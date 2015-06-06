@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+<root>
+
+    <resource>
+        <path>/</path>
+        <method verb="GET">
+            <description>Index or entry point</description>
+        </method>
+        <method verb="OPTIONS">
+            <description>Get allowed methods</description>
+            <response>
+                <headers>
+                    <param name="Allow" value="list">Allowed methods for this resource</param>
+                    <param name="Access-Control-Allow-Origin" value="string">Allow origin from all</param>
+                </headers>
+            </response>
+        </method>
+    </resource>
+
+    <resource>
+        <path>/loggjafarthing</path>
+        <method verb="GET">
+            <description>Get a list of all assemblies. The list will be sorted in reverse order. Current assembly
+                being the first one. This resource is returned in chunks. Range header plays a big part
+                in that.</description>
+            <request>
+                <headers>
+                    <param name="Range" value="items=0-100">Indicate how big the chunk should be</param>
+                </headers>
+            </request>
+            <response>
+                <headers>
+                    <param name="Content-Range" value="items 0-10/100">How much is returned</param>
+                    <param name="Range-Unit" value="items">What kind of items returned</param>
+                </headers>
+                <output>
+                    <![CDATA[
+                [
+                    {
+                        "assembly_id": "143",
+                        "from": "2013-09-09",
+                        "to": "2014-09-09"
+                    },
+                    {
+                        "assembly_id": "144",
+                        "from": "2014-09-09",
+                        "to": null
+                    }
+                ]
+                ]]>
+                </output>
+            </response>
+        </method>
+        <method verb="OPTIONS">
+            <description>Get available methods for this path</description>
+            <response>
+                <headers>
+                    <param name="Allow" value="list">Allowed methods for this resource</param>
+                    <param name="Access-Control-Allow-Origin" value="string">Allow origin from all</param>
+                </headers>
+            </response>
+        </method>
+    </resource>
+
+    <resource>
+        <path>/loggjafarthing/:id</path>
+        <param name="id" value="int">Number of assembly</param>
+        <method verb="GET">
+            <description>Get one assembly</description>
+            <response>
+                <output>
+                    <![CDATA[
+                        {
+                            "assembly_id": "144",
+                            "from": "2014-09-09",
+                            "to": null
+                        }
+                    ]]>
+                </output>
+            </response>
+        </method>
+        <method verb="PUT">
+            <description>
+                Create new assembly. If the assembly already exists, an error message is returned.
+                Will return 201 on success. Could return other error response codes.
+                Some clients and servers don't understand the PUT method. In that case it can be overriten
+                with a POST method and a X-Http-Method-Override header.
+            </description>
+            <request>
+                <headers>
+                    <param name="X-Http-Method-Override" value="PUT">Override POST with PUT</param>
+                </headers>
+                <input>
+                    <param name="from" value="date">Start of assembly (YYY-MM-DD)</param>
+                    <param name="to" value="date">End of assembly (YYY-MM-DD) (optional)</param>
+                </input>
+            </request>
+
+        </method>
+        <method verb="PATCH">
+            <description>
+                Update one assembly. This method allows to update only a single (or many) value(s)
+                of a given assembly. Some servers and clients don't implement PATCH, it that case
+                override POST with PATCH and use X-Http-Method-Override header.
+            </description>
+            <request>
+                <headers>
+                    <param name="X-Http-Method-Override" value="PATCH">Override POST with PATCH</param>
+                </headers>
+                <input>
+                    <param name="from" value="date">Start of assembly (YYY-MM-DD) (optional)</param>
+                    <param name="to" value="date">End of assembly (YYY-MM-DD) (optional)</param>
+                </input>
+            </request>
+        </method>
+    </resource>
+
+</root>
