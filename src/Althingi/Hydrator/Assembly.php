@@ -22,14 +22,7 @@ class Assembly implements HydratorInterface
      */
     public function hydrate(array $data, $object)
     {
-        if (isset($data['assembly_id'])) {
-            $object->assembly_id = (int)$data['assembly_id'];
-        }
-        $object->from = new \DateTime($data['from']);
-        $object->to = isset($data['to'])
-            ? new \DateTime($data['to'])
-            : null ;
-        return $object;
+        return (object) $data;
     }
 
 
@@ -41,6 +34,6 @@ class Assembly implements HydratorInterface
      */
     public function extract($object)
     {
-        return (array)$object;
+        return (array) $object;
     }
 }

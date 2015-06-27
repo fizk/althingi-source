@@ -8,6 +8,7 @@
 
 namespace Althingi\Controller;
 
+use Althingi\Lib\Http\MultiPart;
 use Althingi\View\Model\EmptyModel;
 use Althingi\View\Model\ErrorModel;
 use Zend\Mvc\Controller\AbstractController;
@@ -379,7 +380,7 @@ abstract class AbstractRestfulController extends AbstractController
             // PATCH
             case 'patch':
                 $id = $this->getIdentifier($routeMatch, $request);
-                $data = $request->getPost()->toArray();
+                $data = (new MultiPart())->parse($request);
 
                 if ($id !== false) {
                     $action = 'patch';
@@ -407,8 +408,7 @@ abstract class AbstractRestfulController extends AbstractController
             // PUT
             case 'put':
                 $id   = $this->getIdentifier($routeMatch, $request);
-                //$data = $this->parseRawHttpRequest($request->getContent());
-                $data = $this->processBodyContent($request);
+                $data = (new MultiPart())->parse($request);
 
                 if ($id !== false) {
                     $action = 'put';
@@ -531,6 +531,10 @@ abstract class AbstractRestfulController extends AbstractController
      */
     protected function getIdentifier($routeMatch, $request)
     {
+        if ($identifierName = $routeMatch->getParam('identifier', false)) {
+            $this->setIdentifierName($identifierName);
+        }
+
         $identifier = $this->getIdentifierName();
         $id = $routeMatch->getParam($identifier, false);
         if ($id !== false) {
@@ -592,24 +596,5 @@ abstract class AbstractRestfulController extends AbstractController
             return strtolower($overwrite->getFieldValue());
         }
         return strtolower($request->getMethod());
-    }
-
-    private function parseRawHttpRequest($input)
-    {
-        $boundary = strstr($input, "\n", true);
-        $a_blocks = preg_split("/$boundary/", $input, null, PREG_SPLIT_NO_EMPTY);
-        //array_pop($a_blocks);
-
-
-        $retVal = [];
-        foreach ($a_blocks as $key => $value) {
-            $matches = [];
-            preg_match('/(name=")(.*)(")(.*)/s', $value, $matches);
-            if (count($matches)>=4) {
-                $retVal[$matches[2]] = trim($matches[4]);
-            }
-
-        }
-        return $retVal;
     }
 }

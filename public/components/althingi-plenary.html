@@ -1,0 +1,99 @@
+<dom-module id="althingi-plenaries">
+    <template>
+        <althingi-pagination
+                href="{{src}}"
+                on-response="handleResponse"
+                on-request="handleRequest"
+                on-done="handleDone">
+        </althingi-pagination>
+        <ul class="list list--simple">
+            <template is="dom-repeat" items="{{plenaries}}">
+                <li class="list__item">
+                    <althingi-plenary-badge
+                            from="{{item.from}}"
+                            to="{{item.to}}"
+                            name="{{item.name}}">
+                    </althingi-plenary-badge>
+                </li>
+            </template>
+        </ul>
+        <paper-button on-click="handleMore">Meira</paper-button>
+    </template>
+    <script>
+        Polymer({
+            id: 'althingi-plenaries',
+
+            properties: {
+                src: {
+                    type: String,
+                    reflectToAttribute: true
+                },
+                plenaries: {
+                    type: Array,
+                    value: []
+                }
+            },
+
+            attached: function () {
+
+            },
+
+            handleRequest: function () {
+
+            },
+
+            handleResponse: function () {
+                this.plenaries = this.plenaries.concat(event.detail);
+            },
+
+            handleMore: function (event) {
+                this.querySelector('althingi-pagination').load();
+            },
+
+            handleDone: function (event) {
+                var button = this.querySelector('paper-button');
+                button.parentNode.removeChild(button);
+            }
+        })
+    </script>
+</dom-module>
+
+<dom-module id="althingi-plenary-badge">
+    <template>
+        <article class="badge">
+            <header class="badge__header">
+                <h1 class="badge__title" on-click="handleGetItem">{{name}}</h1>
+            </header>
+            <div class="badge__body">
+                <time class="badge__time">{{from}}</time>
+                <time class="badge__time">{{to}}</time>
+            </div>
+            <footer></footer>
+        </article>
+    </template>
+
+    <script>
+        Polymer({
+            id: 'althingi-plenary-badge',
+
+            properties: {
+                from: {
+                    type: String,
+                    reflectToAttribute: true
+                },
+                to: {
+                    type: String,
+                    reflectToAttribute: true
+                },
+                name: {
+                    type: String,
+                    reflectToAttribute: true
+                }
+            },
+
+            handleGetItem: function () {
+                debugger;
+            }
+        })
+    </script>
+</dom-module>

@@ -1,0 +1,60 @@
+
+
+    .docs {
+        max-width: 960px;
+        margin: $gutter auto;
+
+        .docs__header {
+            h2 {
+                font-size: $font-size-big*2;
+                padding-bottom: $gutter/2;
+                font-weight: bold;
+            }
+        }
+
+        .docs__method {
+            padding: $gutter;
+            h3 {
+                font-weight: bold;
+            }
+            h4 {
+                font-weight: bold;
+            }
+            pre {
+                white-space: pre;
+            }
+        }
+        .docs__method--GET {
+            background-color: #92fec0;
+        }
+        .docs__method--PUT {
+            background-color: #fee2da;
+        }
+        .docs__method--POST {
+            background-color: #fdfee4;
+        }
+        .docs__method--DELETE {
+            background-color: #febfbd;
+        }
+        .docs__method--OPTIONS {
+            background-color: #b2fef9;
+        }
+        .docs__method--PATCH {
+            background-color: #f4c4fe;
+        }
+
+        .docs__table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: $gutter/2 0;
+            thead {
+                border-bottom: 1px solid rgb(200,200,200);
+            }
+            td, th {
+                text-align: left;
+                vertical-align: top;
+            }
+        }
+    }
+
+

@@ -110,3 +110,17 @@ vendor/
 
 ### Application ###
 docs/tests
+
+### Workbench###
+*.mwb.bak
+
+### Node ###
+# Dependency directory
+# https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git
+public/node_modules
+
+### Bower ###
+public/vendor
+.bower-cache
+.bower-registry
+.bower-tmp

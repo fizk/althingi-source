@@ -1,10 +1,9 @@
 <?xml version="1.0"?>
 <root>
-
     <resource>
         <path>/</path>
         <method verb="GET">
-            <description>Index or entry point</description>
+            <description>Get the web-application</description>
         </method>
         <method verb="OPTIONS">
             <description>Get allowed methods</description>
@@ -27,12 +26,18 @@
                 <headers>
                     <param name="Range" value="items=0-100">Indicate how big the chunk should be</param>
                 </headers>
+                <query>
+                    <param name="order" value="asc|desc">Order of list</param>
+                </query>
             </request>
             <response>
                 <headers>
                     <param name="Content-Range" value="items 0-10/100">How much is returned</param>
                     <param name="Range-Unit" value="items">What kind of items returned</param>
                 </headers>
+                <status>
+                    <code value="206">Partial Content</code>
+                </status>
                 <output>
                     <![CDATA[
                 [
@@ -85,6 +90,10 @@
                 Will return 201 on success. Could return other error response codes.
                 Some clients and servers don't understand the PUT method. In that case it can be overriten
                 with a POST method and a X-Http-Method-Override header.
+
+                The ID of the assembly is known, it comes from the official Althingi database or the ID is
+                generated else were, (ie. number of assembly is defined by a fixed set of rules.) That is why
+                we don't POST an assembly, we PUT it.
             </description>
             <request>
                 <headers>
@@ -95,7 +104,12 @@
                     <param name="to" value="date">End of assembly (YYY-MM-DD) (optional)</param>
                 </input>
             </request>
-
+            <response>
+                <status>
+                    <code value="201">Resource created</code>
+                    <code value="204">Conflict. If already present.</code>
+                </status>
+            </response>
         </method>
         <method verb="PATCH">
             <description>
@@ -110,6 +124,310 @@
                 <input>
                     <param name="from" value="date">Start of assembly (YYY-MM-DD) (optional)</param>
                     <param name="to" value="date">End of assembly (YYY-MM-DD) (optional)</param>
+                </input>
+            </request>
+            <response>
+                <status>
+                    <code value="404">Resource not found</code>
+                </status>
+            </response>
+        </method>
+        <method verb="DELETE">
+            <description>Delete on resource.</description>
+        </method>
+        <method verb="OPTIONS">
+            <description>Describes this endpoint</description>
+        </method>
+    </resource>
+
+    <resource>
+        <path>/loggjafarthing/:id/thingfundir</path>
+        <param name="id" value="int">Number of assembly</param>
+        <method verb="GET">
+            <description>Get all plenaries from assembly</description>
+            <request>
+                <headers>
+                    <param name="Range" value="items=0-100">Indicate how big the chunk should be</param>
+                </headers>
+            </request>
+            <response>
+                <headers>
+                    <param name="Content-Range" value="items 0-10/100">How much is returned</param>
+                    <param name="Range-Unit" value="items">What kind of items returned</param>
+                </headers>
+                <status>
+                    <code value="206">Partial Content</code>
+                </status>
+                <output>
+                    [
+                        {
+                            plenary_id: 167,
+                            assembly_id: 139,
+                            from: "2011-09-17 15:27:43",
+                            to: "2011-09-17 17:54:42",
+                            name: "167. fundur"
+                        },
+                        {
+                            plenary_id: 166,
+                            assembly_id: 139,
+                            from: "2011-09-17 09:32:12",
+                            to: "2011-09-17 15:24:58",
+                            name: "166. fundur"
+                        },
+                    ]
+                </output>
+            </response>
+        </method>
+    </resource>
+
+    <resource>
+        <path>/loggjafarthing/:id/thingfundir/:plenary_id</path>
+        <param name="id" value="int">Number of assembly</param>
+        <param name="plenary_id" value="int">Number of plenary</param>
+        <method verb="PUT">
+            <description>Put a new plenary into an assembly.</description>
+            <request>
+                <input>
+                    <param value="string" name="name">Name of plenary: 166. fundur</param>
+                    <param value="date-time" name="from">Beginning of plenary</param>
+                    <param value="date-time" name="to">End of plenary</param>
+                </input>
+            </request>
+        </method>
+    </resource>
+
+    <resource>
+        <path>/loggjafarthing/:id/thingmal/:issue_id</path>
+        <param name="id" value="int">Number of assembly</param>
+        <param name="issue_id" value="int">Number of issue</param>
+        <method verb="GET">
+            <description>Gets some metadata about an issue</description>
+            <response>
+                <output>
+                    {
+                        "issue_id": 803,
+                        "assembly_id": 144,
+                        "category": "A",
+                        "name": "Jafnréttissjóður Íslands",
+                        "type": 1,
+                        "type_name": "Tillaga til þingsályktunar",
+                        "type_subname": "þingsályktunartillaga",
+                        "status": null,
+                        "speekers": [
+                            {
+                                "congressman_id": "1180",
+                                "name": "Þórunn Egilsdóttir",
+                                "birth": "1964-11-23",
+                                "death": null
+                            }
+                        ],
+                        "foreman":
+                        {
+                            "congressman_id": "1180",
+                            "name": "Þórunn Egilsdóttir",
+                            "birth": "1964-11-23",
+                            "death": null
+                        },
+                        "time": "00:05:34"
+                    }
+                </output>
+            </response>
+        </method>
+        <method verb="PUT">
+            <description>Create new issue</description>
+            <request>
+                <input>
+                    <param value="string" name="name">Name of issue: fjárlög 2013</param>
+                    <param value="string" name="category">málsflokkur, A - B</param>
+                    <param value="int" name="type">málstegund</param>
+                    <param value="string" name="type_name">heiti - Frumvarp til laga</param>
+                    <param value="string" name="type_subname">heiti2 - lagafrumvarp</param>
+                    <param value="int" name="congressman_id">Issue foreman (optional)</param>
+                </input>
+            </request>
+        </method>
+    </resource>
+
+    <resource>
+        <path>/thingmenn</path>
+        <method verb="GET">
+            <description>List of all congressmen will be returned in chunks</description>
+            <request>
+                <headers>
+                    <param name="Range" value="items=0-100">Indicate how big the chunk should be</param>
+                </headers>
+            </request>
+            <response>
+                <output>
+                    [
+                        {
+                            "congressman_id": "739",
+                            "name": "Adda Bára Sigfúsdóttir ",
+                            "birth": "1926-12-30",
+                            "death": null
+                        },
+                        {
+                            "congressman_id": "646",
+                            "name": "Adolf H. Berndsen",
+                            "birth": "1959-01-19",
+                            "death": null
+                        },
+                    ]
+                </output>
+            </response>
+        </method>
+        <method verb="POST">
+            <description>Create new congressman allowing the system to auto-generate the ID</description>
+            <request>
+                <input>
+                    <param name="name" value="string">Name of the congressman</param>
+                    <param name="birth" value="date">Date of birth (optional)</param>
+                </input>
+            </request>
+            <response>
+                <headers>
+                    <param value="string" name="Content-Location">Location of resource.</param>
+                </headers>
+            </response>
+        </method>
+    </resource>
+
+    <resource>
+        <path>thingmenn/:id</path>
+        <param name="id" value="int">ID of congressman</param>
+        <method verb="GET">
+            <description>Id ID is given, a single congressman is returned</description>
+            <response>
+                <output>
+                    {
+                        "congressman_id": "739",
+                        "name": "Adda Bára Sigfúsdóttir ",
+                        "birth": "1926-12-30",
+                        "death": null
+                    }
+                </output>
+            </response>
+        </method>
+        <method verb="PUT">
+            <description>Create new congressman. The ID og the congressman is known. Therefor we don't POST a new one,
+            we PUT one in it's place.</description>
+            <request>
+                <input>
+                    <param name="name" value="string">Name of the congressman</param>
+                    <param name="birth" value="date">Date of birth (optional)</param>
+                </input>
+            </request>
+        </method>
+        <method verb="PATCH">
+            <description>Update congressman's properties</description>
+            <request>
+                <input>
+                    <param name="name" value="string">Name of the congressman (optional)</param>
+                    <param name="birth" value="date">Date of birth (optional)</param>
+                </input>
+            </request>
+        </method>
+    </resource>
+
+    <resource>
+        <path>/thingmenn/:id/thingseta</path>
+        <param name="id" value="int">ID of congressman</param>
+        <method verb="GET">
+            <description>Get all sessions objects for congressman in decending order</description>
+            <response>
+                <output>
+                    [
+                        {
+                            "session_id": "274",
+                            "congressman_id": "124",
+                            "from": "2014-11-24",
+                            "to": "1970-01-01",
+                            "type": "þingmaður",
+                            "party": "Sjálfstæðisflokkur"
+                        },
+                        {
+                            "session_id": "273",
+                            "congressman_id": "124",
+                            "from": "2014-11-17",
+                            "to": "2014-11-24",
+                            "type": "með varamann",
+                            "party": "Sjálfstæðisflokkur"
+                        },
+                    ]
+                </output>
+            </response>
+        </method>
+        <method verb="POST">
+            <description>
+                When creating new session, and the session_id is not known, this is the method to use. Like some many
+                parts of this system when the ID of the resource is known and PUSH is used to create, this is NOT one
+                of this things. The session_id is auto-generated in this request and is local to this implementation.
+            </description>
+            <request>
+                <input>
+                    <param name="from" value="date">When the session starts</param>
+                    <param name="to" value="date">When the session ends (optional)</param>
+                    <param name="type" value="string">Type, like 'Varamadur' (optional)</param>
+                    <param name="party_id" value="string">ID of of party (optional)</param>
+                    <param name="constituency_id" value="string">ID of constituency (optional)</param>
+                </input>
+            </request>
+        </method>
+    </resource>
+
+    <resource>
+        <path>/thingmenn/:id/thingseta/:session_id</path>
+        <param name="id" value="int">ID of congressman</param>
+        <param name="session_id" value="int">ID of session</param>
+        <method verb="GET">
+            <description>Get one session resource</description>
+            <response>
+                <output>
+                    {
+                        "session_id": 56,
+                        "congressman_id": 678,
+                        "from": "2014-12-17",
+                        "to": "1970-01-01",
+                        "type": "þingmaður",
+                        "abbr": null,
+                        "constituency": {
+                            "id": "52",
+                            "name": "Suðvesturkjördæmi",
+                            "abbr": "SV"
+                        },
+                        "party": {
+                            "id": "38",
+                            "name": "Samfylkingin",
+                            "abbr": "Sf"
+                        }
+                    }
+                </output>
+            </response>
+        </method>
+        <method verb="PATCH">
+            <description>Update session properties</description>
+            <request>
+                <input>
+                    <param name="from" value="date">When the session starts (optional)</param>
+                    <param name="to" value="date">When the session ends (optional)</param>
+                    <param name="type" value="string">Type, like 'Varamadur' (optional)</param>
+                    <param name="party_id" value="int">ID of of party (optional)</param>
+                    <param name="constituency_id" value="int">ID of constituency (optional)</param>
+                </input>
+            </request>
+        </method>
+        <method verb="DELETE"></method>
+    </resource>
+
+    <resource>
+        <path>/thingflokkar/:id</path>
+        <method verb="PUT">
+            <description>Create one Party</description>
+            <request>
+                <input>
+                    <param name="name" value="string">Name of party</param>
+                    <param name="abbr_short" value="string">Party's short abbreviation</param>
+                    <param name="abbr_long" value="string">Party's long abbreviation</param>
                 </input>
             </request>
         </method>

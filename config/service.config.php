@@ -9,6 +9,13 @@
 return [
     'invokables' => [
         'Althingi\Service\Assembly' => 'Althingi\Service\Assembly',
+        'Althingi\Service\Congressman' => 'Althingi\Service\Congressman',
+        'Althingi\Service\Session' => 'Althingi\Service\Session',
+        'Althingi\Service\Party' => 'Althingi\Service\Party',
+        'Althingi\Service\Constituency' => 'Althingi\Service\Constituency',
+        'Althingi\Service\Plenary' => 'Althingi\Service\Plenary',
+        'Althingi\Service\Issue' => 'Althingi\Service\Issue',
+        'Althingi\Service\Speech' => 'Althingi\Service\Speech',
     ],
 
     'factories' => [
@@ -32,12 +39,22 @@ return [
                 ]
             );
         },
+        'Psr\Log' => function ($sm) {
+            $logger = new \Monolog\Logger('althingi');
+            $logger->pushHandler(new \Monolog\Handler\StreamHandler('php://stdout'));
+            return $logger;
+        },
     ],
 
     'initializers' => [
         'Althingi\Lib\DatabaseAwareInterface' => function ($instance, $sm) {
             if ($instance instanceof \Althingi\Lib\DatabaseAwareInterface) {
                 $instance->setDriver($sm->get('PDO'));
+            }
+        },
+        'Althingi\Lib\LoggerAwareInterface' => function ($instance, $sm) {
+            if ($instance instanceof \Althingi\Lib\LoggerAwareInterface) {
+                $instance->setLogger($sm->get('Psr\Log'));
             }
         }
     ],

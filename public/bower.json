@@ -1,0 +1,31 @@
+{
+  "name": "althingi-client",
+  "version": "0.0.1",
+  "homepage": "https://github.com/fizk/Loggjafarthing",
+  "authors": [
+    "fizk <fizk78@gmail.com>"
+  ],
+  "description": "Polymer Althingi client",
+  "main": "index.html",
+  "keywords": [
+    "Polymer"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "~1.0.3",
+    "iron-ajax": "PolymerElements/iron-ajax#1.0.0",
+    "paper-button": "PolymerElements/paper-button#^1.0.0",
+    "iron-pages": "PolymerElements/iron-pages#^1.0.0",
+    "paper-spinner": "PolymerElements/paper-spinner#^1.0.0",
+    "paper-fab": "PolymerElements/paper-fab#^1.0.0",
+    "iron-image": "PolymerElements/iron-image#^1.0.0",
+    "paper-header-panel": "PolymerElements/paper-header-panel#^1.0.0"
+  }
+}

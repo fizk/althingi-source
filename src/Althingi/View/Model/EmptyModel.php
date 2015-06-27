@@ -115,7 +115,7 @@ class EmptyModel implements ModelInterface, BaseModelInterface
      */
     public function setLocation($location)
     {
-        $this->setOption('Content-Location', $location);
+        $this->setOption('Location', $location);
         return $this;
     }
 

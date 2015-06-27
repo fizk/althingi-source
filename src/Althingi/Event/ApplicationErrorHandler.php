@@ -54,7 +54,7 @@ class ApplicationErrorHandler
             switch ($exception->getCode()) {
                 case 23000: //PDO Exception - Integrity constraint violation: 1062 Duplicate entry
                     $currentModel =  (new ErrorModel(new \Exception('Entry already exists', 0, $exception)))
-                        ->setStatus(400);
+                        ->setStatus(409); //409 Conflict
                     break;  //General 404 error
                 case 404:
                     $currentModel =  (new ErrorModel($exception))

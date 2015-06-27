@@ -8,41 +8,59 @@
 
 namespace Althingi\Model\Dom;
 
+use Althingi\Lib\IdentityInterface;
 use Zend\Stdlib\Extractor\ExtractionInterface;
+use Althingi\Model\Exception as ModelException;
 
-class Assembly implements ExtractionInterface
+class Assembly implements ExtractionInterface, IdentityInterface
 {
+    private $id;
+
     /**
      * Extract values from an object
      *
      * @param  \DOMElement $object
      * @return array|null
+     * @throws \Althingi\Model\Exception
      */
     public function extract($object)
     {
         if (!$object instanceof \DOMElement) {
-            return null;
+            throw new ModelException('Not a valid \DOMElement');
         }
 
-        $no = ($object->hasAttribute('númer'))
-            ? $object->getAttribute('númer')
-            : null ;
+        if (!$object->hasAttribute('númer')) {
+            throw new ModelException('Missing [{númer}] value');
+        }
 
+        if (!$object->getElementsByTagName('þingsetning')->item(0)) {
+            throw new ModelException('Missing [{þingsetning}] value');
+        }
 
-        $start = $object->getElementsByTagName('þingsetning')->item(0);
-        $from = ($start)
-            ? date('Y-m-d', strtotime($start->nodeValue))
-            : null ;
+        $this->setIdentity($object->getAttribute('númer'));
 
-        $end = $object->getElementsByTagName('þinglok')->item(0);
-        $to = ($end)
-            ? date('Y-m-d', strtotime($end->nodeValue))
+        $from = date(
+            'Y-m-d',
+            strtotime($object->getElementsByTagName('þingsetning')->item(0)->nodeValue)
+        );
+        $to = ($object->getElementsByTagName('þinglok')->item(0))
+            ? date('Y-m-d', strtotime($object->getElementsByTagName('þinglok')->item(0)->nodeValue))
             : null ;
 
         return [
-            'no' => $no,
+            'no' => (int) $this->getIdentity(),
             'from' => $from,
             'to' => $to
         ];
+    }
+
+    public function setIdentity($id)
+    {
+        $this->id = $id;
+    }
+
+    public function getIdentity()
+    {
+        return $this->id;
     }
 }

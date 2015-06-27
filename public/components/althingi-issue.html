@@ -1,0 +1,175 @@
+<dom-module id="althingi-issue">
+    <template>
+        <althingi-pagination
+                href="{{src}}"
+                on-response="handleResponse"
+                on-request="handleResquest"
+                on-done="handleDone">
+        </althingi-pagination>
+        <ul>
+            <template is="dom-repeat" items="{{issues}}">
+                <li>
+                    <althingi-issue-badge
+                            id="{{item.issue_id}}"
+                            assembly="{{item.assembly_id}}"
+                            name="{{item.name}}"
+                            status="{{item.status}}"
+                            type="{{item.type_name}}"
+                            >
+                    </althingi-issue-badge>
+                </li>
+            </template>
+        </ul>
+        <paper-button on-click="handleMore">Meira</paper-button>
+        <paper-spinner active></paper-spinner>
+
+    </template>
+    <script>
+        Polymer({
+            id: 'althingi-plenary',
+            properties: {
+                src: {
+                    type: String,
+                    reflectToAttribute: true
+                },
+                issues: {
+                    type: Array,
+                    value: []
+                }
+            },
+
+            handleResquest: function (event) {
+                this.querySelector('paper-spinner').setAttribute('active', 'active');
+            },
+
+            handleResponse: function (event) {
+                this.querySelector('paper-spinner').removeAttribute('active');
+                this.issues = this.issues.concat(event.detail);
+            },
+
+            handleMore: function (event) {
+                this.querySelector('althingi-pagination').load();
+            },
+
+            handleDone: function (event) {
+                var button = this.querySelector('paper-button');
+                button.parentNode.removeChild(button);
+            }
+        })
+    </script>
+</dom-module>
+
+<dom-module id="althingi-issue-badge">
+    <template>
+        <article class="badge">
+            <header class="badge__header" on-click="handleGetInfo">
+                <span>{{id}}</span> <h1 class="badge__title">{{name}}</h1>
+            </header>
+            <div class="badge__body">
+                <span class="badge__label">{{type}}</span> |
+                <span class="badge__label">{{status}}</span>
+            </div>
+            <footer class="badge__footer"></footer>
+        </article>
+
+    </template>
+    <script>
+        Polymer({
+            id: 'althingi-plenary-item',
+
+            properties: {
+                from: {
+                    type: String,
+                    reflectToAttribute: true
+                },
+                status: {
+                    type: String,
+                    reflectToAttribute: true
+                },
+                type: {
+                    type: String,
+                    reflectToAttribute: true
+                },
+                id: {
+                    type: Number,
+                    reflectToAttribute: true
+                },
+                assembly: {
+                    type: Number,
+                    reflectToAttribute: true
+                },
+                expanded: {
+                    type: Boolean,
+                    value: false
+                }
+
+            },
+
+            handleGetInfo: function () {
+                if (!this.expanded) {
+                    var issueInfoElement = document.createElement('althingi-issue-footer');
+                    issueInfoElement.setAttribute('id', this.id);
+                    issueInfoElement.setAttribute('assembly', this.assembly);
+                    this.querySelector('footer').appendChild(issueInfoElement);
+                }
+                this.expanded = true;
+
+            }
+        })
+    </script>
+</dom-module>
+
+<dom-module id="althingi-issue-footer">
+    <template>
+        <iron-ajax
+            auto
+            on-response="handleResponse"
+            handle-as="json"
+            url="{{url}}">
+        </iron-ajax>
+        <template is="dom-if" if="{{data.foreman}}">
+            Fluttingsmadur:
+            <althingi-congressman-badge name="{{data.foreman.name}}" id="{{data.foreman.congressman_id}}"></althingi-congressman-badge>
+        </template>
+        Heildar raedutimi: <time>{{data.time}}</time>
+        <h1>Raedumenn</h1>
+        <template is="dom-repeat" items="{{data.speakers}}">
+            <althingi-congressman-badge name="{{item.name}}" id="{{item.congressman_id}}"></althingi-congressman-badge>
+        </template>
+    </template>
+    <script>
+        Polymer({
+            is: 'althingi-issue-footer',
+
+            properties: {
+                id: {
+                    type: Number,
+                    reflectToAttribute: true
+                },
+                assembly: {
+                    type: Number,
+                    reflectToAttribute: true
+                },
+                url: {
+                    type: String,
+                    computed: 'computeUrl(id, assembly)'
+                },
+                data: {
+                    type: Object,
+                    value: function () {
+                        return {};
+                    }
+                }
+            },
+
+            handleResponse: function (event) {
+                this.data = event.detail.response;
+            },
+
+            computeUrl: function (id, assembly) {
+                return '/api/loggjafarthing/'+assembly+'/thingmal/'+id;
+            }
+
+        });
+    </script>
+</dom-module>

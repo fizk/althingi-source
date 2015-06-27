@@ -1,0 +1,32 @@
+<dom-module is="althingi-congressman-badge">
+    <template>
+        <iron-image style="width:60px; height:60px; background-color: lightgray;"
+                    sizing="cover" preload src="{{image}}"></iron-image>
+        <h1>{{name}}</h1>
+    </template>
+    <script>
+        Polymer({
+            is: 'althingi-congressman-badge',
+
+            properties: {
+                name: {
+                    type: String,
+                    reflectToAttribute: true
+                },
+                id: {
+                    type: Number,
+                    reflectToAttribute: true
+                },
+                image: {
+                    type: String,
+                    computed: 'computeUrl(id)'
+                }
+            },
+
+            computeUrl: function (id) {
+                return 'http://www.althingi.is/myndir/thingmenn-cache/'+id+'/'+id+'-220.jpg';
+            }
+
+        });
+    </script>
+</dom-module>

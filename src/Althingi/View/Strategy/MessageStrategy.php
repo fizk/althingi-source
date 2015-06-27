@@ -8,6 +8,7 @@
 
 namespace Althingi\View\Strategy;
 
+use Althingi\View\Model\EmptyModel;
 use Althingi\View\Model\ModelInterface;
 use Zend\EventManager\AbstractListenerAggregate;
 use Zend\EventManager\EventManagerInterface;
@@ -84,13 +85,16 @@ class MessageStrategy extends AbstractListenerAggregate
         $response = $e->getResponse();
         /** @var $response \Zend\Http\PhpEnvironment\Response */
         $response->setContent($result);
+
+        if (get_class($model) == 'Althingi\View\Model\EmptyModel') {//FIXME
+            $response->setContent('');
+        }
         $response->setStatusCode($model->getStatus());
         $headers = $response->getHeaders();
         foreach ($model->getOptions() as $key => $value) {
             $headers->addHeaderLine($key, $value);
         }
         $headers->addHeaderLine('content-type', 'application/json; charset=utf-8');
-
     }
 
     /**

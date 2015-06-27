@@ -11,6 +11,10 @@ namespace Althingi\Service;
 use Althingi\Lib\DatabaseAwareInterface;
 use PDO;
 
+/**
+ * Class Assembly
+ * @package Althingi\Service
+ */
 class Assembly implements DatabaseAwareInterface
 {
     use DatabaseService;
@@ -32,26 +36,33 @@ class Assembly implements DatabaseAwareInterface
             select * from `Assembly` where assembly_id = :id
         ");
         $statement->execute(['id' => $id]);
-        return $statement->fetchObject() ? : null ;
+        return $this->decorate($statement->fetchObject());
     }
 
     /**
      * Get all Assemblies.
      *
-     * @param int $from
-     * @param int $to
+     * @param int $offset
+     * @param int $size
+     * @param string $order
      * @return array
      */
-    public function fetchAll($from, $to)
+    public function fetchAll($offset, $size, $order = 'desc')
     {
+        $order = in_array($order, ['asc', 'desc']) ? $order : 'desc';
         $statement = $this->getDriver()->prepare("
-            select * from `Assembly` A order by A.`from` desc
-            limit {$from}, {$to}
+            select * from `Assembly` A order by A.`from` {$order}
+            limit {$offset}, {$size}
         ");
         $statement->execute();
-        return $statement->fetchAll();
+        return array_map([$this, 'decorate'], $statement->fetchAll());
     }
 
+    /**
+     * Count all assemblies.
+     *
+     * @return int
+     */
     public function count()
     {
         $statement = $this->getDriver()->prepare("
@@ -84,15 +95,30 @@ class Assembly implements DatabaseAwareInterface
      */
     public function update($data)
     {
-        $statement = $this
-            ->getDriver()
-            ->prepare(
-                $this->updateString('Assembly', $data, "assembly_id={$data->assembly_id}")
-            );
+        $statement = $this->getDriver()->prepare(
+            $this->updateString('Assembly', $data, "assembly_id={$data->assembly_id}")
+        );
         $statement->execute($this->convert($data));
         return $statement->rowCount();
     }
 
+    /**
+     * Delete one Assembly.
+     * Should return 1, for one assembly deleted.
+     *
+     * @param int $id
+     * @return int
+     */
+    public function delete($id)
+    {
+        $statement = $this
+            ->getDriver()
+            ->prepare(
+                "delete from `Assembly` where assembly_id = :assembly_id"
+            );
+        $statement->execute(['assembly_id' => $id]);
+        return $statement->rowCount();
+    }
 
     /**
      * @param \PDO $pdo
@@ -108,5 +134,21 @@ class Assembly implements DatabaseAwareInterface
     public function getDriver()
     {
         return $this->pdo;
+    }
+
+    /**
+     * Decorate and convert one Assembly result object.
+     *
+     * @param $object
+     * @return null|object
+     */
+    private function decorate($object)
+    {
+        if (!$object) {
+            return null;
+        }
+
+        $object->assembly_id = (int) $object->assembly_id;
+        return $object;
     }
 }

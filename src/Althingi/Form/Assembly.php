@@ -8,7 +8,6 @@
 
 namespace Althingi\Form;
 
-use Zend\Form\Form;
 use Zend\InputFilter\InputFilterProviderInterface;
 
 class Assembly extends Form implements InputFilterProviderInterface
@@ -17,8 +16,8 @@ class Assembly extends Form implements InputFilterProviderInterface
     {
         parent::__construct(get_class($this));
         $this
-            ->setHydrator(new \Althingi\Hydrator\Assembly())
-            ->setObject((object)[]);
+            ->setObject((object)[])
+            ->setHydrator(new \Althingi\Hydrator\Assembly());
 
         $this->add(array(
             'name' => 'assembly_id',
