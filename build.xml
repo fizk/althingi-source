@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="name-of-project" default="build">
 	<target name="build"
-		depends="prepare, composer, lint, phpcs"
+		depends="prepare, composer, lint, phpcs, phpunit, clean"
 		description=""/>
 
 
@@ -67,6 +67,11 @@
         </exec>
 
         <property name="phpunit.done" value="true"/>
+    </target>
+
+
+    <target name="clean">
+        <delete dir="${basedir}/module/"/>
     </target>
 
 
