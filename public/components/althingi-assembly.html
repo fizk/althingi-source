@@ -18,7 +18,7 @@
                     <althingi-assembly-badge
                             from="{{item.from}}"
                             to="{{item.to}}"
-                            id="{{item.assembly_id}}">
+                            assembly="{{item.assembly_id}}">
                     </althingi-assembly-badge>
                 </li>
             </template>
@@ -96,7 +96,7 @@
     <template>
         <article class="badge">
             <header class="badge__header">
-                <h1 class="badge__title">{{id}}</h1>
+                <h1 class="badge__title">{{assembly}}</h1>
             </header>
             <div class="badge__body">
                 <time class="badge__time">{{from}}</time> -
@@ -134,7 +134,7 @@
              * @var Object
              */
             properties: {
-                id: {
+                assembly: {
                     type: String,
                     reflectToAttribute: true
                 },
@@ -155,7 +155,7 @@
              * @var Function
              */
             clickPlenariesGet: function (event) {
-                this.fire('plenaries-get', '/api/loggjafarthing/' + this.id + '/thingfundir');
+                this.fire('plenaries-get', {assembly: this.assembly});
             },
 
             /**
@@ -165,7 +165,8 @@
              * @var Function
              */
             clickIssuesGet: function (event) {
-                this.fire('issues-get', '/api/loggjafarthing/' + this.id + '/thingmal');
+                this.fire('issues-get', {assembly: this.assembly});
+                //this.fire('issues-get', '/api/loggjafarthing/' + this.assembly + '/thingmal');
             }
         });
     </script>

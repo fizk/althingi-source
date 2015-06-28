@@ -344,6 +344,54 @@
     </resource>
 
     <resource>
+        <path>/thingmenn/:id/thingmal</path>
+        <param name="id" value="int">ID of congressman</param>
+        <method verb="GET">
+            <description>Get all issues that this congressman fas a foreman for</description>
+            <response>
+                <output>
+                    [
+                        {
+                            "issue_id": 15,
+                            "assembly_id": 144,
+                            "category": "A",
+                            "name": "Framtíðargjaldmiðill Íslands",
+                            "type": 1,
+                            "type_name": "Tillaga til þingsályktunar",
+                            "type_subname": "þingsályktunartillaga",
+                            "status": null,
+                            "foreman": {
+                                "congressman_id": "704",
+                                "name": "Guðmundur Steingrímsson",
+                                "birth": "1972-10-28",
+                                "death": null
+                            },
+                            "time": null
+                        },
+                        {
+                            "issue_id": 123,
+                            "assembly_id": 144,
+                            "category": "A",
+                            "name": "Bætt starfsumhverfi erlendra sérfræðinga",
+                            "type": 1,
+                            "type_name": "Tillaga til þingsályktunar",
+                            "type_subname": "þingsályktunartillaga",
+                            "status": null,
+                            "foreman": {
+                                "congressman_id": "704",
+                                "name": "Guðmundur Steingrímsson",
+                                "birth": "1972-10-28",
+                                "death": null
+                            },
+                            "time": null
+                        },
+                    ]
+                </output>
+            </response>
+        </method>
+    </resource>
+
+    <resource>
         <path>/thingmenn/:id/thingseta</path>
         <param name="id" value="int">ID of congressman</param>
         <method verb="GET">

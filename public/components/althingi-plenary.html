@@ -10,6 +10,7 @@
             <template is="dom-repeat" items="{{plenaries}}">
                 <li class="list__item">
                     <althingi-plenary-badge
+                            assembly="{{item.assembly_id}}"
                             from="{{item.from}}"
                             to="{{item.to}}"
                             name="{{item.name}}">
@@ -26,16 +27,21 @@
             properties: {
                 src: {
                     type: String,
+                    computed: 'computeUrl(assembly)',
+                },
+                assembly: {
+                    type: Number,
                     reflectToAttribute: true
                 },
+
                 plenaries: {
                     type: Array,
                     value: []
                 }
             },
 
-            attached: function () {
-
+            computeUrl: function (assembly) {
+                return '/api/loggjafarthing/' + assembly + '/thingfundir'
             },
 
             handleRequest: function () {
@@ -74,7 +80,7 @@
 
     <script>
         Polymer({
-            id: 'althingi-plenary-badge',
+            is: 'althingi-plenary-badge',
 
             properties: {
                 from: {
@@ -88,11 +94,15 @@
                 name: {
                     type: String,
                     reflectToAttribute: true
+                },
+                assembly: {
+                    type: Number,
+                    reflectToAttribute: true
                 }
             },
 
             handleGetItem: function () {
-                debugger;
+                //this.fire('', {assembly: this.assembly});
             }
         })
     </script>

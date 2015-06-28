@@ -96,6 +96,19 @@ return array(
                                 'controller' => 'Althingi\Controller\Congressman',
                             ],
                         ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'thingmal' => [
+                                'type' => 'Zend\Mvc\Router\Http\Segment',
+                                'options' => [
+                                    'route'    => '/thingmal',
+                                    'defaults' => [
+                                        'controller' => 'Althingi\Controller\CongressmanIssue',
+                                        'identifier' => 'issue_id'
+                                    ],
+                                ]
+                            ],
+                        ],
                     ],
                     'thingseta' => [
                         'type' => 'Zend\Mvc\Router\Http\Segment',
@@ -174,6 +187,7 @@ return array(
             'Althingi\Controller\Plenary' => 'Althingi\Controller\PlenaryController',
             'Althingi\Controller\Issue' => 'Althingi\Controller\IssueController',
             'Althingi\Controller\Speech' => 'Althingi\Controller\SpeechController',
+            'Althingi\Controller\CongressmanIssue' => 'Althingi\Controller\CongressmanIssueController',
 
             'Althingi\Controller\Console' => 'Althingi\Controller\Console\ConsoleController',
             'Althingi\Controller\ConsoleCongressman' => 'Althingi\Controller\Console\ConsoleCongressmanController',
