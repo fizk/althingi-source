@@ -1,6 +1,6 @@
 setup:
     shell:
-        - "echo %buildpath% > /var/www/place.txt && mkdir -p %buildpath%/../_althingi/module/Althingi"
+        - "mkdir -p /var/www/phpci/PHPCI/build/_althingi/module/Althingi"
 
 test:
     php_code_sniffer:
