@@ -3,6 +3,11 @@ setup:
         - "mkdir -p /var/www/phpci/PHPCI/build/_althingi/module/Althingi/"
         - "cd %BUILD_PATH% && cp -r * /var/www/phpci/PHPCI/build/_althingi/module/Althingi/"
 
+    composer:
+        directory: "/var/www/phpci/PHPCI/build/_althingi/module/Althingi/"
+        action: "install"
+        prefer_dist: true
+
 test:
     php_code_sniffer:
         path: "/var/www/phpci/PHPCI/build/_althingi/module/Althingi/src"
