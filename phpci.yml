@@ -1,6 +1,6 @@
 setup:
-    copy_build:
-        directory: "_althingi/module/Althingi"
+    shell:
+        - "mkdir _althingi/module/Althingi"
 
 test:
     php_code_sniffer:
