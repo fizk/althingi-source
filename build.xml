@@ -1,27 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="loggjafarthing" default="build">
-	 <target name="build"
-         depends="lint"
-         description=""/>
+<project name="name-of-project" default="build">
+	<target name="build"
+		depends="prepare, composer, lint, phpcs"
+		description=""/>
 
 
- <target name="lint"
-         unless="lint.done"
-         description="Perform syntax check of sourcecode files">
-  <apply executable="php" failonerror="true" taskname="lint">
-   <arg value="-l" />
+	<target name="prepare"
+			unless="prepare.done"
+			description="Prepare for build">
+		<mkdir dir="${basedir}/module/Althingi"/>
+		<copy todir="${basedir}/module/Althingi">
+			<fileset dir="${basedir}">
+				<exclude name="**/assets"/>
+				<exclude name="**/docs"/>
+				<exclude name="**/module"/>
+				<exclude name="**/build.xml"/>
+			</fileset>
+		</copy>
+		<property name="prepare.done" value="true"/>
+	</target>
 
-   <fileset dir="${basedir}/src">
-    <include name="**/*.php" />
-    <modified />
-   </fileset>
+	<target name="composer">
+		<exec executable="composer" dir="${basedir}/module/Althingi">
+			<arg value="install"/>
+		</exec>
+	</target>
 
-   <fileset dir="${basedir}/tests">
-    <include name="**/*.php" />
-    <modified />
-   </fileset>
-  </apply>
 
-  <property name="lint.done" value="true"/>
- </target>
+	<target name="lint"
+			unless="lint.done"
+			description="Perform syntax check of sourcecode files">
+		<apply executable="php" failonerror="true" taskname="lint">
+			<arg value="-l" />
+			<fileset dir="${basedir}/module/Althingi/src">
+				<include name="**/*.php" />
+				<modified />
+			</fileset>
+		</apply>
+		<property name="lint.done" value="true"/>
+	</target>
+
+
+
+
+
+	<target name="phpcs"
+			unless="phpcs.done"
+			description="Find coding standard violations using PHP_CodeSniffer and print human readable output. Intended for usage on the command line before committing.">
+		<exec executable="phpcs" taskname="phpcs">
+			<arg value="--standard=PSR2" />
+			<arg value="--extensions=php" />
+			<arg value="--ignore=autoload.php" />
+			<arg path="${basedir}/module/Althingi/src" />
+			<arg path="${basedir}/module/Althingi/tests" />
+		</exec>
+
+		<property name="phpcs.done" value="true"/>
+	</target>
+
+
+
+
 </project>
