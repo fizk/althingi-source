@@ -1,6 +1,5 @@
 setup:
     shell:
-        - "mkdir -p /var/www/phpci/PHPCI/build/_althingi/module/Althingi"
         - "cp -R * /var/www/phpci/PHPCI/build/_althingi/module/Althingi/"
 
 test:
