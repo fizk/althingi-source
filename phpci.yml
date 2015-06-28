@@ -1,6 +1,6 @@
 setup:
     shell:
-        - "pwd > /var/www/pwd.txt && mkdir -p _althingi/module/Althingi"
+        - "echo %buildpath% > /var/www/pwd.txt && mkdir -p %buildpath%/../_althingi/module/Althingi"
 
 test:
     php_code_sniffer:
