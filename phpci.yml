@@ -1,5 +1,5 @@
 setup:
-    copy_build
+    copy_build:
         directory:
             - "_althingi/module/Althingi"
 
