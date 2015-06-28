@@ -36,6 +36,7 @@ class Congressman implements DatabaseAwareInterface
             select * from `Congressman` C where congressman_id = :id
         ");
         $statement->execute(['id' => $id]);
+
         return $this->decorate($statement->fetchObject());
     }
 
@@ -143,6 +144,27 @@ class Congressman implements DatabaseAwareInterface
         if (!$object) {
             return null;
         }
+
+        //ASSEMBLIES
+        //  get congressman's assembly
+        $assembliesStatement = $this->getDriver()->prepare("
+            select S.assembly_id from `Session` S
+            where congressman_id = :congressman_id group by assembly_id
+            order by S.assembly_id desc;
+        ");
+        $assembliesStatement->execute(['congressman_id' => $object->congressman_id]);
+        $object->assemblies = $assembliesStatement->fetchAll();
+
+        //PARTY
+        //  get congressman's party
+        $partyStatement = $this->getDriver()->prepare("
+            select P.* from `Session` S
+            join `Party` P on (S.party_id = P.party_id)
+            where S.congressman_id = :congressman_id
+            group by party_id;
+        ");
+        $partyStatement->execute(['congressman_id' => $object->congressman_id]);
+        $object->parties = $partyStatement->fetchAll();
 
         $object->congressman_id = (int) $object->congressman_id;
         return $object;

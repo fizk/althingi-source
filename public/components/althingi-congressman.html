@@ -1,7 +1,7 @@
 <dom-module is="althingi-congressman-badge">
     <template>
         <iron-image style="width:60px; height:60px; background-color: lightgray;"
-                    sizing="cover" preload src="{{image}}"></iron-image>
+                    sizing="cover" preload src="{{image}}" on-click="clickCongressmanGet"></iron-image>
         <h1>{{name}}</h1>
     </template>
     <script>
@@ -23,10 +23,88 @@
                 }
             },
 
+            clickCongressmanGet: function () {
+                this.fire('congressman-get', this.id);
+            },
+
             computeUrl: function (id) {
                 return 'http://www.althingi.is/myndir/thingmenn-cache/'+id+'/'+id+'-220.jpg';
             }
 
         });
     </script>
+</dom-module>
+
+<dom-module is="althingi-congressman-profile">
+    <template>
+        <iron-ajax
+                url="{{url}}"
+                auto
+                on-response="handleResponse"
+                handle-as="json">
+        </iron-ajax>
+        <article>
+            <header>
+                <iron-image src="{{image}}"></iron-image>
+                <h1>{{data.name}}</h1>
+                <time>{{data.birth}}</time>
+            </header>
+            <aside>
+                <h3>Thing:</h3>
+                <template is="dom-repeat" items="{{data.assemblies}}">
+                    <span>{{item.assembly_id}}</span>
+                </template>
+
+                <h3>Flokkar:</h3>
+                <template is="dom-repeat" items="{{data.parties}}">
+                    <althingi-party-badge
+                            name="{{item.name}}">
+                    </althingi-party-badge>
+                </template>
+
+            </aside>
+            <div></div>
+            <footer></footer>
+        </article>
+    </template>
+    <script>
+        Polymer({
+            is: 'althingi-congressman-profile',
+
+            properties: {
+                id: {
+                    type: Number,
+                    reflectToAttribute: true
+                },
+
+                url: {
+                    type: String,
+                    computed: 'computeUrl(id)'
+                },
+
+                data: {
+                    type: Object
+                },
+
+                image: {
+                    type: String,
+                    computed: 'computeImageUrl(data.congressman_id)'
+                }
+            },
+
+            handleResponse: function (event) {
+                this.data = event.detail.response;
+            },
+
+            computeUrl: function (id) {
+                return '/api/thingmenn/' + id;
+            },
+
+            computeImageUrl: function (id) {
+                return "http://althingi.is/myndir/mynd/thingmenn/"+id+"/org/mynd.jpg";
+            }
+        })
+    </script>
+
+
 </dom-module>

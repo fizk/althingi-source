@@ -36,52 +36,13 @@ class Issue implements DatabaseAwareInterface
      */
     public function get($issue_id, $assembly_id)
     {
-        //ISSUE
-        //  get issue
         $issueStatement = $this->getDriver()->prepare(
             "select * from `Issue`
             where issue_id = :issue_id and assembly_id = :assembly_id"
         );
         $issueStatement->execute(['issue_id'=>$issue_id, 'assembly_id'=>$assembly_id]);
 
-        $issue = $this->decorate($issueStatement->fetchObject());
-
-        if (!$issue) {
-            return null;
-        }
-
-        //CONGRESSMEN
-        //  get congressmen
-        //TODO get in which party current congressman is in.
-        $congressmenStatement = $this->getDriver()->prepare("
-            select * from `Congressman` where congressman_id in (
-                select congressman_id from `Speech`
-                where assembly_id = :assembly_id and issue_id = :issue_id
-                group by congressman_id
-            ) order by name
-        ");
-        $congressmenStatement->execute(['issue_id'=>$issue_id, 'assembly_id'=>$assembly_id]);
-        $issue->speakers = $congressmenStatement->fetchAll();
-
-        //CONGRESSMAN
-        //TODO Make sure that this works.
-        $congressmanStatement = $this->getDriver()->prepare("
-            select * from `Congressman` where congressman_id = :congressman_id;
-        ");
-        $congressmanStatement->execute(['congressman_id'=>$issue->congressman_id]);
-        unset($issue->congressman_id);
-
-        $issue->foreman = $congressmanStatement->fetchObject() ? : null ;
-
-        //FIXME this doesn't always work
-        $totalSpeakTimeStatement = $this->getDriver()->prepare("
-            select TIME_FORMAT(sum(TIMEDIFF(time(`to`), time(`from`))), '%H:%i:%s') as the_diff
-            from `Speech`where assembly_id = :assembly_id and issue_id = :issue_id
-        ");
-        $totalSpeakTimeStatement->execute(['issue_id'=>$issue_id, 'assembly_id'=>$assembly_id]);
-        $issue->time = $totalSpeakTimeStatement->fetchColumn(0);
-
-        return $issue;
+        return $this->decorate($issueStatement->fetchObject());
     }
 
     /**
@@ -172,6 +133,7 @@ class Issue implements DatabaseAwareInterface
      *
      * @param $object
      * @return null|object
+     * @todo There can be many kinds of metadata fetched here.
      */
     private function decorate($object)
     {
@@ -179,10 +141,29 @@ class Issue implements DatabaseAwareInterface
             return null;
         }
 
+        //CONGRESSMAN
+        //  get the Foreman for this issue
+        $congressmanStatement = $this->getDriver()->prepare("
+            select * from `Congressman` where congressman_id = :congressman_id;
+        ");
+        $congressmanStatement->execute(['congressman_id'=>$object->congressman_id]);
+        $object->foreman = $congressmanStatement->fetchObject() ? : null ;
+        unset($object->congressman_id);
+
+        //FIXME this doesn't always work
+        $totalSpeakTimeStatement = $this->getDriver()->prepare("
+            select TIME_FORMAT(sum(TIMEDIFF(time(`to`), time(`from`))), '%H:%i:%s') as the_diff
+            from `Speech`where assembly_id = :assembly_id and issue_id = :issue_id
+        ");
+        $totalSpeakTimeStatement->execute(['issue_id'=>$object->issue_id, 'assembly_id'=>$object->assembly_id]);
+        $object->time = $totalSpeakTimeStatement->fetchColumn(0);
+
         $object->assembly_id = (int) $object->assembly_id;
         $object->issue_id = (int) $object->issue_id;
         $object->type = (int) $object->type;
         $object->name = ucfirst($object->name);
+        $object->type_name = ucfirst($object->type_name);
+        $object->type_subname = ucfirst($object->type_subname);
 
         return $object;
     }

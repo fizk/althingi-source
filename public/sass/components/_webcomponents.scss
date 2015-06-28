@@ -1,15 +1,39 @@
 
-    althingi-assembly-list { display: block; }
+    althingi-assembly-list {
+        display: block;
+        padding: $gutter;
+    }
+    althingi-assembly-badge {
+        display: block;
+    }
+    althingi-issue {
+        display: block;
+    }
+    althingi-issue-badge {
+        display: block;
+    }
 
     althingi-issue-footer {
         padding: $gutter;
         display: block
-    } //FIXME
+    }
 
     neon-animated-pages {
         height: 100%;
     }
 
-    iron-image {
-        border-radius: 50%;
+
+    althingi-congressman-badge {
+        display: block;
+        iron-image {
+            border-radius: 50%;
+        }
+    }
+
+    althingi-plenaries {
+        display: block;
+    }
+
+    althingi-plenary-badge {
+        display: block;
     }

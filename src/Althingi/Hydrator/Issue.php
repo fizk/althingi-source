@@ -38,7 +38,6 @@ class Issue implements HydratorInterface
         }
 
         unset($object->foreman);
-        unset($object->speakers);
         unset($object->time);
 
         return (array) $object;

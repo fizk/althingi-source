@@ -111,14 +111,6 @@ class IssueTest extends PHPUnit_Framework_TestCase
             "type_name" => "Frumvarp til laga",
             "type_subname" => "lagafrumvarp",
             "status" => "Samþykkt sem lög frá Alþingi.",
-            "speakers" => [
-                (object)[
-                    "congressman_id" => "1163",
-                    "name" => "Hanna Birna Kristjánsdóttir",
-                    "birth" => "1966-10-12",
-                    "death" => null
-                ],
-            ],
             "foreman" => (object)[
                 "congressman_id" => "1163",
                 "name" => "Hanna Birna Kristjánsdóttir",

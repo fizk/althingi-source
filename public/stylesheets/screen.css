@@ -1,4 +1,5 @@
 /* - - - - - [ SIZES ] - - - - - - - - - - - - - - - - - - - */
+/* - - - - - [ FONT ] - - - - - - - - - - - - - - - - - - - */
 /* - - - - - [ COLOR ] - - - - - - - - - - - - - - - - - - - */
 /*
     https://github.com/murtaugh/HTML5-Reset/blob/master/assets/css/reset.css
@@ -286,6 +287,13 @@ body {
   color: #323232;
   font-family: Futura; }
 
+.list--grid .list__item--forth {
+  width: 25%; }
+
+.list--grid .list__item {
+  display: inline-block;
+  vertical-align: top; }
+
 .list--simple .list__item {
   padding: 30px 0; }
 
@@ -299,11 +307,35 @@ body {
 .badge .badge__title {
   font-size: 20px; }
 
-.badge .badge__label {
+.badge .badge__label, .badge .badge__time {
   color: #2d5382;
   font-size: 14px; }
 
+.article-card h1.article-card__headline {
+  font-weight: 700; }
+
+.article-card__aside {
+  float: left;
+  width: 50%; }
+
+.article-card__body {
+  float: right;
+  width: 50%; }
+
+.article-card__footer {
+  clear: both; }
+
 althingi-assembly-list {
+  display: block;
+  padding: 30px; }
+
+althingi-assembly-badge {
+  display: block; }
+
+althingi-issue {
+  display: block; }
+
+althingi-issue-badge {
   display: block; }
 
 althingi-issue-footer {
@@ -313,7 +345,15 @@ althingi-issue-footer {
 neon-animated-pages {
   height: 100%; }
 
-iron-image {
-  border-radius: 50%; }
+althingi-congressman-badge {
+  display: block; }
+  althingi-congressman-badge iron-image {
+    border-radius: 50%; }
+
+althingi-plenaries {
+  display: block; }
+
+althingi-plenary-badge {
+  display: block; }
 
 /*# sourceMappingURL=screen.css.map */

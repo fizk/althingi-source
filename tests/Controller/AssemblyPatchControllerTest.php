@@ -16,7 +16,7 @@ class AssemblyPatchControllerTest extends AbstractHttpControllerTestCase
     public function setUp()
     {
         $this->setApplicationConfig(
-            include __DIR__ .'/../../../../config/application.config.php'
+            include __DIR__ .'/../application.config.php'
         );
         parent::setUp();
     }

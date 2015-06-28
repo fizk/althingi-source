@@ -1,6 +1,14 @@
 
-    .list {
-        
+// - - - [ LIST ] - - - -
+    .list {  }
+    .list--grid {
+        .list__item--forth {
+            width: 25%;
+        }
+        .list__item {
+            display: inline-block;
+            vertical-align: top;
+        }
     }
     .list--simple {
         .list__item {
@@ -8,6 +16,7 @@
         }
     }
 
+// - - - [ BADGE ] - - - -
     .badge {
         .badge__header {
 
@@ -23,10 +32,28 @@
         .badge__title {
             font-size: $font-size-big;
         }
-        .badge__label {
+        .badge__label, .badge__time {
             color: $color-purple;
             font-size: $font-size-small;
         }
-        .badge__time {}
+    }
+
+// - - - [ ARTICLE-CARD ] - - - -
+    .article-card {
+        h1.article-card__headline {
+            font-weight: $font-weight-bold;
+        }
+    }
+    .article-card__header {}
+    .article-card__aside {
+        float: left;
+        width: 50%;
+    }
+    .article-card__body {
+        float: right;
+        width: 50%;
+    }
+    .article-card__footer {
+        clear: both;
     }
 

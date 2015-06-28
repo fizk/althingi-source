@@ -1,0 +1,78 @@
+<dom-module id="althingi-speech-list">
+    <template>
+        <althingi-pagination
+                href="{{href}}"
+                on-response="handleResponse"
+                on-request="handleRequest"
+                on-done="handleDone">
+        </althingi-pagination>
+        <ul>
+            <template is="dom-repeat" items="{{speeches}}">
+                <li>
+                    <article>
+                        <header>
+                            <althingi-congressman-badge
+                                    id="{{item.congressman.congressman_id}}"
+                                    name="{{item.congressman.name}}">
+                            </althingi-congressman-badge>
+                            <span>{{item.type}}</span>
+                        </header>
+                        <aside>
+                            Raedutimi: <time>{{item.time}}</time>
+                        </aside>
+                        <div>{{item.text}}</div>
+                        <footer></footer>
+                    </article>
+                </li>
+            </template>
+        </ul>
+        <paper-button on-click="handleMore">Meira</paper-button>
+        <paper-spinner active></paper-spinner>
+    </template>
+    <script>
+        Polymer({
+            is: "althingi-speech-list",
+
+            properties: {
+                issue: {
+                    type: Number,
+                    reflectToAttribute: true
+                },
+                assembly: {
+                    type: Number,
+                    reflectToAttribute: true
+                },
+                href: {
+                    type: String,
+                    computed: 'computeUrl(issue, assembly)'
+                },
+                speeches: {
+                    type: Array,
+                    value: []
+                }
+            },
+
+            computeUrl: function (issue, assembly) {
+                return "/api/loggjafarthing/"+assembly+"/thingmal/"+issue+"/raedur"
+            },
+
+            handleResponse: function (event) {
+                this.querySelector('paper-spinner').removeAttribute('active');
+                this.speeches = this.speeches.concat(event.detail);
+            },
+
+            handleRequest: function (event) {
+                this.querySelector('paper-spinner').setAttribute('active', 'active');
+            },
+
+            handleDone: function (event) {
+                var button = this.querySelector('paper-button');
+                button.parentNode.removeChild(button);
+            },
+
+            handleMore: function (event) {
+                this.querySelector('althingi-pagination').load();
+            }
+        })
+    </script>
+</dom-module>

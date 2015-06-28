@@ -6,9 +6,9 @@
                 on-request="handleResquest"
                 on-done="handleDone">
         </althingi-pagination>
-        <ul>
+        <ul class="list list--simple">
             <template is="dom-repeat" items="{{issues}}">
-                <li>
+                <li class="list__item">
                     <althingi-issue-badge
                             id="{{item.issue_id}}"
                             assembly="{{item.assembly_id}}"
@@ -62,14 +62,18 @@
 <dom-module id="althingi-issue-badge">
     <template>
         <article class="badge">
-            <header class="badge__header" on-click="handleGetInfo">
-                <span>{{id}}</span> <h1 class="badge__title">{{name}}</h1>
+            <header class="badge__header">
+                <h1 class="badge__title"><span>{{id}}</span>. <span>{{name}}</span></h1>
             </header>
             <div class="badge__body">
                 <span class="badge__label">{{type}}</span> |
                 <span class="badge__label">{{status}}</span>
             </div>
-            <footer class="badge__footer"></footer>
+            <div class="badge__body">
+                <paper-icon-button icon="clear"  on-click="handleGetInfo"></paper-icon-button>
+                <paper-icon-button icon="menu"  on-click="handleGetSpeeches"></paper-icon-button>
+            </div>
+            <footer class="badge__footer" style="display: none"></footer>
         </article>
 
     </template>
@@ -101,11 +105,17 @@
                 expanded: {
                     type: Boolean,
                     value: false
+                },
+                open: {
+                    type: Boolean,
+                    value: false
                 }
 
             },
 
             handleGetInfo: function () {
+                this.querySelector('.badge__footer').style.display = (this.open) ? 'none':'block';
+                this.open = !this.open;
                 if (!this.expanded) {
                     var issueInfoElement = document.createElement('althingi-issue-footer');
                     issueInfoElement.setAttribute('id', this.id);
@@ -113,7 +123,10 @@
                     this.querySelector('footer').appendChild(issueInfoElement);
                 }
                 this.expanded = true;
+            },
 
+            handleGetSpeeches: function (event) {
+                this.fire('speeches-get', {assembly: this.assembly, issue: this.id});
             }
         })
     </script>
@@ -127,15 +140,30 @@
             handle-as="json"
             url="{{url}}">
         </iron-ajax>
-        <template is="dom-if" if="{{data.foreman}}">
-            Fluttingsmadur:
-            <althingi-congressman-badge name="{{data.foreman.name}}" id="{{data.foreman.congressman_id}}"></althingi-congressman-badge>
-        </template>
-        Heildar raedutimi: <time>{{data.time}}</time>
-        <h1>Raedumenn</h1>
-        <template is="dom-repeat" items="{{data.speakers}}">
-            <althingi-congressman-badge name="{{item.name}}" id="{{item.congressman_id}}"></althingi-congressman-badge>
-        </template>
+        <article class="article-card">
+            <header class="article-card__header">
+                <h1 class="article-card__headline">{{data.type_name}}</h1>
+                <h2 class="article-card__headline">{{data.type_subname}}</h2>
+
+            </header>
+            <aside class="article-card__aside">
+                <dl>
+                    <dt>Raedutimi</dt>
+                    <dd><time>{{data.time}}</time></dd>
+                    <dt>Stada</dt>
+                    <dd>{{data.status}}</dd>
+                </dl>
+            </aside>
+            <div class="article-card__body">
+                <template is="dom-if" if="{{data.foreman}}">
+                    Fluttingsmadur:
+                    <althingi-congressman-badge name="{{data.foreman.name}}" id="{{data.foreman.congressman_id}}"></althingi-congressman-badge>
+                </template>
+            </div>
+            <footer class="article-card__footer"></footer>
+        </article>
+
+
     </template>
     <script>
         Polymer({

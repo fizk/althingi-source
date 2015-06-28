@@ -15,7 +15,7 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
     public function setUp()
     {
         $this->setApplicationConfig(
-            include __DIR__ .'/../../../../config/application.config.php'
+            include __DIR__ .'/../application.config.php'
         );
         parent::setUp();
     }
@@ -80,5 +80,30 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
         $this->assertControllerClass('SpeechController');
         $this->assertActionName('put');
         $this->assertResponseStatusCode(400);
+    }
+
+    public function testGetList()
+    {
+        $serviceMock = \Mockery::mock('Althingi\Service\Session')
+            ->shouldReceive('fetchByIssue')
+            ->andReturnUsing(function ($assembly, $issue) {
+                $this->assertEquals(144, $assembly);
+                $this->assertEquals(3, $issue);
+            })
+            ->once()
+            ->getMock()
+        ->shouldReceive('countByIssue')
+        ->andReturn(100)
+        ->getMock();
+
+        $serviceManager = $this->getApplicationServiceLocator();
+        $serviceManager->setAllowOverride(true);
+        $serviceManager->setService('Althingi\Service\Speech', $serviceMock);
+
+        $this->dispatch('/api/loggjafarthing/144/thingmal/3/raedur');
+
+        $this->assertControllerClass('SpeechController');
+        $this->assertActionName('getList');
+        $this->assertResponseStatusCode(206);
     }
 }

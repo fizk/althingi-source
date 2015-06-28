@@ -213,14 +213,6 @@
                         "type_name": "Tillaga til þingsályktunar",
                         "type_subname": "þingsályktunartillaga",
                         "status": null,
-                        "speekers": [
-                            {
-                                "congressman_id": "1180",
-                                "name": "Þórunn Egilsdóttir",
-                                "birth": "1964-11-23",
-                                "death": null
-                            }
-                        ],
                         "foreman":
                         {
                             "congressman_id": "1180",
@@ -243,6 +235,28 @@
                     <param value="string" name="type_name">heiti - Frumvarp til laga</param>
                     <param value="string" name="type_subname">heiti2 - lagafrumvarp</param>
                     <param value="int" name="congressman_id">Issue foreman (optional)</param>
+                </input>
+            </request>
+        </method>
+    </resource>
+
+    <resource>
+        <path>/loggjafarthing/:id/thingmal/:issue_id/raedur/:speech_id</path>
+        <param name="id" value="int">Number of assembly</param>
+        <param name="issue_id" value="int">Number of issue</param>
+        <param name="speech_id" value="string">ID of speech (from-date with an 'r' in front)</param>
+        <method verb="PUT">
+            <description>Create/PUT one speech</description>
+            <request>
+                <input>
+                    <param name="from" value="date">Date and time string</param>
+                    <param name="to" value="date">Date and time string</param>
+                    <param name="plenary_id" value="int">ID of plenary</param>
+                    <param name="congressman_id" value="int">ID of congressman</param>
+                    <param name="congressman_type" value="int">Type of congressman (optional)</param>
+                    <param name="iteration" value="int"> (optional)</param>
+                    <param name="type" value="string"> (optional)</param>
+                    <param name="text" value="string"> (optional)</param>
                 </input>
             </request>
         </method>
