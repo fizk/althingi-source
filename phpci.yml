@@ -1,6 +1,6 @@
 setup:
     shell:
-        - "mkdir _althingi/module/Althingi"
+        - "mkdir _althingi/ && mkdir _althingi/module && mkdir _althingi/module/Althingi"
 
 test:
     php_code_sniffer:
