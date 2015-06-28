@@ -21,7 +21,7 @@
 	</target>
 
 	<target name="composer">
-		<exec executable="composer" dir="${basedir}/module/Althingi">
+		<exec executable="/var/www/composer.phar" dir="${basedir}/module/Althingi">
 			<arg value="install"/>
 		</exec>
 	</target>
