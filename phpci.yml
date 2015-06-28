@@ -1,6 +1,6 @@
 setup:
     shell:
-        - "cp -R * /var/www/phpci/PHPCI/build/_althingi/module/Althingi/"
+        - "cd %BUILD_PATH% && cp -r * /var/www/phpci/PHPCI/build/_althingi/module/Althingi/"
 
 test:
     php_code_sniffer:
