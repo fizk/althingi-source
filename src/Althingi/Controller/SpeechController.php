@@ -63,5 +63,4 @@ class SpeechController extends AbstractRestfulController
         }
         return (new ErrorModel($form))->setStatus(400);
     }
-
 }
