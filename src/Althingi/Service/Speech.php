@@ -24,6 +24,13 @@ class Speech implements DatabaseAwareInterface
      */
     private $pdo;
 
+    /**
+     * @param $assemblyId
+     * @param $issueId
+     * @param int $offset
+     * @param int $size
+     * @return array
+     */
     public function fetchByIssue($assemblyId, $issueId, $offset = 0, $size = 25)
     {
         $statement = $this->getDriver()->prepare("
