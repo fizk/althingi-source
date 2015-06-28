@@ -2,6 +2,9 @@ setup:
     shell:
         - "mkdir -p /var/www/phpci/PHPCI/build/_althingi/module/Althingi"
 
+    copy_build:
+        directory: "/var/www/phpci/PHPCI/build/_althingi/module/Althingi"
+
 test:
     php_code_sniffer:
         path: "src"
