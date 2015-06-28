@@ -5,10 +5,10 @@ setup:
 
 test:
     php_code_sniffer:
-        path: "src"
+        path: "/var/www/phpci/PHPCI/build/_althingi/module/Althingi/src"
         standard: "PSR2"
 
     php_unit:
         config:
-            - "tests/phpunit.xml"
-        path: "tests/"
+            - "/var/www/phpci/PHPCI/build/_althingi/module/Althingi/tests/phpunit.xml"
+        path: "/var/www/phpci/PHPCI/build/_althingi/module/Althingi/tests/"
