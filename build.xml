@@ -4,7 +4,7 @@
 		depends="prepare, composer, lint, phpcs, phpunit, clean"
 		description=""/>
 
-
+    <!-- CREATE AND MOVE FILES -->
 	<target name="prepare"
 			unless="prepare.done"
 			description="Prepare for build">
