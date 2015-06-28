@@ -1,0 +1,9 @@
+setup:
+    copy_build
+        directory:
+            - "_althingi/module/Althingi"
+
+test:
+    php_code_sniffer:
+        path: "src"
+        standard: "PSR2"
