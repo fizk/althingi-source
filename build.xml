@@ -23,6 +23,7 @@
 	<target name="composer">
 		<exec executable="/var/www/composer.phar" dir="${basedir}/module/Althingi">
 			<arg value="install"/>
+			<arg value="--prefer-source"/>
 		</exec>
 	</target>
 
