@@ -1,0 +1,14 @@
+setup:
+    shell:
+        - "mkdir -p /var/www/phpci/PHPCI/build/_althingi/module/Althingi/"
+        - "cd %BUILD_PATH% && cp -r * /var/www/phpci/PHPCI/build/_althingi/module/Althingi/"
+
+test:
+    php_code_sniffer:
+        path: "src"
+        standard: "PSR2"
+
+    php_unit:
+        config:
+            - "tests/phpunit.xml"
+        path: "tests/"
