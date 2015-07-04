@@ -6,19 +6,20 @@
                 on-request="handleRequest"
                 on-done="handleDone">
         </althingi-pagination>
-        <ul class="list list--simple">
-            <template is="dom-repeat" items="{{plenaries}}">
-                <li class="list__item">
-                    <althingi-plenary-badge
-                            assembly="{{item.assembly_id}}"
-                            from="{{item.from}}"
-                            to="{{item.to}}"
-                            name="{{item.name}}">
-                    </althingi-plenary-badge>
-                </li>
-            </template>
-        </ul>
-        <paper-button on-click="handleMore">Meira</paper-button>
+        <althingi-preloader on-request-next="handleMore">
+            <ul class="list list--simple">
+                <template is="dom-repeat" items="{{plenaries}}">
+                    <li class="list__item">
+                        <althingi-plenary-badge
+                                assembly="{{item.assembly_id}}"
+                                from="{{item.from}}"
+                                to="{{item.to}}"
+                                name="{{item.name}}">
+                        </althingi-plenary-badge>
+                    </li>
+                </template>
+            </ul>
+        </althingi-preloader>
     </template>
     <script>
         Polymer({
@@ -27,7 +28,7 @@
             properties: {
                 src: {
                     type: String,
-                    computed: 'computeUrl(assembly)',
+                    computed: 'computeUrl(assembly)'
                 },
                 assembly: {
                     type: Number,
@@ -44,11 +45,12 @@
                 return '/api/loggjafarthing/' + assembly + '/thingfundir'
             },
 
-            handleRequest: function () {
-
+            handleRequest: function (event) {
+                this.querySelector('althingi-preloader').setAttribute('state', 'load');
             },
 
             handleResponse: function () {
+                this.querySelector('althingi-preloader').setAttribute('state', 'halt');
                 this.plenaries = this.plenaries.concat(event.detail);
             },
 
@@ -57,8 +59,7 @@
             },
 
             handleDone: function (event) {
-                var button = this.querySelector('paper-button');
-                button.parentNode.removeChild(button);
+                this.querySelector('althingi-preloader').setAttribute('state', 'done');
             }
         })
     </script>
