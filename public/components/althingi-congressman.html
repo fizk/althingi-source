@@ -6,13 +6,13 @@
                 on-request="handleRequest"
                 on-done="handleDone">
         </althingi-pagination>
-        <ul>
-            <template is="dom-repeat" items="{{congressmen}}">
-                <li>{{item.name}}</li>
-            </template>
-        </ul>
-        <paper-button on-click="handleMore">Meira</paper-button>
-        <paper-spinner active></paper-spinner>
+        <althingi-preloader on-request-next="handleMore">
+            <ul>
+                <template is="dom-repeat" items="{{congressmen}}">
+                    <li>{{item.name}}</li>
+                </template>
+            </ul>
+        </althingi-preloader>
     </template>
     <script>
         Polymer({
@@ -30,17 +30,16 @@
             },
 
             handleResponse: function (event) {
-                this.querySelector('paper-spinner').removeAttribute('active');
+                this.querySelector('althingi-preloader').setAttribute('state', 'halt');
                 this.congressmen = this.congressmen.concat(event.detail);
             },
 
             handleRequest: function (event) {
-                this.querySelector('paper-spinner').setAttribute('active', 'active');
+                this.querySelector('althingi-preloader').setAttribute('state', 'preload');
             },
 
             handleDone: function (event) {
-                var button = this.querySelector('paper-button');
-                button.parentNode.removeChild(button);
+                this.querySelector('althingi-preloader').setAttribute('state', 'done');
             },
 
             handleMore: function (event) {

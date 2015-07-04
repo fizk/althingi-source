@@ -12,19 +12,19 @@
                 on-request="handleRequest"
                 on-done="handleDone">
         </althingi-pagination>
-        <ul class="list list--simple">
-            <template is="dom-repeat" items="{{assemblies}}">
-                <li class="list__item">
-                    <althingi-assembly-badge
-                            from="{{item.from}}"
-                            to="{{item.to}}"
-                            assembly="{{item.assembly_id}}">
-                    </althingi-assembly-badge>
-                </li>
-            </template>
-        </ul>
-        <paper-button on-click="handleMore">Meira</paper-button>
-        <paper-spinner active></paper-spinner>
+        <althingi-preloader on-request-next="handleMore">
+            <ul class="list list--simple">
+                <template is="dom-repeat" items="{{assemblies}}">
+                    <li class="list__item">
+                        <althingi-assembly-badge
+                                from="{{item.from}}"
+                                to="{{item.to}}"
+                                assembly="{{item.assembly_id}}">
+                        </althingi-assembly-badge>
+                    </li>
+                </template>
+            </ul>
+        </althingi-preloader>
     </template>
     <script>
         Polymer({
@@ -48,7 +48,7 @@
              * @param event CustomEvent
              */
             handleRequest: function (event) {
-                this.querySelector('paper-spinner').setAttribute('active', 'active');
+                this.querySelector('althingi-preloader').setAttribute('state', 'preload');
             },
 
             /**
@@ -57,7 +57,7 @@
              * @param event CustomEvent
              */
             handleResponse: function (event) {
-                this.querySelector('paper-spinner').removeAttribute('active');
+                this.querySelector('althingi-preloader').setAttribute('state', 'halt');
                 this.assemblies = this.assemblies.concat(event.detail);
             },
 
@@ -67,8 +67,7 @@
              * @param event CustomEvent
              */
             handleDone: function (event) {
-                var button = this.querySelector('paper-button');
-                button.parentNode.removeChild(button);
+                this.querySelector('althingi-preloader').setAttribute('state', 'done');
             },
 
             /**
