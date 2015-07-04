@@ -1,4 +1,4 @@
-<dom-module id="althingi-issue">
+<dom-module id="althingi-issue-list">
     <template>
         <althingi-pagination
                 href="{{src}}"
@@ -10,7 +10,7 @@
             <template is="dom-repeat" items="{{issues}}">
                 <li class="list__item">
                     <althingi-issue-badge
-                            id="{{item.issue_id}}"
+                            issue="{{item.issue_id}}"
                             assembly="{{item.assembly_id}}"
                             name="{{item.name}}"
                             status="{{item.status}}"
@@ -26,16 +26,26 @@
     </template>
     <script>
         Polymer({
-            id: 'althingi-plenary',
+            is: 'althingi-issue-list',
+
             properties: {
-                src: {
+                assembly: {
                     type: String,
                     reflectToAttribute: true
                 },
+                src: {
+                    type: String,
+                    computed: 'computeUrl(assembly)'
+                },
+
                 issues: {
                     type: Array,
                     value: []
                 }
+            },
+
+            computeUrl: function (assembly) {
+                return '/api/loggjafarthing/' + assembly + '/thingmal';
             },
 
             handleResquest: function (event) {
@@ -63,7 +73,7 @@
     <template>
         <article class="badge">
             <header class="badge__header">
-                <h1 class="badge__title"><span>{{id}}</span>. <span>{{name}}</span></h1>
+                <h1 class="badge__title"><span>{{issue}}</span>. <span>{{name}}</span></h1>
             </header>
             <div class="badge__body">
                 <span class="badge__label">{{type}}</span> |
@@ -79,7 +89,7 @@
     </template>
     <script>
         Polymer({
-            id: 'althingi-plenary-item',
+            is: 'althingi-issue-badge',
 
             properties: {
                 from: {
@@ -94,7 +104,7 @@
                     type: String,
                     reflectToAttribute: true
                 },
-                id: {
+                issue: {
                     type: Number,
                     reflectToAttribute: true
                 },
@@ -118,7 +128,7 @@
                 this.open = !this.open;
                 if (!this.expanded) {
                     var issueInfoElement = document.createElement('althingi-issue-footer');
-                    issueInfoElement.setAttribute('id', this.id);
+                    issueInfoElement.setAttribute('issue', this.issue);
                     issueInfoElement.setAttribute('assembly', this.assembly);
                     this.querySelector('footer').appendChild(issueInfoElement);
                 }
@@ -126,7 +136,7 @@
             },
 
             handleGetSpeeches: function (event) {
-                this.fire('speeches-get', {assembly: this.assembly, issue: this.id});
+                this.fire('speeches-get', {assembly: this.assembly, issue: this.issue});
             }
         })
     </script>
@@ -157,7 +167,7 @@
             <div class="article-card__body">
                 <template is="dom-if" if="{{data.foreman}}">
                     Fluttingsmadur:
-                    <althingi-congressman-badge name="{{data.foreman.name}}" id="{{data.foreman.congressman_id}}"></althingi-congressman-badge>
+                    <althingi-congressman-badge name="{{data.foreman.name}}" congressman="{{data.foreman.congressman_id}}"></althingi-congressman-badge>
                 </template>
             </div>
             <footer class="article-card__footer"></footer>
@@ -170,7 +180,7 @@
             is: 'althingi-issue-footer',
 
             properties: {
-                id: {
+                issue: {
                     type: Number,
                     reflectToAttribute: true
                 },
@@ -180,7 +190,7 @@
                 },
                 url: {
                     type: String,
-                    computed: 'computeUrl(id, assembly)'
+                    computed: 'computeUrl(issue, assembly)'
                 },
                 data: {
                     type: Object,
@@ -194,8 +204,8 @@
                 this.data = event.detail.response;
             },
 
-            computeUrl: function (id, assembly) {
-                return '/api/loggjafarthing/'+assembly+'/thingmal/'+id;
+            computeUrl: function (issue, assembly) {
+                return '/api/loggjafarthing/'+assembly+'/thingmal/'+issue;
             }
 
         });

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><nav role="navigation"><ul><li><a href="#/">/</a></li><li><a href="#/loggjafarthing">/loggjafarthing</a></li><li><a href="#/loggjafarthing/:id">/loggjafarthing/:id</a></li><li><a href="#/loggjafarthing/:id/thingfundir">/loggjafarthing/:id/thingfundir</a></li><li><a href="#/loggjafarthing/:id/thingfundir/:plenary_id">/loggjafarthing/:id/thingfundir/:plenary_id</a></li><li><a href="#/loggjafarthing/:id/thingmal/:issue_id">/loggjafarthing/:id/thingmal/:issue_id</a></li><li><a href="#/loggjafarthing/:id/thingmal/:issue_id/raedur/:speech_id">/loggjafarthing/:id/thingmal/:issue_id/raedur/:speech_id</a></li><li><a href="#/thingmenn">/thingmenn</a></li><li><a href="#thingmenn/:id">thingmenn/:id</a></li><li><a href="#/thingmenn/:id/thingseta">/thingmenn/:id/thingseta</a></li><li><a href="#/thingmenn/:id/thingseta/:session_id">/thingmenn/:id/thingseta/:session_id</a></li><li><a href="#/thingflokkar/:id">/thingflokkar/:id</a></li></ul></nav><article id="/" class="docs"><header class="docs__header"><h2>/</h2></header><section class="docs__method docs__method--GET"><h3>GET</h3><p>Get the web-application</p><h4>Request:</h4><h4>Response:</h4></section><section class="docs__method docs__method--OPTIONS"><h3>OPTIONS</h3><p>Get allowed methods</p><h4>Request:</h4><h4>Response:</h4><table class="docs__table"><caption>HTTP Headers</caption><thead><tr><td>name</td><td>value</td><td>description</td></tr></thead><tbody><tr><th>Allow</th><td>list</td><td>Allowed methods for this resource</td></tr><tr><th>Access-Control-Allow-Origin</th><td>string</td><td>Allow origin from all</td></tr></tbody></table></section></article><article id="/loggjafarthing" class="docs"><header class="docs__header"><h2>/loggjafarthing</h2></header><section class="docs__method docs__method--GET"><h3>GET</h3><p>Get a list of all assemblies. The list will be sorted in reverse order. Current assembly
+<?xml version="1.0" encoding="UTF-8"?><nav role="navigation"><ul><li><a href="#/">/</a></li><li><a href="#/loggjafarthing">/loggjafarthing</a></li><li><a href="#/loggjafarthing/:id">/loggjafarthing/:id</a></li><li><a href="#/loggjafarthing/:id/thingfundir">/loggjafarthing/:id/thingfundir</a></li><li><a href="#/loggjafarthing/:id/thingfundir/:plenary_id">/loggjafarthing/:id/thingfundir/:plenary_id</a></li><li><a href="#/loggjafarthing/:id/thingmal/:issue_id">/loggjafarthing/:id/thingmal/:issue_id</a></li><li><a href="#/loggjafarthing/:id/thingmal/:issue_id/raedur/:speech_id">/loggjafarthing/:id/thingmal/:issue_id/raedur/:speech_id</a></li><li><a href="#/thingmenn">/thingmenn</a></li><li><a href="#thingmenn/:id">thingmenn/:id</a></li><li><a href="#/thingmenn/:id/thingmal">/thingmenn/:id/thingmal</a></li><li><a href="#/thingmenn/:id/thingseta">/thingmenn/:id/thingseta</a></li><li><a href="#/thingmenn/:id/thingseta/:session_id">/thingmenn/:id/thingseta/:session_id</a></li><li><a href="#/thingflokkar/:id">/thingflokkar/:id</a></li></ul></nav><article id="/" class="docs"><header class="docs__header"><h2>/</h2></header><section class="docs__method docs__method--GET"><h3>GET</h3><p>Get the web-application</p><h4>Request:</h4><h4>Response:</h4></section><section class="docs__method docs__method--OPTIONS"><h3>OPTIONS</h3><p>Get allowed methods</p><h4>Request:</h4><h4>Response:</h4><table class="docs__table"><caption>HTTP Headers</caption><thead><tr><td>name</td><td>value</td><td>description</td></tr></thead><tbody><tr><th>Allow</th><td>list</td><td>Allowed methods for this resource</td></tr><tr><th>Access-Control-Allow-Origin</th><td>string</td><td>Allow origin from all</td></tr></tbody></table></section></article><article id="/loggjafarthing" class="docs"><header class="docs__header"><h2>/loggjafarthing</h2></header><section class="docs__method docs__method--GET"><h3>GET</h3><p>Get a list of all assemblies. The list will be sorted in reverse order. Current assembly
                 being the first one. This resource is returned in chunks. Range header plays a big part
                 in that.</p><h4>Request:</h4><table class="docs__table"><caption class="docs__table-description">HTTP Headers</caption><thead class="docs__table-header"><tr><td>name</td><td>value</td><td>description</td></tr></thead><tbody><tr><th>Range</th><td>items=0-100</td><td>Indicate how big the chunk should be</td></tr></tbody></table><table class="docs__table"><caption>Query Params</caption><thead><tr><td>name</td><td>value</td><td>description</td></tr></thead><tbody><tr><th>order</th><td>asc|desc</td><td>Order of list</td></tr></tbody></table><h4>Response:</h4><table class="docs__table"><caption>HTTP Headers</caption><thead><tr><td>name</td><td>value</td><td>description</td></tr></thead><tbody><tr><th>Content-Range</th><td>items 0-10/100</td><td>How much is returned</td></tr><tr><th>Range-Unit</th><td>items</td><td>What kind of items returned</td></tr></tbody></table><table class="docs__table"><caption>Notable response codes</caption><thead><tr><td>code</td><td>description</td></tr></thead><tbody><tr><th>206</th><td>Partial Content</td></tr></tbody></table><h5>JSON example</h5><pre>
                     
@@ -63,14 +63,6 @@
                         "type_name": "Tillaga til þingsályktunar",
                         "type_subname": "þingsályktunartillaga",
                         "status": null,
-                        "speekers": [
-                            {
-                                "congressman_id": "1180",
-                                "name": "Þórunn Egilsdóttir",
-                                "birth": "1964-11-23",
-                                "death": null
-                            }
-                        ],
                         "foreman":
                         {
                             "congressman_id": "1180",
@@ -103,7 +95,44 @@
                         "death": null
                     }
                 </pre></section><section class="docs__method docs__method--PUT"><h3>PUT</h3><p>Create new congressman. The ID og the congressman is known. Therefor we don't POST a new one,
-            we PUT one in it's place.</p><h4>Request:</h4><table class="docs__table"><caption>Input values</caption><thead><tr><td>name</td><td>value</td><td>description</td></tr></thead><tbody><tr><th>name</th><td>string</td><td>Name of the congressman</td></tr><tr><th>birth</th><td>date</td><td>Date of birth (optional)</td></tr></tbody></table><h4>Response:</h4></section><section class="docs__method docs__method--PATCH"><h3>PATCH</h3><p>Update congressman's properties</p><h4>Request:</h4><table class="docs__table"><caption>Input values</caption><thead><tr><td>name</td><td>value</td><td>description</td></tr></thead><tbody><tr><th>name</th><td>string</td><td>Name of the congressman (optional)</td></tr><tr><th>birth</th><td>date</td><td>Date of birth (optional)</td></tr></tbody></table><h4>Response:</h4></section></article><article id="/thingmenn/:id/thingseta" class="docs"><header class="docs__header"><h2>/thingmenn/:id/thingseta</h2></header><aside><table class="docs__table"><caption>Parameters</caption><thead><tr><td>name</td><td>value</td><td>description</td></tr></thead><tbody><tr><th>id</th><td>int</td><td>ID of congressman</td></tr></tbody></table></aside><section class="docs__method docs__method--GET"><h3>GET</h3><p>Get all sessions objects for congressman in decending order</p><h4>Request:</h4><h4>Response:</h4><h5>JSON example</h5><pre>
+            we PUT one in it's place.</p><h4>Request:</h4><table class="docs__table"><caption>Input values</caption><thead><tr><td>name</td><td>value</td><td>description</td></tr></thead><tbody><tr><th>name</th><td>string</td><td>Name of the congressman</td></tr><tr><th>birth</th><td>date</td><td>Date of birth (optional)</td></tr></tbody></table><h4>Response:</h4></section><section class="docs__method docs__method--PATCH"><h3>PATCH</h3><p>Update congressman's properties</p><h4>Request:</h4><table class="docs__table"><caption>Input values</caption><thead><tr><td>name</td><td>value</td><td>description</td></tr></thead><tbody><tr><th>name</th><td>string</td><td>Name of the congressman (optional)</td></tr><tr><th>birth</th><td>date</td><td>Date of birth (optional)</td></tr></tbody></table><h4>Response:</h4></section></article><article id="/thingmenn/:id/thingmal" class="docs"><header class="docs__header"><h2>/thingmenn/:id/thingmal</h2></header><aside><table class="docs__table"><caption>Parameters</caption><thead><tr><td>name</td><td>value</td><td>description</td></tr></thead><tbody><tr><th>id</th><td>int</td><td>ID of congressman</td></tr></tbody></table></aside><section class="docs__method docs__method--GET"><h3>GET</h3><p>Get all issues that this congressman fas a foreman for</p><h4>Request:</h4><h4>Response:</h4><h5>JSON example</h5><pre>
+                    [
+                        {
+                            "issue_id": 15,
+                            "assembly_id": 144,
+                            "category": "A",
+                            "name": "Framtíðargjaldmiðill Íslands",
+                            "type": 1,
+                            "type_name": "Tillaga til þingsályktunar",
+                            "type_subname": "þingsályktunartillaga",
+                            "status": null,
+                            "foreman": {
+                                "congressman_id": "704",
+                                "name": "Guðmundur Steingrímsson",
+                                "birth": "1972-10-28",
+                                "death": null
+                            },
+                            "time": null
+                        },
+                        {
+                            "issue_id": 123,
+                            "assembly_id": 144,
+                            "category": "A",
+                            "name": "Bætt starfsumhverfi erlendra sérfræðinga",
+                            "type": 1,
+                            "type_name": "Tillaga til þingsályktunar",
+                            "type_subname": "þingsályktunartillaga",
+                            "status": null,
+                            "foreman": {
+                                "congressman_id": "704",
+                                "name": "Guðmundur Steingrímsson",
+                                "birth": "1972-10-28",
+                                "death": null
+                            },
+                            "time": null
+                        },
+                    ]
+                </pre></section></article><article id="/thingmenn/:id/thingseta" class="docs"><header class="docs__header"><h2>/thingmenn/:id/thingseta</h2></header><aside><table class="docs__table"><caption>Parameters</caption><thead><tr><td>name</td><td>value</td><td>description</td></tr></thead><tbody><tr><th>id</th><td>int</td><td>ID of congressman</td></tr></tbody></table></aside><section class="docs__method docs__method--GET"><h3>GET</h3><p>Get all sessions objects for congressman in decending order</p><h4>Request:</h4><h4>Response:</h4><h5>JSON example</h5><pre>
                     [
                         {
                             "session_id": "274",

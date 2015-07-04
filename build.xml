@@ -1,33 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="name-of-project" default="build">
+
+    <!--
+        DEFAULT TASK
+        this is the task that will be run by default.
+    -->
 	<target name="build"
-		depends="prepare, composer, lint, phpcs, phpunit, clean"
+		depends="composer, prepare, lint, phpcs, phpunit, clean"
 		description=""/>
 
-
+    <!--
+        CREATE AND MOVE FILES
+        move everything into ./module/Althingi
+    -->
 	<target name="prepare"
 			unless="prepare.done"
 			description="Prepare for build">
 		<mkdir dir="${basedir}/module/Althingi"/>
 		<copy todir="${basedir}/module/Althingi">
 			<fileset dir="${basedir}">
-				<exclude name="**/assets"/>
-				<exclude name="**/docs"/>
-				<exclude name="**/module"/>
-				<exclude name="**/build.xml"/>
+				<exclude name="${basedir}/assets"/>
+				<exclude name="${basedir}docs"/>
+				<exclude name="${basedir}/module"/>
+				<exclude name="${basedir}/build.xml"/>
 			</fileset>
 		</copy>
+		<chmod perm="a+x">
+			<fileset dir="${basedir}/module/Althingi/vendor/bin">
+				<include name="**/*"/>
+			</fileset>
+		</chmod>
 		<property name="prepare.done" value="true"/>
 	</target>
 
-	<target name="composer">
-		<exec executable="/var/www/composer.phar" dir="${basedir}/module/Althingi">
-			<arg value="install"/>
+    <!--
+        RUN COMPOSER
+        get dependencies
+    -->
+	<target name="composer"
+            unless="composer.done">
+		<exec executable="/var/www/composer.phar" dir="${basedir}">
+			<arg value="update"/>
 			<arg value="--prefer-source"/>
 		</exec>
+        <property name="composer.done" value="true"/>
 	</target>
 
-
+    <!--
+        RUN LINT
+        run the php linter
+    -->
 	<target name="lint"
 			unless="lint.done"
 			description="Perform syntax check of sourcecode files">
@@ -41,38 +63,41 @@
 		<property name="lint.done" value="true"/>
 	</target>
 
-
-
-
-
+    <!--
+        RUN CODE SNIFFER
+        run phpcs
+    -->
 	<target name="phpcs"
 			unless="phpcs.done"
 			description="Find coding standard violations using PHP_CodeSniffer and print human readable output. Intended for usage on the command line before committing.">
-		<exec executable="${basedir}/module/Althingi/vendor/bin/phpcs" taskname="phpcs" >
+		<exec executable="${basedir}/module/Althingi/vendor/bin/phpcs" taskname="phpcs" failonerror="true">
 			<arg value="--standard=PSR2" />
 			<arg value="--extensions=php" />
-			<arg value="--ignore=autoload.php" />
+			<arg value="--ignore=autoload.php, Bootstrap.php" />
 			<arg path="${basedir}/module/Althingi/src" />
 			<arg path="${basedir}/module/Althingi/tests" />
 		</exec>
 		<property name="phpcs.done" value="true"/>
 	</target>
 
-
-
+    <!--
+        RUN UNIT TEST
+        run phpunit
+    -->
     <target name="phpunit"
             unless="phpunit.done"
             description="Run unit tests with PHPUnit">
-        <exec executable="${basedir}/module/Althingi/vendor/bin/phpunit" failonerror="true" taskname="phpunit"  dir="${basedir}/module/Althingi/tests">
-        </exec>
-
+        <exec executable="${basedir}/module/Althingi/vendor/bin/phpunit" failonerror="true" taskname="phpunit"  dir="${basedir}/module/Althingi/tests" />
         <property name="phpunit.done" value="true"/>
     </target>
 
-
-    <target name="clean">
+    <!--
+        RUN CLEANUP
+        cleanup ./module/Althingi
+    -->
+    <target name="clean"
+            unless="clean.done">
         <delete dir="${basedir}/module/"/>
+        <property name="clean.done" value="true"/>
     </target>
-
-
 </project>

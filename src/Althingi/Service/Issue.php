@@ -68,6 +68,17 @@ class Issue implements DatabaseAwareInterface
         return array_map([$this, 'decorate'], $statement->fetchAll());
     }
 
+    public function fetchByCongressman($id)
+    {
+        $statement = $this->getDriver()->prepare("
+            select * from `Issue` I where I.`congressman_id` = :id
+            order by I.`assembly_id` desc, I.`issue_id` asc;
+        ");
+
+        $statement->execute(['id' => $id]);
+        return array_map([$this, 'decorate'], $statement->fetchAll());
+    }
+
     /**
      * Count all Issues per Assembly.
      *
