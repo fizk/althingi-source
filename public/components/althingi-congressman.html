@@ -1,3 +1,10 @@
+<!--
+    ALTHINGI-CONGRESSMAN-LIST
+    Paginated list of congressmen in alphabetic order.
+    This element will XHR request this list.
+
+    Self-contained, has no API or events.
+-->
 <dom-module is="althingi-congressman-list">
     <template>
         <althingi-pagination
@@ -16,6 +23,7 @@
     </template>
     <script>
         Polymer({
+
             is: 'althingi-congressman-list',
 
             properties: {
@@ -49,6 +57,14 @@
     </script>
 </dom-module>
 
+<!--
+    ALTHINGI-CONGRESSMAN-BADGE
+    Will request an image from althingi.is
+    but will not fetch any data via XHR.
+
+    @attribute name String Name of congressman
+    @attribute congressman Number ID of congressman
+-->
 <dom-module is="althingi-congressman-badge">
     <template>
         <iron-image style="width:60px; height:60px; background-color: lightgray;"
@@ -57,6 +73,7 @@
     </template>
     <script>
         Polymer({
+
             is: 'althingi-congressman-badge',
 
             properties: {
@@ -75,7 +92,7 @@
             },
 
             clickCongressmanGet: function () {
-                this.fire('congressman-get', this.congressman);
+                this.fire('congressman-get', {congressman: this.congressman});
             },
 
             computeUrl: function (congressman) {
@@ -86,11 +103,18 @@
     </script>
 </dom-module>
 
+<!--
+    ALTHINGI-CONGRESSMAN-PROFILE
+    This element, provided with an ID, will fetch
+    all kinds of information on congressman. It will
+    make all kinds of XHR requests.
+
+    @attribute congressman Number ID of congressman
+-->
 <dom-module is="althingi-congressman-profile">
     <template>
         <iron-ajax
                 url="{{url}}"
-                auto
                 on-response="handleResponse"
                 handle-as="json">
         </iron-ajax>
@@ -125,17 +149,17 @@
     </template>
     <script>
         Polymer({
+
             is: 'althingi-congressman-profile',
 
             properties: {
                 congressman: {
                     type: Number,
-                    reflectToAttribute: true
+                    observer: 'changeProfile'
                 },
 
                 url: {
-                    type: String,
-                    computed: 'computeUrl(congressman)'
+                    type: String
                 },
 
                 data: {
@@ -143,21 +167,18 @@
                 },
 
                 image: {
-                    type: String,
-                    computed: 'computeImageUrl(data.congressman_id)'
+                    type: String
                 }
+            },
+
+            changeProfile: function (newValue, oldValue) {
+                this.url = '/api/thingmenn/' + newValue;
+                this.image = "http://althingi.is/myndir/mynd/thingmenn/"+newValue+"/org/mynd.jpg";
+                this.querySelector('iron-ajax').generateRequest();
             },
 
             handleResponse: function (event) {
                 this.data = event.detail.response;
-            },
-
-            computeUrl: function (congressman) {
-                return '/api/thingmenn/' + congressman;
-            },
-
-            computeImageUrl: function (congressman) {
-                return "http://althingi.is/myndir/mynd/thingmenn/"+congressman+"/org/mynd.jpg";
             }
         })
     </script>
@@ -165,11 +186,21 @@
 
 </dom-module>
 
+<!--
+    ALTHINGI-CONGRESSMAN-SESSION
+    Used within `althingi-congressman-profile` but can
+    be used as a stand-alone element.
+
+    Will fetch all sessions of a congressman.
+
+    Will XHR data.
+
+    @attribute congressman Number ID of congressman
+-->
 <dom-module is="althingi-congressman-sessions">
     <template>
         <iron-ajax
                 url="{{url}}"
-                auto
                 on-response="handleResponse"
                 handle-as="json">
         </iron-ajax>
@@ -186,16 +217,17 @@
     </template>
     <script>
         Polymer({
+
             is: 'althingi-congressman-sessions',
 
             properties: {
                 url: {
-                    type: String,
-                    computed: 'computeUrl(congressman)'
+                    type: String
                 },
 
                 congressman: {
-                    type: Number
+                    type: Number,
+                    observer: 'changeSession'
                 },
 
                 data: {
@@ -204,22 +236,33 @@
                 }
             },
 
-            handleResponse: function (event) {
-                this.data = event.detail.response
+            changeSession: function (newValue, oldValue) {
+                this.url = '/api/thingmenn/' + newValue +'/thingseta';
+                this.querySelector('iron-ajax').generateRequest();
             },
 
-            computeUrl: function (congressman) {
-                return '/api/thingmenn/' + congressman +'/thingseta';
+            handleResponse: function (event) {
+                this.data = event.detail.response
             }
         })
     </script>
 </dom-module>
 
+<!--
+    ALTHINGI-CONGRESSMAN-ISSUES
+    Used within `althingi-congressman-profile` but can
+    be used as a stand-alone element.
+
+    Fetches issues that congressman is foreman for.
+
+    Will XHR data.
+
+    @attribute congressman Number ID of congressman
+-->
 <dom-module is="althingi-congressman-issues">
     <template>
         <iron-ajax
                 url="{{url}}"
-                auto
                 on-response="handleResponse"
                 handle-as="json">
         </iron-ajax>
@@ -234,27 +277,28 @@
     </template>
     <script>
         Polymer({
+
             is: 'althingi-congressman-issues',
 
             properties: {
                 congressman: {
                     type: Number,
-                    reflectToAttribute: true
+                    observer: 'changeIssues'
                 },
 
                 url: {
-                    computed: 'computedUrl(congressman)'
+                    type: String
                 },
 
                 issues: {
                     type: Array,
                     value: []
                 }
-
             },
 
-            computedUrl: function (congressman) {
-                return '/api/thingmenn/'+congressman+'/thingmal'
+            changeIssues: function (newValue, oldValue) {
+                this.url = '/api/thingmenn/'+newValue+'/thingmal';
+                this.querySelector('iron-ajax').generateRequest();
             },
 
             handleResponse: function (event) {

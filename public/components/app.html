@@ -5,6 +5,9 @@
 <link rel="import" href="../vendor/iron-icons/iron-icons.html">
 <link rel="import" href="../vendor/paper-spinner/paper-spinner.html">
 <link rel="import" href="../vendor/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../vendor/neon-animation/neon-animations.html">
+<link rel="import" href="../vendor/neon-animation/neon-animatable.html">
+<link rel="import" href="../vendor/neon-animation/neon-shared-element-animatable-behavior.html">
 <link rel="import" href="../vendor/iron-image/iron-image.html">
 <link rel="import" href="../vendor/paper-header-panel/paper-header-panel.html">
 <link rel="import" href="../vendor/paper-icon-button/paper-icon-button.html">
@@ -26,13 +29,13 @@
         <paper-drawer-panel>
             <paper-header-panel drawer>
                 <paper-toolbar></paper-toolbar>
-                <div> Upcoming menu... </div>
+                <div>Menu coming soon...</div>
             </paper-header-panel>
             <paper-header-panel main>
                 <paper-toolbar>
                     <paper-fab mini icon="done" on-click="handleNavigateBegin"></paper-fab>
                 </paper-toolbar>
-                <neon-animated-pages id="pages" selected="0"
+                <neon-animated-pages id="pages" selected="0"  entry-animation="fade-in-animation" exit-animation="slide-left-animation"
                                      on-congressman-get="handleGetCongressman"
                                      on-plenaries-get="handleGetPlenaries"
                                      on-speeches-get="handleGetSpeeches"
@@ -41,6 +44,7 @@
                         <althingi-assembly-list></althingi-assembly-list>
                     </div>
                     <div></div>
+                    <althingi-congressman-profile></althingi-congressman-profile>
                     <div>
                         <!--althingi-speech-list assembly="144" issue="1"></althingi-speech-list-->
                         <!--althingi-congressman-profile congressman="704"></althingi-congressman-profile-->
@@ -78,11 +82,8 @@
             },
 
             handleGetCongressman: function (event) {
-                var issueContainer = document.createElement('althingi-congressman-profile');
-                issueContainer.setAttribute('congressman', event.detail);
-                this.$.pages.selected = 3;
-                this.$.pages.children[3].innerHTML = '';
-                this.$.pages.children[3].appendChild(issueContainer);
+                this.$.pages.selected = 2;
+                this.$.pages.children[2].setAttribute('congressman', event.detail.congressman);
             },
 
             handleGetSpeeches: function (event) {
