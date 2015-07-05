@@ -60,44 +60,66 @@
 
     </template>
     <script>
-        Polymer({
-            is: 'althingi-app',
+        (function () {
 
-            handleGetPlenaries: function (event) {
-                var plenaryContainer = document.createElement('althingi-plenaries');
-                plenaryContainer.setAttribute('assembly', event.detail.assembly);
-                this.$.pages.selected = 2;
-                this.$.pages.children[2].innerHTML = '';
-                this.$.pages.children[2].appendChild(plenaryContainer);
-                this.querySelector('paper-header-panel paper-fab').setAttribute('icon', 'reply');
-            },
 
-            handleGetIssues: function (event) {
-                var issueContainer = document.createElement('althingi-issue-list');
-                issueContainer.setAttribute('assembly', event.detail.assembly);
-                this.$.pages.selected = 1;
-                this.$.pages.children[1].innerHTML = '';
-                this.$.pages.children[1].appendChild(issueContainer);
+            Polymer({
+                is: 'althingi-app',
 
-            },
+                ready: function () {
+                    page('/', function (ctx, next) {});
 
-            handleGetCongressman: function (event) {
-                this.$.pages.selected = 2;
-                this.$.pages.children[2].setAttribute('congressman', event.detail.congressman);
-            },
+                    page("/thingmenn", function (ctx, next) {}.bind(this));
 
-            handleGetSpeeches: function (event) {
-                var issueContainer = document.createElement('althingi-speech-list');
-                issueContainer.setAttribute('assembly', event.detail.assembly);
-                issueContainer.setAttribute('issue', event.detail.issue);
-                this.$.pages.selected = 4;
-                this.$.pages.children[4].innerHTML = '';
-                this.$.pages.children[4].appendChild(issueContainer);
-            },
+                    page("/thingmenn/:id", function (ctx, next) {
+                        this._getCongressman(ctx.params.id);
+                    }.bind(this));
 
-            handleNavigateBegin: function (event) {
-                this.$.pages.selected = 0;
-            }
-        })
+                    page();
+                },
+
+                handleGetPlenaries: function (event) {
+                    var plenaryContainer = document.createElement('althingi-plenaries');
+                    plenaryContainer.setAttribute('assembly', event.detail.assembly);
+                    this.$.pages.selected = 2;
+                    this.$.pages.children[2].innerHTML = '';
+                    this.$.pages.children[2].appendChild(plenaryContainer);
+                    this.querySelector('paper-header-panel paper-fab').setAttribute('icon', 'reply');
+                },
+
+                handleGetIssues: function (event) {
+                    var issueContainer = document.createElement('althingi-issue-list');
+                    issueContainer.setAttribute('assembly', event.detail.assembly);
+                    this.$.pages.selected = 1;
+                    this.$.pages.children[1].innerHTML = '';
+                    this.$.pages.children[1].appendChild(issueContainer);
+
+                },
+
+                handleGetCongressman: function (event) {
+                    page('/thingmenn/' + event.detail.congressman);
+                    this._getCongressman(event.detail.congressman);
+                },
+
+                handleGetSpeeches: function (event) {
+                    var issueContainer = document.createElement('althingi-speech-list');
+                    issueContainer.setAttribute('assembly', event.detail.assembly);
+                    issueContainer.setAttribute('issue', event.detail.issue);
+                    this.$.pages.selected = 4;
+                    this.$.pages.children[4].innerHTML = '';
+                    this.$.pages.children[4].appendChild(issueContainer);
+                },
+
+                handleNavigateBegin: function (event) {
+                    this.$.pages.selected = 0;
+                },
+
+                _getCongressman: function (id) {
+                    this.$.pages.selected = 2;
+                    this.$.pages.children[2].setAttribute('congressman', id);
+                }
+            });
+
+        })();
     </script>
 </dom-module>
