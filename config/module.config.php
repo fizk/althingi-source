@@ -30,7 +30,17 @@ return array(
                                 'action'     => 'docs',
                             ],
                         ],
-                    ]
+                    ],
+                    'thingmenn' => [
+                        'type' => 'Zend\Mvc\Router\Http\Segment',
+                        'options' => [
+                            'route'    => 'thingmenn[/:id]',
+                            'defaults' => [
+                                'controller' => 'Althingi\Controller\Index',
+                                'action'     => 'index',
+                            ],
+                        ],
+                    ],
                 ],
             ],
             'home' => [
