@@ -1,3 +1,17 @@
+<!--
+    ALTHINGI-ISSUE-LIST
+    Will list all issues in a give assembly.
+    This element will fetch all data via XHR
+
+    This element is quite self contained. It will
+    handle all it's fetching (in chunks) and pre-loading
+    by its self. So this element is quite dumb. It will
+    have children that are more clever and that
+    can fire events to ask for context switch.
+
+    @attribute assembly Number ID of assembly
+
+-->
 <dom-module id="althingi-issue-list">
     <template>
         <althingi-pagination
@@ -15,8 +29,7 @@
                                 assembly="{{item.assembly_id}}"
                                 name="{{item.name}}"
                                 status="{{item.status}}"
-                                type="{{item.type_name}}"
-                                >
+                                type="{{item.type_name}}">
                         </althingi-issue-badge>
                     </li>
                 </template>
@@ -25,16 +38,16 @@
     </template>
     <script>
         Polymer({
+
             is: 'althingi-issue-list',
 
             properties: {
                 assembly: {
                     type: String,
-                    reflectToAttribute: true
+                    observer: 'changeAssembly'
                 },
                 src: {
-                    type: String,
-                    computed: 'computeUrl(assembly)'
+                    type: String
                 },
 
                 issues: {
@@ -43,8 +56,9 @@
                 }
             },
 
-            computeUrl: function (assembly) {
-                return '/api/loggjafarthing/' + assembly + '/thingmal';
+            changeAssembly: function (newValue, oldValue) {
+                this.issues = [];
+                this.src = '/api/loggjafarthing/' + newValue + '/thingmal';
             },
 
             handleResquest: function (event) {
@@ -67,6 +81,27 @@
     </script>
 </dom-module>
 
+<!--
+    ALTHINGI-ISSUE-BADGE
+    This is a simple badge or card for an issue.
+    This provides just a overview of an issue, with
+    some buttons to instruct a parent element to
+    fetch specific sub-set.
+
+    This element will not fetch any data via XHR,
+    therefor you have to provide it.
+
+    This element has button that fires even to
+    ask for the full issue.
+
+    @attribute status String Status of issue
+    @attribute type String Type of issue
+    @attribute issue Number ID of issue
+    @attribute assembly Number ID of assembly
+    @attribute assembly Number ID of assembly
+
+    @event speeches-get CustomEvent
+-->
 <dom-module id="althingi-issue-badge">
     <template>
         <article class="badge">
@@ -87,13 +122,10 @@
     </template>
     <script>
         Polymer({
+
             is: 'althingi-issue-badge',
 
             properties: {
-                from: {
-                    type: String,
-                    reflectToAttribute: true
-                },
                 status: {
                     type: String,
                     reflectToAttribute: true
@@ -118,7 +150,6 @@
                     type: Boolean,
                     value: false
                 }
-
             },
 
             handleGetInfo: function (event) {
@@ -134,13 +165,23 @@
             },
 
             handleGetSpeeches: function (event) {
-                event.stopPropagation();
                 this.fire('speeches-get', {assembly: this.assembly, issue: this.issue});
             }
         })
     </script>
 </dom-module>
 
+<!--
+    ALTHINGI-ISSUE-FOOTER
+    Footer will provide more details about an issue.
+
+    This element will fetch additional information
+    via XHR, so in a way, this can be a standalone
+    element.
+
+    @attribute issue Number ID of issue
+    @attribute assembly Number ID of assembly
+-->
 <dom-module id="althingi-issue-footer">
     <template>
         <iron-ajax
@@ -166,16 +207,18 @@
             <div class="article-card__body">
                 <template is="dom-if" if="{{data.foreman}}">
                     Fluttingsmadur:
-                    <althingi-congressman-badge name="{{data.foreman.name}}" congressman="{{data.foreman.congressman_id}}"></althingi-congressman-badge>
+                    <althingi-congressman-badge
+                            name="{{data.foreman.name}}"
+                            congressman="{{data.foreman.congressman_id}}">
+                    </althingi-congressman-badge>
                 </template>
             </div>
             <footer class="article-card__footer"></footer>
         </article>
-
-
     </template>
     <script>
         Polymer({
+
             is: 'althingi-issue-footer',
 
             properties: {
@@ -206,7 +249,6 @@
             computeUrl: function (issue, assembly) {
                 return '/api/loggjafarthing/'+assembly+'/thingmal/'+issue;
             }
-
         });
     </script>
 </dom-module>

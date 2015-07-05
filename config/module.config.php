@@ -31,10 +31,11 @@ return array(
                             ],
                         ],
                     ],
-                    'thingmenn' => [
-                        'type' => 'Zend\Mvc\Router\Http\Segment',
+                    'client-router' => [
+                        'type' => 'Zend\Mvc\Router\Http\Regex',
                         'options' => [
-                            'route'    => 'thingmenn[/:id]',
+                            'regex'    => '(?<category>(thingmenn|loggjafarthing))(.*)',
+                            'spec' => '%category%',
                             'defaults' => [
                                 'controller' => 'Althingi\Controller\Index',
                                 'action'     => 'index',
