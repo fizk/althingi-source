@@ -12,6 +12,8 @@
                 on-request="handleRequest"
                 on-done="handleDone">
         </althingi-pagination>
+        <h1>Loggjafarthing</h1>
+        <p>Listi yfir loggjafarthing</p>
         <althingi-preloader on-request-next="handleMore">
             <ul class="list list--simple">
                 <template is="dom-repeat" items="{{assemblies}}">
@@ -95,11 +97,14 @@
     <template>
         <article class="badge">
             <header class="badge__header">
-                <h1 class="badge__title">{{assembly}}</h1>
+                <h1 class="badge__title">
+                    <span>{{assembly}}</span>
+                    <time class="badge__time">{{from}}</time> -
+                    <time class="badge__time">{{to}}</time>
+                </h1>
             </header>
             <div class="badge__body">
-                <time class="badge__time">{{from}}</time> -
-                <time class="badge__time">{{to}}</time>
+
             </div>
             <footer class="header-time__footer">
                 <paper-button on-click="clickPlenariesGet" raised>Þingfundir</paper-button>

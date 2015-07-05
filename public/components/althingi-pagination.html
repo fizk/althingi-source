@@ -29,7 +29,7 @@
             properties: {
                 href: {
                     type: String,
-                    reflectToAttribute: true,
+                    observer: 'reload'
                 },
                 data: {
                     type: Object,
@@ -129,29 +129,15 @@
                 xhr.send();
             },
 
-            /**
-             * When element is attached to DOM
-             * Fetch the first part of data
-             *
-             * @return void
-             */
-
-            attached: function () {
-                if (this.href) {
-                    this.load();
-                }
-            },
-
-            attributeChanged: function (name, type) {
-                if (name === 'href') {
-                    this.data = [];
-                    this.size = undefined;
-                    this.from = undefined;
-                    this.to = undefined;
-                    this.chunk = undefined;
-                    this.done = false;
-                    //this.load();
-                }
+            reload: function (newValue, oldValue) {
+                this.data = [];
+                this.size = undefined;
+                this.from = undefined;
+                this.to = undefined;
+                this.chunk = undefined;
+                this.done = false;
+                this.href = newValue;
+                this.load();
             }
         });
     </script>
@@ -197,14 +183,18 @@
                     case 'done':
                         this.querySelector('paper-spinner').removeAttribute('active');
                         this.querySelector('.preload-container').classList.remove('preload-container--active');
-                        var button = this.querySelector('#more-button');
-                        button.parentNode.removeChild(button);
+                        this.querySelector('#more-button').style.display = 'none';
                         break;
                 }
             },
 
             requestMore: function () {
                 this.fire('request-next');
+            },
+
+            reset: function () {
+                this.state = 'halt';
+                this.querySelector('#more-button').style.display = 'inline-block';
             }
         });
     </script>

@@ -25,6 +25,9 @@
 <link rel="import" href="althingi-speech.html">
 
 <dom-module id="althingi-app">
+    <style>
+
+    </style>
     <template>
         <paper-drawer-panel>
             <paper-header-panel drawer>
@@ -33,93 +36,93 @@
             </paper-header-panel>
             <paper-header-panel main>
                 <paper-toolbar>
-                    <paper-fab mini icon="done" on-click="handleNavigateBegin"></paper-fab>
+                    <paper-fab mini icon="done" on-click="_getHomePage"></paper-fab>
                 </paper-toolbar>
-                <neon-animated-pages id="pages" selected="0"  entry-animation="fade-in-animation" exit-animation="slide-left-animation"
+                <neon-animated-pages id="pages" selected="0"
+                                     entry-animation="fade-in-animation"
+                                     exit-animation="slide-left-animation"
                                      on-congressman-get="handleGetCongressman"
                                      on-plenaries-get="handleGetPlenaries"
                                      on-speeches-get="handleGetSpeeches"
                                      on-issues-get="handleGetIssues">
-                    <div>
-                        <althingi-assembly-list></althingi-assembly-list>
-                    </div>
-                    <div></div>
+                    <althingi-assembly-list></althingi-assembly-list>
                     <althingi-congressman-profile></althingi-congressman-profile>
-                    <div>
-                        <!--althingi-speech-list assembly="144" issue="1"></althingi-speech-list-->
-                        <!--althingi-congressman-profile congressman="704"></althingi-congressman-profile-->
-                        <!--althingi-congressman-list></althingi-congressman-list-->
-                    </div>
-                    <div></div>
-                    <div></div>
+                    <althingi-issue-list></althingi-issue-list>
+                    <althingi-speech-list></althingi-speech-list>
                 </neon-animated-pages>
             </paper-header-panel>
         </paper-drawer-panel>
-
-
-
     </template>
     <script>
-        (function () {
+        Polymer({
 
+            is: 'althingi-app',
 
-            Polymer({
-                is: 'althingi-app',
+            ready: function () {
+                page('/', function (ctx, next) {
+                    this._getHomePage();
+                }.bind(this));
 
-                ready: function () {
-                    page('/', function (ctx, next) {});
+                page("/loggjafarthing/:assembly/thingmal", function (ctx, next) {
+                    this._getIssues(ctx.params.assembly);
+                }.bind(this));
 
-                    page("/thingmenn", function (ctx, next) {}.bind(this));
+                page('/loggjafarthing/:assembly/thingmal/:issue/raedur', function (ctx, next) {
+                    this._getSpeeches(ctx.params.assembly, ctx.params.issue);
+                }.bind(this));
 
-                    page("/thingmenn/:id", function (ctx, next) {
-                        this._getCongressman(ctx.params.id);
-                    }.bind(this));
+                page("/thingmenn", function (ctx, next) {}.bind(this));
 
-                    page();
-                },
+                page("/thingmenn/:congressman", function (ctx, next) {
+                    this._getCongressman(ctx.params.congressman);
+                }.bind(this));
 
-                handleGetPlenaries: function (event) {
-                    var plenaryContainer = document.createElement('althingi-plenaries');
-                    plenaryContainer.setAttribute('assembly', event.detail.assembly);
-                    this.$.pages.selected = 2;
-                    this.$.pages.children[2].innerHTML = '';
-                    this.$.pages.children[2].appendChild(plenaryContainer);
-                    this.querySelector('paper-header-panel paper-fab').setAttribute('icon', 'reply');
-                },
+                page();
+            },
 
-                handleGetIssues: function (event) {
-                    var issueContainer = document.createElement('althingi-issue-list');
-                    issueContainer.setAttribute('assembly', event.detail.assembly);
-                    this.$.pages.selected = 1;
-                    this.$.pages.children[1].innerHTML = '';
-                    this.$.pages.children[1].appendChild(issueContainer);
+            handleGetPlenaries: function (event) {
+                var plenaryContainer = document.createElement('althingi-plenaries');
+                plenaryContainer.setAttribute('assembly', event.detail.assembly);
+                this.$.pages.selected = 2;
+                this.$.pages.children[2].innerHTML = '';
+                this.$.pages.children[2].appendChild(plenaryContainer);
+                this.querySelector('paper-header-panel paper-fab').setAttribute('icon', 'reply');
+            },
 
-                },
+            handleGetIssues: function (event) {
+                page("/loggjafarthing/"+event.detail.assembly+"/thingmal");
+                this._getIssues(event.detail.assembly);
+            },
 
-                handleGetCongressman: function (event) {
-                    page('/thingmenn/' + event.detail.congressman);
-                    this._getCongressman(event.detail.congressman);
-                },
+            handleGetCongressman: function (event) {
+                page('/thingmenn/' + event.detail.congressman);
+                this._getCongressman(event.detail.congressman);
+            },
 
-                handleGetSpeeches: function (event) {
-                    var issueContainer = document.createElement('althingi-speech-list');
-                    issueContainer.setAttribute('assembly', event.detail.assembly);
-                    issueContainer.setAttribute('issue', event.detail.issue);
-                    this.$.pages.selected = 4;
-                    this.$.pages.children[4].innerHTML = '';
-                    this.$.pages.children[4].appendChild(issueContainer);
-                },
+            handleGetSpeeches: function (event) {
+                page('/loggjafarthing/'+event.detail.assembly+'/thingmal/'+event.detail.issue+'/raedur');
+                this._getSpeeches(event.detail.assembly, event.detail.issue);
+            },
 
-                handleNavigateBegin: function (event) {
-                    this.$.pages.selected = 0;
-                },
+            _getCongressman: function (id) {
+                this.$.pages.selected = 1;
+                this.$.pages.children[1].setAttribute('congressman', id);
+            },
 
-                _getCongressman: function (id) {
-                    this.$.pages.selected = 2;
-                    this.$.pages.children[2].setAttribute('congressman', id);
-                }
-            });
+            _getIssues: function (id) {
+                this.$.pages.selected = 2;
+                this.$.pages.children[2].setAttribute('assembly', id);
+            },
 
-        })();
+            _getHomePage: function () {
+                this.$.pages.selected = 0;
+            },
+
+            _getSpeeches: function (assembly, issue) {
+                this.$.pages.selected = 3;
+                this.$.pages.children[3].setAttribute('assembly', assembly);
+                this.$.pages.children[3].setAttribute('issue', issue);
+            }
+        });
     </script>
 </dom-module>

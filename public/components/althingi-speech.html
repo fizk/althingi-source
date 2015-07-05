@@ -1,3 +1,14 @@
+<!--
+    ALTHINGI-SPEECH-LIST
+    This is a standalone element that will display
+    speeches by given issue.
+
+    This element will handle all data fetching and pagination
+    via XHR requests.
+
+    @attribute issue Number ID of issue
+    @attribute assembly Number ID of assembly
+-->
 <dom-module id="althingi-speech-list">
     <template>
         <althingi-pagination
@@ -37,20 +48,18 @@
     </template>
     <script>
         Polymer({
+
             is: "althingi-speech-list",
 
             properties: {
                 issue: {
-                    type: Number,
-                    reflectToAttribute: true
+                    type: Number
                 },
                 assembly: {
-                    type: Number,
-                    reflectToAttribute: true
+                    type: Number
                 },
                 href: {
-                    type: String,
-                    computed: 'computeUrl(issue, assembly)'
+                    type: String
                 },
                 speeches: {
                     type: Array,
@@ -58,8 +67,14 @@
                 }
             },
 
-            computeUrl: function (issue, assembly) {
-                return "/api/loggjafarthing/"+assembly+"/thingmal/"+issue+"/raedur"
+            observers: [
+                'changeSpeeches(assembly, issue)'
+            ],
+
+            changeSpeeches: function(assembly, issue) {
+                this.querySelector('althingi-preloader').reset();
+                this.speeches = [];
+                this.href = "/api/loggjafarthing/"+assembly+"/thingmal/"+issue+"/raedur";
             },
 
             handleResponse: function (event) {
