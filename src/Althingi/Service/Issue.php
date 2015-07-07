@@ -144,7 +144,6 @@ class Issue implements DatabaseAwareInterface
      *
      * @param $object
      * @return null|object
-     * @todo There can be many kinds of metadata fetched here.
      */
     private function decorate($object)
     {
@@ -161,10 +160,9 @@ class Issue implements DatabaseAwareInterface
         $object->foreman = $congressmanStatement->fetchObject() ? : null ;
         unset($object->congressman_id);
 
-        //FIXME this doesn't always work
         $totalSpeakTimeStatement = $this->getDriver()->prepare("
-            select TIME_FORMAT(sum(TIMEDIFF(time(`to`), time(`from`))), '%H:%i:%s') as the_diff
-            from `Speech`where assembly_id = :assembly_id and issue_id = :issue_id
+            select sec_to_time(sum((S.`to` - S.`from`))) as the_diff
+            from `Speech`S where S.assembly_id = :assembly_id and S.issue_id = :issue_id
         ");
         $totalSpeakTimeStatement->execute(['issue_id'=>$object->issue_id, 'assembly_id'=>$object->assembly_id]);
         $object->time = $totalSpeakTimeStatement->fetchColumn(0);

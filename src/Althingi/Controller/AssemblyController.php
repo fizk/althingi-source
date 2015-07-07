@@ -21,6 +21,25 @@ class AssemblyController extends AbstractRestfulController
     use Range;
 
     /**
+     * Get one Assembly.
+     *
+     * @param int $id
+     * @return \Althingi\View\Model\ErrorModel|\Althingi\View\Model\ItemModel
+     */
+    public function get($id)
+    {
+        /** @var  $assemblyService \Althingi\Service\Assembly */
+        $assemblyService = $this->getServiceLocator()
+            ->get('Althingi\Service\Assembly');
+
+        if (($resource = $assemblyService->get($id))) {
+            return (new ItemModel($resource));
+        }
+
+        return $this->notFoundAction();
+    }
+
+    /**
      * Return list of Assemblies.
      *
      * @return \Althingi\View\Model\CollectionModel
@@ -95,25 +114,6 @@ class AssemblyController extends AbstractRestfulController
             ->setStatus(200)
             ->setAllow(['GET', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'])
             ->setOption('Access-Control-Allow-Origin', '*');
-    }
-
-    /**
-     * Get one Assembly.
-     *
-     * @param int $id
-     * @return \Althingi\View\Model\ErrorModel|\Althingi\View\Model\ItemModel
-     */
-    public function get($id)
-    {
-        /** @var  $assemblyService \Althingi\Service\Assembly */
-        $assemblyService = $this->getServiceLocator()
-            ->get('Althingi\Service\Assembly');
-
-        if (($resource = $assemblyService->get($id))) {
-            return (new ItemModel($resource));
-        }
-
-        return $this->notFoundAction();
     }
 
     /**

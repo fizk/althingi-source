@@ -12,20 +12,14 @@
                 on-request="handleRequest"
                 on-done="handleDone">
         </althingi-pagination>
-        <h1>Loggjafarthing</h1>
-        <p>Listi yfir loggjafarthing</p>
         <althingi-preloader on-request-next="handleMore">
-            <ul class="list list--simple">
-                <template is="dom-repeat" items="{{assemblies}}">
-                    <li class="list__item">
-                        <althingi-assembly-badge
-                                from="{{item.from}}"
-                                to="{{item.to}}"
-                                assembly="{{item.assembly_id}}">
-                        </althingi-assembly-badge>
-                    </li>
-                </template>
-            </ul>
+            <template is="dom-repeat" items="{{assemblies}}">
+                <althingi-assembly-badge
+                        from="{{item.from}}"
+                        to="{{item.to}}"
+                        assembly="{{item.assembly_id}}">
+                </althingi-assembly-badge>
+            </template>
         </althingi-preloader>
     </template>
     <script>
@@ -94,23 +88,26 @@
     the begin and end date.
 -->
 <dom-module id="althingi-assembly-badge">
+    <style>
+        :host {
+            margin: 30px 0;
+        }
+    </style>
     <template>
-        <article class="badge">
-            <header class="badge__header">
-                <h1 class="badge__title">
-                    <span>{{assembly}}</span>
-                    <time class="badge__time">{{from}}</time> -
-                    <time class="badge__time">{{to}}</time>
-                </h1>
-            </header>
-            <div class="badge__body">
-
-            </div>
-            <footer class="header-time__footer">
-                <paper-button on-click="clickPlenariesGet" raised>Þingfundir</paper-button>
-                <paper-button on-click="clickIssuesGet" raised>Þingmál</paper-button>
-            </footer>
-        </article>
+        <paper-item>
+            <paper-item-body>
+                <div>{{assembly}}</div>
+                <div secondary>
+                    <time>{{from}}</time> -
+                    <time>{{to}}</time>
+                </div>
+            </paper-item-body>
+            <paper-icon-button
+                    icon="arrow-forward"
+                    on-click="clickIssuesGet">
+            </paper-icon-button>
+            <!--paper-button on-click="clickPlenariesGet" raised>Þingfundir</paper-button-->
+        </paper-item>
     </template>
 
     <script>
@@ -173,5 +170,75 @@
                 //this.fire('issues-get', '/api/loggjafarthing/' + this.assembly + '/thingmal');
             }
         });
+    </script>
+</dom-module>
+
+<dom-module id="althingi-assembly-profile">
+    <template>
+        <iron-ajax
+                auto
+                on-response="handleResponse"
+                handle-as="json"
+                url="{{url}}">
+        </iron-ajax>
+        <h1>{{data.assembly_id}}</h1>
+        <svg-piechart size="250" data="{{issues}}"></svg-piechart>
+        <template is="dom-repeat" items="{{data.congressmen}}">
+            <althingi-congressman-badge
+                    congressman="{{item.congressman_id}}"
+                    name="{{item.name}}">
+            </althingi-congressman-badge>
+        </template>
+    </template>
+    <script>
+        Polymer({
+
+            is: 'althingi-assembly-profile',
+
+            properties: {
+                assembly: {
+                    type: Number,
+                    observer: 'changeAssembly'
+                },
+
+                url: {
+                    type: String
+                },
+
+                data: {
+                    type: Object,
+                    value: function () {
+                        return {};
+                    }
+                },
+
+                issues: {
+                    type: Array,
+                    value: []
+                }
+            },
+
+            observers: [
+                'updateChart(data.issues)'
+            ],
+
+            changeAssembly: function (newValue, oldValue) {
+                this.data = {};
+                this.url = '/api/loggjafarthing/' + newValue;
+            },
+
+            handleResponse: function (event) {
+                this.data = event.detail.response;
+            },
+
+            updateChart: function (issues) {
+                if (issues !== undefined) {
+                    this.issues = issues.map(function (item) {
+                        return parseInt(item.total)
+                    });
+                }
+
+            }
+        })
     </script>
 </dom-module>

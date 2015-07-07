@@ -34,7 +34,7 @@ class Speech implements DatabaseAwareInterface
     public function fetchByIssue($assemblyId, $issueId, $offset = 0, $size = 25)
     {
         $statement = $this->getDriver()->prepare("
-          select *, date_format(timediff(`to`, `from`), '%H:%i:%s') as `time`
+          select *, sec_to_time(`to` - `from`) as `time`
           from `Speech`
           where assembly_id = :assembly_id and issue_id = :issue_id
           order by `from`

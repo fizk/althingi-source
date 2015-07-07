@@ -21,19 +21,15 @@
                 on-done="handleDone">
         </althingi-pagination>
         <althingi-preloader on-request-next="handleMore">
-            <ul class="list list--simple">
-                <template is="dom-repeat" items="{{issues}}">
-                    <li class="list__item">
-                        <althingi-issue-badge
-                                issue="{{item.issue_id}}"
-                                assembly="{{item.assembly_id}}"
-                                name="{{item.name}}"
-                                status="{{item.status}}"
-                                type="{{item.type_name}}">
-                        </althingi-issue-badge>
-                    </li>
-                </template>
-            </ul>
+            <template is="dom-repeat" items="{{issues}}">
+                <althingi-issue-badge
+                        issue="{{item.issue_id}}"
+                        assembly="{{item.assembly_id}}"
+                        name="{{item.name}}"
+                        status="{{item.status}}"
+                        type="{{item.type_name}}">
+                </althingi-issue-badge>
+            </template>
         </althingi-preloader>
     </template>
     <script>
@@ -103,22 +99,26 @@
     @event speeches-get CustomEvent
 -->
 <dom-module id="althingi-issue-badge">
+    <style>
+        :host {
+            margin: 30px 0;
+        }
+    </style>
     <template>
-        <article class="badge">
-            <header class="badge__header">
-                <h1 class="badge__title"><span>{{issue}}</span>. <span>{{name}}</span></h1>
-            </header>
-            <div class="badge__body">
-                <span class="badge__label">{{type}}</span> |
-                <span class="badge__label">{{status}}</span>
-            </div>
-            <div class="badge__body">
-                <paper-icon-button icon="clear"  on-click="handleGetInfo"></paper-icon-button>
-                <paper-icon-button icon="menu"  on-click="handleGetSpeeches"></paper-icon-button>
-            </div>
-            <footer class="badge__footer" style="display: none"></footer>
-        </article>
+        <paper-item>
+            <paper-item-body>
+                <div><span>{{issue}}</span>. <span>{{name}}</span></div>
+                <div secondary>
+                    <span class="badge__label">{{type}}</span> |
+                    <span class="badge__label">{{status}}</span>
+                </div>
+            </paper-item-body>
+            <paper-icon-button icon="clear"  on-click="handleGetInfo"></paper-icon-button>
+            <paper-icon-button icon="menu"  on-click="handleGetSpeeches"></paper-icon-button>
 
+            <!--paper-button on-click="clickPlenariesGet" raised>Þingfundir</paper-button-->
+            <footer class="badge__footer" style="display: none"></footer>
+        </paper-item>
     </template>
     <script>
         Polymer({
