@@ -6,7 +6,7 @@
         this is the task that will be run by default.
     -->
 	<target name="build"
-		depends="composer, prepare, lint, phpcs, phpunit, clean"
+		depends="clean, composer, prepare, link, lint, phpcs, phpunit, clean"
 		description=""/>
 
     <!--
@@ -17,21 +17,46 @@
 			unless="prepare.done"
 			description="Prepare for build">
 		<mkdir dir="${basedir}/module/Althingi"/>
-		<copy todir="${basedir}/module/Althingi">
-			<fileset dir="${basedir}">
-				<exclude name="${basedir}/assets"/>
-				<exclude name="${basedir}docs"/>
-				<exclude name="${basedir}/module"/>
-				<exclude name="${basedir}/build.xml"/>
-			</fileset>
-		</copy>
-		<chmod perm="a+x">
-			<fileset dir="${basedir}/module/Althingi/vendor/bin">
-				<include name="**/*"/>
-			</fileset>
-		</chmod>
 		<property name="prepare.done" value="true"/>
 	</target>
+
+    <target name="link">
+        <exec executable="ln">
+            <arg value="-s"/>
+            <arg value="${basedir}/config"/>
+            <arg value="${basedir}/module/Althingi/config"/>
+        </exec>
+        <exec executable="ln">
+            <arg value="-s"/>
+            <arg value="${basedir}/public"/>
+            <arg value="${basedir}/module/Althingi/public"/>
+        </exec>
+        <exec executable="ln">
+            <arg value="-s"/>
+            <arg value="${basedir}/src"/>
+            <arg value="${basedir}/module/Althingi/src"/>
+        </exec>
+        <exec executable="ln">
+            <arg value="-s"/>
+            <arg value="${basedir}/tests"/>
+            <arg value="${basedir}/module/Althingi/tests"/>
+        </exec>
+        <exec executable="ln">
+            <arg value="-s"/>
+            <arg value="${basedir}/vendor"/>
+            <arg value="${basedir}/module/Althingi/vendor"/>
+        </exec>
+        <exec executable="ln">
+            <arg value="-s"/>
+            <arg value="${basedir}/view"/>
+            <arg value="${basedir}/module/Althingi/view"/>
+        </exec>
+        <exec executable="ln">
+            <arg value="-s"/>
+            <arg value="${basedir}/Module.php"/>
+            <arg value="${basedir}/module/Althingi/Module.php"/>
+        </exec>
+    </target>
 
     <!--
         RUN COMPOSER
