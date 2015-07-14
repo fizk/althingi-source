@@ -161,7 +161,9 @@ class Assembly implements DatabaseAwareInterface
         $issueStatusStatement = $this->getDriver()->prepare("
             select count(*) as `total`, I.`status`
             from `Issue` I
-            where I.assembly_id = :id
+            where I.assembly_id = :id and (
+              I.`status` != 'Álit' or I.`status` != 'Beiðni um skýrslu' or I.`status` != 'Fyrirspurn'
+            )
             group by I.`status`;
         ");
         $issueStatusStatement->execute(['id' => $object->assembly_id]);
@@ -176,6 +178,14 @@ class Assembly implements DatabaseAwareInterface
         ");
         $congressmanStatement->execute(['id' => $object->assembly_id]);
         $object->congressmen = $congressmanStatement->fetchAll();
+
+        $timeStatement = $this->getDriver()->prepare("
+          select sec_to_time(sum((S.`to` - S.`from`))) as `total`
+          from `Speech` S
+          where S.assembly_id = :id;
+        ");
+        $timeStatement->execute(['id' => $object->assembly_id]);
+        $object->time = $timeStatement->fetchColumn(0);
 
         return $this->decorate($object);
     }

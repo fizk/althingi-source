@@ -18,13 +18,16 @@ gulp.task('sass', function () {
 gulp.task('vulcanize', function () {
     return gulp.src('components/app.html')
         .pipe(vulcanize({
-            abspath: '',
+            abspath: 'resources',
             excludes: [],
-            stripExcludes: false
+            inlineScripts: true,
+            inlineCss: true,
+            stripExcludes: true
         }))
-        .pipe(gulp.dest('components/index.html'));
+        .pipe(gulp.dest('.'));
 });
 
-gulp.task('sass:watch', function () {
+gulp.task('watch', function () {
     gulp.watch('./sass/**/*scss', ['sass']);
+    gulp.watch('./components/**/*html', ['vulcanize']);
 });

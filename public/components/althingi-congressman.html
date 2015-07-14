@@ -66,10 +66,19 @@
     @attribute congressman Number ID of congressman
 -->
 <dom-module is="althingi-congressman-badge">
+    <style>
+        .althingi-congressman-badge-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+    </style>
     <template>
+        <div class="althingi-congressman-badge-container">
         <iron-image style="width:60px; height:60px; background-color: lightgray;"
                     sizing="cover" preload src="{{image}}" on-click="clickCongressmanGet"></iron-image>
-        <h1>{{name}}</h1>
+        <span>{{name}}</span>
+        </div>
     </template>
     <script>
         Polymer({
@@ -267,13 +276,10 @@
                 handle-as="json">
         </iron-ajax>
         <h1>Fluttingsmadur:</h1>
-        <ul>
-            <template is="dom-repeat" items="{{issues}}">
-            <li>
-                <span>{{item.assembly_id}}</span> | <span>{{item.name}}</span> | <span>{{item.status}}</span>
-            </li>
-            </template>
-        </ul>
+        <template is="dom-repeat" items="{{issues}}">
+            <althingi-issue-badge status="{{item.status}}" type="{{item.type}}" issue="{{item.issue_id}}" assembly="{{item.assembly_id}}" name="{{item.name}}">
+            </althingi-issue-badge>
+        </template>
     </template>
     <script>
         Polymer({

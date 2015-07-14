@@ -44,7 +44,7 @@
              * @param event CustomEvent
              */
             handleRequest: function (event) {
-                this.querySelector('althingi-preloader').setAttribute('state', 'load');
+                (this.querySelector('althingi-preloader')||{setAttribute: function () {}}).setAttribute('state', 'load');
             },
 
             /**
@@ -96,7 +96,7 @@
     <template>
         <paper-item>
             <paper-item-body>
-                <div>{{assembly}}</div>
+                <div on-click="clickAssemblyGet">{{assembly}}</div>
                 <div secondary>
                     <time>{{from}}</time> -
                     <time>{{to}}</time>
@@ -168,12 +168,26 @@
             clickIssuesGet: function (event) {
                 this.fire('issues-get', {assembly: this.assembly});
                 //this.fire('issues-get', '/api/loggjafarthing/' + this.assembly + '/thingmal');
+            },
+
+            clickAssemblyGet: function () {
+                this.fire('assembly-get', {assembly: this.assembly});
             }
         });
     </script>
 </dom-module>
 
+<!--
+    ALTHINGI-ASSEMBLY-PROFILE
+-->
 <dom-module id="althingi-assembly-profile">
+    <style>
+        .althingi-congressman-badge-container {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+    </style>
     <template>
         <iron-ajax
                 auto
@@ -182,13 +196,31 @@
                 url="{{url}}">
         </iron-ajax>
         <h1>{{data.assembly_id}}</h1>
-        <svg-piechart size="250" data="{{issues}}"></svg-piechart>
+        <hr />
+        <p>Her vantar ad finna ut hvada rkisstjorn tetta er og hvernig thingsaetin radast nidur.</p>
+        <hr />
+        <paper-button>Thingmal</paper-button>
+        <hr />
+        <p>Hlutfall mala sem eru ekki <em>Álit</em>, <em>Beiðni um skýrslu</em> eda <em>Fyrirspurn</em></p>
+        <svg-piechart data="{{issues}}" size="100" colors="{{color}}"></svg-piechart>
+        <dl>
+            <template is="dom-repeat" items="{{data.issues}}">
+                <dt>{{item.status}}</dt>
+                <dd>{{item.total}}</dd>
+            </template>
+        </dl>
+        <hr />
+        <h2>Heildar raedutimi</h2> <time>{{data.time}}</time>
+        <hr />
+        <h1>Thingmenn:</h1>
+        <div class="althingi-congressman-badge-container">
         <template is="dom-repeat" items="{{data.congressmen}}">
             <althingi-congressman-badge
                     congressman="{{item.congressman_id}}"
                     name="{{item.name}}">
             </althingi-congressman-badge>
         </template>
+        </div>
     </template>
     <script>
         Polymer({
@@ -203,6 +235,11 @@
 
                 url: {
                     type: String
+                },
+
+                color: {
+                    type: Array,
+                    value: ['#aaaaaa', '#222222', '#999999', '#345345', '#123123', '#333333', '#777777']
                 },
 
                 data: {

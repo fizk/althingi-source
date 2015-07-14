@@ -94,7 +94,7 @@
     @attribute type String Type of issue
     @attribute issue Number ID of issue
     @attribute assembly Number ID of assembly
-    @attribute assembly Number ID of assembly
+    @attribute name String Name
 
     @event speeches-get CustomEvent
 -->
@@ -113,12 +113,13 @@
                     <span class="badge__label">{{status}}</span>
                 </div>
             </paper-item-body>
-            <paper-icon-button icon="clear"  on-click="handleGetInfo"></paper-icon-button>
-            <paper-icon-button icon="menu"  on-click="handleGetSpeeches"></paper-icon-button>
+            <paper-icon-button icon="icons:info"  on-click="handleGetInfo"></paper-icon-button>
+            <paper-icon-button icon="communication:comment"  on-click="handleGetSpeeches"></paper-icon-button>
 
             <!--paper-button on-click="clickPlenariesGet" raised>Þingfundir</paper-button-->
-            <footer class="badge__footer" style="display: none"></footer>
+
         </paper-item>
+        <footer class="badge__footer" style="display: none"></footer>
     </template>
     <script>
         Polymer({
