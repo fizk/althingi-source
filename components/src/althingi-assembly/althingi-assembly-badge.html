@@ -1,0 +1,85 @@
+<link rel="import" href="../../vendor/polymer/polymer.html" />
+<link rel="import" href="../../vendor/paper-item/paper-item-body.html" />
+<link rel="import" href="../../vendor/iron-icons/iron-icons.html">
+<link rel="import" href="../../vendor/paper-icon-button/paper-icon-button.html" />
+<link rel="import" href="../../vendor/paper-tooltip/paper-tooltip.html" />
+
+<!--
+    ALTHINGI-ASSEMBLY-BADGE
+
+    Item in a list of assemblies.
+    This includes the number of assembly,
+    the begin and end date.
+-->
+<dom-module id="althingi-assembly-badge">
+    <link rel="import" type="css" href="althingi-assembly-badge.css">
+    <template>
+        <paper-item>
+            <paper-item-body two-line>
+                <div>{{assembly}}</div>
+                <div secondary>
+                    <time>{{from}}</time> - <time>{{to}}</time>
+                </div>
+            </paper-item-body>
+
+            <paper-icon-button
+                    title="Mal a dagskra"
+                    icon="menu"
+                    on-click="clickIssuesGet">
+            </paper-icon-button>
+
+            <paper-icon-button
+                    title="Itarlegi upplysingar"
+                    icon="arrow-forward"
+                    on-click="clickAssemblyGet">
+            </paper-icon-button>
+        </paper-item>
+    </template>
+
+    <script>
+        Polymer({
+            is: "althingi-assembly-badge",
+
+            /**
+             * When user wants issues from a give
+             * assembly in the list.
+             *
+             * @event issues-get
+             * @param Object {assembly: int}
+             */
+
+            /**
+             * When a user wants the Assembly
+             *
+             * @event assembly-get
+             * @param Object {assembly: int}
+             */
+
+            properties: {
+                assembly: {
+                    type: String
+                },
+                from: {
+                    type: String
+                },
+                to: {
+                    type: String
+                }
+            },
+
+            /**
+             * Handle click event for 'get issues' button
+             * Will fire 'issues-get' event
+             * @param MouseEvent event
+             * @var Function
+             */
+            clickIssuesGet: function (event) {
+                this.fire('issues-get', {assembly: this.assembly});
+            },
+
+            clickAssemblyGet: function () {
+                this.fire('assembly-get', {assembly: this.assembly});
+            }
+        });
+    </script>
+</dom-module>

@@ -19,13 +19,12 @@ return [
     ],
 
     'factories' => [
-        'MessageStrategy' => 'Althingi\View\Strategy\MessageFactory',
+        'MessageStrategy' => 'Rend\View\Strategy\MessageFactory',
+
         'HttpClient' => function ($sm) {
             return new \Zend\Http\Client();
         },
-        //'Request' => function ($sm) {
-        //    return new \Althingi\Lib\Http\PhpEnvironment\Request();
-        //},
+
         'PDO' => function ($sm) {
             $config = $sm->get('config');
             return new PDO(

@@ -1,0 +1,67 @@
+<link rel="import" href="../../vendor/polymer/polymer.html" />
+
+<link rel="import" href="../althingi-pagination/althingi-pagination.html" />
+<link rel="import" href="../althingi-preloader/althingi-preloader.html" />
+<link rel="import" href="../althingi-congressman/althingi-congressman-badge.html" />
+
+<!--
+    ALTHINGI-CONGRESSMAN-LIST
+    Paginated list of congressmen in alphabetic order.
+    This element will XHR request this list.
+
+    Self-contained, has no API or events.
+-->
+<dom-module is="althingi-congressman-list">
+    <template>
+        <althingi-pagination
+                id="althingiPagination"
+                href="/api/thingmenn"
+                on-response="handleResponse"
+                on-request="handleRequest"
+                on-done="handleDone">
+        </althingi-pagination>
+        <althingi-preloader
+                id="althingiPreloader"
+                on-request-next="handleMore">
+            <ul>
+                <template is="dom-repeat" items="{{congressmen}}">
+                    <li>{{item.name}}</li>
+                </template>
+            </ul>
+        </althingi-preloader>
+    </template>
+    <script>
+        Polymer({
+
+            is: 'althingi-congressman-list',
+
+            properties: {
+                url: {
+                    type: String
+                },
+
+                congressmen: {
+                    type: Array,
+                    value: []
+                }
+            },
+
+            handleResponse: function (event) {
+                this.$.althingiPreloader.setAttribute('state', 'halt');
+                this.congressmen = this.congressmen.concat(event.detail);
+            },
+
+            handleRequest: function (event) {
+                this.$.althingiPreloader.setAttribute('state', 'load');
+            },
+
+            handleDone: function (event) {
+                this.$.althingiPreloader.setAttribute('state', 'done');
+            },
+
+            handleMore: function (event) {
+                this.$.althingiPagination.load();
+            }
+        });
+    </script>
+</dom-module>

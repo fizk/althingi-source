@@ -1,0 +1,18 @@
+@import "../../scss/base";
+
+//--paper-font-common-base: {
+//    font-family: Futura;
+//    -webkit-font-smoothing: antialiased;
+//};
+
+paper-drawer-panel {
+    background-color: rgb(240, 240, 240);
+}
+
+paper-toolbar {
+    --paper-toolbar-background: rgb(0,187,211); /* changes the background to blue*/
+}
+paper-toolbar h1 {
+    font-size: 20px;
+    font-family: Futura, sans-serif;
+}

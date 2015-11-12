@@ -8,12 +8,8 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Form\Session;
-use Althingi\View\Model\CollectionModel;
-use Althingi\View\Model\EmptyModel;
-use Althingi\View\Model\ErrorModel;
-use Althingi\View\Model\ItemModel;
-use Zend\Form\FormInterface;
+use Rend\Controller\AbstractRestfulController;
+use Rend\View\Model\CollectionModel;
 
 /**
  * Class CongressmanSessionController

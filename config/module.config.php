@@ -220,7 +220,6 @@ return array(
             __DIR__ . '/../view',
         ],
         'strategies' => [
-            'ViewJsonStrategy',
             'MessageStrategy',
         ],
     ],

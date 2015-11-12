@@ -1,0 +1,105 @@
+<link rel="import" href="../../vendor/polymer/polymer.html" />
+
+<link rel="import" href="../althingi-pagination/althingi-pagination.html" />
+<link rel="import" href="../althingi-preloader/althingi-preloader.html" />
+<link rel="import" href="../althingi-congressman/althingi-congressman-badge.html" />
+
+<!--
+    ALTHINGI-SPEECH-LIST
+    This is a standalone element that will display
+    speeches by given issue.
+
+    This element will handle all data fetching and pagination
+    via XHR requests.
+
+    @attribute issue Number ID of issue
+    @attribute assembly Number ID of assembly
+-->
+<dom-module id="althingi-speech-list">
+    <template>
+        <althingi-pagination
+                id="althingiPagination"
+                href="{{href}}"
+                on-response="handleResponse"
+                on-request="handleRequest"
+                on-done="handleDone">
+        </althingi-pagination>
+        <althingi-preloader on-request-next="handleMore" id="althingiPreloader">
+            <ul>
+                <template is="dom-repeat" items="{{speeches}}">
+                    <li>
+                        <article>
+                            <header>
+                                <althingi-congressman-badge
+                                        congressman="{{item.congressman.congressman_id}}"
+                                        name="{{item.congressman.name}}">
+                                </althingi-congressman-badge>
+                                <span>{{item.type}}</span>
+                            </header>
+                            <aside>
+                                <dl>
+                                    <dt>Raedutimi:</dt>
+                                    <dd><time>{{item.time}}</time></dd>
+                                    <dt>Yfirferd:</dt>
+                                    <dd>{{item.iteration}}</dd>
+                                </dl>
+
+                            </aside>
+                            <div>{{item.text}}</div>
+                            <footer></footer>
+                        </article>
+                    </li>
+                </template>
+            </ul>
+        </althingi-preloader>
+    </template>
+    <script>
+        Polymer({
+
+            is: "althingi-speech-list",
+
+            properties: {
+                issue: {
+                    type: Number
+                },
+                assembly: {
+                    type: Number
+                },
+                href: {
+                    type: String
+                },
+                speeches: {
+                    type: Array,
+                    value: []
+                }
+            },
+
+            observers: [
+                'changeSpeeches(assembly, issue)'
+            ],
+
+            changeSpeeches: function(assembly, issue) {
+                (this.$.althingiPreloader||{reset: function(){}}).reset();
+                this.speeches = [];
+                this.href = "/api/loggjafarthing/"+assembly+"/thingmal/"+issue+"/raedur";
+            },
+
+            handleResponse: function (event) {
+                this.$.althingiPreloader.setAttribute('state', 'halt');
+                this.speeches = this.speeches.concat(event.detail);
+            },
+
+            handleRequest: function (event) {
+                this.$.althingiPreloader.setAttribute('state', 'load');
+            },
+
+            handleDone: function (event) {
+                this.$.althingiPreloader.setAttribute('state', 'done');
+            },
+
+            handleMore: function (event) {
+                this.$.althingiPagination.load();
+            }
+        })
+    </script>
+</dom-module>

@@ -1,0 +1,86 @@
+<link rel="import" href="../../vendor/polymer/polymer.html" />
+<link rel="import" href="../../vendor/iron-image/iron-image.html" />
+<link rel="import" href="../../vendor/neon-animation/neon-shared-element-animatable-behavior.html">
+<link rel="import" href="../../vendor/neon-animation/animations/hero-animation.html">
+<link rel="import" href="../../vendor/neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../../vendor/neon-animation/animations/fade-out-animation.html">
+
+<!--
+    ALTHINGI-CONGRESSMAN-BADGE
+    Will request an image from althingi.is
+    but will not fetch any data via XHR.
+
+    @attribute name String Name of congressman
+    @attribute congressman Number ID of congressman
+-->
+<dom-module is="althingi-congressman-badge">
+    <link rel="import" type="css" href="althingi-congressman-badge.css">
+    <template>
+        <iron-image style="width:60px; height:60px; background-color: lightgray;"
+                    id="heroImage"
+                    sizing="cover"
+                    preload src="{{image}}"
+                    on-click="clickCongressmanGet">
+        </iron-image>
+        <span>{{name}}</span>
+    </template>
+    <script>
+        Polymer({
+
+            is: 'althingi-congressman-badge',
+
+            behaviors: [Polymer.NeonSharedElementAnimatableBehavior],
+
+            properties: {
+                name: {
+                    type: String,
+                    reflectToAttribute: true
+                },
+                congressman: {
+                    type: Number,
+                    reflectToAttribute: true
+                },
+                image: {
+                    type: String,
+                    computed: 'computeUrl(congressman)'
+                },
+
+                animationConfig: {
+                    value: function() {
+                        return {
+                            'exit': [{
+                                name: 'hero-animation',
+                                id: 'hero',
+                                fromPage: this
+                            },{
+                                name: 'fade-out-animation',
+                                node: true
+                            }],
+                            entry: {
+                                name: 'fade-in-animation',
+                                node: true
+                            }
+                        }
+                    }
+                },
+
+                sharedElements: {
+                    value: function () {
+                        return {
+                            'hero': this.$.heroImage
+                        }
+                    }
+                }
+            },
+
+            clickCongressmanGet: function () {
+                this.fire('congressman-get', {congressman: this.congressman});
+            },
+
+            computeUrl: function (congressman) {
+                return 'http://www.althingi.is/myndir/thingmenn-cache/'+congressman+'/'+congressman+'-220.jpg';
+            }
+
+        });
+    </script>
+</dom-module>

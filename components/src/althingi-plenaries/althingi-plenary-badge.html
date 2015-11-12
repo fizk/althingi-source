@@ -1,0 +1,45 @@
+<link rel="import" href="../../vendor/polymer/polymer.html" />
+
+<dom-module id="althingi-plenary-badge">
+    <template>
+        <article class="badge">
+            <header class="badge__header">
+                <h1 class="badge__title" on-click="handleGetItem">{{name}}</h1>
+            </header>
+            <div class="badge__body">
+                <time class="badge__time">{{from}}</time>
+                <time class="badge__time">{{to}}</time>
+            </div>
+            <footer></footer>
+        </article>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'althingi-plenary-badge',
+
+            properties: {
+                from: {
+                    type: String,
+                    reflectToAttribute: true
+                },
+                to: {
+                    type: String,
+                    reflectToAttribute: true
+                },
+                name: {
+                    type: String,
+                    reflectToAttribute: true
+                },
+                assembly: {
+                    type: Number,
+                    reflectToAttribute: true
+                }
+            },
+
+            handleGetItem: function () {
+                //this.fire('', {assembly: this.assembly});
+            }
+        })
+    </script>
+</dom-module>

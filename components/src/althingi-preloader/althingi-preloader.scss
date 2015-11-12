@@ -1,0 +1,13 @@
+@import "../../scss/base";
+
+:host {
+    display: block;
+}
+
+paper-button {
+    font-family: $font-family;
+}
+
+.preload-container--active {
+    background-color: rgba(200,200,200,.5);
+}
