@@ -23,11 +23,9 @@
         <althingi-preloader
                 id="althingiPreloader"
                 on-request-next="handleMore">
-            <ul>
                 <template is="dom-repeat" items="{{congressmen}}">
-                    <li>{{item.name}}</li>
+                    <althingi-congressman-badge name="{{item.name}}" congressman="{{item.congressman_id}}"  />
                 </template>
-            </ul>
         </althingi-preloader>
     </template>
     <script>

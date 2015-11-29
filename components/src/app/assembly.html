@@ -6,12 +6,15 @@
 <link rel="import" href="../../vendor/neon-animation/animations/fade-in-animation.html" />
 <link rel="import" href="../../vendor/neon-animation/animations/slide-left-animation.html" />
 
+
+<link rel="import" href="../althingi-container/althingi-container-main.html" />
 <link rel="import" href="../althingi-assembly/althingi-assembly-list.html" />
 <link rel="import" href="../althingi-congressman/althingi-congressman-profile.html" />
 <link rel="import" href="../althingi-congressman/althingi-congressman-list.html" />
 <link rel="import" href="../althingi-issue/althingi-issue-list.html" />
 <link rel="import" href="../althingi-speech/althingi-speech-list.html" />
 <link rel="import" href="../althingi-assembly/althingi-assembly-profile.html" />
+<link rel="import" href="../althingi-plenaries/althingi-plenaries-list.html" />
 
 <!--
 
@@ -20,35 +23,25 @@
     <link rel="import" type="css" href="assembly.css">
     <script src="../../vendor/page/page.js"></script>
     <template>
-        <paper-drawer-panel
+        <althingi-container-main
                 on-congressman-get="handleGetCongressman"
+                on-congressmen-get="handleGetCongressmen"
                 on-plenaries-get="handleGetPlenaries"
                 on-speeches-get="handleGetSpeeches"
                 on-assembly-get="handleGetAssembly"
+                on-assemblies-get="handleGetAssemblies"
                 on-issues-get="handleGetIssues">
-            <paper-header-panel drawer>
-                <paper-toolbar></paper-toolbar>
-                <div>
-                    <paper-item on-click="handleGetAssemblies">Thing</paper-item>
-                    <paper-item on-click="handleGetCongressmen">Thingmenn</paper-item>
-                    <paper-item>Stjornmalaflokkar</paper-item>
-                </div>
-            </paper-header-panel>
-            <paper-header-panel main>
-                <paper-toolbar>
-                    <paper-icon-button icon="menu"></paper-icon-button>
-                    <h1><a href="/">Alþingi</a></h1>
-                </paper-toolbar>
-                <neon-animated-pages id="pages" selected="0">
-                    <althingi-assembly-list></althingi-assembly-list>
-                    <althingi-congressman-profile></althingi-congressman-profile>
-                    <althingi-issue-list></althingi-issue-list>
-                    <althingi-speech-list></althingi-speech-list>
-                    <althingi-assembly-profile></althingi-assembly-profile>
-                    <althingi-congressman-list></althingi-congressman-list>
-                </neon-animated-pages>
-            </paper-header-panel>
-        </paper-drawer-panel>
+
+            <neon-animated-pages id="pages" selected="0">
+                <althingi-assembly-list></althingi-assembly-list>
+                <althingi-congressman-profile></althingi-congressman-profile>
+                <althingi-issue-list></althingi-issue-list>
+                <althingi-speech-list></althingi-speech-list>
+                <althingi-assembly-profile></althingi-assembly-profile>
+                <althingi-congressman-list></althingi-congressman-list>
+                <althingi-plenaries-list></althingi-plenaries-list>
+            </neon-animated-pages>
+        </althingi-container-main>
     </template>
     <script>
         Polymer({
@@ -72,22 +65,24 @@
                     this._getSpeeches(ctx.params.assembly, ctx.params.issue);
                 }.bind(this));
 
-                page("/thingmenn", function (ctx, next) {}.bind(this));
+                page("/thingmenn", function (ctx, next) {
+                    this._getCongressmen();
+                }.bind(this));
 
                 page("/thingmenn/:congressman", function (ctx, next) {
                     this._getCongressman(ctx.params.congressman);
+                }.bind(this));
+
+                page("/loggjafarthing/:assembly/thingfundir", function (ctx, next) {
+                    this._getPlenaries(ctx.params.assembly);
                 }.bind(this));
 
                 page();
             },
 
             handleGetPlenaries: function (event) {
-                var plenaryContainer = document.createElement('althingi-plenaries');
-                plenaryContainer.setAttribute('assembly', event.detail.assembly);
-                this.$.pages.selected = 2;
-                this.$.pages.children[2].innerHTML = '';
-                this.$.pages.children[2].appendChild(plenaryContainer);
-                //this.querySelector('paper-header-panel paper-fab').setAttribute('icon', 'reply');
+                page('/loggjafarthing/'+event.detail.assembly+'/thingfundir');
+                this._getPlenaries(event.detail.assembly);
             },
 
             handleGetAssemblies: function () {
@@ -115,13 +110,18 @@
                 this._getAssembly(event.detail.assembly);
             },
 
-            handleGetCongressmen: function () {
-                this.$.pages.selected = 5;
+            handleGetCongressmen: function (event) {
+                page('/thingmenn');
+                this._getCongressmen()
             },
 
             _getCongressman: function (id) {
                 this.$.pages.selected = 1;
                 this.$.pages.children[1].setAttribute('congressman', id);
+            },
+
+            _getCongressmen: function () {
+                this.$.pages.selected = 5;
             },
 
             _getIssues: function (id) {
@@ -142,6 +142,11 @@
             _getAssembly: function (assembly) {
                 this.$.pages.selected = 4;
                 this.$.pages.children[4].setAttribute('assembly', assembly);
+            },
+
+            _getPlenaries: function (assembly) {
+                this.$.pages.selected = 6;
+                this.$.pages.children[6].setAttribute('assembly', assembly);
             }
         });
     </script>

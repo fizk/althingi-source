@@ -1,5 +1,7 @@
 <link rel="import" href="../../vendor/polymer/polymer.html" />
-<link rel="import" href="../../vendor/paper-item/paper-item-body.html" />
+<link rel="import" href="../../vendor/paper-item/paper-icon-item.html" />
+<link rel="import" href="../../vendor/iron-icon/iron-icon.html" />
+
 <link rel="import" href="../../vendor/iron-icons/iron-icons.html">
 <link rel="import" href="../../vendor/paper-icon-button/paper-icon-button.html" />
 <link rel="import" href="../../vendor/paper-tooltip/paper-tooltip.html" />
@@ -14,26 +16,34 @@
 <dom-module id="althingi-assembly-badge">
     <link rel="import" type="css" href="althingi-assembly-badge.css">
     <template>
-        <paper-item>
+        <paper-icon-item>
+            <div item-icon>
+                <div class="assembly-icon"></div>
+            </div>
             <paper-item-body two-line>
-                <div>{{assembly}}</div>
+                <div>{{assembly}}. Löggjafarthing</div>
                 <div secondary>
                     <time>{{from}}</time> - <time>{{to}}</time>
                 </div>
             </paper-item-body>
 
             <paper-icon-button
-                    title="Mal a dagskra"
-                    icon="menu"
-                    on-click="clickIssuesGet">
+                icon="arrow-forward"
+                on-tap="clickAssemblyGet">
             </paper-icon-button>
 
-            <paper-icon-button
-                    title="Itarlegi upplysingar"
-                    icon="arrow-forward"
-                    on-click="clickAssemblyGet">
-            </paper-icon-button>
-        </paper-item>
+            <!--<paper-icon-button-->
+                    <!--title="Mal a dagskra"-->
+                    <!--icon="menu"-->
+                    <!--on-click="clickIssuesGet">-->
+            <!--</paper-icon-button>-->
+
+            <!--<paper-icon-button-->
+                    <!--title="Plenary"-->
+                    <!--icon="arrow-forward"-->
+                    <!--on-click="clickPlenaryGet">-->
+            <!--</paper-icon-button>-->
+        </paper-icon-item>
     </template>
 
     <script>
@@ -77,8 +87,12 @@
                 this.fire('issues-get', {assembly: this.assembly});
             },
 
-            clickAssemblyGet: function () {
+            clickAssemblyGet: function (event) {
                 this.fire('assembly-get', {assembly: this.assembly});
+            },
+
+            clickPlenaryGet: function (event) {
+                this.fire('plenaries-get', {assembly: this.assembly});
             }
         });
     </script>

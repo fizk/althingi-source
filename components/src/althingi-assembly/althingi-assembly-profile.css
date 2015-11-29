@@ -353,6 +353,11 @@ td,
 th {
   padding: 0; }
 
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none; }
+
 @font-face {
   font-family: 'Futura';
   src: url("../fonts/futura/futura-book.eot");
@@ -404,4 +409,11 @@ th {
 hr {
   height: 1px;
   border: none;
-  border-bottom: 1px solid gainsboro; }
+  border-bottom: 1px solid #f0f0f0; }
+
+.assembly-profile {
+  display: flex;
+  width: 100%; }
+
+.assembly-side {
+  width: 300px; }

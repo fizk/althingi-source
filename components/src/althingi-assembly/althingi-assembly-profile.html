@@ -17,32 +17,40 @@
                 handle-as="json"
                 url="{{url}}">
         </iron-ajax>
-        <h1>{{data.assembly_id}}</h1>
-        <hr />
-        <p>Her vantar ad finna ut hvada rkisstjorn tetta er og hvernig thingsaetin radast nidur.</p>
-        <hr />
-        <paper-button>Thingmal</paper-button>
-        <hr />
-        <p>Hlutfall mala sem eru ekki <em>Álit</em>, <em>Beiðni um skýrslu</em> eda <em>Fyrirspurn</em></p>
-        <svg-piechart data="{{issues}}" size="100" colors="{{color}}"></svg-piechart>
-        <dl>
-            <template is="dom-repeat" items="{{data.issues}}">
-                <dt>{{item.status}}</dt>
-                <dd>{{item.total}}</dd>
-            </template>
-        </dl>
-        <hr />
-        <h2>Heildar raedutimi</h2> <time>{{data.time}}</time>
-        <hr />
-        <h1>Thingmenn:</h1>
-        <div class="althingi-congressman-badge-container">
-            <template is="dom-repeat" items="{{data.congressmen}}">
-                <althingi-congressman-badge
-                        congressman="{{item.congressman_id}}"
-                        name="{{item.name}}">
-                </althingi-congressman-badge>
-            </template>
+
+        <div class="assembly-profile">
+            <div class="assembly-main">
+                <h1>{{data.assembly_id}}</h1>
+                <paper-button>Thingmal</paper-button>
+
+                <p>Hlutfall mala sem eru ekki <em>Álit</em>, <em>Beiðni um skýrslu</em> eda <em>Fyrirspurn</em></p>
+                <svg-piechart data="{{issues}}" size="100" colors="{{color}}"></svg-piechart>
+                <dl>
+                    <template is="dom-repeat" items="{{data.issues}}">
+                        <dt>{{item.status}}</dt>
+                        <dd>{{item.total}}</dd>
+                    </template>
+                </dl>
+
+                <h2>Heildar raedutimi</h2> <time>{{data.time}}</time>
+            </div>
+            <div class="assembly-side">
+                <h1>Thingmenn:</h1>
+                <div class="althingi-congressman-badge-container">
+                    <template is="dom-repeat" items="{{data.congressmen}}">
+                        <althingi-congressman-badge
+                                congressman="{{item.congressman_id}}"
+                                name="{{item.name}}">
+                        </althingi-congressman-badge>
+                    </template>
+                </div>
+            </div>
         </div>
+
+
+
+
+
     </template>
     <script>
         Polymer({

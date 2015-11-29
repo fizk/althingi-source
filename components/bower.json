@@ -21,6 +21,7 @@
     "neon-animation": "PolymerElements/neon-animation#~1.0.8",
     "polymer": "~1.2.1",
     "page": "~1.6.4",
-    "svg-piechart": "~1.0.1"
+    "svg-piechart": "~1.0.1",
+    "breakpoint-sass": "~2.6.1"
   }
 }

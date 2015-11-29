@@ -353,6 +353,11 @@ td,
 th {
   padding: 0; }
 
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none; }
+
 @font-face {
   font-family: 'Futura';
   src: url("../fonts/futura/futura-book.eot");
@@ -399,5 +404,5 @@ th {
   box-sizing: border-box; }
 
 :host {
-  background-color: gainsboro;
+  background-color: #f0f0f0;
   display: block; }

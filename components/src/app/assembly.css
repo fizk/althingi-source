@@ -353,6 +353,11 @@ td,
 th {
   padding: 0; }
 
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none; }
+
 @font-face {
   font-family: 'Futura';
   src: url("../fonts/futura/futura-book.eot");
@@ -397,6 +402,11 @@ th {
 
 *, *:before, *:after {
   box-sizing: border-box; }
+
+:host {
+  display: block;
+  width: 100vw;
+  height: 100vh; }
 
 paper-drawer-panel {
   background-color: #f0f0f0; }

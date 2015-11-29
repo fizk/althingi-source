@@ -403,12 +403,31 @@ ul {
 *, *:before, *:after {
   box-sizing: border-box; }
 
-iron-image {
-  border-radius: 50%; }
-
 :host {
+  display: block;
   width: 100%;
+  height: 100vh;
+  font-family: Futura, sans-serif; }
+
+.althingi-container-main {
+  background-color: #f0f0f0;
   display: flex;
   flex-direction: row;
-  align-items: center;
-  font-family: Futura, sans-serif; }
+  height: 100%; }
+
+.althingi-container-main__nav {
+  color: white;
+  background-color: #323232; }
+
+.althingi-container-main__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column; }
+
+.althingi-container-main__header {
+  background-color: white;
+  padding: 15px 30px; }
+
+.althingi-container-main__section {
+  flex: 1;
+  overflow: scroll; }

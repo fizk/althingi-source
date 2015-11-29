@@ -9,3 +9,13 @@ hr {
     border: none;
     border-bottom: 1px solid $color-gray-light;
 }
+
+
+.assembly-profile {
+    display: flex;
+    width: 100%;
+}
+.assembly-main {}
+.assembly-side {
+    width: 300px;
+}

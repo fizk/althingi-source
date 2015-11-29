@@ -11105,6 +11105,11 @@ td,
 th {
   padding: 0; }
 
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none; }
+
 @font-face {
   font-family: 'Futura';
   src: url("../fonts/futura/futura-book.eot");
@@ -11874,6 +11879,11 @@ td,
 th {
   padding: 0; }
 
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none; }
+
 @font-face {
   font-family: 'Futura';
   src: url("../fonts/futura/futura-book.eot");
@@ -11944,12 +11954,10 @@ iron-image {
 
             properties: {
                 name: {
-                    type: String,
-                    reflectToAttribute: true
+                    type: String
                 },
                 congressman: {
-                    type: Number,
-                    reflectToAttribute: true
+                    type: Number
                 },
                 image: {
                     type: String,
@@ -12000,11 +12008,9 @@ iron-image {
         <althingi-pagination id="althingiPagination" href="/api/thingmenn" on-response="handleResponse" on-request="handleRequest" on-done="handleDone">
         </althingi-pagination>
         <althingi-preloader id="althingiPreloader" on-request-next="handleMore">
-            <ul>
                 <template is="dom-repeat" items="{{congressmen}}">
-                    <li>{{item.name}}</li>
-                </template>
-            </ul>
+                    <althingi-congressman-badge name="{{item.name}}" congressman="{{item.congressman_id}}">
+                </althingi-congressman-badge></template>
         </althingi-preloader>
     </template>
     <script>

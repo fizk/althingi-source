@@ -12381,6 +12381,8 @@ if (!window.Promise) {
 
 
 
+
+
 </head><body><div hidden="" by-vulcanize=""><dom-module id="paper-drawer-panel" assetpath="../../vendor/paper-drawer-panel/">
   <template>
     <style>
@@ -13905,6 +13907,474 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 })();
 </script>
+<dom-module id="althingi-container-main" assetpath="../althingi-container/">
+    <style>
+/*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
+/**
+ * 1. Set default font family to sans-serif.
+ * 2. Prevent iOS and IE text size adjust after device orientation change,
+ *    without disabling user zoom.
+ */
+html {
+  font-family: sans-serif;
+  /* 1 */
+  -ms-text-size-adjust: 100%;
+  /* 2 */
+  -webkit-text-size-adjust: 100%;
+  /* 2 */ }
+
+/**
+ * Remove default margin.
+ */
+body {
+  margin: 0; }
+
+/* HTML5 display definitions
+   ========================================================================== */
+/**
+ * Correct `block` display not defined for any HTML5 element in IE 8/9.
+ * Correct `block` display not defined for `details` or `summary` in IE 10/11
+ * and Firefox.
+ * Correct `block` display not defined for `main` in IE 11.
+ */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+menu,
+nav,
+section,
+summary {
+  display: block; }
+
+/**
+ * 1. Correct `inline-block` display not defined in IE 8/9.
+ * 2. Normalize vertical alignment of `progress` in Chrome, Firefox, and Opera.
+ */
+audio,
+canvas,
+progress,
+video {
+  display: inline-block;
+  /* 1 */
+  vertical-align: baseline;
+  /* 2 */ }
+
+/**
+ * Prevent modern browsers from displaying `audio` without controls.
+ * Remove excess height in iOS 5 devices.
+ */
+audio:not([controls]) {
+  display: none;
+  height: 0; }
+
+/**
+ * Address `[hidden]` styling not present in IE 8/9/10.
+ * Hide the `template` element in IE 8/9/10/11, Safari, and Firefox < 22.
+ */
+[hidden],
+template {
+  display: none; }
+
+/* Links
+   ========================================================================== */
+/**
+ * Remove the gray background color from active links in IE 10.
+ */
+a {
+  background-color: transparent; }
+
+/**
+ * Improve readability of focused elements when they are also in an
+ * active/hover state.
+ */
+a:active,
+a:hover {
+  outline: 0; }
+
+/* Text-level semantics
+   ========================================================================== */
+/**
+ * Address styling not present in IE 8/9/10/11, Safari, and Chrome.
+ */
+abbr[title] {
+  border-bottom: 1px dotted; }
+
+/**
+ * Address style set to `bolder` in Firefox 4+, Safari, and Chrome.
+ */
+b,
+strong {
+  font-weight: bold; }
+
+/**
+ * Address styling not present in Safari and Chrome.
+ */
+dfn {
+  font-style: italic; }
+
+/**
+ * Address variable `h1` font-size and margin within `section` and `article`
+ * contexts in Firefox 4+, Safari, and Chrome.
+ */
+h1 {
+  font-size: 2em;
+  margin: 0.67em 0; }
+
+/**
+ * Address styling not present in IE 8/9.
+ */
+mark {
+  background: #ff0;
+  color: #000; }
+
+/**
+ * Address inconsistent and variable font size in all browsers.
+ */
+small {
+  font-size: 80%; }
+
+/**
+ * Prevent `sub` and `sup` affecting `line-height` in all browsers.
+ */
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline; }
+
+sup {
+  top: -0.5em; }
+
+sub {
+  bottom: -0.25em; }
+
+/* Embedded content
+   ========================================================================== */
+/**
+ * Remove border when inside `a` element in IE 8/9/10.
+ */
+img {
+  border: 0; }
+
+/**
+ * Correct overflow not hidden in IE 9/10/11.
+ */
+svg:not(:root) {
+  overflow: hidden; }
+
+/* Grouping content
+   ========================================================================== */
+/**
+ * Address margin not present in IE 8/9 and Safari.
+ */
+figure {
+  margin: 1em 40px; }
+
+/**
+ * Address differences between Firefox and other browsers.
+ */
+hr {
+  box-sizing: content-box;
+  height: 0; }
+
+/**
+ * Contain overflow in all browsers.
+ */
+pre {
+  overflow: auto; }
+
+/**
+ * Address odd `em`-unit font size rendering in all browsers.
+ */
+code,
+kbd,
+pre,
+samp {
+  font-family: monospace, monospace;
+  font-size: 1em; }
+
+/* Forms
+   ========================================================================== */
+/**
+ * Known limitation: by default, Chrome and Safari on OS X allow very limited
+ * styling of `select`, unless a `border` property is set.
+ */
+/**
+ * 1. Correct color not being inherited.
+ *    Known issue: affects color of disabled elements.
+ * 2. Correct font properties not being inherited.
+ * 3. Address margins set differently in Firefox 4+, Safari, and Chrome.
+ */
+button,
+input,
+optgroup,
+select,
+textarea {
+  color: inherit;
+  /* 1 */
+  font: inherit;
+  /* 2 */
+  margin: 0;
+  /* 3 */ }
+
+/**
+ * Address `overflow` set to `hidden` in IE 8/9/10/11.
+ */
+button {
+  overflow: visible; }
+
+/**
+ * Address inconsistent `text-transform` inheritance for `button` and `select`.
+ * All other form control elements do not inherit `text-transform` values.
+ * Correct `button` style inheritance in Firefox, IE 8/9/10/11, and Opera.
+ * Correct `select` style inheritance in Firefox.
+ */
+button,
+select {
+  text-transform: none; }
+
+/**
+ * 1. Avoid the WebKit bug in Android 4.0.* where (2) destroys native `audio`
+ *    and `video` controls.
+ * 2. Correct inability to style clickable `input` types in iOS.
+ * 3. Improve usability and consistency of cursor style between image-type
+ *    `input` and others.
+ */
+button,
+html input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+  -webkit-appearance: button;
+  /* 2 */
+  cursor: pointer;
+  /* 3 */ }
+
+/**
+ * Re-set default cursor for disabled elements.
+ */
+button[disabled],
+html input[disabled] {
+  cursor: default; }
+
+/**
+ * Remove inner padding and border in Firefox 4+.
+ */
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+  border: 0;
+  padding: 0; }
+
+/**
+ * Address Firefox 4+ setting `line-height` on `input` using `!important` in
+ * the UA stylesheet.
+ */
+input {
+  line-height: normal; }
+
+/**
+ * It's recommended that you don't attempt to style these elements.
+ * Firefox's implementation doesn't respect box-sizing, padding, or width.
+ *
+ * 1. Address box sizing set to `content-box` in IE 8/9/10.
+ * 2. Remove excess padding in IE 8/9/10.
+ */
+input[type="checkbox"],
+input[type="radio"] {
+  box-sizing: border-box;
+  /* 1 */
+  padding: 0;
+  /* 2 */ }
+
+/**
+ * Fix the cursor style for Chrome's increment/decrement buttons. For certain
+ * `font-size` values of the `input`, it causes the cursor style of the
+ * decrement button to change from `default` to `text`.
+ */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  height: auto; }
+
+/**
+ * 1. Address `appearance` set to `searchfield` in Safari and Chrome.
+ * 2. Address `box-sizing` set to `border-box` in Safari and Chrome.
+ */
+input[type="search"] {
+  -webkit-appearance: textfield;
+  /* 1 */
+  box-sizing: content-box;
+  /* 2 */ }
+
+/**
+ * Remove inner padding and search cancel button in Safari and Chrome on OS X.
+ * Safari (but not Chrome) clips the cancel button when the search input has
+ * padding (and `textfield` appearance).
+ */
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none; }
+
+/**
+ * Define consistent border, margin, and padding.
+ */
+fieldset {
+  border: 1px solid #c0c0c0;
+  margin: 0 2px;
+  padding: 0.35em 0.625em 0.75em; }
+
+/**
+ * 1. Correct `color` not being inherited in IE 8/9/10/11.
+ * 2. Remove padding so people aren't caught out if they zero out fieldsets.
+ */
+legend {
+  border: 0;
+  /* 1 */
+  padding: 0;
+  /* 2 */ }
+
+/**
+ * Remove default vertical scrollbar in IE 8/9/10/11.
+ */
+textarea {
+  overflow: auto; }
+
+/**
+ * Don't inherit the `font-weight` (applied by a rule above).
+ * NOTE: the default cannot safely be changed in Chrome and Safari on OS X.
+ */
+optgroup {
+  font-weight: bold; }
+
+/* Tables
+   ========================================================================== */
+/**
+ * Remove most spacing between table cells.
+ */
+table {
+  border-collapse: collapse;
+  border-spacing: 0; }
+
+td,
+th {
+  padding: 0; }
+
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none; }
+
+@font-face {
+  font-family: 'Futura';
+  src: url("../fonts/futura/futura-book.eot");
+  src: url("../fonts/futura/futura-book.eot") format("embedded-opentype"), url("../fonts/futura/futura-book.woff") format("woff"), url("../fonts/futura/futura-book.ttf") format("truetype"), url("../fonts/futura/futura-book.svg") format("svg");
+  font-weight: 400;
+  font-style: normal; }
+
+@font-face {
+  font-family: 'Futura';
+  src: url("../fonts/futura/futura-bold.eot");
+  src: url("../fonts/futura/futura-bold.eot") format("embedded-opentype"), url("../fonts/futura/futura-bold.woff") format("woff"), url("../fonts/futura/futura-bold.ttf") format("truetype"), url("../fonts/futura/futura-bold.svg") format("svg");
+  font-weight: 700;
+  font-style: normal; }
+
+@font-face {
+  font-family: 'Futura';
+  src: url("../fonts/futura/futura-book-italic.eot");
+  src: url("../fonts/futura/futura-book-italic.eot") format("embedded-opentype"), url("../fonts/futura/futura-book-italic.woff") format("woff"), url("../fonts/futura/futura-book-italic.ttf") format("truetype"), url("../fonts/futura/futura-book-italic.svg") format("svg");
+  font-weight: 400;
+  font-style: italic; }
+
+@font-face {
+  font-family: 'Futura';
+  src: url("../fonts/futura/fututa-bold-italic.eot");
+  src: url("../fonts/futura/fututa-bold-italic.eot") format("embedded-opentype"), url("../fonts/futura/fututa-bold-italic.woff") format("woff"), url("../fonts/futura/fututa-bold-italic.ttf") format("truetype"), url("../fonts/futura/fututa-bold-italic.svg") format("svg");
+  font-weight: 700;
+  font-style: italic; }
+
+@font-face {
+  font-family: 'Futura';
+  src: url("../fonts/futura/futura-light.eot");
+  src: url("../fonts/futura/futura-light.eot") format("embedded-opentype"), url("../fonts/futura/futura-light.woff") format("woff"), url("../fonts/futura/futura-light.ttf") format("truetype"), url("../fonts/futura/futura-light.svg") format("svg");
+  font-weight: 200;
+  font-style: normal; }
+
+@font-face {
+  font-family: 'Futura';
+  src: url("../fonts/futura/futura-light-italic.eot");
+  src: url("../fonts/futura/futura-light-italic.eot") format("embedded-opentype"), url("../fonts/futura/futura-light-italic.woff") format("woff"), url("../fonts/futura/futura-light-italic.ttf") format("truetype"), url("../fonts/futura/futura-light-italic.svg") format("svg");
+  font-weight: 200;
+  font-style: italic; }
+
+*, *:before, *:after {
+  box-sizing: border-box; }
+
+:host {
+  display: block;
+  width: 100%;
+  height: 100vh;
+  font-family: Futura, sans-serif; }
+
+.althingi-container-main {
+  background-color: #f0f0f0;
+  display: flex;
+  flex-direction: row;
+  height: 100%; }
+
+.althingi-container-main__nav {
+  color: white;
+  background-color: #323232; }
+
+.althingi-container-main__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column; }
+
+.althingi-container-main__header {
+  background-color: white;
+  padding: 15px 30px; }
+
+.althingi-container-main__section {
+  flex: 1;
+  overflow: scroll; }
+
+</style>
+    <template>
+        <div class="althingi-container-main">
+            <nav role="navigation" class="althingi-container-main__nav">
+                <paper-item on-click="handleGetAssemblies">Thing</paper-item>
+                <paper-item on-click="handleGetCongressmen">Thingmenn</paper-item>
+                <paper-item>Stjornmalaflokkar</paper-item>
+            </nav>
+            <main role="main" class="althingi-container-main__main">
+                <header class="althingi-container-main__header">
+                    header
+                </header>
+                <section class="althingi-container-main__section">
+                    <content></content>
+                </section>
+            </main>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'althingi-container-main',
+
+            handleGetAssemblies: function () {
+                this.fire('assemblies-get');
+            },
+
+            handleGetCongressmen: function () {
+                this.fire('congressmen-get');
+            }
+        });
+    </script>
+</dom-module>
 <dom-module id="althingi-pagination" assetpath="../althingi-pagination/">
     <script>
         Polymer({
@@ -15717,6 +16187,11 @@ td,
 th {
   padding: 0; }
 
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none; }
+
 @font-face {
   font-family: 'Futura';
   src: url("../fonts/futura/futura-book.eot");
@@ -15833,44 +16308,79 @@ paper-button {
         });
     </script>
 </dom-module>
-<dom-module id="paper-item-body" assetpath="../../vendor/paper-item/">
+<dom-module id="paper-item-shared-styles" assetpath="../../vendor/paper-item/">
   <template>
     <style>
       :host {
-        overflow: hidden; /* needed for text-overflow: ellipsis to work on ff */
-        @apply(--layout-vertical);
-        @apply(--layout-center-justified);
-        @apply(--layout-flex);
+        display: block;
+        min-height: var(--paper-item-min-height, 48px);
+        padding: 0px 16px;
       }
 
-      :host([two-line]) {
-        min-height: var(--paper-item-body-two-line-min-height, 72px);
+      :host(.iron-selected) {
+        font-weight: var(--paper-item-selected-weight, bold);
+        @apply(--paper-item-selected);
       }
 
-      :host([three-line]) {
-        min-height: var(--paper-item-body-three-line-min-height, 88px);
+      :host([disabled]) {
+        color: var(--paper-item-disabled-color, --disabled-text-color);
+        @apply(--paper-item-disabled);
       }
 
-      :host > ::content > * {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+      :host(:focus) {
+        position: relative;
+        outline: 0;
+        @apply(--paper-item-focused);
       }
 
-      :host > ::content [secondary] {
-        color: var(--paper-item-body-secondary-color, --secondary-text-color);
-        @apply(--paper-font-body1);
+      :host(:focus):before {
+        @apply(--layout-fit);
+        content: '';
+        background: currentColor;
+        opacity: var(--dark-divider-opacity);
 
-        @apply(--paper-item-body-secondary);
+        @apply(--paper-item-focused-before);
+      }
+    </style>
+  </template>
+</dom-module>
+<dom-module id="paper-icon-item" assetpath="../../vendor/paper-item/">
+  <template>
+    <style include="paper-item-shared-styles"></style>
+    <style>
+      :host {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--paper-font-subhead);
+
+        @apply(--paper-item);
+        @apply(--paper-icon-item);
+      }
+
+      .content-icon {
+        width: var(--paper-item-icon-width, 56px);
       }
     </style>
 
+    <div id="contentIcon" class="content-icon layout horizontal center">
+      <content select="[item-icon]"></content>
+    </div>
     <content></content>
   </template>
 
   <script>
     Polymer({
-      is: 'paper-item-body'
+      is: 'paper-icon-item',
+
+      hostAttributes: {
+        'role': 'option',
+        'tabindex': '0'
+      },
+
+      behaviors: [
+        Polymer.IronControlState,
+        Polymer.IronButtonState
+      ]
     });
   </script>
 </dom-module>
@@ -17011,6 +17521,11 @@ td,
 th {
   padding: 0; }
 
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none; }
+
 @font-face {
   font-family: 'Futura';
   src: url("../fonts/futura/futura-book.eot");
@@ -17057,28 +17572,54 @@ th {
   box-sizing: border-box; }
 
 :host {
-  margin: 30px 0; }
+  display: block; }
 
-paper-card {
-  width: 100%;
-  margin: 30px 0; }
+div[item-icon] {
+  background-color: #323232;
+  color: white;
+  display: flex;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  align-items: center;
+  vertical-align: middle;
+  font-weight: bold; }
+
+.assembly-badge {
+  display: flex; }
+
+.assembly-badge__content {
+  flex-grow: 1; }
 
 </style>
     <template>
-        <paper-item>
+        <paper-icon-item>
+            <div item-icon="">
+                <div class="assembly-icon"></div>
+            </div>
             <paper-item-body two-line="">
-                <div>{{assembly}}</div>
+                <div>{{assembly}}. Löggjafarthing</div>
                 <div secondary="">
                     <time>{{from}}</time> - <time>{{to}}</time>
                 </div>
             </paper-item-body>
 
-            <paper-icon-button title="Mal a dagskra" icon="menu" on-click="clickIssuesGet">
+            <paper-icon-button icon="arrow-forward" on-tap="clickAssemblyGet">
             </paper-icon-button>
 
-            <paper-icon-button title="Itarlegi upplysingar" icon="arrow-forward" on-click="clickAssemblyGet">
-            </paper-icon-button>
-        </paper-item>
+            
+                    
+                    
+                    
+            
+
+            
+                    
+                    
+                    
+            
+        </paper-icon-item>
     </template>
 
     <script>
@@ -17122,8 +17663,12 @@ paper-card {
                 this.fire('issues-get', {assembly: this.assembly});
             },
 
-            clickAssemblyGet: function () {
+            clickAssemblyGet: function (event) {
                 this.fire('assembly-get', {assembly: this.assembly});
+            },
+
+            clickPlenaryGet: function (event) {
+                this.fire('plenaries-get', {assembly: this.assembly});
             }
         });
     </script>
@@ -17485,6 +18030,11 @@ td,
 th {
   padding: 0; }
 
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none; }
+
 @font-face {
   font-family: 'Futura';
   src: url("../fonts/futura/futura-book.eot");
@@ -17531,7 +18081,7 @@ th {
   box-sizing: border-box; }
 
 :host {
-  background-color: gainsboro;
+  background-color: #f0f0f0;
   display: block; }
 
 </style>
@@ -18294,6 +18844,11 @@ td,
 th {
   padding: 0; }
 
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none; }
+
 @font-face {
   font-family: 'Futura';
   src: url("../fonts/futura/futura-book.eot");
@@ -18364,12 +18919,10 @@ iron-image {
 
             properties: {
                 name: {
-                    type: String,
-                    reflectToAttribute: true
+                    type: String
                 },
                 congressman: {
-                    type: Number,
-                    reflectToAttribute: true
+                    type: Number
                 },
                 image: {
                     type: String,
@@ -18415,42 +18968,6 @@ iron-image {
         });
     </script>
 </dom-module>
-<dom-module id="paper-item-shared-styles" assetpath="../../vendor/paper-item/">
-  <template>
-    <style>
-      :host {
-        display: block;
-        min-height: var(--paper-item-min-height, 48px);
-        padding: 0px 16px;
-      }
-
-      :host(.iron-selected) {
-        font-weight: var(--paper-item-selected-weight, bold);
-        @apply(--paper-item-selected);
-      }
-
-      :host([disabled]) {
-        color: var(--paper-item-disabled-color, --disabled-text-color);
-        @apply(--paper-item-disabled);
-      }
-
-      :host(:focus) {
-        position: relative;
-        outline: 0;
-        @apply(--paper-item-focused);
-      }
-
-      :host(:focus):before {
-        @apply(--layout-fit);
-        content: '';
-        background: currentColor;
-        opacity: var(--dark-divider-opacity);
-
-        @apply(--paper-item-focused-before);
-      }
-    </style>
-  </template>
-</dom-module>
 <dom-module id="paper-item" assetpath="../../vendor/paper-item/">
   <template>
     <style include="paper-item-shared-styles"></style>
@@ -18480,6 +18997,47 @@ iron-image {
         Polymer.IronControlState,
         Polymer.IronButtonState
       ]
+    });
+  </script>
+</dom-module>
+<dom-module id="paper-item-body" assetpath="../../vendor/paper-item/">
+  <template>
+    <style>
+      :host {
+        overflow: hidden; /* needed for text-overflow: ellipsis to work on ff */
+        @apply(--layout-vertical);
+        @apply(--layout-center-justified);
+        @apply(--layout-flex);
+      }
+
+      :host([two-line]) {
+        min-height: var(--paper-item-body-two-line-min-height, 72px);
+      }
+
+      :host([three-line]) {
+        min-height: var(--paper-item-body-three-line-min-height, 88px);
+      }
+
+      :host > ::content > * {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      :host > ::content [secondary] {
+        color: var(--paper-item-body-secondary-color, --secondary-text-color);
+        @apply(--paper-font-body1);
+
+        @apply(--paper-item-body-secondary);
+      }
+    </style>
+
+    <content></content>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'paper-item-body'
     });
   </script>
 </dom-module>
@@ -18888,6 +19446,11 @@ td,
 th {
   padding: 0; }
 
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none; }
+
 @font-face {
   font-family: 'Futura';
   src: url("../fonts/futura/futura-book.eot");
@@ -19149,11 +19712,9 @@ th {
         <althingi-pagination id="althingiPagination" href="/api/thingmenn" on-response="handleResponse" on-request="handleRequest" on-done="handleDone">
         </althingi-pagination>
         <althingi-preloader id="althingiPreloader" on-request-next="handleMore">
-            <ul>
                 <template is="dom-repeat" items="{{congressmen}}">
-                    <li>{{item.name}}</li>
-                </template>
-            </ul>
+                    <althingi-congressman-badge name="{{item.name}}" congressman="{{item.congressman_id}}">
+                </althingi-congressman-badge></template>
         </althingi-preloader>
     </template>
     <script>
@@ -19877,6 +20438,11 @@ td,
 th {
   padding: 0; }
 
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none; }
+
 @font-face {
   font-family: 'Futura';
   src: url("../fonts/futura/futura-book.eot");
@@ -19928,36 +20494,51 @@ th {
 hr {
   height: 1px;
   border: none;
-  border-bottom: 1px solid gainsboro; }
+  border-bottom: 1px solid #f0f0f0; }
+
+.assembly-profile {
+  display: flex;
+  width: 100%; }
+
+.assembly-side {
+  width: 300px; }
 
 </style>
     <template>
         <iron-ajax auto="" on-response="handleResponse" handle-as="json" url="{{url}}">
         </iron-ajax>
-        <h1>{{data.assembly_id}}</h1>
-        <hr>
-        <p>Her vantar ad finna ut hvada rkisstjorn tetta er og hvernig thingsaetin radast nidur.</p>
-        <hr>
-        <paper-button>Thingmal</paper-button>
-        <hr>
-        <p>Hlutfall mala sem eru ekki <em>Álit</em>, <em>Beiðni um skýrslu</em> eda <em>Fyrirspurn</em></p>
-        <svg-piechart data="{{issues}}" size="100" colors="{{color}}"></svg-piechart>
-        <dl>
-            <template is="dom-repeat" items="{{data.issues}}">
-                <dt>{{item.status}}</dt>
-                <dd>{{item.total}}</dd>
-            </template>
-        </dl>
-        <hr>
-        <h2>Heildar raedutimi</h2> <time>{{data.time}}</time>
-        <hr>
-        <h1>Thingmenn:</h1>
-        <div class="althingi-congressman-badge-container">
-            <template is="dom-repeat" items="{{data.congressmen}}">
-                <althingi-congressman-badge congressman="{{item.congressman_id}}" name="{{item.name}}">
-                </althingi-congressman-badge>
-            </template>
+
+        <div class="assembly-profile">
+            <div class="assembly-main">
+                <h1>{{data.assembly_id}}</h1>
+                <paper-button>Thingmal</paper-button>
+
+                <p>Hlutfall mala sem eru ekki <em>Álit</em>, <em>Beiðni um skýrslu</em> eda <em>Fyrirspurn</em></p>
+                <svg-piechart data="{{issues}}" size="100" colors="{{color}}"></svg-piechart>
+                <dl>
+                    <template is="dom-repeat" items="{{data.issues}}">
+                        <dt>{{item.status}}</dt>
+                        <dd>{{item.total}}</dd>
+                    </template>
+                </dl>
+
+                <h2>Heildar raedutimi</h2> <time>{{data.time}}</time>
+            </div>
+            <div class="assembly-side">
+                <h1>Thingmenn:</h1>
+                <div class="althingi-congressman-badge-container">
+                    <template is="dom-repeat" items="{{data.congressmen}}">
+                        <althingi-congressman-badge congressman="{{item.congressman_id}}" name="{{item.name}}">
+                        </althingi-congressman-badge>
+                    </template>
+                </div>
+            </div>
         </div>
+
+
+
+
+
     </template>
     <script>
         Polymer({
@@ -20012,6 +20593,103 @@ hr {
                     });
                 }
 
+            }
+        })
+    </script>
+</dom-module>
+<dom-module id="althingi-plenary-badge" assetpath="../althingi-plenaries/">
+    <template>
+        <paper-item>
+            <paper-item-body two-line="">
+                <div on-click="handleGetItem">{{name}}</div>
+                <div secondary="">
+                    <time>{{from}}</time>
+                    <time>{{to}}</time>
+                </div>
+            </paper-item-body>
+            <iron-icon icon="warning"></iron-icon>
+        </paper-item>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'althingi-plenary-badge',
+
+            properties: {
+                from: {
+                    type: String,
+                    reflectToAttribute: true
+                },
+                to: {
+                    type: String,
+                    reflectToAttribute: true
+                },
+                name: {
+                    type: String,
+                    reflectToAttribute: true
+                },
+                assembly: {
+                    type: Number,
+                    reflectToAttribute: true
+                }
+            },
+
+            handleGetItem: function () {
+                //this.fire('', {assembly: this.assembly});
+            }
+        })
+    </script>
+</dom-module>
+<dom-module id="althingi-plenaries-list" assetpath="../althingi-plenaries/">
+    <template>
+        <althingi-pagination id="althingiPagination" href="{{src}}" on-response="handleResponse" on-request="handleRequest" on-done="handleDone">
+        </althingi-pagination>
+        <althingi-preloader on-request-next="handleMore" id="althingiPreloader">
+            <template is="dom-repeat" items="{{plenaries}}">
+                <althingi-plenary-badge assembly="{{item.assembly_id}}" from="{{item.from}}" to="{{item.to}}" name="{{item.name}}">
+                </althingi-plenary-badge>
+            </template>
+        </althingi-preloader>
+    </template>
+    <script>
+        Polymer({
+            id: 'althingi-plenaries-list',
+
+            properties: {
+                src: {
+                    type: String,
+                    computed: 'computeUrl(assembly)'
+                },
+                assembly: {
+                    type: Number,
+                    reflectToAttribute: true
+                },
+
+                plenaries: {
+                    type: Array,
+                    value: []
+                }
+            },
+
+            computeUrl: function (assembly) {
+                return '/api/loggjafarthing/' + assembly + '/thingfundir'
+            },
+
+            handleRequest: function (event) {
+                this.$.althingiPreloader.setAttribute('state', 'load');
+            },
+
+            handleResponse: function () {
+                this.$.althingiPreloader.setAttribute('state', 'halt');
+                this.plenaries = this.plenaries.concat(event.detail);
+            },
+
+            handleMore: function (event) {
+                this.$.althingiPagination.load();
+            },
+
+            handleDone: function (event) {
+                this.$.althingiPreloader.setAttribute('state', 'done');
             }
         })
     </script>
@@ -20373,6 +21051,11 @@ td,
 th {
   padding: 0; }
 
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none; }
+
 @font-face {
   font-family: 'Futura';
   src: url("../fonts/futura/futura-book.eot");
@@ -20417,6 +21100,11 @@ th {
 
 *, *:before, *:after {
   box-sizing: border-box; }
+
+:host {
+  display: block;
+  width: 100vw;
+  height: 100vh; }
 
 paper-drawer-panel {
   background-color: #f0f0f0; }
@@ -21541,30 +22229,18 @@ module.exports = Array.isArray || function (arr) {
 },{}]},{},[1])(1)
 });</script>
     <template>
-        <paper-drawer-panel on-congressman-get="handleGetCongressman" on-plenaries-get="handleGetPlenaries" on-speeches-get="handleGetSpeeches" on-assembly-get="handleGetAssembly" on-issues-get="handleGetIssues">
-            <paper-header-panel drawer="">
-                <paper-toolbar></paper-toolbar>
-                <div>
-                    <paper-item on-click="handleGetAssemblies">Thing</paper-item>
-                    <paper-item on-click="handleGetCongressmen">Thingmenn</paper-item>
-                    <paper-item>Stjornmalaflokkar</paper-item>
-                </div>
-            </paper-header-panel>
-            <paper-header-panel main="">
-                <paper-toolbar>
-                    <paper-icon-button icon="menu"></paper-icon-button>
-                    <h1><a href="/">Alþingi</a></h1>
-                </paper-toolbar>
-                <neon-animated-pages id="pages" selected="0">
-                    <althingi-assembly-list></althingi-assembly-list>
-                    <althingi-congressman-profile></althingi-congressman-profile>
-                    <althingi-issue-list></althingi-issue-list>
-                    <althingi-speech-list></althingi-speech-list>
-                    <althingi-assembly-profile></althingi-assembly-profile>
-                    <althingi-congressman-list></althingi-congressman-list>
-                </neon-animated-pages>
-            </paper-header-panel>
-        </paper-drawer-panel>
+        <althingi-container-main on-congressman-get="handleGetCongressman" on-congressmen-get="handleGetCongressmen" on-plenaries-get="handleGetPlenaries" on-speeches-get="handleGetSpeeches" on-assembly-get="handleGetAssembly" on-assemblies-get="handleGetAssemblies" on-issues-get="handleGetIssues">
+
+            <neon-animated-pages id="pages" selected="0">
+                <althingi-assembly-list></althingi-assembly-list>
+                <althingi-congressman-profile></althingi-congressman-profile>
+                <althingi-issue-list></althingi-issue-list>
+                <althingi-speech-list></althingi-speech-list>
+                <althingi-assembly-profile></althingi-assembly-profile>
+                <althingi-congressman-list></althingi-congressman-list>
+                <althingi-plenaries-list></althingi-plenaries-list>
+            </neon-animated-pages>
+        </althingi-container-main>
     </template>
     <script>
         Polymer({
@@ -21588,22 +22264,24 @@ module.exports = Array.isArray || function (arr) {
                     this._getSpeeches(ctx.params.assembly, ctx.params.issue);
                 }.bind(this));
 
-                page("/thingmenn", function (ctx, next) {}.bind(this));
+                page("/thingmenn", function (ctx, next) {
+                    this._getCongressmen();
+                }.bind(this));
 
                 page("/thingmenn/:congressman", function (ctx, next) {
                     this._getCongressman(ctx.params.congressman);
+                }.bind(this));
+
+                page("/loggjafarthing/:assembly/thingfundir", function (ctx, next) {
+                    this._getPlenaries(ctx.params.assembly);
                 }.bind(this));
 
                 page();
             },
 
             handleGetPlenaries: function (event) {
-                var plenaryContainer = document.createElement('althingi-plenaries');
-                plenaryContainer.setAttribute('assembly', event.detail.assembly);
-                this.$.pages.selected = 2;
-                this.$.pages.children[2].innerHTML = '';
-                this.$.pages.children[2].appendChild(plenaryContainer);
-                //this.querySelector('paper-header-panel paper-fab').setAttribute('icon', 'reply');
+                page('/loggjafarthing/'+event.detail.assembly+'/thingfundir');
+                this._getPlenaries(event.detail.assembly);
             },
 
             handleGetAssemblies: function () {
@@ -21631,13 +22309,18 @@ module.exports = Array.isArray || function (arr) {
                 this._getAssembly(event.detail.assembly);
             },
 
-            handleGetCongressmen: function () {
-                this.$.pages.selected = 5;
+            handleGetCongressmen: function (event) {
+                page('/thingmenn');
+                this._getCongressmen()
             },
 
             _getCongressman: function (id) {
                 this.$.pages.selected = 1;
                 this.$.pages.children[1].setAttribute('congressman', id);
+            },
+
+            _getCongressmen: function () {
+                this.$.pages.selected = 5;
             },
 
             _getIssues: function (id) {
@@ -21658,6 +22341,11 @@ module.exports = Array.isArray || function (arr) {
             _getAssembly: function (assembly) {
                 this.$.pages.selected = 4;
                 this.$.pages.children[4].setAttribute('assembly', assembly);
+            },
+
+            _getPlenaries: function (assembly) {
+                this.$.pages.selected = 6;
+                this.$.pages.children[6].setAttribute('assembly', assembly);
             }
         });
     </script>

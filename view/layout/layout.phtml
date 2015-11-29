@@ -9,7 +9,6 @@
             ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
         ?>
 
-
         <!-- Scripts -->
         <?php echo $this->headScript()
             ->prependFile($this->basePath('resources/vendor/webcomponentsjs/webcomponents.js'))
@@ -97,6 +96,12 @@
                 'type' => 'image/vnd.microsoft.icon',
                 'href' => $this->basePath('/img/favicon.ico')])
             ; ?>
+        <style type="text/css">
+            body {
+                height: 100vh;
+                margin: 0;
+            }
+        </style>
 
     </head>
     <body>
