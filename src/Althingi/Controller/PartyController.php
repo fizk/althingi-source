@@ -8,12 +8,11 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Form\Assembly;
 use Althingi\Form\Party;
-use Althingi\View\Model\ErrorModel;
-use Althingi\View\Model\EmptyModel;
-use Althingi\View\Model\ItemModel;
-use Althingi\View\Model\CollectionModel;
+use Rend\Controller\AbstractRestfulController;
+use Rend\View\Model\ErrorModel;
+use Rend\View\Model\EmptyModel;
+use Rend\Helper\Http\Range;
 
 class PartyController extends AbstractRestfulController
 {

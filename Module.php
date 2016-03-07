@@ -10,15 +10,17 @@
 namespace Althingi;
 
 use Zend\Mvc\MvcEvent;
+use Rend\Event\ApplicationErrorHandler;
+use Rend\Event\ShutdownErrorHandler;
 
 class Module
 {
     public function onBootstrap(MvcEvent $e)
     {
-        register_shutdown_function(new Event\ShutdownErrorHandler());
+        register_shutdown_function(new ShutdownErrorHandler());
 
         $eventManager = $e->getApplication()->getEventManager();
-        $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, new Event\ApplicationErrorHandler());
+        $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, new ApplicationErrorHandler());
     }
 
     public function getConfig()

@@ -9,11 +9,10 @@
 namespace Althingi\Controller;
 
 use Althingi\Form\Session;
-use Althingi\View\Model\CollectionModel;
-use Althingi\View\Model\EmptyModel;
-use Althingi\View\Model\ErrorModel;
-use Althingi\View\Model\ItemModel;
-use Zend\Form\FormInterface;
+use Rend\Controller\AbstractRestfulController;
+use Rend\View\Model\ErrorModel;
+use Rend\View\Model\EmptyModel;
+use Rend\View\Model\ItemModel;
 
 /**
  * Class CongressmanSessionController

@@ -9,11 +9,17 @@
 namespace Althingi\Controller;
 
 use Althingi\Form\Session;
-use Althingi\View\Model\CollectionModel;
-use Althingi\View\Model\EmptyModel;
-use Althingi\View\Model\ErrorModel;
-use Althingi\View\Model\ItemModel;
+use Rend\Controller\AbstractRestfulController;
+use Rend\View\Model\ErrorModel;
+use Rend\View\Model\EmptyModel;
+use Rend\View\Model\ItemModel;
+use Rend\View\Model\CollectionModel;
 
+/**
+ * Class SessionController
+ * @package Althingi\Controller
+ * @todo PUT / PATCH
+ */
 class SessionController extends AbstractRestfulController
 {
     /**
@@ -39,13 +45,12 @@ class SessionController extends AbstractRestfulController
      * @param mixed $data
      * @return ItemModel
      */
-    public function create($data)
+    public function post($data)
     {
         $sessionService = $this->getServiceLocator()
             ->get('Althingi\Service\Session');
 
-        $congressmanId = $this->params('id');
-
+        $congressmanId = $this->params('congressman_id');
 
         $form = new Session();
         $form->setData(array_merge($data, ['congressman_id' => $congressmanId]));
@@ -55,8 +60,8 @@ class SessionController extends AbstractRestfulController
             return (new EmptyModel())
                 ->setLocation(
                     $this->url()->fromRoute(
-                        'home/thingseta/fundur',
-                        ['id' => $congressmanId, 'session_id' => $sessionId]
+                        'home/thingmenn/thingseta',
+                        ['congressman_id' => $congressmanId, 'session_id' => $sessionId]
                     )
                 )
                 ->setStatus(201);

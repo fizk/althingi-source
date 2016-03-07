@@ -29,11 +29,11 @@ class Congressman implements ExtractionInterface, IdentityInterface
         }
 
         if (!$object->hasAttribute('id')) {
-            throw new ModelException('Missing [id] value');
+            throw new ModelException('Missing [id] value', $object);
         }
 
         if (!$object->getElementsByTagName('nafn')->item(0)) {
-            throw new ModelException('Missing [{nafn}] value');
+            throw new ModelException('Missing [{nafn}] value', $object);
         }
 
         $this->setIdentity($object->getAttribute('id'));

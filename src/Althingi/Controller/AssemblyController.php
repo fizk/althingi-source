@@ -9,16 +9,36 @@
 namespace Althingi\Controller;
 
 use Althingi\Form\Assembly;
-use Althingi\View\Model\ErrorModel;
-use Althingi\View\Model\EmptyModel;
-use Althingi\View\Model\ItemModel;
-use Althingi\View\Model\CollectionModel;
-use Zend\Form\FormInterface;
-use Zend\Stdlib\ArrayObject;
+use Rend\Controller\AbstractRestfulController;
+use Rend\View\Model\ErrorModel;
+use Rend\View\Model\EmptyModel;
+use Rend\View\Model\ItemModel;
+use Rend\View\Model\CollectionModel;
+use Rend\Helper\Http\Range;
 
 class AssemblyController extends AbstractRestfulController
 {
     use Range;
+
+    /**
+     * Get one Assembly.
+     *
+     * @param int $id
+     * @return \Althingi\View\Model\ErrorModel|\Althingi\View\Model\ItemModel
+     */
+    public function get($id)
+    {
+        /** @var  $assemblyService \Althingi\Service\Assembly */
+        $assemblyService = $this->getServiceLocator()
+            ->get('Althingi\Service\Assembly');
+
+        if (($resource = $assemblyService->get($id))) {
+            return (new ItemModel($resource))
+                ->setOption('Access-Control-Allow-Origin', '*');
+        }
+
+        return $this->notFoundAction();
+    }
 
     /**
      * Return list of Assemblies.
@@ -37,11 +57,13 @@ class AssemblyController extends AbstractRestfulController
         $range = $this->getRange($this->getRequest(), $count);
         $assemblies = $assemblyService->fetchAll(
             $range['from'],
-            ($range['to']-$range['from']),
+            ($range['to'] - $range['from']),
             $order
         );
 
         return (new CollectionModel($assemblies))
+            ->setOption('Access-Control-Allow-Origin', '*')
+            ->setOption('Access-Control-Expose-Headers', 'Range-Unit, Content-Range') //TODO should go into Rend
             ->setStatus(206)
             ->setRange($range['from'], $range['to'], $count);
     }
@@ -95,25 +117,6 @@ class AssemblyController extends AbstractRestfulController
             ->setStatus(200)
             ->setAllow(['GET', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'])
             ->setOption('Access-Control-Allow-Origin', '*');
-    }
-
-    /**
-     * Get one Assembly.
-     *
-     * @param int $id
-     * @return \Althingi\View\Model\ErrorModel|\Althingi\View\Model\ItemModel
-     */
-    public function get($id)
-    {
-        /** @var  $assemblyService \Althingi\Service\Assembly */
-        $assemblyService = $this->getServiceLocator()
-            ->get('Althingi\Service\Assembly');
-
-        if (($resource = $assemblyService->get($id))) {
-            return (new ItemModel($resource));
-        }
-
-        return $this->notFoundAction();
     }
 
     /**

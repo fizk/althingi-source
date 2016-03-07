@@ -36,7 +36,7 @@ class Assembly implements DatabaseAwareInterface
             select * from `Assembly` where assembly_id = :id
         ");
         $statement->execute(['id' => $id]);
-        return $this->decorate($statement->fetchObject());
+        return $this->expandedDecorate($statement->fetchObject());
     }
 
     /**
@@ -150,5 +150,43 @@ class Assembly implements DatabaseAwareInterface
 
         $object->assembly_id = (int) $object->assembly_id;
         return $object;
+    }
+
+    private function expandedDecorate($object)
+    {
+        if (!$object) {
+            return null;
+        }
+
+        $issueStatusStatement = $this->getDriver()->prepare("
+            select count(*) as `total`, I.`status`
+            from `Issue` I
+            where I.assembly_id = :id and (
+              I.`status` != 'Álit' or I.`status` != 'Beiðni um skýrslu' or I.`status` != 'Fyrirspurn'
+            )
+            group by I.`status`;
+        ");
+        $issueStatusStatement->execute(['id' => $object->assembly_id]);
+        $object->issues = $issueStatusStatement->fetchAll();
+
+        $congressmanStatement = $this->getDriver()->prepare("
+            select C.congressman_id, C.name from `Session` S
+            join `Congressman` C on (S.congressman_id = C.congressman_id)
+            where S.assembly_id = :id
+            group by S.congressman_id
+            order by C.name;
+        ");
+        $congressmanStatement->execute(['id' => $object->assembly_id]);
+        $object->congressmen = $congressmanStatement->fetchAll();
+
+        $timeStatement = $this->getDriver()->prepare("
+          select sec_to_time(sum((S.`to` - S.`from`))) as `total`
+          from `Speech` S
+          where S.assembly_id = :id;
+        ");
+        $timeStatement->execute(['id' => $object->assembly_id]);
+        $object->time = $timeStatement->fetchColumn(0);
+
+        return $this->decorate($object);
     }
 }

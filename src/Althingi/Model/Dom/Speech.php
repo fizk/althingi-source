@@ -30,35 +30,35 @@ class Speech implements ExtractionInterface, IdentityInterface
         }
 
         if (!$object->hasAttribute('fundarnúmer')) {
-            throw new ModelException('Missing [{fundarnúmer}] value');
+            throw new ModelException('Missing [{fundarnúmer}] value', $object);
         }
 
         if (!$object->hasAttribute('þingnúmer')) {
-            throw new ModelException('Missing [{þingnúmer}] value');
+            throw new ModelException('Missing [{þingnúmer}] value', $object);
         }
 
         if (!$object->hasAttribute('þingmaður')) {
-            throw new ModelException('Missing [{þingmaður}] value');
+            throw new ModelException('Missing [{þingmaður}] value', $object);
         }
 
         if (!$object->getElementsByTagName('ræðahófst')->item(0)) {
-            throw new ModelException('Missing [{ræðahófst}] value');
+            throw new ModelException('Missing [{ræðahófst}] value', $object);
         }
 
         if (!$object->getElementsByTagName('ræðulauk')->item(0)) {
-            throw new ModelException('Missing [{ræðulauk}] value');
+            throw new ModelException('Missing [{ræðulauk}] value', $object);
         }
 
         if (!$object->getElementsByTagName('mál')->item(0)) {
-            throw new ModelException('Missing [{mál}] value');
+            throw new ModelException('Missing [{mál}] value', $object);
         }
 
         if (!$object->getElementsByTagName('mál')->item(0)) {
-            throw new ModelException('Missing [{mál}] value');
+            throw new ModelException('Missing [{mál}] value', $object);
         }
 
         if (!$object->getElementsByTagName('mál')->item(0)->hasAttribute('nr')) {
-            throw new ModelException('Missing [{nr}] value');
+            throw new ModelException('Missing [{nr}] value', $object);
         }
 
 

@@ -1,1 +1,7 @@
-<althingi-app  class="fullbleed layout vertical">></althingi-app>
+<?php
+    $this->headLink([
+        'rel' => 'import',
+        'href' => $this->basePath('resources/components/app/assembly.html')
+    ]);
+?>
+<althingi-assembly></althingi-assembly>
