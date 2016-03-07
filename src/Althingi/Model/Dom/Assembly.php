@@ -30,11 +30,11 @@ class Assembly implements ExtractionInterface, IdentityInterface
         }
 
         if (!$object->hasAttribute('númer')) {
-            throw new ModelException('Missing [{númer}] value');
+            throw new ModelException('Missing [{númer}] value', $object);
         }
 
         if (!$object->getElementsByTagName('þingsetning')->item(0)) {
-            throw new ModelException('Missing [{þingsetning}] value');
+            throw new ModelException('Missing [{þingsetning}] value', $object);
         }
 
         $this->setIdentity($object->getAttribute('númer'));

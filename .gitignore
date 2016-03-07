@@ -124,3 +124,6 @@ public/vendor
 .bower-cache
 .bower-registry
 .bower-tmp
+
+public
+components

@@ -29,7 +29,7 @@ class Constituency implements ExtractionInterface, IdentityInterface
         }
 
         if (!$object->hasAttribute('id')) {
-            throw new ModelException('Missing [{id}] value');
+            throw new ModelException('Missing [{id}] value', $object);
         }
 
         $this->setIdentity($object->getAttribute('id'));

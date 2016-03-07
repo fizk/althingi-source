@@ -27,62 +27,71 @@ class Session implements ExtractionInterface
         }
 
         if (!$object->getElementsByTagName('inn')->item(0)) {
-            throw new ModelException('Missing [{inn}] value');
+            throw new ModelException('Missing [{inn}] value', $object);
         }
 
-        $id = ($object->getElementsByTagName('þing')->length ==1)
-            ? $object->getElementsByTagName('þing')->item(0)->nodeValue
-            : null ;
+        if (!$object->getElementsByTagName('þing')->item(0)) {
+            throw new ModelException('Missing [{þing}] value', $object);
+        }
 
-        $abbr = ($object->getElementsByTagName('skammstöfun')->length == 1)
-            ? $object->getElementsByTagName('skammstöfun')->item(0)->nodeValue
-            : null;
+        if (!$object->getElementsByTagName('skammstöfun')->item(0)) {
+            throw new ModelException('Missing [{skammstöfun}] value', $object);
+        }
 
-        $type = ($object->getElementsByTagName('tegund')->length == 1)
-            ? $object->getElementsByTagName('tegund')->item(0)->nodeValue
-            : null ;
+        if (!$object->getElementsByTagName('tegund')->item(0)) {
+            throw new ModelException('Missing [{tegund}] value', $object);
+        }
 
-        $party = ($object->getElementsByTagName('þingflokkur')->length == 1)
-            ? $object->getElementsByTagName('þingflokkur')->item(0)->nodeValue
-            : null;
+        if (!$object->getElementsByTagName('þingflokkur')->item(0)) {
+            throw new ModelException('Missing [{þingflokkur}] value', $object);
+        }
 
-        $partyId = ($object->getElementsByTagName('þingflokkur')->length == 1)
-            ? $object->getElementsByTagName('þingflokkur')->item(0)->getAttribute('id')
-            : null ;
+        if (!$object->getElementsByTagName('þingflokkur')->item(0)->hasAttribute('id')) {
+            throw new ModelException('Missing [{þingflokkur.id}] value', $object);
+        }
 
-        $constituency = ($object->getElementsByTagName('kjördæmi')->length == 1)
-            ? $object->getElementsByTagName('kjördæmi')->item(0)->nodeValue
-            : null ;
+        if (!$object->getElementsByTagName('kjördæmi')->item(0)) {
+            throw new ModelException('Missing [{kjördæmi}] value', $object);
+        }
 
-        $constituencyId = ($object->getElementsByTagName('kjördæmi')->length == 1)
-            ? $object->getElementsByTagName('kjördæmi')->item(0)->getAttribute('id')
-            : null ;
+        if (!$object->getElementsByTagName('kjördæmi')->item(0)->hasAttribute('id')) {
+            throw new ModelException('Missing [{kjördæmi.id}] value', $object);
+        }
 
-        $constituencyNo = ($object->getElementsByTagName('kjördæmanúmer')->length == 1)
-            ? $object->getElementsByTagName('kjördæmanúmer')->item(0)->nodeValue
-            : null ;
+        if (!$object->getElementsByTagName('kjördæmanúmer')->item(0)) {
+            throw new ModelException('Missing [{kjördæmanúmer}] value', $object);
+        }
 
-        $seat = ($object->getElementsByTagName('þingsalssæti')->length == 1)
-            ? $object->getElementsByTagName('þingsalssæti')->item(0)->nodeValue
-            : null ;
+        if (!$object->getElementsByTagName('þingsalssæti')->item(0)) {
+            throw new ModelException('Missing [{þingsalssæti}] value', $object);
+        }
 
-        $division =  ($object->getElementsByTagName('deild')->length == 1)
-            ? $object->getElementsByTagName('deild')->item(0)->nodeValue
-            : null ;
-
+        $id = (int) $object->getElementsByTagName('þing')->item(0)->nodeValue;
+        $abbr = trim($object->getElementsByTagName('skammstöfun')->item(0)->nodeValue);
+        $type = trim($object->getElementsByTagName('tegund')->item(0)->nodeValue);
+        $party = trim($object->getElementsByTagName('þingflokkur')->item(0)->nodeValue);
+        $partyId = (int) $object->getElementsByTagName('þingflokkur')->item(0)->getAttribute('id');
+        $constituency = trim($object->getElementsByTagName('kjördæmi')->item(0)->nodeValue);
+        $constituencyId = (int) $object->getElementsByTagName('kjördæmi')->item(0)->getAttribute('id');
+        $constituencyNo = trim($object->getElementsByTagName('kjördæmanúmer')->item(0)->nodeValue);
+        $seat = (empty($object->getElementsByTagName('þingsalssæti')->item(0)->nodeValue))
+            ? null
+            : trim($object->getElementsByTagName('þingsalssæti')->item(0)->nodeValue);
+        $division = (!$object->getElementsByTagName('deild')->item(0))
+            ? null
+            : trim($object->getElementsByTagName('deild')->item(0)->nodeValue);
         $from = date('Y-m-d', strtotime($object->getElementsByTagName('inn')->item(0)->nodeValue));
-
         $to = ($object->getElementsByTagName('út')->item(0))
             ? date('Y-m-d', strtotime($object->getElementsByTagName('út')->item(0)->nodeValue))
             : null;
 
         return [
-            'id' => (int) $id,
-            'assembly_id' => (int) $id,
+            'id' => $id,
+            'assembly_id' => $id,
             'abbr' => $abbr,
             'type' => $type,
             'party' => $party,
-            'party_id' => (int) $partyId,
+            'party_id' => $partyId,
             'constituency' => $constituency,
             'constituency_id' => $constituencyId,
             'constituency_no' => $constituencyNo,

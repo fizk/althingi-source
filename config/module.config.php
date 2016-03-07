@@ -102,9 +102,10 @@ return array(
                     'thingmenn' => [
                         'type' => 'Zend\Mvc\Router\Http\Segment',
                         'options' => [
-                            'route'    => '/thingmenn[/:id]',
+                            'route'    => '/thingmenn[/:congressman_id]',
                             'defaults' => [
                                 'controller' => 'Althingi\Controller\Congressman',
+                                'identifier' => 'congressman_id'
                             ],
                         ],
                         'may_terminate' => true,
@@ -115,33 +116,34 @@ return array(
                                     'route'    => '/thingmal',
                                     'defaults' => [
                                         'controller' => 'Althingi\Controller\CongressmanIssue',
-                                        'identifier' => 'issue_id'
                                     ],
                                 ]
                             ],
-                        ],
-                    ],
-                    'thingseta' => [
-                        'type' => 'Zend\Mvc\Router\Http\Segment',
-                        'options' => [
-                            'route'    => '/thingmenn/:id/thingseta',
-                            'defaults' => [
-                                'controller' => 'Althingi\Controller\Session',
-                            ],
-                        ],
-                        'may_terminate' => true,
-                        'child_routes' => [
-                            'fundur' => [
+                            'thingseta' => [
                                 'type' => 'Zend\Mvc\Router\Http\Segment',
                                 'options' => [
-                                    'route'    => '/:session_id',
+                                    'route'    => '/thingseta[/:session_id]',
                                     'defaults' => [
-                                        'controller' => 'Althingi\Controller\CongressmanSession',
+                                        'controller' => 'Althingi\Controller\Session',
+                                        'identifier' => 'session_id'
                                     ],
                                 ],
+                                'may_terminate' => true,
+//                                'child_routes' => [
+//                                    'fundur' => [
+//                                        'type' => 'Zend\Mvc\Router\Http\Segment',
+//                                        'options' => [
+//                                            'route'    => '/:session_id',
+//                                            'defaults' => [
+//                                                'controller' => 'Althingi\Controller\CongressmanSession',
+//                                            ],
+//                                        ],
+//                                    ],
+//                                ]
                             ],
-                        ]
+                        ],
                     ],
+
                     'thingflokkar' => [
                         'type' => 'Zend\Mvc\Router\Http\Segment',
                         'options' => [

@@ -53,7 +53,8 @@ class CongressmanController extends AbstractRestfulController
             ->get('Althingi\Service\Congressman');
 
         if ($congressman = $congressmanService->get($id)) {
-            return new ItemModel($congressman);
+            return (new ItemModel($congressman))
+                ->setOption('Access-Control-Allow-Origin', '*');
         }
 
         return $this->notFoundAction();

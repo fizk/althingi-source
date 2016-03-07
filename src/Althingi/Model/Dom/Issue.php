@@ -30,11 +30,11 @@ class Issue implements ExtractionInterface, IdentityInterface
         }
 
         if (!$object->hasAttribute('málsnúmer')) {
-            throw new ModelException('Missing [{málsnúmer}] value');
+            throw new ModelException('Missing [{málsnúmer}] value', $object);
         }
 
         if (!$object->hasAttribute('þingnúmer')) {
-            throw new ModelException('Missing [{þingnúmer}] value');
+            throw new ModelException('Missing [{þingnúmer}] value', $object);
         }
 
         //if (!$object->hasAttribute('málsflokkur')) {
@@ -42,27 +42,27 @@ class Issue implements ExtractionInterface, IdentityInterface
         //}
 
         if (!$object->getElementsByTagName('málsheiti')->item(0)) {
-            throw new ModelException('Missing [{málsheiti}] value');
+            throw new ModelException('Missing [{málsheiti}] value', $object);
         }
 
         if (!$object->getElementsByTagName('staðamáls')->item(0)) {
-            //throw new ModelException('Missing [{staðamáls}] value');
+            //throw new ModelException('Missing [{staðamáls}] value', $object);
         }
 
         if (!$object->getElementsByTagName('málstegund')->item(0)) {
-            throw new ModelException('Missing [{málstegund}] value');
+            throw new ModelException('Missing [{málstegund}] value', $object);
         }
 
         if (!$object->getElementsByTagName('málstegund')->item(0)->hasAttribute('málstegund')) {
-            throw new ModelException('Missing [{málstegund}] value');
+            throw new ModelException('Missing [{málstegund}] value', $object);
         }
 
         if (!$object->getElementsByTagName('málstegund')->item(0)->getElementsByTagName('heiti')->item(0)) {
-            throw new ModelException('Missing [{heiti}] value');
+            throw new ModelException('Missing [{heiti}] value', $object);
         }
 
         if (!$object->getElementsByTagName('málstegund')->item(0)->getElementsByTagName('heiti2')->item(0)) {
-            throw new ModelException('Missing [{heiti2}] value');
+            throw new ModelException('Missing [{heiti2}] value', $object);
         }
 
         //----

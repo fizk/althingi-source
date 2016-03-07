@@ -33,7 +33,8 @@ class AssemblyController extends AbstractRestfulController
             ->get('Althingi\Service\Assembly');
 
         if (($resource = $assemblyService->get($id))) {
-            return (new ItemModel($resource));
+            return (new ItemModel($resource))
+                ->setOption('Access-Control-Allow-Origin', '*');
         }
 
         return $this->notFoundAction();
@@ -61,6 +62,8 @@ class AssemblyController extends AbstractRestfulController
         );
 
         return (new CollectionModel($assemblies))
+            ->setOption('Access-Control-Allow-Origin', '*')
+            ->setOption('Access-Control-Expose-Headers', 'Range-Unit, Content-Range') //TODO should go into Rend
             ->setStatus(206)
             ->setRange($range['from'], $range['to'], $count);
     }

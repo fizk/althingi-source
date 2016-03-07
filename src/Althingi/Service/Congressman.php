@@ -148,7 +148,7 @@ class Congressman implements DatabaseAwareInterface
         //ASSEMBLIES
         //  get congressman's assembly
         $assembliesStatement = $this->getDriver()->prepare("
-            select S.assembly_id from `Session` S
+            select S.assembly_id, S.from, S.to from `Session` S
             where congressman_id = :congressman_id group by assembly_id
             order by S.assembly_id desc;
         ");

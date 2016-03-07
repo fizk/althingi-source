@@ -16,7 +16,6 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Stdlib\Parameters;
 use Althingi\Lib\Http\DomClient;
 use Althingi\Model\Dom\Congressman as CongressmanModel;
-use Althingi\Model\Exception as ModelException;
 
 class ConsoleCongressmanController extends AbstractActionController implements LoggerAwareInterface
 {
@@ -34,29 +33,27 @@ class ConsoleCongressmanController extends AbstractActionController implements L
         $this->getLogger()->info("Find Congressman -- started");
 
         $assemblyNumber = $this->params('assembly');
-        $dom = (new DomClient())
-            ->setClient($this->getClient())
-            ->get(($assemblyNumber)
-                ? "http://www.althingi.is/altext/xml/thingmenn/?lthing={$assemblyNumber}"
-                : "http://www.althingi.is/altext/xml/thingmenn/");
+        $congressmenDom = $this->queryForCongressmen($assemblyNumber);
+        $congressmenElements = $congressmenDom->getElementsByTagName('þingmaður');
 
-        foreach ($dom->getElementsByTagName('þingmaður') as $congressmanElement) {
-            $congressmanId = $this->saveCongressman($congressmanElement);
+        foreach ($congressmenElements as $congressmanItem) {
+            $congressmanId = $this->saveCongressman($congressmanItem);
 
             if (!$congressmanId) {
                 continue;
             }
 
-            //IMAGE
-            //TODO do me
-            $imageUrl = "http://www.althingi.is/myndir/thingmenn-cache/{$congressmanId}/{$congressmanId}-220.jpg";
+            try {
+                $congressmanDom = (new DomClient())
+                    ->setClient($this->getClient())
+                    ->get("http://www.althingi.is/altext/xml/thingmenn/thingmadur/thingseta/?nr={$congressmanId}");
 
-
-            $congressmanDom = (new DomClient())
-                ->setClient($this->getClient())
-                ->get("http://www.althingi.is/altext/xml/thingmenn/thingmadur/thingseta/?nr={$congressmanId}");
-
-            $this->saveCongressmanSession($congressmanId, $congressmanDom->getElementsByTagName('þingsetur')->item(0));
+                $xpath = new \DOMXPath($congressmanDom);
+                $congressmanSessionElements = $xpath->query('//þingmaður/þingsetur/þingseta');
+                $this->saveCongressmanSession($congressmanId, $congressmanSessionElements);
+            } catch (\Exception $e) {
+                $this->getLogger()->error($e->getMessage());
+            }
         }
 
         $this->getLogger()->info("Find Congressman -- ended");
@@ -72,61 +69,73 @@ class ConsoleCongressmanController extends AbstractActionController implements L
     private function saveCongressman(\DOMElement $congressmanElement)
     {
         $config = $this->getServiceLocator()->get('Config');
-        try {
-            $congressman = (new CongressmanModel())
-                ->extract($congressmanElement);
 
-            $apiRequest = (new Request())
-                ->setMethod('post')
-                ->setHeaders((new Headers())->addHeaders([
-                    'X-HTTP-Method-Override' => 'PUT'
-                ]))
-                ->setUri(sprintf('%s/thingmenn/%s', $config['server']['host'], $congressman['id']))
-                ->setPost(new Parameters($congressman));
-            $apiResult = $this->getClient()->send($apiRequest);
+        $congressmanModel = (new CongressmanModel())
+            ->extract($congressmanElement);
 
-            $this->getLogger()->info("Find Congressman -- [{$congressman['id']}]");
-            $this->getLogger()->info(
-                $apiResult->getStatusCode(),
-                [json_decode($apiResult->getContent())]
-            );
+        $apiRequest = (new Request())
+            ->setMethod('post')
+            ->setHeaders((new Headers())->addHeaders(['X-HTTP-Method-Override' => 'PUT']))
+            ->setUri(sprintf('%s/thingmenn/%s', $config['server']['host'], $congressmanModel['id']))
+            ->setPost(new Parameters($congressmanModel));
+        $apiResult = $this->getClient()->send($apiRequest);
 
-            return $congressman['id'];
+        $this->getLogger()->info("Find Congressman -- [{$congressmanModel['id']}]");
+        $this->getLogger()->info(
+            $apiResult->getStatusCode(),
+            [json_decode($apiResult->getContent())]
+        );
 
-        } catch (ModelException $e) {
-            $this->getLogger()->error(sprintf('file: [%s] -> %s', $this->getClient()->getUri(), $e->getMessage()));
-            return false;
-        }
+        return $congressmanModel['id'];
+
     }
 
     /**
      * Save Congressman's sessions.
      *
      * @param int $id  Congressman ID
-     * @param \DOMElement $sessions
+     * @param \DOMNodeList $sessions
      */
-    private function saveCongressmanSession($id, \DOMElement $sessions)
+    private function saveCongressmanSession($id, \DOMNodeList $sessions)
     {
+        $this->getLogger()->info("Congressman[{$id}] Session -- start");
+
         $config = $this->getServiceLocator()->get('Config');
 
-        $this->getLogger()->info("Congressman[{$id}] Session -- start");
-        foreach ($sessions->getElementsByTagName('þingseta') as $sessionElement) {
-            try {
-                $session = (new Session())->extract($sessionElement);
-                $apiRequest = (new Request())
-                    ->setMethod('post')
-                    ->setUri(sprintf('%s/thingmenn/%s/thingseta', $config['server']['host'], $id))
-                    ->setPost(new Parameters($session));
-                $apiResult = $this->getClient()->send($apiRequest);
-                $this->getLogger()->info(
-                    $apiResult->getStatusCode(),
-                    [json_decode($apiResult->getContent())]
-                );
+        foreach ($sessions as $sessionElement) {
+            $sessionModel = (new Session())->extract($sessionElement);
+            $apiRequest = (new Request())
+                ->setMethod('post')
+                ->setUri(sprintf('%s/thingmenn/%s/thingseta', $config['server']['host'], $id))
+                ->setPost(new Parameters($sessionModel));
+            $apiResult = $this->getClient()->send($apiRequest);
 
-            } catch (ModelException $e) {
-                $this->getLogger()->error(sprintf('file: [%s] -> %s', $this->getClient()->getUri(), $e->getMessage()));
-            }
+            $this->getLogger()->info(
+                $apiResult->getStatusCode(),
+                [json_decode($apiResult->getContent())]
+            );
         }
+
         $this->getLogger()->info("Congressman[{$id}] Session -- end");
+    }
+
+    /**
+     * Go to remote server and get congressmen.
+     *
+     * If a number of assembly is passed, only request congressmen
+     * from that assembly.
+     *
+     * @param int $assemblyNumber
+     * @return \DOMDocument
+     * @throws \Exception
+     */
+    private function queryForCongressmen($assemblyNumber)
+    {
+        return (new DomClient())
+            ->setClient($this->getClient())
+            ->get(($assemblyNumber)
+                ? "http://www.althingi.is/altext/xml/thingmenn/?lthing={$assemblyNumber}"
+                : "http://www.althingi.is/altext/xml/thingmenn/"
+            );
     }
 }

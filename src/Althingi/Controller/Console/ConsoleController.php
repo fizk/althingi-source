@@ -72,7 +72,7 @@ class ConsoleController extends AbstractActionController implements LoggerAwareI
         $assemblyNumber = $this->params('assembly');
         $dom = (new DomClient())
             ->setClient($this->getClient())
-            ->get("http://huginn.althingi.is/altext/xml/thingfundir/?lthing={$assemblyNumber}");
+            ->get("http://www.althingi.is/altext/xml/thingfundir/?lthing={$assemblyNumber}");
 
         foreach ($dom->getElementsByTagName('þingfundur') as $element) {
             $element->setAttribute('þing', $assemblyNumber);
@@ -161,7 +161,6 @@ class ConsoleController extends AbstractActionController implements LoggerAwareI
 
         $this->getLogger()->info("Issue -- end");
     }
-
 
     private function getFormanId($dom)
     {
