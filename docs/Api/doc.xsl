@@ -15,15 +15,7 @@
             </header>
             <xsl:if test="param">
             <aside>
-                <table class="docs__table">
-                    <caption>Parameters</caption>
-                    <thead>
-                        <tr>
-                            <td>name</td>
-                            <td>value</td>
-                            <td>description</td>
-                        </tr>
-                    </thead>
+                <table class="docs__parameters">
                     <tbody>
                         <xsl:for-each select="param">
                             <tr>
@@ -147,7 +139,6 @@
 
                 </xsl:if>
                 <xsl:if test="response/output">
-                <h5>JSON example</h5>
                 <pre><xsl:value-of select="response/output"/></pre>
                 </xsl:if>
             </section>

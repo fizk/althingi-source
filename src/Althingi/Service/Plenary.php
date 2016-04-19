@@ -24,6 +24,19 @@ class Plenary implements DatabaseAwareInterface
      */
     private $pdo;
 
+    public function get($assemblyId, $plenaryId)
+    {
+        $statement = $this->getDriver()->prepare('
+            select * from `Plenary` where assembly_id = :assembly_id and plenary_id = :plenary_id
+        ');
+        $statement->execute([
+            'assembly_id' => $assemblyId,
+            'plenary_id' => $plenaryId,
+        ]);
+
+        return $this->decorate($statement->fetchObject());
+    }
+
     /**
      * Fetch all Plenaries from given Assembly.
      *
@@ -74,6 +87,16 @@ class Plenary implements DatabaseAwareInterface
             ->prepare($this->insertString('Plenary', $data));
         $statement->execute($this->convert($data));
         return $this->getDriver()->lastInsertId();
+    }
+
+    public function update($data)
+    {
+        $statement = $this->getDriver()
+            ->prepare($this->updateString(
+                'Plenary', $data, "plenary_id = {$data->plenary_id} and assembly_id = {$data->assembly_id}"
+            ));
+        $statement->execute($this->convert($data));
+        return $statement->columnCount();
     }
 
     /**

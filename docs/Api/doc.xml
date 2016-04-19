@@ -3,16 +3,7 @@
     <resource>
         <path>/</path>
         <method verb="GET">
-            <description>Get the web-application</description>
-        </method>
-        <method verb="OPTIONS">
-            <description>Get allowed methods</description>
-            <response>
-                <headers>
-                    <param name="Allow" value="list">Allowed methods for this resource</param>
-                    <param name="Access-Control-Allow-Origin" value="string">Allow origin from all</param>
-                </headers>
-            </response>
+            <description>This document</description>
         </method>
     </resource>
 
@@ -197,6 +188,61 @@
     </resource>
 
     <resource>
+        <path>/loggjafarthing/:id/thingmal</path>
+        <param name="id" value="int">Number of assembly</param>
+        <method verb="GET">
+            <description>Get all issues for an assembly</description>
+            <request>
+                <query>
+                    <param name="type" value="a|b|l|m|q|s">
+                        Any combination of these chars.
+                        a  = þingsályktunartillaga.
+                        b  = beiðni.
+                        l  = lagafrumvarp.
+                        m  = fyrirspurn.
+                        q  = fyrirspurn.
+                        s  = skýrsla.
+                    </param>
+                </query>
+            </request>
+            <response>
+                <output>
+                    [
+                        {
+                            issue_id: 1,
+                            assembly_id: 145,
+                            congressman_id: null,
+                            category: "A",
+                            name: "Fjárlög 2016",
+                            sub_name: null,
+                            type: "l",
+                            type_name: "Frumvarp til laga",
+                            type_subname: "Lagafrumvarp",
+                            status: "Samþykkt sem lög frá Alþingi.",
+                            question: null,
+                            date: "2015-09-08 13:01:00"
+                        }, {
+                            issue_id: 2,
+                            assembly_id: 145,
+                            congressman_id: null,
+                            category: "A",
+                            name: "ýmsar forsendur fjárlagafrumvarps 2016",
+                            sub_name: "breyting ýmissa laga",
+                            type: "l",
+                            type_name: "Frumvarp til laga",
+                            type_subname: "Lagafrumvarp",
+                            status: "Samþykkt sem lög frá Alþingi.",
+                            question: null,
+                            date: "2015-09-08 13:01:00"
+                        },
+                        ...
+                    ]
+                </output>
+            </response>
+        </method>
+    </resource>
+
+    <resource>
         <path>/loggjafarthing/:id/thingmal/:issue_id</path>
         <param name="id" value="int">Number of assembly</param>
         <param name="issue_id" value="int">Number of issue</param>
@@ -205,22 +251,54 @@
             <response>
                 <output>
                     {
-                        "issue_id": 803,
-                        "assembly_id": 144,
+                        "issue_id": 1,
+                        "assembly_id": 145,
+                        "congressman_id": null,
                         "category": "A",
-                        "name": "Jafnréttissjóður Íslands",
-                        "type": 1,
-                        "type_name": "Tillaga til þingsályktunar",
-                        "type_subname": "þingsályktunartillaga",
-                        "status": null,
-                        "foreman":
-                        {
-                            "congressman_id": "1180",
-                            "name": "Þórunn Egilsdóttir",
-                            "birth": "1964-11-23",
-                            "death": null
-                        },
-                        "time": "00:05:34"
+                        "name": "Fjárlög 2016",
+                        "sub_name": null,
+                        "type": "l",
+                        "type_name": "Frumvarp til laga",
+                        "type_subname": "Lagafrumvarp",
+                        "status": "Samþykkt sem lög frá Alþingi.",
+                        "question": null,
+                        "date": "2015-09-08 13:01:00",
+                        "proponents": [
+                            {
+                                "congressman_id": 652,
+                                "name": "Bjarni Benediktsson",
+                                "birth": "1970-01-26",
+                                "death": null,
+                                "party": null
+                            }
+                        ],
+                        "documents": [
+                            {
+                                "document_id": 1,
+                                "issue_id": 1,
+                                "assembly_id": 145,
+                                "date": "2015-09-08 13:01:00",
+                                "url": "http://www.althingi.is/altext/145/s/0001.html",
+                                "type": "stjórnarfrumvarp",
+                                "votes": [
+                                    {
+                                        "vote_id": 51981,
+                                        "issue_id": 1,
+                                        "assembly_id": 145,
+                                        "document_id": 1,
+                                        "date": "2015-09-11 20:34:39",
+                                        "type": "Frv. gengur til 2. umr.",
+                                        "outcome": null,
+                                        "method": "yfirlýsing forseta/mál gengur",
+                                        "yes": 0,
+                                        "no": 0,
+                                        "inaction": 0
+                                    },
+                                ...
+                                ]
+                            },
+                        ...
+                        ]
                     }
                 </output>
             </response>
@@ -234,7 +312,145 @@
                     <param value="int" name="type">málstegund</param>
                     <param value="string" name="type_name">heiti - Frumvarp til laga</param>
                     <param value="string" name="type_subname">heiti2 - lagafrumvarp</param>
-                    <param value="int" name="congressman_id">Issue foreman (optional)</param>
+                </input>
+            </request>
+        </method>
+    </resource>
+
+    <resource>
+        <path>/loggjafarthing/:id/thingmal/:issue_id/thingskjal/:document_id</path>
+        <param name="id" value="int">Number of assembly</param>
+        <param name="issue_id" value="int">Number of issue</param>
+        <param name="document_id" value="int">Number of document</param>
+        <method verb="PUT">
+            <description>Create/Put new document</description>
+            <request>
+                <input>
+                    <param name="type" value="string">Type of document</param>
+                    <param name="date" value="date">When document was submitted</param>
+                    <param name="url" value="string">URL to original document</param>
+                </input>
+            </request>
+        </method>
+    </resource>
+
+    <resource>
+        <path>/loggjafarthing/:id/thingmal/:issue_id/thingskjal/:document_id/flutningsmenn/:congressman_id</path>
+        <param name="id" value="int">Number of assembly</param>
+        <param name="issue_id" value="int">Number of issue</param>
+        <param name="document_id" value="int">Number of document</param>
+        <param name="congressman_id" value="int">Number of congressman</param>
+        <method verb="PUT">
+            <description>Connect document to congressman</description>
+            <request>
+                <input>
+                    <param name="order" value="int">Order og which, congressman is connected</param>
+                </input>
+            </request>
+        </method>
+    </resource>
+
+    <resource>
+        <path>/loggjafarthing/:id/thingmal/:issue_id/atkvaedagreidslur</path>
+        <param name="id" value="int">Number of assembly</param>
+        <param name="issue_id" value="int">Number of issue</param>
+        <method verb="GET">
+            <description>Get all votes per issue</description>
+            <response>
+                <output>
+                    [
+                        {
+                            "vote_id": "51981",
+                            "issue_id": "1",
+                            "assembly_id": "145",
+                            "document_id": "1",
+                            "date": "2015-09-11 20:34:39",
+                            "type": "Frv. gengur til 2. umr.",
+                            "outcome": null,
+                            "method": "yfirlýsing forseta/mál gengur",
+                            "yes": "0",
+                            "no": "0",
+                            "inaction": "0"
+                        },
+                        { ... }
+                    ]
+                </output>
+            </response>
+        </method>
+        <method verb="OPTIONS">
+            <description>Get available options</description>
+        </method>
+    </resource>
+
+    <resource>
+        <path>/loggjafarthing/:id/thingmal/:issue_id/atkvaedagreidslur/:vote_id</path>
+        <param name="id" value="int">Number of assembly</param>
+        <param name="issue_id" value="int">Number of issue</param>
+        <param name="vote_id" value="int">Number of vote</param>
+        <method verb="GET">
+            <description>Get on vote</description>
+            <response>
+                <output>
+                    {
+                        "vote_id": "51992",
+                        "issue_id": "6",
+                        "assembly_id": "145",
+                        "document_id": "6",
+                        "date": "2015-09-14 19:02:20",
+                        "type": "Till. gengur til síðari umr.",
+                        "outcome": null,
+                        "method": "yfirlýsing forseta/mál gengur",
+                        "yes": "0",
+                        "no": "0",
+                        "inaction": "0"
+                    }
+                </output>
+            </response>
+        </method>
+        <method verb="PUT">
+            <description>Create new vote</description>
+            <request>
+                <input>
+                    <param value="date" name="date">Date of vote</param>
+                    <param value="string" name="type">Type of vote</param>
+                    <param value="string" name="outcome">The outcome</param>
+                    <param value="string" name="method">Method used</param>
+                    <param value="int" name="yes">Number of yes</param>
+                    <param value="int" name="no">Number of no</param>
+                    <param value="int" name="inaction">Number of non yes/ non no votes</param>
+                </input>
+            </request>
+        </method>
+        <method verb="PATCH">
+            <description>Update vote</description>
+            <request>
+                <input>
+                    <param value="date" name="date">Date of vote</param>
+                    <param value="string" name="type">Type of vote</param>
+                    <param value="string" name="outcome">The outcome</param>
+                    <param value="string" name="method">Method used</param>
+                    <param value="int" name="yes">Number of yes</param>
+                    <param value="int" name="no">Number of no</param>
+                    <param value="int" name="inaction">Number of non yes/ non no votes</param>
+                </input>
+            </request>
+        </method>
+        <method verb="OPTIONS">
+            <description>Get available options</description>
+        </method>
+    </resource>
+
+    <resource>
+        <path>/loggjafarthing/:id/thingmal/:issue_id/atkvaedagreidslur/:vote_id/atkvaedi</path>
+        <param name="id" value="int">Number of assembly</param>
+        <param name="issue_id" value="int">Number of issue</param>
+        <param name="vote_id" value="int">Number of vote</param>
+        <method verb="POST">
+            <description>Create new vote item, one for each congressman</description>
+            <request>
+                <input>
+                    <param value="int" name="congressman_id">ID of congressman</param>
+                    <param value="string" name="vote">Vote</param>
                 </input>
             </request>
         </method>
@@ -490,6 +706,67 @@
                     <param name="name" value="string">Name of party</param>
                     <param name="abbr_short" value="string">Party's short abbreviation</param>
                     <param name="abbr_long" value="string">Party's long abbreviation</param>
+                </input>
+            </request>
+        </method>
+    </resource>
+
+    <resource>
+        <path>/nefndir</path>
+        <method verb="GET">
+            <description>Get all committees</description>
+            <response>
+                <output>
+                    [
+                        {
+                            committee_id: 201,
+                            name: "allsherjar- og menntamálanefnd",
+                            first_assembly_id: 140,
+                            last_assembly_id: null,
+                            abbr_long: "allsh.- og menntmn.",
+                            abbr_short: "am"
+                        },{
+                            committee_id: 151,
+                            name: "allsherjarnefnd",
+                            first_assembly_id: 27,
+                            last_assembly_id: 139,
+                            abbr_long: "allshn.",
+                            abbr_short: "a"
+                        }
+                        ...
+                    ]
+                </output>
+            </response>
+        </method>
+    </resource>
+
+    <resource>
+        <path>/nefndir/:committee_id</path>
+        <param name="committee_id" value="int">ID of committee</param>
+        <method verb="GET">
+            <description>Get one committee</description>
+            <response>
+                <output>
+                    {
+                        committee_id: 78,
+                        name: "heilbrigðis- og trygginganefnd",
+                        first_assembly_id: 93,
+                        last_assembly_id: 134,
+                        abbr_long: "heilbr.- og trn.",
+                        abbr_short: "ht"
+                    }
+                </output>
+            </response>
+        </method>
+        <method verb="PUT">
+            <description>Create one committee</description>
+            <request>
+                <input>
+                    <param name="name" value="string">Name of the committee</param>
+                    <param name="first_assembly_id" value="int">Reference to the first assembly</param>
+                    <param name="last_assembly_id" value="int">Reference to the last assembly</param>
+                    <param name="abbr_short" value="string">Short abbreviation</param>
+                    <param name="abbr_long" value="string">Long abbreviation</param>
                 </input>
             </request>
         </method>

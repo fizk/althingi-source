@@ -14,11 +14,71 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
 {
     public function setUp()
     {
-
         $this->setApplicationConfig(
             include __DIR__ .'/../application.config.php'
         );
         parent::setUp();
+    }
+
+    public function testGetSuccess()
+    {
+        $assemblyServiceMock = \Mockery::mock('\Althingi\Service\Assembly')
+            ->shouldReceive('get')
+            ->andReturn(new \stdClass())
+            ->getMock();
+
+        $issueServiceMock = \Mockery::mock('\Althingi\Service\Issue')
+            ->shouldReceive('fetchStateByAssembly')
+            ->andReturn(new \stdClass())
+            ->getMock();
+
+
+        $serviceManager = $this->getApplicationServiceLocator();
+        $serviceManager->setAllowOverride(true);
+        $serviceManager->setService('Althingi\Service\Assembly', $assemblyServiceMock);
+        $serviceManager->setService('Althingi\Service\Issue', $issueServiceMock);
+
+        $this->dispatch('/api/loggjafarthing/144', 'GET');
+        $this->assertResponseStatusCode(200);
+    }
+
+    public function testGetNotFound()
+    {
+        $assemblyServiceMock = \Mockery::mock('\Althingi\Service\Assembly')
+            ->shouldReceive('get')
+            ->andReturn(null)
+            ->getMock();
+
+        $issueServiceMock = \Mockery::mock('\Althingi\Service\Issue')
+            ->shouldReceive('fetchStateByAssembly')
+            ->andReturn(new \stdClass())
+            ->getMock();
+
+        $serviceManager = $this->getApplicationServiceLocator();
+        $serviceManager->setAllowOverride(true);
+        $serviceManager->setService('Althingi\Service\Assembly', $assemblyServiceMock);
+        $serviceManager->setService('Althingi\Service\Issue', $issueServiceMock);
+
+        $this->dispatch('/api/loggjafarthing/144', 'GET');
+        $this->assertResponseStatusCode(404);
+    }
+
+    public function testGetListSuccess()
+    {
+        $assemblyServiceMock = \Mockery::mock('\Althingi\Service\Assembly')
+            ->shouldReceive('fetchAll')
+            ->andReturn([])
+            ->shouldReceive('count')
+            ->andReturn(0)
+            ->getMock();
+
+        $serviceManager = $this->getApplicationServiceLocator();
+        $serviceManager->setAllowOverride(true);
+        $serviceManager->setService('Althingi\Service\Assembly', $assemblyServiceMock);
+
+        $this->dispatch('/api/loggjafarthing', 'GET');
+        $this->assertResponseStatusCode(206);
+
     }
 
     public function testPutListNotImplemented()
@@ -68,7 +128,7 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
      * @expectedException \PDOException
      * @todo fixme
      */
-    public function xtestPutResourceExits()
+    public function XtestPutResourceExits()
     {
         $serviceMock = \Mockery::mock('\Althingi\Service\Assembly')
             ->shouldReceive('create')
@@ -83,21 +143,6 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
             'from' => '2001-01-01',
         ]);
         $this->assertResponseStatusCode(409);
-    }
-
-    public function testGet()
-    {
-        $serviceMock = \Mockery::mock('\Althingi\Service\Assembly')
-            ->shouldReceive('get')
-            ->andReturn(new \stdClass())
-            ->getMock();
-
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('Althingi\Service\Assembly', $serviceMock);
-
-        $this->dispatch('/api/loggjafarthing/144', 'GET');
-        $this->assertResponseStatusCode(200);
     }
 
     public function testDeleteSuccess()
@@ -133,21 +178,6 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(404);
     }
 
-    public function testGetNotFound()
-    {
-        $serviceMock = \Mockery::mock('\Althingi\Service\Assembly')
-            ->shouldReceive('get')
-            ->andReturn(null)
-            ->getMock();
-
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('Althingi\Service\Assembly', $serviceMock);
-
-        $this->dispatch('/api/loggjafarthing/144', 'GET');
-        $this->assertResponseStatusCode(404);
-    }
-
     public function testOptions()
     {
         $this->dispatch('/api/loggjafarthing/144', 'OPTIONS');
@@ -160,7 +190,6 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
 
         $this->assertCount(0, array_diff($expectedMethods, $actualMethods));
     }
-
 
     public function testOptionsList()
     {

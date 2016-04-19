@@ -14,10 +14,27 @@ use Rend\View\Model\ErrorModel;
 use Rend\View\Model\EmptyModel;
 use Rend\View\Model\CollectionModel;
 use Rend\Helper\Http\Range;
+use Rend\View\Model\ItemModel;
 
 class PlenaryController extends AbstractRestfulController
 {
     use Range;
+
+    public function get($id)
+    {
+        $assemblyId = $this->params('id');
+        $plenaryId = $this->params('plenary_id');
+
+        /** @var $plenaryService \Althingi\Service\Plenary */
+        $sm = $this->getServiceLocator();
+        $plenaryService = $sm->get('Althingi\Service\Plenary');
+
+        if ($plenary = $plenaryService->get($assemblyId, $plenaryId)) {
+            return new ItemModel($plenary);
+        }
+
+        return $this->notFoundAction();
+    }
 
     public function getList()
     {
@@ -58,5 +75,32 @@ class PlenaryController extends AbstractRestfulController
         }
 
         return (new ErrorModel($form))->setStatus(400);
+    }
+
+    public function patch($id, $data)
+    {
+        $assemblyId = $this->params('id');
+        $plenaryId = $this->params('plenary_id');
+
+        /** @var $plenaryService \Althingi\Service\Plenary */
+        $sm = $this->getServiceLocator();
+        $plenaryService = $sm->get('Althingi\Service\Plenary');
+
+        if (($assembly = $plenaryService->get($assemblyId, $plenaryId)) != null) {
+            $form = new Plenary();
+            $form->bind($assembly);
+            $form->setData($data);
+
+            if ($form->isValid()) {
+                $plenaryService->update($form->getData());
+                return (new EmptyModel())
+                    ->setStatus(204);
+            }
+
+            return (new ErrorModel($form))
+                ->setStatus(400);
+        }
+
+        return $this->notFoundAction();
     }
 }

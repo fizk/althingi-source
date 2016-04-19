@@ -34,4 +34,35 @@ class PartyController extends AbstractRestfulController
 
         return (new ErrorModel($form))->setStatus(400);
     }
+
+    /**
+     * Update one Party
+     *
+     * @param int $id
+     * @param array $data
+     * @return \Rend\View\Model\ErrorModel|\Rend\View\Model\EmptyModel
+     */
+    public function patch($id, $data)
+    {
+        /** @var  $partyService \Althingi\Service\Party */
+        $partyService = $this->getServiceLocator()
+            ->get('Althingi\Service\Party');
+
+        if (($party = $partyService->get($id)) != null) {
+            $form = new Party();
+            $form->bind($party);
+            $form->setData($data);
+
+            if ($form->isValid()) {
+                $partyService->update($form->getData());
+                return (new EmptyModel())
+                    ->setStatus(204);
+            }
+
+            return (new ErrorModel($form))
+                ->setStatus(400);
+        }
+
+        return $this->notFoundAction();
+    }
 }

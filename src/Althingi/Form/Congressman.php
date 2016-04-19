@@ -34,8 +34,10 @@ class Congressman extends Form implements InputFilterProviderInterface
             'type' => 'Zend\Form\Element\Date',
         ));
 
-
-
+        $this->add(array(
+            'name' => 'death',
+            'type' => 'Zend\Form\Element\Date',
+        ));
     }
 
 
@@ -49,12 +51,22 @@ class Congressman extends Form implements InputFilterProviderInterface
     {
         return [
             'congressman_id' => [
-                'required' => false,
-                'allow_empty' => true,
+                'required' => true,
+                'allow_empty' => false,
             ],
             'birth' => [
                 'required' => true,
                 'allow_empty' => false,
+            ],
+            'death' => [
+                'required' => false,
+                'allow_empty' => true,
+                'filters' => [
+                    [
+                        'name' => '\Zend\Filter\ToNull',
+                        'options' => ['type' => 'all']
+                    ]
+                ],
             ],
             'name' => [
                 'required' => true,

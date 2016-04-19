@@ -36,16 +36,19 @@ class Plenary extends Form implements InputFilterProviderInterface
 
         $this->add(array(
             'name' => 'from',
-            //'type' => 'Zend\Form\Element\DateTime',
-            'type' => 'Zend\Form\Element\Text',  //TODO
+            'type' => 'Zend\Form\Element\DateTime',
+            'options' => [
+                'format' => 'Y-m-d H:i'
+            ],
         ));
 
         $this->add(array(
             'name' => 'to',
-            //'type' => 'Zend\Form\Element\DateTime',
-            'type' => 'Zend\Form\Element\Text', //TODO
+            'type' => 'Zend\Form\Element\DateTime',
+            'options' => [
+                'format' => 'Y-m-d H:i'
+            ],
         ));
-
     }
 
 

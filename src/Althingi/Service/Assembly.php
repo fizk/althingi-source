@@ -19,6 +19,8 @@ class Assembly implements DatabaseAwareInterface
 {
     use DatabaseService;
 
+    const ALLOWED_TYPES = ['a', 'b', 'l', 'm', 'q', 's'];
+
     /**
      * @var \PDO
      */
@@ -36,7 +38,9 @@ class Assembly implements DatabaseAwareInterface
             select * from `Assembly` where assembly_id = :id
         ");
         $statement->execute(['id' => $id]);
-        return $this->expandedDecorate($statement->fetchObject());
+
+        $assembly = $statement->fetchObject();
+        return $this->decorate($assembly);
     }
 
     /**
@@ -47,13 +51,16 @@ class Assembly implements DatabaseAwareInterface
      * @param string $order
      * @return array
      */
-    public function fetchAll($offset, $size, $order = 'desc')
+    public function fetchAll($offset = null, $size = null, $order = 'desc')
     {
         $order = in_array($order, ['asc', 'desc']) ? $order : 'desc';
-        $statement = $this->getDriver()->prepare("
-            select * from `Assembly` A order by A.`from` {$order}
-            limit {$offset}, {$size}
-        ");
+
+        $query = "select * from `Assembly` A order by A.`from` {$order}";
+        $limitQuery = "select * from `Assembly` A order by A.`from` {$order} limit {$offset}, {$size}";
+
+        $statement = $this->getDriver()->prepare(
+            ($offset && $size) ? $limitQuery : $query
+        );
         $statement->execute();
         return array_map([$this, 'decorate'], $statement->fetchAll());
     }
@@ -121,6 +128,23 @@ class Assembly implements DatabaseAwareInterface
     }
 
     /**
+     * Decorate and convert one Assembly result object.
+     *
+     * @param $object
+     * @return null|object
+     */
+    private function decorate($object)
+    {
+        if (!$object) {
+            return null;
+        }
+
+        $object->assembly_id = (int) $object->assembly_id;
+
+        return $object;
+    }
+
+    /**
      * @param \PDO $pdo
      */
     public function setDriver(PDO $pdo)
@@ -134,59 +158,5 @@ class Assembly implements DatabaseAwareInterface
     public function getDriver()
     {
         return $this->pdo;
-    }
-
-    /**
-     * Decorate and convert one Assembly result object.
-     *
-     * @param $object
-     * @return null|object
-     */
-    private function decorate($object)
-    {
-        if (!$object) {
-            return null;
-        }
-
-        $object->assembly_id = (int) $object->assembly_id;
-        return $object;
-    }
-
-    private function expandedDecorate($object)
-    {
-        if (!$object) {
-            return null;
-        }
-
-        $issueStatusStatement = $this->getDriver()->prepare("
-            select count(*) as `total`, I.`status`
-            from `Issue` I
-            where I.assembly_id = :id and (
-              I.`status` != 'Álit' or I.`status` != 'Beiðni um skýrslu' or I.`status` != 'Fyrirspurn'
-            )
-            group by I.`status`;
-        ");
-        $issueStatusStatement->execute(['id' => $object->assembly_id]);
-        $object->issues = $issueStatusStatement->fetchAll();
-
-        $congressmanStatement = $this->getDriver()->prepare("
-            select C.congressman_id, C.name from `Session` S
-            join `Congressman` C on (S.congressman_id = C.congressman_id)
-            where S.assembly_id = :id
-            group by S.congressman_id
-            order by C.name;
-        ");
-        $congressmanStatement->execute(['id' => $object->assembly_id]);
-        $object->congressmen = $congressmanStatement->fetchAll();
-
-        $timeStatement = $this->getDriver()->prepare("
-          select sec_to_time(sum((S.`to` - S.`from`))) as `total`
-          from `Speech` S
-          where S.assembly_id = :id;
-        ");
-        $timeStatement->execute(['id' => $object->assembly_id]);
-        $object->time = $timeStatement->fetchColumn(0);
-
-        return $this->decorate($object);
     }
 }

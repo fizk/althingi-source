@@ -8,7 +8,11 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Form\Assembly;
+use Althingi\Form\Assembly as AssemblyForm;
+use Althingi\Lib\ServiceAssemblyAwareInterface;
+use Althingi\Lib\ServiceIssueAwareInterface;
+use Althingi\Service\Assembly;
+use Althingi\Service\Issue;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ErrorModel;
 use Rend\View\Model\EmptyModel;
@@ -16,56 +20,62 @@ use Rend\View\Model\ItemModel;
 use Rend\View\Model\CollectionModel;
 use Rend\Helper\Http\Range;
 
-class AssemblyController extends AbstractRestfulController
+class AssemblyController extends AbstractRestfulController implements
+    ServiceAssemblyAwareInterface,
+    ServiceIssueAwareInterface
 {
     use Range;
+
+    /** @var $assemblyService \Althingi\Service\Assembly */
+    private $assemblyService;
+
+    /** @var $issueService \Althingi\Service\Issue */
+    private $issueService;
 
     /**
      * Get one Assembly.
      *
      * @param int $id
-     * @return \Althingi\View\Model\ErrorModel|\Althingi\View\Model\ItemModel
+     * @return \Rend\View\Model\ModelInterface
      */
     public function get($id)
     {
-        /** @var  $assemblyService \Althingi\Service\Assembly */
-        $assemblyService = $this->getServiceLocator()
-            ->get('Althingi\Service\Assembly');
+        $typeQuery = $this->params()->fromQuery('type', null);
+        $types = $typeQuery ? str_split($typeQuery) : [];
+        $assembly = $this->assemblyService->get($id);
 
-        if (($resource = $assemblyService->get($id))) {
-            return (new ItemModel($resource))
-                ->setOption('Access-Control-Allow-Origin', '*');
+        if (!$assembly) {
+            return $this->notFoundAction();
         }
 
-        return $this->notFoundAction();
+        $assembly->status = $this->issueService->fetchStateByAssembly($id, $types);
+
+        return (new ItemModel($assembly))
+            ->setOption('Access-Control-Allow-Origin', '*');
     }
 
     /**
      * Return list of Assemblies.
      *
-     * @return \Althingi\View\Model\CollectionModel
+     * @return \Rend\View\Model\ModelInterface
      */
     public function getList()
     {
-        /** @var  $assemblyService \Althingi\Service\Assembly */
-        $assemblyService = $this->getServiceLocator()
-            ->get('Althingi\Service\Assembly');
+        $order = $this->params()->fromQuery('order', 'desc');
 
-        $order = $this->request->getQuery('order', 'desc');
-
-        $count = $assemblyService->count();
+        $count = $this->assemblyService->count();
         $range = $this->getRange($this->getRequest(), $count);
-        $assemblies = $assemblyService->fetchAll(
-            $range['from'],
-            ($range['to'] - $range['from']),
-            $order
-        );
-
+//        $assemblies = $this->assemblyService->fetchAll(
+//            $range['from'],
+//            ($range['to'] - $range['from']),
+//            $order
+//        );
+        $assemblies = $this->assemblyService->fetchAll(null, null, $order);
         return (new CollectionModel($assemblies))
             ->setOption('Access-Control-Allow-Origin', '*')
             ->setOption('Access-Control-Expose-Headers', 'Range-Unit, Content-Range') //TODO should go into Rend
             ->setStatus(206)
-            ->setRange($range['from'], $range['to'], $count);
+            ->setRange(0, $count, $count);
     }
 
     /**
@@ -73,22 +83,20 @@ class AssemblyController extends AbstractRestfulController
      *
      * @param  int $id
      * @param  array $data
-     * @return \Althingi\View\Model\ItemModel
+     * @return \Rend\View\Model\ModelInterface
      */
     public function put($id, $data)
     {
-        /** @var $assemblyService \Althingi\Service\Assembly */
-        $sm = $this->getServiceLocator();
-
-        $form = new Assembly();
+        $form = new AssemblyForm();
         $form->bindValues(array_merge($data, ['assembly_id' => $id]));
 
         if ($form->isValid()) {
             $object = $form->getObject();
-            $sm->get('Althingi\Service\Assembly')
-                ->create($object);
-            return (new EmptyModel())->setStatus(201);
+            $this->assemblyService->create($object);
+            return (new EmptyModel())
+                ->setStatus(201);
         }
+
         return (new ErrorModel($form))
             ->setStatus(400);
     }
@@ -96,7 +104,7 @@ class AssemblyController extends AbstractRestfulController
     /**
      * List options for Assembly collection.
      *
-     * @return \Althingi\View\Model\EmptyModel
+     * @return \Rend\View\Model\ModelInterface
      */
     public function optionsList()
     {
@@ -109,7 +117,7 @@ class AssemblyController extends AbstractRestfulController
     /**
      * List options for Assembly entry.
      *
-     * @return \Althingi\View\Model\EmptyModel
+     * @return \Rend\View\Model\ModelInterface
      */
     public function options()
     {
@@ -124,21 +132,17 @@ class AssemblyController extends AbstractRestfulController
      *
      * @param int $id
      * @param array $data
-     * @return \Althingi\View\Model\ErrorModel|\Althingi\View\Model\EmptyModel
+     * @return \Rend\View\Model\ModelInterface
      */
     public function patch($id, $data)
     {
-        /** @var $assemblyService \Althingi\Service\Assembly */
-        $sm = $this->getServiceLocator();
-        $assemblyService = $sm->get('Althingi\Service\Assembly');
-
-        if (($assembly = $assemblyService->get($id)) != null) {
-            $form = new Assembly();
+        if (($assembly = $this->assemblyService->get($id)) != null) {
+            $form = new AssemblyForm();
             $form->bind($assembly);
             $form->setData($data);
 
             if ($form->isValid()) {
-                $assemblyService->update($form->getData());
+                $this->assemblyService->update($form->getData());
                 return (new EmptyModel())
                     ->setStatus(204);
             }
@@ -154,19 +158,31 @@ class AssemblyController extends AbstractRestfulController
      * Delete one Assembly.
      *
      * @param int $id
-     * @return \Althingi\View\Model\ErrorModel|\Althingi\View\Model\EmptyModel
+     * @return \Rend\View\Model\ModelInterface
      */
     public function delete($id)
     {
-        $sm = $this->getServiceLocator();
-        /** @var $assemblyService \Althingi\Service\Assembly */
-        $assemblyService = $sm->get('Althingi\Service\Assembly');
-
-        if (($assembly = $assemblyService->get($id)) != null) {
-            $assemblyService->delete($id);
+        if (($assembly = $this->assemblyService->get($id)) != null) {
+            $this->assemblyService->delete($id);
             return (new EmptyModel())->setStatus(200);
         }
 
         return $this->notFoundAction();
+    }
+
+    /**
+     * @param Assembly $assembly
+     */
+    public function setAssemblyService(Assembly $assembly)
+    {
+        $this->assemblyService = $assembly;
+    }
+
+    /**
+     * @param Issue $issue
+     */
+    public function setIssueService(Issue $issue)
+    {
+        $this->issueService = $issue;
     }
 }

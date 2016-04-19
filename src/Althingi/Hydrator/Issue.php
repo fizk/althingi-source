@@ -33,11 +33,6 @@ class Issue implements HydratorInterface
      */
     public function extract($object)
     {
-        if (isset($object->foreman) && $object->foreman != null) {
-            $object->congressman_id = $object->foreman->congressman_id;
-        }
-
-        unset($object->foreman);
         unset($object->time);
 
         return (array) $object;

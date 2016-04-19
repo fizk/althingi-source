@@ -22,11 +22,13 @@ class Congressman implements HydratorInterface
      */
     public function hydrate(array $data, $object)
     {
-        if (isset($data['congressman_id'])) {
-            $object->congressman_id = (int)$data['congressman_id'];
-        }
+        $object = (object) $data;
+
+        $object->congressman_id = (int) $object->congressman_id;
         $object->birth = new \DateTime($data['birth']);
-        $object->name = $data['name'];
+        $object->death = $data['death']
+            ? new \DateTime($data['death'])
+            : null;
 
         return $object;
     }
@@ -40,6 +42,6 @@ class Congressman implements HydratorInterface
      */
     public function extract($object)
     {
-        return (array)$object;
+        return (array) $object;
     }
 }

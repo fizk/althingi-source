@@ -62,10 +62,22 @@ class Party extends Form implements InputFilterProviderInterface
             'abbr_short' => [
                 'required' => false,
                 'allow_empty' => true,
+                'filters' => [
+                    [
+                        'name' => '\Zend\Filter\ToNull',
+                        'options' => ['type' => 'all']
+                    ]
+                ],
             ],
             'abbr_long' => [
                 'required' => false,
                 'allow_empty' => true,
+                'filters' => [
+                    [
+                        'name' => '\Zend\Filter\ToNull',
+                        'options' => ['type' => 'all']
+                    ]
+                ],
             ],
         ];
     }

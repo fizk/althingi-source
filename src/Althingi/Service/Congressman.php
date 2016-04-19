@@ -57,6 +57,47 @@ class Congressman implements DatabaseAwareInterface
         return array_map([$this, 'decorate'], $statement->fetchAll());
     }
 
+
+    public function fetchAccumulatedTimeByIssue($assemblyId, $issueId)
+    {
+        $statement = $this->getDriver()->prepare('
+            select S.congressman_id, C.name, (sum(`diff`)) as `time`, date(`from`) as `begin` from (
+                select *, timediff(`to`, `from`) as `diff`
+                from `Speech` D
+                where D.assembly_id = :assembly_id and D.issue_id = :issue_id
+            ) S
+            join `Congressman` C on (C.congressman_id = S.congressman_id)
+            group by S.congressman_id
+            order by `time` desc;
+        ');
+        $statement->execute([
+            'issue_id' => $issueId,
+            'assembly_id' => $assemblyId
+        ]);
+
+        return array_map(function ($congressman) {
+            $congressman->congressman_id = (int) $congressman->congressman_id;
+            $congressman->time = (int) $congressman->time;
+            return $congressman;
+        }, $statement->fetchAll());
+    }
+
+    public function fetchProponents($assemblyId, $documentId)
+    {
+        $statement = $this->getDriver()->prepare(
+            'select C.* from `Document_has_Congressman` D
+            join `Congressman` C on (C.congressman_id = D.congressman_id)
+            where assembly_id = :assembly_id and document_id = :document_id
+            order by D.`order` asc;'
+        );
+        $statement->execute([
+            'assembly_id' => $assemblyId,
+            'document_id' => $documentId
+        ]);
+
+        return array_map([$this, 'decorate'], $statement->fetchAll());
+    }
+
     /**
      * Create one Congressman. This method accepts object
      * from corresponding Form.
@@ -145,28 +186,8 @@ class Congressman implements DatabaseAwareInterface
             return null;
         }
 
-        //ASSEMBLIES
-        //  get congressman's assembly
-        $assembliesStatement = $this->getDriver()->prepare("
-            select S.assembly_id, S.from, S.to from `Session` S
-            where congressman_id = :congressman_id group by assembly_id
-            order by S.assembly_id desc;
-        ");
-        $assembliesStatement->execute(['congressman_id' => $object->congressman_id]);
-        $object->assemblies = $assembliesStatement->fetchAll();
-
-        //PARTY
-        //  get congressman's party
-        $partyStatement = $this->getDriver()->prepare("
-            select P.* from `Session` S
-            join `Party` P on (S.party_id = P.party_id)
-            where S.congressman_id = :congressman_id
-            group by party_id;
-        ");
-        $partyStatement->execute(['congressman_id' => $object->congressman_id]);
-        $object->parties = $partyStatement->fetchAll();
-
         $object->congressman_id = (int) $object->congressman_id;
+
         return $object;
     }
 }

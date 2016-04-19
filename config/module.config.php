@@ -16,119 +16,142 @@ return array(
                     'route'    => '/',
                     'defaults' => [
                         'controller' => 'Althingi\Controller\Index',
-                        'action'     => 'index',
-                    ],
-                ],
-                'may_terminate' => true,
-                'child_routes' => [
-                    'docs' => [
-                        'type' => 'Zend\Mvc\Router\Http\Literal',
-                        'options' => [
-                            'route'    => 'docs',
-                            'defaults' => [
-                                'controller' => 'Althingi\Controller\Index',
-                                'action'     => 'docs',
-                            ],
-                        ],
-                    ],
-                    'client-router' => [
-                        'type' => 'Zend\Mvc\Router\Http\Regex',
-                        'options' => [
-                            'regex'    => '(?<category>(thingmenn|loggjafarthing))(.*)',
-                            'spec' => '%category%',
-                            'defaults' => [
-                                'controller' => 'Althingi\Controller\Index',
-                                'action'     => 'index',
-                            ],
-                        ],
+                        'action' => 'index'
                     ],
                 ],
             ],
-            'home' => [
-                'type' => 'Zend\Mvc\Router\Http\Literal',
+            'loggjafarthing' => [
+                'type' => 'Zend\Mvc\Router\Http\Segment',
                 'options' => [
-                    'route'    => '/api',
+                    'route'    => '/loggjafarthing[/:id]',
                     'defaults' => [
-                        'controller' => 'Althingi\Controller\Index',
+                        'controller' => 'Althingi\Controller\Assembly',
                     ],
                 ],
                 'may_terminate' => true,
                 'child_routes' => [
-                    'loggjafarthing' => [
+                    'thingfundir' => [
                         'type' => 'Zend\Mvc\Router\Http\Segment',
                         'options' => [
-                            'route'    => '/loggjafarthing[/:id]',
+                            'route'    => '/thingfundir[/:plenary_id]',
                             'defaults' => [
-                                'controller' => 'Althingi\Controller\Assembly',
+                                'controller' => 'Althingi\Controller\Plenary',
+                                'identifier' => 'plenary_id'
+                            ],
+                        ],
+                    ],
+                    'thingmal' => [
+                        'type' => 'Zend\Mvc\Router\Http\Segment',
+                        'options' => [
+                            'route'    => '/thingmal[/:issue_id]',
+                            'defaults' => [
+                                'controller' => 'Althingi\Controller\Issue',
+                                'identifier' => 'issue_id'
                             ],
                         ],
                         'may_terminate' => true,
                         'child_routes' => [
-                            'thingfundir' => [
+                            'thingraedur' => [
                                 'type' => 'Zend\Mvc\Router\Http\Segment',
                                 'options' => [
-                                    'route'    => '/thingfundir[/:plenary_id]',
+                                    'route'    => '/raedur[/:speech_id]',
                                     'defaults' => [
-                                        'controller' => 'Althingi\Controller\Plenary',
-                                        'identifier' => 'plenary_id'
+                                        'controller' => 'Althingi\Controller\Speech',
+                                        'identifier' => 'speech_id'
                                     ],
                                 ],
                             ],
-                            'thingmal' => [
+
+                            'thingskjal' => [
                                 'type' => 'Zend\Mvc\Router\Http\Segment',
                                 'options' => [
-                                    'route'    => '/thingmal[/:issue_id]',
+                                    'route'    => '/thingskjal[/:document_id]',
                                     'defaults' => [
-                                        'controller' => 'Althingi\Controller\Issue',
-                                        'identifier' => 'issue_id'
+                                        'controller' => 'Althingi\Controller\Document',
+                                        'identifier' => 'document_id'
                                     ],
                                 ],
                                 'may_terminate' => true,
                                 'child_routes' => [
-                                    'thingraedur' => [
+                                    'flutningsmenn' => [
                                         'type' => 'Zend\Mvc\Router\Http\Segment',
                                         'options' => [
-                                            'route'    => '/raedur[/:speech_id]',
+                                            'route'    => '/flutningsmenn[/:congressman_id]',
                                             'defaults' => [
-                                                'controller' => 'Althingi\Controller\Speech',
-                                                'identifier' => 'speech_id'
+                                                'controller' => 'Althingi\Controller\Proponent',
+                                                'identifier' => 'congressman_id'
                                             ],
                                         ],
                                     ],
-                                ]
+                                ],
                             ],
-                        ],
-                    ],
-                    'thingmenn' => [
-                        'type' => 'Zend\Mvc\Router\Http\Segment',
-                        'options' => [
-                            'route'    => '/thingmenn[/:congressman_id]',
-                            'defaults' => [
-                                'controller' => 'Althingi\Controller\Congressman',
-                                'identifier' => 'congressman_id'
-                            ],
-                        ],
-                        'may_terminate' => true,
-                        'child_routes' => [
-                            'thingmal' => [
+                            'atkvaedagreidslur' => [
                                 'type' => 'Zend\Mvc\Router\Http\Segment',
                                 'options' => [
-                                    'route'    => '/thingmal',
+                                    'route'    => '/atkvaedagreidslur[/:vote_id]',
                                     'defaults' => [
-                                        'controller' => 'Althingi\Controller\CongressmanIssue',
-                                    ],
-                                ]
-                            ],
-                            'thingseta' => [
-                                'type' => 'Zend\Mvc\Router\Http\Segment',
-                                'options' => [
-                                    'route'    => '/thingseta[/:session_id]',
-                                    'defaults' => [
-                                        'controller' => 'Althingi\Controller\Session',
-                                        'identifier' => 'session_id'
+                                        'controller' => 'Althingi\Controller\Vote',
+                                        'identifier' => 'vote_id'
                                     ],
                                 ],
                                 'may_terminate' => true,
+                                'child_routes' => [
+                                    'atkvaedagreidsla' => [
+                                        'type' => 'Zend\Mvc\Router\Http\Segment',
+                                        'options' => [
+                                            'route'    => '/atkvaedi[/:vote_item_id]',
+                                            'defaults' => [
+                                                'controller' => 'Althingi\Controller\VoteItem',
+                                                'identifier' => 'vote_item_id'
+                                            ],
+                                        ],
+                                    ]
+                                ]
+                            ],
+                        ]
+                    ],
+                ],
+            ],
+            'nefndir' => [
+                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'options' => [
+                    'route'    => '/nefndir[/:committee_id]',
+                    'defaults' => [
+                        'controller' => 'Althingi\Controller\Committee',
+                        'identifier' => 'committee_id'
+                    ],
+                ],
+            ],
+            'thingmenn' => [
+                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'options' => [
+                    'route'    => '/thingmenn[/:congressman_id]',
+                    'defaults' => [
+                        'controller' => 'Althingi\Controller\Congressman',
+                        'identifier' => 'congressman_id'
+                    ],
+                ],
+                'may_terminate' => true,
+                'child_routes' => [
+                    'thingmal' => [
+                        'type' => 'Zend\Mvc\Router\Http\Segment',
+                        'options' => [
+                            'route'    => '/thingmal',
+                            'defaults' => [
+                                'controller' => 'Althingi\Controller\CongressmanIssue',
+                            ],
+                        ]
+                    ],
+                    'thingseta' => [
+                        'type' => 'Zend\Mvc\Router\Http\Segment',
+                        'options' => [
+                            'route'    => '/thingseta[/:session_id]',
+                            'defaults' => [
+                                'controller' => 'Althingi\Controller\Session',
+                                'identifier' => 'session_id'
+                            ],
+                        ],
+                        'may_terminate' => true,
 //                                'child_routes' => [
 //                                    'fundur' => [
 //                                        'type' => 'Zend\Mvc\Router\Http\Segment',
@@ -140,32 +163,28 @@ return array(
 //                                        ],
 //                                    ],
 //                                ]
-                            ],
-                        ],
                     ],
-
-                    'thingflokkar' => [
-                        'type' => 'Zend\Mvc\Router\Http\Segment',
-                        'options' => [
-                            'route'    => '/thingflokkar[/:id]',
-                            'defaults' => [
-                                'controller' => 'Althingi\Controller\Party',
-                            ],
-                        ],
-                    ],
-                    'kjordaemi' => [
-                        'type' => 'Zend\Mvc\Router\Http\Segment',
-                        'options' => [
-                            'route'    => '/kjordaemi[/:id]',
-                            'defaults' => [
-                                'controller' => 'Althingi\Controller\Constituency',
-                            ],
-                        ],
-                    ],
-                ]
+                ],
             ],
-
-        ],
+            'thingflokkar' => [
+                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'options' => [
+                    'route'    => '/thingflokkar[/:id]',
+                    'defaults' => [
+                        'controller' => 'Althingi\Controller\Party',
+                    ],
+                ],
+            ],
+            'kjordaemi' => [
+                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'options' => [
+                    'route'    => '/kjordaemi[/:id]',
+                    'defaults' => [
+                        'controller' => 'Althingi\Controller\Constituency',
+                    ],
+                ],
+            ],
+        ]
     ],
 
     'service_manager' => [
@@ -200,10 +219,12 @@ return array(
             'Althingi\Controller\Plenary' => 'Althingi\Controller\PlenaryController',
             'Althingi\Controller\Issue' => 'Althingi\Controller\IssueController',
             'Althingi\Controller\Speech' => 'Althingi\Controller\SpeechController',
+            'Althingi\Controller\Vote' => 'Althingi\Controller\VoteController',
+            'Althingi\Controller\VoteItem' => 'Althingi\Controller\VoteItemController',
             'Althingi\Controller\CongressmanIssue' => 'Althingi\Controller\CongressmanIssueController',
-
-            'Althingi\Controller\Console' => 'Althingi\Controller\Console\ConsoleController',
-            'Althingi\Controller\ConsoleCongressman' => 'Althingi\Controller\Console\ConsoleCongressmanController',
+            'Althingi\Controller\Proponent' => 'Althingi\Controller\ProponentController',
+            'Althingi\Controller\Document' => 'Althingi\Controller\DocumentController',
+            'Althingi\Controller\Committee' => 'Althingi\Controller\CommitteeController',
         ],
     ],
     'view_manager' => [
@@ -228,71 +249,7 @@ return array(
     // Placeholder for console routes
     'console' => [
         'router' => [
-            'routes' => [
-                'load-assembly' => [
-                    'options' => [
-                        'route'    => 'load:assembly',
-                        'defaults' => [
-                            'controller' => 'Althingi\Controller\Console',
-                            'action'     => 'find-assembly'
-                        ]
-                    ]
-                ],
-                'current-assembly' => [
-                    'options' => [
-                        'route'    => 'load:assembly:current',
-                        'defaults' => [
-                            'controller' => 'Althingi\Controller\Console',
-                            'action'     => 'current-assembly'
-                        ]
-                    ]
-                ],
-                'congressman' => [
-                    'options' => [
-                        'route'    => 'load:congressman [--assembly=|-a]',
-                        'defaults' => [
-                            'controller' => 'Althingi\Controller\ConsoleCongressman',
-                            'action'     => 'find-congressman'
-                        ]
-                    ]
-                ],
-                'party' => [
-                    'options' => [
-                        'route'    => 'load:party',
-                        'defaults' => [
-                            'controller' => 'Althingi\Controller\Console',
-                            'action'     => 'find-party'
-                        ]
-                    ]
-                ],
-                'constituency' => [
-                    'options' => [
-                        'route'    => 'load:constituency',
-                        'defaults' => [
-                            'controller' => 'Althingi\Controller\Console',
-                            'action'     => 'find-constituency'
-                        ]
-                    ]
-                ],
-                'plenary' => [
-                    'options' => [
-                        'route'    => 'load:plenary [--assembly=|-a]',
-                        'defaults' => [
-                            'controller' => 'Althingi\Controller\Console',
-                            'action'     => 'find-plenary'
-                        ]
-                    ]
-                ],
-                'issue' => [
-                    'options' => [
-                        'route'    => 'load:issue [--assembly=|-a]',
-                        'defaults' => [
-                            'controller' => 'Althingi\Controller\Console',
-                            'action'     => 'find-issue'
-                        ]
-                    ]
-                ],
-            ],
+            'routes' => [],
         ],
     ],
 );

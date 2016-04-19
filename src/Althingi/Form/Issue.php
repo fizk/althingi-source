@@ -28,7 +28,6 @@ class Issue extends Form implements InputFilterProviderInterface
             'name' => 'assembly_id',
             'type' => 'Zend\Form\Element\Number',
         ));
-
         $this->add(array(
             'name' => 'congressman_id',
             'type' => 'Zend\Form\Element\Number',
@@ -36,6 +35,10 @@ class Issue extends Form implements InputFilterProviderInterface
 
         $this->add(array(
             'name' => 'name',
+            'type' => 'Zend\Form\Element\Text',
+        ));
+        $this->add(array(
+            'name' => 'sub_name',
             'type' => 'Zend\Form\Element\Text',
         ));
 
@@ -63,6 +66,10 @@ class Issue extends Form implements InputFilterProviderInterface
             'name' => 'status',
             'type' => 'Zend\Form\Element\Text',
         ));
+        $this->add(array(
+            'name' => 'question',
+            'type' => 'Zend\Form\Element\Text',
+        ));
 
 
     }
@@ -88,10 +95,26 @@ class Issue extends Form implements InputFilterProviderInterface
             'congressman_id' => [
                 'required' => false,
                 'allow_empty' => true,
+                'filters' => [
+                    [
+                        'name' => '\Zend\Filter\ToNull',
+                        'options' => ['type' => 'all']
+                    ]
+                ],
             ],
             'name' => [
                 'required' => true,
                 'allow_empty' => false,
+            ],
+            'sub_name' => [
+                'required' => false,
+                'allow_empty' => true,
+                'filters' => [
+                    [
+                        'name' => '\Zend\Filter\ToNull',
+                        'options' => ['type' => 'all']
+                    ]
+                ],
             ],
             'category' => [
                 'required' => true,
@@ -112,6 +135,24 @@ class Issue extends Form implements InputFilterProviderInterface
             'status' => [
                 'required' => false,
                 'allow_empty' => true,
+                'filters' => [
+                    [
+                        'name' => '\Zend\Filter\ToNull',
+                        'options' => ['type' => 'all']
+                    ], [
+                        'name' => '\Althingi\Filter\ItemStatusFilter'
+                    ]
+                ],
+            ],
+            'question' => [
+                'required' => false,
+                'allow_empty' => true,
+                'filters' => [
+                    [
+                        'name' => '\Zend\Filter\ToNull',
+                        'options' => ['type' => 'all']
+                    ]
+                ],
             ],
         ];
     }

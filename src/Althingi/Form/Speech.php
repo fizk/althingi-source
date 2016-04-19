@@ -26,14 +26,18 @@ class Speech extends Form implements InputFilterProviderInterface
 
         $this->add(array(
             'name' => 'from',
-            //'type' => 'Zend\Form\Element\Date', //TODO fix me
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Zend\Form\Element\DateTime',
+            'options' => [
+                'format' => 'Y-m-d H:i:s'
+            ],
         ));
 
         $this->add(array(
             'name' => 'to',
-            //'type' => 'Zend\Form\Element\Date', //TODO fix me
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Zend\Form\Element\DateTime',
+            'options' => [
+                'format' => 'Y-m-d H:i:s'
+            ],
         ));
 
         $this->add(array(
@@ -118,18 +122,42 @@ class Speech extends Form implements InputFilterProviderInterface
             'congressman_type' => [
                 'required' => false,
                 'allow_empty' => true,
+                'filters' => [
+                    [
+                        'name' => '\Zend\Filter\ToNull',
+                        'options' => ['type' => 'all']
+                    ]
+                ],
             ],
             'iteration' => [
                 'required' => false,
                 'allow_empty' => true,
+                'filters' => [
+                    [
+                        'name' => '\Zend\Filter\ToNull',
+                        'options' => ['type' => 'all']
+                    ]
+                ],
             ],
             'type' => [
                 'required' => false,
                 'allow_empty' => true,
+                'filters' => [
+                    [
+                        'name' => '\Zend\Filter\ToNull',
+                        'options' => ['type' => 'all']
+                    ]
+                ],
             ],
             'text' => [
                 'required' => false,
                 'allow_empty' => true,
+                'filters' => [
+                    [
+                        'name' => '\Zend\Filter\ToNull',
+                        'options' => ['type' => 'all']
+                    ]
+                ],
             ],
         ];
     }

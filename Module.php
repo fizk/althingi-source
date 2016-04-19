@@ -33,6 +33,11 @@ class Module
         return include __DIR__ . '/config/service.config.php';
     }
 
+    public function getControllerConfig()
+    {
+        return include __DIR__ . '/config/controller.config.php';
+    }
+
     public function getAutoloaderConfig()
     {
         return array(

@@ -10,6 +10,7 @@ namespace Althingi\Service;
 
 use Althingi\Lib\DatabaseAwareInterface;
 use PDO;
+use InvalidArgumentException;
 
 /**
  * Class Issue
@@ -18,6 +19,9 @@ use PDO;
 class Issue implements DatabaseAwareInterface
 {
     use DatabaseService;
+
+    const ALLOWED_TYPES = ['a', 'b', 'l', 'm', 'q', 's'];
+    const ALLOWED_ORDER = ['asc', 'desc'];
 
     /**
      * @var \PDO
@@ -37,8 +41,12 @@ class Issue implements DatabaseAwareInterface
     public function get($issue_id, $assembly_id)
     {
         $issueStatement = $this->getDriver()->prepare(
-            "select * from `Issue`
-            where issue_id = :issue_id and assembly_id = :assembly_id"
+        'select
+            *,  (select D.`date` from `Document` D
+                    where assembly_id = I.assembly_id and issue_id = I.issue_id
+                    order by date asc limit 0, 1)
+                as `date`
+         from `Issue` I where I.assembly_id = :assembly_id and I.issue_id = :issue_id'
         );
         $issueStatement->execute(['issue_id'=>$issue_id, 'assembly_id'=>$assembly_id]);
 
@@ -54,13 +62,21 @@ class Issue implements DatabaseAwareInterface
      * @param int $offset
      * @param int $size
      * @param string $order
+     * @param array $type
      * @return array
      */
-    public function fetchByAssembly($id, $offset, $size, $order = 'asc')
+    public function fetchByAssembly($id, $offset, $size, $order = 'asc', $type = [])
     {
-        $order = in_array($order, ['asc', 'desc']) ? $order : 'asc';
+        $order = in_array($order, self::ALLOWED_ORDER) ? $order : 'asc';
+        $typeFilterString = $this->typeFilterString($type);
+
         $statement = $this->getDriver()->prepare("
-            select * from `Issue` I where assembly_id = :id
+            select
+                *,
+                (select D.`date` from `Document` D
+                where assembly_id = I.assembly_id and issue_id = I.issue_id
+                order by `date` asc limit 0, 1) as `date`
+            from `Issue` I where assembly_id = :id {$typeFilterString}
             order by I.`issue_id` {$order}
             limit {$offset}, {$size}
         ");
@@ -79,16 +95,36 @@ class Issue implements DatabaseAwareInterface
         return array_map([$this, 'decorate'], $statement->fetchAll());
     }
 
+    public function fetchStateByAssembly($assemblyId, $type = [])
+    {
+        $filterString = $this->typeFilterString($type);
+        $statement = $this->getDriver()->prepare("
+            select count(*) as `count`, status
+            from `Issue` I
+            where I.assembly_id = :assembly_id {$filterString}
+            group by I.status
+            order by I.status desc;
+        ");
+        $statement->execute(['assembly_id' => $assemblyId]);
+        return array_map(function ($state) {
+            $state->count = (int) $state->count;
+            return $state;
+        }, $statement->fetchAll());
+    }
+
     /**
      * Count all Issues per Assembly.
      *
      * @param int $id Assembly ID
+     * @param array $type
      * @return int count
      */
-    public function countByAssembly($id)
+    public function countByAssembly($id, $type)
     {
+        $typeFilterString = $this->typeFilterString($type);
         $statement = $this->getDriver()->prepare("
-            select count(*) from `Issue` I where `assembly_id` = :id
+            select count(*) from `Issue` I
+            where `assembly_id` = :id {$typeFilterString}
         ");
         $statement->execute(['id' => $id]);
         return (int) $statement->fetchColumn(0);
@@ -151,29 +187,32 @@ class Issue implements DatabaseAwareInterface
             return null;
         }
 
-        //CONGRESSMAN
-        //  get the Foreman for this issue
-        $congressmanStatement = $this->getDriver()->prepare("
-            select * from `Congressman` where congressman_id = :congressman_id;
-        ");
-        $congressmanStatement->execute(['congressman_id'=>$object->congressman_id]);
-        $object->foreman = $congressmanStatement->fetchObject() ? : null ;
-        unset($object->congressman_id);
-
-        $totalSpeakTimeStatement = $this->getDriver()->prepare("
-            select sec_to_time(sum((S.`to` - S.`from`))) as the_diff
-            from `Speech`S where S.assembly_id = :assembly_id and S.issue_id = :issue_id
-        ");
-        $totalSpeakTimeStatement->execute(['issue_id'=>$object->issue_id, 'assembly_id'=>$object->assembly_id]);
-        $object->time = $totalSpeakTimeStatement->fetchColumn(0);
-
         $object->assembly_id = (int) $object->assembly_id;
         $object->issue_id = (int) $object->issue_id;
-        $object->type = (int) $object->type;
-        $object->name = ucfirst($object->name);
-        $object->type_name = ucfirst($object->type_name);
-        $object->type_subname = ucfirst($object->type_subname);
+        $object->name = ucfirst(trim($object->name));
+        $object->type_name = ucfirst(trim($object->type_name));
+        $object->type_subname = ucfirst(trim($object->type_subname));
 
         return $object;
+    }
+
+    private function typeFilterString($type)
+    {
+        if (empty($type)) {
+            return '';
+        }
+
+        if (count(array_diff($type, self::ALLOWED_TYPES)) > 0) {
+            throw new InvalidArgumentException(
+                sprintf('Invalid \'type\' params %s', implode(', ', $type))
+            );
+        }
+
+        return ' and I.`type` in (' .implode(
+            ',',
+            array_map(function ($t) {
+                return "'" . $t . "'";
+            }, $type)
+        ) . ')';
     }
 }

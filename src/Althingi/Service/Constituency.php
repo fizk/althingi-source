@@ -24,6 +24,15 @@ class Constituency implements DatabaseAwareInterface
      */
     private $pdo;
 
+    public function get($id)
+    {
+        $statement = $this->getDriver()->prepare('
+            select * from `Constituency` where constituency_id = :constituency_id
+        ');
+        $statement->execute(['constituency_id' => $id]);
+        return $statement->fetchObject();
+    }
+
     /**
      * Create one Constituency. Accepts object from
      * corresponding Form.
@@ -36,6 +45,15 @@ class Constituency implements DatabaseAwareInterface
         $statement = $this->getDriver()->prepare($this->insertString('Constituency', $data));
         $statement->execute($this->convert($data));
         return $this->getDriver()->lastInsertId();
+    }
+
+    public function update($data)
+    {
+        $statement = $this->getDriver()->prepare(
+            $this->updateString('Constituency', $data, "constituency_id = {$data->constituency_id}")
+        );
+        $statement->execute($this->convert($data));
+        return $statement->rowCount();
     }
 
     /**

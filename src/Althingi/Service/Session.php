@@ -10,6 +10,7 @@ namespace Althingi\Service;
 
 use Althingi\Lib\DatabaseAwareInterface;
 use PDO;
+use DateTime;
 
 /**
  * Class Session
@@ -53,6 +54,20 @@ class Session implements DatabaseAwareInterface
         ");
         $statement->execute(['id' => $id]);
         return array_map([$this, 'decorate'], $statement->fetchAll());
+    }
+
+    public function getIdentifier($congressmanId, DateTime $from, $type)
+    {
+        $statement = $this->getDriver()->prepare('
+            select `session_id` from `Session`
+            where `congressman_id` = :congressman_id and `type` = :type and `from` = :from;
+        ');
+        $statement->execute([
+            'congressman_id' => $congressmanId,
+            'type' => $type,
+            'from' => $from->format('Y-m-d'),
+        ]);
+        return $statement->fetchColumn(0);
     }
 
     /**

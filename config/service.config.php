@@ -16,6 +16,11 @@ return [
         'Althingi\Service\Plenary' => 'Althingi\Service\Plenary',
         'Althingi\Service\Issue' => 'Althingi\Service\Issue',
         'Althingi\Service\Speech' => 'Althingi\Service\Speech',
+        'Althingi\Service\Vote' => 'Althingi\Service\Vote',
+        'Althingi\Service\VoteItem' => 'Althingi\Service\VoteItem',
+        'Althingi\Service\Proponent' => 'Althingi\Service\Proponent',
+        'Althingi\Service\Document' => 'Althingi\Service\Document',
+        'Althingi\Service\Committee' => 'Althingi\Service\Committee',
     ],
 
     'factories' => [

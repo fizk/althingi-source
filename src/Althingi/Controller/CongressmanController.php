@@ -23,7 +23,7 @@ class CongressmanController extends AbstractRestfulController
     /**
      * Return list of congressmen.
      *
-     * @return \Althingi\View\Model\CollectionModel
+     * @return \Rend\View\Model\CollectionModel
      */
     public function getList()
     {
@@ -44,7 +44,7 @@ class CongressmanController extends AbstractRestfulController
      * Get one congressman.
      *
      * @param int $id
-     * @return \Althingi\View\Model\ItemModel
+     * @return \Rend\View\Model\ItemModel
      */
     public function get($id)
     {
@@ -65,7 +65,7 @@ class CongressmanController extends AbstractRestfulController
      *
      * @param int $id
      * @param array $data
-     * @return \Althingi\View\Model\EmptyModel|\Althingi\View\Model\ErrorModel
+     * @return \Rend\View\Model\EmptyModel|\Rend\View\Model\ErrorModel
      */
     public function put($id, $data)
     {
@@ -133,7 +133,7 @@ class CongressmanController extends AbstractRestfulController
         if ($form->isValid()) {
             $id = $congressmanService->create($form->getObject());
             return (new EmptyModel())
-                ->setLocation($this->url()->fromRoute('home/thingmenn', ['id' => $id]))
+                ->setLocation($this->url()->fromRoute('thingmenn', ['id' => $id]))
                 ->setStatus(201);
         }
         return (new ErrorModel($form))

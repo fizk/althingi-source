@@ -41,12 +41,18 @@ class Session extends Form implements InputFilterProviderInterface
 
         $this->add(array(
             'name' => 'from',
-            'type' => 'Zend\Form\Element\Date',
+            'type' => 'Zend\Form\Element\Text',
+            'options' => [
+                'format' => 'Y-m-d'
+            ],
         ));
 
         $this->add(array(
             'name' => 'to',
-            'type' => 'Zend\Form\Element\Date',
+            'type' => 'Zend\Form\Element\Text',
+            'options' => [
+                'format' => 'Y-m-d'
+            ],
         ));
 
         $this->add(array(
@@ -94,14 +100,32 @@ class Session extends Form implements InputFilterProviderInterface
             'to' => [
                 'required' => false,
                 'allow_empty' => true,
+                'filters' => [
+                    [
+                        'name' => '\Zend\Filter\ToNull',
+                        'options' => ['type' => 'all']
+                    ]
+                ],
             ],
             'type' => [
                 'required' => false,
                 'allow_empty' => true,
+                'filters' => [
+                    [
+                        'name' => '\Zend\Filter\ToNull',
+                        'options' => ['type' => 'all']
+                    ]
+                ],
             ],
             'party' => [
                 'required' => false,
                 'allow_empty' => true,
+                'filters' => [
+                    [
+                        'name' => '\Zend\Filter\ToNull',
+                        'options' => ['type' => 'all']
+                    ]
+                ],
             ],
         ];
     }
