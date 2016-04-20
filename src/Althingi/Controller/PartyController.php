@@ -8,26 +8,33 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Form\Party;
+use Althingi\Form\Party as PartyForm;
+use Althingi\Lib\ServicePartyAwareInterface;
+use Althingi\Service\Party;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ErrorModel;
 use Rend\View\Model\EmptyModel;
 use Rend\Helper\Http\Range;
 
-class PartyController extends AbstractRestfulController
+class PartyController extends AbstractRestfulController implements
+    ServicePartyAwareInterface
 {
     use Range;
 
+    /** @var \Althingi\Service\Party */
+    private $partyService;
+
+    /**
+     * @param mixed $id
+     * @param mixed $data
+     * @return \Rend\View\Model\ModelInterface
+     */
     public function put($id, $data)
     {
-        /** @var  $partyService \Althingi\Service\Party */
-        $partyService = $this->getServiceLocator()
-            ->get('Althingi\Service\Party');
-
-        $form = new Party();
+        $form = new PartyForm();
         $form->bindValues(array_merge($data, ['party_id' => $id]));
         if ($form->isValid()) {
-            $partyService->create($form->getObject());
+            $this->partyService->create($form->getObject());
             return (new EmptyModel())
                 ->setStatus(201);
         }
@@ -40,21 +47,17 @@ class PartyController extends AbstractRestfulController
      *
      * @param int $id
      * @param array $data
-     * @return \Rend\View\Model\ErrorModel|\Rend\View\Model\EmptyModel
+     * @return \Rend\View\Model\ModelInterface
      */
     public function patch($id, $data)
     {
-        /** @var  $partyService \Althingi\Service\Party */
-        $partyService = $this->getServiceLocator()
-            ->get('Althingi\Service\Party');
-
-        if (($party = $partyService->get($id)) != null) {
-            $form = new Party();
+        if (($party = $this->partyService->get($id)) != null) {
+            $form = new PartyForm();
             $form->bind($party);
             $form->setData($data);
 
             if ($form->isValid()) {
-                $partyService->update($form->getData());
+                $this->partyService->update($form->getData());
                 return (new EmptyModel())
                     ->setStatus(204);
             }
@@ -64,5 +67,13 @@ class PartyController extends AbstractRestfulController
         }
 
         return $this->notFoundAction();
+    }
+
+    /**
+     * @param Party $party
+     */
+    public function setPartyService(Party $party)
+    {
+        $this->partyService = $party;
     }
 }

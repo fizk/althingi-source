@@ -65,5 +65,40 @@ return [
             }
         },
 
+        'Althingi\Lib\ServiceCommitteeAwareInterface' => function ($instance, $sm) {
+            if ($instance instanceof \Althingi\Lib\ServiceCommitteeAwareInterface) {
+                $locator = $sm->getServiceLocator();
+                $instance->setCommitteeService($locator->get('Althingi\Service\Committee'));
+            }
+        },
+
+        'Althingi\Lib\ServiceSessionAwareInterface' => function ($instance, $sm) {
+            if ($instance instanceof \Althingi\Lib\ServiceSessionAwareInterface) {
+                $locator = $sm->getServiceLocator();
+                $instance->setSessionService($locator->get('Althingi\Service\Session'));
+            }
+        },
+
+        'Althingi\Lib\ServiceConstituencyAwareInterface' => function ($instance, $sm) {
+            if ($instance instanceof \Althingi\Lib\ServiceConstituencyAwareInterface) {
+                $locator = $sm->getServiceLocator();
+                $instance->setConstituencyService($locator->get('Althingi\Service\Constituency'));
+            }
+        },
+
+        'Althingi\Lib\ServicePlenaryAwareInterface' => function ($instance, $sm) {
+            if ($instance instanceof \Althingi\Lib\ServicePlenaryAwareInterface) {
+                $locator = $sm->getServiceLocator();
+                $instance->setPlenaryService($locator->get('Althingi\Service\Plenary'));
+            }
+        },
+
+        'Althingi\Lib\ServiceProponentAwareInterface' => function ($instance, $sm) {
+            if ($instance instanceof \Althingi\Lib\ServiceProponentAwareInterface) {
+                $locator = $sm->getServiceLocator();
+                $instance->setProponentService($locator->get('Althingi\Service\Proponent'));
+            }
+        },
+
     ]
 ];

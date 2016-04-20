@@ -8,26 +8,33 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Form\Constituency;
+use Althingi\Form\Constituency as ConstituencyForm;
+use Althingi\Lib\ServiceConstituencyAwareInterface;
+use Althingi\Service\Constituency;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ErrorModel;
 use Rend\View\Model\EmptyModel;
 use Rend\Helper\Http\Range;
 
-class ConstituencyController extends AbstractRestfulController
+class ConstituencyController extends AbstractRestfulController implements
+    ServiceConstituencyAwareInterface
 {
     use Range;
 
+    /** @var \Althingi\Service\Constituency */
+    private $constituencyService;
+
+    /**
+     * @param mixed $id
+     * @param mixed $data
+     * @return \Rend\View\Model\ModelInterface
+     */
     public function put($id, $data)
     {
-        /** @var  $constituencyService \Althingi\Service\Constituency */
-        $constituencyService = $this->getServiceLocator()
-            ->get('Althingi\Service\Constituency');
-
-        $form = new Constituency();
+        $form = new ConstituencyForm();
         $form->setData(array_merge($data, ['constituency_id' => $id]));
         if ($form->isValid()) {
-            $constituencyService->create($form->getObject());
+            $this->constituencyService->create($form->getObject());
             return (new EmptyModel())
                 ->setStatus(201);
         }
@@ -40,21 +47,17 @@ class ConstituencyController extends AbstractRestfulController
      *
      * @param int $id
      * @param array $data
-     * @return \Rend\View\Model\ErrorModel|\Rend\View\Model\EmptyModel
+     * @return \Rend\View\Model\ModelInterface
      */
     public function patch($id, $data)
     {
-        /** @var  $constituencyService \Althingi\Service\Constituency */
-        $constituencyService = $this->getServiceLocator()
-            ->get('Althingi\Service\Constituency');
-
-        if (($party = $constituencyService->get($id)) != null) {
-            $form = new Constituency();
+        if (($party = $this->constituencyService->get($id)) != null) {
+            $form = new ConstituencyForm();
             $form->bind($party);
             $form->setData($data);
 
             if ($form->isValid()) {
-                $constituencyService->update($form->getData());
+                $this->constituencyService->update($form->getData());
                 return (new EmptyModel())
                     ->setStatus(204);
             }
@@ -64,5 +67,13 @@ class ConstituencyController extends AbstractRestfulController
         }
 
         return $this->notFoundAction();
+    }
+
+    /**
+     * @param Constituency $constituency
+     */
+    public function setConstituencyService(Constituency $constituency)
+    {
+        $this->constituencyService = $constituency;
     }
 }

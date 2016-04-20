@@ -8,7 +8,9 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Form\Session;
+use Althingi\Form\Session as SessionForm;
+use Althingi\Lib\ServiceSessionAwareInterface;
+use Althingi\Service\Session;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ErrorModel;
 use Rend\View\Model\EmptyModel;
@@ -18,20 +20,21 @@ use Rend\View\Model\ItemModel;
  * Class CongressmanSessionController
  * @package Althingi\Controller
  */
-class CongressmanSessionController extends AbstractRestfulController
+class CongressmanSessionController extends AbstractRestfulController implements
+    ServiceSessionAwareInterface
 {
+    /** @var  \Althingi\Service\Session */
+    private $sessionService;
+
     /**
      * Get one session for Congressman.
      *
      * @param mixed $id (not used)
-     * @return ItemModel
+     * @return \Rend\View\Model\ModelInterface
      */
     public function get($id)
     {
-        $sessionService = $this->getServiceLocator()
-            ->get('Althingi\Service\Session');
-
-        if ($session = $sessionService->get($this->params('session_id'))) {
+        if ($session = $this->sessionService->get($this->params('session_id'))) {
             return new ItemModel($session);
         }
 
@@ -43,24 +46,22 @@ class CongressmanSessionController extends AbstractRestfulController
      *
      * @param $id (not used)
      * @param $data
-     * @return EmptyModel|ErrorModel
+     * @return \Rend\View\Model\ModelInterface
      */
     public function patch($id, $data)
     {
-        $sessionService = $this->getServiceLocator()
-            ->get('Althingi\Service\Session');
-        $session = $sessionService->get($this->params('session_id'));
+        $session = $this->sessionService->get($this->params('session_id'));
 
         if (!$session) {
             return $this->notFoundAction();
         }
 
-        $form = (new Session())
+        $form = (new SessionForm())
             ->bind($session)
             ->setData($data);
 
         if ($form->isValid()) {
-            $sessionService->update($form->getData());
+            $this->sessionService->update($form->getData());
             return (new EmptyModel())->setStatus(204);
         }
 
@@ -71,14 +72,20 @@ class CongressmanSessionController extends AbstractRestfulController
      * Delete one Congressman's session
      *
      * @param int $id (not used)
-     * @return EmptyModel
+     * @return \Rend\View\Model\ModelInterface
      */
     public function delete($id)
     {
-        $sessionService = $this->getServiceLocator()
-            ->get('Althingi\Service\Session');
-        $sessionService->delete($this->params('session_id'));
+        $this->sessionService->delete($this->params('session_id'));
 
         return (new EmptyModel())->setStatus(204);
+    }
+
+    /**
+     * @param Session $session
+     */
+    public function setSessionService(Session $session)
+    {
+        $this->sessionService = $session;
     }
 }

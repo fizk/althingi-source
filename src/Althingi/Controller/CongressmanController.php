@@ -8,7 +8,9 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Form\Congressman;
+use Althingi\Form\Congressman as CongressmanForm;
+use Althingi\Lib\ServiceCongressmanAwareInterface;
+use Althingi\Service\Congressman;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ErrorModel;
 use Rend\View\Model\EmptyModel;
@@ -16,24 +18,24 @@ use Rend\View\Model\ItemModel;
 use Rend\View\Model\CollectionModel;
 use Rend\Helper\Http\Range;
 
-class CongressmanController extends AbstractRestfulController
+class CongressmanController extends AbstractRestfulController implements
+    ServiceCongressmanAwareInterface
 {
     use Range;
+
+    /** @var \Althingi\Service\Congressman */
+    private $congressmanService;
 
     /**
      * Return list of congressmen.
      *
-     * @return \Rend\View\Model\CollectionModel
+     * @return \Rend\View\Model\ModelInterface
      */
     public function getList()
     {
-        /** @var  $assemblyService \Althingi\Service\Congressman */
-        $congressmanService = $this->getServiceLocator()
-            ->get('Althingi\Service\Congressman');
-
-        $count = $congressmanService->count();
+        $count = $this->congressmanService->count();
         $range = $this->getRange($this->getRequest(), $count);
-        $assemblies = $congressmanService->fetchAll($range['from'], $range['to']);
+        $assemblies = $this->congressmanService->fetchAll($range['from'], $range['to']);
 
         return (new CollectionModel($assemblies))
             ->setStatus(206)
@@ -44,15 +46,11 @@ class CongressmanController extends AbstractRestfulController
      * Get one congressman.
      *
      * @param int $id
-     * @return \Rend\View\Model\ItemModel
+     * @return \Rend\View\Model\ModelInterface
      */
     public function get($id)
     {
-        /** @var  $assemblyService \Althingi\Service\Congressman */
-        $congressmanService = $this->getServiceLocator()
-            ->get('Althingi\Service\Congressman');
-
-        if ($congressman = $congressmanService->get($id)) {
+        if ($congressman = $this->congressmanService->get($id)) {
             return (new ItemModel($congressman))
                 ->setOption('Access-Control-Allow-Origin', '*');
         }
@@ -65,19 +63,15 @@ class CongressmanController extends AbstractRestfulController
      *
      * @param int $id
      * @param array $data
-     * @return \Rend\View\Model\EmptyModel|\Rend\View\Model\ErrorModel
+     * @return \Rend\View\Model\ModelInterface
      */
     public function put($id, $data)
     {
-        /** @var  $congressmanService \Althingi\Service\Congressman */
-        $congressmanService = $this->getServiceLocator()
-            ->get('Althingi\Service\Congressman');
-
-        $form = new Congressman();
+        $form = new CongressmanForm();
         $form->setData(array_merge($data, ['congressman_id' => $id]));
 
         if ($form->isValid()) {
-            $congressmanService->create($form->getObject());
+            $this->congressmanService->create($form->getObject());
             return (new EmptyModel())->setStatus(201);
         }
 
@@ -90,24 +84,22 @@ class CongressmanController extends AbstractRestfulController
      *
      * @param $id
      * @param $data
-     * @return EmptyModel|ErrorModel
+     * @return \Rend\View\Model\ModelInterface
      */
     public function patch($id, $data)
     {
-        $congressmanService = $this->getServiceLocator()
-            ->get('Althingi\Service\Congressman');
-        $congressman = $congressmanService->get($id);
+        $congressman = $this->congressmanService->get($id);
 
         if (!$congressman) {
             return $this->notFoundAction();
         }
 
-        $form = (new Congressman())
+        $form = (new CongressmanForm())
             ->bind($congressman)
             ->setData($data);
 
         if ($form->isValid()) {
-            $congressmanService->update($form->getObject());
+            $this->congressmanService->update($form->getObject());
             return (new EmptyModel())->setStatus(204);
         }
 
@@ -119,19 +111,15 @@ class CongressmanController extends AbstractRestfulController
      * to auto-generate the ID.
      *
      * @param mixed $data
-     * @return $this
+     * @return \Rend\View\Model\ModelInterface
      */
     public function create($data)
     {
-        /** @var  $congressmanService \Althingi\Service\Congressman */
-        $congressmanService = $this->getServiceLocator()
-            ->get('Althingi\Service\Congressman');
-
-        $form = (new Congressman())
+        $form = (new CongressmanForm())
             ->setData($data);
 
         if ($form->isValid()) {
-            $id = $congressmanService->create($form->getObject());
+            $id = $this->congressmanService->create($form->getObject());
             return (new EmptyModel())
                 ->setLocation($this->url()->fromRoute('thingmenn', ['id' => $id]))
                 ->setStatus(201);
@@ -140,14 +128,22 @@ class CongressmanController extends AbstractRestfulController
             ->setStatus(400);
     }
 
-
+    /**
+     * @param mixed $id
+     * @return \Rend\View\Model\ModelInterface
+     */
     public function delete($id)
     {
-        /** @var  $congressmanService \Althingi\Service\Congressman */
-        $congressmanService = $this->getServiceLocator()
-            ->get('Althingi\Service\Congressman');
-        $congressmanService->delete($id);
+        $this->congressmanService->delete($id);
 
         return (new EmptyModel())->setStatus(204);
+    }
+
+    /**
+     * @param Congressman $congressman
+     */
+    public function setCongressmanService(Congressman $congressman)
+    {
+        $this->congressmanService = $congressman;
     }
 }

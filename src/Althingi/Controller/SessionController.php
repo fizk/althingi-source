@@ -8,7 +8,9 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Form\Session;
+use Althingi\Form\Session as SessionForm;
+use Althingi\Lib\ServiceSessionAwareInterface;
+use Althingi\Service\Session;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ErrorModel;
 use Rend\View\Model\EmptyModel;
@@ -20,21 +22,23 @@ use Rend\View\Model\CollectionModel;
  * @package Althingi\Controller
  * @todo PUT / PATCH
  */
-class SessionController extends AbstractRestfulController
+class SessionController extends AbstractRestfulController implements
+    ServiceSessionAwareInterface
 {
+    /** @var  \Althingi\Service\Session */
+    private $sessionService;
+
     /**
      * Get sessions by one Congressman.
      * This is therefor a list.
      *
      * @param int $id
-     * @return \Rend\View\Model\ItemModel
+     * @return \Rend\View\Model\ModelInterface
      * @todo should there be a test if the congressman exists?
      */
     public function get($id)
     {
-        $sessionService = $this->getServiceLocator()
-            ->get('Althingi\Service\Session');
-        $session = $sessionService->get($id);
+        $session = $this->sessionService->get($id);
 
         return new ItemModel($session);
     }
@@ -42,16 +46,13 @@ class SessionController extends AbstractRestfulController
     /**
      * Get all sessions my congressman.
      *
-     * @return CollectionModel
+     * @return \Rend\View\Model\ModelInterface
      */
     public function getList()
     {
         $congressmanId = $this->params('congressman_id');
 
-        $sessionService = $this->getServiceLocator()
-            ->get('Althingi\Service\Session');
-
-        $sessions = $sessionService->fetchByCongressman($congressmanId);
+        $sessions = $this->sessionService->fetchByCongressman($congressmanId);
 
         return new CollectionModel($sessions);
     }
@@ -76,31 +77,27 @@ class SessionController extends AbstractRestfulController
      *  \Althingi\Service\Session::getIdentifier()
      *
      * @param mixed $data
-     * @return ItemModel
+     * @return \Rend\View\Model\ModelInterface
      */
     public function post($data)
     {
-        /** @var  $sessionService \Althingi\Service\Session */
-        $sessionService = $this->getServiceLocator()
-            ->get('Althingi\Service\Session');
-
         $congressmanId = $this->params('congressman_id');
         $statusCode = 201;
         $sessionId = 0;
 
-        $form = new Session();
+        $form = new SessionForm();
         $form->setData(array_merge($data, ['congressman_id' => $congressmanId]));
 
         if ($form->isValid()) {
             $sessionObject = $form->getObject();
 
             try {
-                $sessionId = $sessionService->create($sessionObject);
+                $sessionId = $this->sessionService->create($sessionObject);
                 $statusCode = 201;
             } catch (\Exception $e) {
                 // Error: 1022 SQLSTATE: 23000 (ER_DUP_KEY)
                 if ($e->getCode() == 23000) {
-                    $sessionId = $sessionService->getIdentifier(
+                    $sessionId = $this->sessionService->getIdentifier(
                         $sessionObject->congressman_id,
                         $sessionObject->from,
                         $sessionObject->type
@@ -122,20 +119,20 @@ class SessionController extends AbstractRestfulController
         return (new ErrorModel($form))->setStatus(400);
     }
 
+    /**
+     * @param $id
+     * @param $data
+     * @return \Rend\View\Model\ModelInterface
+     */
     public function patch($id, $data)
     {
-
-        /** @var $assemblyService \Althingi\Service\Session */
-        $sessionService = $this->getServiceLocator()
-            ->get('Althingi\Service\Session');
-
-        if (($session = $sessionService->get($id)) != null) {
-            $form = new Session();
+        if (($session = $this->sessionService->get($id)) != null) {
+            $form = new SessionForm();
             $form->bind($session);
             $form->setData($data);
 
             if ($form->isValid()) {
-                $sessionService->update($form->getData());
+                $this->sessionService->update($form->getData());
                 return (new EmptyModel())
                     ->setStatus(204);
             }
@@ -145,5 +142,13 @@ class SessionController extends AbstractRestfulController
         }
 
         return $this->notFoundAction();
+    }
+
+    /**
+     * @param Session $session
+     */
+    public function setSessionService(Session $session)
+    {
+        $this->sessionService = $session;
     }
 }

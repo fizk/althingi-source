@@ -8,15 +8,21 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Form\Vote;
+use Althingi\Form\Vote as VoteForm;
+use Althingi\Lib\ServiceVoteAwareInterface;
+use Althingi\Service\Vote;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\CollectionModel;
 use Rend\View\Model\EmptyModel;
 use Rend\View\Model\ErrorModel;
 use Rend\View\Model\ItemModel;
 
-class VoteController extends AbstractRestfulController
+class VoteController extends AbstractRestfulController implements
+    ServiceVoteAwareInterface
 {
+    /** @var \Althingi\Service\Vote */
+    private $voteService;
+
     /**
      * Get one vote declaration.
      *
@@ -25,11 +31,7 @@ class VoteController extends AbstractRestfulController
      */
     public function get($id)
     {
-        /** @var $assemblyService \Althingi\Service\Vote */
-        $voteService = $this->getServiceLocator()
-            ->get('Althingi\Service\Vote');
-
-        if (($vote = $voteService->get($id)) != null) {
+        if (($vote = $this->voteService->get($id)) != null) {
             return (new ItemModel($vote));
         }
 
@@ -49,11 +51,7 @@ class VoteController extends AbstractRestfulController
         $assemblyId = $this->params('id');
         $issueId = $this->params('issue_id');
 
-        /** @var  $voteService \Althingi\Service\Vote */
-        $voteService = $this->getServiceLocator()
-            ->get('Althingi\Service\Vote');
-
-        return (new CollectionModel($voteService->fetchByIssue($assemblyId, $issueId)))
+        return (new CollectionModel($this->voteService->fetchByIssue($assemblyId, $issueId)))
             ->setOption('Access-Control-Allow-Origin', '*');
     }
 
@@ -74,11 +72,7 @@ class VoteController extends AbstractRestfulController
         $issueId = $this->params('issue_id');
         $voteId = $id;
 
-        /** @var  $voteService \Althingi\Service\Vote */
-        $voteService = $this->getServiceLocator()
-            ->get('Althingi\Service\Vote');
-
-        $form = new Vote();
+        $form = new VoteForm();
         $form->setData(array_merge($data, [
             'assembly_id' => $assemblyId,
             'issue_id' => $issueId,
@@ -86,7 +80,7 @@ class VoteController extends AbstractRestfulController
         ]));
 
         if ($form->isValid()) {
-            $voteService->create($form->getObject());
+            $this->voteService->create($form->getObject());
             return (new EmptyModel())
                 ->setStatus(201);
         }
@@ -108,17 +102,13 @@ class VoteController extends AbstractRestfulController
      */
     public function patch($id, $data)
     {
-        /** @var $assemblyService \Althingi\Service\Vote */
-        $voteService = $this->getServiceLocator()
-            ->get('Althingi\Service\Vote');
-
-        if (($vote = $voteService->get($id)) != null) {
-            $form = new Vote();
+        if (($vote = $this->voteService->get($id)) != null) {
+            $form = new VoteForm();
             $form->bind($vote);
             $form->setData($data);
 
             if ($form->isValid()) {
-                $voteService->update($form->getData());
+                $this->voteService->update($form->getData());
                 return (new EmptyModel())
                     ->setStatus(204);
             }
@@ -133,7 +123,7 @@ class VoteController extends AbstractRestfulController
     /**
      * List options for Vote collection.
      *
-     * @return \Rend\View\Model\EmptyModel
+     * @return \Rend\View\Model\ModelInterface
      *
      * @attr int id
      * @attr int issue_id
@@ -149,7 +139,7 @@ class VoteController extends AbstractRestfulController
     /**
      * List options for Vote entry.
      *
-     * @return \Rend\View\Model\EmptyModel
+     * @return \Rend\View\Model\ModelInterface
      *
      * @attr int id
      * @attr int issue_id
@@ -161,5 +151,13 @@ class VoteController extends AbstractRestfulController
             ->setStatus(200)
             ->setAllow(['OPTIONS', 'PUT', 'PATCH', 'GET'])
             ->setOption('Access-Control-Allow-Origin', '*');
+    }
+
+    /**
+     * @param Vote $vote
+     */
+    public function setVoteService(Vote $vote)
+    {
+        $this->voteService = $vote;
     }
 }

@@ -8,22 +8,28 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Form\Committee;
+use Althingi\Form\Committee as CommitteeForm;
+use Althingi\Lib\ServiceCommitteeAwareInterface;
+use Althingi\Service\Committee;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\CollectionModel;
 use Rend\View\Model\ErrorModel;
 use Rend\View\Model\EmptyModel;
 use Rend\View\Model\ItemModel;
 
-class CommitteeController extends AbstractRestfulController
+class CommitteeController extends AbstractRestfulController implements
+    ServiceCommitteeAwareInterface
 {
+    /** @var \Althingi\Service\Committee */
+    private $committeeService;
+
+    /**
+     * @param mixed $id
+     * @return \Rend\View\Model\ModelInterface
+     */
     public function get($id)
     {
-        /** @var $committeeService \Althingi\Service\Committee */
-        $committeeService = $this->getServiceLocator()
-            ->get('Althingi\Service\Committee');
-
-        $committee = $committeeService->get($id);
+        $committee = $this->committeeService->get($id);
 
         if ($committee) {
             return new ItemModel($committee);
@@ -33,13 +39,12 @@ class CommitteeController extends AbstractRestfulController
         return $this->notFoundAction();
     }
 
+    /**
+     * @return \Rend\View\Model\ModelInterface
+     */
     public function getList()
     {
-        /** @var $committeeService \Althingi\Service\Committee */
-        $committeeService = $this->getServiceLocator()
-            ->get('Althingi\Service\Committee');
-
-        $committees = $committeeService->fetchAll();
+        $committees = $this->committeeService->fetchAll();
 
         return new CollectionModel($committees);
     }
@@ -49,20 +54,16 @@ class CommitteeController extends AbstractRestfulController
      *
      * @param  int $id
      * @param  array $data
-     * @return \Rend\View\Model\ItemModel
+     * @return \Rend\View\Model\ModelInterface
      */
     public function put($id, $data)
     {
-        /** @var $committeeService \Althingi\Service\Committee */
-        $committeeService = $this->getServiceLocator()
-            ->get('Althingi\Service\Committee');
-
-        $form = new Committee();
+        $form = new CommitteeForm();
         $form->bindValues(array_merge($data, ['assembly_id' => $id]));
 
         if ($form->isValid()) {
             $object = $form->getObject();
-            $committeeService->create($object);
+            $this->committeeService->create($object);
             return (new EmptyModel())
                 ->setStatus(201);
         }
@@ -74,7 +75,7 @@ class CommitteeController extends AbstractRestfulController
     /**
      * List options for Assembly collection.
      *
-     * @return \Rend\View\Model\EmptyModel
+     * @return \Rend\View\Model\ModelInterface
      */
     public function optionsList()
     {
@@ -87,7 +88,7 @@ class CommitteeController extends AbstractRestfulController
     /**
      * List options for Assembly entry.
      *
-     * @return \Rend\View\Model\EmptyModel
+     * @return \Rend\View\Model\ModelInterface
      */
     public function options()
     {
@@ -95,5 +96,13 @@ class CommitteeController extends AbstractRestfulController
             ->setStatus(200)
             ->setAllow(['GET', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'])
             ->setOption('Access-Control-Allow-Origin', '*');
+    }
+
+    /**
+     * @param Committee $committee
+     */
+    public function setCommitteeService(Committee $committee)
+    {
+        $this->committeeService = $committee;
     }
 }
