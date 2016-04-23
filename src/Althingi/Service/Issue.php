@@ -23,6 +23,13 @@ class Issue implements DatabaseAwareInterface
     const ALLOWED_TYPES = ['a', 'b', 'l', 'm', 'q', 's'];
     const ALLOWED_ORDER = ['asc', 'desc'];
 
+    const STATUS_WAITING_ONE    = 'Bíður 1. umræðu';
+    const STATUS_WAITING_TWO    = 'Bíður 2. umræðu';
+    const STATUS_WAITING_THREE  = 'Bíður 3. umræðu';
+    const STATUS_COMMITTEE_ONE  = 'Í nefnd eftir 1. umræðu';
+    const STATUS_APPROVED       = 'Samþykkt sem lög frá Alþingi';
+    const STATUS_TO_GOVERNMENT  = 'Vísað til ríkisstjórnar';
+
     /**
      * @var \PDO
      */
