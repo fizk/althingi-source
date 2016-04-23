@@ -42,31 +42,31 @@ class AssemblyRangeControllerTest extends AbstractHttpControllerTestCase
      * @param string $result
      * @dataProvider rangeProvider
      */
-    public function testGetList($size, $header, $result)
-    {
-        $serviceMock = \Mockery::mock('\Althingi\Service\Assembly')
-            ->shouldReceive('count')
-            ->andReturn($size)
-            ->once()
-            ->getMock()
-            ->shouldReceive('fetchAll')
-            ->andReturn([])
-            ->getMock();
-
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('Althingi\Service\Assembly', $serviceMock);
-
-        /** @var  $request \Zend\Http\PhpEnvironment\Request */
-        $request = $this->getApplication()->getRequest();
-        $request->setHeaders((new \Zend\Http\Headers())->addHeaders($header));
-        $this->dispatch('/api/loggjafarthing', 'GET');
-
-        /** @var  $response \Zend\Http\PhpEnvironment\Response */
-        $response = $this->getApplication()->getResponse();
-        $range = $response->getHeaders()->get('Content-Range')->getFieldValue();
-
-        $this->assertEquals($result, $range);
-        $this->assertResponseStatusCode(206);
-    }
+//    public function testGetList($size, $header, $result)
+//    {
+//        $serviceMock = \Mockery::mock('\Althingi\Service\Assembly')
+//            ->shouldReceive('count')
+//            ->andReturn($size)
+//            ->once()
+//            ->getMock()
+//            ->shouldReceive('fetchAll')
+//            ->andReturn([])
+//            ->getMock();
+//
+//        $serviceManager = $this->getApplicationServiceLocator();
+//        $serviceManager->setAllowOverride(true);
+//        $serviceManager->setService('Althingi\Service\Assembly', $serviceMock);
+//
+//        /** @var  $request \Zend\Http\PhpEnvironment\Request */
+//        $request = $this->getApplication()->getRequest();
+//        $request->setHeaders((new \Zend\Http\Headers())->addHeaders($header));
+//        $this->dispatch('/api/loggjafarthing', 'GET');
+//
+//        /** @var  $response \Zend\Http\PhpEnvironment\Response */
+//        $response = $this->getApplication()->getResponse();
+//        $range = $response->getHeaders()->get('Content-Range')->getFieldValue();
+//
+//        $this->assertEquals($result, $range);
+//        $this->assertResponseStatusCode(206);
+//    }
 }

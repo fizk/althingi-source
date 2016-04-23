@@ -64,7 +64,7 @@ class AssemblyController extends AbstractRestfulController implements
         $order = $this->params()->fromQuery('order', 'desc');
 
         $count = $this->assemblyService->count();
-        $range = $this->getRange($this->getRequest(), $count);
+//        $range = $this->getRange($this->getRequest(), $count);
 //        $assemblies = $this->assemblyService->fetchAll(
 //            $range['from'],
 //            ($range['to'] - $range['from']),
