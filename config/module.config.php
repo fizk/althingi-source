@@ -30,6 +30,36 @@ return array(
                 ],
                 'may_terminate' => true,
                 'child_routes' => [
+                    'thingmenn' => [
+                        'type' => 'Zend\Mvc\Router\Http\Literal',
+                        'options' => [
+                            'route'    => '/thingmenn',
+                            'defaults' => [
+                                'controller' => 'Althingi\Controller\Congressman',
+                                'action' => 'assembly'
+                            ],
+                        ]
+                    ],
+                    'samantekt' => [
+                        'type' => 'Zend\Mvc\Router\Http\Literal',
+                        'options' => [
+                            'route'    => '/samantekt',
+                            'defaults' => [
+                                'controller' => 'Althingi\Controller\Issue',
+                                'action' => 'assembly'
+                            ],
+                        ],
+                    ],
+                    'raduneyti' => [
+                        'type' => 'Zend\Mvc\Router\Http\Literal',
+                        'options' => [
+                            'route'    => '/raduneyti',
+                            'defaults' => [
+                                'controller' => 'Althingi\Controller\Cabinet',
+                                'action' => 'assembly'
+                            ],
+                        ],
+                    ],
                     'thingfundir' => [
                         'type' => 'Zend\Mvc\Router\Http\Segment',
                         'options' => [
@@ -225,6 +255,7 @@ return array(
             'Althingi\Controller\Proponent' => 'Althingi\Controller\ProponentController',
             'Althingi\Controller\Document' => 'Althingi\Controller\DocumentController',
             'Althingi\Controller\Committee' => 'Althingi\Controller\CommitteeController',
+            'Althingi\Controller\Cabinet' => 'Althingi\Controller\CabinetController',
         ],
     ],
     'view_manager' => [

@@ -2,8 +2,8 @@
 /**
  * Created by PhpStorm.
  * User: einarvalur
- * Date: 20/05/15
- * Time: 7:40 AM
+ * Date: 24/04/2016
+ * Time: 3:36 PM
  */
 
 namespace Althingi\Controller;
@@ -11,7 +11,7 @@ namespace Althingi\Controller;
 use Mockery;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
-class AssemblyControllerTest extends AbstractHttpControllerTestCase
+class CongressmanControllerTest extends AbstractHttpControllerTestCase
 {
     public function setUp()
     {
@@ -21,7 +21,7 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
         parent::setUp();
     }
 
-    public function testRouterGetList()
+    public function testGetList()
     {
         $pdoMock = Mockery::mock('\PDO')
             ->shouldReceive('prepare')
@@ -41,59 +41,13 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService('PDO', $pdoMock);
 
-        $this->dispatch('/loggjafarthing', 'GET');
+        $this->dispatch('/thingmenn', 'GET');
 
-        $this->assertControllerClass('AssemblyController');
+        $this->assertControllerClass('CongressmanController');
         $this->assertActionName('getList');
     }
 
-    public function testGetListHeaders()
-    {
-        $pdoMock = Mockery::mock('\PDO')
-            ->shouldReceive('prepare')
-            ->andReturnSelf()
-            ->mock()
-            ->shouldReceive('execute')
-            ->andReturnSelf()
-            ->mock()
-            ->shouldReceive('fetchColumn')
-            ->andReturn(100)
-            ->mock()
-            ->shouldReceive('fetchAll')
-            ->andReturn($this->assemblies())
-            ->mock();
-
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('PDO', $pdoMock);
-
-        $this->dispatch('/loggjafarthing', 'GET');
-
-        $response = $this->getResponse();
-
-        $expectedRangeHeaders = [
-            'Range-Unit',
-            'Content-Range'
-        ];
-        $responseRangeHeaders = array_map(function ($header) {
-            return trim($header);
-        }, explode(',', $response->getHeaders()->get('Access-Control-Expose-Headers')->getFieldValue()));
-
-
-        $allowOriginHeader = $response->getHeaders()->get('Access-Control-Allow-Origin')->getFieldValue();
-        $rangeUnitHeader = $response->getHeaders()->get('Range-Unit')->getFieldValue();
-        $contentRangeHeader = $response->getHeaders()->get('Content-Range')->getFieldValue();
-        $contentTypeHeader = $response->getHeaders()->get('Content-type')->getFieldValue();
-
-        $this->assertEquals('*', $allowOriginHeader);
-        $this->assertEquals('items', $rangeUnitHeader);
-        $this->assertEquals('items 0-100/100', $contentRangeHeader);
-        $this->assertEquals('application/json; charset=utf-8', $contentTypeHeader);
-        $this->assertCount(0, array_diff($expectedRangeHeaders, $responseRangeHeaders));
-        $this->assertResponseStatusCode(206);
-    }
-
-    public function testGetSuccess()
+    public function testGet()
     {
         $pdoMock = Mockery::mock('\PDO')
             ->shouldReceive('prepare')
@@ -103,18 +57,20 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
             ->andReturnSelf()
             ->mock()
             ->shouldReceive('fetchObject')
-            ->andReturn($this->assembly())
+            ->andReturn($this->congressman())
             ->mock()
             ->shouldReceive('fetchAll')
-            ->andReturn([])
+            ->andReturn($this->parties())
             ->mock();
 
         $serviceManager = $this->getApplicationServiceLocator();
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService('PDO', $pdoMock);
 
-        $this->dispatch('/loggjafarthing/144', 'GET');
-        $this->assertResponseStatusCode(200);
+        $this->dispatch('/thingmenn/1', 'GET');
+
+        $this->assertControllerClass('CongressmanController');
+        $this->assertActionName('get');
     }
 
     public function testGetNotFound()
@@ -127,30 +83,19 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
             ->andReturnSelf()
             ->mock()
             ->shouldReceive('fetchObject')
-            ->andReturn(false)
+            ->andReturn(null)
             ->mock();
 
         $serviceManager = $this->getApplicationServiceLocator();
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService('PDO', $pdoMock);
 
-        $this->dispatch('/loggjafarthing/144', 'GET');
+        $this->dispatch('/thingmenn/1', 'GET');
+
         $this->assertResponseStatusCode(404);
     }
 
-    public function testPutListNotImplemented()
-    {
-        $pdoMock = Mockery::mock('\PDO');
-
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('PDO', $pdoMock);
-
-        $this->dispatch('/loggjafarthing', 'PUT');
-        $this->assertResponseStatusCode(405);
-    }
-
-    public function testPutSuccessful()
+    public function testPutSuccess()
     {
         $pdoMock = Mockery::mock('\PDO')
             ->shouldReceive('prepare')
@@ -159,7 +104,7 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
             ->shouldReceive('execute')
             ->andReturnSelf()
             ->mock()
-            ->shouldReceive('rowCount')
+            ->shouldReceive('lastInsertId')
             ->andReturn(1)
             ->mock();
 
@@ -167,14 +112,17 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService('PDO', $pdoMock);
 
-        $this->dispatch('/loggjafarthing/144', 'PUT', [
-            'from' => '2001-01-01',
-            'to' => '2001-01-01',
+        $this->dispatch('/thingmenn/1', 'PUT', [
+            'name' => 'some name',
+            'birth' => '1978-04-11'
         ]);
+
+        $this->assertControllerClass('CongressmanController');
+        $this->assertActionName('put');
         $this->assertResponseStatusCode(201);
     }
 
-    public function testPutParamMissing()
+    public function testPutInvalidData()
     {
         $pdoMock = Mockery::mock('\PDO')
             ->shouldReceive('prepare')
@@ -183,7 +131,7 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
             ->shouldReceive('execute')
             ->andReturnSelf()
             ->mock()
-            ->shouldReceive('rowCount')
+            ->shouldReceive('lastInsertId')
             ->andReturn(1)
             ->mock();
 
@@ -191,13 +139,15 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService('PDO', $pdoMock);
 
-        $this->dispatch('/loggjafarthing/144', 'PUT', [
-            'to' => '2001-01-01',
+        $this->dispatch('/thingmenn/1', 'PUT', [
+            'name' => 'some name',
+            'birth' => 'not a date'
         ]);
+
         $this->assertResponseStatusCode(400);
     }
 
-    public function testPatchSuccessful()
+    public function testPatchSuccess()
     {
         $pdoMock = Mockery::mock('\PDO')
             ->shouldReceive('prepare')
@@ -207,7 +157,7 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
             ->andReturnSelf()
             ->mock()
             ->shouldReceive('fetchObject')
-            ->andReturn($this->assembly())
+            ->andReturn($this->congressman())
             ->mock()
             ->shouldReceive('rowCount')
             ->andReturn(1)
@@ -217,13 +167,16 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService('PDO', $pdoMock);
 
-        $this->dispatch('/loggjafarthing/144', 'PATCH', [
-            'from' => '2001-01-01',
+        $this->dispatch('/thingmenn/1', 'PATCH', [
+            'name' => 'some name',
         ]);
+
+        $this->assertControllerClass('CongressmanController');
+        $this->assertActionName('patch');
         $this->assertResponseStatusCode(204);
     }
 
-    public function testPatchUnSuccessful()
+    public function testPatchInvalidData()
     {
         $pdoMock = Mockery::mock('\PDO')
             ->shouldReceive('prepare')
@@ -233,16 +186,22 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
             ->andReturnSelf()
             ->mock()
             ->shouldReceive('fetchObject')
-            ->andReturn($this->assembly())
+            ->andReturn($this->congressman())
+            ->mock()
+            ->shouldReceive('rowCount')
+            ->andReturn(1)
             ->mock();
 
         $serviceManager = $this->getApplicationServiceLocator();
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService('PDO', $pdoMock);
 
-        $this->dispatch('/loggjafarthing/144', 'PATCH', [
-            'from' => 'invalid date',
+        $this->dispatch('/thingmenn/1', 'PATCH', [
+            'birth' => 'not a date',
         ]);
+
+        $this->assertControllerClass('CongressmanController');
+        $this->assertActionName('patch');
         $this->assertResponseStatusCode(400);
     }
 
@@ -256,16 +215,22 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
             ->andReturnSelf()
             ->mock()
             ->shouldReceive('fetchObject')
-            ->andReturn(false)
+            ->andReturn(null)
+            ->mock()
+            ->shouldReceive('rowCount')
+            ->andReturn(1)
             ->mock();
 
         $serviceManager = $this->getApplicationServiceLocator();
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService('PDO', $pdoMock);
 
-        $this->dispatch('/loggjafarthing/144', 'PATCH', [
-            'from' => '20016-01-01',
+        $this->dispatch('/thingmenn/1', 'PATCH', [
+            'birth' => 'not a date',
         ]);
+
+        $this->assertControllerClass('CongressmanController');
+        $this->assertActionName('patch');
         $this->assertResponseStatusCode(404);
     }
 
@@ -279,7 +244,7 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
             ->andReturnSelf()
             ->mock()
             ->shouldReceive('fetchObject')
-            ->andReturn($this->assembly())
+            ->andReturn($this->congressman())
             ->mock()
             ->shouldReceive('rowCount')
             ->andReturn(1)
@@ -289,11 +254,14 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService('PDO', $pdoMock);
 
-        $this->dispatch('/loggjafarthing/144', 'DELETE');
-        $this->assertResponseStatusCode(200);
+        $this->dispatch('/thingmenn/1', 'DELETE');
+
+        $this->assertControllerClass('CongressmanController');
+        $this->assertActionName('delete');
+        $this->assertResponseStatusCode(204);
     }
 
-    public function testDeleteNotFound()
+    public function testDeleteResourceNotFound()
     {
         $pdoMock = Mockery::mock('\PDO')
             ->shouldReceive('prepare')
@@ -303,66 +271,37 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
             ->andReturnSelf()
             ->mock()
             ->shouldReceive('fetchObject')
-            ->andReturn(false)
+            ->andReturn(null)
+            ->mock()
+            ->shouldReceive('rowCount')
+            ->andReturn(1)
             ->mock();
 
         $serviceManager = $this->getApplicationServiceLocator();
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService('PDO', $pdoMock);
 
-        $this->dispatch('/loggjafarthing/144', 'DELETE');
+        $this->dispatch('/thingmenn/1', 'DELETE');
+
+        $this->assertControllerClass('CongressmanController');
+        $this->assertActionName('delete');
         $this->assertResponseStatusCode(404);
     }
 
-    public function testOptions()
+    private function congressman()
     {
-        $pdoMock = Mockery::mock('\PDO');
-
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('PDO', $pdoMock);
-
-        $this->dispatch('/loggjafarthing/144', 'OPTIONS');
-
-        $expectedMethods = ['GET', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'];
-        $actualMethods = $this->getResponse()
-            ->getHeaders()
-            ->get('Allow')
-            ->getAllowedMethods();
-
-        $this->assertCount(0, array_diff($expectedMethods, $actualMethods));
-    }
-
-    public function testOptionsList()
-    {
-        $pdoMock = Mockery::mock('\PDO');
-
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('PDO', $pdoMock);
-
-        $this->dispatch('/loggjafarthing', 'OPTIONS');
-
-        $expectedMethods = ['GET', 'OPTIONS'];
-        $actualMethods = $this->getResponse()
-            ->getHeaders()
-            ->get('Allow')
-            ->getAllowedMethods();
-
-        $this->assertCount(0, array_diff($expectedMethods, $actualMethods));
-    }
-
-    private function assemblies()
-    {
-        return [
-            (object)['assembly_id' => 1],
-            (object)['assembly_id' => 2],
-            (object)['assembly_id' => 3],
+        return (object) [
+            'congressman_id' => 1,
+            'name' => 'some name',
+            'birth' => '1978-04-11',
+            'death' => null,
         ];
     }
 
-    private function assembly()
+    private function parties()
     {
-        return (object)['assembly_id' => 1];
+        return [
+            (object) ['party_id' => 1]
+        ];
     }
 }

@@ -43,7 +43,11 @@ class Vote extends Form implements InputFilterProviderInterface
             'name' => 'date',
             'type' => 'Zend\Form\Element\DateTime',
             'options' => [
-                'format' => 'Y-m-d H:i:s'
+                'format' => 'Y-m-d H:i:s',
+
+            ],
+            'attributes' => [
+                'step' => 'any'
             ],
         ));
 

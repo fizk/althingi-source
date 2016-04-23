@@ -129,9 +129,6 @@ class IssueController extends AbstractRestfulController implements
         $orderQuery = $this->params()->fromQuery('order', null);
         $types = $typeQuery ? str_split($typeQuery) : [];
 
-        $congressmanService = $this->congressmanService;
-        $partyService = $this->partyService;
-
         $count = $this->issueService->countByAssembly($assemblyId, $types);
         $range = $this->getRange($this->getRequest(), $count);
         $issues = $this->issueService->fetchByAssembly(
@@ -142,10 +139,10 @@ class IssueController extends AbstractRestfulController implements
             $types
         );
 
-        array_walk($issues, function ($issue) use ($congressmanService, $partyService, $assemblyId) {
+        array_walk($issues, function ($issue) use ($assemblyId) {
             if ($issue->congressman_id) {
-                $issue->congressman = $congressmanService->get($issue->congressman_id);
-                $issue->congressman->party = $partyService->getByCongressman(
+                $issue->congressman = $this->congressmanService->get($issue->congressman_id);
+                $issue->congressman->party = $this->partyService->getByCongressman(
                     $issue->congressman_id,
                     new DateTime($issue->date)
                 );
@@ -168,14 +165,13 @@ class IssueController extends AbstractRestfulController implements
      */
     public function put($id, $data)
     {
+        $assemblyId = $this->params('id');
+        $issueId = $id;
         $issueService = $this->getServiceLocator()
             ->get('Althingi\Service\Issue');
 
         $form = (new IssueForm())
-            ->setData(array_merge(
-                $data,
-                ['assembly_id' => $this->params('id'), 'issue_id' => $id]
-            ));
+            ->setData(array_merge($data, ['assembly_id' => $assemblyId, 'issue_id' => $issueId]));
 
         if ($form->isValid()) {
             $issueService->create($form->getObject());
@@ -240,6 +236,28 @@ class IssueController extends AbstractRestfulController implements
             ->setAllow(['GET', 'OPTIONS', 'PUT', 'PATCH'])
             ->setOption('Access-Control-Allow-Origin', '*')
             ->setOption('Access-Control-Allow-Headers', 'Range');
+    }
+
+    /**
+     * Get statistics about issues in current assembly.
+     *
+     * @return \Rend\View\Model\ModelInterface
+     */
+    public function assemblyAction()
+    {
+        $assemblyId = $this->params('id');
+
+        $response = (object)[
+            'bills' => $this->issueService->fetchBillStatisticsByAssembly($assemblyId),
+            'government_bills' => $this->issueService->fetchGovernmentBillStatisticsByAssembly($assemblyId),
+            'types' => $this->issueService->fetchStateByAssembly($assemblyId),
+            'votes' => $this->voteService->fetchFrequencyByAssembly($assemblyId),
+            'speeches' => $this->speechService->fetchFrequencyByAssembly($assemblyId),
+        ];
+
+        return (new ItemModel($response))
+            ->setStatus(200)
+            ->setOption('Access-Control-Allow-Origin', '*');
     }
 
     /**

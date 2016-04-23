@@ -23,6 +23,7 @@
             </request>
             <response>
                 <headers>
+                    <param name="Access-Control-Allow-Origin" value="*">Allow origin from all</param>
                     <param name="Content-Range" value="items 0-10/100">How much is returned</param>
                     <param name="Range-Unit" value="items">What kind of items returned</param>
                 </headers>
@@ -30,29 +31,30 @@
                     <code value="206">Partial Content</code>
                 </status>
                 <output>
-                    <![CDATA[
-                [
-                    {
-                        "assembly_id": "143",
-                        "from": "2013-09-09",
-                        "to": "2014-09-09"
-                    },
-                    {
-                        "assembly_id": "144",
-                        "from": "2014-09-09",
-                        "to": null
-                    }
-                ]
-                ]]>
+                    [
+                        {
+                            "assembly_id": "143",
+                            "from": "2013-09-09",
+                            "to": "2014-09-09"
+                        },
+                        {
+                            "assembly_id": "144",
+                            "from": "2014-09-09",
+                            "to": null
+                        }
+                    ]
                 </output>
             </response>
         </method>
         <method verb="OPTIONS">
             <description>Get available methods for this path</description>
             <response>
+                <status>
+                    <code value="200">OK</code>
+                </status>
                 <headers>
                     <param name="Allow" value="list">Allowed methods for this resource</param>
-                    <param name="Access-Control-Allow-Origin" value="string">Allow origin from all</param>
+                    <param name="Access-Control-Allow-Origin" value="*">Allow origin from all</param>
                 </headers>
             </response>
         </method>
@@ -64,14 +66,19 @@
         <method verb="GET">
             <description>Get one assembly</description>
             <response>
+                <status>
+                    <code value="200">OK</code>
+                    <code value="404">File not found</code>
+                </status>
+                <headers>
+                    <param name="Access-Control-Allow-Origin" value="*">Allow for XHR query</param>
+                </headers>
                 <output>
-                    <![CDATA[
-                        {
-                            "assembly_id": "144",
-                            "from": "2014-09-09",
-                            "to": null
-                        }
-                    ]]>
+                    {
+                        "assembly_id": 145,
+                        "from": "2015-09-08",
+                        "to": null
+                    }
                 </output>
             </response>
         </method>
@@ -88,6 +95,7 @@
             </description>
             <request>
                 <headers>
+                    <param name="Access-Control-Allow-Origin" value="*">Allow origin from all</param>
                     <param name="X-Http-Method-Override" value="PUT">Override POST with PUT</param>
                 </headers>
                 <input>
@@ -98,7 +106,8 @@
             <response>
                 <status>
                     <code value="201">Resource created</code>
-                    <code value="204">Conflict. If already present.</code>
+                    <code value="409">Conflict. If already present.</code>
+                    <code value="400">Error - most likely in the input values</code>
                 </status>
             </response>
         </method>
@@ -110,6 +119,7 @@
             </description>
             <request>
                 <headers>
+                    <param name="Access-Control-Allow-Origin" value="*">Allow origin from all</param>
                     <param name="X-Http-Method-Override" value="PATCH">Override POST with PATCH</param>
                 </headers>
                 <input>
@@ -119,15 +129,140 @@
             </request>
             <response>
                 <status>
+                    <code value="204">Resource updated</code>
+                    <code value="400">Error - most likely in the input data</code>
                     <code value="404">Resource not found</code>
                 </status>
             </response>
         </method>
         <method verb="DELETE">
             <description>Delete on resource.</description>
+            <response>
+                <headers>
+                    <param name="Access-Control-Allow-Origin" value="*">Allow origin from all</param>
+                    <param name="X-Http-Method-Override" value="DELETE">Override POST with DELETE</param>
+                </headers>
+                <status>
+                    <code value="200">OK</code>
+                    <code value="404">Resource not found</code>
+                </status>
+            </response>
         </method>
         <method verb="OPTIONS">
             <description>Describes this endpoint</description>
+            <response>
+                <headers>
+                    <param name="Allow" value="list">Allowed methods for this resource</param>
+                    <param name="Access-Control-Allow-Origin" value="string">Allow origin from all</param>
+                </headers>
+                <status>
+                    <code value="200">OK</code>
+                </status>
+            </response>
+        </method>
+    </resource>
+
+    <resource>
+        <path>/loggjafarthing/:id/raduneyti</path>
+        <param name="id" value="int">Number of assembly</param>
+        <method verb="GET">
+            <description>Get list of cabinets on a give assembly</description>
+            <response>
+                <output>
+                    [
+                        {
+                            "cabinet_id": 30,
+                            "name": null,
+                            "title": "Ráðuneyti Sigmundar Davíðs Gunnlaugssonar",
+                            "congressmen": [
+                                {
+                                    "congressman_id": 652,
+                                    "name": "Bjarni Benediktsson",
+                                    "birth": "1970-01-26",
+                                    "death": null,
+                                    "title": "Fjármála- og efnahagsráðherra",
+                                    "date": "2013-05-23",
+                                    "party": {
+                                        "party_id": 35,
+                                        "name": "Sjálfstæðisflokkur",
+                                        "abbr_short": "S",
+                                        "abbr_long": "Sjálfstfl.",
+                                        "color": "0000ff"
+                                    }
+                                },
+                                ...
+                            ]
+                        },
+                        ...
+                    ]
+                </output>
+            </response>
+        </method>
+    </resource>
+
+    <resource>
+        <path>/loggjafarthing/:id/thingmenn</path>
+        <param name="id" value="int">Number of assembly</param>
+        <method verb="GET">
+            <description>Get all members of assembly</description>
+            <response>
+                <output>
+                    [
+                        {
+                            "congressman_id": 1221,
+                            "name": "Anna María Elíasdóttir",
+                            "birth": "1970-01-11",
+                            "death": null,
+                            "party_id": 2,
+                            "party": {
+                                "party_id": 2,
+                                "name": "Framsóknarflokkur",
+                                "abbr_short": "F",
+                                "abbr_long": "Framsfl.",
+                                "color": "009900"
+                            }
+                        },
+                        ...
+                    ]
+                </output>
+            </response>
+        </method>
+    </resource>
+
+    <resource>
+        <path>/loggjafarthing/:id/samantekt</path>
+        <param name="id" value="int">Number of assembly</param>
+        <method verb="GET">
+            <description>Get statistic for assembly</description>
+            <response>
+                <output>
+                    {
+                        "bills": [
+                            {
+                                "count": 24,
+                                "status": "Bíður 1. umræðu"
+                            },
+                            ...
+                        ],
+                        "government_bills": [
+                            {
+                                "count": 4,
+                                "status": "Bíður 1. umræðu"
+                            },
+                            ...
+                        ],
+                        "types": [
+                            {
+                                "count": 6,
+                                "type": "b",
+                                "type_name": "Beiðni um skýrslu",
+                                "type_subname": "beiðni um skýrslu"
+                            },
+                            ...
+                        ]
+                    }
+                </output>
+            </response>
         </method>
     </resource>
 

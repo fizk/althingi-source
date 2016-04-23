@@ -34,4 +34,25 @@ class VoteTest extends PHPUnit_Framework_TestCase
         $this->assertEquals((object) $inputData, $object);
     }
 
+    public function testAnotherDate()
+    {
+        $inputData = [
+            'issue_id' => 1,
+            'assembly_id' => 1,
+            'vote_id' => 1,
+            'date' => '2015-12-16 23:42:27',
+            'type' => 'hundur',
+            'outcome' => 'samtykkt',
+            'method' => 'method',
+            'yes' => 1,
+            'no' => 1,
+            'inaction' => 1,
+        ];
+
+        $form = new Vote();
+        $form->setData($inputData)->isValid();
+        $object = $form->getObject();
+
+        $this->assertEquals((object) $inputData, $object);
+    }
 }

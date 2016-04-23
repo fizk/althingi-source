@@ -36,7 +36,7 @@ class Party implements DatabaseAwareInterface
             select * from `Party` where party_id = :party_id
         ');
         $statement->execute(['party_id' => $id]);
-        return $statement->fetchObject();
+        return $this->decorate($statement->fetchObject());
     }
 
     public function getByCongressman($congressmanId, \DateTime $date)
@@ -58,6 +58,23 @@ class Party implements DatabaseAwareInterface
         ]);
 
         return $this->decorate($statement->fetchObject());
+    }
+
+    /**
+     * Get all parties that a congressman as been in.
+     *
+     * @param $congressmanId
+     * @return array
+     */
+    public function fetchByCongressman($congressmanId)
+    {
+        $statement = $this->getDriver()->prepare(
+            'select P.* from `Session` S
+            join `Party` P on (P.party_id = S.party_id)
+            where congressman_id = :congressman_id group by `party_id`;'
+        );
+        $statement->execute(['congressman_id' => $congressmanId]);
+        return array_map([$this, 'decorate'], $statement->fetchAll());
     }
 
     /**
