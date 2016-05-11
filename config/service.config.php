@@ -21,6 +21,7 @@ return [
         'Althingi\Service\Proponent' => 'Althingi\Service\Proponent',
         'Althingi\Service\Document' => 'Althingi\Service\Document',
         'Althingi\Service\Committee' => 'Althingi\Service\Committee',
+        'Althingi\Service\Cabinet' => 'Althingi\Service\Cabinet',
     ],
 
     'factories' => [

@@ -40,6 +40,9 @@ class Plenary extends Form implements InputFilterProviderInterface
             'options' => [
                 'format' => 'Y-m-d H:i'
             ],
+            'attributes' => [
+                'step' => 'any'
+            ],
         ));
 
         $this->add(array(
@@ -47,6 +50,9 @@ class Plenary extends Form implements InputFilterProviderInterface
             'type' => 'Zend\Form\Element\DateTime',
             'options' => [
                 'format' => 'Y-m-d H:i'
+            ],
+            'attributes' => [
+                'step' => 'any'
             ],
         ));
     }

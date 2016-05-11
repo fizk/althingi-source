@@ -26,7 +26,7 @@ class Congressman implements HydratorInterface
 
         $object->congressman_id = (int) $object->congressman_id;
         $object->birth = new \DateTime($data['birth']);
-        $object->death = $data['death']
+        $object->death = isset($data['death']) && $data['death']
             ? new \DateTime($data['death'])
             : null;
 

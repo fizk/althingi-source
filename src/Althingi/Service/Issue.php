@@ -48,12 +48,12 @@ class Issue implements DatabaseAwareInterface
     public function get($issue_id, $assembly_id)
     {
         $issueStatement = $this->getDriver()->prepare(
-        'select
-            *,  (select D.`date` from `Document` D
-                    where assembly_id = I.assembly_id and issue_id = I.issue_id
-                    order by date asc limit 0, 1)
-                as `date`
-         from `Issue` I where I.assembly_id = :assembly_id and I.issue_id = :issue_id'
+            'select
+                *,  (select D.`date` from `Document` D
+                        where assembly_id = I.assembly_id and issue_id = I.issue_id
+                        order by date asc limit 0, 1)
+                    as `date`
+             from `Issue` I where I.assembly_id = :assembly_id and I.issue_id = :issue_id'
         );
         $issueStatement->execute(['issue_id'=>$issue_id, 'assembly_id'=>$assembly_id]);
 
@@ -91,6 +91,13 @@ class Issue implements DatabaseAwareInterface
         return array_map([$this, 'decorate'], $statement->fetchAll());
     }
 
+    /**
+     * Fetch all issues that a given congressman has
+     * been the fourman of.
+     *
+     * @param $id
+     * @return array
+     */
     public function fetchByCongressman($id)
     {
         $statement = $this->getDriver()->prepare("
@@ -102,20 +109,70 @@ class Issue implements DatabaseAwareInterface
         return array_map([$this, 'decorate'], $statement->fetchAll());
     }
 
-    public function fetchStateByAssembly($assemblyId, $type = [])
+    /**
+     * Get the state of issues by assembly.
+     *
+     * Group and count `type` by assembly.
+     *
+     * @param $assemblyId
+     * @return array
+     */
+    public function fetchStateByAssembly($assemblyId)
     {
-        $filterString = $this->typeFilterString($type);
-        $statement = $this->getDriver()->prepare("
-            select count(*) as `count`, status
-            from `Issue` I
-            where I.assembly_id = :assembly_id {$filterString}
-            group by I.status
-            order by I.status desc;
-        ");
+        $statement = $this->getDriver()->prepare(
+            'select count(*) as `count`, `type`, `type_name`, `type_subname` from `Issue`
+            where assembly_id = :assembly_id group by `type` order by `type_name`;'
+        );
+
         $statement->execute(['assembly_id' => $assemblyId]);
-        return array_map(function ($state) {
-            $state->count = (int) $state->count;
-            return $state;
+
+        return array_map(function ($item) {
+            $item->count = is_numeric($item->count) ? (int) $item->count : null;
+            return $item;
+        }, $statement->fetchAll());
+    }
+
+    /**
+     * Group and count `status` by assembly where type is `l`.
+     *
+     * @param $id
+     * @return array
+     */
+    public function fetchBillStatisticsByAssembly($id)
+    {
+        $statement = $this->getDriver()->prepare(
+            'select count(*) as `count`, `status` from `Issue`
+            where `type` = \'l\' and assembly_id = :assembly_id group by `status`;'
+        );
+
+        $statement->execute(['assembly_id' => $id]);
+
+        return array_map(function ($item) {
+            $item->count = is_numeric($item->count) ? (int) $item->count : null;
+            return $item;
+        }, $statement->fetchAll());
+    }
+
+    /**
+     * Group and count `status` where `type_subname` is
+     * `stjórnarfrumvarp`.
+     *
+     * @param $id
+     * @return array
+     */
+    public function fetchGovernmentBillStatisticsByAssembly($id)
+    {
+        $statement = $this->getDriver()->prepare(
+            'SELECT count(*) AS `count`, `status`
+            FROM `Issue`
+            WHERE `type_subname` = \'stjórnarfrumvarp\' AND assembly_id = :assembly_id GROUP BY `status`;'
+        );
+
+        $statement->execute(['assembly_id' => $id]);
+
+        return array_map(function ($item) {
+            $item->count = is_numeric($item->count) ? (int) $item->count : null;
+            return $item;
         }, $statement->fetchAll());
     }
 

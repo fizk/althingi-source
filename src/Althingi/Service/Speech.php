@@ -34,8 +34,10 @@ class Speech implements DatabaseAwareInterface
     }
 
     /**
-     * @param $assemblyId
-     * @param $issueId
+     * Fetch all speeches by issue.
+     *
+     * @param int $assemblyId
+     * @param int $issueId
      * @param int $offset
      * @param int $size
      * @return array
@@ -54,6 +56,13 @@ class Speech implements DatabaseAwareInterface
         return array_map([$this, 'decorate'], $statement->fetchAll());
     }
 
+    /**
+     * Count all speeches by issue.
+     *
+     * @param int $assemblyId
+     * @param int $issueId
+     * @return int
+     */
     public function countByIssue($assemblyId, $issueId)
     {
         $statement = $this->getDriver()->prepare("
@@ -64,6 +73,14 @@ class Speech implements DatabaseAwareInterface
         return $statement->fetchColumn(0);
     }
 
+    /**
+     * Will sum up speech time per issue and return the frequency
+     * on a month bases.
+     *
+     * @param $assemblyId
+     * @param $issueId
+     * @return array
+     */
     public function fetchFrequencyByIssue($assemblyId, $issueId)
     {
         $statement = $this->getDriver()->prepare('
@@ -86,10 +103,35 @@ class Speech implements DatabaseAwareInterface
     }
 
     /**
+     * Will sum up speech time per assembly and return frequency
+     * on a day bases.
+     *
+     * Return date and time in seconds.
+     *
+     * @param int $assemblyId
+     * @return array
+     */
+    public function fetchFrequencyByAssembly($assemblyId)
+    {
+        $statement = $this->getDriver()->prepare(
+            'select date_format(`date`, "%Y-%m") as `month`, sum(`diff`) as `time` from (
+                select date(`from`) as `date`, timediff(`to`, `from`) as `diff`
+                from `Speech`
+                where assembly_id = :assembly_id
+            ) as G group by `month` order by `month`;'
+        );
+        $statement->execute(['assembly_id' => $assemblyId]);
+        return array_map(function ($speech) {
+            $speech->time = (int) $speech->time;
+            return $speech;
+        }, $statement->fetchAll());
+    }
+
+    /**
      * Create one Speech. Accepts object from
      * corresponding Form.
      *
-     * @param $data
+     * @param \stdClass $data
      * @return int
      */
     public function create($data)
@@ -99,6 +141,12 @@ class Speech implements DatabaseAwareInterface
         return $this->getDriver()->lastInsertId();
     }
 
+    /**
+     * Update one entry.
+     *
+     * @param \stdClass $data
+     * @return int
+     */
     public function update($data)
     {
         $statement = $this->getDriver()->prepare(

@@ -50,6 +50,10 @@ class Congressman extends Form implements InputFilterProviderInterface
     public function getInputFilterSpecification()
     {
         return [
+            'name' => [
+                'required' => true,
+                'allow_empty' => false,
+            ],
             'congressman_id' => [
                 'required' => true,
                 'allow_empty' => false,
@@ -67,10 +71,6 @@ class Congressman extends Form implements InputFilterProviderInterface
                         'options' => ['type' => 'all']
                     ]
                 ],
-            ],
-            'name' => [
-                'required' => true,
-                'allow_empty' => false,
             ],
         ];
     }

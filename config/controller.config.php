@@ -100,5 +100,12 @@ return [
             }
         },
 
+        'Althingi\Lib\ServiceCabinetAwareInterface' => function ($instance, $sm) {
+            if ($instance instanceof \Althingi\Lib\ServiceCabinetAwareInterface) {
+                $locator = $sm->getServiceLocator();
+                $instance->setCabinetService($locator->get('Althingi\Service\Cabinet'));
+            }
+        },
+
     ]
 ];

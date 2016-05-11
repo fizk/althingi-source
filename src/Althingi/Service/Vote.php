@@ -62,6 +62,21 @@ class Vote implements DatabaseAwareInterface
         }, $statement->fetchAll());
     }
 
+    public function fetchFrequencyByAssembly($assemblyId)
+    {
+        $statement = $this->getDriver()->prepare(
+            'select count(*) as `count`, date_format(`date`, "%Y-%m") as `vote_date`
+            from `Vote`
+            where assembly_id = :assembly_id
+            group by `vote_date`;'
+        );
+        $statement->execute(['assembly_id' => $assemblyId]);
+        return array_map(function ($vote) {
+            $vote->count = (int) $vote->count;
+            return $vote;
+        }, $statement->fetchAll());
+    }
+
     public function fetchByDocument($assemblyId, $issueId, $documentId)
     {
         $statement = $this->getDriver()->prepare('

@@ -110,6 +110,8 @@ vendor/
 
 ### Application ###
 docs/tests
+public
+components
 
 ### Workbench###
 *.mwb.bak
@@ -124,6 +126,3 @@ public/vendor
 .bower-cache
 .bower-registry
 .bower-tmp
-
-public
-components

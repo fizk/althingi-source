@@ -20,6 +20,12 @@ class VoteItem implements DatabaseAwareInterface
      */
     private $pdo;
 
+    /**
+     * Get all vote-items by vote-id
+     *
+     * @param $id
+     * @return array
+     */
     public function fetchByVote($id)
     {
         $statement = $this->getDriver()->prepare(
@@ -29,6 +35,33 @@ class VoteItem implements DatabaseAwareInterface
         return array_map([$this, 'decorate'], $statement->fetchAll());
     }
 
+    /**
+     * If you don't have the vote-item's unique ID, you can get an individual
+     * vote-item by the vote-id and congressman-id, since that is unique.
+     *
+     * @param $voteId
+     * @param $congressmanId
+     * @return null
+     */
+    public function getByVote($voteId, $congressmanId)
+    {
+        $statement = $this->getDriver()->prepare(
+            'select vi.*, v.assembly_id, v.issue_id from `VoteItem` vi
+            join `Vote` v on (vi.vote_id = v.vote_id)
+            where vi.`vote_id` = :vote_id and vi.`congressman_id` = :congressman_id;'
+        );
+        $statement->execute(['vote_id' => $voteId, 'congressman_id' => $congressmanId]);
+        return $this->decorate($statement->fetchObject());
+    }
+
+    /**
+     * Create a vote-item.
+     *
+     * @todo should return the auto_increment value but currently
+     *  the table doesn't have a auto_increment value.
+     * @param $data
+     * @return int
+     */
     public function create($data)
     {
         $insertStatement = $this->getDriver()->prepare($this->insertString('VoteItem', $data));

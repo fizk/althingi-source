@@ -57,6 +57,28 @@ class Congressman implements DatabaseAwareInterface
         return array_map([$this, 'decorate'], $statement->fetchAll());
     }
 
+    public function fetchByAssembly($assemblyId)
+    {
+        $statement = $this->getDriver()->prepare(
+            'select C.*, S.party_id from `Session` S
+            join `Congressman` C on (C.congressman_id = S.congressman_id)
+            where S.assembly_id = :assembly_id
+            group by S.congressman_id order by S.party_id, C.name;'
+        );
+        $statement->execute(['assembly_id' => $assemblyId]);
+        return array_map([$this, 'decorate'], $statement->fetchAll());
+    }
+
+    public function fetchByCabinet($cabinetId)
+    {
+        $statement = $this->getDriver()->prepare(
+            'select C.*, CC.`title`, CC.`from` as `date` from `Cabinet_has_Congressman` CC
+            join `Congressman` C on (CC.congressman_id = C.`congressman_id`)
+            where CC.`cabinet_id` = :cabinet_id order by C.`name`;'
+        );
+        $statement->execute(['cabinet_id' => $cabinetId]);
+        return array_map([$this, 'decorate'], $statement->fetchAll());
+    }
 
     public function fetchAccumulatedTimeByIssue($assemblyId, $issueId)
     {
@@ -185,7 +207,9 @@ class Congressman implements DatabaseAwareInterface
         if (!$object) {
             return null;
         }
-
+        if (isset($object->party_id)) {
+            $object->party_id = (int) $object->party_id;
+        }
         $object->congressman_id = (int) $object->congressman_id;
 
         return $object;

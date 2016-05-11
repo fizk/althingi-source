@@ -10,7 +10,11 @@ namespace Althingi\Controller;
 
 use Althingi\Form\Congressman as CongressmanForm;
 use Althingi\Lib\ServiceCongressmanAwareInterface;
+use Althingi\Lib\ServicePartyAwareInterface;
+use Althingi\Lib\ServiceSessionAwareInterface;
 use Althingi\Service\Congressman;
+use Althingi\Service\Party;
+use Althingi\Service\Session;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ErrorModel;
 use Rend\View\Model\EmptyModel;
@@ -19,28 +23,20 @@ use Rend\View\Model\CollectionModel;
 use Rend\Helper\Http\Range;
 
 class CongressmanController extends AbstractRestfulController implements
-    ServiceCongressmanAwareInterface
+    ServiceCongressmanAwareInterface,
+    ServicePartyAwareInterface,
+    ServiceSessionAwareInterface
 {
     use Range;
 
     /** @var \Althingi\Service\Congressman */
     private $congressmanService;
 
-    /**
-     * Return list of congressmen.
-     *
-     * @return \Rend\View\Model\ModelInterface
-     */
-    public function getList()
-    {
-        $count = $this->congressmanService->count();
-        $range = $this->getRange($this->getRequest(), $count);
-        $assemblies = $this->congressmanService->fetchAll($range['from'], $range['to']);
+    /** @var \Althingi\Service\Party */
+    private $partyService;
 
-        return (new CollectionModel($assemblies))
-            ->setStatus(206)
-            ->setRange($range['from'], $range['to'], $count);
-    }
+    /** @var \Althingi\Service\Session */
+    private $sessionService;
 
     /**
      * Get one congressman.
@@ -51,11 +47,32 @@ class CongressmanController extends AbstractRestfulController implements
     public function get($id)
     {
         if ($congressman = $this->congressmanService->get($id)) {
+            $congressman->parties = $this->partyService->fetchByCongressman($id);
+
             return (new ItemModel($congressman))
+                ->setStatus(200)
                 ->setOption('Access-Control-Allow-Origin', '*');
         }
 
         return $this->notFoundAction();
+    }
+
+    /**
+     * Return list of congressmen.
+     *
+     * @return \Rend\View\Model\ModelInterface
+     */
+    public function getList()
+    {
+        $count = $this->congressmanService->count();
+        $range = $this->getRange($this->getRequest(), $count);
+        $congressmen = $this->congressmanService->fetchAll($range['from'], $range['to']);
+
+        return (new CollectionModel($congressmen))
+            ->setStatus(206)
+            ->setRange($range['from'], $range['to'], $count)
+            ->setOption('Access-Control-Expose-Headers', 'Range-Unit, Content-Range') //TODO should go into Rend
+            ->setOption('Access-Control-Allow-Origin', '*');
     }
 
     /**
@@ -72,11 +89,14 @@ class CongressmanController extends AbstractRestfulController implements
 
         if ($form->isValid()) {
             $this->congressmanService->create($form->getObject());
-            return (new EmptyModel())->setStatus(201);
+            return (new EmptyModel())
+                ->setStatus(201)
+                ->setOption('Access-Control-Allow-Origin', '*');
         }
 
         return (new ErrorModel($form))
-            ->setStatus(400);
+            ->setStatus(400)
+            ->setOption('Access-Control-Allow-Origin', '*');
     }
 
     /**
@@ -88,44 +108,24 @@ class CongressmanController extends AbstractRestfulController implements
      */
     public function patch($id, $data)
     {
-        $congressman = $this->congressmanService->get($id);
+        if (($congressman = $this->congressmanService->get($id)) != null) {
+            $form = (new CongressmanForm())
+                ->bind($congressman)
+                ->setData($data);
 
-        if (!$congressman) {
-            return $this->notFoundAction();
+            if ($form->isValid()) {
+                $this->congressmanService->update($form->getObject());
+                return (new EmptyModel())
+                    ->setStatus(204)
+                    ->setOption('Access-Control-Allow-Origin', '*');
+            }
+
+            return (new ErrorModel($form))
+                ->setStatus(400)
+                ->setOption('Access-Control-Allow-Origin', '*');
         }
 
-        $form = (new CongressmanForm())
-            ->bind($congressman)
-            ->setData($data);
-
-        if ($form->isValid()) {
-            $this->congressmanService->update($form->getObject());
-            return (new EmptyModel())->setStatus(204);
-        }
-
-        return (new ErrorModel($form))->setStatus(400);
-    }
-
-    /**
-     * Create new Congressman allowing the system
-     * to auto-generate the ID.
-     *
-     * @param mixed $data
-     * @return \Rend\View\Model\ModelInterface
-     */
-    public function create($data)
-    {
-        $form = (new CongressmanForm())
-            ->setData($data);
-
-        if ($form->isValid()) {
-            $id = $this->congressmanService->create($form->getObject());
-            return (new EmptyModel())
-                ->setLocation($this->url()->fromRoute('thingmenn', ['id' => $id]))
-                ->setStatus(201);
-        }
-        return (new ErrorModel($form))
-            ->setStatus(400);
+        return $this->notFoundAction();
     }
 
     /**
@@ -134,9 +134,35 @@ class CongressmanController extends AbstractRestfulController implements
      */
     public function delete($id)
     {
-        $this->congressmanService->delete($id);
+        if (($congressman = $this->congressmanService->get($id))) {
+            $this->congressmanService->delete($id);
 
-        return (new EmptyModel())->setStatus(204);
+            return (new EmptyModel())
+                ->setStatus(204)
+                ->setOption('Access-Control-Allow-Origin', '*');
+        }
+
+        return $this->notFoundAction();
+    }
+
+    /**
+     * Get all members of assembly.
+     *
+     * @return \Rend\View\Model\ModelInterface
+     */
+    public function assemblyAction()
+    {
+        $assemblyId = $this->params('id');
+
+        $congressmen = array_map(function ($congressman) {
+            $congressman->party = $this->partyService->get($congressman->party_id);
+            return $congressman;
+        }, $this->congressmanService->fetchByAssembly($assemblyId));
+
+        return (new CollectionModel($congressmen))
+            ->setStatus(200)
+            ->setOption('Access-Control-Allow-Origin', '*');
+
     }
 
     /**
@@ -145,5 +171,21 @@ class CongressmanController extends AbstractRestfulController implements
     public function setCongressmanService(Congressman $congressman)
     {
         $this->congressmanService = $congressman;
+    }
+
+    /**
+     * @param Party $party
+     */
+    public function setPartyService(Party $party)
+    {
+        $this->partyService = $party;
+    }
+
+    /**
+     * @param Session $session
+     */
+    public function setSessionService(Session $session)
+    {
+        $this->sessionService = $session;
     }
 }
