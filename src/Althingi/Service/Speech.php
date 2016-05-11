@@ -24,13 +24,71 @@ class Speech implements DatabaseAwareInterface
      */
     private $pdo;
 
+    /**
+     * Get one speech item.
+     *
+     * @param string $id
+     * @return \stdClass
+     */
     public function get($id)
     {
         $statement = $this->getDriver()->prepare(
             'select * from `Speech` where speech_id = :speech_id'
         );
         $statement->execute(['speech_id' => $id]);
-        return $statement->fetchObject();
+        return $this->decorate($statement->fetchObject());
+    }
+
+    /**
+     * Get a fixed size section of the speech list which will contain
+     * the speech with the given ID.
+     *
+     * Let's say that we want the chunk size to be 25. Further more let's say that in a
+     * list of speeches for a given issue in a given assembly, the given speech entry is number 78.
+     *
+     * This method will return entries from 75 to 100. As 75 is the closest number dividable by 25 (that
+     * will contain 78 if 25 is added to it). Further more 100 is the distance from 75 in a chunk size of 25.
+     *
+     * @param string $id
+     * @param int $assemblyId
+     * @param int $issueId
+     * @param int $size
+     * @return array
+     */
+    public function fetch($id, $assemblyId, $issueId, $size = 25)
+    {
+        $pointer = 0;
+        $statement = $this->getDriver()->prepare(
+            'select * from `Speech` s 
+            where s.`assembly_id` = :assembly_id and s.`issue_id` = :issue_id
+            order by s.`from`'
+        );
+        $statement->execute(['assembly_id' => $assemblyId, ':issue_id' => $issueId]);
+
+        while ($row = $statement->fetch(PDO::FETCH_OBJ)) {
+            if ($row->speech_id == $id) {
+                break;
+            }
+            $pointer++;
+        }
+
+        $rangeBegin = ($pointer - ($pointer % $size));
+
+        $statement = $this->getDriver()->prepare(
+            'select * from `Speech` s 
+            where s.`assembly_id` = :assembly_id and s.`issue_id` = :issue_id
+            order by s.`from`
+            limit ' . $rangeBegin . ', ' . $size
+        );
+        $statement->execute(['assembly_id' => $assemblyId, ':issue_id' => $issueId]);
+        $speeches = $statement->fetchAll();
+        $rangeEnd = $rangeBegin + count($speeches);
+
+        return array_map(
+            [$this, 'decorate'],
+            $speeches,
+            range($rangeBegin, $rangeEnd - 1)
+        );
     }
 
     /**
@@ -53,7 +111,12 @@ class Speech implements DatabaseAwareInterface
         ");
         $statement->execute(['assembly_id' => $assemblyId, 'issue_id' => $issueId]);
 
-        return array_map([$this, 'decorate'], $statement->fetchAll());
+        $speeches = $statement->fetchAll();
+        return array_map(
+            [$this, 'decorate'],
+            $speeches,
+            range($offset, $offset + count($speeches) - 1)
+        );
     }
 
     /**
@@ -172,7 +235,14 @@ class Speech implements DatabaseAwareInterface
         return $this->pdo;
     }
 
-    private function decorate($object)
+    /**
+     * Typecast and doecorate object.
+     *
+     * @param $object
+     * @param int $position
+     * @return null
+     */
+    private function decorate($object, $position = 0)
     {
         if (!$object) {
             return null;
@@ -182,6 +252,7 @@ class Speech implements DatabaseAwareInterface
         $object->assembly_id = (int) $object->assembly_id;
         $object->issue_id = (int) $object->issue_id;
         $object->congressman_id = (int) $object->congressman_id;
+        $object->position = (int) $position;
 
         return $object;
     }
