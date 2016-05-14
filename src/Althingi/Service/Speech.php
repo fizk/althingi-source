@@ -258,7 +258,7 @@ class Speech implements DatabaseAwareInterface
         $object->assembly_id = (int) $object->assembly_id;
         $object->issue_id = (int) $object->issue_id;
         $object->congressman_id = (int) $object->congressman_id;
-        $object->position = is_numeric($position) ? (int) $position : null ;
+        $object->position = $position;
 
         return $object;
     }
