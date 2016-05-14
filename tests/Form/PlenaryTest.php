@@ -46,7 +46,7 @@ class PlenaryTest extends PHPUnit_Framework_TestCase
 
         array_map(function ($element) {
             /** @var $element \Zend\Form\ElementInterface */
-            print_r($element->getMessages());
+            //print_r($element->getMessages());
         }, $form->getElements());
 
         $this->assertEquals((object) $inputData, $object);

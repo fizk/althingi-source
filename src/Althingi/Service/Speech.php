@@ -58,6 +58,7 @@ class Speech implements DatabaseAwareInterface
     public function fetch($id, $assemblyId, $issueId, $size = 25)
     {
         $pointer = 0;
+        $hasResult = false;
         $statement = $this->getDriver()->prepare(
             'select * from `Speech` s 
             where s.`assembly_id` = :assembly_id and s.`issue_id` = :issue_id
@@ -67,9 +68,14 @@ class Speech implements DatabaseAwareInterface
 
         while ($row = $statement->fetch(PDO::FETCH_OBJ)) {
             if ($row->speech_id == $id) {
+                $hasResult = true;
                 break;
             }
             $pointer++;
+        }
+
+        if ($hasResult == false) {
+            return [];
         }
 
         $rangeBegin = ($pointer - ($pointer % $size));
@@ -115,7 +121,7 @@ class Speech implements DatabaseAwareInterface
         return array_map(
             [$this, 'decorate'],
             $speeches,
-            range($offset, $offset + count($speeches) - 1)
+            count($speeches) > 0 ? range($offset, $offset + count($speeches) - 1) : []
         );
     }
 
@@ -147,7 +153,7 @@ class Speech implements DatabaseAwareInterface
     public function fetchFrequencyByIssue($assemblyId, $issueId)
     {
         $statement = $this->getDriver()->prepare('
-            select date_format(`from`, "%Y-%m") as `year_month`, (sum(timediff(`to`, `from`))/60) as `count`
+            select date_format(`from`, "%Y-%m") as `year_month`, (sum(time_to_sec(timediff(`to`, `from`))) / 60) as `count`
             from `Speech`
             where assembly_id = :assembly_id and issue_id = :issue_id
             group by date_format(`from`, "%Y-%m")
@@ -201,7 +207,7 @@ class Speech implements DatabaseAwareInterface
     {
         $statement = $this->getDriver()->prepare($this->insertString('Speech', $data));
         $statement->execute($this->convert($data));
-        return $this->getDriver()->lastInsertId();
+        return (int) $this->getDriver()->lastInsertId();
     }
 
     /**
@@ -213,7 +219,7 @@ class Speech implements DatabaseAwareInterface
     public function update($data)
     {
         $statement = $this->getDriver()->prepare(
-            $this->updateString('Speech', $data, "speech_id={$data->assembly_id}")
+            $this->updateString('Speech', $data, "speech_id = :speech_id")
         );
         $statement->execute($this->convert($data));
         return $statement->rowCount();
@@ -242,7 +248,7 @@ class Speech implements DatabaseAwareInterface
      * @param int $position
      * @return null
      */
-    private function decorate($object, $position = 0)
+    private function decorate($object, $position = null)
     {
         if (!$object) {
             return null;
@@ -252,7 +258,7 @@ class Speech implements DatabaseAwareInterface
         $object->assembly_id = (int) $object->assembly_id;
         $object->issue_id = (int) $object->issue_id;
         $object->congressman_id = (int) $object->congressman_id;
-        $object->position = (int) $position;
+        $object->position = is_numeric($position) ? (int) $position : null ;
 
         return $object;
     }

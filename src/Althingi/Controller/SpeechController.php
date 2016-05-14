@@ -39,6 +39,49 @@ class SpeechController extends AbstractRestfulController implements
     /** @var \Althingi\Service\Party */
     private $partyService;
 
+    /**
+     * Get Speech item and speeches surrounding it.
+     *
+     * @param mixed $id
+     * @return \Rend\View\Model\ModelInterface
+     */
+    public function get($id)
+    {
+        $assemblyId = $this->params('id');
+        $issueId = $this->params('issue_id');
+        $speechId = $id;
+
+        $count = $this->speechService->countByIssue($assemblyId, $issueId);
+        $speeches = $this->speechService->fetch($speechId, $assemblyId, $issueId);
+        $positionBegin = (count($speeches) > 0)
+            ? $speeches[0]->position
+            : 0 ;
+        $positionEnd = (count($speeches) > 0)
+            ? $speeches[count($speeches) - 1]->position
+            : 0 ;
+
+        array_walk($speeches, function ($speech) {
+            $speech->text = Transformer::speechToMarkdown($speech->text);
+            $speech->congressman = $this->congressmanService->get($speech->congressman_id);
+            $speech->congressman->party = $this->partyService->getByCongressman(
+                $speech->congressman_id,
+                new DateTime($speech->from)
+            );
+        });
+
+        return (new CollectionModel($speeches))
+            ->setOption('Access-Control-Allow-Origin', '*')
+            ->setOption('Access-Control-Expose-Headers', 'Range-Unit, Content-Range') //TODO should go into Rend
+            ->setStatus(206)
+            ->setRange($positionBegin, $positionEnd, $count);
+    }
+
+    /**
+     * Get all speeches by an issue.
+     * Paginated.
+     *
+     * @return \Rend\View\Model\ModelInterface
+     */
     public function getList()
     {
         $assemblyId = $this->params('id');
@@ -70,6 +113,13 @@ class SpeechController extends AbstractRestfulController implements
             ->setRange($range['from'], $range['to'], $count);
     }
 
+    /**
+     * Create one speech.
+     *
+     * @param mixed $id
+     * @param mixed $data
+     * @return \Rend\View\Model\ModelInterface
+     */
     public function put($id, $data)
     {
         $assemblyId = $this->params('id');
@@ -88,6 +138,13 @@ class SpeechController extends AbstractRestfulController implements
         return (new ErrorModel($form))->setStatus(400);
     }
 
+    /**
+     * Update one speech.
+     *
+     * @param $id
+     * @param $data
+     * @return \Rend\View\Model\ModelInterface
+     */
     public function patch($id, $data)
     {
         $speechId = $this->params('speech_id');

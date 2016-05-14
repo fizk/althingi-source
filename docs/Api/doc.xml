@@ -595,7 +595,47 @@
         <path>/loggjafarthing/:id/thingmal/:issue_id/raedur/:speech_id</path>
         <param name="id" value="int">Number of assembly</param>
         <param name="issue_id" value="int">Number of issue</param>
-        <param name="speech_id" value="string">ID of speech (from-date with an 'r' in front)</param>
+        <param name="speech_id" value="string">ID of speech (from-date)</param>
+        <method verb="GET">
+            <description>
+                The result might be a bit different from expected. It will not return a single speech item
+                but one pagination page that contains the speech item requested.
+            </description>
+            <response>
+                <output>
+                    [
+                        {
+                            "speech_id": "20150910T154832",
+                            "plenary_id": 3,
+                            "assembly_id": 145,
+                            "issue_id": 1,
+                            "congressman_id": 557,
+                            "congressman_type": null,
+                            "from": "2015-09-10 15:48:32",
+                            "to": "2015-09-10 15:50:54",
+                            "text": "Herra forseti....",
+                            "type": "andsvar",
+                            "iteration": "1",
+                            "position": 75,
+                            "congressman": {
+                                    "congressman_id": 557,
+                                    "name": "Steingr\u00edmur J. Sigf\u00fasson",
+                                    "birth": "1955-08-04",
+                                    "death": null,
+                                    "party": {
+                                        "party_id": 23,
+                                        "name": "Vinstri hreyfingin - gr\u00e6nt frambo\u00f0",
+                                        "abbr_short": "Vg",
+                                        "abbr_long": "Vinstri-gr.",
+                                        "color": "ff0000"
+                                }
+                            }
+                        },
+                        ...
+                    ]
+                </output>
+            </response>
+        </method>
         <method verb="PUT">
             <description>Create/PUT one speech</description>
             <request>
