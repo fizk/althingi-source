@@ -9,6 +9,7 @@
 namespace Althingi\Controller;
 
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+use Mockery;
 
 class SpeechControllerTest extends AbstractHttpControllerTestCase
 {
@@ -22,7 +23,7 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
 
     public function testGetSuccess()
     {
-        $speechServiceMock = \Mockery::mock('Althingi\Service\Speech')
+        $speechServiceMock = Mockery::mock('Althingi\Service\Speech')
             ->shouldReceive('countByIssue')
                 ->andReturn(100)
                 ->getMock()
@@ -43,11 +44,11 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
                     }, range(1, 10));
                 })
                 ->getMock();
-        $congressmanServiceMock = \Mockery::mock('Althingi\Service\Congressman')
+        $congressmanServiceMock = Mockery::mock('Althingi\Service\Congressman')
             ->shouldReceive('get')
             ->andReturn((object)[])
             ->getMock();
-        $partyServiceMock = \Mockery::mock('Althingi\Service\Party')
+        $partyServiceMock = Mockery::mock('Althingi\Service\Party')
             ->shouldReceive('getByCongressman')
             ->andReturn((object)[])
             ->getMock();
@@ -68,7 +69,7 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
 
     public function testGetRangeHeaders()
     {
-        $speechServiceMock = \Mockery::mock('Althingi\Service\Speech')
+        $speechServiceMock = Mockery::mock('Althingi\Service\Speech')
             ->shouldReceive('countByIssue')
             ->andReturn(100)
             ->getMock()
@@ -83,12 +84,12 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
             }, range(25, 49)))
             ->getMock();
 
-        $congressmanServiceMock = \Mockery::mock('Althingi\Service\Congressman')
+        $congressmanServiceMock = Mockery::mock('Althingi\Service\Congressman')
             ->shouldReceive('get')
             ->andReturn((object) [])
             ->getMock();
 
-        $partyServiceMock = \Mockery::mock('Althingi\Service\Party')
+        $partyServiceMock = Mockery::mock('Althingi\Service\Party')
             ->shouldReceive('getByCongressman')
             ->andReturn((object) [])
             ->getMock();
@@ -111,8 +112,8 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
 
     public function testPutSuccess()
     {
-        $pdoMock = \Mockery::mock('PDO');
-        $serviceMock = \Mockery::mock('Althingi\Service\Speech')
+        $pdoMock = Mockery::mock('PDO');
+        $serviceMock = Mockery::mock('Althingi\Service\Speech')
             ->shouldReceive('create')
             ->andReturnUsing(function ($object) {
                 $this->assertEquals(20, $object->plenary_id);
@@ -149,8 +150,8 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
 
     public function testPutInvalidForm()
     {
-        $pdoMock = \Mockery::mock('PDO');
-        $serviceMock = \Mockery::mock('Althingi\Service\Speech')
+        $pdoMock = Mockery::mock('PDO');
+        $serviceMock = Mockery::mock('Althingi\Service\Speech')
             ->shouldReceive('create')
             ->andReturn(null)
             ->never()
@@ -177,8 +178,8 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
 
     public function testGetList()
     {
-        $pdoMock = \Mockery::mock('PDO');
-        $serviceMock = \Mockery::mock('Althingi\Service\Speech')
+        $pdoMock = Mockery::mock('PDO');
+        $serviceMock = Mockery::mock('Althingi\Service\Speech')
             ->shouldReceive('fetchByIssue')
             ->andReturnUsing(function ($assembly, $issue) {
                 $this->assertEquals(144, $assembly);
@@ -205,8 +206,8 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
 
     public function testPatchSuccess()
     {
-        $pdoMock = \Mockery::mock('PDO');
-        $speechServiceMock = \Mockery::mock('Althingi\Service\Speech')
+        $pdoMock = Mockery::mock('PDO');
+        $speechServiceMock = Mockery::mock('Althingi\Service\Speech')
             ->shouldReceive('get')
             ->andReturnUsing(function ($speechId) {
                 $this->assertEquals(4, $speechId);
@@ -237,8 +238,8 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
 
     public function testPatchInvalid()
     {
-        $pdoMock = \Mockery::mock('PDO');
-        $speechServiceMock = \Mockery::mock('Althingi\Service\Speech')
+        $pdoMock = Mockery::mock('PDO');
+        $speechServiceMock = Mockery::mock('Althingi\Service\Speech')
             ->shouldReceive('get')
             ->andReturn((object) [])
             ->getMock();
@@ -257,8 +258,8 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
 
     public function testPatchNotFound()
     {
-        $pdoMock = \Mockery::mock('PDO');
-        $speechServiceMock = \Mockery::mock('Althingi\Service\Speech')
+        $pdoMock = Mockery::mock('PDO');
+        $speechServiceMock = Mockery::mock('Althingi\Service\Speech')
             ->shouldReceive('get')
             ->andReturn(null)
             ->getMock();
@@ -275,7 +276,7 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
 
     public function testOptions()
     {
-        $pdoMock = \Mockery::mock('\PDO');
+        $pdoMock = Mockery::mock('\PDO');
 
         $serviceManager = $this->getApplicationServiceLocator();
         $serviceManager->setAllowOverride(true);
@@ -294,7 +295,7 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
 
     public function testOptionsList()
     {
-        $pdoMock = \Mockery::mock('\PDO');
+        $pdoMock = Mockery::mock('\PDO');
 
         $serviceManager = $this->getApplicationServiceLocator();
         $serviceManager->setAllowOverride(true);
