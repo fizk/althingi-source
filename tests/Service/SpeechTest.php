@@ -181,7 +181,7 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
         $service = new Speech();
         $service->setDriver($this->pdo);
 
-        $i = $service->create((object) [
+        $service->create((object) [
             'speech_id' => '7_1',
             'plenary_id' => 1,
             'assembly_id' => 145,

@@ -77,7 +77,7 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
             ->andReturn(array_map(function ($i) {
                 return (object) [
                     'congressman_id' => 1,
-                    'text' => '',
+                    'text' => '<?xml version="1.0" ?><root />',
                     'from' => '2000-01-01 00:00:00',
                     'position' => $i
                 ];
