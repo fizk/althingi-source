@@ -44,7 +44,7 @@ class PeriodTest extends \PHPUnit_Framework_TestCase
 
         }, iterator_to_array($daterange));
 
-        print_r($collection);
+        //print_r($collection);
 
 
     }

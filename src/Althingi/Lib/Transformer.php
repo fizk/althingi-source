@@ -15,12 +15,13 @@ class Transformer
         $text =  preg_replace('/(<frammíkall.*?>)(.*?)(<\/frammíkall>)/i', "**[frammíkall: $2]**", $text);
 
         $dom = new \DOMDocument();
-        $dom->loadXML($text);
+        if (@$dom->loadXML($text) == true) {
+            $paragraphs = array_map(function ($paragraph) {
+                return trim($paragraph->nodeValue);
+            }, iterator_to_array($dom->getElementsByTagName('mgr')));
 
-        $paragraphs = array_map(function ($paragraph) {
-            return trim($paragraph->nodeValue);
-        }, iterator_to_array($dom->getElementsByTagName('mgr')));
-
-        return implode("\n\n", $paragraphs);
+            return implode("\n\n", $paragraphs);
+        }
+        return $text;
     }
 }
