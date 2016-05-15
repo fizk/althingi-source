@@ -153,7 +153,8 @@ class Speech implements DatabaseAwareInterface
     public function fetchFrequencyByIssue($assemblyId, $issueId)
     {
         $statement = $this->getDriver()->prepare('
-            select date_format(`from`, "%Y-%m") as `year_month`, (sum(time_to_sec(timediff(`to`, `from`))) / 60) as `count`
+            select date_format(`from`, "%Y-%m") as `year_month`, 
+            (sum(time_to_sec(timediff(`to`, `from`)))) as `count`
             from `Speech`
             where assembly_id = :assembly_id and issue_id = :issue_id
             group by date_format(`from`, "%Y-%m")
@@ -184,9 +185,9 @@ class Speech implements DatabaseAwareInterface
     {
         $statement = $this->getDriver()->prepare(
             'select date_format(`date`, "%Y-%m") as `month`, sum(`diff`) as `time` from (
-                select date(`from`) as `date`, timediff(`to`, `from`) as `diff`
+                select date(`from`) as `date`, time_to_sec(timediff(`to`, `from`)) as `diff`
                 from `Speech`
-                where assembly_id = :assembly_id
+                where assembly_id = :assembly_id and (`from` is not null or `to` is not null)
             ) as G group by `month` order by `month`;'
         );
         $statement->execute(['assembly_id' => $assemblyId]);

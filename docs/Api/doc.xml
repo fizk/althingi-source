@@ -390,49 +390,56 @@
                         "assembly_id": 145,
                         "congressman_id": null,
                         "category": "A",
-                        "name": "Fjárlög 2016",
+                        "name": "Fj\u00e1rl\u00f6g 2016",
                         "sub_name": null,
                         "type": "l",
                         "type_name": "Frumvarp til laga",
-                        "type_subname": "Lagafrumvarp",
-                        "status": "Samþykkt sem lög frá Alþingi.",
+                        "type_subname": "Stj\u00f3rnarfrumvarp",
+                        "status": "Sam\u00feykkt sem l\u00f6g fr\u00e1 Al\u00feingi",
                         "question": null,
                         "date": "2015-09-08 13:01:00",
-                        "proponents": [
-                            {
-                                "congressman_id": 652,
-                                "name": "Bjarni Benediktsson",
-                                "birth": "1970-01-26",
-                                "death": null,
-                                "party": null
+                            "proponent": {
+                                "congressman_id": 1012,
+                                "name": "Bjarkey Olsen Gunnarsd\u00f3ttir",
+                                "time": 32750,
+                                "begin": "2015-09-10",
+                                "party": {
+                                    "party_id": 23,
+                                    "name": "Vinstri hreyfingin - gr\u00e6nt frambo\u00f0",
+                                    "abbr_short": "Vg",
+                                    "abbr_long": "Vinstri-gr.",
+                                    "color": "ff0000"
                             }
-                        ],
-                        "documents": [
+                        },
+                        "voteRange": [
                             {
-                                "document_id": 1,
-                                "issue_id": 1,
-                                "assembly_id": 145,
-                                "date": "2015-09-08 13:01:00",
-                                "url": "http://www.althingi.is/altext/145/s/0001.html",
-                                "type": "stjórnarfrumvarp",
-                                "votes": [
-                                    {
-                                        "vote_id": 51981,
-                                        "issue_id": 1,
-                                        "assembly_id": 145,
-                                        "document_id": 1,
-                                        "date": "2015-09-11 20:34:39",
-                                        "type": "Frv. gengur til 2. umr.",
-                                        "outcome": null,
-                                        "method": "yfirlýsing forseta/mál gengur",
-                                        "yes": 0,
-                                        "no": 0,
-                                        "inaction": 0
-                                    },
-                                ...
-                                ]
+                                "count": 2,
+                                "year_month": "2015-09"
                             },
                         ...
+                        ],
+                        "speechRange": [
+                            {
+                                "year_month": "2015-09",
+                                "count": 55394 //time in seconds
+                            },
+                        ...
+                        ],
+                        "speakers": [
+                            {
+                                "congressman_id": 1012,
+                                "name": "Bjarkey Olsen Gunnarsd\u00f3ttir",
+                                "time": 32750,
+                                "begin": "2015-09-10",
+                                "party": {
+                                    "party_id": 23,
+                                    "name": "Vinstri hreyfingin - gr\u00e6nt frambo\u00f0",
+                                    "abbr_short": "Vg",
+                                    "abbr_long": "Vinstri-gr.",
+                                    "color": "ff0000"
+                                }
+                            },
+                            ...
                         ]
                     }
                 </output>

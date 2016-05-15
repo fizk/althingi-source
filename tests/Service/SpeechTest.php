@@ -136,6 +136,28 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
         $this->assertCount(0, $data);
     }
 
+    public function testFetchFrequencyByIssue()
+    {
+        $service = new Speech();
+        $service->setDriver($this->pdo);
+        $data = $service->fetchFrequencyByIssue(145, 1);
+
+        $this->assertEquals(60, $data[0]->count);
+        $this->assertEquals(118, $data[1]->count);
+        $this->assertEquals(42960, $data[2]->count);
+    }
+
+    public function testFetchFrequencyByAssembly()
+    {
+        $service = new Speech();
+        $service->setDriver($this->pdo);
+        $time = $service->fetchFrequencyByAssembly(145);
+
+        $this->assertEquals(60, $time[0]->time);
+        $this->assertEquals(118, $time[1]->time);
+        $this->assertEquals(42960, $time[2]->time);
+    }
+
     public function testCountByIssue()
     {
         $service = new Speech();
@@ -181,18 +203,6 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
         ]);
 
         $this->assertEquals('hundur', $service->get('6_1')->congressman_type);
-    }
-
-    public function testFetchFrequencyByIssue()
-    {
-        $service = new Speech();
-        $service->setDriver($this->pdo);
-        $data = $service->fetchFrequencyByIssue(145, 1);
-
-        $this->assertEquals(1, $data[0]->count);
-        $this->assertEquals(1, $data[1]->count); //is 1.99
-        $this->assertEquals(716, $data[2]->count);
-        $i = 0;
     }
 
     /**

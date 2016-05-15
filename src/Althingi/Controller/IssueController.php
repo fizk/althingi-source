@@ -104,8 +104,8 @@ class IssueController extends AbstractRestfulController implements
             $speech
         );
 
-        $issue->speekers = $this->congressmanService->fetchAccumulatedTimeByIssue($assemblyId, $issueId);
-        array_walk($issue->speekers, function ($congressman) {
+        $issue->speakers = $this->congressmanService->fetchAccumulatedTimeByIssue($assemblyId, $issueId);
+        array_walk($issue->speakers, function ($congressman) {
             $congressman->party = $this->partyService->getByCongressman(
                 $congressman->congressman_id,
                 new DateTime($congressman->begin)
