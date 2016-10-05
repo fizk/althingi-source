@@ -54,7 +54,8 @@ class SessionController extends AbstractRestfulController implements
 
         $sessions = $this->sessionService->fetchByCongressman($congressmanId);
 
-        return new CollectionModel($sessions);
+        return (new CollectionModel($sessions))
+            ->setOption('Access-Control-Allow-Origin', '*');
     }
 
     /**
