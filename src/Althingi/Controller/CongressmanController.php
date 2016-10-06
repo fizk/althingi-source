@@ -165,6 +165,26 @@ class CongressmanController extends AbstractRestfulController implements
 
     }
 
+    public function optionsList()
+    {
+        return (new EmptyModel())
+            ->setStatus(200)
+            ->setAllow(['GET', 'OPTIONS'])
+            ->setOption('Access-Control-Allow-Origin', '*');
+    }
+    /**
+     * List options for Assembly entry.
+     *
+     * @return \Rend\View\Model\ModelInterface
+     */
+    public function options()
+    {
+        return (new EmptyModel())
+            ->setStatus(200)
+            ->setAllow(['GET', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'])
+            ->setOption('Access-Control-Allow-Origin', '*');
+    }
+    
     /**
      * @param Congressman $congressman
      */
