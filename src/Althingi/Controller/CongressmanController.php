@@ -71,7 +71,7 @@ class CongressmanController extends AbstractRestfulController implements
         return (new CollectionModel($congressmen))
             ->setStatus(206)
             ->setRange($range['from'], $range['to'], $count)
-            ->setOption('Access-Control-Expose-Headers', 'Range-Unit, Content-Range') //TODO should go into Rend
+            ->setOption('Access-Control-Expose-Headers', 'Range, Range-Unit, Content-Range') //TODO should go into Rend
             ->setOption('Access-Control-Allow-Origin', '*');
     }
 
@@ -171,7 +171,7 @@ class CongressmanController extends AbstractRestfulController implements
             ->setStatus(200)
             ->setAllow(['GET', 'OPTIONS'])
             ->setOption('Access-Control-Allow-Origin', '*')
-            ->setOption('Access-Control-Expose-Headers', 'Range-Unit, Content-Range');
+            ->setOption('Access-Control-Expose-Headers', 'Range, Range-Unit, Content-Range')
     }
     /**
      * List options for Assembly entry.
@@ -184,7 +184,7 @@ class CongressmanController extends AbstractRestfulController implements
             ->setStatus(200)
             ->setAllow(['GET', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'])
             ->setOption('Access-Control-Allow-Origin', '*')
-            ->setOption('Access-Control-Expose-Headers', 'Range-Unit, Content-Range');
+            ->setOption('Access-Control-Expose-Headers', 'Range, Range-Unit, Content-Range')
     }
     
     /**
