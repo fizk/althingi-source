@@ -170,7 +170,8 @@ class CongressmanController extends AbstractRestfulController implements
         return (new EmptyModel())
             ->setStatus(200)
             ->setAllow(['GET', 'OPTIONS'])
-            ->setOption('Access-Control-Allow-Origin', '*');
+            ->setOption('Access-Control-Allow-Origin', '*')
+            ->setOption('Access-Control-Expose-Headers', 'Range-Unit, Content-Range');
     }
     /**
      * List options for Assembly entry.
@@ -182,7 +183,8 @@ class CongressmanController extends AbstractRestfulController implements
         return (new EmptyModel())
             ->setStatus(200)
             ->setAllow(['GET', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'])
-            ->setOption('Access-Control-Allow-Origin', '*');
+            ->setOption('Access-Control-Allow-Origin', '*')
+            ->setOption('Access-Control-Expose-Headers', 'Range-Unit, Content-Range');
     }
     
     /**
