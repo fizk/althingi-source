@@ -184,7 +184,7 @@ class CongressmanController extends AbstractRestfulController implements
             ->setStatus(200)
             ->setAllow(['GET', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'])
             ->setOption('Access-Control-Allow-Origin', '*')
-            ->setOption('Access-Control-Expose-Headers', 'Range, Range-Unit, Content-Range')
+            ->setOption('Access-Control-Expose-Headers', 'Range, Range-Unit, Content-Range');
     }
     
     /**
