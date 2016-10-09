@@ -20,7 +20,7 @@ class Issue implements DatabaseAwareInterface
 {
     use DatabaseService;
 
-    const ALLOWED_TYPES = ['a', 'b', 'l', 'm', 'q', 's'];
+    const ALLOWED_TYPES = ['a', 'b', 'f', 'l', 'm', 'n', 'q', 's', 'v'];
     const ALLOWED_ORDER = ['asc', 'desc'];
 
     const STATUS_WAITING_ONE    = 'Bíður 1. umræðu';
