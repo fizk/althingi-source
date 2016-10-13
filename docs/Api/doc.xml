@@ -205,6 +205,13 @@
         <param name="id" value="int">Number of assembly</param>
         <method verb="GET">
             <description>Get all members of assembly</description>
+            <request>
+                <query>
+                    <param name="tegund" value="thingmadur | varamadur | [none]">
+                        Not required. If not provided, will return all.
+                    </param>
+                </query>
+            </request>
             <response>
                 <output>
                     [
@@ -224,6 +231,23 @@
                         },
                         ...
                     ]
+                </output>
+            </response>
+        </method>
+    </resource>
+
+    <resource>
+        <path>/loggjafarthing/:id/thingmenn/:congressman_id/samantekt</path>
+        <param name="id" value="int">Number of assembly</param>
+        <param name="congressman_id" value="int">Number of congressman</param>
+        <method verb="GET">
+            <description>Get some stats about a congressman in a given assembly</description>
+            <response>
+                <output>
+                    {
+                        voting: [],
+                        voting_total: 1234,
+                    }
                 </output>
             </response>
         </method>

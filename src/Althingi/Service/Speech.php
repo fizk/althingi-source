@@ -197,6 +197,20 @@ class Speech implements DatabaseAwareInterface
         }, $statement->fetchAll());
     }
 
+    public function countTotalTimeByAssemblyAndCongressman($assemblyId, $congressmanId)
+    {
+        $statement = $this->getDriver()->prepare('
+            select sum(`diff`) from (
+                select *, time_to_sec(timediff(S.`to`, S.`from`)) as `diff` from `Speech` S where S.`assembly_id` = :assembly_id and S.`congressman_id` = :congressman_id
+            ) as D;
+        ');
+        $statement->execute([
+            'assembly_id' => $assemblyId,
+            'congressman_id' => $congressmanId,
+        ]);
+        return (int) $statement->fetchColumn(0);
+    }
+
     /**
      * Create one Speech. Accepts object from
      * corresponding Form.

@@ -38,6 +38,19 @@ return array(
                                 'controller' => 'Althingi\Controller\Congressman',
                                 'action' => 'assembly'
                             ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'samantekt' => [
+                                'type' => 'Zend\Mvc\Router\Http\Segment',
+                                'options' => [
+                                    'route'    => '/:congressman_id/samantekt',
+                                    'defaults' => [
+                                        'controller' => 'Althingi\Controller\Congressman',
+                                        'action' => 'assembly-summary'
+                                    ],
+                                ],
+                            ],
                         ]
                     ],
                     'samantekt' => [

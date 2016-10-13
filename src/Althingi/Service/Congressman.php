@@ -17,6 +17,10 @@ use PDO;
  */
 class Congressman implements DatabaseAwareInterface
 {
+    const CONGRESSMAN_TYPE_MP = 'parliamentarian';
+    const CONGRESSMAN_TYPE_SUBSTITUTE = 'substitute';
+    const CONGRESSMAN_TYPE_WITH_SUBSTITUTE = 'with-substitute';
+
     use DatabaseService;
 
     /**
@@ -57,14 +61,39 @@ class Congressman implements DatabaseAwareInterface
         return array_map([$this, 'decorate'], $statement->fetchAll());
     }
 
-    public function fetchByAssembly($assemblyId)
+    public function fetchByAssembly($assemblyId, $congressmanType = null)
     {
-        $statement = $this->getDriver()->prepare(
-            'select C.*, S.party_id from `Session` S
-            join `Congressman` C on (C.congressman_id = S.congressman_id)
-            where S.assembly_id = :assembly_id
-            group by S.congressman_id order by S.party_id, C.name;'
-        );
+        $statement;
+        switch ($congressmanType) {
+            case self::CONGRESSMAN_TYPE_MP:
+                $statement = $this->getDriver()->prepare(
+                    'select C.*, S.party_id from `Session` S
+                    join `Congressman` C on (C.congressman_id = S.congressman_id)
+                    where S.assembly_id = :assembly_id and S.`type` = \'þingmaður\'
+                    group by S.congressman_id order by S.party_id, C.name;'
+                );
+                break;
+            case self::CONGRESSMAN_TYPE_SUBSTITUTE:
+                $statement = $this->getDriver()->prepare(
+                    'select C.*, S.party_id from `Session` S
+                    join `Congressman` C on (C.congressman_id = S.congressman_id)
+                    where S.assembly_id = :assembly_id and S.`type` = \'varamaður\'
+                    group by S.congressman_id order by S.party_id, C.name;'
+                );
+                break;
+            case self::CONGRESSMAN_TYPE_WITH_SUBSTITUTE:
+                //TODO do I need this?
+                return [];
+                break;
+            default:
+                $statement = $this->getDriver()->prepare(
+                    'select C.*, S.party_id from `Session` S
+                    join `Congressman` C on (C.congressman_id = S.congressman_id)
+                    where S.assembly_id = :assembly_id
+                    group by S.congressman_id order by S.party_id, C.name;'
+                );
+                break;
+        }
         $statement->execute(['assembly_id' => $assemblyId]);
         return array_map([$this, 'decorate'], $statement->fetchAll());
     }

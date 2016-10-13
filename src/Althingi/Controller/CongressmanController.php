@@ -10,11 +10,17 @@ namespace Althingi\Controller;
 
 use Althingi\Form\Congressman as CongressmanForm;
 use Althingi\Lib\ServiceCongressmanAwareInterface;
+use Althingi\Lib\ServiceIssueAwareInterface;
 use Althingi\Lib\ServicePartyAwareInterface;
 use Althingi\Lib\ServiceSessionAwareInterface;
+use Althingi\Lib\ServiceSpeechAwareInterface;
+use Althingi\Lib\ServiceVoteAwareInterface;
 use Althingi\Service\Congressman;
+use Althingi\Service\Issue;
 use Althingi\Service\Party;
 use Althingi\Service\Session;
+use Althingi\Service\Speech;
+use Althingi\Service\Vote;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ErrorModel;
 use Rend\View\Model\EmptyModel;
@@ -25,7 +31,10 @@ use Rend\Helper\Http\Range;
 class CongressmanController extends AbstractRestfulController implements
     ServiceCongressmanAwareInterface,
     ServicePartyAwareInterface,
-    ServiceSessionAwareInterface
+    ServiceSessionAwareInterface,
+    ServiceVoteAwareInterface,
+    ServiceIssueAwareInterface,
+    ServiceSpeechAwareInterface
 {
     use Range;
 
@@ -37,6 +46,15 @@ class CongressmanController extends AbstractRestfulController implements
 
     /** @var \Althingi\Service\Session */
     private $sessionService;
+
+    /** @var \Althingi\Service\Vote */
+    private $voteService;
+
+    /** @var \Althingi\Service\Issue */
+    private $issueService;
+
+    /** @var \Althingi\Service\Speech */
+    private $speechService;
 
     /**
      * Get one congressman.
@@ -153,16 +171,45 @@ class CongressmanController extends AbstractRestfulController implements
     public function assemblyAction()
     {
         $assemblyId = $this->params('id');
+        $typeArray = [
+            'thingmadur' => Congressman::CONGRESSMAN_TYPE_MP,
+            'varamadur' => Congressman::CONGRESSMAN_TYPE_SUBSTITUTE
+        ];
+        $typeQuery = $this->params()->fromQuery('tegund', null);
+        $typeParam = array_key_exists($typeQuery, $typeArray) ? $typeArray[$typeQuery] : null;
 
         $congressmen = array_map(function ($congressman) {
             $congressman->party = $this->partyService->get($congressman->party_id);
             return $congressman;
-        }, $this->congressmanService->fetchByAssembly($assemblyId));
+        }, $this->congressmanService->fetchByAssembly($assemblyId, $typeParam));
 
         return (new CollectionModel($congressmen))
             ->setStatus(200)
             ->setOption('Access-Control-Allow-Origin', '*');
 
+    }
+
+    public function assemblySummaryAction()
+    {
+        $assemblyId = $this->params('id');
+        $congressmanId = $this->params('congressman_id');
+        $fromString = $this->params()->fromQuery('fra', null);
+        $toString = $this->params()->fromQuery('til', null);
+
+        $fromDate = $fromString ? new \DateTime($fromString) : null ;
+        $toDate = $toString ? new \DateTime($toString) : null ;
+
+        $frequencyData = (object) [
+            'voting' => $this->voteService->getFrequencyByAssemblyAndCongressman($assemblyId, $congressmanId, $fromDate, $toDate),
+            'voting_total' => $this->voteService->countByAssembly($assemblyId),
+            'sessions' => $this->sessionService->fetchByAssemblyAndCongressman($assemblyId, $congressmanId),
+            'issues' => $this->issueService->fetchByAssemblyAndCongressman($assemblyId, $congressmanId),
+            'speech_time' => $this->speechService->countTotalTimeByAssemblyAndCongressman($assemblyId, $congressmanId)
+        ];
+
+        return (new ItemModel($frequencyData))
+            ->setStatus(200)
+            ->setOption('Access-Control-Allow-Origin', '*');
     }
 
     public function optionsList()
@@ -209,5 +256,29 @@ class CongressmanController extends AbstractRestfulController implements
     public function setSessionService(Session $session)
     {
         $this->sessionService = $session;
+    }
+
+    /**
+     * @param Vote $vote
+     */
+    public function setVoteService(Vote $vote)
+    {
+        $this->voteService = $vote;
+    }
+
+    /**
+     * @param Issue $issue
+     */
+    public function setIssueService(Issue $issue)
+    {
+        $this->issueService = $issue;
+    }
+
+    /**
+     * @param Speech $speech
+     */
+    public function setSpeechService(Speech $speech)
+    {
+        $this->speechService = $speech;
     }
 }

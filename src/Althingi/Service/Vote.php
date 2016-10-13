@@ -92,6 +92,53 @@ class Vote implements DatabaseAwareInterface
         return array_map([$this, 'decorate'], $statement->fetchAll());
     }
 
+    public function getFrequencyByAssemblyAndCongressman($assemblyId, $congressmanId, \DateTime $from = null, \DateTime $to = null)
+    {
+        $statement;
+        if ($from) {
+            $to = $to ? $to : new \DateTime();
+            $statement = $this->getDriver()->prepare('
+                select count(*) as `count`, VI.`vote` from `Vote` V 
+                join `VoteItem` VI on (V.`vote_id` = VI.`vote_id`)
+                where V.`assembly_id` = :assembly_id and VI.`congressman_id` = :congressman_id  and (V.`date` between :from and :to)
+                group by VI.`vote`;
+            ');
+            $statement->execute([
+                'assembly_id' => $assemblyId,
+                'congressman_id' => $congressmanId,
+                'from' => $from->format('Y-m-d H:i:s'),
+                'to' => $to->format('Y-m-d H:i:s'),
+            ]);
+        } else {
+            $statement = $this->getDriver()->prepare('
+                select count(*) as `count`, VI.`vote` from `Vote` V 
+                join `VoteItem` VI on (V.`vote_id` = VI.`vote_id`)
+                where V.`assembly_id` = :assembly_id and VI.`congressman_id` = :congressman_id
+                group by VI.`vote`;
+            ');
+            $statement->execute([
+                'assembly_id' => $assemblyId,
+                'congressman_id' => $congressmanId,
+            ]);
+        }
+
+        return array_map(function ($type) {
+            $type->count = (int) $type->count;
+            return $type;
+        }, $statement->fetchAll());
+    }
+
+    public function countByAssembly($assemblyId)
+    {
+        $statement = $this->getDriver()->prepare('
+            select count(*) from `Vote` V where V.`assembly_id` = :assembly_id;
+        ');
+        $statement->execute([
+            'assembly_id' => $assemblyId,
+        ]);
+        return (int) $statement->fetchColumn(0);
+    }
+
     public function create($data)
     {
         $insertStatement = $this->getDriver()->prepare($this->insertString('Vote', $data));

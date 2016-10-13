@@ -56,6 +56,20 @@ class Session implements DatabaseAwareInterface
         return array_map([$this, 'decorate'], $statement->fetchAll());
     }
 
+    public function fetchByAssemblyAndCongressman($assemblyId, $congressmanId)
+    {
+        $statement = $this->getDriver()->prepare("
+            select * from `Session` S where S.`congressman_id` = :congressman_id and S.`assembly_id` = :assembly_id 
+            order by `from` desc
+        ");
+
+        $statement->execute([
+            'assembly_id' => $assemblyId,
+            'congressman_id' => $congressmanId,
+        ]);
+        return array_map([$this, 'decorate'], $statement->fetchAll());
+    }
+
     public function getIdentifier($congressmanId, DateTime $from, $type)
     {
         $statement = $this->getDriver()->prepare('

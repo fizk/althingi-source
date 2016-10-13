@@ -109,6 +109,20 @@ class Issue implements DatabaseAwareInterface
         return array_map([$this, 'decorate'], $statement->fetchAll());
     }
 
+    public function fetchByAssemblyAndCongressman($assemblyId, $congressmanId)
+    {
+        $statement = $this->getDriver()->prepare("
+            select * from `Issue` I where I.`congressman_id` = :congressman_id and I.`assembly_id` = :assembly_id
+            order by I.`assembly_id` desc, I.`issue_id` asc;
+        ");
+
+        $statement->execute([
+            'assembly_id' => $assemblyId,
+            'congressman_id' => $congressmanId,
+        ]);
+        return array_map([$this, 'decorate'], $statement->fetchAll());
+    }
+
     /**
      * Get the state of issues by assembly.
      *
@@ -121,7 +135,7 @@ class Issue implements DatabaseAwareInterface
     {
         $statement = $this->getDriver()->prepare(
             'select count(*) as `count`, `type`, `type_name`, `type_subname` from `Issue`
-            where assembly_id = :assembly_id group by `type` order by `type_name`;'
+            where assembly_id = :assembly_id group by `type`, `type_subname` order by `type_name`;'
         );
 
         $statement->execute(['assembly_id' => $assemblyId]);
