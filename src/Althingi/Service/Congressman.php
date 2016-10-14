@@ -149,6 +149,29 @@ class Congressman implements DatabaseAwareInterface
         return array_map([$this, 'decorate'], $statement->fetchAll());
     }
 
+    public function fetchPresidents()
+    {
+        $statement = $this->getDriver()->prepare("
+            select C.*, P.`from`, P.`to`, P.`title`, P.`abbr` from `President` P
+            join `Congressman` C on (C.`congressman_id` = P.`congressman_id`);
+        ");
+        $statement->execute();
+
+        return array_map([$this, 'decorate'], $statement->fetchAll());
+    }
+
+    public function fetchPresidentsByAssembly($assemblyId)
+    {
+        $statement = $this->getDriver()->prepare("
+            select C.*, P.`from`, P.`to`, P.`title`, P.`abbr` from `President` P
+            join `Congressman` C on (C.`congressman_id` = P.`congressman_id`)
+            where P.`assembly_id` = :assembly_id;
+        ");
+        $statement->execute(['assembly_id' => $assemblyId]);
+
+        return array_map([$this, 'decorate'], $statement->fetchAll());
+    }
+
     /**
      * Create one Congressman. This method accepts object
      * from corresponding Form.

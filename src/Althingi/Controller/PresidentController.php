@@ -8,8 +8,10 @@
 
 namespace Althingi\Controller;
 
+use Althingi\Lib\ServiceCongressmanAwareInterface;
 use Althingi\Lib\ServicePartyAwareInterface;
 use Althingi\Lib\ServicePresidentAwareInterface;
+use Althingi\Service\Congressman;
 use Althingi\Service\Party;
 use Althingi\Service\President;
 use Rend\Controller\AbstractRestfulController;
@@ -21,7 +23,8 @@ use Althingi\Form\President as PresidentForm;
 
 class PresidentController extends AbstractRestfulController implements
     ServicePresidentAwareInterface,
-    ServicePartyAwareInterface
+    ServicePartyAwareInterface,
+    ServiceCongressmanAwareInterface
 {
     /** @var $presidentService \Althingi\Service\President */
     private $presidentService;
@@ -29,8 +32,11 @@ class PresidentController extends AbstractRestfulController implements
     /** @var $presidentService \Althingi\Service\Party */
     private $partyService;
 
+    /** @var $presidentService \Althingi\Service\Congressman */
+    private $congressmanService;
+
     /**
-     * Return list of Presidents.
+     * Return one Presidents.
      *
      * @param int $id
      * @return \Rend\View\Model\ModelInterface
@@ -56,7 +62,7 @@ class PresidentController extends AbstractRestfulController implements
      */
     public function getList()
     {
-        $residents = $this->presidentService->fetchAll();
+        $residents = $this->congressmanService->fetchPresidents();
         array_map(function ($president) {
             $president->party = $this->partyService
                 ->getByCongressman($president->congressman_id, new \DateTime($president->from));
@@ -139,5 +145,13 @@ class PresidentController extends AbstractRestfulController implements
     public function setPartyService(Party $party)
     {
         $this->partyService = $party;
+    }
+
+    /**
+     * @param Congressman $congressman
+     */
+    public function setCongressmanService(Congressman $congressman)
+    {
+        $this->congressmanService = $congressman;
     }
 }
