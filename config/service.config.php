@@ -22,6 +22,7 @@ return [
         'Althingi\Service\Document' => 'Althingi\Service\Document',
         'Althingi\Service\Committee' => 'Althingi\Service\Committee',
         'Althingi\Service\Cabinet' => 'Althingi\Service\Cabinet',
+        'Althingi\Service\President' => 'Althingi\Service\President',
     ],
 
     'factories' => [

@@ -53,6 +53,17 @@ return array(
                             ],
                         ]
                     ],
+                    'forsetar' => [
+                        'type' => 'Zend\Mvc\Router\Http\Segment',
+                        'options' => [
+                            'route'    => '/forsetar[/:congressman_id]',
+                            'defaults' => [
+                                'controller' => 'Althingi\Controller\PresidentAssembly',
+                                'identifier' => 'congressman_id'
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
                     'samantekt' => [
                         'type' => 'Zend\Mvc\Router\Http\Literal',
                         'options' => [
@@ -227,6 +238,15 @@ return array(
                     ],
                 ],
             ],
+            'forsetar' => [
+                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'options' => [
+                    'route'    => '/forsetar[/:id]',
+                    'defaults' => [
+                        'controller' => 'Althingi\Controller\President',
+                    ],
+                ],
+            ]
         ]
     ],
 
@@ -269,6 +289,8 @@ return array(
             'Althingi\Controller\Document' => 'Althingi\Controller\DocumentController',
             'Althingi\Controller\Committee' => 'Althingi\Controller\CommitteeController',
             'Althingi\Controller\Cabinet' => 'Althingi\Controller\CabinetController',
+            'Althingi\Controller\President' => 'Althingi\Controller\PresidentController',
+            'Althingi\Controller\PresidentAssembly' => 'Althingi\Controller\PresidentAssemblyController',
         ],
     ],
     'view_manager' => [

@@ -201,6 +201,37 @@
     </resource>
 
     <resource>
+        <path>/loggjafarthing/:id/forsetar</path>
+        <param name="id" value="int">Number of assembly</param>
+        <method verb="GET">
+            <description>Get list of presidents on a give assembly</description>
+            <response>
+                <output>
+                    [
+                        {
+                            congressman_id: 124,
+                            name: "Einar K. Guðfinnsson",
+                            birth: "1955-12-02",
+                            death: null,
+                            from: "2015-09-08",
+                            to: null,
+                            title: "forseti",
+                            abbr: null,
+                            party: {
+                                party_id: 35,
+                                name: "Sjálfstæðisflokkur",
+                                abbr_short: "S",
+                                abbr_long: "Sjálfstfl.",
+                                color: "0000ff"
+                            }
+                        }
+                    ]
+                </output>
+            </response>
+        </method>
+    </resource>
+
+    <resource>
         <path>/loggjafarthing/:id/thingmenn</path>
         <param name="id" value="int">Number of assembly</param>
         <method verb="GET">
@@ -729,7 +760,7 @@
     </resource>
 
     <resource>
-        <path>thingmenn/:id</path>
+        <path>/thingmenn/:id</path>
         <param name="id" value="int">ID of congressman</param>
         <method verb="GET">
             <description>Id ID is given, a single congressman is returned</description>
@@ -973,6 +1004,92 @@
                     <param name="last_assembly_id" value="int">Reference to the last assembly</param>
                     <param name="abbr_short" value="string">Short abbreviation</param>
                     <param name="abbr_long" value="string">Long abbreviation</param>
+                </input>
+            </request>
+        </method>
+    </resource>
+
+    <resource>
+        <path>/forsetar</path>
+        <method verb="GET">
+            <description>Get all presidents</description>
+            <response>
+                <output>
+                    [
+                        {
+                            congressman_id: 703,
+                            name: "Eygló Harðardóttir",
+                            birth: "1972-12-12",
+                            death: null,
+                            from: "2016-01-01",
+                            to: null,
+                            title: "hundur",
+                            abbr: "h",
+                            party: {
+                                party_id: 2,
+                                name: "Framsóknarflokkur",
+                                abbr_short: "F",
+                                abbr_long: "Framsfl.",
+                                color: "009900"
+                            }
+                        }
+                        ...
+                    ]
+                </output>
+            </response>
+        </method>
+        <method verb="POST">
+            <description>Create president entry</description>
+            <request>
+                <input>
+                    <param name="assembly_id" value="int">Name of the committee</param>
+                    <param name="congressman_id" value="int">Reference to the first assembly</param>
+                    <param name="from" value="date">Reference to the last assembly</param>
+                    <param name="to" value="date">Short abbreviation</param>
+                    <param name="title" value="string">Long abbreviation</param>
+                    <param name="abbr" value="string">Long abbreviation</param>
+                </input>
+            </request>
+        </method>
+    </resource>
+
+    <resource>
+        <path>/forsetar/:president_id</path>
+        <param name="president_id" value="int">ID of president record</param>
+        <method verb="GET">
+            <description>Get one president session</description>
+            <response>
+                <output>
+                    {
+                        congressman_id: 703,
+                        name: "Eygló Harðardóttir",
+                        birth: "1972-12-12",
+                        death: null,
+                        from: "2016-01-01",
+                        to: null,
+                        title: "hundur",
+                        abbr: "h",
+                        party: {
+                            party_id: 2,
+                            name: "Framsóknarflokkur",
+                            abbr_short: "F",
+                            abbr_long: "Framsfl.",
+                            color: "009900"
+                        }
+                    }
+                </output>
+            </response>
+        </method>
+        <method verb="PATCH">
+            <description>Create one president record</description>
+            <request>
+                <input>
+                    <param name="assembly_id" value="int">Name of the committee</param>
+                    <param name="congressman_id" value="int">Reference to the first assembly</param>
+                    <param name="from" value="date">Reference to the last assembly</param>
+                    <param name="to" value="date">Short abbreviation</param>
+                    <param name="title" value="string">Long abbreviation</param>
+                    <param name="abbr" value="string">Long abbreviation</param>
                 </input>
             </request>
         </method>

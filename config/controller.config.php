@@ -107,5 +107,12 @@ return [
             }
         },
 
+        'Althingi\Lib\ServicePresidentAwareInterface' => function ($instance, $sm) {
+            if ($instance instanceof \Althingi\Lib\ServicePresidentAwareInterface) {
+                $locator = $sm->getServiceLocator();
+                $instance->setPresidentService($locator->get('Althingi\Service\President'));
+            }
+        },
+
     ]
 ];
