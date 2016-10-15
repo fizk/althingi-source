@@ -23,6 +23,7 @@ use Althingi\Service\Party;
 use Althingi\Service\Issue;
 use Althingi\Service\Speech;
 use Althingi\Service\Vote;
+use Althingi\Lib\Transformer;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ErrorModel;
 use Rend\View\Model\EmptyModel;
@@ -140,6 +141,13 @@ class IssueController extends AbstractRestfulController implements
         );
 
         array_walk($issues, function ($issue) use ($assemblyId) {
+            $issue->goal = Transformer::htmlToMarkdown($issue->goal);
+            $issue->major_changes = Transformer::htmlToMarkdown($issue->major_changes);
+            $issue->changes_in_law = Transformer::htmlToMarkdown($issue->changes_in_law);
+            $issue->costs_and_revenues = Transformer::htmlToMarkdown($issue->costs_and_revenues);
+            $issue->deliveries = Transformer::htmlToMarkdown($issue->deliveries);
+            $issue->additional_information = Transformer::htmlToMarkdown($issue->additional_information);
+
             if ($issue->congressman_id) {
                 $issue->congressman = $this->congressmanService->get($issue->congressman_id);
                 $issue->congressman->party = $this->partyService->getByCongressman(

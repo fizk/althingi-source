@@ -7,6 +7,8 @@
  */
 
 namespace Althingi\Lib;
+use League\HTMLToMarkdown\HtmlConverter;
+
 
 class Transformer
 {
@@ -23,5 +25,14 @@ class Transformer
             return implode("\n\n", $paragraphs);
         }
         return $text;
+    }
+
+    public static function htmlToMarkdown($html)
+    {
+        if (!$html) {
+            return null;
+        }
+        $converter = new HtmlConverter(['strip_tags' => true]);
+        return $converter->convert($html);
     }
 }

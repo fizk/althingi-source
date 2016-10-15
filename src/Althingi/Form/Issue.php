@@ -66,12 +66,36 @@ class Issue extends Form implements InputFilterProviderInterface
             'name' => 'status',
             'type' => 'Zend\Form\Element\Text',
         ));
+
         $this->add(array(
             'name' => 'question',
             'type' => 'Zend\Form\Element\Text',
         ));
 
-
+        $this->add(array(
+            'name' => 'goal',
+            'type' => 'Zend\Form\Element\Text',
+        ));
+        $this->add(array(
+            'name' => 'major_changes',
+            'type' => 'Zend\Form\Element\Text',
+        ));
+        $this->add(array(
+            'name' => 'changes_in_law',
+            'type' => 'Zend\Form\Element\Text',
+        ));
+        $this->add(array(
+            'name' => 'costs_and_revenues',
+            'type' => 'Zend\Form\Element\Text',
+        ));
+        $this->add(array(
+            'name' => 'deliveries',
+            'type' => 'Zend\Form\Element\Text',
+        ));
+        $this->add(array(
+            'name' => 'additional_information',
+            'type' => 'Zend\Form\Element\Text',
+        ));
     }
 
 
@@ -154,6 +178,68 @@ class Issue extends Form implements InputFilterProviderInterface
                     ]
                 ],
             ],
+
+            'goal' => [
+                'required' => false,
+                'allow_empty' => true,
+                'filters' => [
+                    [
+                        'name' => '\Zend\Filter\ToNull',
+                        'options' => ['type' => 'all']
+                    ]
+                ],
+            ],
+            'major_changes' => [
+                'required' => false,
+                'allow_empty' => true,
+                'filters' => [
+                    [
+                        'name' => '\Zend\Filter\ToNull',
+                        'options' => ['type' => 'all']
+                    ]
+                ],
+            ],
+            'changes_in_law' => [
+                'required' => false,
+                'allow_empty' => true,
+                'filters' => [
+                    [
+                        'name' => '\Zend\Filter\ToNull',
+                        'options' => ['type' => 'all']
+                    ]
+                ],
+            ],
+            'costs_and_revenues' => [
+                'required' => false,
+                'allow_empty' => true,
+                'filters' => [
+                    [
+                        'name' => '\Zend\Filter\ToNull',
+                        'options' => ['type' => 'all']
+                    ]
+                ],
+            ],
+            'deliveries' => [
+                'required' => false,
+                'allow_empty' => true,
+                'filters' => [
+                    [
+                        'name' => '\Zend\Filter\ToNull',
+                        'options' => ['type' => 'all']
+                    ]
+                ],
+            ],
+            'additional_information' => [
+                'required' => false,
+                'allow_empty' => true,
+                'filters' => [
+                    [
+                        'name' => '\Zend\Filter\ToNull',
+                        'options' => ['type' => 'all']
+                    ]
+                ],
+            ],
+
         ];
     }
 }
