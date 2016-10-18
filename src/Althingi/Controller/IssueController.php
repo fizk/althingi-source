@@ -256,11 +256,12 @@ class IssueController extends AbstractRestfulController implements
         $assemblyId = $this->params('id');
 
         $response = (object)[
-            'bills' => $this->issueService->fetchBillStatisticsByAssembly($assemblyId),
+            'bills' => $this->issueService->fetchNonGovernmentBillStatisticsByAssembly($assemblyId),
             'government_bills' => $this->issueService->fetchGovernmentBillStatisticsByAssembly($assemblyId),
             'types' => $this->issueService->fetchStateByAssembly($assemblyId),
             'votes' => $this->voteService->fetchFrequencyByAssembly($assemblyId),
             'speeches' => $this->speechService->fetchFrequencyByAssembly($assemblyId),
+            'party_times' => $this->partyService->fetchTimeByAssembly($assemblyId)
         ];
 
         return (new ItemModel($response))

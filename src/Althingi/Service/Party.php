@@ -60,6 +60,27 @@ class Party implements DatabaseAwareInterface
         return $this->decorate($statement->fetchObject());
     }
 
+    public function fetchTimeByAssembly($assemblyId)
+    {
+        $statement = $this->getDriver()->prepare('
+            select sum(T.`time_sum`) as `total_time`, P.* from (
+                select 
+                    SP.`congressman_id`, 
+                    TIME_TO_SEC(timediff(SP.`to`, SP.`from`)) as `time_sum`,
+                    SE.party_id
+                from `Speech` SP 
+                join `Session` SE ON (SE.`congressman_id` = SP.`congressman_id` and ((SP.`from` between SE.`from` and SE.`to`) or (SP.`from` >= SE.`from` and SE.`to` is null)))
+                where SP.`assembly_id` = :assembly_id
+            
+            ) as T
+            join `Party` P on (P.`party_id` = T.`party_id`)
+            group by T.`party_id`
+            order by `total_time` desc;
+        ');
+        $statement->execute(['assembly_id' => $assemblyId]);
+        return array_map([$this, 'decorate'], $statement->fetchAll());
+    }
+
     /**
      * Get all parties that a congressman as been in.
      *

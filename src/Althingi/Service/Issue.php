@@ -135,7 +135,7 @@ class Issue implements DatabaseAwareInterface
     {
         $statement = $this->getDriver()->prepare(
             'select count(*) as `count`, `type`, `type_name`, `type_subname` from `Issue`
-            where assembly_id = :assembly_id group by `type`, `type_subname` order by `type_name`;'
+            where assembly_id = :assembly_id group by `type` order by `type_name`;'
         );
 
         $statement->execute(['assembly_id' => $assemblyId]);
@@ -157,6 +157,21 @@ class Issue implements DatabaseAwareInterface
         $statement = $this->getDriver()->prepare(
             'select count(*) as `count`, `status` from `Issue`
             where `type` = \'l\' and assembly_id = :assembly_id group by `status`;'
+        );
+
+        $statement->execute(['assembly_id' => $id]);
+
+        return array_map(function ($item) {
+            $item->count = is_numeric($item->count) ? (int) $item->count : null;
+            return $item;
+        }, $statement->fetchAll());
+    }
+
+    public function fetchNonGovernmentBillStatisticsByAssembly($id)
+    {
+        $statement = $this->getDriver()->prepare(
+            'select count(*) as `count`, `status` from `Issue`
+            where `type` = \'l\' and assembly_id = :assembly_id and `type_subname` != \'stjórnarfrumvarp\' group by `status`;'
         );
 
         $statement->execute(['assembly_id' => $id]);
