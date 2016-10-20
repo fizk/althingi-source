@@ -10,9 +10,17 @@ namespace Althingi\Controller;
 
 use Althingi\Form\Assembly as AssemblyForm;
 use Althingi\Lib\ServiceAssemblyAwareInterface;
+use Althingi\Lib\ServiceCabinetAwareInterface;
 use Althingi\Lib\ServiceIssueAwareInterface;
+use Althingi\Lib\ServicePartyAwareInterface;
+use Althingi\Lib\ServiceSpeechAwareInterface;
+use Althingi\Lib\ServiceVoteAwareInterface;
 use Althingi\Service\Assembly;
+use Althingi\Service\Cabinet;
 use Althingi\Service\Issue;
+use Althingi\Service\Party;
+use Althingi\Service\Speech;
+use Althingi\Service\Vote;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ErrorModel;
 use Rend\View\Model\EmptyModel;
@@ -22,7 +30,11 @@ use Rend\Helper\Http\Range;
 
 class AssemblyController extends AbstractRestfulController implements
     ServiceAssemblyAwareInterface,
-    ServiceIssueAwareInterface
+    ServiceIssueAwareInterface,
+    ServicePartyAwareInterface,
+    ServiceVoteAwareInterface,
+    ServiceSpeechAwareInterface,
+    ServiceCabinetAwareInterface
 {
     use Range;
 
@@ -31,6 +43,18 @@ class AssemblyController extends AbstractRestfulController implements
 
     /** @var $issueService \Althingi\Service\Issue */
     private $issueService;
+
+    /** @var $issueService \Althingi\Service\Vote */
+    private $voteService;
+
+    /** @var $issueService \Althingi\Service\Speech */
+    private $speechService;
+
+    /** @var $issueService \Althingi\Service\Party */
+    private $partyService;
+
+    /** @var $issueService \Althingi\Service\Cabinet */
+    private $cabinetService;
 
     /**
      * Get one Assembly.
@@ -41,6 +65,18 @@ class AssemblyController extends AbstractRestfulController implements
     public function get($id)
     {
         if (($assembly = $this->assemblyService->get($id)) != null) {
+            $assembly->parties = [];
+            $cabinets = $this->cabinetService->fetchByAssembly($id);
+            foreach ($cabinets as $cabinet) {
+                $majority = $this->partyService->fetchByCabinet($cabinet->cabinet_id);
+                $assembly->parties[] = [
+                    'majority' => $majority,
+                    'minority' => $this->partyService->fetchByAssembly($id, array_map(function ($party) {
+                        return (int) $party->party_id;
+                    }, $majority)),
+                ];
+            }
+
             return (new ItemModel($assembly))
                 ->setStatus(200)
                 ->setOption('Access-Control-Allow-Origin', '*');
@@ -65,6 +101,16 @@ class AssemblyController extends AbstractRestfulController implements
             ($range['to'] - $range['from']),
             $order
         );
+
+        foreach ($assemblies as $assembly) {
+            $assembly->parties = [];
+            $cabinets = $this->cabinetService->fetchByAssembly($assembly->assembly_id);
+            foreach ($cabinets as $cabinet) {
+                $assembly->parties[] = [
+                    'majority' => $this->partyService->fetchByCabinet($cabinet->cabinet_id)
+                ];
+            }
+        }
 
         return (new CollectionModel($assemblies))
             ->setOption('Access-Control-Allow-Origin', '*')
@@ -121,6 +167,29 @@ class AssemblyController extends AbstractRestfulController implements
         return (new EmptyModel())
             ->setStatus(200)
             ->setAllow(['GET', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'])
+            ->setOption('Access-Control-Allow-Origin', '*');
+    }
+
+    /**
+     * Get statistics about assembly.
+     *
+     * @return \Rend\View\Model\ModelInterface
+     */
+    public function statisticsAction()
+    {
+        $assemblyId = $this->params('id');
+
+        $response = (object)[
+            'bills' => $this->issueService->fetchNonGovernmentBillStatisticsByAssembly($assemblyId),
+            'government_bills' => $this->issueService->fetchGovernmentBillStatisticsByAssembly($assemblyId),
+            'types' => $this->issueService->fetchStateByAssembly($assemblyId),
+            'votes' => $this->voteService->fetchFrequencyByAssembly($assemblyId),
+            'speeches' => $this->speechService->fetchFrequencyByAssembly($assemblyId),
+            'party_times' => $this->partyService->fetchTimeByAssembly($assemblyId)
+        ];
+
+        return (new ItemModel($response))
+            ->setStatus(200)
             ->setOption('Access-Control-Allow-Origin', '*');
     }
 
@@ -185,5 +254,37 @@ class AssemblyController extends AbstractRestfulController implements
     public function setIssueService(Issue $issue)
     {
         $this->issueService = $issue;
+    }
+
+    /**
+     * @param Party $party
+     */
+    public function setPartyService(Party $party)
+    {
+        $this->partyService = $party;
+    }
+
+    /**
+     * @param Speech $speech
+     */
+    public function setSpeechService(Speech $speech)
+    {
+        $this->speechService = $speech;
+    }
+
+    /**
+     * @param Vote $vote
+     */
+    public function setVoteService(Vote $vote)
+    {
+        $this->voteService = $vote;
+    }
+
+    /**
+     * @param Cabinet $cabinet
+     */
+    public function setCabinetService(Cabinet $cabinet)
+    {
+        $this->cabinetService = $cabinet;
     }
 }

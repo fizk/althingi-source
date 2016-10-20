@@ -247,29 +247,6 @@ class IssueController extends AbstractRestfulController implements
     }
 
     /**
-     * Get statistics about issues in current assembly.
-     *
-     * @return \Rend\View\Model\ModelInterface
-     */
-    public function assemblyAction()
-    {
-        $assemblyId = $this->params('id');
-
-        $response = (object)[
-            'bills' => $this->issueService->fetchNonGovernmentBillStatisticsByAssembly($assemblyId),
-            'government_bills' => $this->issueService->fetchGovernmentBillStatisticsByAssembly($assemblyId),
-            'types' => $this->issueService->fetchStateByAssembly($assemblyId),
-            'votes' => $this->voteService->fetchFrequencyByAssembly($assemblyId),
-            'speeches' => $this->speechService->fetchFrequencyByAssembly($assemblyId),
-            'party_times' => $this->partyService->fetchTimeByAssembly($assemblyId)
-        ];
-
-        return (new ItemModel($response))
-            ->setStatus(200)
-            ->setOption('Access-Control-Allow-Origin', '*');
-    }
-
-    /**
      * Set service.
      *
      * @param Congressman $congressman

@@ -69,8 +69,8 @@ return array(
                         'options' => [
                             'route'    => '/samantekt',
                             'defaults' => [
-                                'controller' => 'Althingi\Controller\Issue',
-                                'action' => 'assembly'
+                                'controller' => 'Althingi\Controller\Assembly',
+                                'action' => 'statistics'
                             ],
                         ],
                     ],

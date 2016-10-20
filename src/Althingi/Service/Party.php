@@ -81,6 +81,30 @@ class Party implements DatabaseAwareInterface
         return array_map([$this, 'decorate'], $statement->fetchAll());
     }
 
+    public function fetchByAssembly($assemblyId, $exclude = [])
+    {
+        $query = '';
+        if (count($exclude) == 0) {
+            $query = '
+                select P.* from `Session` S
+                join `Party` P on (P.`party_id` = S.`party_id`)
+                where S.`assembly_id` = :assembly_id
+                group by S.`party_id`;
+            ';
+        } else {
+            $query ='
+                select P.* from `Session` S
+                join `Party` P on (P.`party_id` = S.`party_id`)
+                where S.`assembly_id` = :assembly_id and P.`party_id` not in ('.implode(',', $exclude).')
+                group by S.`party_id`;
+            ';
+        }
+
+        $statement = $this->getDriver()->prepare($query);
+        $statement->execute(['assembly_id' => $assemblyId]);
+        return array_map([$this, 'decorate'], $statement->fetchAll());
+    }
+
     /**
      * Get all parties that a congressman as been in.
      *
@@ -95,6 +119,19 @@ class Party implements DatabaseAwareInterface
             where congressman_id = :congressman_id group by `party_id`;'
         );
         $statement->execute(['congressman_id' => $congressmanId]);
+        return array_map([$this, 'decorate'], $statement->fetchAll());
+    }
+
+    public function fetchByCabinet($cabinetId)
+    {
+        $statement = $this->getDriver()->prepare('
+            select P.* from `Cabinet_has_Congressman` CC
+            join `Session` SE ON (SE.`congressman_id` = CC.`congressman_id` and ((CC.`from` between SE.`from` and SE.`to`) or (CC.`from` >= SE.`from` and SE.`to` is null)))
+            join `Party` P on (SE.`party_id` = P.`party_id`)
+            where cabinet_id = :cabinet_id
+            group by SE.`party_id`;    
+        ');
+        $statement->execute(['cabinet_id' => $cabinetId]);
         return array_map([$this, 'decorate'], $statement->fetchAll());
     }
 
