@@ -20,6 +20,11 @@ class VoteItem extends Form implements InputFilterProviderInterface
             ->setObject((object)[]);
 
         $this->add(array(
+            'name' => 'vote_item_id',
+            'type' => 'Zend\Form\Element\Number',
+        ));
+
+        $this->add(array(
             'name' => 'vote_id',
             'type' => 'Zend\Form\Element\Number',
         ));
@@ -44,6 +49,16 @@ class VoteItem extends Form implements InputFilterProviderInterface
     public function getInputFilterSpecification()
     {
         return [
+            'vote_item_id' => [
+                'required' => false,
+                'allow_empty' => true,
+                'filters' => [
+                    [
+                        'name' => '\Zend\Filter\ToNull',
+                        'options' => ['type' => 'all']
+                    ]
+                ],
+            ],
             'vote_id' => [
                 'required' => true,
                 'allow_empty' => false,

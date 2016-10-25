@@ -20,6 +20,16 @@ class VoteItem implements DatabaseAwareInterface
      */
     private $pdo;
 
+    public function get($id)
+    {
+        $statement = $this->getDriver()->prepare(
+            'select * from `VoteItem` where vote_item_id = :vote__item_id'
+        );
+        $statement->execute(['vote__item_id' => $id]);
+
+        return $this->decorate($statement->fetchObject());
+    }
+
     /**
      * Get all vote-items by vote-id
      *
@@ -69,6 +79,15 @@ class VoteItem implements DatabaseAwareInterface
         return (int) $this->getDriver()->lastInsertId();
     }
 
+    public function update($data)
+    {
+        $insertStatement = $this->getDriver()->prepare(
+            $this->updateString('VoteItem', $data, "vote_item_id={$data->vote_item_id}")
+        );
+        $insertStatement->execute($this->convert($data));
+        return (int) $insertStatement->columnCount();
+    }
+
     /**
      * @param \PDO $pdo
      */
@@ -91,6 +110,7 @@ class VoteItem implements DatabaseAwareInterface
             return null;
         }
 
+        $object->vote_item_id = (int) $object->vote_item_id;
         $object->vote_id = (int) $object->vote_id;
         $object->congressman_id = (int) $object->congressman_id;
         return $object;

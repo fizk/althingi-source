@@ -143,32 +143,32 @@ class Vote extends Form implements InputFilterProviderInterface
             'yes' => [
                 'required' => false,
                 'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => '\Zend\Filter\ToNull',
-                        'options' => ['type' => 'all']
-                    ]
-                ],
+//                'filters' => [
+//                    [
+//                        'name' => '\Zend\Filter\ToNull',
+//                        'options' => ['type' => 'all']
+//                    ]
+//                ],
             ],
             'no' => [
                 'required' => false,
                 'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => '\Zend\Filter\ToNull',
-                        'options' => ['type' => 'all']
-                    ]
-                ],
+//                'filters' => [
+//                    [
+//                        'name' => '\Zend\Filter\ToNull',
+//                        'options' => ['type' => 'all']
+//                    ]
+//                ],
             ],
             'inaction' => [
                 'required' => false,
                 'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => '\Zend\Filter\ToNull',
-                        'options' => ['type' => 'all']
-                    ]
-                ],
+//                'filters' => [
+//                    [
+//                        'name' => '\Zend\Filter\ToNull',
+//                        'options' => ['type' => 'all']
+//                    ]
+//                ],
             ],
             'committee_to' => [
                 'required' => false,

@@ -27,67 +27,67 @@ class VoteItemController extends AbstractRestfulController implements
      */
     public function post($data)
     {
+        $voteId = $this->params('vote_id');
+
         $form = new VoteItemForm();
-        $form->setData(array_merge($data, [
-            'vote_id' => $this->params('vote_id'),
-        ]));
+        $form->setData(array_merge($data, ['vote_id' => $voteId,]));
 
         if ($form->isValid()) {
             $formData = $form->getObject();
-//          TODO the VoteItem table has to have an auto_increment column
-//            try {
+
+            try {
                 $this->voteItemService->create($formData);
                 return (new EmptyModel())->setStatus(201);
-//            } catch (\PDOException $e) {
-//                if (23000 == $e->getCode()) {
-//                    $voteObject =$this->voteItemService->getByVote($formData->vote_id, $formData->congressman_id);
-//                    return (new EmptyModel())
-//                        ->setLocation(
-//                            $this->url()->fromRoute(
-//                                'loggjafarthing/thingmal/atkvaedagreidslur/atkvaedagreidsla',
-//                                [
-//                                    'congressman_id' => $voteObject->congressman_id,
-//                                    'id' => $voteObject->assembly_id,
-//                                    'issue_id' => $voteObject->issue_id,
-//                                    'vote_id' => $voteObject->vote_id
-//                                ]
-//                            )
-//                        )
-//                        ->setStatus(409);
-//                } else {
-//                    throw $e;
-//                }
-//            }
+            } catch (\PDOException $e) {
+                if (23000 == $e->getCode()) {
+                    $voteObject =$this->voteItemService->getByVote($formData->vote_id, $formData->congressman_id);
+                    return (new EmptyModel())
+                        ->setLocation(
+                            $this->url()->fromRoute(
+                                'loggjafarthing/thingmal/atkvaedagreidslur/atkvaedagreidsla',
+                                [
+
+                                    'id' => $voteObject->assembly_id,
+                                    'issue_id' => $voteObject->issue_id,
+                                    'vote_id' => $voteObject->vote_id,
+                                    'vote_item_id' => $voteObject->vote_item_id
+                                ]
+                            )
+                        )
+                        ->setStatus(409);
+                } else {
+                    throw $e;
+                }
+            }
         }
 
         return (new ErrorModel($form))
             ->setStatus(400);
     }
 
-//    public function patch($id, $data)
-//    {
-//        $voteId = $this->params('vote_id');
-//        $congressman_id = $this->params('congressman_id');
-//
-//        if (($voteItem = $this->voteItemService->get($voteId, $congressman_id)) != null) {
-//            $form = new Issue();
-//            $form->bind($voteItem);
-//            $form->setData($data);
-//
-//            if ($form->isValid()) {
-//                $this->voteItemService->update($form->getData());
-//                return (new EmptyModel())
-//                    ->setStatus(204)
-//                    ->setOption('Access-Control-Allow-Origin', '*');
-//            }
-//
-//            return (new ErrorModel($form))
-//                ->setStatus(400)
-//                ->setOption('Access-Control-Allow-Origin', '*');
-//        }
-//
-//        return $this->notFoundAction();
-//    }
+    public function patch($id, $data)
+    {
+        $voteItemId = $this->params('vote_item_id');
+
+        if (($voteItem = $this->voteItemService->get($voteItemId)) != null) {
+            $form = new VoteItemForm();
+            $form->bind($voteItem);
+            $form->setData($data);
+
+            if ($form->isValid()) {
+                $this->voteItemService->update($form->getData());
+                return (new EmptyModel())
+                    ->setStatus(204)
+                    ->setOption('Access-Control-Allow-Origin', '*');
+            }
+
+            return (new ErrorModel($form))
+                ->setStatus(400)
+                ->setOption('Access-Control-Allow-Origin', '*');
+        }
+
+        return $this->notFoundAction();
+    }
 
     /**
      * @param VoteItem $voteItem
