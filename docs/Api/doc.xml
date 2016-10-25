@@ -716,6 +716,17 @@
     </resource>
 
     <resource>
+        <path>/loggjafarthing/:id/thingmal/:issue_id/efnisflokkar/:category_id</path>
+        <param name="id" value="int">Number of assembly</param>
+        <param name="issue_id" value="int">Number of issue</param>
+        <param name="category_id" value="int">Number of category</param>
+        <method verb="PUT">
+            <description>Connect one issue with one sub category</description>
+            <request></request>
+        </method>
+    </resource>
+
+    <resource>
         <path>/thingmenn</path>
         <method verb="GET">
             <description>List of all congressmen will be returned in chunks</description>
@@ -932,6 +943,34 @@
             </request>
         </method>
         <method verb="DELETE"></method>
+    </resource>
+
+    <resource>
+        <path>/thingmal/efnisflokkar/:super_category_id</path>
+        <param name="super_category_id" value="int">Id of super category</param>
+        <method verb="PUT">
+            <description>Create one super category</description>
+            <request>
+                <input>
+                    <param name="title" value="string">Name/Title of category</param>
+                </input>
+            </request>
+        </method>
+    </resource>
+
+    <resource>
+        <path>/thingmal/efnisflokkar/:super_category_id/undirflokkar/:category_id</path>
+        <param name="super_category_id" value="int">Id of super category</param>
+        <param name="category_id" value="int">Id of category</param>
+        <method verb="PUT">
+            <description>Create one category</description>
+            <request>
+                <input>
+                    <param name="title" value="string">Name/Title of category</param>
+                    <param name="description" value="string">Description of category</param>
+                </input>
+            </request>
+        </method>
     </resource>
 
     <resource>

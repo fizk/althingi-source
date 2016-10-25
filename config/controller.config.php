@@ -114,5 +114,26 @@ return [
             }
         },
 
+        'Althingi\Lib\ServiceSuperCategoryAwareInterface' => function ($instance, $sm) {
+            if ($instance instanceof \Althingi\Lib\ServiceSuperCategoryAwareInterface) {
+                $locator = $sm->getServiceLocator();
+                $instance->setSuperCategoryService($locator->get('Althingi\Service\SuperCategory'));
+            }
+        },
+
+        'Althingi\Lib\ServiceCategoryAwareInterface' => function ($instance, $sm) {
+            if ($instance instanceof \Althingi\Lib\ServiceCategoryAwareInterface) {
+                $locator = $sm->getServiceLocator();
+                $instance->setCategoryService($locator->get('Althingi\Service\Category'));
+            }
+        },
+
+        'Althingi\Lib\ServiceIssueCategoryAwareInterface' => function ($instance, $sm) {
+            if ($instance instanceof \Althingi\Lib\ServiceIssueCategoryAwareInterface) {
+                $locator = $sm->getServiceLocator();
+                $instance->setIssueCategoryService($locator->get('Althingi\Service\IssueCategory'));
+            }
+        },
+
     ]
 ];

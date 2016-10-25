@@ -23,6 +23,9 @@ return [
         'Althingi\Service\Committee' => 'Althingi\Service\Committee',
         'Althingi\Service\Cabinet' => 'Althingi\Service\Cabinet',
         'Althingi\Service\President' => 'Althingi\Service\President',
+        'Althingi\Service\SuperCategory' => 'Althingi\Service\SuperCategory',
+        'Althingi\Service\Category' => 'Althingi\Service\Category',
+        'Althingi\Service\IssueCategory' => 'Althingi\Service\IssueCategory',
     ],
 
     'factories' => [

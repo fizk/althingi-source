@@ -14,6 +14,10 @@ class Transformer
 {
     public static function speechToMarkdown($text)
     {
+        if (empty($text)) {
+            return '';
+        }
+        
         $text =  preg_replace('/(<frammíkall.*?>)(.*?)(<\/frammíkall>)/i', "**[frammíkall: $2]**", $text);
 
         $dom = new \DOMDocument();

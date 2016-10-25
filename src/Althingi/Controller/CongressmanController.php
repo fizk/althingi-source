@@ -11,12 +11,14 @@ namespace Althingi\Controller;
 use Althingi\Form\Congressman as CongressmanForm;
 use Althingi\Lib\ServiceCongressmanAwareInterface;
 use Althingi\Lib\ServiceIssueAwareInterface;
+use Althingi\Lib\ServiceIssueCategoryAwareInterface;
 use Althingi\Lib\ServicePartyAwareInterface;
 use Althingi\Lib\ServiceSessionAwareInterface;
 use Althingi\Lib\ServiceSpeechAwareInterface;
 use Althingi\Lib\ServiceVoteAwareInterface;
 use Althingi\Service\Congressman;
 use Althingi\Service\Issue;
+use Althingi\Service\IssueCategory;
 use Althingi\Service\Party;
 use Althingi\Service\Session;
 use Althingi\Service\Speech;
@@ -34,7 +36,8 @@ class CongressmanController extends AbstractRestfulController implements
     ServiceSessionAwareInterface,
     ServiceVoteAwareInterface,
     ServiceIssueAwareInterface,
-    ServiceSpeechAwareInterface
+    ServiceSpeechAwareInterface,
+    ServiceIssueCategoryAwareInterface
 {
     use Range;
 
@@ -55,6 +58,9 @@ class CongressmanController extends AbstractRestfulController implements
 
     /** @var \Althingi\Service\Speech */
     private $speechService;
+
+    /** @var \Althingi\Service\IssueCategory */
+    private $issueCategoryService;
 
     /**
      * Get one congressman.
@@ -204,7 +210,8 @@ class CongressmanController extends AbstractRestfulController implements
             'voting_total' => $this->voteService->countByAssembly($assemblyId),
             'sessions' => $this->sessionService->fetchByAssemblyAndCongressman($assemblyId, $congressmanId),
             'issues' => $this->issueService->fetchByAssemblyAndCongressman($assemblyId, $congressmanId),
-            'speech_time' => $this->speechService->countTotalTimeByAssemblyAndCongressman($assemblyId, $congressmanId)
+            'speech_time' => $this->speechService->countTotalTimeByAssemblyAndCongressman($assemblyId, $congressmanId),
+            'categories' => $this->issueCategoryService->fetchFrequencyByAssemblyAndCongressman($assemblyId, $congressmanId),
         ];
 
         return (new ItemModel($frequencyData))
@@ -280,5 +287,13 @@ class CongressmanController extends AbstractRestfulController implements
     public function setSpeechService(Speech $speech)
     {
         $this->speechService = $speech;
+    }
+
+    /**
+     * @param IssueCategory $issueCategory
+     */
+    public function setIssueCategoryService(IssueCategory $issueCategory)
+    {
+        $this->issueCategoryService = $issueCategory;
     }
 }

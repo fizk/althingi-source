@@ -116,6 +116,18 @@ return array(
                                 ],
                             ],
 
+                            'efnisflokkar' => [
+                                'type' => 'Zend\Mvc\Router\Http\Segment',
+                                'options' => [
+                                    'route'    => '/efnisflokkar[/:category_id]',
+                                    'defaults' => [
+                                        'controller' => 'Althingi\Controller\IssueCategory',
+                                        'identifier' => 'category_id'
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                            ],
+
                             'thingskjal' => [
                                 'type' => 'Zend\Mvc\Router\Http\Segment',
                                 'options' => [
@@ -246,6 +258,29 @@ return array(
                         'controller' => 'Althingi\Controller\President',
                     ],
                 ],
+            ],
+            'efnisflokkar' => [
+                'type' => 'Zend\Mvc\Router\Http\Segment',
+                'options' => [
+                    'route'    => '/thingmal/efnisflokkar[/:super_category_id]',
+                    'defaults' => [
+                        'controller' => 'Althingi\Controller\SuperCategory',
+                        'identifier' => 'super_category_id'
+                    ],
+                ],
+                'may_terminate' => true,
+                'child_routes' => [
+                    'undirflokkar' => [
+                        'type' => 'Zend\Mvc\Router\Http\Segment',
+                        'options' => [
+                            'route'    => '/undirflokkar[/:category_id]',
+                            'defaults' => [
+                                'controller' => 'Althingi\Controller\Category',
+                                'identifier' => 'category_id'
+                            ],
+                        ],
+                    ]
+                ]
             ]
         ]
     ],
@@ -291,6 +326,9 @@ return array(
             'Althingi\Controller\Cabinet' => 'Althingi\Controller\CabinetController',
             'Althingi\Controller\President' => 'Althingi\Controller\PresidentController',
             'Althingi\Controller\PresidentAssembly' => 'Althingi\Controller\PresidentAssemblyController',
+            'Althingi\Controller\SuperCategory' => 'Althingi\Controller\SuperCategoryController',
+            'Althingi\Controller\Category' => 'Althingi\Controller\CategoryController',
+            'Althingi\Controller\IssueCategory' => 'Althingi\Controller\IssueCategoryController',
         ],
     ],
     'view_manager' => [
