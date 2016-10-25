@@ -62,8 +62,14 @@ class Category extends Form implements InputFilterProviderInterface
                 'allow_empty' => false,
             ],
             'description' => [
-                'required' => true,
-                'allow_empty' => false,
+                'required' => false,
+                'allow_empty' => true,
+                'filters' => [
+                    [
+                        'name' => '\Zend\Filter\ToNull',
+                        'options' => ['type' => 'all']
+                    ]
+                ],
             ],
         ];
     }
