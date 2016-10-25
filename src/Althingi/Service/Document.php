@@ -20,11 +20,39 @@ class Document implements DatabaseAwareInterface
      */
     private $pdo;
 
+    public function get($assemblyId, $issueId, $documentId)
+    {
+        $statement = $this->getDriver()->prepare("
+            select * from `Document` D 
+            where D.`assembly_id` = :assembly_id and D.`issue_id` = :issue_id and D.`document_id` = :document_id
+        ");
+        $statement->execute([
+            'assembly_id' => $assemblyId,
+            'issue_id' => $issueId,
+            'document_id' => $documentId
+        ]);
+
+        $assembly = $statement->fetchObject();
+        return $this->decorate($assembly);
+    }
+
     public function create($data)
     {
         $statement = $this
             ->getDriver()
             ->prepare($this->insertString('Document', $data));
+        $statement->execute($this->convert($data));
+    }
+
+    public function update($data)
+    {
+        $statement = $this
+            ->getDriver()
+            ->prepare($this->updateString(
+                'Document',
+                $data,
+                "assembly_id={$data->assembly_id} and issue_id={$data->issue_id} and document_id={$data->document_id}"
+            ));
         $statement->execute($this->convert($data));
     }
 

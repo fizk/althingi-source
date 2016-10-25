@@ -115,6 +115,32 @@ class DocumentController extends AbstractRestfulController implements
         return (new ErrorModel($form))->setStatus(400);
     }
 
+    public function patch($id, $data)
+    {
+        $assemblyId = $this->params('id');
+        $issueId = $this->params('issue_id');
+        $documentId = $this->params('document_id');
+
+        if (($assembly = $this->documentService->get($assemblyId, $issueId, $documentId)) != null) {
+            $form = new DocumentForm();
+            $form->bind($assembly);
+            $form->setData($data);
+
+            if ($form->isValid()) {
+                $this->documentService->update($form->getData());
+                return (new EmptyModel())
+                    ->setStatus(204)
+                    ->setOption('Access-Control-Allow-Origin', '*');
+            }
+
+            return (new ErrorModel($form))
+                ->setStatus(400)
+                ->setOption('Access-Control-Allow-Origin', '*');
+        }
+
+        return $this->notFoundAction();
+    }
+
     /**
      * @param Document $document
      */

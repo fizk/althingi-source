@@ -51,6 +51,33 @@ class ProponentController extends AbstractRestfulController implements
         return (new ErrorModel($form))->setStatus(400);
     }
 
+    public function patch($id, $data)
+    {
+        $assemblyId = $this->params('id');
+        $issueId = $this->params('issue_id');
+        $documentId = $this->params('document_id');
+        $congressmanId = $this->params('congressman_id');
+
+        if (($assembly = $this->proponentService->get($assemblyId, $issueId, $documentId, $congressmanId)) != null) {
+            $form = new ProponentForm();
+            $form->bind($assembly);
+            $form->setData($data);
+
+            if ($form->isValid()) {
+                $this->proponentService->update($form->getData());
+                return (new EmptyModel())
+                    ->setStatus(204)
+                    ->setOption('Access-Control-Allow-Origin', '*');
+            }
+
+            return (new ErrorModel($form))
+                ->setStatus(400)
+                ->setOption('Access-Control-Allow-Origin', '*');
+        }
+
+        return $this->notFoundAction();
+    }
+
     /**
      * @param Proponent $proponent
      */
