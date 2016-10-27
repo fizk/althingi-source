@@ -64,6 +64,31 @@ class VoteItem implements DatabaseAwareInterface
         return $this->decorate($statement->fetchObject());
     }
 
+    public function fetchVoteByAssemblyAndCongressmanAndCategory($assemblyId, $congressmanId)
+    {
+        $statement = $this->getDriver()->prepare('
+        select CI.`category_id`, C.`title`, VI.`congressman_id`, V.`assembly_id`, VI.`vote`, count(VI.`vote`) as `count` from `Vote` V
+            join `VoteItem` VI on (VI.`vote_id` = V.`vote_id`)
+            join `Category_has_Issue` CI on (CI.`assembly_id` = V.`assembly_id` and V.`issue_id` = CI.`issue_id`)
+            join `Category` C on (C.`category_id` = CI.`category_id`)
+        where V.`assembly_id` = :assembly_id and VI.`congressman_id` = :congressman_id
+        group by CI.`category_id`, VI.`vote`
+        order by C.`category_id`;
+        ');
+        $statement->execute([
+            'assembly_id' => $assemblyId,
+            'congressman_id' => $congressmanId,
+        ]);
+        return array_map(function ($object) {
+
+            $object->category_id = (int) $object->category_id;
+            $object->congressman_id = (int) $object->congressman_id;
+            $object->assembly_id = (int) $object->assembly_id;
+            $object->count = (int) $object->count;
+            return $object;
+        }, $statement->fetchAll());
+    }
+
     /**
      * Create a vote-item.
      *

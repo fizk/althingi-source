@@ -529,6 +529,16 @@
                 </input>
             </request>
         </method>
+        <method verb="PATCH">
+            <description>Update document</description>
+            <request>
+                <input>
+                    <param name="type" value="string">Type of document [optional]</param>
+                    <param name="date" value="date">When document was submitted [optional]</param>
+                    <param name="url" value="string">URL to original document [optional]</param>
+                </input>
+            </request>
+        </method>
     </resource>
 
     <resource>
@@ -542,6 +552,16 @@
             <request>
                 <input>
                     <param name="order" value="int">Order og which, congressman is connected</param>
+                    <param name="minister" value="string">type of minister [optional]</param>
+                </input>
+            </request>
+        </method>
+        <method verb="PATCH">
+            <description>Connect document to congressman</description>
+            <request>
+                <input>
+                    <param name="order" value="int">Order og which, congressman is connected [optional]</param>
+                    <param name="minister" value="string">type of minister [optional]</param>
                 </input>
             </request>
         </method>

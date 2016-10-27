@@ -22,19 +22,20 @@ class SessionControllerTest extends AbstractHttpControllerTestCase
 
     public function testCreateSuccess()
     {
-        $serviceMock = \Mockery::mock('Althingi\Service\Session')
-            ->shouldReceive('create')
-            ->andReturnUsing(function ($object) {
-                $this->assertEquals(2, $object->congressman_id);
-                $this->assertEquals(4, $object->party_id);
-                return 10;
-            })->getMock();
+        $pdoMock = \Mockery::mock('PDO')
+            ->shouldReceive('prepare')
+                ->andReturnSelf()
+            ->shouldReceive('execute')
+                ->andReturnSelf()
+            ->shouldReceive('lastInsertId')
+                ->andReturn(10)
+                ->getMock();
 
         $serviceManager = $this->getApplicationServiceLocator();
         $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('Althingi\Service\Session', $serviceMock);
+        $serviceManager->setService('PDO', $pdoMock);
 
-        $this->dispatch('/api/thingmenn/2/thingseta', 'POST', [
+        $this->dispatch('/thingmenn/2/thingseta', 'POST', [
             'constituency_id' => 1,
             'assembly_id' => 1,
             'from' => '2010-01-01',
@@ -44,9 +45,9 @@ class SessionControllerTest extends AbstractHttpControllerTestCase
         ]);
 
         $this->assertResponseStatusCode(201);
-        $this->assertResponseHeaderContains('Location', '/api/thingmenn/2/thingseta/10');
+        $this->assertResponseHeaderContains('Location', '/thingmenn/2/thingseta/10');
         $this->assertControllerClass('SessionController');
-        $this->assertActionName('create');
+        $this->assertActionName('post');
     }
 
     public function testCreateInvalid()

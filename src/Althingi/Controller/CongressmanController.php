@@ -16,6 +16,7 @@ use Althingi\Lib\ServicePartyAwareInterface;
 use Althingi\Lib\ServiceSessionAwareInterface;
 use Althingi\Lib\ServiceSpeechAwareInterface;
 use Althingi\Lib\ServiceVoteAwareInterface;
+use Althingi\Lib\ServiceVoteItemAwareInterface;
 use Althingi\Service\Congressman;
 use Althingi\Service\Issue;
 use Althingi\Service\IssueCategory;
@@ -23,6 +24,7 @@ use Althingi\Service\Party;
 use Althingi\Service\Session;
 use Althingi\Service\Speech;
 use Althingi\Service\Vote;
+use Althingi\Service\VoteItem;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ErrorModel;
 use Rend\View\Model\EmptyModel;
@@ -35,6 +37,7 @@ class CongressmanController extends AbstractRestfulController implements
     ServicePartyAwareInterface,
     ServiceSessionAwareInterface,
     ServiceVoteAwareInterface,
+    ServiceVoteItemAwareInterface,
     ServiceIssueAwareInterface,
     ServiceSpeechAwareInterface,
     ServiceIssueCategoryAwareInterface
@@ -52,6 +55,9 @@ class CongressmanController extends AbstractRestfulController implements
 
     /** @var \Althingi\Service\Vote */
     private $voteService;
+
+    /** @var \Althingi\Service\VoteItem */
+    private $voteItemService;
 
     /** @var \Althingi\Service\Issue */
     private $issueService;
@@ -207,11 +213,12 @@ class CongressmanController extends AbstractRestfulController implements
 
         $frequencyData = (object) [
             'voting' => $this->voteService->getFrequencyByAssemblyAndCongressman($assemblyId, $congressmanId, $fromDate, $toDate),
-            'voting_total' => $this->voteService->countByAssembly($assemblyId),
+            'voting_total' => $this->voteService->countByAssembly($assemblyId), //TODO remove
             'sessions' => $this->sessionService->fetchByAssemblyAndCongressman($assemblyId, $congressmanId),
             'issues' => $this->issueService->fetchByAssemblyAndCongressman($assemblyId, $congressmanId),
             'speech_time' => $this->speechService->countTotalTimeByAssemblyAndCongressman($assemblyId, $congressmanId),
             'categories' => $this->issueCategoryService->fetchFrequencyByAssemblyAndCongressman($assemblyId, $congressmanId),
+            'vote_categories' => $this->voteItemService->fetchVoteByAssemblyAndCongressmanAndCategory($assemblyId, $congressmanId)
         ];
 
         return (new ItemModel($frequencyData))
@@ -295,5 +302,13 @@ class CongressmanController extends AbstractRestfulController implements
     public function setIssueCategoryService(IssueCategory $issueCategory)
     {
         $this->issueCategoryService = $issueCategory;
+    }
+
+    /**
+     * @param VoteItem $voteItem
+     */
+    public function setVoteItemService(VoteItem $voteItem)
+    {
+        $this->voteItemService = $voteItem;
     }
 }

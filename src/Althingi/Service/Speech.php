@@ -201,7 +201,8 @@ class Speech implements DatabaseAwareInterface
     {
         $statement = $this->getDriver()->prepare('
             select sum(`diff`) from (
-                select *, time_to_sec(timediff(S.`to`, S.`from`)) as `diff` from `Speech` S where S.`assembly_id` = :assembly_id and S.`congressman_id` = :congressman_id
+                select *, time_to_sec(timediff(S.`to`, S.`from`)) as `diff` 
+                from `Speech` S where S.`assembly_id` = :assembly_id and S.`congressman_id` = :congressman_id
             ) as D;
         ');
         $statement->execute([
