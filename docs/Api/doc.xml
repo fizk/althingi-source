@@ -268,6 +268,76 @@
     </resource>
 
     <resource>
+        <path>/loggjafarthing/:id/thingmenn/:congressman_id/thingseta</path>
+        <param name="id" value="int">Number of assembly</param>
+        <param name="congressman_id" value="int">Number of congressman</param>
+        <method verb="GET">
+            <description>Get sessions for a congressman in a given assembly</description>
+            <response>
+                <output>
+                    [
+                        {
+                            session_id: 155,
+                            congressman_id: 652,
+                            assembly_id: "145",
+                            from: "2015-09-08",
+                            to: null,
+                            type: "þingmaður",
+                            abbr: null,
+                            constituency: {
+                                id: "52",
+                                name: "Suðvesturkjördæmi",
+                                abbr: "SV"
+                            },
+                            party: {
+                                id: "35",
+                                name: "Sjálfstæðisflokkur",
+                                abbr: "S"
+                            }
+                        }
+                        ...
+                    ]
+                </output>
+            </response>
+        </method>
+    </resource>
+
+    <resource>
+        <path>/loggjafarthing/:id/thingmenn/:congressman_id/thingmal</path>
+        <param name="id" value="int">Number of assembly</param>
+        <param name="congressman_id" value="int">Number of congressman</param>
+        <method verb="GET">
+            <description>Get issues for a congressman in a given assembly</description>
+            <response>
+                <output>
+                    [
+                        {
+                            issue_id: 242,
+                            assembly_id: 145,
+                            congressman_id: "715",
+                            category: "A",
+                            name: "Efling Heilbrigðisstofnunar Vesturlands",
+                            sub_name: null,
+                            type: "a",
+                            type_name: "Tillaga til þingsályktunar",
+                            type_subname: "þingsályktunartillaga",
+                            status: null,
+                            question: null,
+                            goal: null,
+                            major_changes: null,
+                            changes_in_law: null,
+                            costs_and_revenues: null,
+                            deliveries: null,
+                            additional_information: null
+                        },
+                        ...
+                    ]
+                </output>
+            </response>
+        </method>
+    </resource>
+
+    <resource>
         <path>/loggjafarthing/:id/thingmenn/:congressman_id/samantekt</path>
         <param name="id" value="int">Number of assembly</param>
         <param name="congressman_id" value="int">Number of congressman</param>
@@ -372,6 +442,67 @@
                     <param value="string" name="name">Name of plenary: 166. fundur</param>
                     <param value="date-time" name="from">Beginning of plenary</param>
                     <param value="date-time" name="to">End of plenary</param>
+                </input>
+            </request>
+        </method>
+    </resource>
+
+    <resource>
+        <path>/loggjafarthing/:id/nefndir/:committee_id/nefndarfundir</path>
+        <param name="id" value="int">Number of assembly</param>
+        <param name="committee_id" value="int">Number of committee</param>
+        <method verb="GET">
+            <description>Gets a list of all meetings</description>
+        </method>
+    </resource>
+
+    <resource>
+        <path>/loggjafarthing/:id/nefndir/:committee_id/nefndarfundir/:committee_meeting_id</path>
+        <param name="id" value="int">Number of assembly</param>
+        <param name="committee_id" value="int">Number of committee</param>
+        <param name="committee_meeting_id" value="int">Number of committee meeting</param>
+        <method verb="GET">
+            <description>Gets a description of one meeting</description>
+        </method>
+        <method verb="PUT">
+            <request>
+                <input>
+                    <param name="from" value="date">[optional]</param>
+                    <param name="to" value="date">[optional]</param>
+                    <param name="description" value="string">[optional]</param>
+                </input>
+            </request>
+        </method>
+        <method verb="PATCH">
+            <request>
+                <input>
+                    <param name="from" value="date">[optional]</param>
+                    <param name="to" value="date">[optional]</param>
+                    <param name="description" value="string">[optional]</param>
+                </input>
+            </request>
+        </method>
+    </resource>
+
+    <resource>
+        <path>/loggjafarthing/:is/nefndir/:committee_id/nefndarfundir/:committee_meeting_id/dagskralidir/:committee_meeting_agenda_id</path>
+        <param name="id" value="int">Number of assembly</param>
+        <param name="committee_id" value="int">Number of committee</param>
+        <param name="committee_meeting_id" value="int">Number of committee meeting</param>
+        <param name="committee_meeting_agenda_id" value="int">Number of committee meeting agenda</param>
+        <method verb="PUT">
+            <request>
+                <input>
+                    <param value="issue_id" name="int">Attache to an issue [optional]</param>
+                    <param value="title" name="string">Name of the agenda item</param>
+                </input>
+            </request>
+        </method>
+        <method verb="PATCH">
+            <request>
+                <input>
+                    <param value="issue_id" name="int">Attache to an issue [optional]</param>
+                    <param value="title" name="string">Name of the agenda item</param>
                 </input>
             </request>
         </method>

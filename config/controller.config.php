@@ -72,6 +72,20 @@ return [
             }
         },
 
+        'Althingi\Lib\ServiceCommitteeAgendaAwareInterface' => function ($instance, $sm) {
+            if ($instance instanceof \Althingi\Lib\ServiceCommitteeMeetingAgendaAwareInterface) {
+                $locator = $sm->getServiceLocator();
+                $instance->setCommitteeMeetingAgendaService($locator->get('Althingi\Service\CommitteeMeetingAgenda'));
+            }
+        },
+
+        'Althingi\Lib\ServiceCommitteeMeetingAwareInterface' => function ($instance, $sm) {
+            if ($instance instanceof \Althingi\Lib\ServiceCommitteeMeetingAwareInterface) {
+                $locator = $sm->getServiceLocator();
+                $instance->setCommitteeMeetingService($locator->get('Althingi\Service\CommitteeMeeting'));
+            }
+        },
+
         'Althingi\Lib\ServiceSessionAwareInterface' => function ($instance, $sm) {
             if ($instance instanceof \Althingi\Lib\ServiceSessionAwareInterface) {
                 $locator = $sm->getServiceLocator();

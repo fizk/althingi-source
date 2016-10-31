@@ -226,6 +226,30 @@ class CongressmanController extends AbstractRestfulController implements
             ->setOption('Access-Control-Allow-Origin', '*');
     }
 
+    public function assemblySessionsAction()
+    {
+        $assemblyId = $this->params('id');
+        $congressmanId = $this->params('congressman_id');
+
+        $sessions = $this->sessionService->fetchByAssemblyAndCongressman($assemblyId, $congressmanId);
+
+        return (new CollectionModel($sessions))
+            ->setStatus(200)
+            ->setOption('Access-Control-Allow-Origin', '*');
+    }
+
+    public function assemblyIssuesAction()
+    {
+        $assemblyId = $this->params('id');
+        $congressmanId = $this->params('congressman_id');
+
+        $issues = $this->issueService->fetchByAssemblyAndCongressman($assemblyId, $congressmanId);
+
+        return (new CollectionModel($issues))
+            ->setStatus(200)
+            ->setOption('Access-Control-Allow-Origin', '*');
+    }
+
     public function optionsList()
     {
         return (new EmptyModel())

@@ -21,6 +21,8 @@ return [
         'Althingi\Service\Proponent' => 'Althingi\Service\Proponent',
         'Althingi\Service\Document' => 'Althingi\Service\Document',
         'Althingi\Service\Committee' => 'Althingi\Service\Committee',
+        'Althingi\Service\CommitteeMeeting' => 'Althingi\Service\CommitteeMeeting',
+        'Althingi\Service\CommitteeMeetingAgenda' => 'Althingi\Service\CommitteeMeetingAgenda',
         'Althingi\Service\Cabinet' => 'Althingi\Service\Cabinet',
         'Althingi\Service\President' => 'Althingi\Service\President',
         'Althingi\Service\SuperCategory' => 'Althingi\Service\SuperCategory',

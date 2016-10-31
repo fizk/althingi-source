@@ -51,6 +51,26 @@ return array(
                                     ],
                                 ],
                             ],
+                            'thingseta' => [
+                                'type' => 'Zend\Mvc\Router\Http\Segment',
+                                'options' => [
+                                    'route'    => '/:congressman_id/thingseta',
+                                    'defaults' => [
+                                        'controller' => 'Althingi\Controller\Congressman',
+                                        'action' => 'assembly-sessions'
+                                    ],
+                                ],
+                            ],
+                            'thingmal' => [
+                                'type' => 'Zend\Mvc\Router\Http\Segment',
+                                'options' => [
+                                    'route'    => '/:congressman_id/thingmal',
+                                    'defaults' => [
+                                        'controller' => 'Althingi\Controller\Congressman',
+                                        'action' => 'assembly-issues'
+                                    ],
+                                ],
+                            ]
                         ]
                     ],
                     'forsetar' => [
@@ -176,6 +196,42 @@ return array(
                             ],
                         ]
                     ],
+                    'nefndir' => [
+                        'type' => 'Zend\Mvc\Router\Http\Segment',
+                        'options' => [
+                            'route'    => '/nefndir[/:committee_id]',
+                            'defaults' => [
+                                'controller' => 'Althingi\Controller\NULL',
+                                'identifier' => 'committee_id'
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'nefndarfundir' => [
+                                'type' => 'Zend\Mvc\Router\Http\Segment',
+                                'options' => [
+                                    'route'    => '/nefndarfundir[/:committee_meeting_id]',
+                                    'defaults' => [
+                                        'controller' => 'Althingi\Controller\CommitteeMeeting',
+                                        'identifier' => 'committee_meeting_id'
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                                'child_routes' => [
+                                    'dagskralidir' => [
+                                        'type' => 'Zend\Mvc\Router\Http\Segment',
+                                        'options' => [
+                                            'route'    => '/dagskralidir[/:committee_meeting_agenda_id]',
+                                            'defaults' => [
+                                                'controller' => 'Althingi\Controller\CommitteeMeetingAgenda',
+                                                'identifier' => 'committee_meeting_agenda_id'
+                                            ],
+                                        ],
+                                    ]
+                                ]
+                            ]
+                        ],
+                    ]
                 ],
             ],
             'nefndir' => [
@@ -329,6 +385,8 @@ return array(
             'Althingi\Controller\SuperCategory' => 'Althingi\Controller\SuperCategoryController',
             'Althingi\Controller\Category' => 'Althingi\Controller\CategoryController',
             'Althingi\Controller\IssueCategory' => 'Althingi\Controller\IssueCategoryController',
+            'Althingi\Controller\CommitteeMeeting' => 'Althingi\Controller\CommitteeMeetingController',
+            'Althingi\Controller\CommitteeMeetingAgenda' => 'Althingi\Controller\CommitteeMeetingAgendaController',
         ],
     ],
     'view_manager' => [
