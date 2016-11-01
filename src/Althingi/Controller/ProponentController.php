@@ -66,7 +66,7 @@ class ProponentController extends AbstractRestfulController implements
             if ($form->isValid()) {
                 $this->proponentService->update($form->getData());
                 return (new EmptyModel())
-                    ->setStatus(204)
+                    ->setStatus(205)
                     ->setOption('Access-Control-Allow-Origin', '*');
             }
 

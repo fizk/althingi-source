@@ -198,7 +198,7 @@ class IssueController extends AbstractRestfulController implements
      */
     public function patch($id, $data)
     {
-        $assemblyId = $this->params('id', 0);
+        $assemblyId = $this->params('id');
         $issueService = $this->getServiceLocator()->get('Althingi\Service\Issue');
         $issue = $issueService->get($id, $assemblyId);
 
@@ -212,7 +212,7 @@ class IssueController extends AbstractRestfulController implements
 
         if ($form->isValid()) {
             $issueService->update($form->getObject());
-            return (new EmptyModel())->setStatus(200);
+            return (new EmptyModel())->setStatus(205);
         }
 
         return (new ErrorModel($form))->setStatus(400);

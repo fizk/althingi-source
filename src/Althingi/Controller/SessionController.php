@@ -135,7 +135,7 @@ class SessionController extends AbstractRestfulController implements
             if ($form->isValid()) {
                 $this->sessionService->update($form->getData());
                 return (new EmptyModel())
-                    ->setStatus(204);
+                    ->setStatus(205);
             }
 
             return (new ErrorModel($form))

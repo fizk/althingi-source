@@ -132,9 +132,31 @@ class SpeechController extends AbstractRestfulController implements
         ));
 
         if ($form->isValid()) {
-            $this->speechService->create($form->getObject());
-            return (new EmptyModel())->setStatus(201);
+            try {
+                $this->speechService->create($form->getObject());
+                return (new EmptyModel())->setStatus(201);
+            } catch (\PDOException $e) {
+                /**
+                 * @todo damn you althingi.is For some reason, the plenary list is empty for some assemblies
+                 *  but then there is a plenary id on the speech entry. So, sometimes a speech is trying to be saved
+                 *  but it can't be attached to a plenary as it doesn't exists
+                 *  Example: speeches here have a plenary id
+                 *  http://www.althingi.is/altext/xml/thingmalalisti/thingmal/?lthing=20&malnr=1 but the plenary list
+                 *  it self is empty http://www.althingi.is/altext/xml/thingfundir/?lthing=20
+                 *
+                 * For the Aggregator not to go crazy and try to do a PATCH request and get a 404 from it (because
+                 *  unattended, this action will return a 409, requesting the aggregator to do a PATCH), this action
+                 *  returns the classic 418 I'm a teapot; making the aggregator just shut up :)
+                 */
+                if ($e->getCode() == 23000 && strpos($e->getMessage(), 'fk_Speach_Plenary1') !== false) {
+                    return (new ErrorModel("Plenary({$data->plenary_id}) not found, can't attach speech to plenary"))
+                        ->setStatus(418);
+                } else {
+                    throw $e;
+                }
+            }
         }
+
         return (new ErrorModel($form))->setStatus(400);
     }
 
@@ -157,7 +179,7 @@ class SpeechController extends AbstractRestfulController implements
             if ($form->isValid()) {
                 $this->speechService->update($form->getData());
                 return (new EmptyModel())
-                    ->setStatus(204);
+                    ->setStatus(205);
             }
 
             return (new ErrorModel($form))

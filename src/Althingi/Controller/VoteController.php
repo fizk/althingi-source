@@ -110,7 +110,7 @@ class VoteController extends AbstractRestfulController implements
             if ($form->isValid()) {
                 $this->voteService->update($form->getData());
                 return (new EmptyModel())
-                    ->setStatus(204);
+                    ->setStatus(205);
             }
 
             return (new ErrorModel($form))

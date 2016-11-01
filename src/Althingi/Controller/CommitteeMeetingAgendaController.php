@@ -85,7 +85,7 @@ class CommitteeMeetingAgendaController extends AbstractRestfulController impleme
             if ($form->isValid()) {
                 $this->committeeMeetingAgendaService->update($form->getData());
                 return (new EmptyModel())
-                    ->setStatus(204);
+                    ->setStatus(205);
             }
 
             return (new ErrorModel($form))
