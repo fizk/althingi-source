@@ -39,6 +39,51 @@ class Speech implements DatabaseAwareInterface
         return $this->decorate($statement->fetchObject());
     }
 
+    public function getFrequencyByAssemblyAndCongressman($assemblyId, $congressmanId)
+    {
+        $speechTypeStatement = $this->getDriver()->prepare('
+            select `type`, sum(`diff`) as `total` from (
+                select S.`type`, S.`congressman_type`, TIMESTAMPDIFF(SECOND, S.`from`, S.`to`) as `diff` 
+                from `Speech` S 
+                where S.`assembly_id` = :assembly_id and S.`congressman_id` = :congressman_id
+            ) as D
+            group by `type`
+            order by `total` desc;
+        ');
+        $speechTypeStatement->execute([
+            'assembly_id' => $assemblyId,
+            'congressman_id' => $congressmanId
+        ]);
+
+        $congressmanTypeStatement = $this->getDriver()->prepare('
+            select `congressman_type`, sum(`diff`) as `total` from (
+                select S.`type`, S.`congressman_type`, TIMESTAMPDIFF(SECOND, S.`from`, S.`to`) as `diff` 
+                from `Speech` S 
+                where S.`assembly_id` = :assembly_id and S.`congressman_id` = :congressman_id
+            ) as D
+            group by `congressman_type`
+            order by `total` desc;
+        ');
+        $congressmanTypeStatement->execute([
+            'assembly_id' => $assemblyId,
+            'congressman_id' => $congressmanId
+        ]);
+
+        return (object) [
+            'type' =>  array_map(function ($speech) {
+                $speech->total = (int) $speech->total;
+                return $speech;
+            }, $speechTypeStatement->fetchAll()),
+            'congressman_type' =>  array_map(function ($speech) {
+                $speech->congressman_type = $speech->congressman_type
+                    ? $speech->congressman_type
+                    : 'þingmaður';
+                $speech->total = (int) $speech->total;
+                return $speech;
+            }, $congressmanTypeStatement->fetchAll()),
+        ];
+    }
+
     /**
      * Get a fixed size section of the speech list which will contain
      * the speech with the given ID.

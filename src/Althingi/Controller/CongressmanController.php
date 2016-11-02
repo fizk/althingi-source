@@ -198,28 +198,14 @@ class CongressmanController extends AbstractRestfulController implements
         return (new CollectionModel($congressmen))
             ->setStatus(200)
             ->setOption('Access-Control-Allow-Origin', '*');
-
     }
 
-    public function assemblySummaryAction()
+    public function assemblySpeechTimeAction()
     {
         $assemblyId = $this->params('id');
         $congressmanId = $this->params('congressman_id');
-        $fromString = $this->params()->fromQuery('fra', null);
-        $toString = $this->params()->fromQuery('til', null);
 
-        $fromDate = $fromString ? new \DateTime($fromString) : null ;
-        $toDate = $toString ? new \DateTime($toString) : null ;
-
-        $frequencyData = (object) [
-            'voting' => $this->voteService->getFrequencyByAssemblyAndCongressman($assemblyId, $congressmanId, $fromDate, $toDate),
-            'voting_total' => $this->voteService->countByAssembly($assemblyId), //TODO remove
-            'sessions' => $this->sessionService->fetchByAssemblyAndCongressman($assemblyId, $congressmanId),
-            'issues' => $this->issueService->fetchByAssemblyAndCongressman($assemblyId, $congressmanId),
-            'speech_time' => $this->speechService->countTotalTimeByAssemblyAndCongressman($assemblyId, $congressmanId),
-            'categories' => $this->issueCategoryService->fetchFrequencyByAssemblyAndCongressman($assemblyId, $congressmanId),
-            'vote_categories' => $this->voteItemService->fetchVoteByAssemblyAndCongressmanAndCategory($assemblyId, $congressmanId)
-        ];
+        $frequencyData = $this->speechService->getFrequencyByAssemblyAndCongressman($assemblyId, $congressmanId);
 
         return (new ItemModel($frequencyData))
             ->setStatus(200)
@@ -246,6 +232,55 @@ class CongressmanController extends AbstractRestfulController implements
         $issues = $this->issueService->fetchByAssemblyAndCongressman($assemblyId, $congressmanId);
 
         return (new CollectionModel($issues))
+            ->setStatus(200)
+            ->setOption('Access-Control-Allow-Origin', '*');
+    }
+
+    public function assemblyVotingAction()
+    {
+        $fromString = $this->params()->fromQuery('fra', null);
+        $toString = $this->params()->fromQuery('til', null);
+
+        $fromDate = $fromString ? new \DateTime($fromString) : null ;
+        $toDate = $toString ? new \DateTime($toString) : null ;
+        $assemblyId = $this->params('id');
+        $congressmanId = $this->params('congressman_id');
+
+        $voting = $this->voteService->getFrequencyByAssemblyAndCongressman(
+            $assemblyId,
+            $congressmanId,
+            $fromDate,
+            $toDate
+        );
+
+        return (new CollectionModel($voting))
+            ->setStatus(200)
+            ->setOption('Access-Control-Allow-Origin', '*');
+    }
+
+    public function assemblyCategoriesAction()
+    {
+        $assemblyId = $this->params('id');
+        $congressmanId = $this->params('congressman_id');
+
+        $categories = $this->issueCategoryService->fetchFrequencyByAssemblyAndCongressman($assemblyId, $congressmanId);
+
+        return (new CollectionModel($categories))
+            ->setStatus(200)
+            ->setOption('Access-Control-Allow-Origin', '*');
+    }
+
+    public function assemblyVoteCategoriesAction()
+    {
+        $assemblyId = $this->params('id');
+        $congressmanId = $this->params('congressman_id');
+
+        $voteCategories = $this->voteItemService->fetchVoteByAssemblyAndCongressmanAndCategory(
+            $assemblyId,
+            $congressmanId
+        );
+
+        return (new CollectionModel($voteCategories))
             ->setStatus(200)
             ->setOption('Access-Control-Allow-Origin', '*');
     }

@@ -338,7 +338,73 @@
     </resource>
 
     <resource>
-        <path>/loggjafarthing/:id/thingmenn/:congressman_id/samantekt</path>
+        <path>/loggjafarthing/:id/thingmenn/:congressman_id/malaflokkar</path>
+        <param name="id" value="int">Number of assembly</param>
+        <param name="congressman_id" value="int">Number of congressman</param>
+        <method verb="GET">
+            <description>Get speech time for all categories</description>
+            <response>
+                <output>
+                    [
+                        {
+                            category_id: 15,
+                            super_category_id: 11,
+                            time: 11042,
+                            title: "Félagsmál"
+                        },
+                        ...
+                    ]
+                </output>
+            </response>
+        </method>
+    </resource>
+
+    <resource>
+        <path>/loggjafarthing/:id/thingmenn/:congressman_id/atvaedagreidslur</path>
+        <param name="id" value="int">Number of assembly</param>
+        <param name="congressman_id" value="int">Number of congressman</param>
+        <method verb="GET">
+            <description>Get votes types and count</description>
+            <response>
+                <output>
+                    [
+                        {
+                            count: 16,
+                            vote: "boðaði fjarvist"
+                        },
+                        ...
+                    ]
+                </output>
+            </response>
+        </method>
+    </resource>
+
+    <resource>
+        <path>/loggjafarthing/:id/thingmenn/:congressman_id/atvaedagreidslur-malaflokkar</path>
+        <param name="id" value="int">Number of assembly</param>
+        <param name="congressman_id" value="int">Number of congressman</param>
+        <method verb="GET">
+            <description>Get vote count for all categories</description>
+            <response>
+                <output>
+                    [
+                        {
+                            assembly_id :145,
+                            category_id :1,
+                            congressman_id :1161,
+                            count: 36,
+                            title: "Ferðaþjónusta",
+                            vote: "já"
+                        },
+                        ...
+                    ]
+                </output>
+            </response>
+        </method>
+    </resource>
+
+    <resource>
+        <path>/loggjafarthing/:id/thingmenn/:congressman_id/raedutimar</path>
         <param name="id" value="int">Number of assembly</param>
         <param name="congressman_id" value="int">Number of congressman</param>
         <method verb="GET">
@@ -346,8 +412,20 @@
             <response>
                 <output>
                     {
-                        voting: [],
-                        voting_total: 1234,
+                        congressman_type: [
+                            {
+                                congressman_type: "þingmaður",
+                                total:17421
+                            }
+                            ...
+                        ],
+                        type: [
+                            {
+                                total: 13048,
+                                type: "ræða"
+                            }
+                            ...
+                        ],
                     }
                 </output>
             </response>

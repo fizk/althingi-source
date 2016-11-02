@@ -41,13 +41,13 @@ return array(
                         ],
                         'may_terminate' => true,
                         'child_routes' => [
-                            'samantekt' => [
+                            'raedutimar' => [
                                 'type' => 'Zend\Mvc\Router\Http\Segment',
                                 'options' => [
-                                    'route'    => '/:congressman_id/samantekt',
+                                    'route'    => '/:congressman_id/raedutimar',
                                     'defaults' => [
                                         'controller' => 'Althingi\Controller\Congressman',
-                                        'action' => 'assembly-summary'
+                                        'action' => 'assembly-speech-time'
                                     ],
                                 ],
                             ],
@@ -68,6 +68,36 @@ return array(
                                     'defaults' => [
                                         'controller' => 'Althingi\Controller\Congressman',
                                         'action' => 'assembly-issues'
+                                    ],
+                                ],
+                            ],
+                            'atvaedagreidslur' => [
+                                'type' => 'Zend\Mvc\Router\Http\Segment',
+                                'options' => [
+                                    'route'    => '/:congressman_id/atvaedagreidslur',
+                                    'defaults' => [
+                                        'controller' => 'Althingi\Controller\Congressman',
+                                        'action' => 'assembly-voting'
+                                    ],
+                                ],
+                            ],
+                            'malaflokkar' => [
+                                'type' => 'Zend\Mvc\Router\Http\Segment',
+                                'options' => [
+                                    'route'    => '/:congressman_id/malaflokkar',
+                                    'defaults' => [
+                                        'controller' => 'Althingi\Controller\Congressman',
+                                        'action' => 'assembly-categories'
+                                    ],
+                                ],
+                            ],
+                            'atvaedagreidslur-malaflokkar' => [
+                                'type' => 'Zend\Mvc\Router\Http\Segment',
+                                'options' => [
+                                    'route'    => '/:congressman_id/atvaedagreidslur-malaflokkar',
+                                    'defaults' => [
+                                        'controller' => 'Althingi\Controller\Congressman',
+                                        'action' => 'assembly-vote-categories'
                                     ],
                                 ],
                             ]
