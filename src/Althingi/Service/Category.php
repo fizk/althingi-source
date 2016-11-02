@@ -39,6 +39,21 @@ class Category implements DatabaseAwareInterface
         return $this->decorate($statement->fetchObject());
     }
 
+    public function fetchByAssembly($assemblyId)
+    {
+        $statement = $this->getDriver()->prepare('
+            select count(*) as `count` , C.* from `Issue` I
+            join `Category_has_Issue` CI on (CI.`issue_id` = I.`issue_id`)
+            join `Category` C on (C.`category_id` = CI.`category_id`)
+            where I.`assembly_id` = :assembly_id
+            group by CI.`category_id`
+            order by `count` desc;
+        ');
+        $statement->execute(['assembly_id' => $assemblyId]);
+
+        return array_map([$this, 'decorate'], $statement->fetchAll());
+    }
+
     public function create($data)
     {
         $statement = $this->getDriver()->prepare($this->insertString('Category', $data));
@@ -61,7 +76,15 @@ class Category implements DatabaseAwareInterface
             return null;
         }
 
-        $object->party_id = (int) $object->party_id;
+        if (property_exists($object, 'count')) {
+            $object->count = (int) $object->count;
+        }
+
+        if (property_exists($object, 'party_id')) {
+            $object->party_id = (int) $object->party_id;
+        }
+
+
 
         return $object;
     }
