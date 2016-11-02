@@ -149,7 +149,7 @@ class SpeechController extends AbstractRestfulController implements
                  *  returns the classic 418 I'm a teapot; making the aggregator just shut up :)
                  */
                 if ($e->getCode() == 23000 && strpos($e->getMessage(), 'fk_Speach_Plenary1') !== false) {
-                    return (new ErrorModel("Plenary({$data->plenary_id}) not found, can't attach speech to plenary"))
+                    return (new ErrorModel("Plenary({$data['plenary_id']}) not found, can't attach speech to plenary"))
                         ->setStatus(418);
                 } else {
                     throw $e;
