@@ -149,5 +149,12 @@ return [
             }
         },
 
+        'Althingi\Lib\ServiceElectionAwareInterface' => function ($instance, $sm) {
+            if ($instance instanceof \Althingi\Lib\ServiceElectionAwareInterface) {
+                $locator = $sm->getServiceLocator();
+                $instance->setElectionService($locator->get('Althingi\Service\Election'));
+            }
+        },
+
     ]
 ];

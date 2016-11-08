@@ -12,6 +12,7 @@ use Althingi\Form\Assembly as AssemblyForm;
 use Althingi\Lib\ServiceAssemblyAwareInterface;
 use Althingi\Lib\ServiceCabinetAwareInterface;
 use Althingi\Lib\ServiceCategoryAwareInterface;
+use Althingi\Lib\ServiceElectionAwareInterface;
 use Althingi\Lib\ServiceIssueAwareInterface;
 use Althingi\Lib\ServicePartyAwareInterface;
 use Althingi\Lib\ServiceSpeechAwareInterface;
@@ -19,6 +20,7 @@ use Althingi\Lib\ServiceVoteAwareInterface;
 use Althingi\Service\Assembly;
 use Althingi\Service\Cabinet;
 use Althingi\Service\Category;
+use Althingi\Service\Election;
 use Althingi\Service\Issue;
 use Althingi\Service\Party;
 use Althingi\Service\Speech;
@@ -37,7 +39,8 @@ class AssemblyController extends AbstractRestfulController implements
     ServiceVoteAwareInterface,
     ServiceSpeechAwareInterface,
     ServiceCabinetAwareInterface,
-    ServiceCategoryAwareInterface
+    ServiceCategoryAwareInterface,
+    ServiceElectionAwareInterface
 {
     use Range;
 
@@ -62,6 +65,9 @@ class AssemblyController extends AbstractRestfulController implements
     /** @var $issueService \Althingi\Service\Category */
     private $categoryService;
 
+    /** @var $issueService \Althingi\Service\Election */
+    private $electionService;
+
     /**
      * Get one Assembly.
      *
@@ -81,6 +87,10 @@ class AssemblyController extends AbstractRestfulController implements
                         return (int) $party->party_id;
                     }, $majority)),
                 ];
+            }
+
+            if (count($assembly->parties) > 1 && $assembly->parties[0] == $assembly->parties[1]) {
+                $assembly->parties = [$assembly->parties[0]];
             }
 
             return (new ItemModel($assembly))
@@ -192,7 +202,9 @@ class AssemblyController extends AbstractRestfulController implements
             'votes' => $this->voteService->fetchFrequencyByAssembly($assemblyId),
             'speeches' => $this->speechService->fetchFrequencyByAssembly($assemblyId),
             'party_times' => $this->partyService->fetchTimeByAssembly($assemblyId),
-            'categories' => $this->categoryService->fetchByAssembly($assemblyId)
+            'categories' => $this->categoryService->fetchByAssembly($assemblyId),
+            'election' => $this->electionService->getByAssembly($assemblyId),
+            'election_results' => $this->partyService->fetchElectedByAssembly($assemblyId)
         ];
 
         return (new ItemModel($response))
@@ -301,5 +313,13 @@ class AssemblyController extends AbstractRestfulController implements
     public function setCategoryService(Category $category)
     {
         $this->categoryService = $category;
+    }
+
+    /**
+     * @param Election $election
+     */
+    public function setElectionService(Election $election)
+    {
+        $this->electionService = $election;
     }
 }

@@ -28,6 +28,7 @@ return [
         'Althingi\Service\SuperCategory' => 'Althingi\Service\SuperCategory',
         'Althingi\Service\Category' => 'Althingi\Service\Category',
         'Althingi\Service\IssueCategory' => 'Althingi\Service\IssueCategory',
+        'Althingi\Service\Election' => 'Althingi\Service\Election',
     ],
 
     'factories' => [

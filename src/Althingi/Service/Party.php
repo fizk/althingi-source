@@ -105,6 +105,17 @@ class Party implements DatabaseAwareInterface
         return array_map([$this, 'decorate'], $statement->fetchAll());
     }
 
+    public function fetchElectedByAssembly($assemblyId)
+    {
+        $statement = $this->getDriver()->prepare('
+            select * from `ElectionResult` ER join `Election_has_Assembly` E on (E.`election_id` = ER.`election_id`)
+            join `Party` P on (P.party_id = ER.party_id)
+            where E.`assembly_id` = :assembly_id order by `result` desc;
+        ');
+        $statement->execute(['assembly_id' => $assemblyId]);
+        return array_map([$this, 'decorate'], $statement->fetchAll());
+    }
+
     /**
      * Get all parties that a congressman as been in.
      *
