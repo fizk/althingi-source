@@ -29,6 +29,8 @@ return [
         'Althingi\Service\Category' => 'Althingi\Service\Category',
         'Althingi\Service\IssueCategory' => 'Althingi\Service\IssueCategory',
         'Althingi\Service\Election' => 'Althingi\Service\Election',
+
+        'Althingi\Command\GetAssembly' => 'Althingi\Command\GetAssembly',
     ],
 
     'factories' => [
@@ -68,6 +70,6 @@ return [
             if ($instance instanceof \Althingi\Lib\LoggerAwareInterface) {
                 $instance->setLogger($sm->get('Psr\Log'));
             }
-        }
+        },
     ],
 ];

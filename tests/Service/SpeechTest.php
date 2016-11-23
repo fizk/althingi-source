@@ -8,7 +8,7 @@
  */
 namespace Althingi\Service;
 
-require './module/Althingi/tests/MyAppDbUnitArrayDataSet.php';
+require_once './module/Althingi/tests/MyAppDbUnitArrayDataSet.php';
 
 use PDO;
 use PHPUnit_Extensions_Database_DataSet_IDataSet;
@@ -260,6 +260,5 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
                 ['speech_id' => '4_2', 'plenary_id' => 1, 'assembly_id' => 145, 'issue_id' => 2, 'congressman_id' => 1],
             ]
         ]);
-
     }
 }

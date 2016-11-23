@@ -25,6 +25,20 @@ class IssueCategory implements DatabaseAwareInterface
      */
     private $pdo;
 
+    public function get($assemblyId, $issueId, $categoryId)
+    {
+        $statement = $this->getDriver()->prepare('
+            select * from `Category_has_Issue` C
+            where C.`assembly_id` = :assembly_id and C.`issue_id` = :issue_id and C.`category_id` = :category_id
+        ');
+        $statement->execute([
+            'assembly_id' => $assemblyId,
+            'issue_id' => $issueId,
+            'category_id' => $categoryId
+        ]);
+        return $this->decorate($statement->fetchObject());
+    }
+
     /**
      * Create new Issue. This method
      * accepts object from corresponding Form.
@@ -37,6 +51,19 @@ class IssueCategory implements DatabaseAwareInterface
         $statement = $this->getDriver()->prepare($this->insertString('Category_has_Issue', $data));
         $statement->execute($this->convert($data));
         return $this->getDriver()->lastInsertId();
+    }
+
+    public function update($data)
+    {
+        $statement = $this->getDriver()->prepare(
+            $this->updateString(
+                'Category_has_Issue',
+                $data,
+                "category_id={$data->category_id} and issue_id={$data->issue_id} and assembly_id={$data->assembly_id}"
+            )
+        );
+        $statement->execute($this->convert($data));
+        return $statement->rowCount();
     }
 
     public function fetchFrequencyByAssemblyAndCongressman($assemblyId, $congressmanId)
@@ -80,6 +107,19 @@ class IssueCategory implements DatabaseAwareInterface
     public function getDriver()
     {
         return $this->pdo;
+    }
+
+    private function decorate($object)
+    {
+        if (!$object) {
+            return null;
+        }
+
+        $object->assembly_id = (int) $object->assembly_id;
+        $object->issue_id = (int) $object->issue_id;
+        $object->category_id = (int) $object->category_id;
+
+        return $object;
     }
 
 }

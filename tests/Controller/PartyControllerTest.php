@@ -38,7 +38,7 @@ class PartyControllerTest extends AbstractHttpControllerTestCase
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService('Althingi\Service\Party', $serviceMock);
 
-        $this->dispatch('/api/thingflokkar/100', 'PUT', [
+        $this->dispatch('/thingflokkar/100', 'PUT', [
             'name' => 'n1',
             'abbr_short' => 'p1',
             'abbr_long' => 'p2',
@@ -61,7 +61,7 @@ class PartyControllerTest extends AbstractHttpControllerTestCase
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService('Althingi\Service\Party', $serviceMock);
 
-        $this->dispatch('/api/thingflokkar/100', 'PUT', [
+        $this->dispatch('/thingflokkar/100', 'PUT', [
             'abbr_short' => 'p1',
             'abbr_long' => 'p2',
         ]);
@@ -87,7 +87,7 @@ class PartyControllerTest extends AbstractHttpControllerTestCase
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService('Althingi\Service\Plenary', $serviceMock);
 
-        $this->dispatch('/api/loggjafarthing/1/thingfundir', 'GET');
+        $this->dispatch('/loggjafarthing/1/thingfundir', 'GET');
         $this->assertControllerClass('PlenaryController');
         $this->assertActionName('getList');
         $this->assertResponseStatusCode(206);

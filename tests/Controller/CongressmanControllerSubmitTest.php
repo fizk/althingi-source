@@ -34,8 +34,9 @@ class CongressmanControllerSubmitTest extends AbstractHttpControllerTestCase
         $serviceManager = $this->getApplicationServiceLocator();
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService('Althingi\Service\Congressman', $service);
+        $serviceManager->setService('PDO', \Mockery::mock('PDO'));
 
-        $this->dispatch('/api/thingmenn/1', 'PUT', [
+        $this->dispatch('/thingmenn/1', 'PUT', [
             'name' => 'n1',
             'birth' => '2000-01-01'
         ]);
@@ -55,8 +56,9 @@ class CongressmanControllerSubmitTest extends AbstractHttpControllerTestCase
         $serviceManager = $this->getApplicationServiceLocator();
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService('Althingi\Service\Congressman', $service);
+        $serviceManager->setService('PDO', \Mockery::mock('PDO'));
 
-        $this->dispatch('/api/thingmenn/1', 'PUT', [
+        $this->dispatch('/thingmenn/1', 'PUT', [
             'birth' => '2000-01-01'
         ]);
 
@@ -85,13 +87,14 @@ class CongressmanControllerSubmitTest extends AbstractHttpControllerTestCase
         $serviceManager = $this->getApplicationServiceLocator();
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService('Althingi\Service\Congressman', $service);
+        $serviceManager->setService('PDO', \Mockery::mock('PDO'));
 
-        $this->dispatch('/api/thingmenn/1', 'PATCH', [
+        $this->dispatch('/thingmenn/1', 'PATCH', [
             'name' => 'new_name',
             'birth' => '2000-01-01'
         ]);
 
-        $this->assertResponseStatusCode(204);
+        $this->assertResponseStatusCode(205);
         $this->assertControllerClass('CongressmanController');
         $this->assertActionName('patch');
     }
@@ -106,8 +109,9 @@ class CongressmanControllerSubmitTest extends AbstractHttpControllerTestCase
         $serviceManager = $this->getApplicationServiceLocator();
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService('Althingi\Service\Congressman', $service);
+        $serviceManager->setService('PDO', \Mockery::mock('PDO'));
 
-        $this->dispatch('/api/thingmenn/1', 'PATCH', []);
+        $this->dispatch('/thingmenn/1', 'PATCH', []);
 
         $this->assertResponseStatusCode(404);
         $this->assertControllerClass('CongressmanController');
@@ -124,61 +128,14 @@ class CongressmanControllerSubmitTest extends AbstractHttpControllerTestCase
         $serviceManager = $this->getApplicationServiceLocator();
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService('Althingi\Service\Congressman', $service);
+        $serviceManager->setService('PDO', \Mockery::mock('PDO'));
 
-        $this->dispatch('/api/thingmenn/1', 'PATCH', [
+        $this->dispatch('/thingmenn/1', 'PATCH', [
             'birth' => 'nota-a-date'
         ]);
 
         $this->assertResponseStatusCode(400);
         $this->assertControllerClass('CongressmanController');
         $this->assertActionName('patch');
-    }
-
-    public function testCreateSuccess()
-    {
-        $service = \Mockery::mock('Althingi\Service\Congressman')
-            ->shouldReceive('create')
-            ->andReturnUsing(function ($item) {
-                $this->assertEquals('n1', $item->name);
-                $this->assertInstanceOf('DateTime', $item->birth);
-
-                return 12;
-            })
-            ->getMock();
-
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('Althingi\Service\Congressman', $service);
-
-        $this->dispatch('/api/thingmenn', 'POST', [
-            'name' => 'n1',
-            'birth' => '2000-01-01'
-        ]);
-
-        $this->assertResponseStatusCode(201);
-        $this->assertControllerClass('CongressmanController');
-        $this->assertActionName('create');
-        $this->assertResponseHeaderContains('Location', '/api/thingmenn/12');
-    }
-
-    public function testCreateInvalid()
-    {
-        $service = \Mockery::mock('Althingi\Service\Congressman')
-            ->shouldReceive('create')
-            ->andReturn(null)
-            ->getMock();
-
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('Althingi\Service\Congressman', $service);
-
-        $this->dispatch('/api/thingmenn', 'POST', [
-            'name' => 'n1',
-            'birth' => 'not-valid-date'
-        ]);
-
-        $this->assertResponseStatusCode(400);
-        $this->assertControllerClass('CongressmanController');
-        $this->assertActionName('create');
     }
 }

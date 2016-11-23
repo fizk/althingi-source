@@ -54,6 +54,34 @@ class Category implements DatabaseAwareInterface
         return array_map([$this, 'decorate'], $statement->fetchAll());
     }
 
+    public function fetchByAssemblyAndIssue($assemblyId, $issueId)
+    {
+        $statement = $this->getDriver()->prepare('
+            select C.* from `Category_has_Issue` CI
+            join `Category` C on (C.`category_id` = CI.`category_id`)
+            where CI.`assembly_id` = :assembly_id and CI.`issue_id` = :issue_id;
+        ');
+        $statement->execute([
+            'assembly_id' => $assemblyId,
+            'issue_id' => $issueId,
+        ]);
+        return array_map([$this, 'decorate'], $statement->fetchAll());
+    }
+    public function fetchByAssemblyIssueAndCategory($assemblyId, $issueId, $categoryId)
+    {
+        $statement = $this->getDriver()->prepare('
+            select C.* from `Category_has_Issue` CI
+            join `Category` C on (C.`category_id` = CI.`category_id`)
+            where CI.`assembly_id` = :assembly_id and CI.`issue_id` = :issue_id and CI.`category_id` = :category_id;
+        ');
+        $statement->execute([
+            'assembly_id' => $assemblyId,
+            'issue_id' => $issueId,
+            'category_id' => $categoryId,
+        ]);
+        return $this->decorate($statement->fetchObject());
+    }
+
     public function create($data)
     {
         $statement = $this->getDriver()->prepare($this->insertString('Category', $data));
@@ -76,6 +104,9 @@ class Category implements DatabaseAwareInterface
             return null;
         }
 
+        $object->category_id = (int) $object->category_id;
+        $object->super_category_id = (int) $object->super_category_id;
+
         if (property_exists($object, 'count')) {
             $object->count = (int) $object->count;
         }
@@ -83,8 +114,6 @@ class Category implements DatabaseAwareInterface
         if (property_exists($object, 'party_id')) {
             $object->party_id = (int) $object->party_id;
         }
-
-
 
         return $object;
     }

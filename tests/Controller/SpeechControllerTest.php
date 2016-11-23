@@ -233,7 +233,7 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
             'congressman_id' => 1,
         ]);
 
-        $this->assertResponseStatusCode(204);
+        $this->assertResponseStatusCode(205);
     }
 
     public function testPatchInvalid()

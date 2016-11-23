@@ -231,7 +231,7 @@ return array(
                         'options' => [
                             'route'    => '/nefndir[/:committee_id]',
                             'defaults' => [
-                                'controller' => 'Althingi\Controller\NULL',
+                                'controller' => 'Althingi\Controller\AssemblyCommittee',
                                 'identifier' => 'committee_id'
                             ],
                         ],
@@ -288,9 +288,10 @@ return array(
                     'thingmal' => [
                         'type' => 'Zend\Mvc\Router\Http\Segment',
                         'options' => [
-                            'route'    => '/thingmal',
+                            'route'    => '/thingmal[/:issue_id]',
                             'defaults' => [
                                 'controller' => 'Althingi\Controller\CongressmanIssue',
+                                'identifier' => 'issue_id'
                             ],
                         ]
                     ],
@@ -417,6 +418,7 @@ return array(
             'Althingi\Controller\IssueCategory' => 'Althingi\Controller\IssueCategoryController',
             'Althingi\Controller\CommitteeMeeting' => 'Althingi\Controller\CommitteeMeetingController',
             'Althingi\Controller\CommitteeMeetingAgenda' => 'Althingi\Controller\CommitteeMeetingAgendaController',
+            'Althingi\Controller\AssemblyCommittee' => 'Althingi\Controller\AssemblyCommitteeController',
         ],
     ],
     'view_manager' => [

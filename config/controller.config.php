@@ -156,5 +156,12 @@ return [
             }
         },
 
+        'Althingi\Lib\CommandGetAssemblyAwareInterface' => function ($instance, $sm) {
+            if ($instance instanceof \Althingi\Lib\CommandGetAssemblyAwareInterface) {
+                $locator = $sm->getServiceLocator();
+                $instance->setGetAssemblyCommand($locator->get('Althingi\Command\GetAssembly'));
+            }
+        },
+
     ]
 ];

@@ -513,6 +513,9 @@
         <path>/loggjafarthing/:id/thingfundir/:plenary_id</path>
         <param name="id" value="int">Number of assembly</param>
         <param name="plenary_id" value="int">Number of plenary</param>
+        <method verb="GET">
+            <description>Get one plenary by assembly.</description>
+        </method>
         <method verb="PUT">
             <description>Put a new plenary into an assembly.</description>
             <request>
@@ -522,6 +525,48 @@
                     <param value="date-time" name="to">End of plenary</param>
                 </input>
             </request>
+        </method>
+    </resource>
+
+    <resource>
+        <path>/loggjafarthing/:id/nefndir</path>
+        <param name="id" value="int">Number of assembly</param>
+        <method verb="GET">
+            <response>
+                <output>
+                    [
+                        {
+                            committee_id: 201,
+                            name: "allsherjar- og menntamálanefnd",
+                            first_assembly_id: 140,
+                            last_assembly_id: null,
+                            abbr_long: "allsh.- og menntmn.",
+                            abbr_short: "am"
+                        },
+                        ...
+                    ]
+                </output>
+            </response>
+        </method>
+    </resource>
+
+    <resource>
+        <path>/loggjafarthing/:id/nefndir/:committee_id</path>
+        <param name="id" value="int">Number of assembly</param>
+        <param name="committee_id" value="int">Number of committee</param>
+        <method verb="GET">
+            <response>
+                <output>
+                    {
+                        committee_id: 201,
+                        name: "allsherjar- og menntamálanefnd",
+                        first_assembly_id: 140,
+                        last_assembly_id: null,
+                        abbr_long: "allsh.- og menntmn.",
+                        abbr_short: "am"
+                    }
+                </output>
+            </response>
         </method>
     </resource>
 
@@ -563,7 +608,7 @@
     </resource>
 
     <resource>
-        <path>/loggjafarthing/:is/nefndir/:committee_id/nefndarfundir/:committee_meeting_id/dagskralidir/:committee_meeting_agenda_id</path>
+        <path>/loggjafarthing/:id/nefndir/:committee_id/nefndarfundir/:committee_meeting_id/dagskralidir/:committee_meeting_agenda_id</path>
         <param name="id" value="int">Number of assembly</param>
         <param name="committee_id" value="int">Number of committee</param>
         <param name="committee_meeting_id" value="int">Number of committee meeting</param>
@@ -728,6 +773,21 @@
         <param name="id" value="int">Number of assembly</param>
         <param name="issue_id" value="int">Number of issue</param>
         <param name="document_id" value="int">Number of document</param>
+        <method verb="GET">
+            <description>Get document</description>
+            <response>
+                <output>
+                    {
+                        document_id: 585,
+                        issue_id: 1,
+                        assembly_id: 145,
+                        date: "2015-12-05 17:02:00",
+                        url: "http://www.althingi.is/altext/145/s/0585.html",
+                        type: "nefndarálit"
+                    }
+                </output>
+            </response>
+        </method>
         <method verb="PUT">
             <description>Create/Put new document</description>
             <request>
@@ -945,13 +1005,49 @@
     </resource>
 
     <resource>
+        <path>/loggjafarthing/:id/thingmal/:issue_id/efnisflokkar</path>
+        <param name="id" value="int">Number of assembly</param>
+        <param name="issue_id" value="int">Number of issue</param>
+        <method verb="GET">
+            <response>
+                <output>
+                    [
+                        {
+                            category_id: 6,
+                            super_category_id: 2,
+                            title: "Fjárreiður ríkisins",
+                            description: "þ.m.t. fjárlög, ... "
+                        }
+                        ...
+                    ]
+                </output>
+            </response>
+        </method>
+    </resource>
+
+    <resource>
         <path>/loggjafarthing/:id/thingmal/:issue_id/efnisflokkar/:category_id</path>
         <param name="id" value="int">Number of assembly</param>
         <param name="issue_id" value="int">Number of issue</param>
         <param name="category_id" value="int">Number of category</param>
+        <method verb="GET">
+            <description>Get one category connected to issue</description>
+            <response>
+                <output>
+                    {
+                        category_id: 6,
+                        super_category_id: 2,
+                        title: "Fjárreiður ríkisins",
+                        description: "þ.m.t. fjárlög..."
+                    }
+                </output>
+            </response>
+        </method>
         <method verb="PUT">
             <description>Connect one issue with one sub category</description>
-            <request></request>
+        </method>
+        <method verb="PATCH">
+            <description>Update connection with one sub category</description>
         </method>
     </resource>
 
@@ -1171,7 +1267,7 @@
                 </input>
             </request>
         </method>
-        <method verb="DELETE"></method>
+        <method verb="DELETE" />
     </resource>
 
     <resource>
@@ -1179,6 +1275,14 @@
         <param name="super_category_id" value="int">Id of super category</param>
         <method verb="PUT">
             <description>Create one super category</description>
+            <request>
+                <input>
+                    <param name="title" value="string">Name/Title of category</param>
+                </input>
+            </request>
+        </method>
+        <method verb="PATCH">
+            <description>CUpdate one super category</description>
             <request>
                 <input>
                     <param name="title" value="string">Name/Title of category</param>

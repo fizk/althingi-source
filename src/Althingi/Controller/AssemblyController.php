@@ -9,6 +9,7 @@
 namespace Althingi\Controller;
 
 use Althingi\Form\Assembly as AssemblyForm;
+use Althingi\Lib\CommandGetAssemblyAwareInterface;
 use Althingi\Lib\ServiceAssemblyAwareInterface;
 use Althingi\Lib\ServiceCabinetAwareInterface;
 use Althingi\Lib\ServiceCategoryAwareInterface;

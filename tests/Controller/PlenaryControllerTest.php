@@ -37,9 +37,9 @@ class PlenaryControllerTest extends AbstractHttpControllerTestCase
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService('Althingi\Service\Plenary', $serviceMock);
 
-        $this->dispatch('/api/loggjafarthing/1/thingfundir/2', 'PUT', [
-            'from' => '2001-01-01 00:00:00',
-            'to' => '2001-01-01 00:00:00',
+        $this->dispatch('/loggjafarthing/1/thingfundir/2', 'PUT', [
+            'from' => '2001-01-01 00:00',
+            'to' => '2001-01-01 00:00',
             'name' => 'n1'
         ]);
 
@@ -60,7 +60,7 @@ class PlenaryControllerTest extends AbstractHttpControllerTestCase
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService('Althingi\Service\Plenary', $serviceMock);
 
-        $this->dispatch('/api/loggjafarthing/1/thingfundir/2', 'PUT', [
+        $this->dispatch('/loggjafarthing/1/thingfundir/2', 'PUT', [
             'from' => '2001-01-01 00:00:00',
             'to' => '2001-01-01 00:00:00',
         ]);
@@ -86,7 +86,7 @@ class PlenaryControllerTest extends AbstractHttpControllerTestCase
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService('Althingi\Service\Plenary', $serviceMock);
 
-        $this->dispatch('/api/loggjafarthing/1/thingfundir', 'GET');
+        $this->dispatch('/loggjafarthing/1/thingfundir', 'GET');
         $this->assertControllerClass('PlenaryController');
         $this->assertActionName('getList');
         $this->assertResponseStatusCode(206);

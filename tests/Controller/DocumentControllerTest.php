@@ -71,6 +71,6 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
 
         $this->assertControllerClass('DocumentController');
         $this->assertActionName('patch');
-        $this->assertResponseStatusCode(204);
+        $this->assertResponseStatusCode(205);
     }
 }

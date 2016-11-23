@@ -70,6 +70,6 @@ class ProponentControllerTest extends AbstractHttpControllerTestCase
 
         $this->assertControllerClass('ProponentController');
         $this->assertActionName('patch');
-        $this->assertResponseStatusCode(204);
+        $this->assertResponseStatusCode(205);
     }
 }

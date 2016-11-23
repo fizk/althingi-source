@@ -119,20 +119,15 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
 
     public function testGetNotFound()
     {
-        $pdoMock = Mockery::mock('\PDO')
-            ->shouldReceive('prepare')
-            ->andReturnSelf()
-            ->mock()
-            ->shouldReceive('execute')
-            ->andReturnSelf()
-            ->mock()
-            ->shouldReceive('fetchObject')
-            ->andReturn(false)
-            ->mock();
+        $assemblyServiceMock = \Mockery::mock('Althingi\Service\Assembly')
+            ->shouldReceive('get')
+            ->andReturnNull()
+            ->getMock();
 
         $serviceManager = $this->getApplicationServiceLocator();
         $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('PDO', $pdoMock);
+        $serviceManager->setService('PDO', \Mockery::mock('PDO'));
+        $serviceManager->setService('Althingi\Service\Assembly', $assemblyServiceMock);
 
         $this->dispatch('/loggjafarthing/144', 'GET');
         $this->assertResponseStatusCode(404);
@@ -220,7 +215,7 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
         $this->dispatch('/loggjafarthing/144', 'PATCH', [
             'from' => '2001-01-01',
         ]);
-        $this->assertResponseStatusCode(204);
+        $this->assertResponseStatusCode(205);
     }
 
     public function testPatchUnSuccessful()
@@ -355,9 +350,9 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
     private function assemblies()
     {
         return [
-            (object)['assembly_id' => 1],
-            (object)['assembly_id' => 2],
-            (object)['assembly_id' => 3],
+            (object)['assembly_id' => 1, 'cabinet_id' => 1, 'party_id' => 1],
+            (object)['assembly_id' => 2, 'cabinet_id' => 1, 'party_id' => 1],
+            (object)['assembly_id' => 3, 'cabinet_id' => 1, 'party_id' => 1],
         ];
     }
 

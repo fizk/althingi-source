@@ -116,7 +116,16 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
         $pdo = Mockery::mock('PDO');
         $serviceMock = \Mockery::mock('Althingi\Service\Issue')
             ->shouldReceive('fetchByAssembly')
-            ->andReturn([(object) ['congressman_id' => 1, 'date' => date('Y-m-d H:i:s')]])
+            ->andReturn([(object) [
+                'congressman_id' => 1,
+                'date' => date('Y-m-d H:i:s'),
+                'goal' => '',
+                'major_changes' => '',
+                'changes_in_law' => '',
+                'costs_and_revenues' => '',
+                'deliveries' => '',
+                'additional_information' => '',
+            ]])
             ->never()
             ->getMock()
             ->shouldReceive('countByAssembly')
@@ -294,7 +303,7 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
         ]);
         $this->assertControllerClass('IssueController');
         $this->assertActionName('patch');
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(205);
     }
 
     public function testPatchEntryNotFound()
@@ -415,57 +424,6 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
             ->getAllowedMethods();
 
         $this->assertCount(0, array_diff($expectedMethods, $actualMethods));
-    }
-
-    public function testAssembly()
-    {
-        $expectedResponse = (object) [
-            'bills' => [],
-            'government_bills' => [],
-            'types' => [],
-            'votes' => [],
-            'speeches' => [],
-        ];
-
-        $pdo = Mockery::mock('PDO');
-        $issueService = Mockery::mock('Althingi\Service\Issue')
-            ->shouldReceive('fetchBillStatisticsByAssembly')
-            ->andReturnUsing(function ($assemblyId) {
-                $this->assertEquals(100, $assemblyId);
-                return [];
-            })
-            ->once()
-            ->getMock()
-            ->shouldReceive('fetchGovernmentBillStatisticsByAssembly')
-            ->andReturn([])
-            ->getMock()
-            ->shouldReceive('fetchStateByAssembly')
-            ->andReturn([])
-            ->getMock();
-        $voteService = Mockery::mock('Althingi\Service\Vote')
-            ->shouldReceive('fetchFrequencyByAssembly')
-            ->andReturn([])
-            ->once()
-            ->getMock();
-        $speechService = Mockery::mock('Althingi\Service\Speech')
-            ->shouldReceive('fetchFrequencyByAssembly')
-            ->andReturn([])
-            ->once()
-            ->getMock();
-
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('Althingi\Service\Issue', $issueService);
-        $serviceManager->setService('Althingi\Service\Vote', $voteService);
-        $serviceManager->setService('Althingi\Service\Speech', $speechService);
-        $serviceManager->setService('PDO', $pdo);
-
-        $this->dispatch('/loggjafarthing/100/samantekt', 'GET');
-
-        $this->assertControllerClass('IssueController');
-        $this->assertActionName('assembly');
-
-        $this->assertEquals($expectedResponse, json_decode($this->getResponse()->getContent()));
     }
 
     private function buildIssueObject()

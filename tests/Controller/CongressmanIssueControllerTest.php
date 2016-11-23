@@ -20,7 +20,7 @@ class CongressmanIssueControllerTest extends AbstractHttpControllerTestCase
         parent::setUp();
     }
 
-    public function testTrue()
+    public function testGetCongressmanIssueList()
     {
         $serviceMock = \Mockery::mock('Althingi\Service\Issue')
             ->shouldReceive('fetchByCongressman')
@@ -34,7 +34,7 @@ class CongressmanIssueControllerTest extends AbstractHttpControllerTestCase
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService('Althingi\Service\Issue', $serviceMock);
 
-        $this->dispatch('/api/thingmenn/123/thingmal', 'GET');
+        $this->dispatch('/thingmenn/123/thingmal', 'GET');
 
         $this->assertControllerClass('CongressmanIssueController');
         $this->assertActionName('getList');

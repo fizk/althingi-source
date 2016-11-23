@@ -22,7 +22,7 @@ class ConstituencyControllerTest extends AbstractHttpControllerTestCase
 
     public function testPutSuccess()
     {
-        $serviceMock = \Mockery::mock()
+        $serviceMock = \Mockery::mock('Althingi\Service\Constituency')
             ->shouldReceive('create')
             ->andReturnUsing(function ($object) {
                 $this->assertEquals('name1', $object->name);
@@ -34,7 +34,7 @@ class ConstituencyControllerTest extends AbstractHttpControllerTestCase
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService('Althingi\Service\Constituency', $serviceMock);
 
-        $this->dispatch('/api/kjordaemi/1', 'PUT', [
+        $this->dispatch('/kjordaemi/1', 'PUT', [
             'name' => 'name1'
         ]);
         $this->assertResponseStatusCode(201);
@@ -44,7 +44,7 @@ class ConstituencyControllerTest extends AbstractHttpControllerTestCase
 
     public function testPutInvalidForm()
     {
-        $serviceMock = \Mockery::mock()
+        $serviceMock = \Mockery::mock('Althingi\Service\Constituency')
             ->shouldReceive('create')
             ->andReturn(new \stdClass())
             ->getMock();
@@ -53,7 +53,7 @@ class ConstituencyControllerTest extends AbstractHttpControllerTestCase
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService('Althingi\Service\Constituency', $serviceMock);
 
-        $this->dispatch('/api/kjordaemi/1', 'PUT');
+        $this->dispatch('/kjordaemi/1', 'PUT');
         $this->assertResponseStatusCode(400);
         $this->assertControllerClass('ConstituencyController');
         $this->assertActionName('put');

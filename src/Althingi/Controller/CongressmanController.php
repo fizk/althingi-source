@@ -168,7 +168,7 @@ class CongressmanController extends AbstractRestfulController implements
             $this->congressmanService->delete($id);
 
             return (new EmptyModel())
-                ->setStatus(204)
+                ->setStatus(205)
                 ->setOption('Access-Control-Allow-Origin', '*');
         }
 

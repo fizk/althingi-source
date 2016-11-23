@@ -134,10 +134,10 @@ class DatabaseSetup implements PHPUnit_Framework_TestListener
 
     private function setupDatabase()
     {
-        exec('mysql -u root -e "drop database if exists '.
+        exec($GLOBALS['MYSQL.BIN'].' -u root -e "drop database if exists '.
             $GLOBALS['DB_DBNAME'].'; create database '.
-            $GLOBALS['DB_DBNAME'].';" && mysqldump -u '.$GLOBALS['DB_USER'].' -d '.
-            $GLOBALS['DB_DEV'].' | mysql -u '.$GLOBALS['DB_USER'].' -D'.
+            $GLOBALS['DB_DBNAME'].';" && '.$GLOBALS['MYSQLDUMP.BIN'].' -u '.$GLOBALS['DB_USER'].' -d '.
+            $GLOBALS['DB_DEV'].' | '.$GLOBALS['MYSQL.BIN'].' -u '.$GLOBALS['DB_USER'].' -D '.
             $GLOBALS['DB_DBNAME']);
         $this->hasDatabase = true;
     }
@@ -145,7 +145,7 @@ class DatabaseSetup implements PHPUnit_Framework_TestListener
     private function teardownDatabase()
     {
         if ($this->hasDatabase) {
-            exec('mysql -u '.$GLOBALS['DB_USER'].' -e "drop database if exists '.$GLOBALS['DB_DBNAME'].';"');
+            exec($GLOBALS['MYSQL.BIN'].' -u '.$GLOBALS['DB_USER'].' -e "drop database if exists '.$GLOBALS['DB_DBNAME'].';"');
         }
         $this->hasDatabase = false;
     }

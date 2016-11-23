@@ -28,7 +28,7 @@ class CongressmanIssueController extends AbstractRestfulController implements
      */
     public function getList()
     {
-        $congressmanId = $this->params('id');
+        $congressmanId = $this->params('congressman_id');
 
         $issues = $this->issueService->fetchByCongressman($congressmanId);
 

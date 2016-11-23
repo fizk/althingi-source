@@ -173,7 +173,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
 
         $this->assertControllerClass('CongressmanController');
         $this->assertActionName('patch');
-        $this->assertResponseStatusCode(204);
+        $this->assertResponseStatusCode(205);
     }
 
     public function testPatchInvalidData()
@@ -258,7 +258,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
 
         $this->assertControllerClass('CongressmanController');
         $this->assertActionName('delete');
-        $this->assertResponseStatusCode(204);
+        $this->assertResponseStatusCode(205);
     }
 
     public function testDeleteResourceNotFound()

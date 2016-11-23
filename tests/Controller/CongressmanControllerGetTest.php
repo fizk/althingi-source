@@ -24,12 +24,10 @@ class CongressmanControllerGetTest extends AbstractHttpControllerTestCase
     {
         $serviceManager = $this->getApplicationServiceLocator();
         $serviceManager->setAllowOverride(true);
-        $serviceManager->setService(
-            'Althingi\Service\Congressman',
-            $this->buildService()
-        );
+        $serviceManager->setService('Althingi\Service\Congressman', $this->buildCongressmanService());
+        $serviceManager->setService('PDO', \Mockery::mock('PDO'));
 
-        $this->dispatch('/api/thingmenn');
+        $this->dispatch('/thingmenn');
         $this->assertResponseStatusCode(206);
         $this->assertControllerClass('CongressmanController');
         $this->assertActionName('getList');
@@ -39,12 +37,11 @@ class CongressmanControllerGetTest extends AbstractHttpControllerTestCase
     {
         $serviceManager = $this->getApplicationServiceLocator();
         $serviceManager->setAllowOverride(true);
-        $serviceManager->setService(
-            'Althingi\Service\Congressman',
-            $this->buildService()
-        );
+        $serviceManager->setService('Althingi\Service\Congressman', $this->buildCongressmanService());
+        $serviceManager->setService('Althingi\Service\Party', $this->buildPartyService());
+        $serviceManager->setService('PDO', \Mockery::mock('PDO'));
 
-        $this->dispatch('/api/thingmenn/1');
+        $this->dispatch('/thingmenn/1');
         $this->assertResponseStatusCode(200);
         $this->assertControllerClass('CongressmanController');
         $this->assertActionName('get');
@@ -63,8 +60,9 @@ class CongressmanControllerGetTest extends AbstractHttpControllerTestCase
             'Althingi\Service\Congressman',
             $mock
         );
+        $serviceManager->setService('PDO', \Mockery::mock('PDO'));
 
-        $this->dispatch('/api/thingmenn/1');
+        $this->dispatch('/thingmenn/1');
         $this->assertResponseStatusCode(404);
         $this->assertControllerClass('CongressmanController');
         $this->assertActionName('get');
@@ -72,25 +70,29 @@ class CongressmanControllerGetTest extends AbstractHttpControllerTestCase
 
     public function testDelete()
     {
-        $mock = \Mockery::mock('Althingi\Service\Congressman')
-            ->shouldReceive('delete')
-            ->andReturn(0)
-            ->getMock();
-
         $serviceManager = $this->getApplicationServiceLocator();
         $serviceManager->setAllowOverride(true);
-        $serviceManager->setService(
-            'Althingi\Service\Congressman',
-            $mock
-        );
+        $serviceManager->setService('Althingi\Service\Congressman', $this->buildCongressmanService());
+        $serviceManager->setService('PDO', \Mockery::mock('PDO'));
 
-        $this->dispatch('/api/thingmenn/1', 'DELETE');
-        $this->assertResponseStatusCode(204);
+        $this->dispatch('/thingmenn/1', 'DELETE');
+        $this->assertResponseStatusCode(205);
         $this->assertControllerClass('CongressmanController');
         $this->assertActionName('delete');
     }
 
-    private function buildService()
+    private function buildPartyService()
+    {
+        return \Mockery::mock('Althingi\Service\Party')
+            ->shouldReceive('fetchByCongressman')
+            ->andReturn(null)
+            ->getMock()
+            ->shouldReceive('fetchAll')
+            ->andReturn([])
+            ->getMock();
+    }
+
+    private function buildCongressmanService()
     {
         return \Mockery::mock('Althingi\Service\Congressman')
             ->shouldReceive('count')
@@ -101,6 +103,9 @@ class CongressmanControllerGetTest extends AbstractHttpControllerTestCase
                 ->getMock()
             ->shouldReceive('get')
                 ->andReturn((object) [])
+                ->getMock()
+            ->shouldReceive('delete')
+                ->andReturn(0)
                 ->getMock();
 
     }

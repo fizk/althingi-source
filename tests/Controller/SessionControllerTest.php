@@ -61,7 +61,7 @@ class SessionControllerTest extends AbstractHttpControllerTestCase
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService('Althingi\Service\Session', $serviceMock);
 
-        $this->dispatch('/api/thingmenn/2/thingseta', 'POST', [
+        $this->dispatch('/thingmenn/2/thingseta', 'POST', [
             'constituency_id' => 1,
             'from' => 'not-valid-date',
             'to' => '2010-01-01',
@@ -71,7 +71,7 @@ class SessionControllerTest extends AbstractHttpControllerTestCase
 
         $this->assertResponseStatusCode(400);
         $this->assertControllerClass('SessionController');
-        $this->assertActionName('create');
+        $this->assertActionName('post');
     }
 
     public function testGetList()
@@ -85,7 +85,7 @@ class SessionControllerTest extends AbstractHttpControllerTestCase
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService('Althingi\Service\Session', $serviceMock);
 
-        $this->dispatch('/api/thingmenn/2/thingseta', 'GET');
+        $this->dispatch('/thingmenn/2/thingseta', 'GET');
         $this->assertResponseStatusCode(200);
         $this->assertControllerClass('SessionController');
         $this->assertActionName('get');

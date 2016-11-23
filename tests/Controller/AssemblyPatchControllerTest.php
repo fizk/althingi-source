@@ -23,62 +23,80 @@ class AssemblyPatchControllerTest extends AbstractHttpControllerTestCase
 
     public function testPassingInArgument()
     {
-        $serviceMock = \Mockery::mock()
-            ->shouldReceive('get')
-            ->once()
-            ->andReturn((object)[
-                'assembly_id' => 1,
-                'from' => '2000-01-01',
-                'to' => '1978-04-11',
-            ])
+        $pdoMock = \Mockery::mock('PDO')
+            ->shouldReceive('prepare')
+            ->andReturnSelf()
             ->getMock()
-        ->shouldReceive('update')
-            ->once()
-            ->andReturnUsing(function ($data) {
-                $this->assertEquals('2001-01-01', $data->to);
-                $this->assertEquals('2000-01-01', $data->from);
-            })
-        ->getMock();
 
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('Althingi\Service\Assembly', $serviceMock);
+            ->shouldReceive('execute')
+            ->andReturnSelf()
+            ->getMock()
 
-        $this->dispatch('/api/loggjafarthing/1', 'PATCH', [
-            'to' => '2001-01-01',
-            'from' => '2000-01-01',
-        ]);
-        $this->assertResponseStatusCode(204);
-    }
+            ->shouldReceive('fetchObject')
+            ->andReturn((object) ['assembly_id' => 1])
+            ->getMock()
 
-    public function testPatchResourceNotFound()
-    {
-        $serviceMock = \Mockery::mock()
-            ->shouldReceive('get')
-            ->andReturn(null)
+            ->shouldReceive('rowCount')
+            ->andReturn(1)
             ->getMock();
 
         $serviceManager = $this->getApplicationServiceLocator();
         $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('Althingi\Service\Assembly', $serviceMock);
+        $serviceManager->setService('PDO', $pdoMock);
 
-        $this->dispatch('/api/loggjafarthing/1', 'PATCH');
+        $this->dispatch('/loggjafarthing/1', 'PATCH', [
+            'to' => '2001-01-01',
+            'from' => '2000-01-01',
+        ]);
+        $c = $this->getResponse()->getContent();
+        $this->assertResponseStatusCode(205);
+    }
+
+    public function testPatchResourceNotFound()
+    {
+        $pdoMock = \Mockery::mock('PDO')
+            ->shouldReceive('prepare')
+            ->andReturnSelf()
+            ->getMock()
+
+            ->shouldReceive('execute')
+            ->andReturnSelf()
+            ->getMock()
+
+            ->shouldReceive('fetchObject')
+            ->andReturn(false)
+            ->getMock();
+
+
+        $serviceManager = $this->getApplicationServiceLocator();
+        $serviceManager->setAllowOverride(true);
+        $serviceManager->setService('PDO', $pdoMock);
+
+        $this->dispatch('/loggjafarthing/1', 'PATCH');
         $this->assertResponseStatusCode(404);
     }
 
 
     public function testPatchInvalid()
     {
-        $serviceMock = \Mockery::mock()
-            ->shouldReceive('get')
-            ->andReturn(new \stdClass())
+        $pdoMock = \Mockery::mock('PDO')
+            ->shouldReceive('prepare')
+            ->andReturnSelf()
+            ->getMock()
+
+            ->shouldReceive('execute')
+            ->andReturnSelf()
+            ->getMock()
+
+            ->shouldReceive('fetchObject')
+            ->andReturn((object) ['assembly_id' => 1])
             ->getMock();
 
         $serviceManager = $this->getApplicationServiceLocator();
         $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('Althingi\Service\Assembly', $serviceMock);
+        $serviceManager->setService('PDO', $pdoMock);
 
-        $this->dispatch('/api/loggjafarthing/1', 'PATCH', [
+        $this->dispatch('/loggjafarthing/1', 'PATCH', [
             'from' => 'invalid-date'
         ]);
         $this->assertResponseStatusCode(400);

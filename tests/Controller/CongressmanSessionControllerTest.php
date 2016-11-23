@@ -22,7 +22,7 @@ class CongressmanSessionControllerTest extends AbstractHttpControllerTestCase
 
     public function testGetSuccess()
     {
-        $serviceMock = \Mockery::mock()
+        $serviceMock = \Mockery::mock('Althingi\Service\Session')
             ->shouldReceive('get')
             ->andReturn(new \stdClass())
             ->getMock();
@@ -30,8 +30,9 @@ class CongressmanSessionControllerTest extends AbstractHttpControllerTestCase
         $serviceManager = $this->getApplicationServiceLocator();
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService('Althingi\Service\Session', $serviceMock);
+        $serviceManager->setService('PDO', \Mockery::mock('PDO'));
 
-        $this->dispatch('/api/thingmenn/1/thingseta/2');
+        $this->dispatch('/thingmenn/1/thingseta/2');
         $this->assertResponseStatusCode(200);
         $this->assertControllerClass('CongressmanSessionController');
         $this->assertActionName('get');
@@ -48,7 +49,7 @@ class CongressmanSessionControllerTest extends AbstractHttpControllerTestCase
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService('Althingi\Service\Session', $serviceMock);
 
-        $this->dispatch('/api/thingmenn/1/thingseta/2');
+        $this->dispatch('/thingmenn/1/thingseta/2');
         $this->assertResponseStatusCode(404);
         $this->assertControllerClass('CongressmanSessionController');
         $this->assertActionName('get');
@@ -80,10 +81,10 @@ class CongressmanSessionControllerTest extends AbstractHttpControllerTestCase
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService('Althingi\Service\Session', $serviceMock);
 
-        $this->dispatch('/api/thingmenn/1/thingseta/2', 'PATCH', [
+        $this->dispatch('/thingmenn/1/thingseta/2', 'PATCH', [
             'party_id' => 1
         ]);
-        $this->assertResponseStatusCode(204);
+        $this->assertResponseStatusCode(205);
         $this->assertControllerClass('CongressmanSessionController');
         $this->assertActionName('patch');
     }
@@ -103,7 +104,7 @@ class CongressmanSessionControllerTest extends AbstractHttpControllerTestCase
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService('Althingi\Service\Session', $serviceMock);
 
-        $this->dispatch('/api/thingmenn/1/thingseta/2', 'PATCH', []);
+        $this->dispatch('/thingmenn/1/thingseta/2', 'PATCH', []);
         $this->assertResponseStatusCode(404);
         $this->assertControllerClass('CongressmanSessionController');
         $this->assertActionName('patch');
@@ -130,7 +131,7 @@ class CongressmanSessionControllerTest extends AbstractHttpControllerTestCase
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService('Althingi\Service\Session', $serviceMock);
 
-        $this->dispatch('/api/thingmenn/1/thingseta/2', 'PATCH', [
+        $this->dispatch('/thingmenn/1/thingseta/2', 'PATCH', [
             'party_id' => 1,
             'from' => 'not-valid-date'
         ]);
@@ -150,8 +151,8 @@ class CongressmanSessionControllerTest extends AbstractHttpControllerTestCase
         $serviceManager->setAllowOverride(true);
         $serviceManager->setService('Althingi\Service\Session', $serviceMock);
 
-        $this->dispatch('/api/thingmenn/1/thingseta/2', 'DELETE');
-        $this->assertResponseStatusCode(204);
+        $this->dispatch('/thingmenn/1/thingseta/2', 'DELETE');
+        $this->assertResponseStatusCode(205);
         $this->assertControllerClass('CongressmanSessionController');
         $this->assertActionName('delete');
     }

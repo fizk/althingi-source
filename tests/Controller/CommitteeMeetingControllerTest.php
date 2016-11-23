@@ -46,30 +46,6 @@ class CommitteeMeetingControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(201);
     }
 
-    public function testPutDatesMissing()
-    {
-        $pdo = \Mockery::mock('PDO')
-            ->shouldReceive('prepare')
-            ->andReturnSelf()
-            ->shouldReceive('execute')
-            ->andReturnSelf()
-            ->shouldReceive('rowCount')
-            ->andReturn(1)
-            ->getMock();
-
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('PDO', $pdo);
-
-        $this->dispatch('/loggjafarthing/145/nefndir/202/nefndarfundir/1646', 'PUT', [
-            'description' => 'some description'
-        ]);
-
-        $this->assertControllerClass('CommitteeMeetingController');
-        $this->assertActionName('put');
-        $this->assertResponseStatusCode(400);
-    }
-
     public function testPatchSuccess()
     {
         $pdo = \Mockery::mock('PDO')
@@ -102,7 +78,7 @@ class CommitteeMeetingControllerTest extends AbstractHttpControllerTestCase
 
         $this->assertControllerClass('CommitteeMeetingController');
         $this->assertActionName('patch');
-        $this->assertResponseStatusCode(204);
+        $this->assertResponseStatusCode(205);
     }
 
     public function testPatchInvalidDate()

@@ -37,6 +37,9 @@
         <var name="DB_PASSWD" value="" />
         <var name="DB_DBNAME" value="althingi_test" />
         <var name="DB_DEV" value="althingi" />
+
+        <var name="MYSQL.BIN" value="/usr/local/mysql/bin/mysql" />
+        <var name="MYSQLDUMP.BIN" value="/usr/local/mysql/bin/mysqldump" />
     </php>
 
 </phpunit>

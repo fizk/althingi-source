@@ -42,32 +42,32 @@ class SuperCategoryController extends AbstractRestfulController implements
         return (new ErrorModel($form))->setStatus(400);
     }
 
-//    /**
-//     * Update one Party
-//     *
-//     * @param int $id
-//     * @param array $data
-//     * @return \Rend\View\Model\ModelInterface
-//     */
-//    public function patch($id, $data)
-//    {
-//        if (($party = $this->partyService->get($id)) != null) {
-//            $form = new PartyForm();
-//            $form->bind($party);
-//            $form->setData($data);
-//
-//            if ($form->isValid()) {
-//                $this->partyService->update($form->getData());
-//                return (new EmptyModel())
-//                    ->setStatus(204);
-//            }
-//
-//            return (new ErrorModel($form))
-//                ->setStatus(400);
-//        }
-//
-//        return $this->notFoundAction();
-//    }
+    /**
+     * Update one Party
+     *
+     * @param int $id
+     * @param array $data
+     * @return \Rend\View\Model\ModelInterface
+     */
+    public function patch($id, $data)
+    {
+        if (($party = $this->superCategoryService->get($id)) != null) {
+            $form = new SuperCategoryForm();
+            $form->bind($party);
+            $form->setData($data);
+
+            if ($form->isValid()) {
+                $this->superCategoryService->update($form->getData());
+                return (new EmptyModel())
+                    ->setStatus(205);
+            }
+
+            return (new ErrorModel($form))
+                ->setStatus(400);
+        }
+
+        return $this->notFoundAction();
+    }
 
     /**
      * @param SuperCategory $superCategory

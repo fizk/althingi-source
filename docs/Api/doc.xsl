@@ -3,7 +3,12 @@
         <nav role="navigation">
             <ul>
                 <xsl:for-each select="/root/resource">
-                    <li><a href="#{path}"><xsl:value-of select="path"/></a></li>
+                    <li>
+                        <a href="#{path}"><xsl:value-of select="path"/></a>
+                        <xsl:for-each select="method">
+                            <p class="badge badge__method--{@verb}" title="{@verb}" />
+                        </xsl:for-each>
+                    </li>
                 </xsl:for-each>
             </ul>
         </nav>

@@ -42,6 +42,22 @@ class Committee implements DatabaseAwareInterface
         return array_map([$this, 'decorate'], $statement->fetchAll());
     }
 
+    public function fetchByAssembly($assemblyId)
+    {
+        $statement = $this->getDriver()->prepare('
+            select * from `Committee` C
+            where C.`first_assembly_id` <= :assembly_id 
+            and (C.`last_assembly_id` >= :assembly_id or C.`last_assembly_id` is null)
+            order by C.`name`;
+        ');
+
+        $statement->execute([
+            'assembly_id' => $assemblyId
+        ]);
+
+        return array_map([$this, 'decorate'], $statement->fetchAll());
+    }
+
     /**
      * Create one entry.
      *

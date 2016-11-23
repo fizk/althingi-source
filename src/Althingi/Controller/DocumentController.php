@@ -24,6 +24,7 @@ use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\CollectionModel;
 use Rend\View\Model\EmptyModel;
 use Rend\View\Model\ErrorModel;
+use Rend\View\Model\ItemModel;
 
 class DocumentController extends AbstractRestfulController implements
     ServiceDocumentAwareInterface,
@@ -46,6 +47,19 @@ class DocumentController extends AbstractRestfulController implements
 
     /** @var  \Althingi\Service\Party */
     private $partyService;
+
+    public function get($id)
+    {
+        $assemblyId = $this->params('id');
+        $issueId = $this->params('issue_id');
+        $documentId = $this->params('document_id');
+
+        if (($document = $this->documentService->get($assemblyId, $issueId, $documentId)) != null) {
+            return (new ItemModel($document));
+        } else {
+            return $this->notFoundAction();
+        }
+    }
 
     public function getList()
     {
