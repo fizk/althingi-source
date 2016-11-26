@@ -56,8 +56,7 @@ class CabinetController extends AbstractRestfulController implements
         }, $this->cabinetService->fetchByAssembly($assemblyId));
 
         return (new CollectionModel($cabinets))
-            ->setStatus(200)
-            ->setOption('Access-Control-Allow-Origin', '*');
+            ->setStatus(200);
     }
 
     /**

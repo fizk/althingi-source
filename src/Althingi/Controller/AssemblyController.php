@@ -95,8 +95,7 @@ class AssemblyController extends AbstractRestfulController implements
             }
 
             return (new ItemModel($assembly))
-                ->setStatus(200)
-                ->setOption('Access-Control-Allow-Origin', '*');
+                ->setStatus(200);
         }
 
         return $this->notFoundAction();
@@ -130,8 +129,6 @@ class AssemblyController extends AbstractRestfulController implements
         }
 
         return (new CollectionModel($assemblies))
-            ->setOption('Access-Control-Allow-Origin', '*')
-            ->setOption('Access-Control-Expose-Headers', 'Range-Unit, Content-Range') //TODO should go into Rend
             ->setStatus(206)
             ->setRange(0, $count, $count);
     }
@@ -152,13 +149,11 @@ class AssemblyController extends AbstractRestfulController implements
             $object = $form->getObject();
             $this->assemblyService->create($object);
             return (new EmptyModel())
-                ->setStatus(201)
-                ->setOption('Access-Control-Allow-Origin', '*');
+                ->setStatus(201);
         }
 
         return (new ErrorModel($form))
-            ->setStatus(400)
-            ->setOption('Access-Control-Allow-Origin', '*');
+            ->setStatus(400);
     }
 
     /**
@@ -170,8 +165,7 @@ class AssemblyController extends AbstractRestfulController implements
     {
         return (new EmptyModel())
             ->setStatus(200)
-            ->setAllow(['GET', 'OPTIONS'])
-            ->setOption('Access-Control-Allow-Origin', '*');
+            ->setAllow(['GET', 'OPTIONS']);
     }
 
     /**
@@ -183,8 +177,7 @@ class AssemblyController extends AbstractRestfulController implements
     {
         return (new EmptyModel())
             ->setStatus(200)
-            ->setAllow(['GET', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'])
-            ->setOption('Access-Control-Allow-Origin', '*');
+            ->setAllow(['GET', 'OPTIONS', 'PUT', 'PATCH', 'DELETE']);
     }
 
     /**
@@ -209,8 +202,7 @@ class AssemblyController extends AbstractRestfulController implements
         ];
 
         return (new ItemModel($response))
-            ->setStatus(200)
-            ->setOption('Access-Control-Allow-Origin', '*');
+            ->setStatus(200);
     }
 
     /**
@@ -230,31 +222,11 @@ class AssemblyController extends AbstractRestfulController implements
             if ($form->isValid()) {
                 $this->assemblyService->update($form->getData());
                 return (new EmptyModel())
-                    ->setStatus(205)
-                    ->setOption('Access-Control-Allow-Origin', '*');
+                    ->setStatus(205);
             }
 
             return (new ErrorModel($form))
-                ->setStatus(400)
-                ->setOption('Access-Control-Allow-Origin', '*');
-        }
-
-        return $this->notFoundAction();
-    }
-
-    /**
-     * Delete one Assembly.
-     *
-     * @param int $id
-     * @return \Rend\View\Model\ModelInterface
-     */
-    public function delete($id)
-    {
-        if (($assembly = $this->assemblyService->get($id)) != null) {
-            $this->assemblyService->delete($id);
-            return (new EmptyModel())
-                ->setStatus(200)
-                ->setOption('Access-Control-Allow-Origin', '*');
+                ->setStatus(400);
         }
 
         return $this->notFoundAction();

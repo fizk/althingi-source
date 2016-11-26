@@ -27,18 +27,18 @@ class CommitteeMeetingAgendaController extends AbstractRestfulController impleme
      */
     private $committeeMeetingAgendaService;
 
-//    public function get($id)
-//    {
-//        $committeeMeetingId = $this->params('committee_meeting_id');
-//
-//        if (($meeting = $this->committeeMeetingService->get($committeeMeetingId)) != null) {
-//            return (new ItemModel($meeting))
-//                ->setStatus(200)
-//                ->setOption('Access-Control-Allow-Origin', '*');
-//        }
-//
-//        return $this->notFoundAction();
-//    }
+    public function get($id)
+    {
+        $agendaId = $this->params('committee_meeting_agenda_id');
+        $meetingId = $this->params('committee_meeting_id');
+
+        $agenda = $this->committeeMeetingAgendaService->get($meetingId, $agendaId);
+
+        return $agenda
+            ? (new ItemModel($agenda))
+            : $this->notFoundAction();
+    }
+
 //
 //    public function getList()
 //    {

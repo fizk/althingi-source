@@ -73,6 +73,15 @@ class Committee implements DatabaseAwareInterface
         return $statement->rowCount();
     }
 
+    public function update($data)
+    {
+        $statement = $this
+            ->getDriver()
+            ->prepare($this->updateString('Committee', $data, "committee_id={$data->committee_id}"));
+        $statement->execute($this->convert($data));
+        return $statement->rowCount();
+    }
+
     /**
      * @param \PDO $pdo
      */

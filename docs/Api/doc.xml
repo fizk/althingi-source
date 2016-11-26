@@ -135,19 +135,6 @@
                 </status>
             </response>
         </method>
-        <method verb="DELETE">
-            <description>Delete on resource.</description>
-            <response>
-                <headers>
-                    <param name="Access-Control-Allow-Origin" value="*">Allow origin from all</param>
-                    <param name="X-Http-Method-Override" value="DELETE">Override POST with DELETE</param>
-                </headers>
-                <status>
-                    <code value="200">OK</code>
-                    <code value="404">Resource not found</code>
-                </status>
-            </response>
-        </method>
         <method verb="OPTIONS">
             <description>Describes this endpoint</description>
             <response>
@@ -1304,6 +1291,15 @@
                 </input>
             </request>
         </method>
+        <method verb="PATCH">
+            <description>Update one category</description>
+            <request>
+                <input>
+                    <param name="title" value="string">Name/Title of category</param>
+                    <param name="description" value="string">Description of category</param>
+                </input>
+            </request>
+        </method>
     </resource>
 
     <resource>
@@ -1379,6 +1375,19 @@
                 </input>
             </request>
         </method>
+        <method verb="PATCH">
+            <description>Update committees</description>
+            <request>
+                <input>
+                    <param name="first_assembly_id" value="1">First assembly</param>
+                    <param name="last_assembly_id" value="1">Last assembly or null</param>
+                    <param name="name" value="1">Name</param>
+                    <param name="abbr_short" value="1">Short abbreviation</param>
+                    <param name="abbr_long" value="1">Abbreviation</param>
+                </input>
+            </request>
+        </method>
+        <method verb="OPTIONS" />
     </resource>
 
     <resource>

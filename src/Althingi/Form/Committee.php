@@ -48,7 +48,6 @@ class Committee extends Form implements InputFilterProviderInterface
             'name' => 'abbr_long',
             'type' => 'Zend\Form\Element\Text',
         ));
-
     }
 
 

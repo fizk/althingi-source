@@ -40,10 +40,12 @@ class IssueCategoryController extends AbstractRestfulController implements
         $issueId = $this->params('issue_id');
         $categoryId = $this->params('category_id');
 
-        $categories = $this->categoryService
+        $category = $this->categoryService
             ->fetchByAssemblyIssueAndCategory($assemblyId, $issueId, $categoryId);
 
-        return (new ItemModel($categories));
+        return $category
+            ? (new ItemModel($category))
+            : $this->notFoundAction() ;
     }
 
     public function getList()
@@ -51,7 +53,8 @@ class IssueCategoryController extends AbstractRestfulController implements
         $assemblyId = $this->params('id');
         $issueId = $this->params('issue_id');
 
-        $categories = $this->categoryService->fetchByAssemblyAndIssue($assemblyId, $issueId);
+        $categories = $this->categoryService
+            ->fetchByAssemblyAndIssue($assemblyId, $issueId);
         
         return (new CollectionModel($categories));
     }

@@ -47,7 +47,9 @@ class AssemblyCommitteeController extends AbstractRestfulController implements
         $committeeId = $this->params('committee_id');
         $committee = $this->committeeService->get($committeeId);
 
-        return (new ItemModel($committee));
+        return $committee
+            ? (new ItemModel($committee))
+            : $this->notFoundAction();
     }
 
     public function getList()

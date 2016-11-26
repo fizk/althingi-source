@@ -31,12 +31,9 @@ class CommitteeController extends AbstractRestfulController implements
     {
         $committee = $this->committeeService->get($id);
 
-        if ($committee) {
-            return new ItemModel($committee);
-
-        }
-
-        return $this->notFoundAction();
+        return $committee
+            ? new ItemModel($committee)
+            : $this->notFoundAction();
     }
 
     /**
@@ -58,8 +55,11 @@ class CommitteeController extends AbstractRestfulController implements
      */
     public function put($id, $data)
     {
+        $assemblyId = $this->params('id');
+        $committeeId = $this->params('committee_id');
+
         $form = new CommitteeForm();
-        $form->bindValues(array_merge($data, ['assembly_id' => $id]));
+        $form->bindValues(array_merge($data, ['assembly_id' => $assemblyId, 'committee_id' => $committeeId]));
 
         if ($form->isValid()) {
             $object = $form->getObject();
@@ -73,6 +73,31 @@ class CommitteeController extends AbstractRestfulController implements
     }
 
     /**
+     * @param  int $id
+     * @param  array $data
+     * @return \Rend\View\Model\ModelInterface
+     */
+    public function patch($id, $data)
+    {
+        if (($assembly = $this->committeeService->get($id)) != null) {
+            $form = new CommitteeForm();
+            $form->bind($assembly);
+            $form->setData($data);
+
+            if ($form->isValid()) {
+                $this->committeeService->update($form->getData());
+                return (new EmptyModel())
+                    ->setStatus(205);
+            }
+
+            return (new ErrorModel($form))
+                ->setStatus(400);
+        }
+
+        return $this->notFoundAction();
+    }
+
+    /**
      * List options for Assembly collection.
      *
      * @return \Rend\View\Model\ModelInterface
@@ -81,8 +106,7 @@ class CommitteeController extends AbstractRestfulController implements
     {
         return (new EmptyModel())
             ->setStatus(200)
-            ->setAllow(['GET', 'OPTIONS'])
-            ->setOption('Access-Control-Allow-Origin', '*');
+            ->setAllow(['GET', 'OPTIONS']);
     }
 
     /**
@@ -94,8 +118,7 @@ class CommitteeController extends AbstractRestfulController implements
     {
         return (new EmptyModel())
             ->setStatus(200)
-            ->setAllow(['GET', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'])
-            ->setOption('Access-Control-Allow-Origin', '*');
+            ->setAllow(['GET', 'OPTIONS', 'PUT', 'PATCH']);
     }
 
     /**

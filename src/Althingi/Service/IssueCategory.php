@@ -44,7 +44,7 @@ class IssueCategory implements DatabaseAwareInterface
      * accepts object from corresponding Form.
      *
      * @param object $data
-     * @return string
+     * @return int
      */
     public function create($data)
     {
