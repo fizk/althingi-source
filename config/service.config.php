@@ -6,41 +6,64 @@
  * Time: 9:04 PM
  */
 
+use Althingi\Service\Assembly;
+use Althingi\Service\Congressman;
+use Althingi\Service\Session;
+use Althingi\Service\Party;
+use Althingi\Service\Constituency;
+use Althingi\Service\Plenary;
+use Althingi\Service\Issue;
+use Althingi\Service\Speech;
+use Althingi\Service\Vote;
+use Althingi\Service\VoteItem;
+use Althingi\Service\Proponent;
+use Althingi\Service\Document;
+use Althingi\Service\Committee;
+use Althingi\Service\CommitteeMeeting;
+use Althingi\Service\CommitteeMeetingAgenda;
+use Althingi\Service\Cabinet;
+use Althingi\Service\President;
+use Althingi\Service\SuperCategory;
+use Althingi\Service\Category;
+use Althingi\Service\IssueCategory;
+use Althingi\Service\Election;
+use Althingi\Lib\DatabaseAwareInterface;
+use Althingi\Lib\LoggerAwareInterface;
+use Zend\ServiceManager\ServiceManager;
+use Rend\View\Strategy\MessageFactory;
+use Psr\Log\LoggerInterface;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+
 return [
     'invokables' => [
-        'Althingi\Service\Assembly' => 'Althingi\Service\Assembly',
-        'Althingi\Service\Congressman' => 'Althingi\Service\Congressman',
-        'Althingi\Service\Session' => 'Althingi\Service\Session',
-        'Althingi\Service\Party' => 'Althingi\Service\Party',
-        'Althingi\Service\Constituency' => 'Althingi\Service\Constituency',
-        'Althingi\Service\Plenary' => 'Althingi\Service\Plenary',
-        'Althingi\Service\Issue' => 'Althingi\Service\Issue',
-        'Althingi\Service\Speech' => 'Althingi\Service\Speech',
-        'Althingi\Service\Vote' => 'Althingi\Service\Vote',
-        'Althingi\Service\VoteItem' => 'Althingi\Service\VoteItem',
-        'Althingi\Service\Proponent' => 'Althingi\Service\Proponent',
-        'Althingi\Service\Document' => 'Althingi\Service\Document',
-        'Althingi\Service\Committee' => 'Althingi\Service\Committee',
-        'Althingi\Service\CommitteeMeeting' => 'Althingi\Service\CommitteeMeeting',
-        'Althingi\Service\CommitteeMeetingAgenda' => 'Althingi\Service\CommitteeMeetingAgenda',
-        'Althingi\Service\Cabinet' => 'Althingi\Service\Cabinet',
-        'Althingi\Service\President' => 'Althingi\Service\President',
-        'Althingi\Service\SuperCategory' => 'Althingi\Service\SuperCategory',
-        'Althingi\Service\Category' => 'Althingi\Service\Category',
-        'Althingi\Service\IssueCategory' => 'Althingi\Service\IssueCategory',
-        'Althingi\Service\Election' => 'Althingi\Service\Election',
-
-        'Althingi\Command\GetAssembly' => 'Althingi\Command\GetAssembly',
+        Assembly::class => Assembly::class,
+        Congressman::class => Congressman::class,
+        Session::class => Session::class,
+        Party::class => Party::class,
+        Constituency::class => Constituency::class,
+        Plenary::class => Plenary::class,
+        Issue::class => Issue::class,
+        Speech::class => Speech::class,
+        Vote::class => Vote::class,
+        VoteItem::class => VoteItem::class,
+        Proponent::class => Proponent::class,
+        Document::class => Document::class,
+        Committee::class => Committee::class,
+        CommitteeMeeting::class => CommitteeMeeting::class,
+        CommitteeMeetingAgenda::class => CommitteeMeetingAgenda::class,
+        Cabinet::class => Cabinet::class,
+        President::class => President::class,
+        SuperCategory::class => SuperCategory::class,
+        Category::class => Category::class,
+        IssueCategory::class => IssueCategory::class,
+        Election::class => Election::class,
     ],
 
     'factories' => [
-        'MessageStrategy' => 'Rend\View\Strategy\MessageFactory',
+        'MessageStrategy' => MessageFactory::class,
 
-        'HttpClient' => function ($sm) {
-            return new \Zend\Http\Client();
-        },
-
-        'PDO' => function ($sm) {
+        PDO::class => function (ServiceManager $sm) {
             $config = $sm->get('config');
             return new PDO(
                 $config['db']['dns'],
@@ -53,22 +76,23 @@ return [
                 ]
             );
         },
-        'Psr\Log' => function ($sm) {
-            $logger = new \Monolog\Logger('althingi');
-            $logger->pushHandler(new \Monolog\Handler\StreamHandler('php://stdout'));
+
+        LoggerInterface::class => function (ServiceManager $sm) {
+            $logger = new Logger('althingi');
+            $logger->pushHandler(new StreamHandler('php://stdout'));
             return $logger;
         },
     ],
 
     'initializers' => [
-        'Althingi\Lib\DatabaseAwareInterface' => function ($instance, $sm) {
-            if ($instance instanceof \Althingi\Lib\DatabaseAwareInterface) {
-                $instance->setDriver($sm->get('PDO'));
+        DatabaseAwareInterface::class => function ($instance, ServiceManager $sm) {
+            if ($instance instanceof DatabaseAwareInterface) {
+                $instance->setDriver($sm->get(PDO::class));
             }
         },
-        'Althingi\Lib\LoggerAwareInterface' => function ($instance, $sm) {
-            if ($instance instanceof \Althingi\Lib\LoggerAwareInterface) {
-                $instance->setLogger($sm->get('Psr\Log'));
+        LoggerAwareInterface::class => function ($instance, ServiceManager $sm) {
+            if ($instance instanceof LoggerAwareInterface) {
+                $instance->setLogger($sm->get(LoggerInterface::class));
             }
         },
     ],

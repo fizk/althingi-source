@@ -7,6 +7,32 @@
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
+use Althingi\Controller\IndexController;
+use Althingi\Controller\AssemblyController;
+use Althingi\Controller\CongressmanController;
+use Althingi\Controller\SessionController;
+use Althingi\Controller\CongressmanSessionController;
+use Althingi\Controller\PartyController;
+use Althingi\Controller\ConstituencyController;
+use Althingi\Controller\PlenaryController;
+use Althingi\Controller\IssueController;
+use Althingi\Controller\SpeechController;
+use Althingi\Controller\VoteController;
+use Althingi\Controller\VoteItemController;
+use Althingi\Controller\CongressmanIssueController;
+use Althingi\Controller\ProponentController;
+use Althingi\Controller\DocumentController;
+use Althingi\Controller\CommitteeController;
+use Althingi\Controller\CabinetController;
+use Althingi\Controller\PresidentController;
+use Althingi\Controller\PresidentAssemblyController;
+use Althingi\Controller\SuperCategoryController;
+use Althingi\Controller\CategoryController;
+use Althingi\Controller\IssueCategoryController;
+use Althingi\Controller\CommitteeMeetingController;
+use Althingi\Controller\CommitteeMeetingAgendaController;
+use Althingi\Controller\AssemblyCommitteeController;
+
 return array(
     'router' => [
         'routes' => [
@@ -15,7 +41,7 @@ return array(
                 'options' => [
                     'route'    => '/',
                     'defaults' => [
-                        'controller' => 'Althingi\Controller\Index',
+                        'controller' => IndexController::class,
                         'action' => 'index'
                     ],
                 ],
@@ -25,7 +51,7 @@ return array(
                 'options' => [
                     'route'    => '/loggjafarthing[/:id]',
                     'defaults' => [
-                        'controller' => 'Althingi\Controller\Assembly',
+                        'controller' => AssemblyController::class,
                     ],
                 ],
                 'may_terminate' => true,
@@ -35,7 +61,7 @@ return array(
                         'options' => [
                             'route'    => '/thingmenn',
                             'defaults' => [
-                                'controller' => 'Althingi\Controller\Congressman',
+                                'controller' => CongressmanController::class,
                                 'action' => 'assembly'
                             ],
                         ],
@@ -46,7 +72,7 @@ return array(
                                 'options' => [
                                     'route'    => '/:congressman_id/raedutimar',
                                     'defaults' => [
-                                        'controller' => 'Althingi\Controller\Congressman',
+                                        'controller' => CongressmanController::class,
                                         'action' => 'assembly-speech-time'
                                     ],
                                 ],
@@ -56,7 +82,7 @@ return array(
                                 'options' => [
                                     'route'    => '/:congressman_id/thingseta',
                                     'defaults' => [
-                                        'controller' => 'Althingi\Controller\Congressman',
+                                        'controller' => CongressmanController::class,
                                         'action' => 'assembly-sessions'
                                     ],
                                 ],
@@ -66,7 +92,7 @@ return array(
                                 'options' => [
                                     'route'    => '/:congressman_id/thingmal',
                                     'defaults' => [
-                                        'controller' => 'Althingi\Controller\Congressman',
+                                        'controller' => CongressmanController::class,
                                         'action' => 'assembly-issues'
                                     ],
                                 ],
@@ -76,7 +102,7 @@ return array(
                                 'options' => [
                                     'route'    => '/:congressman_id/atvaedagreidslur',
                                     'defaults' => [
-                                        'controller' => 'Althingi\Controller\Congressman',
+                                        'controller' => CongressmanController::class,
                                         'action' => 'assembly-voting'
                                     ],
                                 ],
@@ -86,7 +112,7 @@ return array(
                                 'options' => [
                                     'route'    => '/:congressman_id/malaflokkar',
                                     'defaults' => [
-                                        'controller' => 'Althingi\Controller\Congressman',
+                                        'controller' => CongressmanController::class,
                                         'action' => 'assembly-categories'
                                     ],
                                 ],
@@ -96,7 +122,7 @@ return array(
                                 'options' => [
                                     'route'    => '/:congressman_id/atvaedagreidslur-malaflokkar',
                                     'defaults' => [
-                                        'controller' => 'Althingi\Controller\Congressman',
+                                        'controller' => CongressmanController::class,
                                         'action' => 'assembly-vote-categories'
                                     ],
                                 ],
@@ -108,7 +134,7 @@ return array(
                         'options' => [
                             'route'    => '/forsetar[/:congressman_id]',
                             'defaults' => [
-                                'controller' => 'Althingi\Controller\PresidentAssembly',
+                                'controller' => PresidentAssemblyController::class,
                                 'identifier' => 'congressman_id'
                             ],
                         ],
@@ -119,7 +145,7 @@ return array(
                         'options' => [
                             'route'    => '/samantekt',
                             'defaults' => [
-                                'controller' => 'Althingi\Controller\Assembly',
+                                'controller' => AssemblyController::class,
                                 'action' => 'statistics'
                             ],
                         ],
@@ -129,7 +155,7 @@ return array(
                         'options' => [
                             'route'    => '/raduneyti',
                             'defaults' => [
-                                'controller' => 'Althingi\Controller\Cabinet',
+                                'controller' => CabinetController::class,
                                 'action' => 'assembly'
                             ],
                         ],
@@ -139,7 +165,7 @@ return array(
                         'options' => [
                             'route'    => '/thingfundir[/:plenary_id]',
                             'defaults' => [
-                                'controller' => 'Althingi\Controller\Plenary',
+                                'controller' => PlenaryController::class,
                                 'identifier' => 'plenary_id'
                             ],
                         ],
@@ -149,7 +175,7 @@ return array(
                         'options' => [
                             'route'    => '/thingmal[/:issue_id]',
                             'defaults' => [
-                                'controller' => 'Althingi\Controller\Issue',
+                                'controller' => IssueController::class,
                                 'identifier' => 'issue_id'
                             ],
                         ],
@@ -160,7 +186,7 @@ return array(
                                 'options' => [
                                     'route'    => '/raedur[/:speech_id]',
                                     'defaults' => [
-                                        'controller' => 'Althingi\Controller\Speech',
+                                        'controller' => SpeechController::class,
                                         'identifier' => 'speech_id'
                                     ],
                                 ],
@@ -171,7 +197,7 @@ return array(
                                 'options' => [
                                     'route'    => '/efnisflokkar[/:category_id]',
                                     'defaults' => [
-                                        'controller' => 'Althingi\Controller\IssueCategory',
+                                        'controller' => IssueCategoryController::class,
                                         'identifier' => 'category_id'
                                     ],
                                 ],
@@ -183,7 +209,7 @@ return array(
                                 'options' => [
                                     'route'    => '/thingskjal[/:document_id]',
                                     'defaults' => [
-                                        'controller' => 'Althingi\Controller\Document',
+                                        'controller' => DocumentController::class,
                                         'identifier' => 'document_id'
                                     ],
                                 ],
@@ -194,7 +220,7 @@ return array(
                                         'options' => [
                                             'route'    => '/flutningsmenn[/:congressman_id]',
                                             'defaults' => [
-                                                'controller' => 'Althingi\Controller\Proponent',
+                                                'controller' => ProponentController::class,
                                                 'identifier' => 'congressman_id'
                                             ],
                                         ],
@@ -206,7 +232,7 @@ return array(
                                 'options' => [
                                     'route'    => '/atkvaedagreidslur[/:vote_id]',
                                     'defaults' => [
-                                        'controller' => 'Althingi\Controller\Vote',
+                                        'controller' => VoteController::class,
                                         'identifier' => 'vote_id'
                                     ],
                                 ],
@@ -217,7 +243,7 @@ return array(
                                         'options' => [
                                             'route'    => '/atkvaedi[/:vote_item_id]',
                                             'defaults' => [
-                                                'controller' => 'Althingi\Controller\VoteItem',
+                                                'controller' => VoteItemController::class,
                                                 'identifier' => 'vote_item_id'
                                             ],
                                         ],
@@ -231,7 +257,7 @@ return array(
                         'options' => [
                             'route'    => '/nefndir[/:committee_id]',
                             'defaults' => [
-                                'controller' => 'Althingi\Controller\AssemblyCommittee',
+                                'controller' => AssemblyCommitteeController::class,
                                 'identifier' => 'committee_id'
                             ],
                         ],
@@ -242,7 +268,7 @@ return array(
                                 'options' => [
                                     'route'    => '/nefndarfundir[/:committee_meeting_id]',
                                     'defaults' => [
-                                        'controller' => 'Althingi\Controller\CommitteeMeeting',
+                                        'controller' => CommitteeMeetingController::class,
                                         'identifier' => 'committee_meeting_id'
                                     ],
                                 ],
@@ -253,7 +279,7 @@ return array(
                                         'options' => [
                                             'route'    => '/dagskralidir[/:committee_meeting_agenda_id]',
                                             'defaults' => [
-                                                'controller' => 'Althingi\Controller\CommitteeMeetingAgenda',
+                                                'controller' => CommitteeMeetingAgendaController::class,
                                                 'identifier' => 'committee_meeting_agenda_id'
                                             ],
                                         ],
@@ -269,7 +295,7 @@ return array(
                 'options' => [
                     'route'    => '/nefndir[/:committee_id]',
                     'defaults' => [
-                        'controller' => 'Althingi\Controller\Committee',
+                        'controller' => CommitteeController::class,
                         'identifier' => 'committee_id'
                     ],
                 ],
@@ -279,7 +305,7 @@ return array(
                 'options' => [
                     'route'    => '/thingmenn[/:congressman_id]',
                     'defaults' => [
-                        'controller' => 'Althingi\Controller\Congressman',
+                        'controller' => CongressmanController::class,
                         'identifier' => 'congressman_id'
                     ],
                 ],
@@ -290,7 +316,7 @@ return array(
                         'options' => [
                             'route'    => '/thingmal[/:issue_id]',
                             'defaults' => [
-                                'controller' => 'Althingi\Controller\CongressmanIssue',
+                                'controller' => CongressmanIssueController::class,
                                 'identifier' => 'issue_id'
                             ],
                         ]
@@ -300,7 +326,7 @@ return array(
                         'options' => [
                             'route'    => '/thingseta[/:session_id]',
                             'defaults' => [
-                                'controller' => 'Althingi\Controller\Session',
+                                'controller' => SessionController::class,
                                 'identifier' => 'session_id'
                             ],
                         ],
@@ -311,7 +337,7 @@ return array(
 //                                        'options' => [
 //                                            'route'    => '/:session_id',
 //                                            'defaults' => [
-//                                                'controller' => 'Althingi\Controller\CongressmanSession',
+//                                                'controller' => CongressmanSessionController::class,
 //                                            ],
 //                                        ],
 //                                    ],
@@ -324,7 +350,7 @@ return array(
                 'options' => [
                     'route'    => '/thingflokkar[/:id]',
                     'defaults' => [
-                        'controller' => 'Althingi\Controller\Party',
+                        'controller' => PartyController::class,
                     ],
                 ],
             ],
@@ -333,7 +359,7 @@ return array(
                 'options' => [
                     'route'    => '/kjordaemi[/:id]',
                     'defaults' => [
-                        'controller' => 'Althingi\Controller\Constituency',
+                        'controller' => ConstituencyController::class,
                     ],
                 ],
             ],
@@ -342,7 +368,7 @@ return array(
                 'options' => [
                     'route'    => '/forsetar[/:id]',
                     'defaults' => [
-                        'controller' => 'Althingi\Controller\President',
+                        'controller' => PresidentController::class,
                     ],
                 ],
             ],
@@ -351,7 +377,7 @@ return array(
                 'options' => [
                     'route'    => '/thingmal/efnisflokkar[/:super_category_id]',
                     'defaults' => [
-                        'controller' => 'Althingi\Controller\SuperCategory',
+                        'controller' => SuperCategoryController::class,
                         'identifier' => 'super_category_id'
                     ],
                 ],
@@ -362,7 +388,7 @@ return array(
                         'options' => [
                             'route'    => '/undirflokkar[/:category_id]',
                             'defaults' => [
-                                'controller' => 'Althingi\Controller\Category',
+                                'controller' => CategoryController::class,
                                 'identifier' => 'category_id'
                             ],
                         ],
@@ -394,31 +420,31 @@ return array(
 
     'controllers' =>[
         'invokables' => [
-            'Althingi\Controller\Index' => 'Althingi\Controller\IndexController',
-            'Althingi\Controller\Assembly' => 'Althingi\Controller\AssemblyController',
-            'Althingi\Controller\Congressman' => 'Althingi\Controller\CongressmanController',
-            'Althingi\Controller\Session' => 'Althingi\Controller\SessionController',
-            'Althingi\Controller\CongressmanSession' => 'Althingi\Controller\CongressmanSessionController',
-            'Althingi\Controller\Party' => 'Althingi\Controller\PartyController',
-            'Althingi\Controller\Constituency' => 'Althingi\Controller\ConstituencyController',
-            'Althingi\Controller\Plenary' => 'Althingi\Controller\PlenaryController',
-            'Althingi\Controller\Issue' => 'Althingi\Controller\IssueController',
-            'Althingi\Controller\Speech' => 'Althingi\Controller\SpeechController',
-            'Althingi\Controller\Vote' => 'Althingi\Controller\VoteController',
-            'Althingi\Controller\VoteItem' => 'Althingi\Controller\VoteItemController',
-            'Althingi\Controller\CongressmanIssue' => 'Althingi\Controller\CongressmanIssueController',
-            'Althingi\Controller\Proponent' => 'Althingi\Controller\ProponentController',
-            'Althingi\Controller\Document' => 'Althingi\Controller\DocumentController',
-            'Althingi\Controller\Committee' => 'Althingi\Controller\CommitteeController',
-            'Althingi\Controller\Cabinet' => 'Althingi\Controller\CabinetController',
-            'Althingi\Controller\President' => 'Althingi\Controller\PresidentController',
-            'Althingi\Controller\PresidentAssembly' => 'Althingi\Controller\PresidentAssemblyController',
-            'Althingi\Controller\SuperCategory' => 'Althingi\Controller\SuperCategoryController',
-            'Althingi\Controller\Category' => 'Althingi\Controller\CategoryController',
-            'Althingi\Controller\IssueCategory' => 'Althingi\Controller\IssueCategoryController',
-            'Althingi\Controller\CommitteeMeeting' => 'Althingi\Controller\CommitteeMeetingController',
-            'Althingi\Controller\CommitteeMeetingAgenda' => 'Althingi\Controller\CommitteeMeetingAgendaController',
-            'Althingi\Controller\AssemblyCommittee' => 'Althingi\Controller\AssemblyCommitteeController',
+            IndexController::class => IndexController::class,
+            AssemblyController::class => AssemblyController::class,
+            CongressmanController::class => CongressmanController::class,
+            SessionController::class => SessionController::class,
+            CongressmanSessionController::class => CongressmanSessionController::class,
+            PartyController::class => PartyController::class,
+            ConstituencyController::class => ConstituencyController::class,
+            PlenaryController::class => PlenaryController::class,
+            IssueController::class => IssueController::class,
+            SpeechController::class => SpeechController::class,
+            VoteController::class => VoteController::class,
+            VoteItemController::class => VoteItemController::class,
+            CongressmanIssueController::class => CongressmanIssueController::class,
+            ProponentController::class => ProponentController::class,
+            DocumentController::class => DocumentController::class,
+            CommitteeController::class => CommitteeController::class,
+            CabinetController::class => CabinetController::class,
+            PresidentController::class => PresidentController::class,
+            PresidentAssemblyController::class => PresidentAssemblyController::class,
+            SuperCategoryController::class => SuperCategoryController::class,
+            CategoryController::class => CategoryController::class,
+            IssueCategoryController::class => IssueCategoryController::class,
+            CommitteeMeetingController::class => CommitteeMeetingController::class,
+            CommitteeMeetingAgendaController::class => CommitteeMeetingAgendaController::class,
+            AssemblyCommitteeController::class => AssemblyCommitteeController::class,
         ],
     ],
     'view_manager' => [
