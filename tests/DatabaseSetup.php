@@ -144,9 +144,9 @@ class DatabaseSetup implements PHPUnit_Framework_TestListener
 
     private function teardownDatabase()
     {
-        if ($this->hasDatabase) {
-            exec($GLOBALS['MYSQL.BIN'].' -u '.$GLOBALS['DB_USER'].' -e "drop database if exists '.$GLOBALS['DB_DBNAME'].';"');
-        }
+//        if ($this->hasDatabase) {
+//            exec($GLOBALS['MYSQL.BIN'].' -u '.$GLOBALS['DB_USER'].' -e "drop database if exists '.$GLOBALS['DB_DBNAME'].';"');
+//        }
         $this->hasDatabase = false;
     }
 

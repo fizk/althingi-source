@@ -30,17 +30,20 @@ class Assembly implements DatabaseAwareInterface
      * Get one Assembly.
      *
      * @param $id
-     * @return null|object
+     * @return null|\Althingi\Model\Assembly
      */
     public function get($id)
     {
-        $statement = $this->getDriver()->prepare("
-            select * from `Assembly` where assembly_id = :id
-        ");
+        $statement = $this->getDriver()->prepare("select * from `Assembly` where assembly_id = :id");
         $statement->execute(['id' => $id]);
-
         $assembly = $statement->fetchObject();
-        return $this->decorate($assembly);
+
+        return $assembly
+            ? (new \Althingi\Model\Assembly())
+                ->setAssemblyId($assembly->assembly_id)
+                ->setFrom($assembly->from ? new \DateTime($assembly->from) : null)
+                ->setTo($assembly->to ? new \DateTime($assembly->to) : null)
+            : null;
     }
 
     /**
@@ -62,7 +65,13 @@ class Assembly implements DatabaseAwareInterface
             ($offset && $size) ? $limitQuery : $query
         );
         $statement->execute();
-        return array_map([$this, 'decorate'], $statement->fetchAll());
+
+        return array_map(function ($assembly) {
+            return (new \Althingi\Model\Assembly())
+                ->setAssemblyId($assembly->assembly_id)
+                ->setFrom($assembly->from ? new \DateTime($assembly->from) : null)
+                ->setTo($assembly->to ? new \DateTime($assembly->to) : null);
+        }, $statement->fetchAll());
     }
 
     /**
@@ -72,40 +81,41 @@ class Assembly implements DatabaseAwareInterface
      */
     public function count()
     {
-        $statement = $this->getDriver()->prepare("
-            select count(*) from `Assembly` A
-        ");
+        $statement = $this->getDriver()->prepare("select count(*) from `Assembly` A");
         $statement->execute();
+
         return (int) $statement->fetchColumn(0);
     }
 
     /**
      * Create one entry.
      *
-     * @param object $data
+     * @param \Althingi\Model\Assembly $data
      * @return int affected rows
      */
-    public function create($data)
+    public function create(\Althingi\Model\Assembly $data)
     {
-        $statement = $this
-            ->getDriver()
-            ->prepare($this->insertString('Assembly', $data));
-        $statement->execute($this->convert($data));
-        return $statement->rowCount();
+        $statement = $this->getDriver()->prepare(
+            $this->toInsertString('Assembly', $data)
+        );
+        $statement->execute($this->toSqlValues($data));
+
+        return $this->getDriver()->lastInsertId();
     }
 
     /**
      * Update one entry.
      *
-     * @param object $data
+     * @param \Althingi\Model\Assembly $data
      * @return int affected rows
      */
-    public function update($data)
+    public function update(\Althingi\Model\Assembly $data)
     {
         $statement = $this->getDriver()->prepare(
-            $this->updateString('Assembly', $data, "assembly_id={$data->assembly_id}")
+            $this->toUpdateString('Assembly', $data, "assembly_id={$data->getAssemblyId()}")
         );
-        $statement->execute($this->convert($data));
+        $statement->execute($this->toSqlValues($data));
+
         return $statement->rowCount();
     }
 
@@ -118,30 +128,10 @@ class Assembly implements DatabaseAwareInterface
      */
     public function delete($id)
     {
-        $statement = $this
-            ->getDriver()
-            ->prepare(
-                "delete from `Assembly` where assembly_id = :assembly_id"
-            );
+        $statement = $this->getDriver()->prepare("delete from `Assembly` where assembly_id = :assembly_id");
         $statement->execute(['assembly_id' => $id]);
+
         return $statement->rowCount();
-    }
-
-    /**
-     * Decorate and convert one Assembly result object.
-     *
-     * @param $object
-     * @return null|object
-     */
-    private function decorate($object)
-    {
-        if (!$object) {
-            return null;
-        }
-
-        $object->assembly_id = (int) $object->assembly_id;
-
-        return $object;
     }
 
     /**

@@ -2,10 +2,43 @@
 
 namespace Althingi\Service;
 
+use Althingi\Model\ModelInterface;
 use DateTime;
 
 trait DatabaseService
 {
+    protected function toInsertString($table, ModelInterface $data)
+    {
+        $data = array_keys($data->jsonSerialize());
+        $columns = implode(',', array_map(function ($i) {
+            return " `{$i}`";
+        }, $data));
+        $values = implode(',', array_map(function ($i) {
+            return " :{$i}";
+        }, $data));
+
+        return "INSERT INTO `{$table}` ({$columns}) VALUES ({$values});";
+    }
+
+    protected function toUpdateString($table, ModelInterface $data, $condition)
+    {
+        $data = array_keys($data->jsonSerialize());
+        $columns = implode(',', array_map(function ($i) {
+            return " `{$i}` = :{$i}";
+        }, $data));
+
+        return "UPDATE `{$table}` SET {$columns} WHERE {$condition};";
+    }
+
+    protected function toSqlValues(ModelInterface $data)
+    {
+        return array_map(function ($i) {
+            if ($i instanceof DateTime) {
+                return $i->format('Y-m-d H:i:s');
+            }
+            return $i;
+        }, $data->toArray());
+    }
 
     /**
      * This is a simple utility function that creates

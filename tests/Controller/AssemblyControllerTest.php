@@ -8,7 +8,7 @@
 
 namespace Althingi\Controller;
 
-use Mockery;
+use Althingi\Model\Assembly;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
 class AssemblyControllerTest extends AbstractHttpControllerTestCase
@@ -44,9 +44,13 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
 
     public function testGet()
     {
+        $assembly = (new Assembly())
+            ->setAssemblyId(144)
+            ->setFrom(new \DateTime());
+
         $this->getMockService('Althingi\Service\Assembly')
             ->shouldReceive('get')
-            ->andReturn(new \stdClass())
+            ->andReturn($assembly)
             ->once()
             ->getMock();
 
@@ -91,13 +95,19 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
 
     public function testGetList()
     {
+        $assemblies = [
+            (new Assembly())->setAssemblyId(144)->setFrom(new \DateTime()),
+            (new Assembly())->setAssemblyId(143)->setFrom(new \DateTime()),
+            (new Assembly())->setAssemblyId(144)->setFrom(new \DateTime()),
+        ];
+
         $this->getMockService('Althingi\Service\Assembly')
             ->shouldReceive('count')
             ->andReturn(3)
             ->once()
             ->getMock()
             ->shouldReceive('fetchAll')
-            ->andReturn(require './module/Althingi/tests/data/assemblies.php')
+            ->andReturn($assemblies)
             ->getMock();
 
         $this->getMockService('Althingi\Service\Cabinet')
@@ -154,9 +164,13 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
 
     public function testPatch()
     {
+        $assembly = (new Assembly())
+            ->setAssemblyId(144)
+            ->setFrom(new \DateTime());
+
         $this->getMockService('Althingi\Service\Assembly')
             ->shouldReceive('get')
-            ->andReturn((object)require './module/Althingi/tests/data/assembly_145.php')
+            ->andReturn($assembly)
             ->once()
             ->getMock()
             ->shouldReceive('update')
@@ -185,9 +199,13 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
 
     public function testPatchInvalidParams()
     {
+        $assembly = (new Assembly())
+            ->setAssemblyId(144)
+            ->setFrom(new \DateTime('2000-01-01'));
+
         $this->getMockService('Althingi\Service\Assembly')
             ->shouldReceive('get')
-            ->andReturn((object)require './module/Althingi/tests/data/assembly_145.php')
+            ->andReturn($assembly)
             ->once()
             ->getMock()
             ->shouldReceive('update')

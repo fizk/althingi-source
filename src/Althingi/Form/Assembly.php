@@ -16,7 +16,7 @@ class Assembly extends Form implements InputFilterProviderInterface
     {
         parent::__construct(get_class($this));
         $this
-            ->setObject((object)[])
+            ->setObject(new \Althingi\Model\Assembly())
             ->setHydrator(new \Althingi\Hydrator\Assembly());
 
         $this->add(array(
@@ -33,7 +33,6 @@ class Assembly extends Form implements InputFilterProviderInterface
             'name' => 'to',
             'type' => 'Zend\Form\Element\Date',
         ));
-
     }
 
 

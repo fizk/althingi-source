@@ -78,6 +78,7 @@ class AssemblyController extends AbstractRestfulController implements
     public function get($id)
     {
         if (($assembly = $this->assemblyService->get($id)) != null) {
+            $assembly = (object)$assembly->toArray();
             $assembly->parties = [];
             $cabinets = $this->cabinetService->fetchByAssembly($id);
             foreach ($cabinets as $cabinet) {
@@ -117,6 +118,10 @@ class AssemblyController extends AbstractRestfulController implements
             ($range['to'] - $range['from']),
             $order
         );
+
+        $assemblies = array_map(function ($assembly) {
+            return (object)$assembly->toArray();
+        }, $assemblies);
 
         foreach ($assemblies as $assembly) {
             $assembly->parties = [];
