@@ -17,7 +17,7 @@ class IssueCategory extends Form implements InputFilterProviderInterface
         parent::__construct(get_class($this));
         $this
             ->setHydrator(new \Althingi\Hydrator\IssueCategory())
-            ->setObject((object)[]);
+            ->setObject(new \Althingi\Model\IssueCategory());
 
         $this->add(array(
             'name' => 'issue_id',

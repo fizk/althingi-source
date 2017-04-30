@@ -8,8 +8,12 @@
 
 namespace Althingi\Service;
 
-use Althingi\Lib\DatabaseAwareInterface;
 use PDO;
+use Althingi\Lib\DatabaseAwareInterface;
+use Althingi\Model\Category as CategoryModel;
+use Althingi\Hydrator\Category as CategoryHydrator;
+use Althingi\Hydrator\CategoryAndCount as CategoryAndCountHydrator;
+use Althingi\Model\CategoryAndCount as CategoryAndCountModel;
 
 /**
  * Class Party
@@ -28,18 +32,27 @@ class Category implements DatabaseAwareInterface
      * Get one party.
      *
      * @param int $id
-     * @return \stdClass
+     * @return \Althingi\Model\Category
      */
-    public function get($id)
+    public function get(int $id): ?CategoryModel
     {
         $statement = $this->getDriver()->prepare('
             select * from `Category` where category_id = :category_id
         ');
         $statement->execute(['category_id' => $id]);
-        return $this->decorate($statement->fetchObject());
+
+        $object = $statement->fetch(PDO::FETCH_ASSOC);
+
+        return $object
+            ? (new CategoryHydrator())->hydrate($object, new CategoryModel())
+            : null;
     }
 
-    public function fetchByAssembly($assemblyId)
+    /**
+     * @param $assemblyId
+     * @return \Althingi\Model\CategoryAndCount[]
+     */
+    public function fetchByAssembly(int $assemblyId): array
     {
         $statement = $this->getDriver()->prepare('
             select count(*) as `count` , C.* from `Issue` I
@@ -51,10 +64,17 @@ class Category implements DatabaseAwareInterface
         ');
         $statement->execute(['assembly_id' => $assemblyId]);
 
-        return array_map([$this, 'decorate'], $statement->fetchAll());
+        return array_map(function ($object) {
+            return (new CategoryAndCountHydrator())->hydrate($object, new CategoryAndCountModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    public function fetchByAssemblyAndIssue($assemblyId, $issueId)
+    /**
+     * @param int $assemblyId
+     * @param int $issueId
+     * @return \Althingi\Model\Category[]
+     */
+    public function fetchByAssemblyAndIssue(int $assemblyId, int $issueId): array
     {
         $statement = $this->getDriver()->prepare('
             select C.* from `Category_has_Issue` CI
@@ -65,9 +85,18 @@ class Category implements DatabaseAwareInterface
             'assembly_id' => $assemblyId,
             'issue_id' => $issueId,
         ]);
-        return array_map([$this, 'decorate'], $statement->fetchAll());
+        return array_map(function ($object) {
+            return (new CategoryHydrator())->hydrate($object, new CategoryModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
-    public function fetchByAssemblyIssueAndCategory($assemblyId, $issueId, $categoryId)
+
+    /**
+     * @param int $assemblyId
+     * @param int $issueId
+     * @param int $categoryId
+     * @return \Althingi\Model\Category|null
+     */
+    public function fetchByAssemblyIssueAndCategory(int $assemblyId, int $issueId, int $categoryId): ?CategoryModel
     {
         $statement = $this->getDriver()->prepare('
             select C.* from `Category_has_Issue` CI
@@ -79,43 +108,39 @@ class Category implements DatabaseAwareInterface
             'issue_id' => $issueId,
             'category_id' => $categoryId,
         ]);
-        return $this->decorate($statement->fetchObject());
+        $object = $statement->fetch(PDO::FETCH_ASSOC);
+
+        return $object
+            ? (new CategoryHydrator())->hydrate($object, new CategoryModel())
+            : null;
     }
 
-    public function create($data)
+    /**
+     * @param \Althingi\Model\Category $data
+     * @return int
+     */
+    public function create(CategoryModel $data): int
     {
-        $statement = $this->getDriver()->prepare($this->insertString('Category', $data));
-        $statement->execute($this->convert($data));
+        $statement = $this->getDriver()->prepare(
+            $this->toInsertString('Category', $data)
+        );
+        $statement->execute($this->toSqlValues($data));
+
         return $this->getDriver()->lastInsertId();
     }
 
-    public function update($data)
+    /**
+     * @param \Althingi\Model\Category $data
+     * @return int
+     */
+    public function update(CategoryModel $data): int
     {
         $statement = $this->getDriver()->prepare(
-            $this->updateString('Category', $data, "category_id = {$data->category_id}")
+            $this->toUpdateString('Category', $data, "category_id={$data->getCategoryId()}")
         );
-        $statement->execute($this->convert($data));
+        $statement->execute($this->toSqlValues($data));
+
         return $statement->rowCount();
-    }
-
-    private function decorate($object)
-    {
-        if (!$object) {
-            return null;
-        }
-
-        $object->category_id = (int) $object->category_id;
-        $object->super_category_id = (int) $object->super_category_id;
-
-        if (property_exists($object, 'count')) {
-            $object->count = (int) $object->count;
-        }
-
-        if (property_exists($object, 'party_id')) {
-            $object->party_id = (int) $object->party_id;
-        }
-
-        return $object;
     }
 
     /**

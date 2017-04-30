@@ -22,7 +22,7 @@ class CongressmanTest extends PHPUnit_Framework_TestCase
             'death' => '',
         ])->isValid();
 
-        $this->assertNull($form->getObject()->death);
+        $this->assertNull($form->getObject()->getDeath());
     }
 
     public function testNonEmptyToValue()
@@ -35,6 +35,6 @@ class CongressmanTest extends PHPUnit_Framework_TestCase
             'death' => '2010-01-01',
         ])->isValid();
 
-        $this->assertNotNull($form->getObject()->death);
+        $this->assertNotNull($form->getObject()->getDeath());
     }
 }

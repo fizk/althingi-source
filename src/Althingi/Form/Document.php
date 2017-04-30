@@ -17,7 +17,7 @@ class Document extends Form implements InputFilterProviderInterface
         parent::__construct(get_class($this));
         $this
             ->setHydrator(new \Althingi\Hydrator\Document())
-            ->setObject((object)[]);
+            ->setObject(new \Althingi\Model\Document());
 
         $this->add(array(
             'name' => 'issue_id',
@@ -39,7 +39,13 @@ class Document extends Form implements InputFilterProviderInterface
         ));
         $this->add(array(
             'name' => 'date',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Zend\Form\Element\DateTime',
+            'options' => [
+                'format' => 'Y-m-d'
+            ],
+            'attributes' => [
+                'step' => 'any'
+            ],
         ));
         $this->add(array(
             'name' => 'url',
@@ -89,6 +95,12 @@ class Document extends Form implements InputFilterProviderInterface
             'date' => [
                 'required' => true,
                 'allow_empty' => false,
+                'filters' => [
+                    [
+                        'name' => '\Zend\Filter\ToNull',
+                        'options' => ['type' => 'all']
+                    ]
+                ],
             ],
             'url' => [
                 'required' => false,

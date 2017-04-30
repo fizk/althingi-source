@@ -8,12 +8,12 @@
 
 namespace Althingi\Lib;
 
-use Althingi\Service\Proponent;
+use Althingi\Service\CongressmanDocument;
 
 interface ServiceProponentAwareInterface
 {
     /**
-     * @param Proponent $proponent
+     * @param CongressmanDocument $congressmanDocument
      */
-    public function setProponentService(Proponent $proponent);
+    public function setCongressmanDocumentService(CongressmanDocument $congressmanDocument);
 }

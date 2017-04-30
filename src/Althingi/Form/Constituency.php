@@ -17,7 +17,7 @@ class Constituency extends Form implements InputFilterProviderInterface
         parent::__construct(get_class($this));
         $this
             ->setHydrator(new \Althingi\Hydrator\Constituency())
-            ->setObject((object)[]);
+            ->setObject(new \Althingi\Model\Constituency());
 
         $this->add(array(
             'name' => 'constituency_id',
@@ -43,7 +43,6 @@ class Constituency extends Form implements InputFilterProviderInterface
             'name' => 'description',
             'type' => 'Zend\Form\Element\Text',
         ));
-
     }
 
 

@@ -8,9 +8,16 @@
 
 namespace Althingi\Controller;
 
+use Althingi\Service\Category;
 use Mockery;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
+/**
+ * Class CategoryControllerTest
+ * @package Althingi\Controller
+ * @coversDefaultClass \Althingi\Controller\CategoryController
+ * @covers \Althingi\Controller\CategoryController::setCategoryService
+ */
 class CategoryControllerTest extends AbstractHttpControllerTestCase
 {
     use ServiceHelper;
@@ -22,21 +29,25 @@ class CategoryControllerTest extends AbstractHttpControllerTestCase
         );
         parent::setUp();
         $this->buildServices([
-            'Althingi\Service\Category',
+            Category::class,
         ]);
     }
 
     public function tearDown()
     {
-        \Mockery::close();
+        Mockery::close();
         $this->destroyServices();
         return parent::tearDown();
     }
 
+    /**
+     * @covers ::put
+     */
     public function testPut()
     {
-        $this->getMockService('Althingi\Service\Category')
+        $this->getMockService(Category::class)
             ->shouldReceive('create')
+            ->once()
             ->andReturn(1)
             ->getMock();
 
@@ -49,13 +60,16 @@ class CategoryControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(201);
     }
 
+    /**
+     * @covers ::patch
+     */
     public function testPatch()
     {
-        $this->getMockService('Althingi\Service\Category')
+        $this->getMockService(Category::class)
             ->shouldReceive('get')
             ->once()
             ->with(2)
-            ->andReturn((object)['category_id' => 1, 'super_category_id' => 2])
+            ->andReturn((new \Althingi\Model\Category())->setCategoryId(1)->setSuperCategoryId(2))
             ->getMock()
             ->shouldReceive('update')
             ->once()
@@ -71,17 +85,19 @@ class CategoryControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(205);
     }
 
+    /**
+     * @covers ::patch
+     */
     public function testPatchNotFound()
     {
-        $this->getMockService('Althingi\Service\Category')
+        $this->getMockService(Category::class)
             ->shouldReceive('get')
             ->once()
             ->with(2)
-            ->andReturnNull()
+            ->andReturn(null)
             ->getMock()
             ->shouldReceive('update')
             ->never()
-            ->andReturn(1)
             ->getMock();
 
         $this->dispatch('/thingmal/efnisflokkar/1/undirflokkar/2', 'PATCH', [
@@ -93,9 +109,12 @@ class CategoryControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(404);
     }
 
+    /**
+     * @covers ::put
+     */
     public function testPutInvalidParams()
     {
-        $this->getMockService('Althingi\Service\Category')
+        $this->getMockService(Category::class)
             ->shouldReceive('create')
             ->andReturn(1)
             ->getMock();

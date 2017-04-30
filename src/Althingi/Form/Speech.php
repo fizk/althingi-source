@@ -17,7 +17,7 @@ class Speech extends Form implements InputFilterProviderInterface
         parent::__construct(get_class($this));
         $this
             ->setHydrator(new \Althingi\Hydrator\Speech())
-            ->setObject((object)[]);
+            ->setObject(new \Althingi\Model\Speech());
 
         $this->add(array(
             'name' => 'speech_id',

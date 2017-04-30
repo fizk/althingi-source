@@ -47,10 +47,10 @@ class VoteItemController extends AbstractRestfulController implements
                                 'loggjafarthing/thingmal/atkvaedagreidslur/atkvaedagreidsla',
                                 [
 
-                                    'id' => $voteObject->assembly_id,
-                                    'issue_id' => $voteObject->issue_id,
-                                    'vote_id' => $voteObject->vote_id,
-                                    'vote_item_id' => $voteObject->vote_item_id
+                                    'id' => $voteObject->getAssemblyId(),
+                                    'issue_id' => $voteObject->getIssueId(),
+                                    'vote_id' => $voteObject->getVoteId(),
+                                    'vote_item_id' => $voteObject->getVoteItemId()
                                 ]
                             )
                         )
@@ -77,13 +77,11 @@ class VoteItemController extends AbstractRestfulController implements
             if ($form->isValid()) {
                 $this->voteItemService->update($form->getData());
                 return (new EmptyModel())
-                    ->setStatus(205)
-                    ->setOption('Access-Control-Allow-Origin', '*');
+                    ->setStatus(205);
             }
 
             return (new ErrorModel($form))
-                ->setStatus(400)
-                ->setOption('Access-Control-Allow-Origin', '*');
+                ->setStatus(400);
         }
 
         return $this->notFoundAction();

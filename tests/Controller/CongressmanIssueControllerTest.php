@@ -8,31 +8,51 @@
 
 namespace Althingi\Controller;
 
+use Althingi\Service\Issue;
+use \Althingi\Model\Issue as IssueModel;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
+/**
+ * Class CongressmanIssueControllerTest
+ * @package Althingi\Controller
+ * @coversDefaultClass \Althingi\Controller\CongressmanIssueController
+ * @covers \Althingi\Controller\CongressmanIssueController::setIssueService
+ */
 class CongressmanIssueControllerTest extends AbstractHttpControllerTestCase
 {
+    use ServiceHelper;
+
     public function setUp()
     {
         $this->setApplicationConfig(
             include __DIR__ .'/../application.config.php'
         );
+
         parent::setUp();
+
+        $this->buildServices([
+            Issue::class,
+
+        ]);
     }
 
+    public function tearDown()
+    {
+        \Mockery::close();
+        return parent::tearDown();
+    }
+
+    /**
+     * @covers ::getList
+     */
     public function testGetCongressmanIssueList()
     {
-        $serviceMock = \Mockery::mock('Althingi\Service\Issue')
+        $this->getMockService(Issue::class)
             ->shouldReceive('fetchByCongressman')
-            ->andReturnUsing(function ($id) {
-                $this->assertEquals('123', $id);
-                return [];
-            })
+            ->with(123)
+            ->once()
+            ->andReturn([new IssueModel()])
             ->getMock();
-
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('Althingi\Service\Issue', $serviceMock);
 
         $this->dispatch('/thingmenn/123/thingmal', 'GET');
 

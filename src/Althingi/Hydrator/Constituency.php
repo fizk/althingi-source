@@ -8,7 +8,7 @@
 
 namespace Althingi\Hydrator;
 
-use Zend\Stdlib\Hydrator\HydratorInterface;
+use Zend\Hydrator\HydratorInterface;
 
 class Constituency implements HydratorInterface
 {
@@ -16,43 +16,28 @@ class Constituency implements HydratorInterface
      * Hydrate $object with the provided $data.
      *
      * @param  array $data
-     * @param  object $object
-     * @return object
+     * @param  \Althingi\Model\Constituency $object
+     * @return \Althingi\Model\Constituency
      */
     public function hydrate(array $data, $object)
     {
-        if (isset($data['constituency_id'])) {
-            $object->constituency_id = (int) $data['constituency_id'];
-        }
-
-        $object->name = isset($data['name'])
-            ? $data['name']
-            : null ;
-
-        $object->abbr_short = isset($data['abbr_short'])
-            ? $data['abbr_short']
-            : null ;
-
-        $object->abbr_long = isset($data['abbr_long'])
-            ? $data['abbr_long']
-            : null ;
-
-        $object->description = isset($data['description'])
-            ? $data['description']
-            : null ;
-
-        return $object;
+        return $object
+            ->setConstituencyId($data['constituency_id'])
+            ->setName($data['name'])
+            ->setAbbrShort($data['abbr_short'])
+            ->setAbbrLong($data['abbr_long'])
+            ->setDescription($data['description']);
     }
 
 
     /**
      * Extract values from an object
      *
-     * @param  object $object
+     * @param  \Althingi\Model\Constituency $object
      * @return array
      */
     public function extract($object)
     {
-        return (array)$object;
+        return $object->toArray();
     }
 }

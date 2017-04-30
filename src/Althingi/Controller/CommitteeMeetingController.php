@@ -73,9 +73,9 @@ class CommitteeMeetingController extends AbstractRestfulController implements
     {
         $committeeMeetingId = $this->params('committee_meeting_id');
 
-        if (($party = $this->committeeMeetingService->get($committeeMeetingId)) != null) {
+        if (($committeeMeeting = $this->committeeMeetingService->get($committeeMeetingId)) != null) {
             $form = new CommitteeMeetingForm();
-            $form->bind($party);
+            $form->bind($committeeMeeting);
             $form->setData($data);
 
             if ($form->isValid()) {

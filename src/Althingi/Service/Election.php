@@ -9,6 +9,8 @@
 namespace Althingi\Service;
 
 use Althingi\Lib\DatabaseAwareInterface;
+use Althingi\Model\Election as ElectionModel;
+use Althingi\Hydrator\Election as ElectionHydrator;
 use PDO;
 
 /**
@@ -27,27 +29,29 @@ class Election implements DatabaseAwareInterface
     /**
      * Get one Election.
      *
-     * @param $id
-     * @return null|object
+     * @param int $id
+     * @return null|\Althingi\Model\Election
      */
-    public function get($id)
+    public function get(int $id): ?ElectionModel
     {
         $statement = $this->getDriver()->prepare("
             select * from `Election` where election_id = :election_id
         ");
         $statement->execute(['election_id' => $id]);
 
-        $assembly = $statement->fetchObject();
-        return $this->decorate($assembly);
+        $object = $statement->fetch(PDO::FETCH_ASSOC);
+        return $object
+            ? (new ElectionHydrator())->hydrate($object, new ElectionModel())
+            : null;
     }
 
     /**
      * Get one Electin by Assembly.
      *
-     * @param $assemblyId
-     * @return null|object
+     * @param int $assemblyId
+     * @return null|\Althingi\Model\Election
      */
-    public function getByAssembly($assemblyId)
+    public function getByAssembly(int $assemblyId): ?ElectionModel
     {
         $statement = $this->getDriver()->prepare("
             select E.* from `Election` E 
@@ -56,19 +60,10 @@ class Election implements DatabaseAwareInterface
         ");
         $statement->execute(['assembly_id' => $assemblyId]);
 
-        $assembly = $statement->fetchObject();
-        return $this->decorate($assembly);
-    }
-
-    private function decorate($object)
-    {
-        if (!$object) {
-            return null;
-        }
-
-        $object->election_id = (int) $object->election_id;
-
-        return $object;
+        $object = $statement->fetch(PDO::FETCH_ASSOC);
+        return $object
+            ? (new ElectionHydrator())->hydrate($object, new ElectionModel())
+            : null;
     }
 
     /**

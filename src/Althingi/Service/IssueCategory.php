@@ -10,7 +10,10 @@ namespace Althingi\Service;
 
 use Althingi\Lib\DatabaseAwareInterface;
 use PDO;
-use InvalidArgumentException;
+use Althingi\Model\IssueCategory as IssueCategoryModel;
+use Althingi\Hydrator\IssueCategory as IssueCategoryHydrator;
+use Althingi\Model\IssueCategoryAndTime as IssueCategoryAndTimeModel;
+use Althingi\Hydrator\IssueCategoryAndTime as IssueCategoryAndTimeHydrator;
 
 /**
  * Class Issue
@@ -25,7 +28,13 @@ class IssueCategory implements DatabaseAwareInterface
      */
     private $pdo;
 
-    public function get($assemblyId, $issueId, $categoryId)
+    /**
+     * @param int $assemblyId
+     * @param int $issueId
+     * @param int $categoryId
+     * @return \Althingi\Model\IssueCategory|null
+     */
+    public function get(int $assemblyId, int $issueId, int $categoryId): ?IssueCategoryModel
     {
         $statement = $this->getDriver()->prepare('
             select * from `Category_has_Issue` C
@@ -36,37 +45,54 @@ class IssueCategory implements DatabaseAwareInterface
             'issue_id' => $issueId,
             'category_id' => $categoryId
         ]);
-        return $this->decorate($statement->fetchObject());
+
+        $object = $statement->fetch(PDO::FETCH_ASSOC);
+        return $object
+            ? (new IssueCategoryHydrator())->hydrate($object, new IssueCategoryModel())
+            : null;
     }
 
     /**
      * Create new Issue. This method
      * accepts object from corresponding Form.
      *
-     * @param object $data
+     * @param \Althingi\Model\IssueCategory $data
      * @return int
      */
-    public function create($data)
+    public function create(IssueCategoryModel $data): int
     {
-        $statement = $this->getDriver()->prepare($this->insertString('Category_has_Issue', $data));
-        $statement->execute($this->convert($data));
+        $statement = $this->getDriver()->prepare(
+            $this->toInsertString('Category_has_Issue', $data)
+        );
+        $statement->execute($this->toSqlValues($data));
+
         return $this->getDriver()->lastInsertId();
     }
 
-    public function update($data)
+    /**
+     * @param \Althingi\Model\IssueCategory $data
+     * @return int
+     */
+    public function update(IssueCategoryModel $data): int
     {
         $statement = $this->getDriver()->prepare(
-            $this->updateString(
+            $this->toUpdateString(
                 'Category_has_Issue',
                 $data,
-                "category_id={$data->category_id} and issue_id={$data->issue_id} and assembly_id={$data->assembly_id}"
+                "category_id={$data->getCategoryId()} and issue_id={$data->getIssueId()} and assembly_id={$data->getAssemblyId()}"
             )
         );
-        $statement->execute($this->convert($data));
+        $statement->execute($this->toSqlValues($data));
+
         return $statement->rowCount();
     }
 
-    public function fetchFrequencyByAssemblyAndCongressman($assemblyId, $congressmanId)
+    /**
+     * @param int $assemblyId
+     * @param int $congressmanId
+     * @return \Althingi\Model\IssueCategoryAndTime[]
+     */
+    public function fetchFrequencyByAssemblyAndCongressman(int $assemblyId, int $congressmanId): array
     {
         $statement = $this->getDriver()->prepare('
             select C.`category_id`, C.`super_category_id`, C.`title`, sum(`speech_sum`) as `time` from (
@@ -84,13 +110,9 @@ class IssueCategory implements DatabaseAwareInterface
             'congressman_id' => $congressmanId,
         ]);
 
-        return array_map(function ($item) {
-            $item->super_category_id = (int) $item->super_category_id;
-            $item->category_id = (int) $item->category_id;
-            $item->time = (int) $item->time;
-
-            return $item;
-        }, $statement->fetchAll());
+        return array_map(function ($object) {
+            return (new IssueCategoryAndTimeHydrator())->hydrate($object, new IssueCategoryAndTimeModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
     /**
@@ -108,18 +130,4 @@ class IssueCategory implements DatabaseAwareInterface
     {
         return $this->pdo;
     }
-
-    private function decorate($object)
-    {
-        if (!$object) {
-            return null;
-        }
-
-        $object->assembly_id = (int) $object->assembly_id;
-        $object->issue_id = (int) $object->issue_id;
-        $object->category_id = (int) $object->category_id;
-
-        return $object;
-    }
-
 }

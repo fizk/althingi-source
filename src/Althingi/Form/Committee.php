@@ -16,7 +16,7 @@ class Committee extends Form implements InputFilterProviderInterface
     {
         parent::__construct(get_class($this));
         $this
-            ->setObject((object)[])
+            ->setObject(new \Althingi\Model\Committee())
             ->setHydrator(new \Althingi\Hydrator\Committee());
 
         $this->add(array(

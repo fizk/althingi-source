@@ -62,8 +62,7 @@ class CommitteeController extends AbstractRestfulController implements
         $form->bindValues(array_merge($data, ['assembly_id' => $assemblyId, 'committee_id' => $committeeId]));
 
         if ($form->isValid()) {
-            $object = $form->getObject();
-            $this->committeeService->create($object);
+            $this->committeeService->create($form->getObject());
             return (new EmptyModel())
                 ->setStatus(201);
         }
@@ -79,9 +78,9 @@ class CommitteeController extends AbstractRestfulController implements
      */
     public function patch($id, $data)
     {
-        if (($assembly = $this->committeeService->get($id)) != null) {
+        if (($committee = $this->committeeService->get($id)) != null) {
             $form = new CommitteeForm();
-            $form->bind($assembly);
+            $form->bind($committee);
             $form->setData($data);
 
             if ($form->isValid()) {

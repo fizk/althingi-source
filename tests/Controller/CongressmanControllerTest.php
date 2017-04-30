@@ -8,38 +8,132 @@
 
 namespace Althingi\Controller;
 
-use Mockery;
+use Althingi\Model\CongressmanAndParty;
+use Althingi\Model\Session as SessionModel;
+use Althingi\Model\Issue as IssueModel;
+use Althingi\Model\IssueCategoryAndTime as IssueCategoryAndTimeModel;
+use Althingi\Service\Congressman;
+use Althingi\Service\Issue;
+use Althingi\Service\IssueCategory;
+use Althingi\Service\Party;
+use Althingi\Service\Session;
+use Althingi\Service\Speech;
+use Althingi\Service\Vote;
+use Althingi\Service\VoteItem;
+use Althingi\Model\Congressman as CongressmanModel;
+use Althingi\Model\Party as PartyModel;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
+/**
+ * Class CongressmanControllerTest
+ * @package Althingi\Controller
+ * @coversDefaultClass \Althingi\Controller\CongressmanController
+ * @covers \Althingi\Controller\CongressmanController::setCongressmanService
+ * @covers \Althingi\Controller\CongressmanController::setPartyService
+ * @covers \Althingi\Controller\CongressmanController::setSessionService
+ * @covers \Althingi\Controller\CongressmanController::setVoteService
+ * @covers \Althingi\Controller\CongressmanController::setIssueService
+ * @covers \Althingi\Controller\CongressmanController::setSpeechService
+ * @covers \Althingi\Controller\CongressmanController::setIssueCategoryService
+ * @covers \Althingi\Controller\CongressmanController::setVoteItemService
+ */
 class CongressmanControllerTest extends AbstractHttpControllerTestCase
 {
+    use ServiceHelper;
+
     public function setUp()
     {
         $this->setApplicationConfig(
             include __DIR__ .'/../application.config.php'
         );
+
         parent::setUp();
+
+        $this->buildServices([
+            Congressman::class,
+            Party::class,
+            Session::class,
+            Vote::class,
+            VoteItem::class,
+            Issue::class,
+            Speech::class,
+            IssueCategory::class
+
+        ]);
     }
 
+    public function tearDown()
+    {
+        \Mockery::close();
+        return parent::tearDown();
+    }
+
+    /**
+     * @covers ::get
+     */
+    public function testGet()
+    {
+        $this->getMockService(Congressman::class)
+            ->shouldReceive('get')
+            ->andReturn(
+                (new CongressmanModel())
+                ->setCongressmanId(1)
+            )->once()
+            ->getMock();
+
+        $this->getMockService(Party::class)
+            ->shouldReceive('fetchByCongressman')
+            ->with(1)
+            ->andReturn(
+                [(new PartyModel())]
+            )->once()
+            ->getMock();
+
+        $this->dispatch('/thingmenn/1', 'GET');
+
+        $this->assertControllerClass('CongressmanController');
+        $this->assertActionName('get');
+        $this->assertResponseStatusCode(200);
+    }
+
+    /**
+     * @covers ::get
+     */
+    public function testGetResourceNotFound()
+    {
+        $this->getMockService(Congressman::class)
+            ->shouldReceive('get')
+            ->once()
+            ->andReturn(null)
+            ->getMock();
+
+        $this->getMockService(Party::class)
+            ->shouldReceive('fetchByCongressman')
+            ->never()
+            ->getMock();
+
+        $this->dispatch('/thingmenn/1', 'GET');
+
+        $this->assertControllerClass('CongressmanController');
+        $this->assertActionName('get');
+        $this->assertResponseStatusCode(404);
+    }
+
+    /**
+     * @covers ::getList
+     */
     public function testGetList()
     {
-        $pdoMock = Mockery::mock('\PDO')
-            ->shouldReceive('prepare')
-            ->andReturnSelf()
-            ->mock()
-            ->shouldReceive('execute')
-            ->andReturnSelf()
-            ->mock()
-            ->shouldReceive('fetchColumn')
-            ->andReturn(100)
-            ->mock()
-            ->shouldReceive('fetchAll')
-            ->andReturn([])
-            ->mock();
+        $this->getMockService(Congressman::class)
+            ->shouldReceive('count')
+            ->once()
+            ->andReturn(1)
+            ->getMock()
 
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('PDO', $pdoMock);
+            ->shouldReceive('fetchAll')
+            ->once()
+            ->andReturn([new CongressmanModel()])
+            ->getMock();
 
         $this->dispatch('/thingmenn', 'GET');
 
@@ -47,70 +141,16 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
         $this->assertActionName('getList');
     }
 
-    public function testGet()
-    {
-        $pdoMock = Mockery::mock('\PDO')
-            ->shouldReceive('prepare')
-            ->andReturnSelf()
-            ->mock()
-            ->shouldReceive('execute')
-            ->andReturnSelf()
-            ->mock()
-            ->shouldReceive('fetchObject')
-            ->andReturn($this->congressman())
-            ->mock()
-            ->shouldReceive('fetchAll')
-            ->andReturn($this->parties())
-            ->mock();
-
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('PDO', $pdoMock);
-
-        $this->dispatch('/thingmenn/1', 'GET');
-
-        $this->assertControllerClass('CongressmanController');
-        $this->assertActionName('get');
-    }
-
-    public function testGetNotFound()
-    {
-        $pdoMock = Mockery::mock('\PDO')
-            ->shouldReceive('prepare')
-            ->andReturnSelf()
-            ->mock()
-            ->shouldReceive('execute')
-            ->andReturnSelf()
-            ->mock()
-            ->shouldReceive('fetchObject')
-            ->andReturn(null)
-            ->mock();
-
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('PDO', $pdoMock);
-
-        $this->dispatch('/thingmenn/1', 'GET');
-
-        $this->assertResponseStatusCode(404);
-    }
-
+    /**
+     * @covers ::put
+     */
     public function testPutSuccess()
     {
-        $pdoMock = Mockery::mock('\PDO')
-            ->shouldReceive('prepare')
-            ->andReturnSelf()
-            ->mock()
-            ->shouldReceive('execute')
-            ->andReturnSelf()
-            ->mock()
-            ->shouldReceive('lastInsertId')
+        $this->getMockService(Congressman::class)
+            ->shouldReceive('create')
+            ->once()
             ->andReturn(1)
-            ->mock();
-
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('PDO', $pdoMock);
+            ->getMock();
 
         $this->dispatch('/thingmenn/1', 'PUT', [
             'name' => 'some name',
@@ -122,50 +162,45 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(201);
     }
 
+    /**
+     * @covers ::put
+     */
     public function testPutInvalidData()
     {
-        $pdoMock = Mockery::mock('\PDO')
-            ->shouldReceive('prepare')
-            ->andReturnSelf()
-            ->mock()
-            ->shouldReceive('execute')
-            ->andReturnSelf()
-            ->mock()
-            ->shouldReceive('lastInsertId')
-            ->andReturn(1)
-            ->mock();
-
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('PDO', $pdoMock);
+        $this->getMockService(Congressman::class)
+            ->shouldReceive('create')
+            ->never()
+            ->getMock();
 
         $this->dispatch('/thingmenn/1', 'PUT', [
             'name' => 'some name',
             'birth' => 'not a date'
         ]);
 
+        $this->assertControllerClass('CongressmanController');
+        $this->assertActionName('put');
         $this->assertResponseStatusCode(400);
     }
 
+    /**
+     * @covers ::patch
+     */
     public function testPatchSuccess()
     {
-        $pdoMock = Mockery::mock('\PDO')
-            ->shouldReceive('prepare')
-            ->andReturnSelf()
-            ->mock()
-            ->shouldReceive('execute')
-            ->andReturnSelf()
-            ->mock()
-            ->shouldReceive('fetchObject')
-            ->andReturn($this->congressman())
-            ->mock()
-            ->shouldReceive('rowCount')
-            ->andReturn(1)
-            ->mock();
+        $this->getMockService(Congressman::class)
+            ->shouldReceive('get')
+            ->andReturn(
+                (new CongressmanModel())
+                    ->setCongressmanId(1)
+                    ->setBirth(new \DateTime('1978-04-11'))
+            )->once()
+            ->getMock()
 
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('PDO', $pdoMock);
+            ->shouldReceive('update')
+            ->once()
+            ->andReturn(1)
+            ->getMock();
+
 
         $this->dispatch('/thingmenn/1', 'PATCH', [
             'name' => 'some name',
@@ -176,28 +211,28 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(205);
     }
 
+    /**
+     * @covers ::patch
+     */
     public function testPatchInvalidData()
     {
-        $pdoMock = Mockery::mock('\PDO')
-            ->shouldReceive('prepare')
-            ->andReturnSelf()
-            ->mock()
-            ->shouldReceive('execute')
-            ->andReturnSelf()
-            ->mock()
-            ->shouldReceive('fetchObject')
-            ->andReturn($this->congressman())
-            ->mock()
-            ->shouldReceive('rowCount')
-            ->andReturn(1)
-            ->mock();
+        $this->getMockService(Congressman::class)
+            ->shouldReceive('get')
+            ->andReturn(
+                (new CongressmanModel())
+                    ->setCongressmanId(1)
+                    ->setName('My Namesson')
+                    ->setBirth(new \DateTime('1978-04-11'))
+            )->once()
+            ->getMock()
 
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('PDO', $pdoMock);
+            ->shouldReceive('update')
+            ->never()
+            ->getMock();
+
 
         $this->dispatch('/thingmenn/1', 'PATCH', [
-            'birth' => 'not a date',
+            'birth' => 'invalid date',
         ]);
 
         $this->assertControllerClass('CongressmanController');
@@ -205,28 +240,21 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(400);
     }
 
+    /**
+     * @covers ::patch
+     */
     public function testPatchResourceNotFound()
     {
-        $pdoMock = Mockery::mock('\PDO')
-            ->shouldReceive('prepare')
-            ->andReturnSelf()
-            ->mock()
-            ->shouldReceive('execute')
-            ->andReturnSelf()
-            ->mock()
-            ->shouldReceive('fetchObject')
-            ->andReturn(null)
-            ->mock()
-            ->shouldReceive('rowCount')
-            ->andReturn(1)
-            ->mock();
-
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('PDO', $pdoMock);
+        $this->getMockService(Congressman::class)
+            ->shouldReceive('get')
+            ->andReturn(null)->once()
+            ->getMock()
+            ->shouldReceive('update')
+            ->never()
+            ->getMock();
 
         $this->dispatch('/thingmenn/1', 'PATCH', [
-            'birth' => 'not a date',
+            'birth' => '1978-04-11',
         ]);
 
         $this->assertControllerClass('CongressmanController');
@@ -234,25 +262,24 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(404);
     }
 
+    /**
+     * @covers ::delete
+     */
     public function testDeleteSuccess()
     {
-        $pdoMock = Mockery::mock('\PDO')
-            ->shouldReceive('prepare')
-            ->andReturnSelf()
-            ->mock()
-            ->shouldReceive('execute')
-            ->andReturnSelf()
-            ->mock()
-            ->shouldReceive('fetchObject')
-            ->andReturn($this->congressman())
-            ->mock()
-            ->shouldReceive('rowCount')
-            ->andReturn(1)
-            ->mock();
+        $this->getMockService(Congressman::class)
+            ->shouldReceive('get')
+            ->andReturn(
+                (new CongressmanModel())
+                    ->setCongressmanId(1)
+                    ->setName('My Namesson')
+                    ->setBirth(new \DateTime('1978-04-11'))
+            )->once()
+            ->getMock()
 
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('PDO', $pdoMock);
+            ->shouldReceive('delete')
+            ->once()
+            ->getMock();
 
         $this->dispatch('/thingmenn/1', 'DELETE');
 
@@ -261,25 +288,19 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(205);
     }
 
+    /**
+     * @covers ::delete
+     */
     public function testDeleteResourceNotFound()
     {
-        $pdoMock = Mockery::mock('\PDO')
-            ->shouldReceive('prepare')
-            ->andReturnSelf()
-            ->mock()
-            ->shouldReceive('execute')
-            ->andReturnSelf()
-            ->mock()
-            ->shouldReceive('fetchObject')
-            ->andReturn(null)
-            ->mock()
-            ->shouldReceive('rowCount')
-            ->andReturn(1)
-            ->mock();
+        $this->getMockService(Congressman::class)
+            ->shouldReceive('get')
+            ->andReturn(null)->once()
+            ->getMock()
 
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('PDO', $pdoMock);
+            ->shouldReceive('delete')
+            ->never()
+            ->getMock();
 
         $this->dispatch('/thingmenn/1', 'DELETE');
 
@@ -288,20 +309,193 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(404);
     }
 
-    private function congressman()
+    /**
+     * @covers ::options
+     */
+    public function testOptions()
     {
-        return (object) [
-            'congressman_id' => 1,
-            'name' => 'some name',
-            'birth' => '1978-04-11',
-            'death' => null,
-        ];
+        $this->dispatch('/thingmenn/1', 'OPTIONS');
+
+        $expectedMethods = ['GET', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'];
+        $actualMethods = $this->getResponse()
+            ->getHeaders()
+            ->get('Allow')
+            ->getAllowedMethods();
+
+        $this->assertCount(0, array_diff($expectedMethods, $actualMethods));
     }
 
-    private function parties()
+    /**
+     * @covers ::optionsList
+     */
+    public function testOptionsList()
     {
-        return [
-            (object) ['party_id' => 1]
-        ];
+        $this->dispatch('/thingmenn', 'OPTIONS');
+
+        $expectedMethods = ['GET', 'OPTIONS'];
+        $actualMethods = $this->getResponse()
+            ->getHeaders()
+            ->get('Allow')
+            ->getAllowedMethods();
+
+        $this->assertCount(0, array_diff($expectedMethods, $actualMethods));
+    }
+
+    /**
+     * @covers ::assemblyAction
+     */
+    public function testAssemblyAction()
+    {
+        $this->getMockService(Congressman::class)
+            ->shouldReceive('fetchByAssembly')
+            ->with(1, null)
+            ->once()
+            ->andReturn([
+                (new CongressmanAndParty())->setPartyId(100)
+            ])
+            ->getMock();
+
+        $this->getMockService(Party::class)
+            ->shouldReceive('get')
+            ->with(100)
+            ->andReturn(new PartyModel())
+            ->once()
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/1/thingmenn');
+
+        $this->assertControllerClass('CongressmanController');
+        $this->assertActionName('assembly');
+        $this->assertResponseStatusCode(200);
+
+//        print_r(json_decode($this->getResponse()->getContent()));
+    }
+
+    /**
+     * @covers ::assemblySpeechTimeAction
+     */
+    public function testAssemblySpeechTimeAction()
+    {
+        $this->getMockService(Speech::class)
+            ->shouldReceive('getFrequencyByAssemblyAndCongressman')
+            ->with(1, 2)
+            ->once()
+            ->andReturn(1)
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/1/thingmenn/2/raedutimar');
+
+        $this->assertControllerClass('CongressmanController');
+        $this->assertActionName('assembly-speech-time');
+        $this->assertResponseStatusCode(200);
+
+//        print_r(json_decode($this->getResponse()->getContent()));
+    }
+
+    /**
+     * @covers ::assemblySessionsAction
+     */
+    public function testAssemblySessionsAction()
+    {
+        $this->getMockService(Session::class)
+            ->shouldReceive('fetchByAssemblyAndCongressman')
+            ->with(1, 2)
+            ->once()
+            ->andReturn([
+                (new SessionModel())
+            ])
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/1/thingmenn/2/thingseta');
+
+        $this->assertControllerClass('CongressmanController');
+        $this->assertActionName('assembly-sessions');
+        $this->assertResponseStatusCode(200);
+
+//        print_r(json_decode($this->getResponse()->getContent()));
+    }
+
+    /**
+     * @covers ::assemblyIssuesAction
+     */
+    public function testAssemblyIssuesAction()
+    {
+        $this->getMockService(Issue::class)
+            ->shouldReceive('fetchByAssemblyAndCongressman')
+            ->with(1, 2)
+            ->once()
+            ->andReturn([new IssueModel()])
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/1/thingmenn/2/thingmal');
+
+        $this->assertControllerClass('CongressmanController');
+        $this->assertActionName('assembly-issues');
+        $this->assertResponseStatusCode(200);
+
+//        print_r(json_decode($this->getResponse()->getContent()));
+    }
+
+    /**
+     * @covers ::assemblyVotingAction
+     */
+    public function testAssemblyVotingAction()
+    {
+        $this->getMockService(Vote::class)
+            ->shouldReceive('getFrequencyByAssemblyAndCongressman')
+            ->with(1, 2, null, null)
+            ->once()
+            ->andReturn([])
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/1/thingmenn/2/atvaedagreidslur');
+
+        $this->assertControllerClass('CongressmanController');
+        $this->assertActionName('assembly-voting');
+        $this->assertResponseStatusCode(200);
+
+//        print_r(json_decode($this->getResponse()->getContent()));
+    }
+
+    /**
+     * @covers ::assemblyCategoriesAction
+     */
+    public function testAssemblyCategoriesAction()
+    {
+        $this->getMockService(IssueCategory::class)
+            ->shouldReceive('fetchFrequencyByAssemblyAndCongressman')
+            ->with(1, 2)
+            ->once()
+            ->andReturn([new IssueCategoryAndTimeModel()])
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/1/thingmenn/2/malaflokkar');
+
+        $this->assertControllerClass('CongressmanController');
+        $this->assertActionName('assembly-categories');
+        $this->assertResponseStatusCode(200);
+
+//        print_r(json_decode($this->getResponse()->getContent()));
+    }
+
+    /**
+     * @covers ::assemblyVoteCategoriesAction
+     */
+    public function testAssemblyVoteCategoriesAction()
+    {
+        $this->getMockService(VoteItem::class)
+            ->shouldReceive('fetchVoteByAssemblyAndCongressmanAndCategory')
+            ->with(1, 2)
+            ->once()
+            ->andReturn([])
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/1/thingmenn/2/atvaedagreidslur-malaflokkar');
+
+        $this->assertControllerClass('CongressmanController');
+        $this->assertActionName('assembly-vote-categories');
+        $this->assertResponseStatusCode(200);
+
+//        print_r(json_decode($this->getResponse()->getContent()));
     }
 }

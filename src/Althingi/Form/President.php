@@ -16,7 +16,7 @@ class President extends Form implements InputFilterProviderInterface
     {
         parent::__construct(get_class($this));
         $this
-            ->setObject((object)[])
+            ->setObject(new \Althingi\Model\President())
             ->setHydrator(new \Althingi\Hydrator\President());
 
         $this->add(array(

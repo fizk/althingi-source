@@ -8,80 +8,108 @@
 
 namespace Althingi\Controller;
 
+use Althingi\Service\Assembly;
+use Althingi\Service\Congressman;
+use Althingi\Service\Document;
+use Althingi\Service\Issue;
+use Althingi\Service\Party;
+use Althingi\Service\Speech;
+use Althingi\Service\Vote;
+use Althingi\Model\CongressmanAndDateRange;
+use Althingi\Model\Issue as IssueModel;
+use Althingi\Model\Party as PartyModel;
+use Althingi\Model\Assembly as AssemblyModel;
+use Althingi\Model\Congressman as CongressmanModel;
+use Althingi\Model\IssueAndDate as IssueAndDatetModel;
 use Mockery;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
+/**
+ * Class IssueControllerTest
+ * @package Althingi\Controller
+ * @coversDefaultClass \Althingi\Controller\IssueController
+ * @covers \Althingi\Controller\IssueController::setCongressmanService
+ * @covers \Althingi\Controller\IssueController::setIssueService
+ * @covers \Althingi\Controller\IssueController::setPartyService
+ * @covers \Althingi\Controller\IssueController::setDocumentService
+ * @covers \Althingi\Controller\IssueController::setVoteService
+ * @covers \Althingi\Controller\IssueController::setAssemblyService
+ * @covers \Althingi\Controller\IssueController::setSpeechService
+ */
 class IssueControllerTest extends AbstractHttpControllerTestCase
 {
+    use ServiceHelper;
+
     public function setUp()
     {
         $this->setApplicationConfig(
             include __DIR__ .'/../application.config.php'
         );
+
         parent::setUp();
+
+        $this->buildServices([
+            Congressman::class,
+            Issue::class,
+            Party::class,
+            Document::class,
+            Vote::class,
+            Assembly::class,
+            Speech::class,
+        ]);
     }
 
+    public function tearDown()
+    {
+        \Mockery::close();
+        return parent::tearDown();
+    }
+
+    /**
+     * @covers ::get
+     */
     public function testGetSuccess()
     {
-        $pdo = Mockery::mock('PDO');
-        $issueService = Mockery::mock('Althingi\Service\Issue')
-            ->shouldReceive('get')
-            ->andReturnUsing(function ($issueId, $assemblyId) {
-                $this->assertEquals(100, $assemblyId);
-                $this->assertEquals(200, $issueId);
-                return $this->buildIssueObject();
-            })
+        $this->getMockService(Issue::class)
+            ->shouldReceive('getWithDate')
+            ->andReturn((new IssueAndDatetModel())->setCongressmanId(1)->setDate(new \DateTime()))
             ->once()
             ->getMock();
 
-        $assemblyService = Mockery::mock('Althingi\Service\Assembly')
+        $this->getMockService(Assembly::class)
             ->shouldReceive('get')
-            ->andReturn((object) ['from' => '2001-02-01', 'to' => null])
+            ->andReturn((new AssemblyModel)->setFrom(new \DateTime('2001-02-01')))
             ->once()
             ->getMock();
 
-        $congressmanService = Mockery::mock('Althingi\Service\Congressman')
+        $this->getMockService(Congressman::class)
             ->shouldReceive('get')
-            ->andReturn((object) ['congressman_id' => 1])
+            ->andReturn((new CongressmanModel())->setCongressmanId(1))
             ->once()
             ->getMock()
             ->shouldReceive('fetchAccumulatedTimeByIssue')
-            ->andReturn([
-                (object) [
-                    'congressman_id' => 1,
-                    'begin' => date('Y-m-d H:i:s')
-                ]
-            ])
+            ->andReturn([(new CongressmanAndDateRange())->setBegin(new \DateTime())->setCongressmanId(1)])
             ->once()
             ->getMock();
 
-        $partyService = Mockery::mock('Althingi\Service\Party')
+        $this->getMockService(Party::class)
             ->shouldReceive('getByCongressman')
-            ->andReturnNull()
-            ->once()
+            ->andReturn((new PartyModel()))
+            ->twice()
             ->getMock();
 
-        $voteService = Mockery::mock('Althingi\Service\Vote')
+        $this->getMockService(Vote::class)
             ->shouldReceive('fetchDateFrequencyByIssue')
             ->andReturn([])
             ->once()
             ->getMock();
 
-        $speechService = Mockery::mock('Althingi\Service\Speech')
+        $this->getMockService(Speech::class)
             ->shouldReceive('fetchFrequencyByIssue')
             ->andReturn([])
             ->once()
             ->getMock();
 
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('Althingi\Service\Issue', $issueService);
-        $serviceManager->setService('Althingi\Service\Assembly', $assemblyService);
-        $serviceManager->setService('Althingi\Service\Congressman', $congressmanService);
-        $serviceManager->setService('Althingi\Service\Party', $partyService);
-        $serviceManager->setService('Althingi\Service\Vote', $voteService);
-        $serviceManager->setService('Althingi\Service\Speech', $speechService);
-        $serviceManager->setService('PDO', $pdo);
 
         $this->dispatch('/loggjafarthing/100/thingmal/200', 'GET');
 
@@ -90,19 +118,45 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(200);
     }
 
-    public function testGetResourceNotFound()
+    /**
+     * @covers ::get
+     */
+    public function testGetNotFound()
     {
-        $pdo = Mockery::mock('PDO');
-        $serviceMock = Mockery::mock('Althingi\Service\Issue')
-            ->shouldReceive('get')
+        $this->getMockService(Issue::class)
+            ->shouldReceive('getWithDate')
             ->andReturn(null)
             ->once()
             ->getMock();
 
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('Althingi\Service\Issue', $serviceMock);
-        $serviceManager->setService('PDO', $pdo);
+        $this->getMockService(Assembly::class)
+            ->shouldReceive('get')
+            ->never()
+            ->getMock();
+
+        $this->getMockService(Congressman::class)
+            ->shouldReceive('get')
+            ->never()
+            ->getMock()
+            ->shouldReceive('fetchAccumulatedTimeByIssue')
+            ->never()
+            ->getMock();
+
+        $this->getMockService(Party::class)
+            ->shouldReceive('getByCongressman')
+            ->never()
+            ->getMock();
+
+        $this->getMockService(Vote::class)
+            ->shouldReceive('fetchDateFrequencyByIssue')
+            ->never()
+            ->getMock();
+
+        $this->getMockService(Speech::class)
+            ->shouldReceive('fetchFrequencyByIssue')
+            ->never()
+            ->getMock();
+
 
         $this->dispatch('/loggjafarthing/100/thingmal/200', 'GET');
 
@@ -111,44 +165,35 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(404);
     }
 
+    /**
+     * @covers ::getList
+     */
     public function testGetList()
     {
-        $pdo = Mockery::mock('PDO');
-        $serviceMock = \Mockery::mock('Althingi\Service\Issue')
-            ->shouldReceive('fetchByAssembly')
-            ->andReturn([(object) [
-                'congressman_id' => 1,
-                'date' => date('Y-m-d H:i:s'),
-                'goal' => '',
-                'major_changes' => '',
-                'changes_in_law' => '',
-                'costs_and_revenues' => '',
-                'deliveries' => '',
-                'additional_information' => '',
-            ]])
-            ->never()
-            ->getMock()
+        $this->getMockService(Issue::class)
             ->shouldReceive('countByAssembly')
             ->andReturn(123)
             ->once()
-            ->getMock();
+            ->getMock()
+            ->shouldReceive('fetchByAssembly')
+            ->andReturn([
+                (new IssueAndDatetModel())->setDate(new \DateTime())->setCongressmanId(1)
+            ])
+            ->once()
+            ->getMock()
+        ;
 
-        $partyService = Mockery::mock('Althingi\Service\Party')
+        $this->getMockService(Party::class)
             ->shouldReceive('getByCongressman')
-            ->andReturnNull()
+            ->andReturn(null)
+            ->once()
             ->getMock();
 
-        $congressmanService = Mockery::mock('Althingi\Service\Congressman')
+        $this->getMockService(Congressman::class)
             ->shouldReceive('get')
-            ->andReturn((object) ['congressman_id' => 1])
+            ->andReturn((new CongressmanModel())->setCongressmanId(1))
+            ->once()
             ->getMock();
-
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('Althingi\Service\Issue', $serviceMock);
-        $serviceManager->setService('Althingi\Service\Party', $partyService);
-        $serviceManager->setService('Althingi\Service\Congressman', $congressmanService);
-        $serviceManager->setService('PDO', $pdo);
 
         $this->dispatch('/loggjafarthing/100/thingmal', 'GET');
         $this->assertControllerClass('IssueController');
@@ -158,55 +203,30 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseHeaderContains('Content-Range', 'items 0-25/123');
     }
 
-    public function testGetListParams()
-    {
-        $pdo = Mockery::mock('PDO');
-        $issueService = Mockery::mock('Althingi\Service\Issue')
-            ->shouldReceive('countByAssembly')
-            ->andReturn(700)
-            ->getMock()
-            ->shouldReceive('fetchByAssembly')
-            ->andReturnUsing(function ($assemblyId, $from, $size, $order, $type) {
-                $this->assertEquals(100, $assemblyId);
-                $this->assertEquals(0, $from);
-                $this->assertEquals(25, $size);
-                $this->assertEquals('desc', $order);
-                $this->assertCount(0, array_diff($type, ['l','a']));
-                return [];
-            })
-            ->once()
-            ->getMock();
-
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('PDO', $pdo);
-        $serviceManager->setService('Althingi\Service\Issue', $issueService);
-
-        $this->dispatch('/loggjafarthing/100/thingmal?order=desc&type=la', 'GET');
-    }
-
+    /**
+     * @covers ::put
+     */
     public function testPutSuccess()
     {
-        $pdo = Mockery::mock('PDO');
-        $serviceMock = Mockery::mock('Althingi\Service\Issue')
-            ->shouldReceive('create')
-            ->andReturnUsing(function ($object) {
-                $this->assertEquals('n1', $object->name);
-                $this->assertEquals('c1', $object->category);
-                $this->assertEquals('1', $object->type);
-                $this->assertEquals('tn', $object->type_name);
-                $this->assertEquals('tsn', $object->type_subname);
-                $this->assertEquals(100, $object->assembly_id);
-                $this->assertEquals(200, $object->issue_id);
-                return 10;
-            })
-            ->once()
-            ->getMock();
+        $expectedObject = (new IssueModel())
+            ->setIssueId(200)
+            ->setAssemblyId(100)
+            ->setName('n1')
+            ->setCategory('c1')
+            ->setType('1')
+            ->setTypeName('tn')
+            ->setTypeSubname('tsn')
+        ;
 
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('Althingi\Service\Issue', $serviceMock);
-        $serviceManager->setService('PDO', $pdo);
+        $this->getMockService(Issue::class)
+            ->shouldReceive('create')
+            ->with(Mockery::on(function ($actualObject) use ($expectedObject) {
+                return $expectedObject == $actualObject;
+            }))
+            ->andReturn(1)
+            ->once()
+            ->getMock()
+        ;
 
         $this->dispatch('/loggjafarthing/100/thingmal/200', 'PUT', [
             'name' => 'n1',
@@ -221,24 +241,16 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(201);
     }
 
+    /**
+     * @covers ::put
+     */
     public function testPutInvalidForm()
     {
-        $pdo = Mockery::mock('PDO');
-        $serviceMock = \Mockery::mock('Althingi\Service\Issue')
+        $this->getMockService(Issue::class)
             ->shouldReceive('create')
-            ->andReturnUsing(function ($object) {
-                $this->assertEquals(100, $object->assembly_id);
-                $this->assertEquals(200, $object->issue_id);
-                $this->assertEquals('tn', $object->type_name);
-                $this->assertEquals('tsn', $object->type_subname);
-            })
             ->never()
-            ->getMock();
-
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('Althingi\Service\Issue', $serviceMock);
-        $serviceManager->setService('PDO', $pdo);
+            ->getMock()
+        ;
 
         $this->dispatch('/loggjafarthing/100/thingmal/200', 'PUT', [
             'type_name' => 'tn',
@@ -250,167 +262,55 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(400);
     }
 
-    public function testPutParams()
+    /**
+     * @covers ::patch
+     */
+    public function testPatch()
     {
-        $pdo = Mockery::mock('PDO');
-        $issueService = Mockery::mock('Althingi\Service\Issue')
-            ->shouldReceive('create')
-            ->andReturnUsing(function ($object) {
-                $this->assertEquals(100, $object->assembly_id);
-                $this->assertEquals(200, $object->issue_id);
-                return null;
-            })
+        $expectedObject = (new IssueModel())
+            ->setIssueId(200)
+            ->setAssemblyId(100)
+            ->setName('n1')
+            ->setCategory('c1')
+            ->setType('1')
+            ->setTypeName('tn')
+            ->setTypeSubname('tsn')
+        ;
+
+        $this->getMockService(Issue::class)
+            ->shouldReceive('get')
             ->once()
-            ->getMock();
+            ->with(200, 100)
+            ->andReturn((new IssueModel())->setIssueId(200)->setAssemblyId(100))
+            ->getMock()
 
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('Althingi\Service\Issue', $issueService);
-        $serviceManager->setService('PDO', $pdo);
+            ->shouldReceive('update')
+            ->with(Mockery::on(function ($actualObject) use ($expectedObject) {
+                return $expectedObject == $actualObject;
+            }))
+            ->andReturn(1)
+            ->once()
+            ->getMock()
+        ;
 
-        $this->dispatch('/loggjafarthing/100/thingmal/200', 'PUT', [
+        $this->dispatch('/loggjafarthing/100/thingmal/200', 'PATCH', [
             'name' => 'n1',
             'category' => 'c1',
             'type' => '1',
             'type_name' => 'tn',
             'type_subname' => 'tsn',
         ]);
-    }
 
-    public function testPatch()
-    {
-        $pdo = Mockery::mock('PDO');
-        $serviceMock = \Mockery::mock('Althingi\Service\Issue')
-            ->shouldReceive('get')
-                ->andReturn($this->buildIssueObject())
-                ->getMock()
-            ->shouldReceive('update')
-            ->andReturnUsing(function ($object) {
-                $this->assertObjectHasAttribute('congressman_id', $object);
-                $this->assertEquals(1, $object->congressman_id);
-                $this->assertEquals('n1', $object->name);
-                $this->assertEquals('A', $object->category);
-                return $object;
-            })->getMock();
-
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('Althingi\Service\Issue', $serviceMock);
-        $serviceManager->setService('PDO', $pdo);
-
-        $this->dispatch('/loggjafarthing/100/thingmal/200', 'PATCH', [
-            'name' => 'n1'
-        ]);
         $this->assertControllerClass('IssueController');
         $this->assertActionName('patch');
         $this->assertResponseStatusCode(205);
     }
 
-    public function testPatchEntryNotFound()
-    {
-        $pdo = Mockery::mock('PDO');
-        $serviceMock = Mockery::mock('Althingi\Service\Issue')
-            ->shouldReceive('get')
-                ->andReturn(null)
-                ->once()
-                ->getMock()
-            ->shouldReceive('update')
-                ->andReturn(null)
-                ->never()
-                ->getMock();
-
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('Althingi\Service\Issue', $serviceMock);
-        $serviceManager->setService('PDO', $pdo);
-
-        $this->dispatch('/loggjafarthing/100/thingmal/200', 'PATCH', [
-            'name' => 'n1'
-        ]);
-
-        $this->assertControllerClass('IssueController');
-        $this->assertActionName('patch');
-        $this->assertResponseStatusCode(404);
-    }
-
-    public function testPatchInvalidForm()
-    {
-        $pdo = Mockery::mock('PDO');
-        $serviceMock = Mockery::mock('Althingi\Service\Issue')
-            ->shouldReceive('get')
-                ->andReturn($this->buildIssueObject())
-                ->once()
-                ->getMock()
-            ->shouldReceive('update')
-                ->andReturn(null)
-                ->never()
-                ->getMock();
-
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('Althingi\Service\Issue', $serviceMock);
-        $serviceManager->setService('PDO', $pdo);
-
-        $this->dispatch('/loggjafarthing/100/thingmal/200', 'PATCH', [
-            'name' => 'n1',
-            'congressman_id' => 'I can not be a string'
-        ]);
-        $this->assertControllerClass('IssueController');
-        $this->assertActionName('patch');
-        $this->assertResponseStatusCode(400);
-    }
-
-    public function testPatchParams()
-    {
-        $pdo = Mockery::mock('PDO');
-        $issueService = Mockery::mock('Althingi\Service\Issue')
-            ->shouldReceive('get')
-            ->andReturnUsing(function ($issueId, $assemblyId) {
-                $this->assertEquals(200, $issueId);
-                $this->assertEquals(100, $assemblyId);
-                return null;
-            })
-            ->once()
-            ->getMock();
-
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('Althingi\Service\Issue', $issueService);
-        $serviceManager->setService('PDO', $pdo);
-
-        $this->dispatch('/loggjafarthing/100/thingmal/200', 'PATCH');
-    }
-
-    public function testOptions()
-    {
-        $pdo = Mockery::mock('PDO');
-
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('PDO', $pdo);
-
-        $this->dispatch('/loggjafarthing/100/thingmal/1', 'OPTIONS');
-
-        $this->assertControllerClass('IssueController');
-        $this->assertActionName('options');
-        $this->assertResponseStatusCode(200);
-
-        $expectedMethods = ['GET', 'OPTIONS', 'PUT', 'PATCH'];
-        $actualMethods = $this->getResponse()
-            ->getHeaders()
-            ->get('Allow')
-            ->getAllowedMethods();
-
-        $this->assertCount(0, array_diff($expectedMethods, $actualMethods));
-    }
-
+    /**
+     * @covers ::optionsList
+     */
     public function testOptionsList()
     {
-        $pdo = Mockery::mock('PDO');
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('PDO', $pdo);
-
         $this->dispatch('/loggjafarthing/100/thingmal', 'OPTIONS');
 
         $this->assertControllerClass('IssueController');
@@ -426,19 +326,23 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
         $this->assertCount(0, array_diff($expectedMethods, $actualMethods));
     }
 
-    private function buildIssueObject()
+    /**
+     * @covers ::options
+     */
+    public function testOptions()
     {
-        return (object) [
-            "issue_id"  => 2,
-            "assembly_id"  => 144,
-            "category"  => "A",
-            "name"  => "Virðisaukaskattur o.fl.",
-            "type"  => 'l',
-            "type_name"  => "Frumvarp til laga",
-            "type_subname"  => "lagafrumvarp",
-            "status" => "Samþykkt sem lög frá Alþingi.",
-            "congressman_id" => 1,
-            "date" => '2001-02-02'
-        ];
+        $this->dispatch('/loggjafarthing/100/thingmal/200', 'OPTIONS');
+
+        $this->assertControllerClass('IssueController');
+        $this->assertActionName('options');
+        $this->assertResponseStatusCode(200);
+
+        $expectedMethods = ['GET', 'OPTIONS', 'PUT', 'PATCH'];
+        $actualMethods = $this->getResponse()
+            ->getHeaders()
+            ->get('Allow')
+            ->getAllowedMethods();
+
+        $this->assertCount(0, array_diff($expectedMethods, $actualMethods));
     }
 }

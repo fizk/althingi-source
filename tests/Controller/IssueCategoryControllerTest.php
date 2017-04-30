@@ -8,8 +8,19 @@
 
 namespace Althingi\Controller;
 
+use Althingi\Model\Category as CategoryModel;
+use Althingi\Model\IssueCategory as IssueCategoryModel;
+use Althingi\Service\Category;
+use Althingi\Service\IssueCategory;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
+/**
+ * Class IssueCategoryControllerTest
+ * @package Althingi\Controller
+ * @coversDefaultClass \Althingi\Controller\IssueCategoryController
+ * @covers \Althingi\Controller\IssueCategoryController::setIssueCategoryService
+ * @covers \Althingi\Controller\IssueCategoryController::setCategoryService
+ */
 class IssueCategoryControllerTest extends AbstractHttpControllerTestCase
 {
     use ServiceHelper;
@@ -23,23 +34,26 @@ class IssueCategoryControllerTest extends AbstractHttpControllerTestCase
         parent::setUp();
 
         $this->buildServices([
-            'Althingi\Service\Category',
-            'Althingi\Service\IssueCategory'
+            Category::class,
+            IssueCategory::class,
         ]);
     }
 
     public function tearDown()
     {
-        $this->destroyServices();
+        \Mockery::close();
         return parent::tearDown();
     }
 
+    /**
+     * @covers ::get
+     */
     public function testGet()
     {
-        $this->getMockService('Althingi\Service\Category')
+        $this->getMockService(Category::class)
             ->shouldReceive('fetchByAssemblyIssueAndCategory')
             ->withArgs([141, 131, 21])
-            ->andReturn(require './module/Althingi/tests/data/category.php')
+            ->andReturn(new CategoryModel())
             ->getMock();
 
         $this->dispatch('/loggjafarthing/141/thingmal/131/efnisflokkar/21', 'GET');
@@ -48,9 +62,12 @@ class IssueCategoryControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(200);
     }
 
+    /**
+     * @covers ::get
+     */
     public function testGetNotFound()
     {
-        $this->getMockService('Althingi\Service\Category')
+        $this->getMockService(Category::class)
             ->shouldReceive('fetchByAssemblyIssueAndCategory')
             ->withArgs([141, 131, 21])
             ->andReturn(null)
@@ -62,12 +79,15 @@ class IssueCategoryControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(404);
     }
 
+    /**
+     * @covers ::getList
+     */
     public function testList()
     {
-        $this->getMockService('Althingi\Service\Category')
+        $this->getMockService(Category::class)
             ->shouldReceive('fetchByAssemblyAndIssue')
             ->withArgs([141, 131])
-            ->andReturn(require './module/Althingi/tests/data/categories.php')
+            ->andReturn([new CategoryModel()])
             ->getMock();
 
         $this->dispatch('/loggjafarthing/141/thingmal/131/efnisflokkar', 'GET');
@@ -76,9 +96,12 @@ class IssueCategoryControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(200);
     }
 
+    /**
+     * @covers ::put
+     */
     public function testPut()
     {
-        $this->getMockService('Althingi\Service\IssueCategory')
+        $this->getMockService(IssueCategory::class)
             ->shouldReceive('create')
             ->andReturn()
             ->getMock();
@@ -89,12 +112,31 @@ class IssueCategoryControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(201);
     }
 
+    /**
+     * @covers ::put
+     */
+    public function testPutInvalidArguments()
+    {
+        $this->getMockService(IssueCategory::class)
+            ->shouldReceive('create')
+            ->andReturn()
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/141/thingmal/not-a-number/efnisflokkar/21', 'PUT');
+        $this->assertControllerClass('IssueCategoryController');
+        $this->assertActionName('put');
+        $this->assertResponseStatusCode(400);
+    }
+
+    /**
+     * @covers ::patch
+     */
     public function testPatch()
     {
-        $this->getMockService('Althingi\Service\IssueCategory')
+        $this->getMockService(IssueCategory::class)
             ->shouldReceive('get')
             ->withArgs([141, 131, 21])
-            ->andReturn((object) ['assembly_id' => 141, 'issue_id' => 131, 'category_id' => 21])
+            ->andReturn((new IssueCategoryModel())->setAssemblyId(141)->setIssueId(131)->setCategoryId(21))
             ->getMock()
             ->shouldReceive('update')
             ->andReturn(1)
@@ -106,12 +148,15 @@ class IssueCategoryControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(205);
     }
 
+    /**
+     * @covers ::patch
+     */
     public function testPatchNotFound()
     {
-        $this->getMockService('Althingi\Service\IssueCategory')
+        $this->getMockService(IssueCategory::class)
             ->shouldReceive('get')
             ->withArgs([141, 131, 21])
-            ->andReturnNull()
+            ->andReturn(null)
             ->getMock();
 
         $this->dispatch('/loggjafarthing/141/thingmal/131/efnisflokkar/21', 'PATCH');

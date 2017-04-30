@@ -17,7 +17,7 @@ class Issue extends Form implements InputFilterProviderInterface
         parent::__construct(get_class($this));
         $this
             ->setHydrator(new \Althingi\Hydrator\Issue())
-            ->setObject((object)[]);
+            ->setObject(new \Althingi\Model\Issue());
 
         $this->add(array(
             'name' => 'issue_id',

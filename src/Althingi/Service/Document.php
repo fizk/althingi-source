@@ -9,6 +9,8 @@
 namespace Althingi\Service;
 
 use Althingi\Lib\DatabaseAwareInterface;
+use Althingi\Model\Document as DocumentModel;
+use Althingi\Hydrator\Document as DocumentHydrator;
 use PDO;
 
 class Document implements DatabaseAwareInterface
@@ -20,7 +22,13 @@ class Document implements DatabaseAwareInterface
      */
     private $pdo;
 
-    public function get($assemblyId, $issueId, $documentId)
+    /**
+     * @param int $assemblyId
+     * @param int $issueId
+     * @param int $documentId
+     * @return \Althingi\Model\Document|null
+     */
+    public function get(int $assemblyId, int $issueId, int $documentId): ?DocumentModel
     {
         $statement = $this->getDriver()->prepare("
             select * from `Document` D 
@@ -32,31 +40,45 @@ class Document implements DatabaseAwareInterface
             'document_id' => $documentId
         ]);
 
-        $assembly = $statement->fetchObject();
-        return $this->decorate($assembly);
+        $object = $statement->fetch(PDO::FETCH_ASSOC);
+        return $object
+            ? (new DocumentHydrator())->hydrate($object, new DocumentModel())
+            : null ;
     }
 
-    public function create($data)
+    /**
+     * @param \Althingi\Model\Document $data
+     * @return int
+     */
+    public function create(DocumentModel $data): int
     {
-        $statement = $this
-            ->getDriver()
-            ->prepare($this->insertString('Document', $data));
-        $statement->execute($this->convert($data));
+        $statement = $this->getDriver()->prepare(
+            $this->toInsertString('Document', $data)
+        );
+        $statement->execute($this->toSqlValues($data));
+
+        return $this->getDriver()->lastInsertId();
     }
 
-    public function update($data)
+    /**
+     * @param \Althingi\Model\Document $data
+     * @return int
+     */
+    public function update(DocumentModel$data): int
     {
-        $statement = $this
-            ->getDriver()
-            ->prepare($this->updateString(
+        $statement = $this->getDriver()->prepare(
+            $this->toUpdateString(
                 'Document',
                 $data,
-                "assembly_id={$data->assembly_id} and issue_id={$data->issue_id} and document_id={$data->document_id}"
-            ));
-        $statement->execute($this->convert($data));
+                "assembly_id={$data->getAssemblyId()} and issue_id={$data->getIssueId()} and document_id={$data->getDocumentId()}"
+            )
+        );
+        $statement->execute($this->toSqlValues($data));
+
+        return $statement->rowCount();
     }
 
-    public function fetchByIssue($assemblyId, $issueId)
+    public function fetchByIssue(int $assemblyId, int $issueId): array
     {
         $statement = $this->getDriver()->prepare('
             select * from `Document`
@@ -68,20 +90,9 @@ class Document implements DatabaseAwareInterface
             'issue_id' => $issueId,
         ]);
 
-        return array_map([$this, 'decorate'], $statement->fetchAll());
-    }
-
-    private function decorate($object)
-    {
-        if (!$object) {
-            return null;
-        }
-
-        $object->document_id = (int) $object->document_id;
-        $object->issue_id = (int) $object->issue_id;
-        $object->assembly_id = (int) $object->assembly_id;
-
-        return $object;
+        return array_map(function ($object) {
+            return (new DocumentHydrator())->hydrate($object, new DocumentModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
     /**

@@ -9,6 +9,8 @@
 namespace Althingi\Service;
 
 use Althingi\Lib\DatabaseAwareInterface;
+use Althingi\Model\CommitteeMeetingAgenda as CommitteeMeetingAgendaModel;
+use Althingi\Hydrator\CommitteeMeetingAgenda as CommitteeMeetingAgendaHydrator;
 use PDO;
 
 /**
@@ -22,7 +24,12 @@ class CommitteeMeetingAgenda implements DatabaseAwareInterface
     /** @var  \PDO */
     private $pdo;
 
-    public function get($meetingId, $agendaId)
+    /**
+     * @param $meetingId
+     * @param $agendaId
+     * @return \Althingi\Model\CommitteeMeetingAgenda|null
+     */
+    public function get(int $meetingId, int $agendaId): ?CommitteeMeetingAgendaModel
     {
         $statement = $this->getDriver()->prepare('
             select * from `CommitteeMeetingAgenda` C 
@@ -34,41 +41,46 @@ class CommitteeMeetingAgenda implements DatabaseAwareInterface
             'committee_meeting_agenda_id' => $agendaId
         ]);
 
-        return $this->decorate($statement->fetchObject());
+        $object = $statement->fetch(PDO::FETCH_ASSOC);
+
+        return $object
+            ? (new CommitteeMeetingAgendaHydrator())->hydrate($object, new CommitteeMeetingAgendaModel())
+            : null;
     }
 
     /**
      * Create one entry.
      *
-     * @param object $data
+     * @param \Althingi\Model\CommitteeMeetingAgenda $data
      * @return int affected rows
      */
-    public function create($data)
+    public function create(CommitteeMeetingAgendaModel $data): int
     {
-        $statement = $this
-            ->getDriver()
-            ->prepare($this->insertString('CommitteeMeetingAgenda', $data));
-        $statement->execute($this->convert($data));
-        return $statement->rowCount();
+        $statement = $this->getDriver()->prepare(
+            $this->toInsertString('CommitteeMeetingAgenda', $data)
+        );
+        $statement->execute($this->toSqlValues($data));
+
+        return $this->getDriver()->lastInsertId();
     }
 
     /**
      * Create one entry.
      *
-     * @param object $data
+     * @param \Althingi\Model\CommitteeMeetingAgenda $data
      * @return int affected rows
      */
-    public function update($data)
+    public function update(CommitteeMeetingAgendaModel $data): int
     {
-        $statement = $this
-            ->getDriver()
-            ->prepare($this->updateString(
+        $statement = $this->getDriver()->prepare(
+            $this->toUpdateString(
                 'CommitteeMeetingAgenda',
                 $data,
-                "committee_meeting_id={$data->committee_meeting_id} " .
-                "and committee_meeting_agenda_id={$data->committee_meeting_agenda_id}"
-            ));
-        $statement->execute($this->convert($data));
+                "committee_meeting_id={$data->getCommitteeMeetingId()} and committee_meeting_agenda_id={$data->getCommitteeMeetingAgendaId()}"
+            )
+        );
+        $statement->execute($this->toSqlValues($data));
+
         return $statement->rowCount();
     }
 
@@ -86,19 +98,5 @@ class CommitteeMeetingAgenda implements DatabaseAwareInterface
     public function getDriver()
     {
         return $this->pdo;
-    }
-
-    private function decorate($object)
-    {
-        if (!$object) {
-            return null;
-        }
-
-        $object->assembly_id = (int) $object->assembly_id;
-        $object->issue_id = $object->issue_id ? (int) $object->assembly_id : null;
-        $object->committee_meeting_id = (int) $object->committee_meeting_id;
-        $object->committee_meeting_agenda_id = (int) $object->committee_meeting_agenda_id;
-
-        return $object;
     }
 }

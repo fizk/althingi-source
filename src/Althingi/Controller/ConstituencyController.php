@@ -51,9 +51,9 @@ class ConstituencyController extends AbstractRestfulController implements
      */
     public function patch($id, $data)
     {
-        if (($party = $this->constituencyService->get($id)) != null) {
+        if (($constituency = $this->constituencyService->get($id)) != null) {
             $form = new ConstituencyForm();
-            $form->bind($party);
+            $form->bind($constituency);
             $form->setData($data);
 
             if ($form->isValid()) {

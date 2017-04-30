@@ -21,7 +21,7 @@ class AssemblyTest extends PHPUnit_Framework_TestCase
             'to' => '',
         ])->isValid();
 
-        $this->assertNull($form->getObject()->to);
+        $this->assertNull($form->getObject()->getTo());
     }
 
     public function testNonEmptyToValue()
@@ -33,6 +33,6 @@ class AssemblyTest extends PHPUnit_Framework_TestCase
             'to' => '2001-02-02',
         ])->isValid();
 
-        $this->assertNotNull($form->getObject()->to);
+        $this->assertNotNull($form->getObject()->getTo());
     }
 }

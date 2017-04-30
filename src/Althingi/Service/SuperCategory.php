@@ -10,6 +10,8 @@ namespace Althingi\Service;
 
 use Althingi\Lib\DatabaseAwareInterface;
 use PDO;
+use Althingi\Model\SuperCategory as SuperCategoryModel;
+use Althingi\Hydrator\SuperCategory as SuperCategoryHydrator;
 
 /**
  * Class Party
@@ -28,42 +30,49 @@ class SuperCategory implements DatabaseAwareInterface
      * Get one party.
      *
      * @param int $id
-     * @return \stdClass
+     * @return \Althingi\Model\SuperCategory
      */
-    public function get($id)
+    public function get($id): ?SuperCategoryModel
     {
         $statement = $this->getDriver()->prepare('
             select * from `SuperCategory` where super_category_id = :super_category_id
         ');
         $statement->execute(['super_category_id' => $id]);
-        return $this->decorate($statement->fetchObject());
+        $object = $statement->fetch(PDO::FETCH_ASSOC);
+
+        return $object
+            ? (new SuperCategoryHydrator())->hydrate($object, new SuperCategoryModel())
+            : null;
     }
 
-    public function create($data)
+    /**
+     * @param SuperCategoryModel $data
+     * @return int
+     */
+    public function create(SuperCategoryModel $data): int
     {
-        $statement = $this->getDriver()->prepare($this->insertString('SuperCategory', $data));
-        $statement->execute($this->convert($data));
+        $statement = $this->getDriver()->prepare(
+            $this->toInsertString('SuperCategory', $data)
+        );
+        $statement->execute($this->toSqlValues($data));
+
         return $this->getDriver()->lastInsertId();
     }
 
-    public function update($data)
+    public function update(SuperCategoryModel $data): int
     {
+//        $statement = $this->getDriver()->prepare(
+//            $this->updateString('SuperCategory', $data, "super_category_id = {$data->super_category_id}")
+//        );
+//        $statement->execute($this->convert($data));
+//        return $statement->rowCount();
+
         $statement = $this->getDriver()->prepare(
-            $this->updateString('SuperCategory', $data, "super_category_id = {$data->super_category_id}")
+            $this->toUpdateString('SuperCategory', $data, "super_category_id={$data->getSuperCategoryId()}")
         );
-        $statement->execute($this->convert($data));
+        $statement->execute($this->toSqlValues($data));
+
         return $statement->rowCount();
-    }
-
-    private function decorate($object)
-    {
-        if (!$object) {
-            return null;
-        }
-
-        $object->party_id = (int) $object->party_id;
-
-        return $object;
     }
 
     /**

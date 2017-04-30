@@ -17,7 +17,7 @@ class SuperCategory extends Form implements InputFilterProviderInterface
         parent::__construct(get_class($this));
         $this
             ->setHydrator(new \Althingi\Hydrator\SuperCategory())
-            ->setObject((object)[]);
+            ->setObject(new \Althingi\Model\SuperCategory());
 
         $this->add(array(
             'name' => 'super_category_id',

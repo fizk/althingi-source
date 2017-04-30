@@ -17,7 +17,7 @@ class VoteItem extends Form implements InputFilterProviderInterface
         parent::__construct(get_class($this));
         $this
             ->setHydrator(new \Althingi\Hydrator\VoteItem())
-            ->setObject((object)[]);
+            ->setObject(new \Althingi\Model\VoteItem());
 
         $this->add(array(
             'name' => 'vote_item_id',

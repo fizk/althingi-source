@@ -10,6 +10,18 @@ namespace Althingi\Service;
 
 use Althingi\Lib\DatabaseAwareInterface;
 use PDO;
+use Althingi\Model\Congressman as CongressmanModel;
+use Althingi\Model\CongressmanAndParty as CongressmanAndPartyModel;
+use Althingi\Model\CongressmanAndCabinet as CongressmanAndCabinetModel;
+use Althingi\Model\CongressmanAndDateRange as CongressmanAndDateRangeModel;
+use Althingi\Model\Proponent as ProponentModel;
+use Althingi\Model\President as PresidentModel;
+use Althingi\Hydrator\Congressman as CongressmanHydrator;
+use Althingi\Hydrator\CongressmanAndParty as CongressmanAndPartyHydrator;
+use Althingi\Hydrator\CongressmanAndCabinet as CongressmanAndCabinetHydrator;
+use Althingi\Hydrator\CongressmanAndRange as CongressmanAndRangeHydrator;
+use Althingi\Hydrator\Proponent as ProponentHydrator;
+use Althingi\Hydrator\President as PresidentHydrator;
 
 /**
  * Class Congressman
@@ -32,16 +44,17 @@ class Congressman implements DatabaseAwareInterface
      * Get one Congressman.
      *
      * @param int $id
-     * @return object
+     * @return \Althingi\Model\Congressman
      */
-    public function get($id)
+    public function get(int $id): ?CongressmanModel
     {
-        $statement = $this->getDriver()->prepare("
-            select * from `Congressman` C where congressman_id = :id
-        ");
+        $statement = $this->getDriver()->prepare("select * from `Congressman` C where congressman_id = :id");
         $statement->execute(['id' => $id]);
+        $object =  $statement->fetch(PDO::FETCH_ASSOC);
 
-        return $this->decorate($statement->fetchObject());
+        return $object
+            ? (new CongressmanHydrator())->hydrate($object, new CongressmanModel())
+            : null ;
     }
 
     /**
@@ -49,19 +62,26 @@ class Congressman implements DatabaseAwareInterface
      *
      * @param int $offset
      * @param int $size
-     * @return array
+     * @return \Althingi\Model\CongressmanAndParty[]
      */
-    public function fetchAll($offset, $size)
+    public function fetchAll(int $offset, int $size): array
     {
         $statement = $this->getDriver()->prepare("
             select * from `Congressman` C order by C.`name` asc
             limit {$offset}, {$size}
         ");
         $statement->execute();
-        return array_map([$this, 'decorate'], $statement->fetchAll());
+        return array_map(function ($object) {
+            return (new CongressmanHydrator())->hydrate($object, new CongressmanModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    public function fetchByAssembly($assemblyId, $congressmanType = null)
+    /**
+     * @param $assemblyId
+     * @param null $congressmanType
+     * @return \Althingi\Model\CongressmanAndParty[]
+     */
+    public function fetchByAssembly(int $assemblyId, $congressmanType = null): array
     {
         $statement;
         switch ($congressmanType) {
@@ -95,10 +115,16 @@ class Congressman implements DatabaseAwareInterface
                 break;
         }
         $statement->execute(['assembly_id' => $assemblyId]);
-        return array_map([$this, 'decorate'], $statement->fetchAll());
+        return array_map(function ($object) {
+            return (new CongressmanAndPartyHydrator())->hydrate($object, new CongressmanAndPartyModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    public function fetchByCabinet($cabinetId)
+    /**
+     * @param int $cabinetId
+     * @return \Althingi\Model\CongressmanAndCabinet[]
+     */
+    public function fetchByCabinet(int $cabinetId): array
     {
         $statement = $this->getDriver()->prepare(
             'select C.*, CC.`title`, CC.`from` as `date` from `Cabinet_has_Congressman` CC
@@ -106,13 +132,20 @@ class Congressman implements DatabaseAwareInterface
             where CC.`cabinet_id` = :cabinet_id order by C.`name`;'
         );
         $statement->execute(['cabinet_id' => $cabinetId]);
-        return array_map([$this, 'decorate'], $statement->fetchAll());
+        return array_map(function ($object) {
+            return (new CongressmanAndCabinetHydrator())->hydrate($object, new CongressmanAndCabinetModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    public function fetchAccumulatedTimeByIssue($assemblyId, $issueId)
+    /**
+     * @param int $assemblyId
+     * @param int $issueId
+     * @return \Althingi\Model\CongressmanAndDateRange[]
+     */
+    public function fetchAccumulatedTimeByIssue(int $assemblyId, int $issueId): array
     {
         $statement = $this->getDriver()->prepare('
-            select S.congressman_id, C.name, (sum(`diff`)) as `time`, date(`from`) as `begin` from (
+            select C.*, (sum(`diff`)) as `time`, date(`from`) as `begin`, null as `end` from (
                 select *, timediff(`to`, `from`) as `diff`
                 from `Speech` D
                 where D.assembly_id = :assembly_id and D.issue_id = :issue_id
@@ -126,14 +159,17 @@ class Congressman implements DatabaseAwareInterface
             'assembly_id' => $assemblyId
         ]);
 
-        return array_map(function ($congressman) {
-            $congressman->congressman_id = (int) $congressman->congressman_id;
-            $congressman->time = (int) $congressman->time;
-            return $congressman;
-        }, $statement->fetchAll());
+        return array_map(function ($object) {
+            return (new CongressmanAndRangeHydrator())->hydrate($object, new CongressmanAndDateRangeModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    public function fetchProponents($assemblyId, $documentId)
+    /**
+     * @param int $assemblyId
+     * @param int $documentId
+     * @return \Althingi\Model\Proponent[]
+     */
+    public function fetchProponents(int $assemblyId, int $documentId): array
     {
         $statement = $this->getDriver()->prepare(
             'select C.* from `Document_has_Congressman` D
@@ -146,43 +182,59 @@ class Congressman implements DatabaseAwareInterface
             'document_id' => $documentId
         ]);
 
-        return array_map([$this, 'decorate'], $statement->fetchAll());
+        return array_map(function ($object) {
+            return (new ProponentHydrator())->hydrate($object, new ProponentModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    public function fetchPresidents()
+    /**
+     * @return \Althingi\Model\President[]
+     */
+    public function fetchPresidents(): array
     {
         $statement = $this->getDriver()->prepare("
-            select C.*, P.`from`, P.`to`, P.`title`, P.`abbr` from `President` P
+            select * from `President` P
             join `Congressman` C on (C.`congressman_id` = P.`congressman_id`);
         ");
         $statement->execute();
 
-        return array_map([$this, 'decorate'], $statement->fetchAll());
+        return array_map(function ($object) {
+            return (new PresidentHydrator())->hydrate($object, new PresidentModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    public function fetchPresidentsByAssembly($assemblyId)
+    /**
+     * @param int $assemblyId
+     * @return \Althingi\Model\President[]
+     */
+    public function fetchPresidentsByAssembly(int $assemblyId): array
     {
         $statement = $this->getDriver()->prepare("
-            select C.*, P.`from`, P.`to`, P.`title`, P.`abbr` from `President` P
+            select * from `President` P
             join `Congressman` C on (C.`congressman_id` = P.`congressman_id`)
             where P.`assembly_id` = :assembly_id;
         ");
         $statement->execute(['assembly_id' => $assemblyId]);
 
-        return array_map([$this, 'decorate'], $statement->fetchAll());
+        return array_map(function ($object) {
+            return (new PresidentHydrator())->hydrate($object, new PresidentModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
     /**
      * Create one Congressman. This method accepts object
      * from corresponding Form.
      *
-     * @param $data
-     * @return string
+     * @param \Althingi\Model\Congressman $data
+     * @return int
      */
-    public function create($data)
+    public function create(CongressmanModel $data): int
     {
-        $statement = $this->getDriver()->prepare($this->insertString('Congressman', $data));
-        $statement->execute($this->convert($data));
+        $statement = $this->getDriver()->prepare(
+            $this->toInsertString('Congressman', $data)
+        );
+        $statement->execute($this->toSqlValues($data));
+
         return $this->getDriver()->lastInsertId();
     }
 
@@ -190,15 +242,16 @@ class Congressman implements DatabaseAwareInterface
      * Update one Congressman. This method accepts object
      * from corresponding Form.
      *
-     * @param $data
+     * @param \Althingi\Model\Congressman $data
      * @return int Should be 1, for one entry updated.
      */
-    public function update($data)
+    public function update(CongressmanModel $data): int
     {
         $statement = $this->getDriver()->prepare(
-            $this->updateString('Congressman', $data, "congressman_id = {$data->congressman_id}")
+            $this->toUpdateString('Congressman', $data, "congressman_id={$data->getCongressmanId()}")
         );
-        $statement->execute($this->convert($data));
+        $statement->execute($this->toSqlValues($data));
+
         return $statement->rowCount();
     }
 
@@ -208,10 +261,10 @@ class Congressman implements DatabaseAwareInterface
      * @param $id
      * @return int Should be 1, for one entry deleted.
      */
-    public function delete($id)
+    public function delete(int $id): int
     {
         $statement = $this->getDriver()->prepare("
-            select * from `Congressman`
+            delete from `Congressman`
             where congressman_id = :id
         ");
         $statement->execute(['id' => $id]);
@@ -223,7 +276,7 @@ class Congressman implements DatabaseAwareInterface
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         $statement = $this->getDriver()->prepare("
             select count(*) from `Congressman` C
@@ -246,24 +299,5 @@ class Congressman implements DatabaseAwareInterface
     public function getDriver()
     {
         return $this->pdo;
-    }
-
-    /**
-     * Decorate and convert one entry object.
-     *
-     * @param $object
-     * @return null|object
-     */
-    private function decorate($object)
-    {
-        if (!$object) {
-            return null;
-        }
-        if (isset($object->party_id)) {
-            $object->party_id = (int) $object->party_id;
-        }
-        $object->congressman_id = (int) $object->congressman_id;
-
-        return $object;
     }
 }

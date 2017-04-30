@@ -51,9 +51,9 @@ class SuperCategoryController extends AbstractRestfulController implements
      */
     public function patch($id, $data)
     {
-        if (($party = $this->superCategoryService->get($id)) != null) {
+        if (($superCategory = $this->superCategoryService->get($id)) != null) {
             $form = new SuperCategoryForm();
-            $form->bind($party);
+            $form->bind($superCategory);
             $form->setData($data);
 
             if ($form->isValid()) {

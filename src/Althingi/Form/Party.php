@@ -17,7 +17,7 @@ class Party extends Form implements InputFilterProviderInterface
         parent::__construct(get_class($this));
         $this
             ->setHydrator(new \Althingi\Hydrator\Party())
-            ->setObject((object)[]);
+            ->setObject(new \Althingi\Model\Party());
 
         $this->add(array(
             'name' => 'party_id',
@@ -39,6 +39,10 @@ class Party extends Form implements InputFilterProviderInterface
             'type' => 'Zend\Form\Element\Text',
         ));
 
+        $this->add(array(
+            'name' => 'color',
+            'type' => 'Zend\Form\Element\Text',
+        ));
     }
 
 
@@ -70,6 +74,16 @@ class Party extends Form implements InputFilterProviderInterface
                 ],
             ],
             'abbr_long' => [
+                'required' => false,
+                'allow_empty' => true,
+                'filters' => [
+                    [
+                        'name' => '\Zend\Filter\ToNull',
+                        'options' => ['type' => 'all']
+                    ]
+                ],
+            ],
+            'color' => [
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [

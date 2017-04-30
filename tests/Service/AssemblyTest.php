@@ -35,7 +35,7 @@ class AssemblyTest extends PHPUnit_Extensions_Database_TestCase
 
     public function testGetNotFound()
     {
-        $assemblyService = new Assembly();
+        $assemblyService = new President();
         $assemblyService->setDriver($this->pdo);
 
         $actualData = $assemblyService->get(100);

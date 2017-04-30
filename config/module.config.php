@@ -20,7 +20,7 @@ use Althingi\Controller\SpeechController;
 use Althingi\Controller\VoteController;
 use Althingi\Controller\VoteItemController;
 use Althingi\Controller\CongressmanIssueController;
-use Althingi\Controller\ProponentController;
+use Althingi\Controller\CongressmanDocumentController;
 use Althingi\Controller\DocumentController;
 use Althingi\Controller\CommitteeController;
 use Althingi\Controller\CabinetController;
@@ -220,7 +220,7 @@ return array(
                                         'options' => [
                                             'route'    => '/flutningsmenn[/:congressman_id]',
                                             'defaults' => [
-                                                'controller' => ProponentController::class,
+                                                'controller' => CongressmanDocumentController::class,
                                                 'identifier' => 'congressman_id'
                                             ],
                                         ],
@@ -433,7 +433,7 @@ return array(
             VoteController::class => VoteController::class,
             VoteItemController::class => VoteItemController::class,
             CongressmanIssueController::class => CongressmanIssueController::class,
-            ProponentController::class => ProponentController::class,
+            CongressmanDocumentController::class => CongressmanDocumentController::class,
             DocumentController::class => DocumentController::class,
             CommitteeController::class => CommitteeController::class,
             CabinetController::class => CabinetController::class,

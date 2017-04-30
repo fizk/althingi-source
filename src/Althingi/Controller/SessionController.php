@@ -34,13 +34,14 @@ class SessionController extends AbstractRestfulController implements
      *
      * @param int $id
      * @return \Rend\View\Model\ModelInterface
-     * @todo should there be a test if the congressman exists?
      */
     public function get($id)
     {
-        $session = $this->sessionService->get($id);
+        if (($session = $this->sessionService->get($id)) != null) {
+            return new ItemModel($session);
+        }
 
-        return new ItemModel($session);
+        return $this->notFoundAction();
     }
 
     /**
@@ -54,8 +55,7 @@ class SessionController extends AbstractRestfulController implements
 
         $sessions = $this->sessionService->fetchByCongressman($congressmanId);
 
-        return (new CollectionModel($sessions))
-            ->setOption('Access-Control-Allow-Origin', '*');
+        return (new CollectionModel($sessions));
     }
 
     /**
@@ -90,6 +90,7 @@ class SessionController extends AbstractRestfulController implements
         $form->setData(array_merge($data, ['congressman_id' => $congressmanId]));
 
         if ($form->isValid()) {
+            /** @var $sessionObject \Althingi\Model\Session */
             $sessionObject = $form->getObject();
 
             try {
@@ -99,9 +100,9 @@ class SessionController extends AbstractRestfulController implements
                 // Error: 1022 SQLSTATE: 23000 (ER_DUP_KEY)
                 if ($e->getCode() == 23000) {
                     $sessionId = $this->sessionService->getIdentifier(
-                        $sessionObject->congressman_id,
-                        $sessionObject->from,
-                        $sessionObject->type
+                        $sessionObject->getCongressmanId(),
+                        $sessionObject->getFrom(),
+                        $sessionObject->getType()
                     );
                     $statusCode = 409;
                 }

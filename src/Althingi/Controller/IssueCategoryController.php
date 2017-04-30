@@ -100,13 +100,11 @@ class IssueCategoryController extends AbstractRestfulController implements
             if ($form->isValid()) {
                 $this->issueCategoryService->update($form->getData());
                 return (new EmptyModel())
-                    ->setStatus(205)
-                    ->setOption('Access-Control-Allow-Origin', '*');
+                    ->setStatus(205);
             }
 
             return (new ErrorModel($form))
-                ->setStatus(400)
-                ->setOption('Access-Control-Allow-Origin', '*');
+                ->setStatus(400);
         }
 
         return $this->notFoundAction();

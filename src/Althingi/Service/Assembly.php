@@ -9,6 +9,8 @@
 namespace Althingi\Service;
 
 use Althingi\Lib\DatabaseAwareInterface;
+use Althingi\Model\Assembly as AssemblyModel;
+use Althingi\Hydrator\Assembly as AssemblyHydrator;
 use PDO;
 
 /**
@@ -32,17 +34,14 @@ class Assembly implements DatabaseAwareInterface
      * @param $id
      * @return null|\Althingi\Model\Assembly
      */
-    public function get($id)
+    public function get($id): ?AssemblyModel
     {
         $statement = $this->getDriver()->prepare("select * from `Assembly` where assembly_id = :id");
         $statement->execute(['id' => $id]);
-        $assembly = $statement->fetchObject();
+        $assembly = $statement->fetch(PDO::FETCH_ASSOC);
 
         return $assembly
-            ? (new \Althingi\Model\Assembly())
-                ->setAssemblyId($assembly->assembly_id)
-                ->setFrom($assembly->from ? new \DateTime($assembly->from) : null)
-                ->setTo($assembly->to ? new \DateTime($assembly->to) : null)
+            ? (new AssemblyHydrator)->hydrate($assembly, new AssemblyModel())
             : null;
     }
 
@@ -52,9 +51,9 @@ class Assembly implements DatabaseAwareInterface
      * @param int $offset
      * @param int $size
      * @param string $order
-     * @return array
+     * @return \Althingi\Model\Assembly[]
      */
-    public function fetchAll($offset = null, $size = null, $order = 'desc')
+    public function fetchAll($offset = null, $size = null, $order = 'desc'): array
     {
         $order = in_array($order, ['asc', 'desc']) ? $order : 'desc';
 
@@ -67,11 +66,8 @@ class Assembly implements DatabaseAwareInterface
         $statement->execute();
 
         return array_map(function ($assembly) {
-            return (new \Althingi\Model\Assembly())
-                ->setAssemblyId($assembly->assembly_id)
-                ->setFrom($assembly->from ? new \DateTime($assembly->from) : null)
-                ->setTo($assembly->to ? new \DateTime($assembly->to) : null);
-        }, $statement->fetchAll());
+            return (new AssemblyHydrator)->hydrate($assembly, new AssemblyModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
     /**
@@ -79,7 +75,7 @@ class Assembly implements DatabaseAwareInterface
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         $statement = $this->getDriver()->prepare("select count(*) from `Assembly` A");
         $statement->execute();
@@ -93,7 +89,7 @@ class Assembly implements DatabaseAwareInterface
      * @param \Althingi\Model\Assembly $data
      * @return int affected rows
      */
-    public function create(\Althingi\Model\Assembly $data)
+    public function create(AssemblyModel $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toInsertString('Assembly', $data)
@@ -109,7 +105,7 @@ class Assembly implements DatabaseAwareInterface
      * @param \Althingi\Model\Assembly $data
      * @return int affected rows
      */
-    public function update(\Althingi\Model\Assembly $data)
+    public function update(AssemblyModel $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toUpdateString('Assembly', $data, "assembly_id={$data->getAssemblyId()}")
@@ -126,7 +122,7 @@ class Assembly implements DatabaseAwareInterface
      * @param int $id
      * @return int
      */
-    public function delete($id)
+    public function delete($id): int
     {
         $statement = $this->getDriver()->prepare("delete from `Assembly` where assembly_id = :assembly_id");
         $statement->execute(['assembly_id' => $id]);

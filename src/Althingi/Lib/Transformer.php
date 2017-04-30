@@ -7,8 +7,8 @@
  */
 
 namespace Althingi\Lib;
-use League\HTMLToMarkdown\HtmlConverter;
 
+use League\HTMLToMarkdown\HtmlConverter;
 
 class Transformer
 {

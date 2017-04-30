@@ -1,0 +1,69 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: einarvalur
+ * Date: 20/05/15
+ * Time: 7:40 AM
+ */
+
+namespace Althingi\Controller;
+
+use Althingi\Model\President;
+use Althingi\Service\Congressman;
+use Althingi\Service\Party;
+use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+
+/**
+ * Class PresidentAssemblyControllerTest
+ * @package Althingi\Controller
+ * @coversDefaultClass \Althingi\Controller\PresidentAssemblyController
+ * @covers \Althingi\Controller\PresidentAssemblyController::setPartyService
+ * @covers \Althingi\Controller\PresidentAssemblyController::setCongressmanService
+ */
+class PresidentAssemblyControllerTest extends AbstractHttpControllerTestCase
+{
+    use ServiceHelper;
+
+    public function setUp()
+    {
+        $this->setApplicationConfig(
+            include __DIR__ .'/../application.config.php'
+        );
+
+        parent::setUp();
+
+        $this->buildServices([
+            Party::class,
+            Congressman::class,
+        ]);
+    }
+
+    public function tearDown()
+    {
+        \Mockery::close();
+        return parent::tearDown();
+    }
+
+    /**
+     * @covers ::getList
+     */
+    public function testGetList()
+    {
+        $this->getMockService(Congressman::class)
+            ->shouldReceive('fetchPresidentsByAssembly')
+            ->andReturn([(new President())->setPresidentId(1)->setFrom(new \DateTime())])
+            ->once()
+            ->getMock();
+
+        $this->getMockService(Party::class)
+            ->shouldReceive('getByCongressman')
+            ->andReturn((new \Althingi\Model\Party()))
+            ->once()
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/1/forsetar', 'GET');
+        $this->assertControllerClass('PresidentAssemblyController');
+        $this->assertActionName('getList');
+        $this->assertResponseStatusCode(200);
+    }
+}

@@ -8,7 +8,8 @@
 
 namespace Althingi\Hydrator;
 
-use Zend\Stdlib\Hydrator\HydratorInterface;
+use Zend\Hydrator\HydratorInterface;
+use DateTime;
 
 class Document implements HydratorInterface
 {
@@ -16,25 +17,29 @@ class Document implements HydratorInterface
      * Hydrate $object with the provided $data.
      *
      * @param  array $data
-     * @param  object $object
-     * @return object
+     * @param  \Althingi\Model\Document $object
+     * @return \Althingi\Model\Document
      */
     public function hydrate(array $data, $object)
     {
-        return (object) $data;
+        return $object
+            ->setDocumentId($data['document_id'])
+            ->setIssueId($data['issue_id'])
+            ->setAssemblyId($data['assembly_id'])
+            ->setDate(new DateTime($data['date']))
+            ->setUrl($data['url'])
+            ->setType($data['type']);
     }
 
 
     /**
      * Extract values from an object
      *
-     * @param  object $object
+     * @param  \Althingi\Model\Document $object
      * @return array
      */
     public function extract($object)
     {
-        unset($object->time);
-
-        return (array) $object;
+        return $object->toArray();
     }
 }

@@ -16,7 +16,7 @@ use Althingi\Service\Issue;
 use Althingi\Service\Speech;
 use Althingi\Service\Vote;
 use Althingi\Service\VoteItem;
-use Althingi\Service\Proponent;
+use Althingi\Service\CongressmanDocument;
 use Althingi\Service\Document;
 use Althingi\Service\Committee;
 use Althingi\Service\CommitteeMeeting;
@@ -47,7 +47,7 @@ return [
         Speech::class => Speech::class,
         Vote::class => Vote::class,
         VoteItem::class => VoteItem::class,
-        Proponent::class => Proponent::class,
+        CongressmanDocument::class => CongressmanDocument::class,
         Document::class => Document::class,
         Committee::class => Committee::class,
         CommitteeMeeting::class => CommitteeMeeting::class,

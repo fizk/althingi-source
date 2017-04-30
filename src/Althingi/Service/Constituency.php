@@ -9,6 +9,8 @@
 namespace Althingi\Service;
 
 use Althingi\Lib\DatabaseAwareInterface;
+use Althingi\Model\Constituency as ConstituencyModel;
+use Althingi\Hydrator\Constituency as ConstituencyHydrator;
 use PDO;
 
 /**
@@ -24,35 +26,50 @@ class Constituency implements DatabaseAwareInterface
      */
     private $pdo;
 
-    public function get($id)
+    /**
+     * @param int $id
+     * @return \Althingi\Model\Constituency
+     */
+    public function get(int $id): ?ConstituencyModel
     {
-        $statement = $this->getDriver()->prepare('
-            select * from `Constituency` where constituency_id = :constituency_id
-        ');
+        $statement = $this->getDriver()->prepare(
+            'select * from `Constituency` where constituency_id = :constituency_id'
+        );
         $statement->execute(['constituency_id' => $id]);
-        return $statement->fetchObject();
+        $object = $statement->fetch(PDO::FETCH_ASSOC);
+        return $object
+            ? (new ConstituencyHydrator())->hydrate($object, new ConstituencyModel())
+            : null;
     }
 
     /**
      * Create one Constituency. Accepts object from
      * corresponding Form.
      *
-     * @param $data
-     * @return string
+     * @param \Althingi\Model\Constituency $data
+     * @return int
      */
-    public function create($data)
+    public function create(ConstituencyModel $data): int
     {
-        $statement = $this->getDriver()->prepare($this->insertString('Constituency', $data));
-        $statement->execute($this->convert($data));
+        $statement = $this->getDriver()->prepare(
+            $this->toInsertString('Constituency', $data)
+        );
+        $statement->execute($this->toSqlValues($data));
+
         return $this->getDriver()->lastInsertId();
     }
 
-    public function update($data)
+    /**
+     * @param \Althingi\Model\Constituency $data
+     * @return int
+     */
+    public function update(ConstituencyModel $data): int
     {
         $statement = $this->getDriver()->prepare(
-            $this->updateString('Constituency', $data, "constituency_id = {$data->constituency_id}")
+            $this->toUpdateString('Constituency', $data, "constituency_id={$data->getConstituencyId()}")
         );
-        $statement->execute($this->convert($data));
+        $statement->execute($this->toSqlValues($data));
+
         return $statement->rowCount();
     }
 

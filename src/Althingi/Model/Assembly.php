@@ -58,7 +58,7 @@ class Assembly implements ModelInterface
     /**
      * @return \DateTime
      */
-    public function getTo(): \DateTime
+    public function getTo(): ?\DateTime
     {
         return $this->to;
     }
@@ -73,6 +73,9 @@ class Assembly implements ModelInterface
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function toArray()
     {
         return [
@@ -83,11 +86,7 @@ class Assembly implements ModelInterface
     }
 
     /**
-     * Specify data which should be serialized to JSON
-     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
-     * @return mixed data which can be serialized by <b>json_encode</b>,
-     * which is a value of any type other than a resource.
-     * @since 5.4.0
+     * @return array
      */
     public function jsonSerialize()
     {

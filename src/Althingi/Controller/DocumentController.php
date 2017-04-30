@@ -9,11 +9,14 @@
 namespace Althingi\Controller;
 
 use Althingi\Lib\ServiceVoteItemAwareInterface;
+use Althingi\Model\Proponent as ProponentModel;
+use Althingi\Model\ProponentPartyProperties as ProponentPartyPropertiesModel;
 use Althingi\Service\Congressman;
 use Althingi\Service\Party;
 use Althingi\Service\Vote;
 use Althingi\Service\VoteItem;
-use DateTime;
+use Althingi\Model\Document as DocumentModel;
+use Althingi\Model\DocumentProperties as DocumentPropertiesModel;
 use Althingi\Form\Document as DocumentForm;
 use Althingi\Lib\ServiceCongressmanAwareInterface;
 use Althingi\Lib\ServiceDocumentAwareInterface;
@@ -66,17 +69,22 @@ class DocumentController extends AbstractRestfulController implements
         $assemblyId = $this->params('id');
         $issueId = $this->params('issue_id');
 
-        $documents = $this->documentService->fetchByIssue(
-            $assemblyId,
-            $issueId
-        );
-        array_walk($documents, function ($document) use ($assemblyId, $issueId) {
+        $documents = array_map(function (DocumentModel $document) use ($assemblyId, $issueId) {
 
-            $document->votes = $this->voteService->fetchByDocument(
-                $assemblyId,
-                $issueId,
-                $document->document_id
-            );
+            $votes = $this->voteService->fetchByDocument($assemblyId, $issueId, $document->getDocumentId());
+            $congressmen = array_map(function (ProponentModel $proponent) use ($document) {
+                return (new ProponentPartyPropertiesModel())
+                    ->setCongressman($proponent)
+                    ->setParty($this->partyService->getByCongressman(
+                        $proponent->getCongressmanId(),
+                        $document->getDate()
+                    ));
+            }, $this->congressmanService->fetchProponents($assemblyId, $document->getDocumentId()));
+
+            $documentProperties = (new DocumentPropertiesModel())
+                ->setDocument($document)
+                ->setVotes($votes)
+                ->setProponents($congressmen);
 
 //            $date = $document->date;
 //            array_walk($document->votes, function ($vote) use ($date) {
@@ -91,21 +99,10 @@ class DocumentController extends AbstractRestfulController implements
 //                });
 //            });
 
-            $document->proponents = $this->congressmanService->fetchProponents(
-                $assemblyId,
-                $document->document_id
-            );
-            array_walk($document->proponents, function ($proponent) use ($document) {
-                $proponent->party = $this->partyService->getByCongressman(
-                    $proponent->congressman_id,
-                    new DateTime($document->date)
-                );
-            });
-        });
+            return $documentProperties;
+        }, $this->documentService->fetchByIssue($assemblyId, $issueId));
 
         return (new CollectionModel($documents))
-            ->setOption('Access-Control-Allow-Origin', '*')
-            ->setOption('Access-Control-Expose-Headers', 'Range-Unit, Content-Range') //TODO should go into Rend
             ->setRange(0, count($documents), count($documents));
     }
 
@@ -115,11 +112,11 @@ class DocumentController extends AbstractRestfulController implements
         $issueId = $this->params('issue_id');
         $documentId = $this->params('document_id');
 
-        $form = (new DocumentForm())
-            ->setData(array_merge(
-                $data,
-                ['assembly_id' => $assemblyId, 'issue_id' => $issueId, 'document_id' => $documentId]
-            ));
+        $form = new DocumentForm();
+        $form->bindValues(array_merge(
+            $data,
+            ['assembly_id' => $assemblyId, 'issue_id' => $issueId, 'document_id' => $documentId]
+        ));
 
         if ($form->isValid()) {
             $this->documentService->create($form->getObject());
@@ -143,13 +140,11 @@ class DocumentController extends AbstractRestfulController implements
             if ($form->isValid()) {
                 $this->documentService->update($form->getData());
                 return (new EmptyModel())
-                    ->setStatus(205)
-                    ->setOption('Access-Control-Allow-Origin', '*');
+                    ->setStatus(205);
             }
 
             return (new ErrorModel($form))
-                ->setStatus(400)
-                ->setOption('Access-Control-Allow-Origin', '*');
+                ->setStatus(400);
         }
 
         return $this->notFoundAction();

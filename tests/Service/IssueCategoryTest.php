@@ -8,13 +8,11 @@
  */
 namespace Althingi\Service;
 
-require_once './module/Althingi/tests/MyAppDbUnitArrayDataSet.php';
-
+use Althingi\Model\IssueCategory as IssueCategoryModel;
 use PDO;
 use PHPUnit_Extensions_Database_DataSet_IDataSet;
 use PHPUnit_Extensions_Database_DB_IDatabaseConnection;
 use PHPUnit_Extensions_Database_TestCase;
-use Althingi\MyAppDbUnitArrayDataSet;
 
 class IssueCategoryTest extends PHPUnit_Extensions_Database_TestCase
 {
@@ -28,10 +26,10 @@ class IssueCategoryTest extends PHPUnit_Extensions_Database_TestCase
 
         $data = $service->get(145, 1, 1);
 
-        $this->assertInstanceOf('stdClass', $data);
-        $this->assertEquals(145, $data->assembly_id);
-        $this->assertEquals(1, $data->issue_id);
-        $this->assertEquals(1, $data->category_id);
+        $this->assertInstanceOf(IssueCategoryModel::class, $data);
+        $this->assertEquals(145, $data->getAssemblyId());
+        $this->assertEquals(1, $data->getIssueId());
+        $this->assertEquals(1, $data->getCategoryId());
     }
 
     public function testCreate()
@@ -39,14 +37,15 @@ class IssueCategoryTest extends PHPUnit_Extensions_Database_TestCase
         $service = new IssueCategory();
         $service->setDriver($this->pdo);
 
-        $service->create((object) [
-            'assembly_id' => 145,
-            'issue_id' => 2,
-            'category_id' => 34
-        ]);
+        $issueCategory = (new IssueCategoryModel())
+            ->setAssemblyId(145)
+            ->setIssueId(2)
+            ->setCategoryId(34);
+
+        $service->create($issueCategory);
 
         $data = $service->get(145, 2, 34);
-        $this->assertInstanceOf('stdClass', $data);
+        $this->assertEquals($issueCategory, $data);
     }
 
     public function testUpdate()
@@ -54,15 +53,24 @@ class IssueCategoryTest extends PHPUnit_Extensions_Database_TestCase
         $service = new IssueCategory();
         $service->setDriver($this->pdo);
 
-        $service->update((object) [
-            'assembly_id' => 145,
-            'issue_id' => 1,
-            'category_id' => 1
-        ]);
+        $issueCategory = (new IssueCategoryModel())
+            ->setAssemblyId(145)
+            ->setIssueId(1)
+            ->setCategoryId(1);
+
+        $service->update($issueCategory);
 
         $data = $service->get(145, 1, 1);
-        $this->assertInstanceOf('stdClass', $data);
+        $this->assertEquals($issueCategory, $data);
     }
+
+//    public function testFetchFrequencyByAssemblyAndCongressman()
+//    {
+//        $service = new IssueCategory();
+//        $service->setDriver($this->pdo);
+//
+//        $service->fetchFrequencyByAssemblyAndCongressman(1, 1);
+//    }
 
     /**
      * Returns the test database connection.
@@ -91,7 +99,7 @@ class IssueCategoryTest extends PHPUnit_Extensions_Database_TestCase
      */
     protected function getDataSet()
     {
-        return new MyAppDbUnitArrayDataSet([
+        return $this->createArrayDataSet([
             'SuperCategory' => require './module/Althingi/tests/data/super-categories.php',
             'Category' => require './module/Althingi/tests/data/categories.php',
             'Assembly' => [require './module/Althingi/tests/data/assembly_145.php'],

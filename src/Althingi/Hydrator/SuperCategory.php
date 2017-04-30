@@ -8,7 +8,7 @@
 
 namespace Althingi\Hydrator;
 
-use Zend\Stdlib\Hydrator\HydratorInterface;
+use Zend\Hydrator\HydratorInterface;
 
 class SuperCategory implements HydratorInterface
 {
@@ -16,23 +16,25 @@ class SuperCategory implements HydratorInterface
      * Hydrate $object with the provided $data.
      *
      * @param  array $data
-     * @param  object $object
-     * @return object
+     * @param  \Althingi\Model\SuperCategory $object
+     * @return \Althingi\Model\SuperCategory $object
      */
     public function hydrate(array $data, $object)
     {
-        return (object) $data;
+        return $object
+            ->setSuperCategoryId($data['super_category_id'])
+            ->setTitle($data['title']);
     }
 
 
     /**
      * Extract values from an object
      *
-     * @param  object $object
+     * @param  \Althingi\Model\SuperCategory $object
      * @return array
      */
     public function extract($object)
     {
-        return (array)$object;
+        return $object->toArray();
     }
 }

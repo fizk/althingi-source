@@ -8,7 +8,7 @@
 
 namespace Althingi\Hydrator;
 
-use Zend\Stdlib\Hydrator\HydratorInterface;
+use Zend\Hydrator\HydratorInterface;
 
 class Vote implements HydratorInterface
 {
@@ -16,19 +16,31 @@ class Vote implements HydratorInterface
      * Hydrate $object with the provided $data.
      *
      * @param  array $data
-     * @param  object $object
-     * @return object
+     * @param  \Althingi\Model\Vote $object
+     * @return \Althingi\Model\Vote $object
      */
     public function hydrate(array $data, $object)
     {
-        return (object) $data;
+        return $object
+            ->setVoteId($data['vote_id'])
+            ->setIssueId($data['issue_id'])
+            ->setAssemblyId($data['assembly_id'])
+            ->setDocumentId($data['document_id'])
+            ->setDate($data['date'] ? new \DateTime($data['date']) : null)
+            ->setType($data['type'])
+            ->setOutcome($data['outcome'])
+            ->setMethod($data['method'])
+            ->setYes($data['yes'])
+            ->setNo($data['no'])
+            ->setInaction($data['inaction'])
+            ->setCommitteeTo($data['committee_to']);
     }
 
 
     /**
      * Extract values from an object
      *
-     * @param  object $object
+     * @param  \Althingi\Model\Vote $object
      * @return array
      */
     public function extract($object)

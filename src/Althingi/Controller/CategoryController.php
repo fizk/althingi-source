@@ -45,11 +45,16 @@ class CategoryController extends AbstractRestfulController implements
         return (new ErrorModel($form))->setStatus(400);
     }
 
+    /**
+     * @param int $id
+     * @param array $data
+     * @return \Rend\View\Model\ModelInterface
+     */
     public function patch($id, $data)
     {
-        if (($assembly = $this->categoryService->get($id)) != null) {
+        if (($category = $this->categoryService->get($id)) != null) {
             $form = new CategoryForm();
-            $form->bind($assembly);
+            $form->bind($category);
             $form->setData($data);
 
             if ($form->isValid()) {
