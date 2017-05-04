@@ -33,6 +33,7 @@ class VoteItemController extends AbstractRestfulController implements
         $form->setData(array_merge($data, ['vote_id' => $voteId,]));
 
         if ($form->isValid()) {
+            /** @var $formData \Althingi\Model\VoteItem*/
             $formData = $form->getObject();
 
             try {
@@ -40,13 +41,15 @@ class VoteItemController extends AbstractRestfulController implements
                 return (new EmptyModel())->setStatus(201);
             } catch (\PDOException $e) {
                 if (23000 == $e->getCode()) {
-                    $voteObject =$this->voteItemService->getByVote($formData->vote_id, $formData->congressman_id);
+                    $voteObject =$this->voteItemService->getByVote(
+                        $formData->getVoteId(),
+                        $formData->getCongressmanId()
+                    );
                     return (new EmptyModel())
                         ->setLocation(
                             $this->url()->fromRoute(
                                 'loggjafarthing/thingmal/atkvaedagreidslur/atkvaedagreidsla',
                                 [
-
                                     'id' => $voteObject->getAssemblyId(),
                                     'issue_id' => $voteObject->getIssueId(),
                                     'vote_id' => $voteObject->getVoteId(),

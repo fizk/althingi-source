@@ -12,8 +12,10 @@ use Althingi\Lib\DatabaseAwareInterface;
 use PDO;
 use Althingi\Model\Vote as VoteModel;
 use Althingi\Model\DateAndCount as DateAndCountModel;
+use Althingi\Model\VoteTypeAndCount as VoteTypeAndCountModel;
 use Althingi\Hydrator\Vote as VoteHydrator;
 use Althingi\Hydrator\DateAndCount as DateAndCountHydrator;
+use Althingi\Hydrator\VoteTypeAndCount as VoteTypeAndCountHydrator;
 
 class Vote implements DatabaseAwareInterface
 {
@@ -136,7 +138,7 @@ class Vote implements DatabaseAwareInterface
      */
     public function getFrequencyByAssemblyAndCongressman($assemblyId, $congressmanId, \DateTime $from = null, \DateTime $to = null)
     {
-        $statement;
+        $statement = null;
         if ($from) {
             $to = $to ? $to : new \DateTime();
             $statement = $this->getDriver()->prepare('
@@ -164,10 +166,9 @@ class Vote implements DatabaseAwareInterface
             ]);
         }
 
-        return array_map(function ($type) {
-            $type->count = (int) $type->count;
-            return $type;
-        }, $statement->fetchAll());
+        return array_map(function ($object) {
+            return (new VoteTypeAndCountHydrator())->hydrate($object, new VoteTypeAndCountModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
     /**

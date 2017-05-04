@@ -9,6 +9,7 @@
 namespace Althingi\Service;
 
 use Althingi\Model\Vote as VoteModel;
+use Althingi\Model\VoteTypeAndCount;
 use PDO;
 use PHPUnit_Extensions_Database_DataSet_IDataSet;
 use PHPUnit_Extensions_Database_DB_IDatabaseConnection;
@@ -118,7 +119,7 @@ class VoteTest extends PHPUnit_Extensions_Database_TestCase
     public function testCreate()
     {
         $vote = (new VoteModel())
-            ->setVoteId(8)
+            ->setVoteId(9)
             ->setIssueId(2)
             ->setAssemblyId(1)
             ->setYes(0)
@@ -128,12 +129,12 @@ class VoteTest extends PHPUnit_Extensions_Database_TestCase
 
         $expectedTable = $this->createArrayDataSet([
             'Vote' => [
-                ['vote_id' => 8, 'issue_id' => 2, 'assembly_id' => 1, 'document_id' => 2],
+                ['vote_id' => 9, 'issue_id' => 2, 'assembly_id' => 1, 'document_id' => 2],
             ],
         ])->getTable('Vote');
         $actualTable = $this->getConnection()->createQueryTable(
             'Vote',
-            'SELECT `vote_id`, `issue_id`, `assembly_id`, `document_id` FROM Vote WHERE vote_id = 8'
+            'SELECT `vote_id`, `issue_id`, `assembly_id`, `document_id` FROM Vote WHERE vote_id = 9'
         );
 
         $voteService = new Vote();
@@ -172,6 +173,44 @@ class VoteTest extends PHPUnit_Extensions_Database_TestCase
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
+    public function testCountByAssembly()
+    {
+        $voteService = new Vote();
+        $voteService->setDriver($this->pdo);
+
+        $expectedCount = 7;
+        $actualCount = $voteService->countByAssembly(1);
+
+        $this->assertEquals($expectedCount, $actualCount);
+    }
+
+    public function testGetFrequencyByAssemblyAndCongressman()
+    {
+        $voteService = new Vote();
+        $voteService->setDriver($this->pdo);
+
+        $expectedData = [
+            (new VoteTypeAndCount())->setVote('ja')->setCount(1),
+            (new VoteTypeAndCount())->setVote('nei')->setCount(1),
+        ];
+        $actualData = $voteService->getFrequencyByAssemblyAndCongressman(1, 2);
+
+        $this->assertEquals($expectedData, $actualData);
+    }
+    public function testGetFrequencyByAssemblyAndCongressmanWithDate()
+    {
+        $voteService = new Vote();
+        $voteService->setDriver($this->pdo);
+
+        $expectedData = [
+            (new VoteTypeAndCount())->setVote('ja')->setCount(1),
+            (new VoteTypeAndCount())->setVote('nei')->setCount(1),
+        ];
+        $actualData = $voteService->getFrequencyByAssemblyAndCongressman(1, 2, new \DateTime('2000-01-01'));
+
+        $this->assertEquals($expectedData, $actualData);
+    }
+
     /**
      * Returns the test database connection.
      *
@@ -204,6 +243,12 @@ class VoteTest extends PHPUnit_Extensions_Database_TestCase
                 ['assembly_id' => 1, 'from' => '2000-01-01', 'to' => null],
                 ['assembly_id' => 2, 'from' => '2000-01-01', 'to' => null],
             ],
+            'Congressman' => [
+                ['congressman_id' => 1, 'name' => 'name1', 'birth' => '2000-01-01', 'death' => null],
+                ['congressman_id' => 2, 'name' => 'name2', 'birth' => '2000-01-01', 'death' => null],
+                ['congressman_id' => 3, 'name' => 'name3', 'birth' => '2000-01-01', 'death' => null],
+                ['congressman_id' => 4, 'name' => 'name4', 'birth' => '2000-01-01', 'death' => null],
+            ],
             'Issue' => [
                 ['assembly_id' => 1, 'issue_id' => 1],
                 ['assembly_id' => 1, 'issue_id' => 2],
@@ -226,6 +271,13 @@ class VoteTest extends PHPUnit_Extensions_Database_TestCase
                 ['vote_id' => 5, 'issue_id' => 2, 'assembly_id' => 1, 'document_id' => 1],
                 ['vote_id' => 6, 'issue_id' => 2, 'assembly_id' => 1, 'document_id' => 1],
                 ['vote_id' => 7, 'issue_id' => 2, 'assembly_id' => 1, 'document_id' => 2],
+                ['vote_id' => 8, 'issue_id' => 2, 'assembly_id' => 2, 'document_id' => 2],
+            ],
+            'VoteItem' => [
+                ['vote_id' => 1, 'congressman_id' => 1, 'vote' => 'ja', 'vote_item_id' => 1],
+                ['vote_id' => 1, 'congressman_id' => 2, 'vote' => 'ja', 'vote_item_id' => 2],
+                ['vote_id' => 2, 'congressman_id' => 1, 'vote' => 'ja', 'vote_item_id' => 3],
+                ['vote_id' => 2, 'congressman_id' => 2, 'vote' => 'nei', 'vote_item_id' => 4],
             ]
         ]);
     }

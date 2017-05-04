@@ -25,15 +25,15 @@ class Vote implements HydratorInterface
             ->setVoteId($data['vote_id'])
             ->setIssueId($data['issue_id'])
             ->setAssemblyId($data['assembly_id'])
-            ->setDocumentId($data['document_id'])
+            ->setDocumentId(isset($data['document_id']) ? $data['document_id'] : null)
             ->setDate($data['date'] ? new \DateTime($data['date']) : null)
             ->setType($data['type'])
-            ->setOutcome($data['outcome'])
+            ->setOutcome(isset($data['outcome']) ? $data['outcome'] : null)
             ->setMethod($data['method'])
-            ->setYes($data['yes'])
-            ->setNo($data['no'])
-            ->setInaction($data['inaction'])
-            ->setCommitteeTo($data['committee_to']);
+            ->setYes(isset($data['yes']) ? $data['yes'] : null)
+            ->setNo(isset($data['no']) ? $data['no'] : null)
+            ->setInaction(isset($data['inaction']) ? $data['inaction'] : null)
+            ->setCommitteeTo(isset($data['committee_to']) ? $data['committee_to'] : null);
     }
 
 
@@ -45,6 +45,6 @@ class Vote implements HydratorInterface
      */
     public function extract($object)
     {
-        return (array) $object;
+        return $object->toArray();
     }
 }

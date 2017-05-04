@@ -193,7 +193,7 @@ class Vote implements ModelInterface
     /**
      * @return int
      */
-    public function getYes(): int
+    public function getYes(): ?int
     {
         return $this->yes;
     }
@@ -202,7 +202,7 @@ class Vote implements ModelInterface
      * @param int $yes
      * @return Vote
      */
-    public function setYes(int $yes): Vote
+    public function setYes(int $yes = null): Vote
     {
         $this->yes = $yes;
         return $this;
@@ -211,7 +211,7 @@ class Vote implements ModelInterface
     /**
      * @return int
      */
-    public function getNo(): int
+    public function getNo(): ?int
     {
         return $this->no;
     }
@@ -220,7 +220,7 @@ class Vote implements ModelInterface
      * @param int $no
      * @return Vote
      */
-    public function setNo(int $no): Vote
+    public function setNo(int $no = null): Vote
     {
         $this->no = $no;
         return $this;
@@ -229,7 +229,7 @@ class Vote implements ModelInterface
     /**
      * @return int
      */
-    public function getInaction(): int
+    public function getInaction(): ?int
     {
         return $this->inaction;
     }
@@ -238,7 +238,7 @@ class Vote implements ModelInterface
      * @param int $inaction
      * @return Vote
      */
-    public function setInaction(int $inaction): Vote
+    public function setInaction(int $inaction = null): Vote
     {
         $this->inaction = $inaction;
         return $this;

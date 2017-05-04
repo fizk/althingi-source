@@ -86,7 +86,7 @@ class IssueController extends AbstractRestfulController implements
         }
 
         $assembly = $this->assemblyService->get($assemblyId);
-        $proponent = $this->congressmanService->get($issue->getCongressmanId());
+        $proponent = $issue->getCongressmanId() ? $this->congressmanService->get($issue->getCongressmanId()) : null;
         $voteDates = $this->voteService->fetchDateFrequencyByIssue($assemblyId, $issueId);
         $speech = $this->speechService->fetchFrequencyByIssue($assemblyId, $issueId);
         $speakers = $this->congressmanService->fetchAccumulatedTimeByIssue($assemblyId, $issueId);
@@ -160,6 +160,8 @@ class IssueController extends AbstractRestfulController implements
 
                 $issueAndProperty->setProponent($congressmanAndParty);
             }
+
+            return $issueAndProperty;
         }, $issues);
 
         return (new CollectionModel($issuesAndProperties))
@@ -318,7 +320,8 @@ class IssueController extends AbstractRestfulController implements
         return array_map(function ($dateObject) use ($range) {
             $date = $dateObject->format('Y-m');
             $count = array_filter($range, function ($item) use ($date) {
-                return $item->year_month == $date;
+                /** @var $item \Althingi\Model\DateAndCount */
+                return $item->getDate()->format('Y-m') == $date;
             });
             return count($count) >= 1
                 ? array_pop($count)

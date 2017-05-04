@@ -14,7 +14,7 @@ class Transformer
 {
     public static function speechToMarkdown($text)
     {
-        if (empty($text)) {
+        if (empty($text) || !is_string($text)) {
             return '';
         }
         

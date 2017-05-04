@@ -41,7 +41,7 @@ class Document extends Form implements InputFilterProviderInterface
             'name' => 'date',
             'type' => 'Zend\Form\Element\DateTime',
             'options' => [
-                'format' => 'Y-m-d'
+                'format' => 'Y-m-d H:i'
             ],
             'attributes' => [
                 'step' => 'any'

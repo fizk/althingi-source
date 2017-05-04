@@ -25,7 +25,7 @@ class VoteItem implements ModelInterface
     /**
      * @return int
      */
-    public function getVoteId(): int
+    public function getVoteId(): ?int
     {
         return $this->vote_id;
     }
@@ -34,7 +34,7 @@ class VoteItem implements ModelInterface
      * @param int $vote_id
      * @return VoteItem
      */
-    public function setVoteId(int $vote_id): VoteItem
+    public function setVoteId(int $vote_id = null): VoteItem
     {
         $this->vote_id = $vote_id;
         return $this;
@@ -79,7 +79,7 @@ class VoteItem implements ModelInterface
     /**
      * @return int
      */
-    public function getVoteItemId(): int
+    public function getVoteItemId(): ?int
     {
         return $this->vote_item_id;
     }
@@ -88,7 +88,7 @@ class VoteItem implements ModelInterface
      * @param int $vote_item_id
      * @return VoteItem
      */
-    public function setVoteItemId(int $vote_item_id): VoteItem
+    public function setVoteItemId(int $vote_item_id = null): VoteItem
     {
         $this->vote_item_id = $vote_item_id;
         return $this;

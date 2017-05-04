@@ -152,7 +152,7 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
             ->getMock();
 
         $this->dispatch('/loggjafarthing/145/thingmal/2/thingskjal/2', 'PUT', [
-            'date' => '2000-01-01',
+            'date' => '2000-01-01 00:00',
             'type' => 'my-type'
         ]);
 
@@ -205,7 +205,7 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
             ->getMock();
 
         $this->dispatch('/loggjafarthing/145/thingmal/2/thingskjal/2', 'PATCH', [
-            'date' => '2000-01-01',
+            'date' => '2000-01-01 00:00',
             'type' => 'my-type'
         ]);
 
