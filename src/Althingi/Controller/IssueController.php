@@ -20,6 +20,7 @@ use Althingi\Lib\ServiceSpeechAwareInterface;
 use Althingi\Lib\ServiceVoteAwareInterface;
 use Althingi\Model\CongressmanPartyProperties;
 use Althingi\Model\IssueProperties;
+use Althingi\Model\Proponent;
 use Althingi\Service\Assembly;
 use Althingi\Service\Congressman;
 use Althingi\Service\Document;
@@ -86,7 +87,8 @@ class IssueController extends AbstractRestfulController implements
         }
 
         $assembly = $this->assemblyService->get($assemblyId);
-        $proponent = $issue->getCongressmanId() ? $this->congressmanService->get($issue->getCongressmanId()) : null;
+//        $proponent = $issue->getCongressmanId() ? $this->congressmanService->get($issue->getCongressmanId()) : null;
+        $proponents = $this->congressmanService->fetchProponentsByIssue($assemblyId, $issueId);
         $voteDates = $this->voteService->fetchDateFrequencyByIssue($assemblyId, $issueId);
         $speech = $this->speechService->fetchFrequencyByIssue($assemblyId, $issueId);
         $speakers = $this->congressmanService->fetchAccumulatedTimeByIssue($assemblyId, $issueId);
@@ -106,14 +108,14 @@ class IssueController extends AbstractRestfulController implements
             ->setSpeechRange($this->buildDateRange($assembly->getFrom(), $assembly->getTo(), $speech))
             ->setSpeakers($speakersWithParties);
 
-        if ($proponent) {
-            $congressmanAndParty = new CongressmanPartyProperties();
-            $congressmanAndParty->setCongressman($proponent);
-            $congressmanAndParty->setParty(
-                $this->partyService->getByCongressman($issue->getCongressmanId(), $issue->getDate())
-            );
-            $issueProperties->setProponent($congressmanAndParty);
-        }
+        $proponentsAndParty = array_map(function (Proponent $proponent) use ($issue) {
+            return (new CongressmanPartyProperties())
+                ->setCongressman($proponent)
+                ->setParty(
+                    $this->partyService->getByCongressman($proponent->getCongressmanId(), $issue->getDate())
+                );
+        }, $proponents);
+        $issueProperties->setProponents($proponentsAndParty);
 
         return (new ItemModel($issueProperties));
     }
@@ -152,14 +154,15 @@ class IssueController extends AbstractRestfulController implements
             $issueAndProperty = (new IssueProperties())
                 ->setIssue($issue);
 
-            if ($issue->getCongressmanId()) {
-                $congressman = $this->congressmanService->get($issue->getCongressmanId());
-                $congressmanAndParty = (new CongressmanPartyProperties())
-                    ->setCongressman($congressman)
-                    ->setParty($this->partyService->getByCongressman($issue->getCongressmanId(), $issue->getDate()));
-
-                $issueAndProperty->setProponent($congressmanAndParty);
-            }
+            $proponents = $this->congressmanService->fetchProponentsByIssue($assemblyId, $issue->getIssueId());
+            $proponentsAndParty = array_map(function (Proponent $proponent) use ($issue) {
+                return (new CongressmanPartyProperties())
+                    ->setCongressman($proponent)
+                    ->setParty(
+                        $this->partyService->getByCongressman($proponent->getCongressmanId(), $issue->getDate())
+                    );
+            }, $proponents);
+            $issueAndProperty->setProponents($proponentsAndParty);
 
             return $issueAndProperty;
         }, $issues);

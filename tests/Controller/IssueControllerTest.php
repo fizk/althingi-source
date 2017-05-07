@@ -8,6 +8,7 @@
 
 namespace Althingi\Controller;
 
+use Althingi\Model\Proponent;
 use Althingi\Service\Assembly;
 use Althingi\Service\Congressman;
 use Althingi\Service\Document;
@@ -19,8 +20,7 @@ use Althingi\Model\CongressmanAndDateRange;
 use Althingi\Model\Issue as IssueModel;
 use Althingi\Model\Party as PartyModel;
 use Althingi\Model\Assembly as AssemblyModel;
-use Althingi\Model\Congressman as CongressmanModel;
-use Althingi\Model\IssueAndDate as IssueAndDatetModel;
+use Althingi\Model\IssueAndDate as IssueAndDateModel;
 use Mockery;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
@@ -72,7 +72,7 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
     {
         $this->getMockService(Issue::class)
             ->shouldReceive('getWithDate')
-            ->andReturn((new IssueAndDatetModel())->setCongressmanId(1)->setDate(new \DateTime()))
+            ->andReturn((new IssueAndDateModel())->setCongressmanId(1)->setDate(new \DateTime()))
             ->once()
             ->getMock();
 
@@ -83,8 +83,8 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
             ->getMock();
 
         $this->getMockService(Congressman::class)
-            ->shouldReceive('get')
-            ->andReturn((new CongressmanModel())->setCongressmanId(1))
+            ->shouldReceive('fetchProponentsByIssue')
+            ->andReturn([(new Proponent())->setCongressmanId(1)])
             ->once()
             ->getMock()
             ->shouldReceive('fetchAccumulatedTimeByIssue')
@@ -177,7 +177,7 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
             ->getMock()
             ->shouldReceive('fetchByAssembly')
             ->andReturn([
-                (new IssueAndDatetModel())->setDate(new \DateTime())->setCongressmanId(1)
+                (new IssueAndDateModel())->setDate(new \DateTime())->setCongressmanId(1)->setIssueId(1)
             ])
             ->once()
             ->getMock()
@@ -190,8 +190,8 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
             ->getMock();
 
         $this->getMockService(Congressman::class)
-            ->shouldReceive('get')
-            ->andReturn((new CongressmanModel())->setCongressmanId(1))
+            ->shouldReceive('fetchProponentsByIssue')
+            ->andReturn([(new Proponent())->setCongressmanId(1)])
             ->once()
             ->getMock();
 

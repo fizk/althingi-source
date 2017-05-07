@@ -110,9 +110,9 @@ class VoteItemTest extends PHPUnit_Extensions_Database_TestCase
 
         $expectedTable = $this->createArrayDataSet([
             'VoteItem' => [
-                ['vote_id' => 1, 'congressman_id' => 1, 'vote' => 'ja', 'vote_item_id' => 1],
-                ['vote_id' => 1, 'congressman_id' => 2, 'vote' => 'ja', 'vote_item_id' => 2],
-                ['vote_id' => 1, 'congressman_id' => 3, 'vote' => 'ja', 'vote_item_id' => 5],
+                ['vote_item_id' => 1, 'vote_id' => 1, 'congressman_id' => 1, 'vote' => 'ja'],
+                ['vote_item_id' => 2, 'vote_id' => 1, 'congressman_id' => 2, 'vote' => 'ja'],
+                ['vote_item_id' => 5, 'vote_id' => 1, 'congressman_id' => 3, 'vote' => 'ja'],
             ],
         ])->getTable('VoteItem');
         $actualTable = $this->getConnection()->createQueryTable('VoteItem', 'SELECT * FROM VoteItem WHERE vote_id = 1');
@@ -134,7 +134,7 @@ class VoteItemTest extends PHPUnit_Extensions_Database_TestCase
 
         $expectedTable = $this->createArrayDataSet([
             'VoteItem' => [
-                ['vote_id' => 1, 'congressman_id' => 1, 'vote' => 'nei', 'vote_item_id' => 1],
+                ['vote_item_id' => 1, 'vote_id' => 1, 'congressman_id' => 1, 'vote' => 'nei'],
             ],
         ])->getTable('VoteItem');
         $actualTable = $this->getConnection()

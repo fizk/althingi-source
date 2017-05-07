@@ -172,7 +172,7 @@ class Congressman implements DatabaseAwareInterface
     public function fetchProponents(int $assemblyId, int $documentId): array
     {
         $statement = $this->getDriver()->prepare(
-            'select C.* from `Document_has_Congressman` D
+            'select C.*, D.`minister` from `Document_has_Congressman` D
             join `Congressman` C on (C.congressman_id = D.congressman_id)
             where assembly_id = :assembly_id and document_id = :document_id
             order by D.`order` asc;'
@@ -180,6 +180,34 @@ class Congressman implements DatabaseAwareInterface
         $statement->execute([
             'assembly_id' => $assemblyId,
             'document_id' => $documentId
+        ]);
+
+        return array_map(function ($object) {
+            return (new ProponentHydrator())->hydrate($object, new ProponentModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
+    }
+    /**
+     * @param int $assemblyId
+     * @param int $issueId
+     * @return \Althingi\Model\Proponent[]
+     */
+    public function fetchProponentsByIssue(int $assemblyId, int $issueId): array
+    {
+        $statement = $this->getDriver()->prepare(
+            'select C.*, A.`minister`, A.`order` from ( 
+                select DC.* from `Document_has_Congressman` DC
+                    join `Document` D on (
+                      D.`document_id` = DC.`document_id` and 
+                      D.`issue_id` = DC.`issue_id` and 
+                      D.`assembly_id` = DC.`assembly_id`)
+                    where DC.`issue_id` = :issue_id and DC.`assembly_id` = :assembly_id
+                    order by D.`date`
+            ) as A
+            join `Congressman` C on (C.`congressman_id` = A.`congressman_id`) order by A.`order`'
+        );
+        $statement->execute([
+            'assembly_id' => $assemblyId,
+            'issue_id' => $issueId
         ]);
 
         return array_map(function ($object) {

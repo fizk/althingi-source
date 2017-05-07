@@ -13,8 +13,8 @@ class IssueProperties implements ModelInterface
     /** @var  \Althingi\Model\Issue */
     private $issue;
 
-    /** @var  \Althingi\Model\CongressmanPartyProperties */
-    private $proponent;
+    /** @var  \Althingi\Model\CongressmanPartyProperties[] */
+    private $proponents;
 
     /** @var  \Althingi\Model\DateAndCount[] */
     private $voteRange;
@@ -44,20 +44,20 @@ class IssueProperties implements ModelInterface
     }
 
     /**
-     * @return CongressmanPartyProperties
+     * @return array
      */
-    public function getProponent(): CongressmanPartyProperties
+    public function getProponents(): array
     {
-        return $this->proponent;
+        return $this->proponents;
     }
 
     /**
-     * @param CongressmanPartyProperties $proponent
+     * @param CongressmanPartyProperties[] $proponents
      * @return IssueProperties
      */
-    public function setProponent(CongressmanPartyProperties $proponent): IssueProperties
+    public function setProponents(array $proponents): IssueProperties
     {
-        $this->proponent = $proponent;
+        $this->proponents = $proponents;
         return $this;
     }
 
@@ -120,7 +120,7 @@ class IssueProperties implements ModelInterface
         return array_merge(
             $this->issue->toArray(),
             [
-                'proponent' => $this->proponent,
+                'proponents' => $this->proponents,
                 'voteRange' => $this->voteRange,
                 'speechRange' => $this->speechRange,
                 'speakers' => $this->speakers,

@@ -25,6 +25,7 @@ class Proponent implements HydratorInterface
         return $object
             ->setCongressmanId($data['congressman_id'])
             ->setName($data['name'])
+            ->setMinister($data['minister'])
             ->setBirth($data['birth'] ? new DateTime($data['birth']) : null)
             ->setDeath($data['death'] ? new DateTime($data['death']) : null);
     }
@@ -38,8 +39,6 @@ class Proponent implements HydratorInterface
      */
     public function extract($object)
     {
-        unset($object->time);
-
-        return (array) $object;
+        return $object->toArray();
     }
 }

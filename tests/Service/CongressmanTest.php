@@ -106,6 +106,17 @@ class CongressmanTest extends PHPUnit_Extensions_Database_TestCase
         $this->assertInstanceOf(Proponent::class, $proponents[0]);
     }
 
+    public function testFetchProponentsByIssue()
+    {
+        $congressmanService = new Congressman();
+        $congressmanService->setDriver($this->pdo);
+
+        $proponents = $congressmanService->fetchProponentsByIssue(1, 1);
+
+        $this->assertCount(1, $proponents);
+        $this->assertInstanceOf(Proponent::class, $proponents[0]);
+    }
+
     public function testFetchAccumulatedTimeByIssue()
     {
         $congressmanService = new Congressman();
