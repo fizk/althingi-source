@@ -8,7 +8,7 @@ before_script:
   - docker-compose up
 
 script:
-  - test.sh
+  - ./test.sh
 
 after_script:
   - docker-compose down
