@@ -6,6 +6,7 @@ services:
 
 before_script:
   - docker-compose up
+  - composer install
 
 script:
   - ./test.sh
