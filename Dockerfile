@@ -1,3 +1,3 @@
 FROM einarvalur/loggjafarthing:v2
 
-WORKDIR /var/www
+WORKDIR /var/www/module/Althingi
