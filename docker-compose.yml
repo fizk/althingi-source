@@ -1,10 +1,6 @@
 version: '2'
 services:
-  database:
-      image: mysql:5.7
   web:
-    depends_on:
-      - database
     build:
       context: .
       dockerfile: Dockerfile
