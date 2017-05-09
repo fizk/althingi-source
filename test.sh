@@ -1,1 +1,4 @@
-cd ./tests && ../vendor/bin/phpunit
+#!/bin/bash
+
+composer install \
+&& cd ./tests && ../vendor/bin/phpunit

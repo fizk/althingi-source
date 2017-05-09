@@ -6,10 +6,6 @@ services:
 
 before_script:
   - docker-compose up
-  - composer install
-
-script:
-  - ./test.sh
 
 after_script:
   - docker-compose down
