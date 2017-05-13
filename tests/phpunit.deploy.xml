@@ -12,31 +12,15 @@
             <directory suffix=".php">../src/</directory>
             <exclude>
                 <directory suffix=".phtml">../view/</directory>
-                <!--<directory>./Controller</directory>-->
             </exclude>
         </whitelist>
     </filter>
-
-    <logging>
-        <log type="junit" target="../docs/tests/report.junit.xml" />
-        <log type="coverage-html" target="../docs/tests/report" charset="UTF-8"
-             yui="true" highlight="true" lowUpperBound="50" highLowerBound="80"/>
-        <log type="testdox-html" target="../docs/tests/testdox.html" />
-    </logging>
-
-    <listeners>
-        <listener class="Althingi\DatabaseSetup" file="./DatabaseSetup.php" />
-    </listeners>
 
     <php>
         <var name="DB_DSN" value="mysql:dbname=althingi_test;host=db" />
         <var name="DB_USER" value="root" />
         <var name="DB_PASSWD" value="" />
         <var name="DB_DBNAME" value="althingi_test" />
-        <var name="DB_DEV" value="althingi" />
-
-        <var name="MYSQL.BIN" value="/usr/local/mysql/bin/mysql" />
-        <var name="MYSQLDUMP.BIN" value="/usr/local/mysql/bin/mysqldump" />
     </php>
 
 </phpunit>

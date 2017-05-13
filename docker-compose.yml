@@ -1,7 +1,40 @@
 version: '2'
+
 services:
+  db:
+    image: centurylink/mysql
+    environment:
+      MYSQL_DATABASE: althingi_test
+      MYSQL_USER: root
+
   web:
-    build: .
+    build:
+      context: ./docker
+      dockerfile: Dockerfile-php
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: althingi_test
+      DB_USER: root
     volumes:
       - .:/var/www/module/Althingi
-    command: sh ./test.sh
+
+  server:
+    container_name: server-container
+    extends: web
+    depends_on:
+      - db
+    command: bash -c "php ./bin/database.php && cd ../../public && php -S 0.0.0.0:8080"
+    ports:
+      - '8000:8080'
+    links:
+      - db
+
+  tests:
+    container_name: test-container
+    extends: web
+    depends_on:
+      - db
+    command: bash -c "composer install && php ./bin/database.php && cd tests && ../vendor/bin/phpunit -c `pwd`/phpunit.deploy.xml"
+    links:
+      - db
