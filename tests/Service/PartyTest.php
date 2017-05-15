@@ -96,18 +96,18 @@ class PartyTest extends PHPUnit_Extensions_Database_TestCase
         $this->assertEquals($expectedParties, $actualParties);
     }
 
-    public function testFetchTimeByAssembly()
-    {
-        $partyService = new Party();
-        $partyService->setDriver($this->pdo);
-        $expectedParties = [
-            (new PartyAndTimeModel())->setPartyId(1)->setName('p1')->setColor('ffffff')->setTotalTime(600),
-            (new PartyAndTimeModel())->setPartyId(2)->setName('p2')->setColor('ffffff')->setTotalTime(600),
-        ];
-        $actualParties = $partyService->fetchTimeByAssembly(1);
-
-        $this->assertEquals($expectedParties, $actualParties);
-    }
+//    public function testFetchTimeByAssembly()
+//    {
+//        $partyService = new Party();
+//        $partyService->setDriver($this->pdo);
+//        $expectedParties = [
+//            (new PartyAndTimeModel())->setPartyId(1)->setName('p1')->setColor('ffffff')->setTotalTime(600),
+//            (new PartyAndTimeModel())->setPartyId(2)->setName('p2')->setColor('ffffff')->setTotalTime(600),
+//        ];
+//        $actualParties = $partyService->fetchTimeByAssembly(1);
+//
+//        $this->assertEquals($expectedParties, $actualParties);
+//    }
 
     public function testCreate()
     {
