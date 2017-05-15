@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 13/05/2016
- * Time: 8:25 AM
- */
 
 namespace Althingi;
 
@@ -17,7 +11,41 @@ use PHPUnit_Extensions_Database_TestCase;
 
 class DatabaseSetup implements PHPUnit_Framework_TestListener
 {
+    /** @var string  */
+    private $dbUser;
+
+    /** @var string  */
+    private $dbName;
+
+    /** @var string  */
+    private $dbTestName;
+
+    /** @var string  */
+    private $dbPass;
+
+    /** @var string  */
+    private $dbBin;
+
+    /** @var string  */
+    private $dbDumpBin;
+
+    /** @var bool */
     private $hasDatabase = false;
+
+    /**
+     * DatabaseSetup constructor.
+     * Initialize local variables
+     */
+    public function __construct()
+    {
+        $this->dbName = getenv('DB_NAME') ? : 'althingi';
+        $this->dbTestName = 'althingi_test';
+        $this->dbUser = getenv('DB_USER') ? : 'root';
+        $this->dbPass = getenv('DB_PASSWORD') ? : '';
+        $this->dbBin = $GLOBALS['MYSQL.BIN'] ? : 'mysql';
+        $this->dbDumpBin = $GLOBALS['MYSQLDUMP.BIN'] ? : 'mysqldump';
+    }
+
     /**
      * An error occurred.
      *
@@ -134,19 +162,16 @@ class DatabaseSetup implements PHPUnit_Framework_TestListener
 
     private function setupDatabase()
     {
-        exec($GLOBALS['MYSQL.BIN'].' -u root -e "drop database if exists '.
-            $GLOBALS['DB_DBNAME'].'; create database '.
-            $GLOBALS['DB_DBNAME'].';" && '.$GLOBALS['MYSQLDUMP.BIN'].' -u '.$GLOBALS['DB_USER'].' -d '.
-            $GLOBALS['DB_DEV'].' | '.$GLOBALS['MYSQL.BIN'].' -u '.$GLOBALS['DB_USER'].' -D '.
-            $GLOBALS['DB_DBNAME']);
+        exec($this->dbBin.' -u root -e "drop database if exists '.
+            $this->dbTestName.'; create database '.
+            $this->dbTestName.';" && '.$this->dbDumpBin.' -u '.$this->dbUser.' -d '.
+            $this->dbName.' | '.$this->dbBin.' -u '.$this->dbUser.' -D '.
+            $this->dbTestName);
         $this->hasDatabase = true;
     }
 
     private function teardownDatabase()
     {
-//        if ($this->hasDatabase) {
-//            exec($GLOBALS['MYSQL.BIN'].' -u '.$GLOBALS['DB_USER'].' -e "drop database if exists '.$GLOBALS['DB_DBNAME'].';"');
-//        }
         $this->hasDatabase = false;
     }
 

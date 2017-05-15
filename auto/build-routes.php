@@ -1,10 +1,13 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einar.adalsteinsson
- * Date: 4/9/17
- * Time: 8:19 PM
- */
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+#   A script that runs through the router configuration and prints out
+#   all API URLs
+#
+#
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 
 error_reporting(E_ALL | E_STRICT);
@@ -13,10 +16,6 @@ chdir(__DIR__.'/../');
 include __DIR__ . '/../vendor/autoload.php';
 
 $rotes = require_once './config/module.config.php';
-
-new \Althingi\Controller\IndexController();
-
-print_r($rotes);
 
 function printRoute($routes, $prefix = '', $depth = 0)
 {

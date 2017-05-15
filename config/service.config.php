@@ -64,11 +64,13 @@ return [
         'MessageStrategy' => MessageFactory::class,
 
         PDO::class => function (ServiceManager $sm) {
-            $config = $sm->get('config');
+            $dbHost = getenv('DB_HOST') ?: 'localhost';
+            $dbPort = getenv('DB_PORT') ?: 3306;
+            $dbName = getenv('DB_NAME') ?: 'althingi';
             return new PDO(
-                $config['db']['dns'],
-                $config['db']['user'],
-                $config['db']['password'],
+                "mysql:host={$dbHost};port={$dbPort};dbname={$dbName}",
+                getenv('DB_USER'),
+                getenv('DB_PASSWORD'),
                 [
                     PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'",
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,

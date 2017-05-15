@@ -1,23 +1,18 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 11/05/2016
- * Time: 3:21 PM
- */
 namespace Althingi\Service;
 
-use PDO;
+use Althingi\DatabaseConnection;
 use DateTime;
 use PHPUnit_Extensions_Database_DataSet_IDataSet;
-use PHPUnit_Extensions_Database_DB_IDatabaseConnection;
 use PHPUnit_Extensions_Database_TestCase;
 use Althingi\Model\President as PresidentModel;
 use Althingi\Model\PresidentCongressman as PresidentCongressmanModel;
 
 class PresidentTest extends PHPUnit_Extensions_Database_TestCase
 {
+    use DatabaseConnection;
+
     /** @var  \PDO */
     private $pdo;
 
@@ -112,26 +107,6 @@ class PresidentTest extends PHPUnit_Extensions_Database_TestCase
         $presidentService->update($president);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
-    }
-
-    /**
-     * Returns the test database connection.
-     *
-     * @return PHPUnit_Extensions_Database_DB_IDatabaseConnection
-     */
-    protected function getConnection()
-    {
-        $this->pdo = new PDO(
-            $GLOBALS['DB_DSN'],
-            $GLOBALS['DB_USER'],
-            $GLOBALS['DB_PASSWD'],
-            [
-                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'",
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
-            ]
-        );
-        return $this->createDefaultDBConnection($this->pdo);
     }
 
     /**

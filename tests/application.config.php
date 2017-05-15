@@ -12,10 +12,4 @@ return array(
             'vendor',
         ),
     ),
-
-    'db' => [
-        'dns' => 'mysql:host=127.0.0.1;dbname=althingi',
-        'user' => 'root',
-        'password' => '',
-    ]
 );

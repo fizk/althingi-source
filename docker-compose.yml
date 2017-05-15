@@ -8,9 +8,7 @@ services:
       MYSQL_USER: root
 
   web:
-    build:
-      context: ./docker
-      dockerfile: Dockerfile-php
+    build: .
     environment:
       DB_HOST: db
       DB_PORT: 3306
@@ -24,7 +22,7 @@ services:
     extends: web
     depends_on:
       - db
-    command: bash -c "php ./bin/database.php && cd ../../public && php -S 0.0.0.0:8080"
+    command: bash -c "php ./auto/import-schema.php && cd ../../public && php -S 0.0.0.0:8080"
     ports:
       - '8000:8080'
     links:
@@ -35,6 +33,6 @@ services:
     extends: web
     depends_on:
       - db
-    command: bash -c "composer install && php ./bin/database.php && cd tests && ../vendor/bin/phpunit -c `pwd`/phpunit.deploy.xml"
+    command: bash -c "composer install && php ./auto/import-schema.php && cd tests && ../vendor/bin/phpunit -c `pwd`/phpunit.deploy.xml"
     links:
       - db
