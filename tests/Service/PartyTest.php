@@ -189,10 +189,10 @@ class PartyTest extends PHPUnit_Extensions_Database_TestCase
                 ['election_id' => 2, 'date'=> '2004-01-01'],
             ],
             'ElectionResult' => [
-                ['election_result_id' => 1, 'election_id' => 1, 'party_id' => 1],
-                ['election_result_id' => 2, 'election_id' => 1, 'party_id' => 2],
-                ['election_result_id' => 3, 'election_id' => 2, 'party_id' => 2],
-                ['election_result_id' => 4, 'election_id' => 2, 'party_id' => 3],
+                ['election_result_id' => 1, 'election_id' => 1, 'party_id' => 1, 'result' => 99.00],
+                ['election_result_id' => 2, 'election_id' => 1, 'party_id' => 2, 'result' => 98.00],
+                ['election_result_id' => 3, 'election_id' => 2, 'party_id' => 2, 'result' => 97.00],
+                ['election_result_id' => 4, 'election_id' => 2, 'party_id' => 3, 'result' => 98.00],
             ],
             'Election_has_Assembly' => [
                 ['election_id' => 1, 'assembly_id' => 1],

@@ -137,7 +137,7 @@ class Party implements DatabaseAwareInterface
         $statement = $this->getDriver()->prepare('
             select * from `ElectionResult` ER join `Election_has_Assembly` E on (E.`election_id` = ER.`election_id`)
             join `Party` P on (P.party_id = ER.party_id)
-            where E.`assembly_id` = :assembly_id order by `result` desc;
+            where E.`assembly_id` = :assembly_id order by ER.`result` desc;
         ');
         $statement->execute(['assembly_id' => $assemblyId]);
         return array_map(function ($object) {

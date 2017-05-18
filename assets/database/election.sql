@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS `ElectionResult` (
   `election_id` INT NOT NULL,
   `party_id` INT NOT NULL,
   `seat` INT NULL,
-  `result` DECIMAL(4,2) NULL,
+  `result` DECIMAL(5,2) NULL,
   PRIMARY KEY (`election_result_id`),
   INDEX `fk_ElectionResult_Election1_idx` (`election_id` ASC),
   INDEX `fk_ElectionResult_Party1_idx` (`party_id` ASC),
