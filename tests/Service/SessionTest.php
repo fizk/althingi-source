@@ -221,11 +221,6 @@ class SessionTest extends PHPUnit_Extensions_Database_TestCase
         $this->assertEquals(1, $affectedRowCound);
     }
 
-    /**
-     * Returns the test dataset.
-     *
-     * @return PHPUnit_Extensions_Database_DataSet_IDataSet
-     */
     protected function getDataSet()
     {
         return $this->createArrayDataSet([

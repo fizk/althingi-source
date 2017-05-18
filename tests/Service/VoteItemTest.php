@@ -142,11 +142,6 @@ class VoteItemTest extends PHPUnit_Extensions_Database_TestCase
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    /**
-     * Returns the test dataset.
-     *
-     * @return PHPUnit_Extensions_Database_DataSet_IDataSet
-     */
     protected function getDataSet()
     {
         return $this->createArrayDataSet([

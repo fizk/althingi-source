@@ -162,83 +162,78 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-//    public function testCreate()
-//    {
-//        $speech = (new SpeechModel())
-//            ->setSpeechId('id--20001')
-//            ->setPlenaryId(1)
-//            ->setAssemblyId(3)
-//            ->setIssueId(1)
-//            ->setCongressmanId(1);
-//
-//        $expectedTable = $this->createArrayDataSet([
-//            'Speech' => [
-//                [
-//                    'speech_id' => 'id--20001',
-//                    'plenary_id' => 1,
-//                    'assembly_id' => 3,
-//                    'issue_id' => 1,
-//                    'congressman_id' => 1,
-//                    'congressman_type' => null,
-//                    'from' => null,
-//                    'to' => null,
-//                    'text' => null,
-//                    'type' => null,
-//                    'iteration' => null,
-//                ]
-//            ],
-//        ])->getTable('Speech');
-//        $actualTable = $this->getConnection()
-//            ->createQueryTable('Speech', 'SELECT * FROM Speech where `assembly_id` = 3');
-//
-//        $speechService = new Speech();
-//        $speechService->setDriver($this->pdo);
-//        $speechService->create($speech);
-//
-//        $this->assertTablesEqual($expectedTable, $actualTable);
-//    }
+    public function testCreate()
+    {
+        $speech = (new SpeechModel())
+            ->setSpeechId('id--20001')
+            ->setPlenaryId(1)
+            ->setAssemblyId(3)
+            ->setIssueId(1)
+            ->setCongressmanId(1);
 
-//    public function testUpdate()
-//    {
-//        $speech = (new SpeechModel())
-//            ->setSpeechId('id--00001')
-//            ->setPlenaryId(1)
-//            ->setAssemblyId(1)
-//            ->setIssueId(1)
-//            ->setCongressmanId(2);
-//
-//        $expectedTable = $this->createArrayDataSet([
-//            'Speech' => [
-//                [
-//                    'speech_id' => 'id--00001',
-//                    'plenary_id' => 1,
-//                    'assembly_id' => 1,
-//                    'issue_id' => 1,
-//                    'congressman_id' => 2,
-//                    'congressman_type' => null,
-//                    'from' => null,
-//                    'to' => null,
-//                    'text' => null,
-//                    'type' => null,
-//                    'iteration' => null
-//                ]
-//            ],
-//        ])->getTable('Speech');
-//        $actualTable = $this->getConnection()
-//            ->createQueryTable('Speech', 'SELECT * FROM Speech where `speech_id` = "id--00001"');
-//
-//        $speechService = new Speech();
-//        $speechService->setDriver($this->pdo);
-//        $speechService->update($speech);
-//
-//        $this->assertTablesEqual($expectedTable, $actualTable);
-//    }
+        $expectedTable = $this->createArrayDataSet([
+            'Speech' => [
+                [
+                    'speech_id' => 'id--20001',
+                    'plenary_id' => 1,
+                    'assembly_id' => 3,
+                    'issue_id' => 1,
+                    'congressman_id' => 1,
+                    'congressman_type' => null,
+                    'from' => null,
+                    'to' => null,
+                    'text' => null,
+                    'type' => null,
+                    'iteration' => null,
+                ]
+            ],
+        ])->getTable('Speech');
+        $actualTable = $this->getConnection()
+            ->createQueryTable('Speech', 'SELECT * FROM Speech where `assembly_id` = 3');
 
-    /**
-     * Returns the test dataset.
-     *
-     * @return PHPUnit_Extensions_Database_DataSet_IDataSet
-     */
+        $speechService = new Speech();
+        $speechService->setDriver($this->pdo);
+        $speechService->create($speech);
+
+        $this->assertTablesEqual($expectedTable, $actualTable);
+    }
+
+    public function testUpdate()
+    {
+        $speech = (new SpeechModel())
+            ->setSpeechId('id--00001')
+            ->setPlenaryId(1)
+            ->setAssemblyId(1)
+            ->setIssueId(1)
+            ->setCongressmanId(2);
+
+        $expectedTable = $this->createArrayDataSet([
+            'Speech' => [
+                [
+                    'speech_id' => 'id--00001',
+                    'plenary_id' => 1,
+                    'assembly_id' => 1,
+                    'issue_id' => 1,
+                    'congressman_id' => 2,
+                    'congressman_type' => null,
+                    'from' => null,
+                    'to' => null,
+                    'text' => null,
+                    'type' => null,
+                    'iteration' => null
+                ]
+            ],
+        ])->getTable('Speech');
+        $actualTable = $this->getConnection()
+            ->createQueryTable('Speech', 'SELECT * FROM Speech where `speech_id` = "id--00001"');
+
+        $speechService = new Speech();
+        $speechService->setDriver($this->pdo);
+        $speechService->update($speech);
+
+        $this->assertTablesEqual($expectedTable, $actualTable);
+    }
+
     protected function getDataSet()
     {
         return $this->createArrayDataSet([
@@ -257,13 +252,14 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
             ],
             'Congressman' => [
                 ['congressman_id' => 1, 'name' => 'congressman 1', 'birth' => '2000-01-01'],
-                ['congressman_id' => 2, 'name' => 'congressman 1', 'birth' => '2000-01-01'],
-                ['congressman_id' => 3, 'name' => 'congressman 1', 'birth' => '2000-01-01'],
+                ['congressman_id' => 2, 'name' => 'congressman 2', 'birth' => '2000-01-01'],
+                ['congressman_id' => 3, 'name' => 'congressman 3', 'birth' => '2000-01-01'],
             ],
             'Plenary' => [
-              ['plenary_id' => 1, 'assembly_id' => 1],
-              ['plenary_id' => 2, 'assembly_id' => 1],
-              ['plenary_id' => 3, 'assembly_id' => 1],
+                ['plenary_id' => 1, 'assembly_id' => 1],
+                ['plenary_id' => 2, 'assembly_id' => 1],
+                ['plenary_id' => 3, 'assembly_id' => 1],
+                ['plenary_id' => 1, 'assembly_id' => 3],
             ],
             'Speech' => [
                 [
@@ -331,7 +327,8 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
                     'from' => '2000-03-01 00:00:00',
                     'to' => '2000-03-01 00:01:00',
                 ]
-            ]
+            ],
+
         ]);
     }
 }

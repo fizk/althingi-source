@@ -34,13 +34,18 @@ class CongressmanTest extends PHPUnit_Extensions_Database_TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    /**
-     * @todo create testGetNotFound
-     */
+    public function testGetNotFound()
+    {
+        $congressmanService = new Congressman();
+        $congressmanService->setDriver($this->pdo);
 
-    /**
-     *
-     */
+        $expectedData = null;
+
+        $actualData = $congressmanService->get(10000);
+
+        $this->assertEquals($expectedData, $actualData);
+    }
+
     public function testFetchAll()
     {
         $congressmanService = new Congressman();
@@ -200,11 +205,6 @@ class CongressmanTest extends PHPUnit_Extensions_Database_TestCase
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    /**
-     * Returns the test dataset.
-     *
-     * @return PHPUnit_Extensions_Database_DataSet_IDataSet
-     */
     protected function getDataSet()
     {
         return $this->createArrayDataSet([

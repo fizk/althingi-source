@@ -61,12 +61,6 @@ class SuperCategory implements DatabaseAwareInterface
 
     public function update(SuperCategoryModel $data): int
     {
-//        $statement = $this->getDriver()->prepare(
-//            $this->updateString('SuperCategory', $data, "super_category_id = {$data->super_category_id}")
-//        );
-//        $statement->execute($this->convert($data));
-//        return $statement->rowCount();
-
         $statement = $this->getDriver()->prepare(
             $this->toUpdateString('SuperCategory', $data, "super_category_id={$data->getSuperCategoryId()}")
         );

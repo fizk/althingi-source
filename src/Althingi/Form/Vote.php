@@ -145,8 +145,7 @@ class Vote extends Form implements InputFilterProviderInterface
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Zend\Filter\ToNull',
-                        'options' => ['type' => 'all']
+                        'name' => '\Zend\Filter\ToInt',
                     ]
                 ],
             ],
@@ -155,8 +154,7 @@ class Vote extends Form implements InputFilterProviderInterface
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Zend\Filter\ToNull',
-                        'options' => ['type' => 'all']
+                        'name' => '\Zend\Filter\ToInt',
                     ]
                 ],
             ],
@@ -165,8 +163,7 @@ class Vote extends Form implements InputFilterProviderInterface
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Zend\Filter\ToNull',
-                        'options' => ['type' => 'all']
+                        'name' => '\Zend\Filter\ToInt',
                     ]
                 ],
             ],

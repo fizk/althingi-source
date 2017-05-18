@@ -171,7 +171,7 @@ class President implements ModelInterface
             'congressman_id' => $this->congressman_id,
             'assembly_id' => $this->assembly_id,
             'from' => $this->from ? $this->from->format('Y-m-d') : null,
-            'to' => $this->to ? new DateTime($this->to) : null,
+            'to' => $this->to ? $this->to->format('Y-m-d') : null,
             'title' => $this->title,
             'abbr' => $this->abbr,
         ];

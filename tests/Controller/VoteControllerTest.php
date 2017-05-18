@@ -8,12 +8,16 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Model\VoteItemAndAssemblyIssue;
 use Althingi\Service\Vote;
-use Althingi\Service\VoteItem;
 use Mockery;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
+/**
+ * Class VoteControllerTest
+ * @package Althingi\Controller
+ * @coversDefaultClass \Althingi\Controller\VoteController
+ * @covers \Althingi\Controller\VoteController::setVoteService
+ */
 class VoteControllerTest extends AbstractHttpControllerTestCase
 {
     use ServiceHelper;
@@ -38,6 +42,9 @@ class VoteControllerTest extends AbstractHttpControllerTestCase
         return parent::tearDown();
     }
 
+    /**
+     * @covers ::get
+     */
     public function testGet()
     {
         $this->getMockService(Vote::class)
@@ -54,6 +61,9 @@ class VoteControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(200);
     }
 
+    /**
+     * @covers ::get
+     */
     public function testGetResourceNotFound()
     {
         $this->getMockService(Vote::class)
@@ -70,6 +80,9 @@ class VoteControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(404);
     }
 
+    /**
+     * @covers ::getList
+     */
     public function testGetList()
     {
         $this->getMockService(Vote::class)
@@ -86,6 +99,9 @@ class VoteControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(200);
     }
 
+    /**
+     * @covers ::put
+     */
     public function testPutSuccess()
     {
         $this->getMockService(Vote::class)
@@ -105,6 +121,9 @@ class VoteControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(201);
     }
 
+    /**
+     * @covers ::put
+     */
     public function testPutInvalid()
     {
         $this->getMockService(Vote::class)
@@ -123,6 +142,9 @@ class VoteControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(400);
     }
 
+    /**
+     * @covers ::patch
+     */
     public function testPatchSuccess()
     {
         $returnedData = (new \Althingi\Model\Vote())
@@ -163,6 +185,9 @@ class VoteControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(205);
     }
 
+    /**
+     * @covers ::patch
+     */
     public function testPatchInvalid()
     {
         $returnedData = (new \Althingi\Model\Vote())
@@ -192,6 +217,9 @@ class VoteControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(400);
     }
 
+    /**
+     * @covers ::patch
+     */
     public function testPatchNotFound()
     {
         $this->getMockService(Vote::class)
@@ -213,6 +241,9 @@ class VoteControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(404);
     }
 
+    /**
+     * @covers ::options
+     */
     public function testOptions()
     {
         $this->dispatch('/loggjafarthing/1/thingmal/2/atkvaedagreidslur/3', 'OPTIONS');
@@ -222,6 +253,9 @@ class VoteControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(200);
     }
 
+    /**
+     * @covers ::optionsList
+     */
     public function testOptionsList()
     {
         $this->dispatch('/loggjafarthing/1/thingmal/2/atkvaedagreidslur', 'OPTIONS');

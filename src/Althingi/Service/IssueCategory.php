@@ -96,8 +96,8 @@ class IssueCategory implements DatabaseAwareInterface
     {
         $statement = $this->getDriver()->prepare('
             select C.`category_id`, C.`super_category_id`, C.`title`, sum(`speech_sum`) as `time` from (
-                select CI.*, TIME_TO_SEC(timediff(SP.`to`, SP.`from`)) as `speech_sum`  
-                from `Speech` SP 
+                select CI.*, TIME_TO_SEC(timediff(SP.`to`, SP.`from`)) as `speech_sum`
+                from `Speech` SP
                 join `Category_has_Issue` CI on (CI.`issue_id` = SP.`issue_id`)
                 where SP.`assembly_id` = :assembly_id and SP.`congressman_id` = :congressman_id
             ) as T

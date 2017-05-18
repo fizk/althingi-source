@@ -4,7 +4,6 @@ namespace Althingi\Service;
 
 use Althingi\DatabaseConnection;
 use DateTime;
-use PHPUnit_Extensions_Database_DataSet_IDataSet;
 use PHPUnit_Extensions_Database_TestCase;
 use Althingi\Model\President as PresidentModel;
 use Althingi\Model\PresidentCongressman as PresidentCongressmanModel;
@@ -17,6 +16,31 @@ class PresidentTest extends PHPUnit_Extensions_Database_TestCase
     private $pdo;
 
     public function testGet()
+    {
+        $presidentService = new President();
+        $presidentService->setDriver($this->pdo);
+        $expectedData = (new \Althingi\Model\President())
+            ->setPresidentId(1)
+            ->setCongressmanId(1)
+            ->setAssemblyId(1)
+            ->setFrom(new DateTime('2000-01-01'))
+            ->setTitle('t');
+        $actualData = $presidentService->get(1);
+
+        $this->assertEquals($expectedData, $actualData);
+    }
+
+    public function testGetNotFound()
+    {
+        $presidentService = new President();
+        $presidentService->setDriver($this->pdo);
+        $expectedData = null;
+        $actualData = $presidentService->get(10987655);
+
+        $this->assertEquals($expectedData, $actualData);
+    }
+
+    public function testGetWithCongressman()
     {
         $presidentService = new President();
         $presidentService->setDriver($this->pdo);
@@ -34,7 +58,7 @@ class PresidentTest extends PHPUnit_Extensions_Database_TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testGetNotFound()
+    public function testGetWithCongressmanNotFound()
     {
         $presidentService = new President();
         $presidentService->setDriver($this->pdo);
@@ -109,11 +133,6 @@ class PresidentTest extends PHPUnit_Extensions_Database_TestCase
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    /**
-     * Returns the test dataset.
-     *
-     * @return PHPUnit_Extensions_Database_DataSet_IDataSet
-     */
     protected function getDataSet()
     {
         return $this->createArrayDataSet([

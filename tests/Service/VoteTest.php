@@ -192,6 +192,7 @@ class VoteTest extends PHPUnit_Extensions_Database_TestCase
 
         $this->assertEquals($expectedData, $actualData);
     }
+
     public function testGetFrequencyByAssemblyAndCongressmanWithDate()
     {
         $voteService = new Vote();
@@ -206,11 +207,6 @@ class VoteTest extends PHPUnit_Extensions_Database_TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    /**
-     * Returns the test dataset.
-     *
-     * @return PHPUnit_Extensions_Database_DataSet_IDataSet
-     */
     protected function getDataSet()
     {
         return $this->createArrayDataSet([

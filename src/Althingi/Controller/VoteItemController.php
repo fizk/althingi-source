@@ -59,7 +59,8 @@ class VoteItemController extends AbstractRestfulController implements
                         )
                         ->setStatus(409);
                 } else {
-                    throw $e;
+                    return (new ErrorModel($e))
+                        ->setStatus(500);
                 }
             }
         }
@@ -68,6 +69,11 @@ class VoteItemController extends AbstractRestfulController implements
             ->setStatus(400);
     }
 
+    /**
+     * @param $id
+     * @param $data
+     * @return \Rend\View\Model\ModelInterface
+     */
     public function patch($id, $data)
     {
         $voteItemId = $this->params('vote_item_id');

@@ -36,11 +36,6 @@ class ElectionTest extends PHPUnit_Extensions_Database_TestCase
         $this->assertInstanceOf(ElectionModel::class, $election);
     }
 
-    /**
-     * Returns the test dataset.
-     *
-     * @return PHPUnit_Extensions_Database_DataSet_IDataSet
-     */
     protected function getDataSet()
     {
         return $this->createArrayDataSet([

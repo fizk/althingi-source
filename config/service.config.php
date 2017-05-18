@@ -67,10 +67,12 @@ return [
             $dbHost = getenv('DB_HOST') ?: 'localhost';
             $dbPort = getenv('DB_PORT') ?: 3306;
             $dbName = getenv('DB_NAME') ?: 'althingi';
+            $dbUser = getenv('DB_USER') ?: 'root';
+            $dbPass = getenv('DB_PASSWORD') ?: '';
             return new PDO(
                 "mysql:host={$dbHost};port={$dbPort};dbname={$dbName}",
-                getenv('DB_USER'),
-                getenv('DB_PASSWORD'),
+                $dbUser,
+                $dbPass,
                 [
                     PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'",
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
