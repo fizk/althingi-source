@@ -1,15 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 10/06/15
- * Time: 8:53 PM
- */
 
 namespace Althingi\Service;
 
 use Althingi\Lib\DatabaseAwareInterface;
 use PDO;
+use Althingi\Hydrator\Speech as SpeechHydrator;
+use Althingi\Hydrator\SpeechAndPosition as SpeechAndPositionHydrator;
+use Althingi\Hydrator\DateAndCount as DateAndCountHydrator;
+use Althingi\Model\Speech as SpeechModel;
+use Althingi\Model\SpeechAndPosition as SpeechAndPositionModel;
+use Althingi\Model\DateAndCount as DateAndCountModel;
 
 /**
  * Class Speech
@@ -28,18 +28,28 @@ class Speech implements DatabaseAwareInterface
      * Get one speech item.
      *
      * @param string $id
-     * @return \stdClass
+     * @return \Althingi\Model\Speech
      */
-    public function get($id)
+    public function get(string $id): ?SpeechModel
     {
         $statement = $this->getDriver()->prepare(
             'select * from `Speech` where speech_id = :speech_id'
         );
         $statement->execute(['speech_id' => $id]);
-        return $this->decorate($statement->fetchObject());
+
+        $object = $statement->fetch(PDO::FETCH_ASSOC);
+        return $object
+            ? (new SpeechHydrator())->hydrate($object, new SpeechModel())
+            : null ;
     }
 
-    public function getFrequencyByAssemblyAndCongressman($assemblyId, $congressmanId)
+    /**
+     * @todo I don't fully understand what is going on here...
+     * @param $assemblyId
+     * @param $congressmanId
+     * @return object
+     */
+    public function getFrequencyByAssemblyAndCongressman(int $assemblyId, int $congressmanId)
     {
         $speechTypeStatement = $this->getDriver()->prepare('
             select `type`, sum(`diff`) as `total` from (
@@ -98,9 +108,9 @@ class Speech implements DatabaseAwareInterface
      * @param int $assemblyId
      * @param int $issueId
      * @param int $size
-     * @return array
+     * @return \Althingi\Model\SpeechAndPosition[]
      */
-    public function fetch($id, $assemblyId, $issueId, $size = 25)
+    public function fetch(string $id, int $assemblyId, int $issueId, int $size = 25): array
     {
         $pointer = 0;
         $hasResult = false;
@@ -132,14 +142,15 @@ class Speech implements DatabaseAwareInterface
             limit ' . $rangeBegin . ', ' . $size
         );
         $statement->execute(['assembly_id' => $assemblyId, ':issue_id' => $issueId]);
-        $speeches = $statement->fetchAll();
+        $speeches = $statement->fetchAll(PDO::FETCH_ASSOC);
         $rangeEnd = $rangeBegin + count($speeches);
 
-        return array_map(
-            [$this, 'decorate'],
-            $speeches,
-            range($rangeBegin, $rangeEnd - 1)
-        );
+        return array_map(function ($object, $position) {
+            return (new SpeechAndPositionHydrator())->hydrate(
+                array_merge($object, ['position' => $position]),
+                new SpeechAndPositionModel()
+            );
+        }, $speeches, range($rangeBegin, $rangeEnd - 1));
     }
 
     /**
@@ -149,9 +160,9 @@ class Speech implements DatabaseAwareInterface
      * @param int $issueId
      * @param int $offset
      * @param int $size
-     * @return array
+     * @return \Althingi\Model\SpeechAndPosition[]
      */
-    public function fetchByIssue($assemblyId, $issueId, $offset = 0, $size = 25)
+    public function fetchByIssue(int $assemblyId, int $issueId, int $offset = 0, int $size = 25): array
     {
         $statement = $this->getDriver()->prepare("
           select *, timestampdiff(SECOND, `from`, `to`) as `time`
@@ -162,12 +173,13 @@ class Speech implements DatabaseAwareInterface
         ");
         $statement->execute(['assembly_id' => $assemblyId, 'issue_id' => $issueId]);
 
-        $speeches = $statement->fetchAll();
-        return array_map(
-            [$this, 'decorate'],
-            $speeches,
-            count($speeches) > 0 ? range($offset, $offset + count($speeches) - 1) : []
-        );
+        $speeches = $statement->fetchAll(PDO::FETCH_ASSOC);
+        return array_map(function ($object, $position) {
+            return (new SpeechAndPositionHydrator())->hydrate(
+                array_merge($object, ['position' => $position]),
+                new SpeechAndPositionModel()
+            );
+        }, $speeches, count($speeches) > 0 ? range($offset, $offset + count($speeches) - 1) : []);
     }
 
     /**
@@ -177,7 +189,7 @@ class Speech implements DatabaseAwareInterface
      * @param int $issueId
      * @return int
      */
-    public function countByIssue($assemblyId, $issueId)
+    public function countByIssue(int $assemblyId, int $issueId): int
     {
         $statement = $this->getDriver()->prepare("
           select count(*) from `Speech`
@@ -193,16 +205,17 @@ class Speech implements DatabaseAwareInterface
      *
      * @param $assemblyId
      * @param $issueId
-     * @return array
+     * @return \Althingi\Model\DateAndCount[]
      */
-    public function fetchFrequencyByIssue($assemblyId, $issueId)
+    public function fetchFrequencyByIssue(int $assemblyId, int $issueId): array
     {
         $statement = $this->getDriver()->prepare('
-            select date_format(`from`, "%Y-%m") as `year_month`, 
+            select date_format(`from`, "%Y-%m-01 00:00:00") as `date`, 
             (sum(time_to_sec(timediff(`to`, `from`)))) as `count`
             from `Speech`
             where assembly_id = :assembly_id and issue_id = :issue_id
             group by date_format(`from`, "%Y-%m")
+            having `count` is not null
             order by `from`;
         ');
 
@@ -212,9 +225,8 @@ class Speech implements DatabaseAwareInterface
         ]);
 
         return array_map(function ($speech) {
-            $speech->count = (int) $speech->count;
-            return $speech;
-        }, $statement->fetchAll());
+            return (new DateAndCountHydrator())->hydrate($speech, new DateAndCountModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
     /**
@@ -224,25 +236,30 @@ class Speech implements DatabaseAwareInterface
      * Return date and time in seconds.
      *
      * @param int $assemblyId
-     * @return array
+     * @return \Althingi\Model\DateAndCount[]
      */
-    public function fetchFrequencyByAssembly($assemblyId)
+    public function fetchFrequencyByAssembly(int $assemblyId): array
     {
         $statement = $this->getDriver()->prepare(
-            'select date_format(`date`, "%Y-%m") as `month`, sum(`diff`) as `time` from (
+            'select date_format(`date`, "%Y-%m-01 00:00:00") as `date`, sum(`diff`) as `count` from (
                 select date(`from`) as `date`, time_to_sec(timediff(`to`, `from`)) as `diff`
                 from `Speech`
                 where assembly_id = :assembly_id and (`from` is not null or `to` is not null)
-            ) as G group by `month` order by `month`;'
+            ) as G group by `date` order by `date`;'
         );
         $statement->execute(['assembly_id' => $assemblyId]);
+
         return array_map(function ($speech) {
-            $speech->time = (int) $speech->time;
-            return $speech;
-        }, $statement->fetchAll());
+            return (new DateAndCountHydrator())->hydrate($speech, new DateAndCountModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    public function countTotalTimeByAssemblyAndCongressman($assemblyId, $congressmanId)
+    /**
+     * @param int $assemblyId
+     * @param int $congressmanId
+     * @return int
+     */
+    public function countTotalTimeByAssemblyAndCongressman(int $assemblyId, int $congressmanId): int
     {
         $statement = $this->getDriver()->prepare('
             select sum(`diff`) from (
@@ -261,28 +278,32 @@ class Speech implements DatabaseAwareInterface
      * Create one Speech. Accepts object from
      * corresponding Form.
      *
-     * @param \stdClass $data
+     * @param \Althingi\Model\Speech $data
      * @return int
      */
-    public function create($data)
+    public function create(SpeechModel $data)
     {
-        $statement = $this->getDriver()->prepare($this->insertString('Speech', $data));
-        $statement->execute($this->convert($data));
-        return (int) $this->getDriver()->lastInsertId();
+        $statement = $this->getDriver()->prepare(
+            $this->toInsertString('Speech', $data)
+        );
+        $statement->execute($this->toSqlValues($data));
+
+        return $this->getDriver()->lastInsertId();
     }
 
     /**
      * Update one entry.
      *
-     * @param \stdClass $data
+     * @param \Althingi\Model\Speech $data
      * @return int
      */
-    public function update($data)
+    public function update(SpeechModel $data)
     {
         $statement = $this->getDriver()->prepare(
-            $this->updateString('Speech', $data, "speech_id = :speech_id")
+            $this->toUpdateString('Speech', $data, "speech_id='{$data->getSpeechId()}'")
         );
-        $statement->execute($this->convert($data));
+        $statement->execute($this->toSqlValues($data));
+
         return $statement->rowCount();
     }
 
@@ -300,27 +321,5 @@ class Speech implements DatabaseAwareInterface
     public function getDriver()
     {
         return $this->pdo;
-    }
-
-    /**
-     * Typecast and doecorate object.
-     *
-     * @param $object
-     * @param int $position
-     * @return null
-     */
-    private function decorate($object, $position = null)
-    {
-        if (!$object) {
-            return null;
-        }
-
-        $object->plenary_id = (int) $object->plenary_id;
-        $object->assembly_id = (int) $object->assembly_id;
-        $object->issue_id = (int) $object->issue_id;
-        $object->congressman_id = (int) $object->congressman_id;
-        $object->position = $position;
-
-        return $object;
     }
 }

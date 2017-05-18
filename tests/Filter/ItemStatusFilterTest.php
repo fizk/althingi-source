@@ -1,12 +1,5 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 19/04/2016
- * Time: 4:19 PM
- */
-
 namespace Althingi\Filter;
 
 use PHPUnit_Framework_TestCase;

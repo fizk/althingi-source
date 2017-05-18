@@ -1,15 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 20/03/2016
- * Time: 11:22 AM
- */
 
 namespace Althingi\Service;
 
 use Althingi\Lib\DatabaseAwareInterface;
 use PDO;
+use Althingi\Model\Vote as VoteModel;
+use Althingi\Model\DateAndCount as DateAndCountModel;
+use Althingi\Model\VoteTypeAndCount as VoteTypeAndCountModel;
+use Althingi\Hydrator\Vote as VoteHydrator;
+use Althingi\Hydrator\DateAndCount as DateAndCountHydrator;
+use Althingi\Hydrator\VoteTypeAndCount as VoteTypeAndCountHydrator;
 
 class Vote implements DatabaseAwareInterface
 {
@@ -20,16 +20,29 @@ class Vote implements DatabaseAwareInterface
      */
     private $pdo;
 
-    public function get($id)
+    /**
+     * @param int $id
+     * @return \Althingi\Model\Vote|null
+     */
+    public function get(int $id): ?VoteModel
     {
         $statement = $this->getDriver()->prepare('
             select * from `Vote` where vote_id = :vote_id
         ');
         $statement->execute(['vote_id' => $id]);
-        return $statement->fetchObject();
+        $object = $statement->fetch(PDO::FETCH_ASSOC);
+
+        return $object
+            ? (new VoteHydrator())->hydrate($object, new VoteModel())
+            : null ;
     }
 
-    public function fetchByIssue($assemblyId, $issueId)
+    /**
+     * @param int $assemblyId
+     * @param int $issueId
+     * @return \Althingi\Model\Vote[]
+     */
+    public function fetchByIssue(int $assemblyId, int $issueId): array
     {
         $statement =$this->getDriver()->prepare('
             select * from `Vote` V
@@ -41,43 +54,58 @@ class Vote implements DatabaseAwareInterface
             'assembly_id' => $assemblyId,
         ]);
 
-        return $statement->fetchAll();
+        return array_map(function ($object) {
+            return (new VoteHydrator())->hydrate($object, new VoteModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    public function fetchDateFrequencyByIssue($assemblyId, $issueId)
+    /**
+     * @param int $assemblyId
+     * @param int $issueId
+     * @return \Althingi\Model\DateAndCount[]
+     */
+    public function fetchDateFrequencyByIssue(int $assemblyId, int $issueId): array
     {
         $statement = $this->getDriver()->prepare('
-            select count(*) as `count`, date_format(`date`, "%Y-%m") as `year_month` from `Vote`
+            select count(*) as `count`, date_format(`date`, "%Y-%m-01") as `date` from `Vote`
             where assembly_id = :assembly_id and issue_id = :issue_id
-            group by `year_month`
-            order by `year_month`;
+            group by `date`
+            order by `date`;
         ');
         $statement->execute([
             'assembly_id' => $assemblyId,
             'issue_id' => $issueId
         ]);
         return array_map(function ($vote) {
-            $vote->count = (int) $vote->count;
-            return $vote;
-        }, $statement->fetchAll());
+            return (new DateAndCountHydrator())->hydrate($vote, new DateAndCountModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    public function fetchFrequencyByAssembly($assemblyId)
+    /**
+     * @param int $assemblyId
+     * @return \Althingi\Model\DateAndCount[]
+     */
+    public function fetchFrequencyByAssembly(int $assemblyId): array
     {
         $statement = $this->getDriver()->prepare(
-            'select count(*) as `count`, date_format(`date`, "%Y-%m") as `vote_date`
+            'select count(*) as `count`, date_format(`date`, "%Y-%m-01") as `date`
             from `Vote`
             where assembly_id = :assembly_id
-            group by `vote_date`;'
+            group by `date`;'
         );
         $statement->execute(['assembly_id' => $assemblyId]);
         return array_map(function ($vote) {
-            $vote->count = (int) $vote->count;
-            return $vote;
-        }, $statement->fetchAll());
+            return (new DateAndCountHydrator())->hydrate($vote, new DateAndCountModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    public function fetchByDocument($assemblyId, $issueId, $documentId)
+    /**
+     * @param int $assemblyId
+     * @param int $issueId
+     * @param int $documentId
+     * @return \Althingi\Model\Vote[]
+     */
+    public function fetchByDocument(int $assemblyId, int $issueId, int $documentId): array
     {
         $statement = $this->getDriver()->prepare('
             select * from `Vote`
@@ -89,12 +117,26 @@ class Vote implements DatabaseAwareInterface
             'issue_id' => $issueId,
             'document_id' => $documentId,
         ]);
-        return array_map([$this, 'decorate'], $statement->fetchAll());
+        return array_map(function ($object) {
+            return (new VoteHydrator())->hydrate($object, new VoteModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    public function getFrequencyByAssemblyAndCongressman($assemblyId, $congressmanId, \DateTime $from = null, \DateTime $to = null)
-    {
-        $statement;
+    /**
+     * @todo wtf??
+     * @param $assemblyId
+     * @param $congressmanId
+     * @param \DateTime|null $from
+     * @param \DateTime|null $to
+     * @return array
+     */
+    public function getFrequencyByAssemblyAndCongressman(
+        int $assemblyId,
+        int $congressmanId,
+        \DateTime $from = null,
+        \DateTime $to = null
+    ) {
+        $statement = null;
         if ($from) {
             $to = $to ? $to : new \DateTime();
             $statement = $this->getDriver()->prepare('
@@ -122,13 +164,16 @@ class Vote implements DatabaseAwareInterface
             ]);
         }
 
-        return array_map(function ($type) {
-            $type->count = (int) $type->count;
-            return $type;
-        }, $statement->fetchAll());
+        return array_map(function ($object) {
+            return (new VoteTypeAndCountHydrator())->hydrate($object, new VoteTypeAndCountModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    public function countByAssembly($assemblyId)
+    /**
+     * @param int $assemblyId
+     * @return int
+     */
+    public function countByAssembly(int $assemblyId): int
     {
         $statement = $this->getDriver()->prepare('
             select count(*) from `Vote` V where V.`assembly_id` = :assembly_id;
@@ -139,36 +184,32 @@ class Vote implements DatabaseAwareInterface
         return (int) $statement->fetchColumn(0);
     }
 
-    public function create($data)
-    {
-        $insertStatement = $this->getDriver()->prepare($this->insertString('Vote', $data));
-        $insertStatement->execute($this->convert($data));
-    }
-
-    public function update($data)
+    /**
+     * @param VoteModel $data
+     * @return int
+     */
+    public function create(VoteModel $data): int
     {
         $statement = $this->getDriver()->prepare(
-            $this->updateString('Vote', $data, "vote_id = {$data->vote_id}")
+            $this->toInsertString('Vote', $data)
         );
-        $statement->execute($this->convert($data));
-        return $statement->rowCount();
+        $statement->execute($this->toSqlValues($data));
+
+        return $this->getDriver()->lastInsertId();
     }
 
-    private function decorate($object)
+    /**
+     * @param VoteModel $data
+     * @return int
+     */
+    public function update(VoteModel $data): int
     {
-        if (!$object) {
-            return null;
-        }
+        $statement = $this->getDriver()->prepare(
+            $this->toUpdateString('Vote', $data, "vote_id={$data->getVoteId()}")
+        );
+        $statement->execute($this->toSqlValues($data));
 
-        $object->vote_id = (int) $object->vote_id;
-        $object->issue_id = (int) $object->issue_id;
-        $object->assembly_id = (int) $object->assembly_id;
-        $object->document_id = (int) $object->document_id;
-        $object->yes = (int) $object->yes;
-        $object->no = (int) $object->no;
-        $object->inaction = (int) $object->inaction;
-
-        return $object;
+        return $statement->rowCount();
     }
 
     /**

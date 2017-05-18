@@ -1,14 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 19/05/15
- * Time: 1:02 PM
- */
 
 namespace Althingi\Service;
 
 use Althingi\Lib\DatabaseAwareInterface;
+use Althingi\Model\Committee as CommitteeModel;
+use Althingi\Hydrator\Committee as CommitteeHydrator;
 use PDO;
 
 /**
@@ -22,63 +18,86 @@ class Committee implements DatabaseAwareInterface
     /** @var  \PDO */
     private $pdo;
 
-    public function get($id)
+    /**
+     * @param $id
+     * @return \Althingi\Model\Committee|null
+     */
+    public function get(int $id): ?CommitteeModel
     {
-        $statement = $this->getDriver()->prepare('
-            select * from `Committee` C where C.`committee_id` = :committee_id;
-        ');
-        $statement->execute([
-            'committee_id' => $id
-        ]);
-        return $this->decorate($statement->fetchObject());
+        $statement = $this->getDriver()->prepare('select * from `Committee` C where C.`committee_id` = :committee_id;');
+        $statement->execute(['committee_id' => $id]);
+
+        $object = $statement->fetch(PDO::FETCH_ASSOC);
+
+        return $object
+            ? (new CommitteeHydrator())->hydrate($object, new CommitteeModel())
+            : null;
     }
 
-    public function fetchAll()
+    /**
+     * @return \Althingi\Model\Committee[]
+     */
+    public function fetchAll(): array
     {
-        $statement = $this->getDriver()->prepare('
-            select * from `Committee` C order by C.`name`;
-        ');
+        $statement = $this->getDriver()->prepare('select * from `Committee` C order by C.`name`;');
         $statement->execute();
-        return array_map([$this, 'decorate'], $statement->fetchAll());
+
+        return array_map(function ($object) {
+            return $object
+                ? (new CommitteeHydrator())->hydrate($object, new CommitteeModel())
+                : null;
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    public function fetchByAssembly($assemblyId)
+    /**
+     * @param $assemblyId
+     * @return \Althingi\Model\Committee[]
+     */
+    public function fetchByAssembly(int $assemblyId): array
     {
         $statement = $this->getDriver()->prepare('
             select * from `Committee` C
-            where C.`first_assembly_id` <= :assembly_id 
-            and (C.`last_assembly_id` >= :assembly_id or C.`last_assembly_id` is null)
-            order by C.`name`;
+              where C.`first_assembly_id` <= :assembly_id 
+              and (C.`last_assembly_id` >= :assembly_id or C.`last_assembly_id` is null)
+              order by C.`name`;
         ');
 
         $statement->execute([
             'assembly_id' => $assemblyId
         ]);
 
-        return array_map([$this, 'decorate'], $statement->fetchAll());
+        return array_map(function ($object) {
+            return $object
+                ? (new CommitteeHydrator())->hydrate($object, new CommitteeModel())
+                : null;
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
     /**
      * Create one entry.
      *
-     * @param object $data
+     * @param \Althingi\Model\Committee $data
      * @return int affected rows
      */
-    public function create($data)
+    public function create(CommitteeModel $data): int
     {
-        $statement = $this
-            ->getDriver()
-            ->prepare($this->insertString('Committee', $data));
-        $statement->execute($this->convert($data));
-        return $statement->rowCount();
+        $statement = $this->getDriver()->prepare($this->toInsertString('Committee', $data));
+        $statement->execute($this->toSqlValues($data));
+
+        return $this->getDriver()->lastInsertId();
     }
 
-    public function update($data)
+    /**
+     * @param \Althingi\Model\Committee $data
+     * @return int
+     */
+    public function update(CommitteeModel $data): int
     {
-        $statement = $this
-            ->getDriver()
-            ->prepare($this->updateString('Committee', $data, "committee_id={$data->committee_id}"));
-        $statement->execute($this->convert($data));
+        $statement = $this->getDriver()->prepare(
+            $this->toUpdateString('Committee', $data, "committee_id={$data->getCommitteeId()}")
+        );
+        $statement->execute($this->toSqlValues($data));
+
         return $statement->rowCount();
     }
 
@@ -96,18 +115,5 @@ class Committee implements DatabaseAwareInterface
     public function getDriver()
     {
         return $this->pdo;
-    }
-
-    private function decorate($object)
-    {
-        if (!$object) {
-            return null;
-        }
-
-        $object->committee_id = (int) $object->committee_id;
-        $object->first_assembly_id = $object->first_assembly_id ? (int) $object->first_assembly_id : null;
-        $object->last_assembly_id = $object->last_assembly_id ? (int) $object->last_assembly_id : null;
-
-        return $object;
     }
 }

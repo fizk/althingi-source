@@ -1,14 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 19/05/15
- * Time: 1:02 PM
- */
 
 namespace Althingi\Service;
 
 use Althingi\Lib\DatabaseAwareInterface;
+use Althingi\Model\CommitteeMeeting as CommitteeMeetingModel;
+use Althingi\Hydrator\CommitteeMeeting as CommitteeMeetingHydrator;
 use PDO;
 
 /**
@@ -22,7 +18,11 @@ class CommitteeMeeting implements DatabaseAwareInterface
     /** @var  \PDO */
     private $pdo;
 
-    public function get($id)
+    /**
+     * @param $id
+     * @return \Althingi\Model\CommitteeMeeting|null
+     */
+    public function get(int $id): ?CommitteeMeetingModel
     {
         $statement = $this->getDriver()->prepare('
             select * from `CommitteeMeeting` where committee_meeting_id = :committee_meeting_id
@@ -30,10 +30,20 @@ class CommitteeMeeting implements DatabaseAwareInterface
         $statement->execute([
             'committee_meeting_id' => $id,
         ]);
-        return $this->decorate($statement->fetchObject());
+
+        $object = $statement->fetch(PDO::FETCH_ASSOC);
+
+        return $object
+            ? (new CommitteeMeetingHydrator())->hydrate($object, new CommitteeMeetingModel())
+            : null;
     }
 
-    public function fetchByAssembly($assemblyId, $committeeId)
+    /**
+     * @param int $assemblyId
+     * @param int $committeeId
+     * @return \Althingi\Model\CommitteeMeeting[]
+     */
+    public function fetchByAssembly(int $assemblyId, int $committeeId): array
     {
         $statement = $this->getDriver()->prepare('
             select * from `CommitteeMeeting` C where assembly_id = :assembly_id and committee_id = :committee_id
@@ -44,40 +54,40 @@ class CommitteeMeeting implements DatabaseAwareInterface
             'committee_id' => $committeeId,
         ]);
 
-        return array_map([$this, 'decorate'], $statement->fetchAll());
+        return array_map(function ($object) {
+            return (new CommitteeMeetingHydrator())->hydrate($object, new CommitteeMeetingModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
     /**
      * Create one entry.
      *
-     * @param object $data
+     * @param \Althingi\Model\CommitteeMeeting $data
      * @return int affected rows
      */
-    public function create($data)
+    public function create(CommitteeMeetingModel $data): int
     {
-        $statement = $this
-            ->getDriver()
-            ->prepare($this->insertString('CommitteeMeeting', $data));
-        $statement->execute($this->convert($data));
-        return $statement->rowCount();
+        $statement = $this->getDriver()->prepare(
+            $this->toInsertString('CommitteeMeeting', $data)
+        );
+        $statement->execute($this->toSqlValues($data));
+
+        return $this->getDriver()->lastInsertId();
     }
 
     /**
      * Create one entry.
      *
-     * @param object $data
+     * @param \Althingi\Model\CommitteeMeeting $data
      * @return int affected rows
      */
-    public function update($data)
+    public function update(CommitteeMeetingModel $data): int
     {
-        $statement = $this
-            ->getDriver()
-            ->prepare($this->updateString(
-                'CommitteeMeeting',
-                $data,
-                "committee_meeting_id={$data->committee_meeting_id}"
-            ));
-        $statement->execute($this->convert($data));
+        $statement = $this->getDriver()->prepare(
+            $this->toUpdateString('CommitteeMeeting', $data, "committee_meeting_id={$data->getCommitteeMeetingId()}")
+        );
+        $statement->execute($this->toSqlValues($data));
+
         return $statement->rowCount();
     }
 
@@ -95,18 +105,5 @@ class CommitteeMeeting implements DatabaseAwareInterface
     public function getDriver()
     {
         return $this->pdo;
-    }
-
-    private function decorate($object)
-    {
-        if (!$object) {
-            return null;
-        }
-
-        $object->assembly_id = (int) $object->assembly_id;
-        $object->committee_id = (int) $object->committee_id;
-        $object->committee_meeting_id = (int) $object->committee_meeting_id;
-
-        return $object;
     }
 }

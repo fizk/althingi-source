@@ -1,16 +1,17 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 20/05/15
- * Time: 7:40 AM
- */
 
 namespace Althingi\Controller;
 
+use Althingi\Service\Committee;
 use Mockery;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
+/**
+ * Class CommitteeControllerTest
+ * @package Althingi\Controller
+ * @coversDefaultClass \Althingi\Controller\CommitteeController
+ * @covers \Althingi\Controller\CommitteeController::setCommitteeService
+ */
 class CommitteeControllerTest extends AbstractHttpControllerTestCase
 {
     use ServiceHelper;
@@ -24,24 +25,27 @@ class CommitteeControllerTest extends AbstractHttpControllerTestCase
         parent::setUp();
 
         $this->buildServices([
-            'Althingi\Service\Committee',
+            Committee::class,
         ]);
     }
 
     public function tearDown()
     {
         $this->destroyServices();
-        \Mockery::close();
+        Mockery::close();
         return parent::tearDown();
     }
 
+    /**
+     * @covers ::get
+     */
     public function testGet()
     {
-        $this->getMockService('Althingi\Service\Committee')
+        $this->getMockService(Committee::class)
             ->shouldReceive('get')
             ->once()
             ->with(1)
-            ->andReturn(new \stdClass())
+            ->andReturn((new \Althingi\Model\Committee()))
             ->getMock();
 
         $this->dispatch('/nefndir/1', 'GET');
@@ -51,13 +55,16 @@ class CommitteeControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(200);
     }
 
+    /**
+     * @covers ::get
+     */
     public function testGetNotFound()
     {
-        $this->getMockService('Althingi\Service\Committee')
+        $this->getMockService(Committee::class)
             ->shouldReceive('get')
             ->once()
             ->with(1)
-            ->andReturnNull()
+            ->andReturn(null)
             ->getMock();
 
         $this->dispatch('/nefndir/1', 'GET');
@@ -68,9 +75,12 @@ class CommitteeControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseHeaderContains('Access-Control-Allow-Origin', '*');
     }
 
+    /**
+     * @covers ::getList
+     */
     public function testGetList()
     {
-        $this->getMockService('Althingi\Service\Committee')
+        $this->getMockService(Committee::class)
             ->shouldReceive('fetchAll')
             ->once()
             ->andReturn([])
@@ -81,12 +91,14 @@ class CommitteeControllerTest extends AbstractHttpControllerTestCase
         $this->assertControllerClass('CommitteeController');
         $this->assertActionName('getList');
         $this->assertResponseStatusCode(200);
-        $this->assertResponseHeaderContains('Access-Control-Allow-Origin', '*');
     }
 
+    /**
+     * @covers ::put
+     */
     public function testPut()
     {
-        $this->getMockService('Althingi\Service\Committee')
+        $this->getMockService(Committee::class)
             ->shouldReceive('create')
             ->once()
             ->andReturn(1)
@@ -106,9 +118,12 @@ class CommitteeControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(201);
     }
 
+    /**
+     * @covers ::put
+     */
     public function testPutInvalidParameters()
     {
-        $this->getMockService('Althingi\Service\Committee')
+        $this->getMockService(Committee::class)
             ->shouldReceive('create')
             ->never()
             ->andReturn(1)
@@ -121,19 +136,23 @@ class CommitteeControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(400);
     }
 
+    /**
+     * @covers ::patch
+     */
     public function testPatch()
     {
-        $this->getMockService('Althingi\Service\Committee')
+        $this->getMockService(Committee::class)
             ->shouldReceive('get')
             ->once()
-            ->andReturn((object)[
-                'committee_id' => 1,
-                'first_assembly_id' => 1,
-                'last_assembly_id' => 1,
-                'name' => 'name',
-                'abbr_short' => 'n',
-                'abbr_long' => 'na',
-            ])
+            ->andReturn(
+                (new \Althingi\Model\Committee())
+                ->setCommitteeId(1)
+                ->setFirstAssemblyId(1)
+                ->setLastAssemblyId(1)
+                ->setName('name')
+                ->setAbbrShort('n')
+                ->setAbbrLong('na')
+            )
             ->getMock()
             ->shouldReceive('update')
             ->once()
@@ -149,16 +168,18 @@ class CommitteeControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(205);
     }
 
+    /**
+     * @covers ::get
+     */
     public function testPatchNotFound()
     {
         $this->getMockService('Althingi\Service\Committee')
             ->shouldReceive('get')
             ->once()
-            ->andReturnNull()
+            ->andReturn(null)
             ->getMock()
             ->shouldReceive('update')
             ->never()
-            ->andReturn(1)
             ->getMock();
 
         $this->dispatch('/nefndir/1', 'PATCH', [
@@ -170,6 +191,9 @@ class CommitteeControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(404);
     }
 
+    /**
+     * @covers ::options
+     */
     public function testOptions()
     {
         $this->dispatch('/nefndir/1', 'OPTIONS');
@@ -181,6 +205,9 @@ class CommitteeControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseHeaderContains('Allow', 'OPTIONS, GET, PUT, PATCH');
     }
 
+    /**
+     * @covers ::optionsList
+     */
     public function testOptionsList()
     {
         $this->dispatch('/nefndir', 'OPTIONS');

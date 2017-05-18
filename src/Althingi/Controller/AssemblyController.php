@@ -1,15 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 2/06/15
- * Time: 7:31 AM
- */
 
 namespace Althingi\Controller;
 
 use Althingi\Form\Assembly as AssemblyForm;
-use Althingi\Lib\CommandGetAssemblyAwareInterface;
 use Althingi\Lib\ServiceAssemblyAwareInterface;
 use Althingi\Lib\ServiceCabinetAwareInterface;
 use Althingi\Lib\ServiceCategoryAwareInterface;
@@ -18,6 +11,7 @@ use Althingi\Lib\ServiceIssueAwareInterface;
 use Althingi\Lib\ServicePartyAwareInterface;
 use Althingi\Lib\ServiceSpeechAwareInterface;
 use Althingi\Lib\ServiceVoteAwareInterface;
+use Althingi\Model\AssemblyProperties;
 use Althingi\Service\Assembly;
 use Althingi\Service\Cabinet;
 use Althingi\Service\Category;
@@ -73,29 +67,28 @@ class AssemblyController extends AbstractRestfulController implements
      * Get one Assembly.
      *
      * @param int $id
-     * @return \Rend\View\Model\ModelInterface
+     * @return \Rend\View\Model\ModelInterface|array
      */
     public function get($id)
     {
         if (($assembly = $this->assemblyService->get($id)) != null) {
-            $assembly = (object)$assembly->toArray();
-            $assembly->parties = [];
-            $cabinets = $this->cabinetService->fetchByAssembly($id);
+            $assemblyProperties = (new AssemblyProperties())
+                ->setAssembly($assembly);
+            $cabinets = $this->cabinetService->fetchByAssembly($assembly->getAssemblyId());
+
             foreach ($cabinets as $cabinet) {
-                $majority = $this->partyService->fetchByCabinet($cabinet->cabinet_id);
-                $assembly->parties[] = [
-                    'majority' => $majority,
-                    'minority' => $this->partyService->fetchByAssembly($id, array_map(function ($party) {
-                        return (int) $party->party_id;
-                    }, $majority)),
-                ];
+                $assemblyProperties->setMajority(
+                    $this->partyService->fetchByCabinet($cabinet->getCabinetId())
+                );
+                $assemblyProperties->setMinority(
+                    $this->partyService->fetchByAssembly(
+                        $assembly->getAssemblyId(),
+                        $assemblyProperties->getMajorityPartyIds()
+                    )
+                );
             }
 
-            if (count($assembly->parties) > 1 && $assembly->parties[0] == $assembly->parties[1]) {
-                $assembly->parties = [$assembly->parties[0]];
-            }
-
-            return (new ItemModel($assembly))
+            return (new ItemModel($assemblyProperties))
                 ->setStatus(200);
         }
 
@@ -113,52 +106,31 @@ class AssemblyController extends AbstractRestfulController implements
 
         $count = $this->assemblyService->count();
         $range = $this->getRange($this->getRequest(), $count);
-        $assemblies = $this->assemblyService->fetchAll(
-            $range['from'],
-            ($range['to'] - $range['from']),
-            $order
-        );
+        $assemblies = $this->assemblyService->fetchAll($range['from'], ($range['to'] - $range['from']), $order);
 
-        $assemblies = array_map(function ($assembly) {
-            return (object)$assembly->toArray();
+        $assemblyCollection = array_map(function (\Althingi\Model\Assembly $assembly) {
+            $assemblyProperties = (new AssemblyProperties())
+                ->setAssembly($assembly);
+            $cabinets = $this->cabinetService->fetchByAssembly($assembly->getAssemblyId());
+
+            foreach ($cabinets as $cabinet) {
+                $assemblyProperties->setMajority($this->partyService->fetchByCabinet(
+                    $cabinet->getCabinetId()
+                ));
+                $assemblyProperties->setMinority($this->partyService->fetchByAssembly(
+                    $assembly->getAssemblyId(),
+                    array_map(function (\Althingi\Model\Party $party) {
+                        return $party->getPartyId();
+                    }, $assemblyProperties->getMajority())
+                ));
+            }
+
+            return $assemblyProperties;
         }, $assemblies);
 
-        foreach ($assemblies as $assembly) {
-            $assembly->parties = [];
-            $cabinets = $this->cabinetService->fetchByAssembly($assembly->assembly_id);
-            foreach ($cabinets as $cabinet) {
-                $assembly->parties[] = [
-                    'majority' => $this->partyService->fetchByCabinet($cabinet->cabinet_id)
-                ];
-            }
-        }
-
-        return (new CollectionModel($assemblies))
+        return (new CollectionModel($assemblyCollection))
             ->setStatus(206)
             ->setRange(0, $count, $count);
-    }
-
-    /**
-     * Create new Resource Assembly.
-     *
-     * @param  int $id
-     * @param  array $data
-     * @return \Rend\View\Model\ModelInterface
-     */
-    public function put($id, $data)
-    {
-        $form = new AssemblyForm();
-        $form->bindValues(array_merge($data, ['assembly_id' => $id]));
-
-        if ($form->isValid()) {
-            $object = $form->getObject();
-            $this->assemblyService->create($object);
-            return (new EmptyModel())
-                ->setStatus(201);
-        }
-
-        return (new ErrorModel($form))
-            ->setStatus(400);
     }
 
     /**
@@ -208,6 +180,29 @@ class AssemblyController extends AbstractRestfulController implements
 
         return (new ItemModel($response))
             ->setStatus(200);
+    }
+
+    /**
+     * Create new Resource Assembly.
+     *
+     * @param  int $id
+     * @param  array $data
+     * @return \Rend\View\Model\ModelInterface
+     */
+    public function put($id, $data)
+    {
+        $form = new AssemblyForm();
+        $form->bindValues(array_merge($data, ['assembly_id' => $id]));
+
+        if ($form->isValid()) {
+            $object = $form->getObject();
+            $this->assemblyService->create($object);
+            return (new EmptyModel())
+                ->setStatus(201);
+        }
+
+        return (new ErrorModel($form))
+            ->setStatus(400);
     }
 
     /**

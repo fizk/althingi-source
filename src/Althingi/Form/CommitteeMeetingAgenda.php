@@ -1,14 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 18/05/15
- * Time: 10:30 PM
- */
 
 namespace Althingi\Form;
 
-use Zend\Hydrator\HydratorInterface;
 use Zend\InputFilter\InputFilterProviderInterface;
 
 class CommitteeMeetingAgenda extends Form implements InputFilterProviderInterface
@@ -17,18 +10,8 @@ class CommitteeMeetingAgenda extends Form implements InputFilterProviderInterfac
     {
         parent::__construct(get_class($this));
         $this
-            ->setHydrator(new class implements HydratorInterface {
-                public function hydrate(array $data, $object)
-                {
-                    return (object) $data;
-                }
-
-                public function extract($object)
-                {
-                    return (array)$object;
-                }
-            })
-            ->setObject((object)[]);
+            ->setHydrator(new \Althingi\Hydrator\CommitteeMeetingAgenda())
+            ->setObject(new \Althingi\Model\CommitteeMeetingAgenda());
 
         $this->add(array(
             'name' => 'committee_meeting_agenda_id',

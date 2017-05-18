@@ -1,15 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 2/06/15
- * Time: 7:31 AM
- */
 
 namespace Althingi\Controller;
 
 use Althingi\Lib\ServiceCongressmanAwareInterface;
 use Althingi\Lib\ServicePartyAwareInterface;
+use Althingi\Model\President;
+use Althingi\Model\PresidentPartyProperties;
 use Althingi\Service\Congressman;
 use Althingi\Service\Party;
 use Rend\Controller\AbstractRestfulController;
@@ -35,13 +31,16 @@ class PresidentAssemblyController extends AbstractRestfulController implements
     {
         $assemblyId = $this->params('id');
         $residents = $this->congressmanService->fetchPresidentsByAssembly($assemblyId);
-        array_map(function ($president) {
-            $president->party = $this->partyService
-                ->getByCongressman($president->congressman_id, new \DateTime($president->from));
+        array_map(function (President $president) {
+            $congressmanAndParty = new PresidentPartyProperties();
+            $congressmanAndParty
+                ->setPresident($president)
+                ->setParty(
+                    $this->partyService->getByCongressman($president->getPresidentId(), $president->getFrom())
+                );
         }, $residents);
 
         return (new CollectionModel($residents))
-            ->setOption('Access-Control-Allow-Origin', '*')
             ->setStatus(200);
     }
 

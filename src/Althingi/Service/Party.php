@@ -1,13 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 10/06/15
- * Time: 8:53 PM
- */
 
 namespace Althingi\Service;
 
+use Althingi\Model\Party as PartyModel;
+use Althingi\Hydrator\Party as PartyHydrator;
+use Althingi\Model\PartyAndTime as PartyAndTimeModel;
+use Althingi\Hydrator\PartyAndTime as PartyAndTimeHydrator;
 use Althingi\Lib\DatabaseAwareInterface;
 use PDO;
 
@@ -28,18 +26,27 @@ class Party implements DatabaseAwareInterface
      * Get one party.
      *
      * @param int $id
-     * @return \stdClass
+     * @return \Althingi\Model\Party|null
      */
-    public function get($id)
+    public function get(int $id): ?PartyModel
     {
         $statement = $this->getDriver()->prepare('
             select * from `Party` where party_id = :party_id
         ');
         $statement->execute(['party_id' => $id]);
-        return $this->decorate($statement->fetchObject());
+
+        $object = $statement->fetch(PDO::FETCH_ASSOC);
+        return $object
+            ? (new PartyHydrator())->hydrate($object, new PartyModel())
+            : null;
     }
 
-    public function getByCongressman($congressmanId, \DateTime $date)
+    /**
+     * @param $congressmanId
+     * @param \DateTime $date
+     * @return \Althingi\Model\Party|null
+     */
+    public function getByCongressman(int $congressmanId, \DateTime $date): ?PartyModel
     {
         $statement = $this->getDriver()->prepare('
             select P.* from
@@ -57,10 +64,17 @@ class Party implements DatabaseAwareInterface
             'date' => $date->format('Y-m-d')
         ]);
 
-        return $this->decorate($statement->fetchObject());
+        $object = $statement->fetch(PDO::FETCH_ASSOC);
+        return $object
+            ? (new PartyHydrator())->hydrate($object, new PartyModel())
+            : null;
     }
 
-    public function fetchTimeByAssembly($assemblyId)
+    /**
+     * @param $assemblyId
+     * @return \Althingi\Model\PartyAndTime[]
+     */
+    public function fetchTimeByAssembly(int $assemblyId): array
     {
         $statement = $this->getDriver()->prepare('
             select sum(T.`time_sum`) as `total_time`, P.* from (
@@ -78,10 +92,17 @@ class Party implements DatabaseAwareInterface
             order by `total_time` desc;
         ');
         $statement->execute(['assembly_id' => $assemblyId]);
-        return array_map([$this, 'decorate'], $statement->fetchAll());
+        return array_map(function ($object) {
+            return (new PartyAndTimeHydrator())->hydrate($object, new PartyAndTimeModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    public function fetchByAssembly($assemblyId, $exclude = [])
+    /**
+     * @param $assemblyId
+     * @param array $exclude
+     * @return \Althingi\Model\Party[]
+     */
+    public function fetchByAssembly(int $assemblyId, array $exclude = []): array
     {
         $query = '';
         if (count($exclude) == 0) {
@@ -102,27 +123,35 @@ class Party implements DatabaseAwareInterface
 
         $statement = $this->getDriver()->prepare($query);
         $statement->execute(['assembly_id' => $assemblyId]);
-        return array_map([$this, 'decorate'], $statement->fetchAll());
+        return array_map(function ($object) {
+            return (new PartyHydrator())->hydrate($object, new PartyModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    public function fetchElectedByAssembly($assemblyId)
+    /**
+     * @param int $assemblyId
+     * @return \Althingi\Model\Party[]
+     */
+    public function fetchElectedByAssembly(int $assemblyId): array
     {
         $statement = $this->getDriver()->prepare('
             select * from `ElectionResult` ER join `Election_has_Assembly` E on (E.`election_id` = ER.`election_id`)
             join `Party` P on (P.party_id = ER.party_id)
-            where E.`assembly_id` = :assembly_id order by `result` desc;
+            where E.`assembly_id` = :assembly_id order by ER.`result` desc;
         ');
         $statement->execute(['assembly_id' => $assemblyId]);
-        return array_map([$this, 'decorate'], $statement->fetchAll());
+        return array_map(function ($object) {
+            return (new PartyHydrator())->hydrate($object, new PartyModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
     /**
      * Get all parties that a congressman as been in.
      *
-     * @param $congressmanId
-     * @return array
+     * @param int $congressmanId
+     * @return \Althingi\Model\Party[]
      */
-    public function fetchByCongressman($congressmanId)
+    public function fetchByCongressman(int $congressmanId): array
     {
         $statement = $this->getDriver()->prepare(
             'select P.* from `Session` S
@@ -130,10 +159,16 @@ class Party implements DatabaseAwareInterface
             where congressman_id = :congressman_id group by `party_id`;'
         );
         $statement->execute(['congressman_id' => $congressmanId]);
-        return array_map([$this, 'decorate'], $statement->fetchAll());
+        return array_map(function ($object) {
+            return (new PartyHydrator())->hydrate($object, new PartyModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    public function fetchByCabinet($cabinetId)
+    /**
+     * @param int $cabinetId
+     * @return \Althingi\Model\Party[]
+     */
+    public function fetchByCabinet(int $cabinetId): array
     {
         $statement = $this->getDriver()->prepare('
             select P.* from `Cabinet_has_Congressman` CC
@@ -143,41 +178,40 @@ class Party implements DatabaseAwareInterface
             group by SE.`party_id`;    
         ');
         $statement->execute(['cabinet_id' => $cabinetId]);
-        return array_map([$this, 'decorate'], $statement->fetchAll());
+        return array_map(function ($object) {
+            return (new PartyHydrator())->hydrate($object, new PartyModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
     /**
      * Create one Party. Accept object from corresponding
      * Form.
      *
-     * @param $data
-     * @return string
+     * @param \Althingi\Model\Party $data
+     * @return int
      */
-    public function create($data)
+    public function create(PartyModel $data): int
     {
-        $statement = $this->getDriver()->prepare($this->insertString('Party', $data));
-        $statement->execute($this->convert($data));
+        $statement = $this->getDriver()->prepare(
+            $this->toInsertString('Party', $data)
+        );
+        $statement->execute($this->toSqlValues($data));
+
         return $this->getDriver()->lastInsertId();
     }
 
-    public function update($data)
+    /**
+     * @param \Althingi\Model\Party $data
+     * @return int
+     */
+    public function update(PartyModel $data): int
     {
         $statement = $this->getDriver()->prepare(
-            $this->updateString('Party', $data, "party_id = {$data->party_id}")
+            $this->toUpdateString('Party', $data, "party_id={$data->getPartyId()}")
         );
-        $statement->execute($this->convert($data));
+        $statement->execute($this->toSqlValues($data));
+
         return $statement->rowCount();
-    }
-
-    private function decorate($object)
-    {
-        if (!$object) {
-            return null;
-        }
-
-        $object->party_id = (int) $object->party_id;
-
-        return $object;
     }
 
     /**

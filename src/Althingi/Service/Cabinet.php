@@ -1,14 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 19/05/15
- * Time: 1:02 PM
- */
 
 namespace Althingi\Service;
 
 use Althingi\Lib\DatabaseAwareInterface;
+use Althingi\Model\Cabinet as CabinetModel;
+use Althingi\Hydrator\Cabinet as CabinetHydrator;
 use PDO;
 
 /**
@@ -22,15 +18,22 @@ class Cabinet implements DatabaseAwareInterface
     /** @var  \PDO */
     private $pdo;
 
-    public function fetchByAssembly($assemblyId)
+    /**
+     * @param int $assemblyId
+     * @return \Althingi\Model\Cabinet[]
+     */
+    public function fetchByAssembly(int $assemblyId): array
     {
         $statement = $this->getDriver()->prepare(
             'select C.* from `Cabinet` C
-            join `Cabinet_has_Assembly` A on (C.cabinet_id = A.cabinet_id)
-            where A.assembly_id = :assembly_id;'
+              join `Cabinet_has_Assembly` A on (C.cabinet_id = A.cabinet_id)
+              where A.assembly_id = :assembly_id;'
         );
         $statement->execute(['assembly_id' => $assemblyId]);
-        return array_map([$this, 'decorate'], $statement->fetchAll());
+
+        return array_map(function ($object) {
+            return (new CabinetHydrator())->hydrate($object, new CabinetModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
     /**
@@ -47,15 +50,5 @@ class Cabinet implements DatabaseAwareInterface
     public function getDriver()
     {
         return $this->pdo;
-    }
-
-    private function decorate($object)
-    {
-        if (!$object) {
-            return null;
-        };
-
-        $object->cabinet_id = (int) $object->cabinet_id;
-        return $object;
     }
 }

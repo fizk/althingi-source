@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 19/03/2016
- * Time: 12:20 PM
- */
 
 namespace Althingi\Controller;
 
@@ -51,8 +45,7 @@ class VoteController extends AbstractRestfulController implements
         $assemblyId = $this->params('id');
         $issueId = $this->params('issue_id');
 
-        return (new CollectionModel($this->voteService->fetchByIssue($assemblyId, $issueId)))
-            ->setOption('Access-Control-Allow-Origin', '*');
+        return (new CollectionModel($this->voteService->fetchByIssue($assemblyId, $issueId)));
     }
 
     /**
@@ -102,10 +95,18 @@ class VoteController extends AbstractRestfulController implements
      */
     public function patch($id, $data)
     {
+        $assemblyId = $this->params('id');
+        $issueId = $this->params('issue_id');
+        $voteId = $id;
+
         if (($vote = $this->voteService->get($id)) != null) {
             $form = new VoteForm();
             $form->bind($vote);
-            $form->setData($data);
+            $form->setData(array_merge($data, [
+                'assembly_id' => $assemblyId,
+                'issue_id' => $issueId,
+                'vote_id' => $voteId,
+            ]));
 
             if ($form->isValid()) {
                 $this->voteService->update($form->getData());
@@ -132,8 +133,7 @@ class VoteController extends AbstractRestfulController implements
     {
         return (new EmptyModel())
             ->setStatus(200)
-            ->setAllow(['GET', 'OPTIONS'])
-            ->setOption('Access-Control-Allow-Origin', '*');
+            ->setAllow(['GET', 'OPTIONS']);
     }
 
     /**
@@ -149,8 +149,7 @@ class VoteController extends AbstractRestfulController implements
     {
         return (new EmptyModel())
             ->setStatus(200)
-            ->setAllow(['OPTIONS', 'PUT', 'PATCH', 'GET'])
-            ->setOption('Access-Control-Allow-Origin', '*');
+            ->setAllow(['OPTIONS', 'PUT', 'PATCH', 'GET']);
     }
 
     /**

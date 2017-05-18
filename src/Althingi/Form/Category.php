@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 18/05/15
- * Time: 10:30 PM
- */
 
 namespace Althingi\Form;
 
@@ -17,7 +11,7 @@ class Category extends Form implements InputFilterProviderInterface
         parent::__construct(get_class($this));
         $this
             ->setHydrator(new \Althingi\Hydrator\Category())
-            ->setObject((object)[]);
+            ->setObject(new \Althingi\Model\Category());
 
         $this->add(array(
             'name' => 'super_category_id',

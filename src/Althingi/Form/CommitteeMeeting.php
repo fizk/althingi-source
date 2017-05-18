@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 18/05/15
- * Time: 10:30 PM
- */
 
 namespace Althingi\Form;
 
@@ -17,18 +11,9 @@ class CommitteeMeeting extends Form implements InputFilterProviderInterface
     {
         parent::__construct(get_class($this));
         $this
-            ->setHydrator(new class implements HydratorInterface {
-                public function hydrate(array $data, $object)
-                {
-                    return (object) $data;
-                }
-
-                public function extract($object)
-                {
-                    return (array)$object;
-                }
-            })
-            ->setObject((object)[]);
+            ->setHydrator(new \Althingi\Hydrator\CommitteeMeeting())
+            ->setObject(new \Althingi\Model\CommitteeMeeting());
+        ;
 
         $this->add(array(
             'name' => 'committee_meeting_id',

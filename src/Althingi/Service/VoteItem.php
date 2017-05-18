@@ -1,14 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 20/03/2016
- * Time: 11:22 AM
- */
 
 namespace Althingi\Service;
 
 use Althingi\Lib\DatabaseAwareInterface;
+use Althingi\Model\VoteItem as VoteItemModel;
+use Althingi\Hydrator\VoteItem as VoteItemHydrator;
+use Althingi\Model\VoteItemAndCount as VoteItemAndCountModel;
+use Althingi\Hydrator\VoteItemAndCount as VoteItemAndCountHydrator;
+use Althingi\Model\VoteItemAndAssemblyIssue as VoteItemAndAssemblyIssueModel;
+use Althingi\Hydrator\VoteItemAndAssemblyIssue as VoteItemAndAssemblyIssueHydrator;
+
 use PDO;
 
 class VoteItem implements DatabaseAwareInterface
@@ -20,40 +21,50 @@ class VoteItem implements DatabaseAwareInterface
      */
     private $pdo;
 
-    public function get($id)
+    /**
+     * @param int $id
+     * @return \Althingi\Model\VoteItem|null
+     */
+    public function get(int $id): ?VoteItemModel
     {
         $statement = $this->getDriver()->prepare(
-            'select * from `VoteItem` where vote_item_id = :vote__item_id'
+            'select * from `VoteItem` where vote_item_id = :vote_item_id'
         );
-        $statement->execute(['vote__item_id' => $id]);
+        $statement->execute(['vote_item_id' => $id]);
 
-        return $this->decorate($statement->fetchObject());
+        $object = $statement->fetch(PDO::FETCH_ASSOC);
+        return $object
+            ? (new VoteItemHydrator())->hydrate($object, new VoteItemModel())
+            : null;
     }
 
     /**
      * Get all vote-items by vote-id
      *
-     * @param $id
-     * @return array
+     * @param int $id
+     * @return \Althingi\Model\VoteItem[]
      */
-    public function fetchByVote($id)
+    public function fetchByVote(int $id): array
     {
         $statement = $this->getDriver()->prepare(
             'select * from `VoteItem` where vote_id = :vote_id'
         );
         $statement->execute(['vote_id' => $id]);
-        return array_map([$this, 'decorate'], $statement->fetchAll());
+
+        return array_map(function ($object) {
+            return (new VoteItemHydrator())->hydrate($object, new VoteItemModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
     /**
      * If you don't have the vote-item's unique ID, you can get an individual
      * vote-item by the vote-id and congressman-id, since that is unique.
      *
-     * @param $voteId
-     * @param $congressmanId
-     * @return null
+     * @param int $voteId
+     * @param int $congressmanId
+     * @return \Althingi\Model\VoteItemAndAssemblyIssue|null
      */
-    public function getByVote($voteId, $congressmanId)
+    public function getByVote(int $voteId, int $congressmanId): ?VoteItemAndAssemblyIssueModel
     {
         $statement = $this->getDriver()->prepare(
             'select vi.*, v.assembly_id, v.issue_id from `VoteItem` vi
@@ -61,13 +72,22 @@ class VoteItem implements DatabaseAwareInterface
             where vi.`vote_id` = :vote_id and vi.`congressman_id` = :congressman_id;'
         );
         $statement->execute(['vote_id' => $voteId, 'congressman_id' => $congressmanId]);
-        return $this->decorate($statement->fetchObject());
+
+        $object = $statement->fetch(PDO::FETCH_ASSOC);
+        return $object
+            ? (new VoteItemAndAssemblyIssueHydrator())->hydrate($object, new VoteItemAndAssemblyIssueModel())
+            : null;
     }
 
-    public function fetchVoteByAssemblyAndCongressmanAndCategory($assemblyId, $congressmanId)
+    /**
+     * @param int $assemblyId
+     * @param int $congressmanId
+     * @return \Althingi\Model\VoteItem[]
+     */
+    public function fetchVoteByAssemblyAndCongressmanAndCategory(int $assemblyId, int $congressmanId): array
     {
         $statement = $this->getDriver()->prepare('
-        select CI.`category_id`, C.`title`, VI.`congressman_id`, V.`assembly_id`, VI.`vote`, count(VI.`vote`) as `count` from `Vote` V
+        select CI.`category_id`, C.`title`, VI.vote_item_id, V.vote_id, VI.`congressman_id`, V.`assembly_id`, VI.`vote`, count(VI.`vote`) as `count` from `Vote` V
             join `VoteItem` VI on (VI.`vote_id` = V.`vote_id`)
             join `Category_has_Issue` CI on (CI.`assembly_id` = V.`assembly_id` and V.`issue_id` = CI.`issue_id`)
             join `Category` C on (C.`category_id` = CI.`category_id`)
@@ -75,18 +95,11 @@ class VoteItem implements DatabaseAwareInterface
         group by CI.`category_id`, VI.`vote`
         order by C.`category_id`;
         ');
-        $statement->execute([
-            'assembly_id' => $assemblyId,
-            'congressman_id' => $congressmanId,
-        ]);
-        return array_map(function ($object) {
+        $statement->execute(['assembly_id' => $assemblyId, 'congressman_id' => $congressmanId]);
 
-            $object->category_id = (int) $object->category_id;
-            $object->congressman_id = (int) $object->congressman_id;
-            $object->assembly_id = (int) $object->assembly_id;
-            $object->count = (int) $object->count;
-            return $object;
-        }, $statement->fetchAll());
+        return array_map(function ($object) {
+            return (new VoteItemAndCountHydrator())->hydrate($object, new VoteItemAndCountModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
     /**
@@ -94,23 +107,31 @@ class VoteItem implements DatabaseAwareInterface
      *
      * @todo should return the auto_increment value but currently
      *  the table doesn't have a auto_increment value.
-     * @param $data
+     * @param \Althingi\Model\VoteItem $data
      * @return int
      */
-    public function create($data)
+    public function create(VoteItemModel $data): int
     {
-        $insertStatement = $this->getDriver()->prepare($this->insertString('VoteItem', $data));
-        $insertStatement->execute($this->convert($data));
-        return (int) $this->getDriver()->lastInsertId();
+        $statement = $this->getDriver()->prepare(
+            $this->toInsertString('VoteItem', $data)
+        );
+        $statement->execute($this->toSqlValues($data));
+
+        return $this->getDriver()->lastInsertId();
     }
 
-    public function update($data)
+    /**
+     * @param VoteItemModel $data
+     * @return int
+     */
+    public function update(VoteItemModel $data): int
     {
-        $insertStatement = $this->getDriver()->prepare(
-            $this->updateString('VoteItem', $data, "vote_item_id={$data->vote_item_id}")
+        $statement = $this->getDriver()->prepare(
+            $this->toUpdateString('VoteItem', $data, "vote_item_id={$data->getVoteItemId()}")
         );
-        $insertStatement->execute($this->convert($data));
-        return (int) $insertStatement->columnCount();
+        $statement->execute($this->toSqlValues($data));
+
+        return $statement->rowCount();
     }
 
     /**
@@ -127,17 +148,5 @@ class VoteItem implements DatabaseAwareInterface
     public function getDriver()
     {
         return $this->pdo;
-    }
-
-    private function decorate($object)
-    {
-        if (!$object) {
-            return null;
-        }
-
-        $object->vote_item_id = (int) $object->vote_item_id;
-        $object->vote_id = (int) $object->vote_id;
-        $object->congressman_id = (int) $object->congressman_id;
-        return $object;
     }
 }

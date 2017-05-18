@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 2/06/15
- * Time: 7:31 AM
- */
 
 namespace Althingi\Controller;
 
@@ -13,6 +7,9 @@ use Althingi\Lib\ServiceCongressmanAwareInterface;
 use Althingi\Lib\ServicePartyAwareInterface;
 use Althingi\Lib\ServiceSpeechAwareInterface;
 use Althingi\Lib\Transformer;
+use Althingi\Model\CongressmanPartyProperties;
+use Althingi\Model\SpeechAndPosition;
+use Althingi\Model\SpeechCongressmanProperties;
 use Althingi\Service\Congressman;
 use Althingi\Service\Party;
 use Althingi\Service\Speech;
@@ -54,23 +51,26 @@ class SpeechController extends AbstractRestfulController implements
         $count = $this->speechService->countByIssue($assemblyId, $issueId);
         $speeches = $this->speechService->fetch($speechId, $assemblyId, $issueId);
         $positionBegin = (count($speeches) > 0)
-            ? $speeches[0]->position
+            ? $speeches[0]->getPosition()
             : 0 ;
         $positionEnd = (count($speeches) > 0)
-            ? $speeches[count($speeches) - 1]->position
+            ? $speeches[count($speeches) - 1]->getPosition()
             : 0 ;
 
-        array_walk($speeches, function ($speech) {
-            $speech->text = Transformer::speechToMarkdown($speech->text);
-            $speech->congressman = $this->congressmanService->get($speech->congressman_id);
-            $speech->congressman->party = $this->partyService->getByCongressman(
-                $speech->congressman_id,
-                new DateTime($speech->from)
-            );
-        });
+        $speechesProperties = array_map(function (SpeechAndPosition $speech) {
+            $speech->setText(Transformer::speechToMarkdown($speech->getText()));
 
-        return (new CollectionModel($speeches))
-            ->setOption('Access-Control-Allow-Origin', '*')
+            $congressman = $this->congressmanService->get($speech->getCongressmanId());
+            $congressmanPartyProperties = (new CongressmanPartyProperties())
+                ->setCongressman($congressman)
+                ->setParty($this->partyService->getByCongressman($speech->getCongressmanId(), $speech->getFrom()));
+
+            return (new SpeechCongressmanProperties())
+                ->setCongressman($congressmanPartyProperties)
+                ->setSpeech($speech);
+        }, $speeches);
+
+        return (new CollectionModel($speechesProperties))
             ->setOption('Access-Control-Expose-Headers', 'Range-Unit, Content-Range') //TODO should go into Rend
             ->setStatus(206)
             ->setRange($positionBegin, $positionEnd, $count);
@@ -97,17 +97,21 @@ class SpeechController extends AbstractRestfulController implements
             ($range['to']-$range['from'])
         );
 
-        array_walk($speeches, function ($speech) {
-            $speech->text = Transformer::speechToMarkdown($speech->text);
-            $speech->congressman = $this->congressmanService->get($speech->congressman_id);
-            $speech->congressman->party = $this->partyService->getByCongressman(
-                $speech->congressman_id,
-                new DateTime($speech->from)
-            );
-        });
+        $speechesAndProperties = array_map(function (SpeechAndPosition $speech) {
+            $speech->setText(Transformer::speechToMarkdown($speech->getText()));
 
-        return (new CollectionModel($speeches))
-            ->setOption('Access-Control-Allow-Origin', '*')
+            $congressman = $this->congressmanService->get($speech->getCongressmanId());
+            $party = $this->partyService->getByCongressman($speech->getCongressmanId(), $speech->getFrom());
+            $congressmanPartyProperties = (new CongressmanPartyProperties())
+                ->setCongressman($congressman)
+                ->setParty($party);
+
+            return (new SpeechCongressmanProperties())
+                ->setCongressman($congressmanPartyProperties)
+                ->setSpeech($speech);
+        }, $speeches);
+
+        return (new CollectionModel($speechesAndProperties))
             ->setOption('Access-Control-Expose-Headers', 'Range-Unit, Content-Range') //TODO should go into Rend
             ->setStatus(206)
             ->setRange($range['from'], $range['to'], $count);

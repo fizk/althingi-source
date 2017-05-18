@@ -1,14 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 18/05/15
- * Time: 10:43 PM
- */
 
 namespace Althingi\Hydrator;
 
-use Zend\Stdlib\Hydrator\HydratorInterface;
+use Zend\Hydrator\HydratorInterface;
 
 class Speech implements HydratorInterface
 {
@@ -16,23 +10,33 @@ class Speech implements HydratorInterface
      * Hydrate $object with the provided $data.
      *
      * @param  array $data
-     * @param  object $object
-     * @return object
+     * @param  \Althingi\Model\Speech $object
+     * @return \Althingi\Model\Speech $object
      */
     public function hydrate(array $data, $object)
     {
-        return (object) $data;
+        return $object
+            ->setSpeechId($data['speech_id'])
+            ->setPlenaryId($data['plenary_id'])
+            ->setAssemblyId($data['assembly_id'])
+            ->setIssueId($data['issue_id'])
+            ->setCongressmanId($data['congressman_id'])
+            ->setCongressmanType($data['congressman_type'])
+            ->setFrom($data['from'] ? new \DateTime($data['from']) : null)
+            ->setTo($data['to'] ? new \DateTime($data['to']) : null)
+            ->setText($data['text'])
+            ->setType($data['type'])
+            ->setIteration($data['iteration']);
     }
-
 
     /**
      * Extract values from an object
      *
-     * @param  object $object
+     * @param  \Althingi\Model\Speech $object
      * @return array
      */
     public function extract($object)
     {
-        return (array) $object;
+        return $object->toArray();
     }
 }

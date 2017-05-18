@@ -1,16 +1,18 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 20/05/15
- * Time: 7:40 AM
- */
 
 namespace Althingi\Controller;
 
 use Mockery;
+use Althingi\Service\Committee;
+use Althingi\Model\Committee as CommitteeModel;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
+/**
+ * Class AssemblyCommitteeControllerTest
+ * @package Althingi\Controller
+ * @coversDefaultClass \Althingi\Controller\AssemblyCommitteeController
+ * @covers \Althingi\Controller\AssemblyCommitteeController::setCommitteeService
+ */
 class AssemblyCommitteeControllerTest extends AbstractHttpControllerTestCase
 {
     use ServiceHelper;
@@ -24,23 +26,26 @@ class AssemblyCommitteeControllerTest extends AbstractHttpControllerTestCase
         parent::setUp();
 
         $this->buildServices([
-            'Althingi\Service\Committee',
+            Committee::class,
         ]);
     }
 
     public function tearDown()
     {
         $this->destroyServices();
-        \Mockery::close();
+        Mockery::close();
         return parent::tearDown();
     }
 
+    /**
+     * @covers ::get
+     */
     public function testGet()
     {
-        $this->getMockService('Althingi\Service\Committee')
+        $this->getMockService(Committee::class)
             ->shouldReceive('get')
             ->withArgs([1])
-            ->andReturn(new \stdClass())
+            ->andReturn((new CommitteeModel())->setCommitteeId(1)->setFirstAssemblyId(1))
             ->once()
             ->getMock();
 
@@ -52,12 +57,15 @@ class AssemblyCommitteeControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseHeaderContains('Access-Control-Allow-Origin', '*');
     }
 
+    /**
+     * @covers ::get
+     */
     public function testGetNotFound()
     {
-        $this->getMockService('Althingi\Service\Committee')
+        $this->getMockService(Committee::class)
             ->shouldReceive('get')
             ->withArgs([1])
-            ->andReturnNull()
+            ->andReturn(null)
             ->once()
             ->getMock();
 
@@ -69,9 +77,12 @@ class AssemblyCommitteeControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseHeaderContains('Access-Control-Allow-Origin', '*');
     }
 
+    /**
+     * @covers ::getList
+     */
     public function testGetList()
     {
-        $this->getMockService('Althingi\Service\Committee')
+        $this->getMockService(Committee::class)
             ->shouldReceive('fetchByAssembly')
             ->withArgs([144])
             ->andReturn([])

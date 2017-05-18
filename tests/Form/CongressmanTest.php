@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 24/03/2016
- * Time: 4:36 PM
- */
 
 namespace Althingi\Form;
 
@@ -22,7 +16,7 @@ class CongressmanTest extends PHPUnit_Framework_TestCase
             'death' => '',
         ])->isValid();
 
-        $this->assertNull($form->getObject()->death);
+        $this->assertNull($form->getObject()->getDeath());
     }
 
     public function testNonEmptyToValue()
@@ -35,6 +29,6 @@ class CongressmanTest extends PHPUnit_Framework_TestCase
             'death' => '2010-01-01',
         ])->isValid();
 
-        $this->assertNotNull($form->getObject()->death);
+        $this->assertNotNull($form->getObject()->getDeath());
     }
 }

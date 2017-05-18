@@ -1,14 +1,16 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 10/06/15
- * Time: 8:53 PM
- */
 
 namespace Althingi\Service;
 
 use Althingi\Lib\DatabaseAwareInterface;
+use Althingi\Model\Issue as IssueModel;
+use Althingi\Hydrator\Issue as IssueHydrator;
+use Althingi\Model\IssueAndDate as IssueAndDateModel;
+use Althingi\Hydrator\IssueAndDate as IssueAndDateHydrator;
+use Althingi\Model\AssemblyStatus as AssemblyStatusModel;
+use Althingi\Hydrator\AssemblyStatus as AssemblyStatusHydrator;
+use Althingi\Model\IssueTypeStatus as IssueTypeStatusModel;
+use Althingi\Hydrator\IssueTypeStatus as IssueTypeStatusHydrator;
 use PDO;
 use InvalidArgumentException;
 
@@ -30,9 +32,7 @@ class Issue implements DatabaseAwareInterface
     const STATUS_APPROVED       = 'Samþykkt sem lög frá Alþingi';
     const STATUS_TO_GOVERNMENT  = 'Vísað til ríkisstjórnar';
 
-    /**
-     * @var \PDO
-     */
+    /** @var \PDO */
     private $pdo;
 
     /**
@@ -43,9 +43,34 @@ class Issue implements DatabaseAwareInterface
      *
      * @param $issue_id
      * @param $assembly_id
-     * @return null|object
+     * @return null|\Althingi\Model\Issue
      */
-    public function get($issue_id, $assembly_id)
+    public function get(int $issue_id, int $assembly_id): ?IssueModel
+    {
+        $issueStatement = $this->getDriver()->prepare(
+            'select * from `Issue` I 
+              where I.assembly_id = :assembly_id and I.issue_id = :issue_id'
+        );
+        $issueStatement->execute(['issue_id'=>$issue_id, 'assembly_id'=>$assembly_id]);
+
+        $object = $issueStatement->fetch(PDO::FETCH_ASSOC);
+
+        return $object
+            ? (new IssueHydrator())->hydrate($object, new IssueModel())
+            : null;
+    }
+
+    /**
+     * Get one Issue along with some metadata.
+     *
+     * Issue is a combined key, so you need assembly and issue
+     * number.
+     *
+     * @param $issue_id
+     * @param $assembly_id
+     * @return null|\Althingi\Model\IssueAndDate
+     */
+    public function getWithDate(int $issue_id, int $assembly_id): ?IssueAndDateModel
     {
         $issueStatement = $this->getDriver()->prepare(
             'select
@@ -57,7 +82,11 @@ class Issue implements DatabaseAwareInterface
         );
         $issueStatement->execute(['issue_id'=>$issue_id, 'assembly_id'=>$assembly_id]);
 
-        return $this->decorate($issueStatement->fetchObject());
+        $object = $issueStatement->fetch(PDO::FETCH_ASSOC);
+
+        return $object
+            ? (new IssueAndDateHydrator())->hydrate($object, new IssueAndDateModel())
+            : null;
     }
 
     /**
@@ -65,15 +94,20 @@ class Issue implements DatabaseAwareInterface
      *
      * Result set is always restricted by size.
      *
-     * @param int $id
+     * @param int $assembly_id
      * @param int $offset
      * @param int $size
      * @param string $order
      * @param array $type
-     * @return array
+     * @return \Althingi\Model\Issue[]
      */
-    public function fetchByAssembly($id, $offset, $size, $order = 'asc', $type = [])
-    {
+    public function fetchByAssembly(
+        int $assembly_id,
+        int $offset,
+        int $size,
+        ?string $order = 'asc',
+        array $type = []
+    ): array {
         $order = in_array($order, self::ALLOWED_ORDER) ? $order : 'asc';
         $typeFilterString = $this->typeFilterString($type);
 
@@ -87,8 +121,10 @@ class Issue implements DatabaseAwareInterface
             order by I.`issue_id` {$order}
             limit {$offset}, {$size}
         ");
-        $statement->execute(['id' => $id]);
-        return array_map([$this, 'decorate'], $statement->fetchAll());
+        $statement->execute(['id' => $assembly_id]);
+        return array_map(function ($object) {
+            return (new IssueAndDateHydrator())->hydrate($object, new IssueAndDateModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
     /**
@@ -96,9 +132,9 @@ class Issue implements DatabaseAwareInterface
      * been the fourman of.
      *
      * @param $id
-     * @return array
+     * @return \Althingi\Model\Issue[]
      */
-    public function fetchByCongressman($id)
+    public function fetchByCongressman(int $id): array
     {
         $statement = $this->getDriver()->prepare("
             select * from `Issue` I where I.`congressman_id` = :id
@@ -106,10 +142,17 @@ class Issue implements DatabaseAwareInterface
         ");
 
         $statement->execute(['id' => $id]);
-        return array_map([$this, 'decorate'], $statement->fetchAll());
+        return array_map(function ($object) {
+            return (new IssueHydrator())->hydrate($object, new IssueModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    public function fetchByAssemblyAndCongressman($assemblyId, $congressmanId)
+    /**
+     * @param int $assemblyId
+     * @param int $congressmanId
+     * @return \Althingi\Model\Issue[]
+     */
+    public function fetchByAssemblyAndCongressman(int $assemblyId, int $congressmanId): array
     {
         $statement = $this->getDriver()->prepare("
             select * from `Issue` I where I.`congressman_id` = :congressman_id and I.`assembly_id` = :assembly_id
@@ -120,7 +163,9 @@ class Issue implements DatabaseAwareInterface
             'assembly_id' => $assemblyId,
             'congressman_id' => $congressmanId,
         ]);
-        return array_map([$this, 'decorate'], $statement->fetchAll());
+        return array_map(function ($object) {
+            return (new IssueHydrator())->hydrate($object, new IssueModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
     /**
@@ -128,10 +173,10 @@ class Issue implements DatabaseAwareInterface
      *
      * Group and count `type` by assembly.
      *
-     * @param $assemblyId
-     * @return array
+     * @param int $assemblyId
+     * @return \Althingi\Model\AssemblyStatus[]
      */
-    public function fetchStateByAssembly($assemblyId)
+    public function fetchStateByAssembly(int $assemblyId): array
     {
         $statement = $this->getDriver()->prepare(
             'select count(*) as `count`, `type`, `type_name`, `type_subname` from `Issue`
@@ -140,19 +185,18 @@ class Issue implements DatabaseAwareInterface
 
         $statement->execute(['assembly_id' => $assemblyId]);
 
-        return array_map(function ($item) {
-            $item->count = is_numeric($item->count) ? (int) $item->count : null;
-            return $item;
-        }, $statement->fetchAll());
+        return array_map(function ($object) {
+            return (new AssemblyStatusHydrator())->hydrate($object, new AssemblyStatusModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
     /**
      * Group and count `status` by assembly where type is `l`.
      *
      * @param $id
-     * @return array
+     * @return \Althingi\Model\IssueTypeStatus[]
      */
-    public function fetchBillStatisticsByAssembly($id)
+    public function fetchBillStatisticsByAssembly(int $id): array
     {
         $statement = $this->getDriver()->prepare(
             'select count(*) as `count`, `status` from `Issue`
@@ -161,13 +205,16 @@ class Issue implements DatabaseAwareInterface
 
         $statement->execute(['assembly_id' => $id]);
 
-        return array_map(function ($item) {
-            $item->count = is_numeric($item->count) ? (int) $item->count : null;
-            return $item;
-        }, $statement->fetchAll());
+        return array_map(function ($object) {
+            return (new IssueTypeStatusHydrator())->hydrate($object, new IssueTypeStatusModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    public function fetchNonGovernmentBillStatisticsByAssembly($id)
+    /**
+     * @param $id
+     * @return \Althingi\Model\IssueTypeStatus[]
+     */
+    public function fetchNonGovernmentBillStatisticsByAssembly(int $id): array
     {
         $statement = $this->getDriver()->prepare(
             'select count(*) as `count`, `status` from `Issue`
@@ -176,10 +223,9 @@ class Issue implements DatabaseAwareInterface
 
         $statement->execute(['assembly_id' => $id]);
 
-        return array_map(function ($item) {
-            $item->count = is_numeric($item->count) ? (int) $item->count : null;
-            return $item;
-        }, $statement->fetchAll());
+        return array_map(function ($object) {
+            return (new IssueTypeStatusHydrator())->hydrate($object, new IssueTypeStatusModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
     /**
@@ -187,9 +233,9 @@ class Issue implements DatabaseAwareInterface
      * `stjórnarfrumvarp`.
      *
      * @param $id
-     * @return array
+     * @return \Althingi\Model\IssueTypeStatus[]
      */
-    public function fetchGovernmentBillStatisticsByAssembly($id)
+    public function fetchGovernmentBillStatisticsByAssembly(int $id): array
     {
         $statement = $this->getDriver()->prepare(
             'SELECT count(*) AS `count`, `status`
@@ -199,10 +245,9 @@ class Issue implements DatabaseAwareInterface
 
         $statement->execute(['assembly_id' => $id]);
 
-        return array_map(function ($item) {
-            $item->count = is_numeric($item->count) ? (int) $item->count : null;
-            return $item;
-        }, $statement->fetchAll());
+        return array_map(function ($object) {
+            return (new IssueTypeStatusHydrator())->hydrate($object, new IssueTypeStatusModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
     /**
@@ -212,7 +257,7 @@ class Issue implements DatabaseAwareInterface
      * @param array $type
      * @return int count
      */
-    public function countByAssembly($id, $type)
+    public function countByAssembly(int $id, array $type = []): int
     {
         $typeFilterString = $this->typeFilterString($type);
         $statement = $this->getDriver()->prepare("
@@ -227,28 +272,36 @@ class Issue implements DatabaseAwareInterface
      * Create new Issue. This method
      * accepts object from corresponding Form.
      *
-     * @param object $data
-     * @return string
+     * @param \Althingi\Model\Issue $data
+     * @return int
      */
-    public function create($data)
+    public function create(IssueModel $data): int
     {
-        $statement = $this->getDriver()->prepare($this->insertString('Issue', $data));
-        $statement->execute($this->convert($data));
+        $statement = $this->getDriver()->prepare(
+            $this->toInsertString('Issue', $data)
+        );
+        $statement->execute($this->toSqlValues($data));
+
         return $this->getDriver()->lastInsertId();
     }
 
     /**
      * Update one Issue.
      *
-     * @param $data
+     * @param \Althingi\Model\Issue $data
      * @return int affected rows
      */
-    public function update($data)
+    public function update(IssueModel $data): int
     {
         $statement = $this->getDriver()->prepare(
-            $this->updateString('Issue', $data, "issue_id = {$data->issue_id} and assembly_id = {$data->assembly_id}")
+            $this->toUpdateString(
+                'Issue',
+                $data,
+                "issue_id = {$data->getIssueId()} and assembly_id = {$data->getAssemblyId()}"
+            )
         );
-        $statement->execute($this->convert($data));
+        $statement->execute($this->toSqlValues($data));
+
         return $statement->rowCount();
     }
 
@@ -269,27 +322,10 @@ class Issue implements DatabaseAwareInterface
     }
 
     /**
-     * Decorate and convert one Issue result object.
-     *
-     * @param $object
-     * @return null|object
+     * @param array $type
+     * @return string
      */
-    private function decorate($object)
-    {
-        if (!$object) {
-            return null;
-        }
-
-        $object->assembly_id = (int) $object->assembly_id;
-        $object->issue_id = (int) $object->issue_id;
-        $object->name = ucfirst(trim($object->name));
-        $object->type_name = ucfirst(trim($object->type_name));
-        $object->type_subname = ucfirst(trim($object->type_subname));
-
-        return $object;
-    }
-
-    private function typeFilterString($type)
+    private function typeFilterString(array $type = []): string
     {
         if (empty($type)) {
             return '';

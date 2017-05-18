@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 18/05/15
- * Time: 10:30 PM
- */
 
 namespace Althingi\Form;
 
@@ -17,7 +11,7 @@ class Session extends Form implements InputFilterProviderInterface
         parent::__construct(get_class($this));
         $this
             ->setHydrator(new \Althingi\Hydrator\Session())
-            ->setObject((object)[]);
+            ->setObject(new \Althingi\Model\Session());
 
         $this->add(array(
             'name' => 'session_id',
@@ -41,17 +35,23 @@ class Session extends Form implements InputFilterProviderInterface
 
         $this->add(array(
             'name' => 'from',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Zend\Form\Element\Date',
             'options' => [
                 'format' => 'Y-m-d'
+            ],
+            'attributes' => [
+                'step' => 'any'
             ],
         ));
 
         $this->add(array(
             'name' => 'to',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Zend\Form\Element\Date',
             'options' => [
                 'format' => 'Y-m-d'
+            ],
+            'attributes' => [
+                'step' => 'any'
             ],
         ));
 
@@ -64,7 +64,6 @@ class Session extends Form implements InputFilterProviderInterface
             'name' => 'party_id',
             'type' => 'Zend\Form\Element\Number',
         ));
-
     }
 
 

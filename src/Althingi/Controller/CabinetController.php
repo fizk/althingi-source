@@ -1,30 +1,18 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 2/06/15
- * Time: 7:31 AM
- */
 
 namespace Althingi\Controller;
 
-use Althingi\Form\Assembly as AssemblyForm;
-use Althingi\Lib\ServiceAssemblyAwareInterface;
 use Althingi\Lib\ServiceCabinetAwareInterface;
 use Althingi\Lib\ServiceCongressmanAwareInterface;
-use Althingi\Lib\ServiceIssueAwareInterface;
 use Althingi\Lib\ServicePartyAwareInterface;
-use Althingi\Service\Assembly;
+use Althingi\Model\CabinetProperties;
+use Althingi\Model\CongressmanAndCabinet;
+use Althingi\Model\CongressmanPartyProperties;
 use Althingi\Service\Cabinet;
 use Althingi\Service\Congressman;
-use Althingi\Service\Issue;
 use Althingi\Service\Party;
 use Rend\Controller\AbstractRestfulController;
-use Rend\View\Model\ErrorModel;
-use Rend\View\Model\EmptyModel;
-use Rend\View\Model\ItemModel;
 use Rend\View\Model\CollectionModel;
-use Rend\Helper\Http\Range;
 
 class CabinetController extends AbstractRestfulController implements
     ServiceCongressmanAwareInterface,
@@ -44,19 +32,24 @@ class CabinetController extends AbstractRestfulController implements
     {
         $assemblyId = $this->params('id');
 
-        $cabinets = array_map(function ($cabinet) {
-            $cabinet->congressmen = array_map(function ($congressman) {
-                $congressman->party = $this->partyService->getByCongressman(
-                    $congressman->congressman_id,
-                    new \DateTime($congressman->date)
-                );
-                return $congressman;
-            }, $this->congressmanService->fetchByCabinet($cabinet->cabinet_id));
-            return $cabinet;
+        $cabinetsCollection = array_map(function (\Althingi\Model\Cabinet $cabinet) {
+            $congressmenParty = array_map(function (CongressmanAndCabinet $congressman) {
+                return (new CongressmanPartyProperties())
+                    ->setCongressman($congressman)
+                    ->setParty(
+                        $this->partyService->getByCongressman(
+                            $congressman->getCongressmanId(),
+                            $congressman->getDate()
+                        )
+                    );
+            }, $this->congressmanService->fetchByCabinet($cabinet->getCabinetId()));
+
+            return (new CabinetProperties())
+                ->setCabinet($cabinet)
+                ->setCongressmen($congressmenParty);
         }, $this->cabinetService->fetchByAssembly($assemblyId));
 
-        return (new CollectionModel($cabinets))
-            ->setStatus(200);
+        return new CollectionModel($cabinetsCollection);
     }
 
     /**

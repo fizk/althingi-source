@@ -16,7 +16,8 @@ use \PHPUnit_Extensions_Database_DataSet_DefaultTableMetaData;
 error_reporting(E_ALL | E_STRICT);
 chdir(__DIR__.'/../../../');
 
-require_once __DIR__ . '/Controller/ServiceHelper.php';
+require_once __DIR__ . '/ServiceHelper.php';
+require_once __DIR__ . '/DatabaseConnection.php';
 
 class Bootstrap
 {

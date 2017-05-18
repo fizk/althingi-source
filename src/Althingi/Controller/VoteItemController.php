@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 19/03/2016
- * Time: 12:20 PM
- */
 
 namespace Althingi\Controller;
 
@@ -33,6 +27,7 @@ class VoteItemController extends AbstractRestfulController implements
         $form->setData(array_merge($data, ['vote_id' => $voteId,]));
 
         if ($form->isValid()) {
+            /** @var $formData \Althingi\Model\VoteItem*/
             $formData = $form->getObject();
 
             try {
@@ -40,23 +35,26 @@ class VoteItemController extends AbstractRestfulController implements
                 return (new EmptyModel())->setStatus(201);
             } catch (\PDOException $e) {
                 if (23000 == $e->getCode()) {
-                    $voteObject =$this->voteItemService->getByVote($formData->vote_id, $formData->congressman_id);
+                    $voteObject =$this->voteItemService->getByVote(
+                        $formData->getVoteId(),
+                        $formData->getCongressmanId()
+                    );
                     return (new EmptyModel())
                         ->setLocation(
                             $this->url()->fromRoute(
                                 'loggjafarthing/thingmal/atkvaedagreidslur/atkvaedagreidsla',
                                 [
-
-                                    'id' => $voteObject->assembly_id,
-                                    'issue_id' => $voteObject->issue_id,
-                                    'vote_id' => $voteObject->vote_id,
-                                    'vote_item_id' => $voteObject->vote_item_id
+                                    'id' => $voteObject->getAssemblyId(),
+                                    'issue_id' => $voteObject->getIssueId(),
+                                    'vote_id' => $voteObject->getVoteId(),
+                                    'vote_item_id' => $voteObject->getVoteItemId()
                                 ]
                             )
                         )
                         ->setStatus(409);
                 } else {
-                    throw $e;
+                    return (new ErrorModel($e))
+                        ->setStatus(500);
                 }
             }
         }
@@ -65,6 +63,11 @@ class VoteItemController extends AbstractRestfulController implements
             ->setStatus(400);
     }
 
+    /**
+     * @param $id
+     * @param $data
+     * @return \Rend\View\Model\ModelInterface
+     */
     public function patch($id, $data)
     {
         $voteItemId = $this->params('vote_item_id');
@@ -77,13 +80,11 @@ class VoteItemController extends AbstractRestfulController implements
             if ($form->isValid()) {
                 $this->voteItemService->update($form->getData());
                 return (new EmptyModel())
-                    ->setStatus(205)
-                    ->setOption('Access-Control-Allow-Origin', '*');
+                    ->setStatus(205);
             }
 
             return (new ErrorModel($form))
-                ->setStatus(400)
-                ->setOption('Access-Control-Allow-Origin', '*');
+                ->setStatus(400);
         }
 
         return $this->notFoundAction();

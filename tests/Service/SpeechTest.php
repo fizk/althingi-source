@@ -1,161 +1,113 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 11/05/2016
- * Time: 3:21 PM
- */
 namespace Althingi\Service;
 
-require_once './module/Althingi/tests/MyAppDbUnitArrayDataSet.php';
-
-use PDO;
+use Althingi\DatabaseConnection;
 use PHPUnit_Extensions_Database_DataSet_IDataSet;
-use PHPUnit_Extensions_Database_DB_IDatabaseConnection;
 use PHPUnit_Extensions_Database_TestCase;
-use Althingi\MyAppDbUnitArrayDataSet;
+use Althingi\Model\Speech as SpeechModel;
+use Althingi\Model\SpeechAndPosition as SpeechAndPositionModel;
+use Althingi\Model\DateAndCount as DateAndCountModel;
 
 class SpeechTest extends PHPUnit_Extensions_Database_TestCase
 {
+    use DatabaseConnection;
+
     /** @var  \PDO */
     private $pdo;
 
-    public function testFetch1stEntry()
+    public function testGetSpeech()
     {
         $service = new Speech();
         $service->setDriver($this->pdo);
 
-        $data = $service->fetch('1_1', 145, 1);
+        $expectedData = (new SpeechModel())
+            ->setSpeechId('id--00001')
+            ->setAssemblyId(1)
+            ->setPlenaryId(1)
+            ->setIssueId(1)
+            ->setCongressmanId(1);
 
-        $this->assertInternalType('array', $data);
-        $this->assertCount(6, $data);
-        $this->assertEquals('1_1', $data[0]->speech_id);
+        $actualData = $service->get('id--00001');
+
+        $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetch2ndEntry()
+    public function testGetSpeechNotFound()
     {
         $service = new Speech();
         $service->setDriver($this->pdo);
 
-        $data = $service->fetch('2_1', 145, 1);
+        $expectedData = null;
 
-        $this->assertInternalType('array', $data);
-        $this->assertCount(6, $data);
-        $this->assertEquals('2_1', $data[1]->speech_id);
+        $actualData = $service->get('invalid-id');
+
+        $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchLastEntry()
+    public function testFetch()
     {
         $service = new Speech();
         $service->setDriver($this->pdo);
+        $expectedData = [
+            (new SpeechAndPositionModel())
+                ->setSpeechId('id--00003')
+                ->setAssemblyId(1)
+                ->setPlenaryId(1)
+                ->setIssueId(1)
+                ->setCongressmanId(1)
+                ->setPosition(2),
 
-        $data = $service->fetch('6_1', 145, 1);
+            (new SpeechAndPositionModel())
+                ->setSpeechId('id--00004')
+                ->setAssemblyId(1)
+                ->setPlenaryId(1)
+                ->setIssueId(1)
+                ->setCongressmanId(1)
+                ->setPosition(3),
+        ];
 
-        $this->assertInternalType('array', $data);
-        $this->assertCount(6, $data);
-        $this->assertEquals('6_1', $data[5]->speech_id);
-    }
+        $actualData = $service->fetch('id--00004', 1, 1, 2);
 
-    public function testFetchSmallerFrame()
-    {
-        $service = new Speech();
-        $service->setDriver($this->pdo);
-
-        $data = $service->fetch('5_1', 145, 1, 3);
-
-        $this->assertInternalType('array', $data);
-        $this->assertCount(3, $data);
-        $this->assertEquals('4_1', $data[0]->speech_id);
-        $this->assertEquals('6_1', $data[2]->speech_id);
-    }
-
-    public function testPosition()
-    {
-        $service = new Speech();
-        $service->setDriver($this->pdo);
-
-        $data = $service->fetch('5_1', 145, 1, 3);
-
-        $this->assertInternalType('array', $data);
-        $this->assertCount(3, $data);
-        $this->assertEquals(3, $data[0]->position);
-        $this->assertEquals(4, $data[1]->position);
-        $this->assertEquals(5, $data[2]->position);
+        $this->assertEquals($expectedData, $actualData);
     }
 
     public function testFetchNotFound()
     {
         $service = new Speech();
         $service->setDriver($this->pdo);
+        $expectedData = [];
 
-        $data = $service->fetch('not-defined', 145, 1);
+        $actualData = $service->fetch('id--invalid', 1, 1, 2);
 
-        $this->assertInternalType('array', $data);
-        $this->assertCount(0, $data);
-    }
-
-    public function testGetFound()
-    {
-        $service = new Speech();
-        $service->setDriver($this->pdo);
-
-        $data = $service->get('1_1');
-        $this->assertInstanceOf('\stdClass', $data);
-        $this->assertNull($data->position);
-    }
-
-    public function testGetNotFound()
-    {
-        $service = new Speech();
-        $service->setDriver($this->pdo);
-
-        $data = $service->get('undefined');
-        $this->assertNull($data);
+        $this->assertEquals($expectedData, $actualData);
     }
 
     public function testFetchByIssue()
     {
         $service = new Speech();
         $service->setDriver($this->pdo);
+        $expectedData = [
+            (new SpeechAndPositionModel())
+                ->setSpeechId('id--00001')
+                ->setAssemblyId(1)
+                ->setPlenaryId(1)
+                ->setIssueId(1)
+                ->setCongressmanId(1)
+                ->setPosition(0),
 
-        $data = $service->fetchByIssue(145, 1);
+            (new SpeechAndPositionModel())
+                ->setSpeechId('id--00002')
+                ->setAssemblyId(1)
+                ->setPlenaryId(1)
+                ->setIssueId(1)
+                ->setCongressmanId(1)
+                ->setPosition(1),
+        ];
 
-        $this->assertCount(6, $data);
-        $this->assertEquals(0, $data[0]->position);
-        $this->assertEquals(5, $data[5]->position);
-    }
+        $actualData = $service->fetchByIssue(1, 1, 0, 2);
 
-    public function testFetchByIssueNotFound()
-    {
-        $service = new Speech();
-        $service->setDriver($this->pdo);
-
-        $data = $service->fetchByIssue(145, 10000);
-
-        $this->assertCount(0, $data);
-    }
-
-    public function testFetchFrequencyByIssue()
-    {
-        $service = new Speech();
-        $service->setDriver($this->pdo);
-        $data = $service->fetchFrequencyByIssue(145, 1);
-
-        $this->assertEquals(60, $data[0]->count);
-        $this->assertEquals(118, $data[1]->count);
-        $this->assertEquals(42960, $data[2]->count);
-    }
-
-    public function testFetchFrequencyByAssembly()
-    {
-        $service = new Speech();
-        $service->setDriver($this->pdo);
-        $time = $service->fetchFrequencyByAssembly(145);
-
-        $this->assertEquals(60, $time[0]->time);
-        $this->assertEquals(118, $time[1]->time);
-        $this->assertEquals(42960, $time[2]->time);
+        $this->assertEquals($expectedData, $actualData);
     }
 
     public function testCountByIssue()
@@ -163,102 +115,220 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
         $service = new Speech();
         $service->setDriver($this->pdo);
 
-        $count = $service->countByIssue(145, 1);
-        $this->assertEquals(6, $count);
+        $expectedData = 4;
+        $actualData = $service->countByIssue(1, 1);
+
+        $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testCountByIssueNotFound()
+    public function testFetchFrequencyByIssue()
     {
         $service = new Speech();
         $service->setDriver($this->pdo);
 
-        $count = $service->countByIssue(145, 10000);
-        $this->assertEquals(0, $count);
+        $expectedData = [
+            (new DateAndCountModel())->setCount(60)->setDate(new \DateTime('2000-01-01')),
+            (new DateAndCountModel())->setCount(60)->setDate(new \DateTime('2000-02-01')),
+            (new DateAndCountModel())->setCount(60)->setDate(new \DateTime('2000-03-01')),
+        ];
+        $actualData = $service->fetchFrequencyByIssue(1, 2);
+
+        $this->assertEquals($expectedData, $actualData);
+    }
+
+    public function testFetchFrequencyByAssembly()
+    {
+        $service = new Speech();
+        $service->setDriver($this->pdo);
+
+        $expectedData = [
+            (new DateAndCountModel())->setCount(60)->setDate(new \DateTime('2000-01-01')),
+            (new DateAndCountModel())->setCount(60)->setDate(new \DateTime('2000-02-01')),
+            (new DateAndCountModel())->setCount(60)->setDate(new \DateTime('2000-03-01')),
+        ];
+        $actualData = $service->fetchFrequencyByAssembly(1);
+
+        $this->assertEquals($expectedData, $actualData);
+    }
+
+    public function testCountTotalTimeByAssemblyAndCongressman()
+    {
+        $service = new Speech();
+        $service->setDriver($this->pdo);
+
+        $expectedData = 120;
+        $actualData = $service->countTotalTimeByAssemblyAndCongressman(1, 1);
+
+        $this->assertEquals($expectedData, $actualData);
     }
 
     public function testCreate()
     {
-        $service = new Speech();
-        $service->setDriver($this->pdo);
+        $speech = (new SpeechModel())
+            ->setSpeechId('id--20001')
+            ->setPlenaryId(1)
+            ->setAssemblyId(3)
+            ->setIssueId(1)
+            ->setCongressmanId(1);
 
-        $service->create((object) [
-            'speech_id' => '7_1',
-            'plenary_id' => 1,
-            'assembly_id' => 145,
-            'issue_id' => 1,
-            'congressman_id' => 1
-        ]);
+        $expectedTable = $this->createArrayDataSet([
+            'Speech' => [
+                [
+                    'speech_id' => 'id--20001',
+                    'plenary_id' => 1,
+                    'assembly_id' => 3,
+                    'issue_id' => 1,
+                    'congressman_id' => 1,
+                    'congressman_type' => null,
+                    'from' => null,
+                    'to' => null,
+                    'text' => null,
+                    'type' => null,
+                    'iteration' => null,
+                ]
+            ],
+        ])->getTable('Speech');
+        $actualTable = $this->getConnection()
+            ->createQueryTable('Speech', 'SELECT * FROM Speech where `assembly_id` = 3');
 
-        $this->assertNotNull($service->get('7_1'));
+        $speechService = new Speech();
+        $speechService->setDriver($this->pdo);
+        $speechService->create($speech);
+
+        $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
     public function testUpdate()
     {
-        $service = new Speech();
-        $service->setDriver($this->pdo);
+        $speech = (new SpeechModel())
+            ->setSpeechId('id--00001')
+            ->setPlenaryId(1)
+            ->setAssemblyId(1)
+            ->setIssueId(1)
+            ->setCongressmanId(2);
 
-        $service->update((object) [
-            'speech_id' => '6_1',
-            'congressman_type' => 'hundur'
-        ]);
+        $expectedTable = $this->createArrayDataSet([
+            'Speech' => [
+                [
+                    'speech_id' => 'id--00001',
+                    'plenary_id' => 1,
+                    'assembly_id' => 1,
+                    'issue_id' => 1,
+                    'congressman_id' => 2,
+                    'congressman_type' => null,
+                    'from' => null,
+                    'to' => null,
+                    'text' => null,
+                    'type' => null,
+                    'iteration' => null
+                ]
+            ],
+        ])->getTable('Speech');
+        $actualTable = $this->getConnection()
+            ->createQueryTable('Speech', 'SELECT * FROM Speech where `speech_id` = "id--00001"');
 
-        $this->assertEquals('hundur', $service->get('6_1')->congressman_type);
+        $speechService = new Speech();
+        $speechService->setDriver($this->pdo);
+        $speechService->update($speech);
+
+        $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    /**
-     * Returns the test database connection.
-     *
-     * @return PHPUnit_Extensions_Database_DB_IDatabaseConnection
-     */
-    protected function getConnection()
-    {
-        $this->pdo = new PDO(
-            $GLOBALS['DB_DSN'],
-            $GLOBALS['DB_USER'],
-            $GLOBALS['DB_PASSWD'],
-            [
-                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'",
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
-            ]
-        );
-        return $this->createDefaultDBConnection($this->pdo);
-    }
-
-    /**
-     * Returns the test dataset.
-     *
-     * @return PHPUnit_Extensions_Database_DataSet_IDataSet
-     */
     protected function getDataSet()
     {
-        return new MyAppDbUnitArrayDataSet([
-            'Congressman' => [
-                require './module/Althingi/tests/data/congressman_1.php'
-            ],
+        return $this->createArrayDataSet([
             'Assembly' => [
-                require './module/Althingi/tests/data/assembly_145.php'
-            ],
-            'Plenary' => [
-                require './module/Althingi/tests/data/plenary_145_1.php'
+              ['assembly_id' => 1, 'from' => '2000-01-01'],
+              ['assembly_id' => 2, 'from' => '2000-01-01'],
+              ['assembly_id' => 3, 'from' => '2000-01-01'],
             ],
             'Issue' => [
-                require './module/Althingi/tests/data/issue_145_1.php',
-                require './module/Althingi/tests/data/issue_145_2.php',
+                ['assembly_id' => 1, 'issue_id' => 1],
+                ['assembly_id' => 1, 'issue_id' => 2],
+                ['assembly_id' => 1, 'issue_id' => 3],
+                ['assembly_id' => 2, 'issue_id' => 1],
+                ['assembly_id' => 2, 'issue_id' => 2],
+                ['assembly_id' => 2, 'issue_id' => 3],
+            ],
+            'Congressman' => [
+                ['congressman_id' => 1, 'name' => 'congressman 1', 'birth' => '2000-01-01'],
+                ['congressman_id' => 2, 'name' => 'congressman 2', 'birth' => '2000-01-01'],
+                ['congressman_id' => 3, 'name' => 'congressman 3', 'birth' => '2000-01-01'],
+            ],
+            'Plenary' => [
+                ['plenary_id' => 1, 'assembly_id' => 1],
+                ['plenary_id' => 2, 'assembly_id' => 1],
+                ['plenary_id' => 3, 'assembly_id' => 1],
+                ['plenary_id' => 1, 'assembly_id' => 3],
             ],
             'Speech' => [
-                ['speech_id' => '1_1', 'plenary_id' => 1, 'assembly_id' => 145, 'issue_id' => 1, 'congressman_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => '2000-01-01 00:01:00'],
-                ['speech_id' => '2_1', 'plenary_id' => 1, 'assembly_id' => 145, 'issue_id' => 1, 'congressman_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => null],
-                ['speech_id' => '3_1', 'plenary_id' => 1, 'assembly_id' => 145, 'issue_id' => 1, 'congressman_id' => 1, 'from' => '2000-02-01 00:00:00', 'to' => '2000-02-01 00:01:00'],
-                ['speech_id' => '4_1', 'plenary_id' => 1, 'assembly_id' => 145, 'issue_id' => 1, 'congressman_id' => 1, 'from' => '2000-02-02 00:03:01', 'to' => '2000-02-02 00:03:59'],
-                ['speech_id' => '5_1', 'plenary_id' => 1, 'assembly_id' => 145, 'issue_id' => 1, 'congressman_id' => 1, 'from' => '2000-03-01 00:05:00', 'to' => '2000-03-01 10:00:00'],
-                ['speech_id' => '6_1', 'plenary_id' => 1, 'assembly_id' => 145, 'issue_id' => 1, 'congressman_id' => 1, 'from' => '2000-03-01 12:00:00', 'to' => '2000-03-01 14:01:00'],
+                [
+                    'speech_id' => 'id--00001',
+                    'plenary_id' => 1,
+                    'assembly_id' => 1,
+                    'issue_id' => 1,
+                    'congressman_id' => 1,
+                    'from' => null,
+                    'to' => null,
+                ],[
+                    'speech_id' => 'id--00002',
+                    'plenary_id' => 1,
+                    'assembly_id' => 1,
+                    'issue_id' => 1,
+                    'congressman_id' => 1,
+                    'from' => null,
+                    'to' => null,
+                ],[
+                    'speech_id' => 'id--00003',
+                    'plenary_id' => 1,
+                    'assembly_id' => 1,
+                    'issue_id' => 1,
+                    'congressman_id' => 1,
+                    'from' => null,
+                    'to' => null,
+                ],[
+                    'speech_id' => 'id--00004',
+                    'plenary_id' => 1,
+                    'assembly_id' => 1,
+                    'issue_id' => 1,
+                    'congressman_id' => 1,
+                    'from' => null,
+                    'to' => null,
+                ],[
+                    'speech_id' => 'id--10001',
+                    'plenary_id' => 1,
+                    'assembly_id' => 1,
+                    'issue_id' => 2,
+                    'congressman_id' => 1,
+                    'from' => null,
+                    'to' => null,
+                ],[
+                    'speech_id' => 'id--10002',
+                    'plenary_id' => 1,
+                    'assembly_id' => 1,
+                    'issue_id' => 2,
+                    'congressman_id' => 1,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => '2000-01-01 00:01:00',
+                ],[
+                    'speech_id' => 'id--10003',
+                    'plenary_id' => 1,
+                    'assembly_id' => 1,
+                    'issue_id' => 2,
+                    'congressman_id' => 1,
+                    'from' => '2000-02-01 00:00:00',
+                    'to' => '2000-02-01 00:01:00',
+                ],[
+                    'speech_id' => 'id--10004',
+                    'plenary_id' => 1,
+                    'assembly_id' => 1,
+                    'issue_id' => 2,
+                    'congressman_id' => 2,
+                    'from' => '2000-03-01 00:00:00',
+                    'to' => '2000-03-01 00:01:00',
+                ]
+            ],
 
-                ['speech_id' => '1_2', 'plenary_id' => 1, 'assembly_id' => 145, 'issue_id' => 2, 'congressman_id' => 1],
-                ['speech_id' => '2_2', 'plenary_id' => 1, 'assembly_id' => 145, 'issue_id' => 2, 'congressman_id' => 1],
-                ['speech_id' => '3_2', 'plenary_id' => 1, 'assembly_id' => 145, 'issue_id' => 2, 'congressman_id' => 1],
-                ['speech_id' => '4_2', 'plenary_id' => 1, 'assembly_id' => 145, 'issue_id' => 2, 'congressman_id' => 1],
-            ]
         ]);
     }
 }

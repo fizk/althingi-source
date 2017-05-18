@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 2/06/15
- * Time: 7:31 AM
- */
 
 namespace Althingi\Controller;
 
@@ -73,9 +67,9 @@ class CommitteeMeetingController extends AbstractRestfulController implements
     {
         $committeeMeetingId = $this->params('committee_meeting_id');
 
-        if (($party = $this->committeeMeetingService->get($committeeMeetingId)) != null) {
+        if (($committeeMeeting = $this->committeeMeetingService->get($committeeMeetingId)) != null) {
             $form = new CommitteeMeetingForm();
-            $form->bind($party);
+            $form->bind($committeeMeeting);
             $form->setData($data);
 
             if ($form->isValid()) {

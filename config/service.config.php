@@ -16,7 +16,7 @@ use Althingi\Service\Issue;
 use Althingi\Service\Speech;
 use Althingi\Service\Vote;
 use Althingi\Service\VoteItem;
-use Althingi\Service\Proponent;
+use Althingi\Service\CongressmanDocument;
 use Althingi\Service\Document;
 use Althingi\Service\Committee;
 use Althingi\Service\CommitteeMeeting;
@@ -47,7 +47,7 @@ return [
         Speech::class => Speech::class,
         Vote::class => Vote::class,
         VoteItem::class => VoteItem::class,
-        Proponent::class => Proponent::class,
+        CongressmanDocument::class => CongressmanDocument::class,
         Document::class => Document::class,
         Committee::class => Committee::class,
         CommitteeMeeting::class => CommitteeMeeting::class,
@@ -64,11 +64,15 @@ return [
         'MessageStrategy' => MessageFactory::class,
 
         PDO::class => function (ServiceManager $sm) {
-            $config = $sm->get('config');
+            $dbHost = getenv('DB_HOST') ?: 'localhost';
+            $dbPort = getenv('DB_PORT') ?: 3306;
+            $dbName = getenv('DB_NAME') ?: 'althingi';
+            $dbUser = getenv('DB_USER') ?: 'root';
+            $dbPass = getenv('DB_PASSWORD') ?: '';
             return new PDO(
-                $config['db']['dns'],
-                $config['db']['user'],
-                $config['db']['password'],
+                "mysql:host={$dbHost};port={$dbPort};dbname={$dbName}",
+                $dbUser,
+                $dbPass,
                 [
                     PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'",
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,

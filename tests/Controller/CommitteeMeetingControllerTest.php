@@ -1,39 +1,51 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 20/05/15
- * Time: 7:40 AM
- */
 
 namespace Althingi\Controller;
 
+use Althingi\Service\CommitteeMeeting;
+use Althingi\Model\CommitteeMeeting as CommitteeMeetingModel;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
+/**
+ * Class CommitteeMeetingControllerTest
+ * @package Althingi\Controller
+ * @coversDefaultClass \Althingi\Controller\CommitteeMeetingController
+ * @convers \Althingi\Controller\CommitteeMeetingController::setCommitteeMeetingService
+ */
 class CommitteeMeetingControllerTest extends AbstractHttpControllerTestCase
 {
+    use ServiceHelper;
+
     public function setUp()
     {
         $this->setApplicationConfig(
             include __DIR__ .'/../application.config.php'
         );
+
         parent::setUp();
+
+        $this->buildServices([
+            CommitteeMeeting::class
+        ]);
     }
 
+    public function tearDown()
+    {
+        \Mockery::close();
+        return parent::tearDown();
+    }
+
+    /**
+     * @covers ::put
+     */
     public function testPutSuccess()
     {
-        $pdo = \Mockery::mock('PDO')
-            ->shouldReceive('prepare')
-            ->andReturnSelf()
-            ->shouldReceive('execute')
-            ->andReturnSelf()
-            ->shouldReceive('rowCount')
+        $this->getMockService(CommitteeMeeting::class)
+            ->shouldReceive('create')
             ->andReturn(1)
+            ->once()
             ->getMock();
 
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('PDO', $pdo);
 
         $this->dispatch('/loggjafarthing/145/nefndir/202/nefndarfundir/1646', 'PUT', [
             'from' => "2016-04-26 13:00:00",
@@ -46,29 +58,22 @@ class CommitteeMeetingControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(201);
     }
 
+    /**
+     * @covers ::patch
+     */
     public function testPatchSuccess()
     {
-        $pdo = \Mockery::mock('PDO')
-            ->shouldReceive('prepare')
-            ->andReturnSelf()
-            ->shouldReceive('execute')
-            ->andReturnSelf()
-            ->shouldReceive('fetchObject')
-            ->andReturn((object)[
-                'from' => '',
-                'to' => '',
-                'description' => '',
-                'committee_id' => 202,
-                'committee_meeting_id' => 1646,
-                'assembly_id' => 145,
-            ])
-            ->shouldReceive('rowCount')
-            ->andReturn(1)
+        $this->getMockService(CommitteeMeeting::class)
+            ->shouldReceive('get')
+            ->andReturn(
+                (new CommitteeMeetingModel())
+                    ->setCommitteeId(202)
+                    ->setCommitteeMeetingId(1646)
+                    ->setAssemblyId(145)
+            )->once()->getMock()
+            ->shouldReceive('update')
+            ->andReturn(1)->once()
             ->getMock();
-
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('PDO', $pdo);
 
         $this->dispatch('/loggjafarthing/145/nefndir/202/nefndarfundir/1646', 'PATCH', [
             'from' => "2016-04-26 13:00:00",
@@ -81,29 +86,23 @@ class CommitteeMeetingControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(205);
     }
 
+    /**
+     * @covers ::patch
+     */
     public function testPatchInvalidDate()
     {
-        $pdo = \Mockery::mock('PDO')
-            ->shouldReceive('prepare')
-            ->andReturnSelf()
-            ->shouldReceive('execute')
-            ->andReturnSelf()
-            ->shouldReceive('fetchObject')
-            ->andReturn((object)[
-                'from' => '',
-                'to' => '',
-                'description' => '',
-                'committee_id' => 202,
-                'committee_meeting_id' => 1646,
-                'assembly_id' => 145,
-            ])
-            ->shouldReceive('rowCount')
+        $this->getMockService(CommitteeMeeting::class)
+            ->shouldReceive('get')
+            ->andReturn(
+                (new CommitteeMeetingModel())
+                    ->setCommitteeId(202)
+                    ->setCommitteeMeetingId(1646)
+                    ->setAssemblyId(145)
+            )->once()->getMock()
+            ->shouldReceive('update')
             ->andReturn(1)
+            ->never()
             ->getMock();
-
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('PDO', $pdo);
 
         $this->dispatch('/loggjafarthing/145/nefndir/202/nefndarfundir/1646', 'PATCH', [
             'from' => "This is not a valid date string",
@@ -116,22 +115,17 @@ class CommitteeMeetingControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(400);
     }
 
+    /**
+     * @covers ::patch
+     */
     public function testPatchResourceNotFound()
     {
-        $pdo = \Mockery::mock('PDO')
-            ->shouldReceive('prepare')
-            ->andReturnSelf()
-            ->shouldReceive('execute')
-            ->andReturnSelf()
-            ->shouldReceive('fetchObject')
-            ->andReturn(false)
-            ->shouldReceive('rowCount')
-            ->andReturn(1)
+        $this->getMockService(CommitteeMeeting::class)
+            ->shouldReceive('get')
+            ->andReturn(null)->getMock()
+            ->shouldReceive('update')
+            ->never()
             ->getMock();
-
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('PDO', $pdo);
 
         $this->dispatch('/loggjafarthing/145/nefndir/202/nefndarfundir/1646', 'PATCH', [
             'from' => "2016-04-26 13:00:00",
@@ -144,54 +138,47 @@ class CommitteeMeetingControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(404);
     }
 
+    /**
+     * @covers ::get
+     */
     public function testGetSuccess()
     {
-        $pdo = \Mockery::mock('PDO')
-            ->shouldReceive('prepare')
-            ->andReturnSelf()
-            ->shouldReceive('execute')
-            ->andReturnSelf()
-            ->shouldReceive('fetchObject')
-            ->andReturn((object)[
-                'from' => '',
-                'to' => '',
-                'description' => '',
-                'committee_id' => 202,
-                'committee_meeting_id' => 1646,
-                'assembly_id' => 145,
-            ])
+        $this->getMockService(CommitteeMeeting::class)
+            ->shouldReceive('get')
+            ->andReturn(
+                (new CommitteeMeetingModel())
+                    ->setCommitteeId(202)
+                    ->setCommitteeMeetingId(1646)
+                    ->setAssemblyId(145)
+            )->once()
             ->getMock();
-
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('PDO', $pdo);
 
         $this->dispatch('/loggjafarthing/145/nefndir/202/nefndarfundir/1646', 'GET');
 
         $this->assertControllerClass('CommitteeMeetingController');
         $this->assertActionName('get');
         $this->assertResponseStatusCode(200);
+
+//        print_r(json_decode($this->getResponse()->getContent()));
     }
 
+    /**
+     * @covers ::get
+     */
     public function testGetResourceNotFound()
     {
-        $pdo = \Mockery::mock('PDO')
-            ->shouldReceive('prepare')
-            ->andReturnSelf()
-            ->shouldReceive('execute')
-            ->andReturnSelf()
-            ->shouldReceive('fetchObject')
-            ->andReturn(false)
+        $this->getMockService(CommitteeMeeting::class)
+            ->shouldReceive('get')
+            ->andReturn(null)
+            ->once()
             ->getMock();
-
-        $serviceManager = $this->getApplicationServiceLocator();
-        $serviceManager->setAllowOverride(true);
-        $serviceManager->setService('PDO', $pdo);
 
         $this->dispatch('/loggjafarthing/145/nefndir/202/nefndarfundir/1646', 'GET');
 
         $this->assertControllerClass('CommitteeMeetingController');
         $this->assertActionName('get');
         $this->assertResponseStatusCode(404);
+
+//        print_r(json_decode($this->getResponse()->getContent()));
     }
 }

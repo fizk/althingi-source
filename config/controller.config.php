@@ -28,6 +28,7 @@ use Althingi\Lib\ServiceCategoryAwareInterface;
 use Althingi\Lib\ServiceIssueCategoryAwareInterface;
 use Althingi\Lib\ServiceElectionAwareInterface;
 use Althingi\Service\Assembly;
+use Althingi\Service\President;
 use Althingi\Service\Congressman;
 use Althingi\Service\Session;
 use Althingi\Service\Party;
@@ -37,17 +38,17 @@ use Althingi\Service\Issue;
 use Althingi\Service\Speech;
 use Althingi\Service\Vote;
 use Althingi\Service\VoteItem;
-use Althingi\Service\Proponent;
+use Althingi\Service\CongressmanDocument;
 use Althingi\Service\Document;
 use Althingi\Service\Committee;
 use Althingi\Service\CommitteeMeeting;
 use Althingi\Service\CommitteeMeetingAgenda;
 use Althingi\Service\Cabinet;
-use Althingi\Service\President;
 use Althingi\Service\SuperCategory;
 use Althingi\Service\Category;
 use Althingi\Service\IssueCategory;
 use Althingi\Service\Election;
+
 use Zend\ServiceManager\AbstractPluginManager;
 
 return [
@@ -153,7 +154,7 @@ return [
         ServiceProponentAwareInterface::class => function ($instance, AbstractPluginManager $sm) {
             if ($instance instanceof ServiceProponentAwareInterface) {
                 $locator = $sm->getServiceLocator();
-                $instance->setProponentService($locator->get(Proponent::class));
+                $instance->setCongressmanDocumentService($locator->get(CongressmanDocument::class));
             }
         },
 

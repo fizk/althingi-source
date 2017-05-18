@@ -1,14 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 19/05/15
- * Time: 1:02 PM
- */
 
 namespace Althingi\Service;
 
 use Althingi\Lib\DatabaseAwareInterface;
+use Althingi\Model\Session as SessionModel;
+use Althingi\Hydrator\Session as SessionHydrator;
 use PDO;
 use DateTime;
 
@@ -28,35 +24,47 @@ class Session implements DatabaseAwareInterface
     /**
      * Get one Congressman's Session.
      *
-     * @param $id
-     * @return null|object
+     * @param int $id
+     * @return null|\Althingi\Model\Session
      */
-    public function get($id)
+    public function get(int $id): ?SessionModel
     {
-        $statement = $this->getDriver()->prepare("
-            select * from `Session` where session_id = :session_id
-        ");
+        $statement = $this->getDriver()->prepare(
+            "select * from `Session` where session_id = :session_id"
+        );
         $statement->execute(['session_id' => $id]);
-        return $this->decorate($statement->fetchObject());
+        $object = $statement->fetch(PDO::FETCH_ASSOC);
+
+        return $object
+            ? (new SessionHydrator())->hydrate($object, new SessionModel())
+            : null;
     }
 
     /**
      * Fetch all Session by Congressman.
      *
-     * @param $id
-     * @return array
+     * @param int $id
+     * @return \Althingi\Model\Session[]
      */
-    public function fetchByCongressman($id)
+    public function fetchByCongressman(int $id): array
     {
         $statement =$this->getDriver()->prepare("
             select * from `Session` where congressman_id = :id
             order by `from` desc
         ");
         $statement->execute(['id' => $id]);
-        return array_map([$this, 'decorate'], $statement->fetchAll());
+
+        return array_map(function ($object) {
+            return (new SessionHydrator())->hydrate($object, new SessionModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    public function fetchByAssemblyAndCongressman($assemblyId, $congressmanId)
+    /**
+     * @param int $assemblyId
+     * @param int $congressmanId
+     * @return array
+     */
+    public function fetchByAssemblyAndCongressman(int $assemblyId, int $congressmanId): array
     {
         $statement = $this->getDriver()->prepare("
             select * from `Session` S where S.`congressman_id` = :congressman_id and S.`assembly_id` = :assembly_id 
@@ -67,10 +75,18 @@ class Session implements DatabaseAwareInterface
             'assembly_id' => $assemblyId,
             'congressman_id' => $congressmanId,
         ]);
-        return array_map([$this, 'decorate'], $statement->fetchAll());
+        return array_map(function ($object) {
+            return (new SessionHydrator())->hydrate($object, new SessionModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    public function getIdentifier($congressmanId, DateTime $from, $type)
+    /**
+     * @param int $congressmanId
+     * @param DateTime $from
+     * @param string $type
+     * @return int
+     */
+    public function getIdentifier(int $congressmanId, DateTime $from, string $type): int
     {
         $statement = $this->getDriver()->prepare('
             select `session_id` from `Session`
@@ -88,15 +104,16 @@ class Session implements DatabaseAwareInterface
      * Create one entry. Accepts object from
      * corresponding Form.
      *
-     * @param object $data
+     * @param \Althingi\Model\Session $data
      * @return int affected rows
      */
-    public function create($data)
+    public function create(SessionModel $data): int
     {
-        $statement = $this
-            ->getDriver()
-            ->prepare($this->insertString('Session', $data));
-        $statement->execute($this->convert($data));
+        $statement = $this->getDriver()->prepare(
+            $this->toInsertString('Session', $data)
+        );
+        $statement->execute($this->toSqlValues($data));
+
         return $this->getDriver()->lastInsertId();
     }
 
@@ -104,25 +121,26 @@ class Session implements DatabaseAwareInterface
      * Update one Congressman's Session. Accepts object from
      * corresponding Form.
      *
-     * @param $data
-     * @return string
+     * @param \Althingi\Model\Session $data
+     * @return int
      */
-    public function update($data)
+    public function update(SessionModel $data): int
     {
-        $statement = $this
-            ->getDriver()
-            ->prepare($this->updateString('Session', $data, "session_id = {$data->session_id}"));
-        $statement->execute($this->convert($data));
-        return $this->getDriver()->lastInsertId();
+        $statement = $this->getDriver()->prepare(
+            $this->toUpdateString('Session', $data, "session_id={$data->getSessionId()}")
+        );
+        $statement->execute($this->toSqlValues($data));
+
+        return $statement->rowCount();
     }
 
     /**
      * Delete one Congressman's session.
      *
-     * @param $id
+     * @param int $id
      * @return int
      */
-    public function delete($id)
+    public function delete(int $id)
     {
         $statement = $this->getDriver()->prepare("
             delete from `Session` where session_id = :id
@@ -145,43 +163,5 @@ class Session implements DatabaseAwareInterface
     public function getDriver()
     {
         return $this->pdo;
-    }
-
-    /**
-     * Decorate and convert one entry object.
-     *
-     * Adds Congressman object, Constituency object
-     * and Party object to Speech.
-     *
-     * @param $object
-     * @return null|object
-     */
-    private function decorate($object)
-    {
-        if (!$object) {
-            return null;
-        }
-
-        $constituencyStatement = $this->getDriver()->prepare("
-            select `constituency_id` as id, `name`, `abbr_short` as abbr
-            from `Constituency` where constituency_id = :id
-        ");
-        $constituencyStatement->execute(['id' => $object->constituency_id]);
-
-        $partyStatement = $this->getDriver()->prepare("
-            select `party_id` as id, `name`, `abbr_short` as abbr
-            from `Party` where party_id = :id
-        ");
-        $partyStatement->execute(['id' => $object->party_id]);
-
-
-        $object->session_id = (int) $object->session_id;
-        $object->congressman_id = (int) $object->congressman_id;
-        $object->constituency = $constituencyStatement->fetchObject();
-        $object->party = $partyStatement->fetchObject();
-
-        unset($object->constituency_id);
-        unset($object->party_id);
-        return $object;
     }
 }

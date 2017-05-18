@@ -1,20 +1,14 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 1/04/2016
- * Time: 2:25 PM
- */
 
 namespace Althingi\Lib;
-use League\HTMLToMarkdown\HtmlConverter;
 
+use League\HTMLToMarkdown\HtmlConverter;
 
 class Transformer
 {
     public static function speechToMarkdown($text)
     {
-        if (empty($text)) {
+        if (empty($text) || !is_string($text)) {
             return '';
         }
         

@@ -1,21 +1,16 @@
 <?php
-return array(
-    'modules' => array(
+
+return [
+    'modules' => [
         'Althingi',
-    ),
-    'module_listener_options' => array(
-        'config_glob_paths'    => array(
+    ],
+    'module_listener_options' => [
+        'config_glob_paths'    => [
             '../../../config/test/{,*.}{global,local}.php',
-        ),
-        'module_paths' => array(
+        ],
+        'module_paths' => [
             'module',
             'vendor',
-        ),
-    ),
-
-    'db' => [
-        'dns' => 'mysql:host=127.0.0.1;dbname=althingi',
-        'user' => 'root',
-        'password' => '',
-    ]
-);
+        ],
+    ],
+];

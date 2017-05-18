@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 8/06/15
- * Time: 9:05 PM
- */
 
 namespace Althingi\Controller;
 
@@ -17,6 +11,9 @@ use Althingi\Lib\ServiceSessionAwareInterface;
 use Althingi\Lib\ServiceSpeechAwareInterface;
 use Althingi\Lib\ServiceVoteAwareInterface;
 use Althingi\Lib\ServiceVoteItemAwareInterface;
+use Althingi\Model\CongressmanAndParties;
+use Althingi\Model\CongressmanAndParty;
+use Althingi\Model\CongressmanPartyProperties;
 use Althingi\Service\Congressman;
 use Althingi\Service\Issue;
 use Althingi\Service\IssueCategory;
@@ -77,11 +74,12 @@ class CongressmanController extends AbstractRestfulController implements
     public function get($id)
     {
         if ($congressman = $this->congressmanService->get($id)) {
-            $congressman->parties = $this->partyService->fetchByCongressman($id);
+            $congressmanWithParties = (new CongressmanAndParties())
+                ->setCongressman($congressman)
+                ->setParties($this->partyService->fetchByCongressman($id));
 
-            return (new ItemModel($congressman))
-                ->setStatus(200)
-                ->setOption('Access-Control-Allow-Origin', '*');
+            return (new ItemModel($congressmanWithParties))
+                ->setStatus(200);
         }
 
         return $this->notFoundAction();
@@ -100,9 +98,7 @@ class CongressmanController extends AbstractRestfulController implements
 
         return (new CollectionModel($congressmen))
             ->setStatus(206)
-            ->setRange($range['from'], $range['to'], $count)
-            ->setOption('Access-Control-Expose-Headers', 'Range, Range-Unit, Content-Range') //TODO should go into Rend
-            ->setOption('Access-Control-Allow-Origin', '*');
+            ->setRange($range['from'], $range['to'], $count);
     }
 
     /**
@@ -120,13 +116,11 @@ class CongressmanController extends AbstractRestfulController implements
         if ($form->isValid()) {
             $this->congressmanService->create($form->getObject());
             return (new EmptyModel())
-                ->setStatus(201)
-                ->setOption('Access-Control-Allow-Origin', '*');
+                ->setStatus(201);
         }
 
         return (new ErrorModel($form))
-            ->setStatus(400)
-            ->setOption('Access-Control-Allow-Origin', '*');
+            ->setStatus(400);
     }
 
     /**
@@ -146,13 +140,11 @@ class CongressmanController extends AbstractRestfulController implements
             if ($form->isValid()) {
                 $this->congressmanService->update($form->getObject());
                 return (new EmptyModel())
-                    ->setStatus(205)
-                    ->setOption('Access-Control-Allow-Origin', '*');
+                    ->setStatus(205);
             }
 
             return (new ErrorModel($form))
-                ->setStatus(400)
-                ->setOption('Access-Control-Allow-Origin', '*');
+                ->setStatus(400);
         }
 
         return $this->notFoundAction();
@@ -190,14 +182,14 @@ class CongressmanController extends AbstractRestfulController implements
         $typeQuery = $this->params()->fromQuery('tegund', null);
         $typeParam = array_key_exists($typeQuery, $typeArray) ? $typeArray[$typeQuery] : null;
 
-        $congressmen = array_map(function ($congressman) {
-            $congressman->party = $this->partyService->get($congressman->party_id);
-            return $congressman;
+        $congressmen = array_map(function (CongressmanAndParty $congressman) {
+            return (new CongressmanPartyProperties())
+                ->setCongressman($congressman)
+                ->setParty($this->partyService->get($congressman->getPartyId()));
         }, $this->congressmanService->fetchByAssembly($assemblyId, $typeParam));
 
         return (new CollectionModel($congressmen))
-            ->setStatus(200)
-            ->setOption('Access-Control-Allow-Origin', '*');
+            ->setStatus(200);
     }
 
     public function assemblySpeechTimeAction()
@@ -208,8 +200,7 @@ class CongressmanController extends AbstractRestfulController implements
         $frequencyData = $this->speechService->getFrequencyByAssemblyAndCongressman($assemblyId, $congressmanId);
 
         return (new ItemModel($frequencyData))
-            ->setStatus(200)
-            ->setOption('Access-Control-Allow-Origin', '*');
+            ->setStatus(200);
     }
 
     public function assemblySessionsAction()
@@ -220,8 +211,7 @@ class CongressmanController extends AbstractRestfulController implements
         $sessions = $this->sessionService->fetchByAssemblyAndCongressman($assemblyId, $congressmanId);
 
         return (new CollectionModel($sessions))
-            ->setStatus(200)
-            ->setOption('Access-Control-Allow-Origin', '*');
+            ->setStatus(200);
     }
 
     public function assemblyIssuesAction()
@@ -232,8 +222,7 @@ class CongressmanController extends AbstractRestfulController implements
         $issues = $this->issueService->fetchByAssemblyAndCongressman($assemblyId, $congressmanId);
 
         return (new CollectionModel($issues))
-            ->setStatus(200)
-            ->setOption('Access-Control-Allow-Origin', '*');
+            ->setStatus(200);
     }
 
     public function assemblyVotingAction()
@@ -243,8 +232,8 @@ class CongressmanController extends AbstractRestfulController implements
 
         $fromDate = $fromString ? new \DateTime($fromString) : null ;
         $toDate = $toString ? new \DateTime($toString) : null ;
-        $assemblyId = $this->params('id');
-        $congressmanId = $this->params('congressman_id');
+        $assemblyId = (int) $this->params('id');
+        $congressmanId = (int) $this->params('congressman_id');
 
         $voting = $this->voteService->getFrequencyByAssemblyAndCongressman(
             $assemblyId,
@@ -254,8 +243,7 @@ class CongressmanController extends AbstractRestfulController implements
         );
 
         return (new CollectionModel($voting))
-            ->setStatus(200)
-            ->setOption('Access-Control-Allow-Origin', '*');
+            ->setStatus(200);
     }
 
     public function assemblyCategoriesAction()
@@ -266,8 +254,7 @@ class CongressmanController extends AbstractRestfulController implements
         $categories = $this->issueCategoryService->fetchFrequencyByAssemblyAndCongressman($assemblyId, $congressmanId);
 
         return (new CollectionModel($categories))
-            ->setStatus(200)
-            ->setOption('Access-Control-Allow-Origin', '*');
+            ->setStatus(200);
     }
 
     public function assemblyVoteCategoriesAction()
@@ -281,8 +268,7 @@ class CongressmanController extends AbstractRestfulController implements
         );
 
         return (new CollectionModel($voteCategories))
-            ->setStatus(200)
-            ->setOption('Access-Control-Allow-Origin', '*');
+            ->setStatus(200);
     }
 
     public function optionsList()
@@ -290,7 +276,6 @@ class CongressmanController extends AbstractRestfulController implements
         return (new EmptyModel())
             ->setStatus(200)
             ->setAllow(['GET', 'OPTIONS'])
-            ->setOption('Access-Control-Allow-Origin', '*')
             ->setOption('Access-Control-Allow-Headers', 'Range');
     }
     /**
@@ -303,7 +288,6 @@ class CongressmanController extends AbstractRestfulController implements
         return (new EmptyModel())
             ->setStatus(200)
             ->setAllow(['GET', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'])
-            ->setOption('Access-Control-Allow-Origin', '*')
             ->setOption('Access-Control-Allow-Headers', 'Range');
     }
     

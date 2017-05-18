@@ -1,14 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 2/06/15
- * Time: 7:31 AM
- */
 
 namespace Althingi\Controller;
 
 use Althingi\Form\Issue as IssueForm;
+use Althingi\Model\CongressmanAndDateRange;
+use Althingi\Model\IssueAndDate as IssueAndDateModel;
 use Althingi\Lib\ServiceAssemblyAwareInterface;
 use Althingi\Lib\ServiceCongressmanAwareInterface;
 use Althingi\Lib\ServiceDocumentAwareInterface;
@@ -16,6 +12,9 @@ use Althingi\Lib\ServiceIssueAwareInterface;
 use Althingi\Lib\ServicePartyAwareInterface;
 use Althingi\Lib\ServiceSpeechAwareInterface;
 use Althingi\Lib\ServiceVoteAwareInterface;
+use Althingi\Model\CongressmanPartyProperties;
+use Althingi\Model\IssueProperties;
+use Althingi\Model\Proponent;
 use Althingi\Service\Assembly;
 use Althingi\Service\Congressman;
 use Althingi\Service\Document;
@@ -58,7 +57,7 @@ class IssueController extends AbstractRestfulController implements
     /** @var  \Althingi\Service\Vote */
     private $voteService;
 
-    /** @var  \Althingi\Service\Assembly */
+    /** @var  \Althingi\Service\President */
     private $assemblyService;
 
     /** @var  \Althingi\Service\Speech */
@@ -75,46 +74,44 @@ class IssueController extends AbstractRestfulController implements
         $assemblyId = $this->params('id', 0);
         $issueId = $this->params('issue_id', 0);
 
-        $issue = $this->issueService->get($issueId, $assemblyId);
+        $issue = $this->issueService->getWithDate($issueId, $assemblyId);
 
         if (!$issue) {
             return $this->notFoundAction();
         }
 
         $assembly = $this->assemblyService->get($assemblyId);
-
-        $issue->proponent = $this->congressmanService->get($issue->congressman_id);
-        if ($issue->proponent) {
-            $issue->proponent->party = $this->partyService->getByCongressman(
-                $issue->congressman_id,
-                new \DateTime($issue->date)
-            );
-        }
-
-        $dates = $this->voteService->fetchDateFrequencyByIssue($assemblyId, $issueId);
-        $issue->voteRange = $this->buildDateRange(
-            new DateTime($assembly->from),
-            new DateTime($assembly->to),
-            $dates
-        );
-
+//        $proponent = $issue->getCongressmanId() ? $this->congressmanService->get($issue->getCongressmanId()) : null;
+        $proponents = $this->congressmanService->fetchProponentsByIssue($assemblyId, $issueId);
+        $voteDates = $this->voteService->fetchDateFrequencyByIssue($assemblyId, $issueId);
         $speech = $this->speechService->fetchFrequencyByIssue($assemblyId, $issueId);
-        $issue->speechRange = $this->buildDateRange(
-            new DateTime($assembly->from),
-            new DateTime($assembly->to),
-            $speech
-        );
+        $speakers = $this->congressmanService->fetchAccumulatedTimeByIssue($assemblyId, $issueId);
 
-        $issue->speakers = $this->congressmanService->fetchAccumulatedTimeByIssue($assemblyId, $issueId);
-        array_walk($issue->speakers, function ($congressman) {
-            $congressman->party = $this->partyService->getByCongressman(
-                $congressman->congressman_id,
-                new DateTime($congressman->begin)
-            );
-        });
+        $speakersWithParties = array_map(function (CongressmanAndDateRange $congressman) {
+            return (new CongressmanPartyProperties())
+                ->setCongressman($congressman)
+                ->setParty($this->partyService->getByCongressman(
+                    $congressman->getCongressmanId(),
+                    $congressman->getBegin()
+                ));
+        }, $speakers);
 
-        return (new ItemModel($issue))
-            ->setOption('Access-Control-Allow-Origin', '*');
+        $issueProperties = (new IssueProperties())
+            ->setIssue($issue)
+            ->setVoteRange($this->buildDateRange($assembly->getFrom(), $assembly->getTo(), $voteDates))
+            ->setSpeechRange($this->buildDateRange($assembly->getFrom(), $assembly->getTo(), $speech))
+            ->setSpeakers($speakersWithParties);
+
+        $proponentsAndParty = array_map(function (Proponent $proponent) use ($issue) {
+            return (new CongressmanPartyProperties())
+                ->setCongressman($proponent)
+                ->setParty(
+                    $this->partyService->getByCongressman($proponent->getCongressmanId(), $issue->getDate())
+                );
+        }, $proponents);
+        $issueProperties->setProponents($proponentsAndParty);
+
+        return (new ItemModel($issueProperties));
     }
 
     /**
@@ -140,26 +137,32 @@ class IssueController extends AbstractRestfulController implements
             $types
         );
 
-        array_walk($issues, function ($issue) use ($assemblyId) {
-            $issue->goal = Transformer::htmlToMarkdown($issue->goal);
-            $issue->major_changes = Transformer::htmlToMarkdown($issue->major_changes);
-            $issue->changes_in_law = Transformer::htmlToMarkdown($issue->changes_in_law);
-            $issue->costs_and_revenues = Transformer::htmlToMarkdown($issue->costs_and_revenues);
-            $issue->deliveries = Transformer::htmlToMarkdown($issue->deliveries);
-            $issue->additional_information = Transformer::htmlToMarkdown($issue->additional_information);
+        $issuesAndProperties = array_map(function (IssueAndDateModel $issue) use ($assemblyId) {
+            $issue->setGoal(Transformer::htmlToMarkdown($issue->getGoal()));
+            $issue->setMajorChanges(Transformer::htmlToMarkdown($issue->getMajorChanges()));
+            $issue->setChangesInLaw(Transformer::htmlToMarkdown($issue->getChangesInLaw()));
+            $issue->setCostsAndRevenues(Transformer::htmlToMarkdown($issue->getCostsAndRevenues()));
+            $issue->setAdditionalInformation(Transformer::htmlToMarkdown($issue->getAdditionalInformation()));
+            $issue->setDeliveries(Transformer::htmlToMarkdown($issue->getDeliveries()));
 
-            if ($issue->congressman_id) {
-                $issue->congressman = $this->congressmanService->get($issue->congressman_id);
-                $issue->congressman->party = $this->partyService->getByCongressman(
-                    $issue->congressman_id,
-                    new DateTime($issue->date)
-                );
-            }
-        });
+            $issueAndProperty = (new IssueProperties())
+                ->setIssue($issue);
 
-        return (new CollectionModel($issues))
+            $proponents = $this->congressmanService->fetchProponentsByIssue($assemblyId, $issue->getIssueId());
+            $proponentsAndParty = array_map(function (Proponent $proponent) use ($issue) {
+                return (new CongressmanPartyProperties())
+                    ->setCongressman($proponent)
+                    ->setParty(
+                        $this->partyService->getByCongressman($proponent->getCongressmanId(), $issue->getDate())
+                    );
+            }, $proponents);
+            $issueAndProperty->setProponents($proponentsAndParty);
+
+            return $issueAndProperty;
+        }, $issues);
+
+        return (new CollectionModel($issuesAndProperties))
             ->setStatus(206)
-            ->setOption('Access-Control-Allow-Origin', '*')
             ->setOption('Access-Control-Expose-Headers', 'Range, Range-Unit, Content-Range') //TODO should go into Rend
             ->setRange($range['from'], $range['to'], $count);
     }
@@ -175,14 +178,12 @@ class IssueController extends AbstractRestfulController implements
     {
         $assemblyId = $this->params('id');
         $issueId = $id;
-        $issueService = $this->getServiceLocator()
-            ->get('Althingi\Service\Issue');
 
         $form = (new IssueForm())
             ->setData(array_merge($data, ['assembly_id' => $assemblyId, 'issue_id' => $issueId]));
 
         if ($form->isValid()) {
-            $issueService->create($form->getObject());
+            $this->issueService->create($form->getObject());
             return (new EmptyModel())->setStatus(201);
         }
 
@@ -199,8 +200,7 @@ class IssueController extends AbstractRestfulController implements
     public function patch($id, $data)
     {
         $assemblyId = $this->params('id');
-        $issueService = $this->getServiceLocator()->get('Althingi\Service\Issue');
-        $issue = $issueService->get($id, $assemblyId);
+        $issue = $this->issueService->get($id, $assemblyId);
 
         if (!$issue) {
             return $this->notFoundAction();
@@ -211,7 +211,7 @@ class IssueController extends AbstractRestfulController implements
         $form->setData($data);
 
         if ($form->isValid()) {
-            $issueService->update($form->getObject());
+            $this->issueService->update($form->getObject());
             return (new EmptyModel())->setStatus(205);
         }
 
@@ -308,15 +308,17 @@ class IssueController extends AbstractRestfulController implements
         $this->speechService = $speech;
     }
 
-    private function buildDateRange(\DateTime $begin, \DateTime $end, $range)
+    private function buildDateRange(\DateTime $begin, \DateTime $end = null, $range = 0)
     {
+        $end = $end ? : new DateTime();
         $interval = new \DateInterval('P1M');
         $dateRange = new \DatePeriod($begin, $interval, $end);
 
         return array_map(function ($dateObject) use ($range) {
             $date = $dateObject->format('Y-m');
             $count = array_filter($range, function ($item) use ($date) {
-                return $item->year_month == $date;
+                /** @var $item \Althingi\Model\DateAndCount */
+                return $item->getDate()->format('Y-m') == $date;
             });
             return count($count) >= 1
                 ? array_pop($count)
@@ -324,7 +326,6 @@ class IssueController extends AbstractRestfulController implements
                     'count' => 0,
                     'year_month' => $date
                 ];
-
         }, iterator_to_array($dateRange));
     }
 }

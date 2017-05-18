@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 24/03/2016
- * Time: 4:36 PM
- */
 
 namespace Althingi\Form;
 
@@ -21,7 +15,7 @@ class AssemblyTest extends PHPUnit_Framework_TestCase
             'to' => '',
         ])->isValid();
 
-        $this->assertNull($form->getObject()->to);
+        $this->assertNull($form->getObject()->getTo());
     }
 
     public function testNonEmptyToValue()
@@ -33,6 +27,6 @@ class AssemblyTest extends PHPUnit_Framework_TestCase
             'to' => '2001-02-02',
         ])->isValid();
 
-        $this->assertNotNull($form->getObject()->to);
+        $this->assertNotNull($form->getObject()->getTo());
     }
 }

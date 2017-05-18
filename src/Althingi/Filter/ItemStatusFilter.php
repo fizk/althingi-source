@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 19/04/2016
- * Time: 4:10 PM
- */
 
 namespace Althingi\Filter;
 
