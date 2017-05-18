@@ -1,14 +1,11 @@
 language: php
+
 php:
   - '7.1'
 services:
   - docker
 
-before_script:
-  - docker-compose up
-
 script:
-  - ./auto/test.sh
+  - docker-compose build
+  - docker-compose run tests
 
-after_script:
-  - docker-compose down
