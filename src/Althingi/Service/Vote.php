@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 20/03/2016
- * Time: 11:22 AM
- */
 
 namespace Althingi\Service;
 
@@ -136,8 +130,12 @@ class Vote implements DatabaseAwareInterface
      * @param \DateTime|null $to
      * @return array
      */
-    public function getFrequencyByAssemblyAndCongressman($assemblyId, $congressmanId, \DateTime $from = null, \DateTime $to = null)
-    {
+    public function getFrequencyByAssemblyAndCongressman(
+        int $assemblyId,
+        int $congressmanId,
+        \DateTime $from = null,
+        \DateTime $to = null
+    ) {
         $statement = null;
         if ($from) {
             $to = $to ? $to : new \DateTime();

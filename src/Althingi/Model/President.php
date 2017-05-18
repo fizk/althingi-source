@@ -4,12 +4,6 @@ namespace Althingi\Model;
 
 use DateTime;
 
-/**
- * Created by PhpStorm.
- * User: einar.adalsteinsson
- * Date: 11/27/16
- * Time: 3:33 PM
- */
 class President implements ModelInterface
 {
     /** @var int */
@@ -21,10 +15,10 @@ class President implements ModelInterface
     /** @var int */
     private $assembly_id;
 
-    /** @var \DateTime */
+    /** @var DateTime */
     private $from;
 
-    /** @var \DateTime */
+    /** @var DateTime */
     private $to;
 
     /** @var string */
@@ -88,36 +82,36 @@ class President implements ModelInterface
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getFrom(): \DateTime
+    public function getFrom(): DateTime
     {
         return $this->from;
     }
 
     /**
-     * @param \DateTime $from
+     * @param DateTime $from
      * @return President
      */
-    public function setFrom(\DateTime $from): President
+    public function setFrom(DateTime $from): President
     {
         $this->from = $from;
         return $this;
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getTo(): ?\DateTime
+    public function getTo(): ?DateTime
     {
         return $this->to;
     }
 
     /**
-     * @param \DateTime $to
+     * @param DateTime $to
      * @return President
      */
-    public function setTo(\DateTime $to = null): President
+    public function setTo(DateTime $to = null): President
     {
         $this->to = $to;
         return $this;

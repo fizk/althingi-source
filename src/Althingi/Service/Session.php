@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 19/05/15
- * Time: 1:02 PM
- */
 
 namespace Althingi\Service;
 
@@ -170,42 +164,4 @@ class Session implements DatabaseAwareInterface
     {
         return $this->pdo;
     }
-
-    /**
-     * Decorate and convert one entry object.
-     *
-     * Adds Congressman object, Constituency object
-     * and Party object to Speech.
-     *
-     * @param $object
-     * @return null|object
-     */
-//    private function decorate($object)
-//    {
-//        if (!$object) {
-//            return null;
-//        }
-//
-//        $constituencyStatement = $this->getDriver()->prepare("
-//            select `constituency_id` as id, `name`, `abbr_short` as abbr
-//            from `Constituency` where constituency_id = :id
-//        ");
-//        $constituencyStatement->execute(['id' => $object->constituency_id]);
-//
-//        $partyStatement = $this->getDriver()->prepare("
-//            select `party_id` as id, `name`, `abbr_short` as abbr
-//            from `Party` where party_id = :id
-//        ");
-//        $partyStatement->execute(['id' => $object->party_id]);
-//
-//
-//        $object->session_id = (int) $object->session_id;
-//        $object->congressman_id = (int) $object->congressman_id;
-//        $object->constituency = $constituencyStatement->fetchObject();
-//        $object->party = $partyStatement->fetchObject();
-//
-//        unset($object->constituency_id);
-//        unset($object->party_id);
-//        return $object;
-//    }
 }

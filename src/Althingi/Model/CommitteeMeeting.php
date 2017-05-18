@@ -4,12 +4,6 @@ namespace Althingi\Model;
 
 use DateTime;
 
-/**
- * Created by PhpStorm.
- * User: einar.adalsteinsson
- * Date: 11/27/16
- * Time: 3:33 PM
- */
 class CommitteeMeeting implements ModelInterface
 {
     /** @var  int */

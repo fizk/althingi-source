@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 10/06/15
- * Time: 8:53 PM
- */
 
 namespace Althingi\Service;
 
@@ -32,7 +26,7 @@ class SuperCategory implements DatabaseAwareInterface
      * @param int $id
      * @return \Althingi\Model\SuperCategory
      */
-    public function get($id): ?SuperCategoryModel
+    public function get(int $id): ?SuperCategoryModel
     {
         $statement = $this->getDriver()->prepare('
             select * from `SuperCategory` where super_category_id = :super_category_id

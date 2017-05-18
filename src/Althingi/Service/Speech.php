@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 10/06/15
- * Time: 8:53 PM
- */
 
 namespace Althingi\Service;
 
@@ -55,7 +49,7 @@ class Speech implements DatabaseAwareInterface
      * @param $congressmanId
      * @return object
      */
-    public function getFrequencyByAssemblyAndCongressman($assemblyId, $congressmanId)
+    public function getFrequencyByAssemblyAndCongressman(int $assemblyId, int $congressmanId)
     {
         $speechTypeStatement = $this->getDriver()->prepare('
             select `type`, sum(`diff`) as `total` from (

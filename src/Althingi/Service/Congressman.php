@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 8/06/15
- * Time: 9:16 PM
- */
 
 namespace Althingi\Service;
 
@@ -78,10 +72,10 @@ class Congressman implements DatabaseAwareInterface
 
     /**
      * @param $assemblyId
-     * @param null $congressmanType
+     * @param string $congressmanType
      * @return \Althingi\Model\CongressmanAndParty[]
      */
-    public function fetchByAssembly(int $assemblyId, $congressmanType = null): array
+    public function fetchByAssembly(int $assemblyId, string $congressmanType = null): array
     {
         $statement;
         switch ($congressmanType) {

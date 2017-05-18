@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einar.adalsteinsson
- * Date: 3/19/17
- * Time: 10:28 AM
- */
 
 namespace Althingi\Model;
 

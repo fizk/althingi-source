@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 24/04/2016
- * Time: 3:36 PM
- */
 
 namespace Althingi\Controller;
 

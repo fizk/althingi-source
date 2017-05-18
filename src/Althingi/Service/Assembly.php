@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 19/05/15
- * Time: 1:02 PM
- */
 
 namespace Althingi\Service;
 
@@ -34,7 +28,7 @@ class Assembly implements DatabaseAwareInterface
      * @param $id
      * @return null|\Althingi\Model\Assembly
      */
-    public function get($id): ?AssemblyModel
+    public function get(int $id): ?AssemblyModel
     {
         $statement = $this->getDriver()->prepare("select * from `Assembly` where assembly_id = :id");
         $statement->execute(['id' => $id]);
@@ -53,7 +47,7 @@ class Assembly implements DatabaseAwareInterface
      * @param string $order
      * @return \Althingi\Model\Assembly[]
      */
-    public function fetchAll($offset = null, $size = null, $order = 'desc'): array
+    public function fetchAll(int $offset = null, int $size = null, string $order = 'desc'): array
     {
         $order = in_array($order, ['asc', 'desc']) ? $order : 'desc';
 
@@ -122,7 +116,7 @@ class Assembly implements DatabaseAwareInterface
      * @param int $id
      * @return int
      */
-    public function delete($id): int
+    public function delete(int $id): int
     {
         $statement = $this->getDriver()->prepare("delete from `Assembly` where assembly_id = :assembly_id");
         $statement->execute(['assembly_id' => $id]);

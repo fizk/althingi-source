@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 20/03/2016
- * Time: 11:22 AM
- */
 
 namespace Althingi\Service;
 
@@ -50,7 +44,7 @@ class VoteItem implements DatabaseAwareInterface
      * @param int $id
      * @return \Althingi\Model\VoteItem[]
      */
-    public function fetchByVote($id): array
+    public function fetchByVote(int $id): array
     {
         $statement = $this->getDriver()->prepare(
             'select * from `VoteItem` where vote_id = :vote_id'

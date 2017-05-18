@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 10/06/15
- * Time: 8:53 PM
- */
 
 namespace Althingi\Service;
 
@@ -34,7 +28,7 @@ class Party implements DatabaseAwareInterface
      * @param int $id
      * @return \Althingi\Model\Party|null
      */
-    public function get($id): ?PartyModel
+    public function get(int $id): ?PartyModel
     {
         $statement = $this->getDriver()->prepare('
             select * from `Party` where party_id = :party_id
@@ -52,7 +46,7 @@ class Party implements DatabaseAwareInterface
      * @param \DateTime $date
      * @return \Althingi\Model\Party|null
      */
-    public function getByCongressman($congressmanId, \DateTime $date): ?PartyModel
+    public function getByCongressman(int $congressmanId, \DateTime $date): ?PartyModel
     {
         $statement = $this->getDriver()->prepare('
             select P.* from
@@ -108,7 +102,7 @@ class Party implements DatabaseAwareInterface
      * @param array $exclude
      * @return \Althingi\Model\Party[]
      */
-    public function fetchByAssembly(int $assemblyId, $exclude = []): array
+    public function fetchByAssembly(int $assemblyId, array $exclude = []): array
     {
         $query = '';
         if (count($exclude) == 0) {

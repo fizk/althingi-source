@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 19/05/15
- * Time: 1:02 PM
- */
 
 namespace Althingi\Service;
 
@@ -71,8 +65,12 @@ class President implements DatabaseAwareInterface
      * @param string $title
      * @return \Althingi\Model\PresidentCongressman|null
      */
-    public function getByUnique(int $assemblyId, int $congressmanId, DateTime $from, string $title): ?PresidentCongressmanModel
-    {
+    public function getByUnique(
+        int $assemblyId,
+        int $congressmanId,
+        DateTime $from,
+        string $title
+    ): ?PresidentCongressmanModel {
         $statement = $this->getDriver()->prepare("
             select P.`president_id`, P.`assembly_id`, P.`from`, P.`to`, P.`title`, P.`abbr`, C.* 
             from `President` P 
