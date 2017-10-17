@@ -3,6 +3,7 @@
 namespace Althingi\Controller;
 
 use Althingi\Form\Assembly as AssemblyForm;
+use Althingi\Lib\DateAndCountSequence;
 use Althingi\Lib\ServiceAssemblyAwareInterface;
 use Althingi\Lib\ServiceCabinetAwareInterface;
 use Althingi\Lib\ServiceCategoryAwareInterface;
@@ -166,12 +167,22 @@ class AssemblyController extends AbstractRestfulController implements
     {
         $assemblyId = $this->params('id');
 
+        $assembly = $this->assemblyService->get($assemblyId);
+
         $response = (object)[
             'bills' => $this->issueService->fetchNonGovernmentBillStatisticsByAssembly($assemblyId),
             'government_bills' => $this->issueService->fetchGovernmentBillStatisticsByAssembly($assemblyId),
             'types' => $this->issueService->fetchStateByAssembly($assemblyId),
-            'votes' => $this->voteService->fetchFrequencyByAssembly($assemblyId),
-            'speeches' => $this->speechService->fetchFrequencyByAssembly($assemblyId),
+            'votes' => DateAndCountSequence::buildDateRange(
+                $assembly->getFrom(),
+                $assembly->getTo(),
+                $this->voteService->fetchFrequencyByAssembly($assemblyId)
+            ),
+            'speeches' => DateAndCountSequence::buildDateRange(
+                $assembly->getFrom(),
+                $assembly->getTo(),
+                $this->speechService->fetchFrequencyByAssembly($assemblyId)
+            ),
             'party_times' => $this->partyService->fetchTimeByAssembly($assemblyId),
             'categories' => $this->categoryService->fetchByAssembly($assemblyId),
             'election' => $this->electionService->getByAssembly($assemblyId),

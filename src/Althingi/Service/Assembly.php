@@ -39,6 +39,17 @@ class Assembly implements DatabaseAwareInterface
             : null;
     }
 
+    public function getCurrent()
+    {
+        $statement = $this->getDriver()->prepare("select * from `Assembly` order by `assembly_id` desc limit 0, 1");
+        $statement->execute();
+        $assembly = $statement->fetch(PDO::FETCH_ASSOC);
+
+        return $assembly
+            ? (new AssemblyHydrator)->hydrate($assembly, new AssemblyModel())
+            : null;
+    }
+
     /**
      * Get all Assemblies.
      *

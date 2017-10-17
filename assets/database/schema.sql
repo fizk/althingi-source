@@ -62,7 +62,7 @@ CREATE TABLE `Cabinet` (
   `name` varchar(255) DEFAULT NULL,
   `title` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`cabinet_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -182,7 +182,7 @@ CREATE TABLE `CommitteeMeeting` (
   KEY `fk_CommitteeMeeting_Assembly1_idx` (`assembly_id`),
   CONSTRAINT `fk_CommitteeMeeting_Assembly1` FOREIGN KEY (`assembly_id`) REFERENCES `Assembly` (`assembly_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_CommitteeMeeting_Committee1` FOREIGN KEY (`committee_id`) REFERENCES `Committee` (`committee_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=17895 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -203,7 +203,7 @@ CREATE TABLE `CommitteeMeetingAgenda` (
   KEY `fk_CommitteeMeetingAgenda_Issue1_idx` (`issue_id`,`assembly_id`),
   CONSTRAINT `fk_CommitteeMeetingAgenda_CommitteeMeeting1` FOREIGN KEY (`committee_meeting_id`) REFERENCES `CommitteeMeeting` (`committee_meeting_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_CommitteeMeetingAgenda_Issue1` FOREIGN KEY (`issue_id`, `assembly_id`) REFERENCES `Issue` (`issue_id`, `assembly_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -219,7 +219,7 @@ CREATE TABLE `Congressman` (
   `birth` date NOT NULL,
   `death` date DEFAULT NULL,
   PRIMARY KEY (`congressman_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1304 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1310 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -271,12 +271,12 @@ CREATE TABLE `Document` (
   `issue_id` int(11) NOT NULL,
   `assembly_id` int(11) NOT NULL,
   `date` datetime NOT NULL,
-  `url` varchar(255) NOT NULL,
+  `url` varchar(255) DEFAULT NULL,
   `type` varchar(45) NOT NULL,
   PRIMARY KEY (`document_id`,`issue_id`,`assembly_id`),
   KEY `fk_Document_Issue1_idx` (`issue_id`,`assembly_id`),
   CONSTRAINT `fk_Document_Issue1` FOREIGN KEY (`issue_id`, `assembly_id`) REFERENCES `Issue` (`issue_id`, `assembly_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=700 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1813 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -309,7 +309,7 @@ DROP TABLE IF EXISTS `Election`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Election` (
-  `election_id` int(11) NOT NULL,
+  `election_id` int(11) NOT NULL AUTO_INCREMENT,
   `date` date NOT NULL,
   `title` varchar(255) DEFAULT NULL,
   `description` text,
@@ -333,9 +333,9 @@ CREATE TABLE `ElectionResult` (
   PRIMARY KEY (`election_result_id`),
   KEY `fk_ElectionResult_Election1_idx` (`election_id`),
   KEY `fk_ElectionResult_Party1_idx` (`party_id`),
-  CONSTRAINT `fk_ElectionResult_Election1` FOREIGN KEY (`election_id`) REFERENCES `Election` (`election_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `fk_ElectionResult_Party1` FOREIGN KEY (`party_id`) REFERENCES `Party` (`party_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=78 DEFAULT CHARSET=latin1;
+  CONSTRAINT `fk_ElectionResult_Election1` FOREIGN KEY (`election_id`) REFERENCES `Election` (`election_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_ElectionResult_Party1` FOREIGN KEY (`party_id`) REFERENCES `Party` (`party_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -386,7 +386,7 @@ CREATE TABLE `Issue` (
   KEY `fk_Issue_Congressman1_idx` (`congressman_id`),
   CONSTRAINT `fk_Issue_Assembly1` FOREIGN KEY (`assembly_id`) REFERENCES `Assembly` (`assembly_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_Issue_Congressman1` FOREIGN KEY (`congressman_id`) REFERENCES `Congressman` (`congressman_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=501 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=547 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -464,7 +464,7 @@ CREATE TABLE `President` (
   KEY `fk_president_Assembly1_idx` (`assembly_id`),
   CONSTRAINT `fk_president_Assembly1` FOREIGN KEY (`assembly_id`) REFERENCES `Assembly` (`assembly_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_president_Congressman1` FOREIGN KEY (`congressman_id`) REFERENCES `Congressman` (`congressman_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1412 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -494,7 +494,7 @@ CREATE TABLE `Session` (
   CONSTRAINT `fk_Session_Congressman` FOREIGN KEY (`congressman_id`) REFERENCES `Congressman` (`congressman_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_Session_Constituency1` FOREIGN KEY (`constituency_id`) REFERENCES `Constituency` (`constituency_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_Session_Party1` FOREIGN KEY (`party_id`) REFERENCES `Party` (`party_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2710 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4101 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -591,7 +591,7 @@ CREATE TABLE `Vote` (
   KEY `fk_Vote_Issue2` (`issue_id`,`assembly_id`),
   CONSTRAINT `fk_Vote_Document1` FOREIGN KEY (`document_id`) REFERENCES `Document` (`document_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_Vote_Issue2` FOREIGN KEY (`issue_id`, `assembly_id`) REFERENCES `Issue` (`issue_id`, `assembly_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=54425 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=54470 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -611,7 +611,7 @@ CREATE TABLE `VoteItem` (
   KEY `fk_VoteItem_Congressman2_idx` (`congressman_id`),
   CONSTRAINT `fk_VoteItem_Congressman2` FOREIGN KEY (`congressman_id`) REFERENCES `Congressman` (`congressman_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_VoteItem_Vote3` FOREIGN KEY (`vote_id`) REFERENCES `Vote` (`vote_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=14681 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=45288 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -623,4 +623,4 @@ CREATE TABLE `VoteItem` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-05-15  9:42:32
+-- Dump completed on 2017-05-18 14:41:43

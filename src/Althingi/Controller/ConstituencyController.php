@@ -9,6 +9,7 @@ use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ErrorModel;
 use Rend\View\Model\EmptyModel;
 use Rend\Helper\Http\Range;
+use Rend\View\Model\ItemModel;
 
 class ConstituencyController extends AbstractRestfulController implements
     ServiceConstituencyAwareInterface
@@ -17,6 +18,14 @@ class ConstituencyController extends AbstractRestfulController implements
 
     /** @var \Althingi\Service\Constituency */
     private $constituencyService;
+
+    public function get($id)
+    {
+        $constituency = $this->constituencyService->get($id);
+        return $constituency
+            ? new ItemModel($constituency)
+            : $this->notFoundAction();
+    }
 
     /**
      * @param mixed $id

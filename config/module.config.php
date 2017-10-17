@@ -32,6 +32,7 @@ use Althingi\Controller\IssueCategoryController;
 use Althingi\Controller\CommitteeMeetingController;
 use Althingi\Controller\CommitteeMeetingAgendaController;
 use Althingi\Controller\AssemblyCommitteeController;
+use Althingi\Controller\HighlightController;
 
 return array(
     'router' => [
@@ -46,10 +47,33 @@ return array(
                     ],
                 ],
             ],
+            'thingmal-current' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/thingmal/nuverandi',
+                    'defaults' => [
+                        'controller' => HighlightController::class,
+                        'action' => 'get-active-issue'
+                    ],
+                ],
+            ],
+            'loggjafarthing-current' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/loggjafarthing/nuverandi',
+                    'defaults' => [
+                        'controller' => HighlightController::class,
+                        'action' => 'get-current-assembly'
+                    ],
+                ],
+            ],
             'loggjafarthing' => [
                 'type' => 'Zend\Mvc\Router\Http\Segment',
                 'options' => [
                     'route'    => '/loggjafarthing[/:id]',
+                    'constraints' => [
+                        'id' => '[0-9]*'
+                    ],
                     'defaults' => [
                         'controller' => AssemblyController::class,
                     ],
@@ -445,6 +469,7 @@ return array(
             CommitteeMeetingController::class => CommitteeMeetingController::class,
             CommitteeMeetingAgendaController::class => CommitteeMeetingAgendaController::class,
             AssemblyCommitteeController::class => AssemblyCommitteeController::class,
+            HighlightController::class => HighlightController::class,
         ],
     ],
     'view_manager' => [

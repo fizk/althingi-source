@@ -43,6 +43,19 @@ class Speech implements DatabaseAwareInterface
             : null ;
     }
 
+    public function getLastActive(): ?SpeechModel
+    {
+        $statement = $this->getDriver()->prepare(
+            'select * from `Speech` where `text` is not null order by `from` desc;'
+        );
+        $statement->execute([]);
+
+        $object = $statement->fetch(PDO::FETCH_ASSOC);
+        return $object
+            ? (new SpeechHydrator())->hydrate($object, new SpeechModel())
+            : null ;
+    }
+
     /**
      * @todo I don't fully understand what is going on here...
      * @param $assemblyId
@@ -210,11 +223,11 @@ class Speech implements DatabaseAwareInterface
     public function fetchFrequencyByIssue(int $assemblyId, int $issueId): array
     {
         $statement = $this->getDriver()->prepare('
-            select date_format(`from`, "%Y-%m-01 00:00:00") as `date`, 
+            select date_format(`from`, "%Y-%m-%d 00:00:00") as `date`, 
             (sum(time_to_sec(timediff(`to`, `from`)))) as `count`
             from `Speech`
             where assembly_id = :assembly_id and issue_id = :issue_id
-            group by date_format(`from`, "%Y-%m")
+            group by date_format(`from`, "%Y-%m-%d")
             having `count` is not null
             order by `from`;
         ');
@@ -241,7 +254,7 @@ class Speech implements DatabaseAwareInterface
     public function fetchFrequencyByAssembly(int $assemblyId): array
     {
         $statement = $this->getDriver()->prepare(
-            'select date_format(`date`, "%Y-%m-01 00:00:00") as `date`, sum(`diff`) as `count` from (
+            'select date_format(`date`, "%Y-%m-%d 00:00:00") as `date`, sum(`diff`) as `count` from (
                 select date(`from`) as `date`, time_to_sec(timediff(`to`, `from`)) as `diff`
                 from `Speech`
                 where assembly_id = :assembly_id and (`from` is not null or `to` is not null)

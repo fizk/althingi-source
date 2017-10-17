@@ -3,6 +3,7 @@
 namespace Althingi\Controller;
 
 use Althingi\Form\Issue as IssueForm;
+use Althingi\Lib\DateAndCountSequence;
 use Althingi\Model\CongressmanAndDateRange;
 use Althingi\Model\IssueAndDate as IssueAndDateModel;
 use Althingi\Lib\ServiceAssemblyAwareInterface;
@@ -80,6 +81,13 @@ class IssueController extends AbstractRestfulController implements
             return $this->notFoundAction();
         }
 
+        $issue->setGoal(Transformer::htmlToMarkdown($issue->getGoal()));
+        $issue->setMajorChanges(Transformer::htmlToMarkdown($issue->getMajorChanges()));
+        $issue->setChangesInLaw(Transformer::htmlToMarkdown($issue->getChangesInLaw()));
+        $issue->setCostsAndRevenues(Transformer::htmlToMarkdown($issue->getCostsAndRevenues()));
+        $issue->setAdditionalInformation(Transformer::htmlToMarkdown($issue->getAdditionalInformation()));
+        $issue->setDeliveries(Transformer::htmlToMarkdown($issue->getDeliveries()));
+
         $assembly = $this->assemblyService->get($assemblyId);
 //        $proponent = $issue->getCongressmanId() ? $this->congressmanService->get($issue->getCongressmanId()) : null;
         $proponents = $this->congressmanService->fetchProponentsByIssue($assemblyId, $issueId);
@@ -98,8 +106,8 @@ class IssueController extends AbstractRestfulController implements
 
         $issueProperties = (new IssueProperties())
             ->setIssue($issue)
-            ->setVoteRange($this->buildDateRange($assembly->getFrom(), $assembly->getTo(), $voteDates))
-            ->setSpeechRange($this->buildDateRange($assembly->getFrom(), $assembly->getTo(), $speech))
+            ->setVoteRange(DateAndCountSequence::buildDateRange($assembly->getFrom(), $assembly->getTo(), $voteDates))
+            ->setSpeechRange(DateAndCountSequence::buildDateRange($assembly->getFrom(), $assembly->getTo(), $speech))
             ->setSpeakers($speakersWithParties);
 
         $proponentsAndParty = array_map(function (Proponent $proponent) use ($issue) {
@@ -306,26 +314,5 @@ class IssueController extends AbstractRestfulController implements
     public function setSpeechService(Speech $speech)
     {
         $this->speechService = $speech;
-    }
-
-    private function buildDateRange(\DateTime $begin, \DateTime $end = null, $range = 0)
-    {
-        $end = $end ? : new DateTime();
-        $interval = new \DateInterval('P1M');
-        $dateRange = new \DatePeriod($begin, $interval, $end);
-
-        return array_map(function ($dateObject) use ($range) {
-            $date = $dateObject->format('Y-m');
-            $count = array_filter($range, function ($item) use ($date) {
-                /** @var $item \Althingi\Model\DateAndCount */
-                return $item->getDate()->format('Y-m') == $date;
-            });
-            return count($count) >= 1
-                ? array_pop($count)
-                : (object) [
-                    'count' => 0,
-                    'year_month' => $date
-                ];
-        }, iterator_to_array($dateRange));
     }
 }

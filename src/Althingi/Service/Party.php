@@ -4,7 +4,9 @@ namespace Althingi\Service;
 
 use Althingi\Model\Party as PartyModel;
 use Althingi\Hydrator\Party as PartyHydrator;
+use Althingi\Model\PartyAndElection;
 use Althingi\Model\PartyAndTime as PartyAndTimeModel;
+use Althingi\Hydrator\PartyAndElection as PartyAndElectionHydrator;
 use Althingi\Hydrator\PartyAndTime as PartyAndTimeHydrator;
 use Althingi\Lib\DatabaseAwareInterface;
 use PDO;
@@ -141,7 +143,7 @@ class Party implements DatabaseAwareInterface
         ');
         $statement->execute(['assembly_id' => $assemblyId]);
         return array_map(function ($object) {
-            return (new PartyHydrator())->hydrate($object, new PartyModel());
+            return (new PartyAndElectionHydrator())->hydrate($object, new PartyAndElection());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 

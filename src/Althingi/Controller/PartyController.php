@@ -9,6 +9,7 @@ use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ErrorModel;
 use Rend\View\Model\EmptyModel;
 use Rend\Helper\Http\Range;
+use Rend\View\Model\ItemModel;
 
 class PartyController extends AbstractRestfulController implements
     ServicePartyAwareInterface
@@ -17,6 +18,14 @@ class PartyController extends AbstractRestfulController implements
 
     /** @var \Althingi\Service\Party */
     private $partyService;
+
+    public function get($id)
+    {
+        $party = $this->partyService->get($id);
+        return $party
+            ? new ItemModel($party)
+            : $this->notFoundAction();
+    }
 
     /**
      * @param mixed $id

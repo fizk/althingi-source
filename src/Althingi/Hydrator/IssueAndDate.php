@@ -48,6 +48,6 @@ class IssueAndDate implements HydratorInterface
     {
         unset($object->time);
 
-        return (array) $object;
+        return $object->toArray();
     }
 }

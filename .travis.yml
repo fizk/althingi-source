@@ -9,3 +9,9 @@ script:
   - docker-compose build
   - docker-compose run tests
 
+deploy:
+  - provider: script
+    script: auto/deploy.sh production
+    on:
+      branch: master
+

@@ -67,7 +67,7 @@ class Vote implements DatabaseAwareInterface
     public function fetchDateFrequencyByIssue(int $assemblyId, int $issueId): array
     {
         $statement = $this->getDriver()->prepare('
-            select count(*) as `count`, date_format(`date`, "%Y-%m-01") as `date` from `Vote`
+            select count(*) as `count`, date_format(`date`, "%Y-%m-%d") as `date` from `Vote`
             where assembly_id = :assembly_id and issue_id = :issue_id
             group by `date`
             order by `date`;
@@ -88,7 +88,7 @@ class Vote implements DatabaseAwareInterface
     public function fetchFrequencyByAssembly(int $assemblyId): array
     {
         $statement = $this->getDriver()->prepare(
-            'select count(*) as `count`, date_format(`date`, "%Y-%m-01") as `date`
+            'select count(*) as `count`, date_format(`date`, "%Y-%m-%d") as `date`
             from `Vote`
             where assembly_id = :assembly_id
             group by `date`;'
