@@ -35,6 +35,6 @@ class CongressmanAndCabinet implements HydratorInterface
      */
     public function extract($object)
     {
-        return (array) $object;
+        return $object->toArray();
     }
 }

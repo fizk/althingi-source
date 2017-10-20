@@ -49,7 +49,7 @@ class PartyAndElection extends Party
      * @param int $seat
      * @return PartyAndElection
      */
-    public function setSeat(int $seat): PartyAndElection
+    public function setSeat(?int $seat): PartyAndElection
     {
         $this->seat = $seat;
         return $this;

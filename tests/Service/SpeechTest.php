@@ -8,6 +8,7 @@ use PHPUnit_Extensions_Database_TestCase;
 use Althingi\Model\Speech as SpeechModel;
 use Althingi\Model\SpeechAndPosition as SpeechAndPositionModel;
 use Althingi\Model\DateAndCount as DateAndCountModel;
+use Zend\EventManager\EventManager;
 
 class SpeechTest extends PHPUnit_Extensions_Database_TestCase
 {
@@ -193,6 +194,7 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
 
         $speechService = new Speech();
         $speechService->setDriver($this->pdo);
+        $speechService->setEventManager(new EventManager());
         $speechService->create($speech);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
@@ -229,6 +231,7 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
 
         $speechService = new Speech();
         $speechService->setDriver($this->pdo);
+        $speechService->setEventManager(new EventManager());
         $speechService->update($speech);
 
         $this->assertTablesEqual($expectedTable, $actualTable);

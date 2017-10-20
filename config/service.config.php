@@ -34,6 +34,11 @@ use Rend\View\Strategy\MessageFactory;
 use Psr\Log\LoggerInterface;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+use Zend\EventManager\EventManagerAwareInterface;
+use Althingi\ServiceEvents\ServiceEventsListener;
+use Althingi\Lib\ElasticSearchAwareInterface;
+use Elasticsearch\Client as ElasticsearchClient;
+use Elasticsearch\ClientBuilder as ElasticsearchClientBuilder;
 
 return [
     'invokables' => [
@@ -81,6 +86,19 @@ return [
             );
         },
 
+        ElasticsearchClient::class => function (ServiceManager $sm) {
+            $hosts = ['localhost:9200',];
+            $client = ElasticsearchClientBuilder::create()
+                ->setHosts($hosts)
+                ->build();
+
+            return $client;
+        },
+
+        ServiceEventsListener::class => function (ServiceManager $sm) {
+            return new ServiceEventsListener();
+        },
+
         LoggerInterface::class => function (ServiceManager $sm) {
             $logger = new Logger('althingi');
             $logger->pushHandler(new StreamHandler('php://stdout'));
@@ -99,5 +117,17 @@ return [
                 $instance->setLogger($sm->get(LoggerInterface::class));
             }
         },
+        ElasticSearchAwareInterface::class => function ($instance, ServiceManager $sm) {
+            if ($instance instanceof ElasticSearchAwareInterface) {
+                $instance->setElasticSearchClient($sm->get(ElasticsearchClient::class));
+            }
+        },
+        EventManagerAwareInterface::class => function ($instance, ServiceManager $sm) {
+            if ($instance instanceof EventManagerAwareInterface) {
+                $eventManager = new \Zend\EventManager\EventManager();
+                $eventManager->attach($sm->get(ServiceEventsListener::class));
+                $instance->setEventManager($eventManager);
+            }
+        }
     ],
 ];

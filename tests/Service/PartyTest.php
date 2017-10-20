@@ -3,7 +3,6 @@
 namespace Althingi\Service;
 
 use Althingi\DatabaseConnection;
-use PHPUnit_Extensions_Database_DataSet_IDataSet;
 use PHPUnit_Extensions_Database_TestCase;
 use Althingi\Model\Party as PartyModel;
 use Althingi\Model\PartyAndTime as PartyAndTimeModel;
@@ -60,8 +59,22 @@ class PartyTest extends PHPUnit_Extensions_Database_TestCase
         $partyService = new Party();
         $partyService->setDriver($this->pdo);
         $expectedParties = [
-            (new PartyModel())->setPartyId(1)->setName('p1')->setColor('ffffff'),
-            (new PartyModel())->setPartyId(2)->setName('p2')->setColor('ffffff'),
+            (new \Althingi\Model\PartyAndElection())
+                ->setResults(99.0)
+                ->setElectionId(1)
+                ->setElectionResultId(1)
+                ->setAssemblyId(1)
+                ->setPartyId(1)
+                ->setName('p1')
+                ->setColor('ffffff'),
+            (new \Althingi\Model\PartyAndElection())
+                ->setResults(98.0)
+                ->setElectionId(1)
+                ->setElectionResultId(2)
+                ->setAssemblyId(1)
+                ->setPartyId(2)
+                ->setName('p2')
+                ->setColor('ffffff'),
         ];
         $actualParties = $partyService->fetchElectedByAssembly(1);
 

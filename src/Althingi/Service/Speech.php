@@ -3,6 +3,8 @@
 namespace Althingi\Service;
 
 use Althingi\Lib\DatabaseAwareInterface;
+use Althingi\ServiceEvents\AddEvent;
+use Althingi\ServiceEvents\UpdateEvent;
 use PDO;
 use Althingi\Hydrator\Speech as SpeechHydrator;
 use Althingi\Hydrator\SpeechAndPosition as SpeechAndPositionHydrator;
@@ -10,12 +12,14 @@ use Althingi\Hydrator\DateAndCount as DateAndCountHydrator;
 use Althingi\Model\Speech as SpeechModel;
 use Althingi\Model\SpeechAndPosition as SpeechAndPositionModel;
 use Althingi\Model\DateAndCount as DateAndCountModel;
+use Zend\EventManager\EventManagerInterface;
+use Zend\EventManager\EventManagerAwareInterface;
 
 /**
  * Class Speech
  * @package Althingi\Service
  */
-class Speech implements DatabaseAwareInterface
+class Speech implements DatabaseAwareInterface, EventManagerAwareInterface
 {
     use DatabaseService;
 
@@ -23,6 +27,9 @@ class Speech implements DatabaseAwareInterface
      * @var \PDO
      */
     private $pdo;
+
+    /** @var  \Zend\EventManager\EventManager */
+    private $eventManager;
 
     /**
      * Get one speech item.
@@ -43,6 +50,9 @@ class Speech implements DatabaseAwareInterface
             : null ;
     }
 
+    /**
+     * @return SpeechModel|null
+     */
     public function getLastActive(): ?SpeechModel
     {
         $statement = $this->getDriver()->prepare(
@@ -301,6 +311,8 @@ class Speech implements DatabaseAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
+        $this->getEventManager()->trigger(new AddEvent($data, new \Althingi\Hydrator\Speech()));
+
         return $this->getDriver()->lastInsertId();
     }
 
@@ -316,6 +328,8 @@ class Speech implements DatabaseAwareInterface
             $this->toUpdateString('Speech', $data, "speech_id='{$data->getSpeechId()}'")
         );
         $statement->execute($this->toSqlValues($data));
+
+        $this->getEventManager()->trigger(new UpdateEvent($data, new \Althingi\Hydrator\Speech()));
 
         return $statement->rowCount();
     }
@@ -334,5 +348,28 @@ class Speech implements DatabaseAwareInterface
     public function getDriver()
     {
         return $this->pdo;
+    }
+
+    /**
+     * Inject an EventManager instance
+     *
+     * @param  EventManagerInterface $eventManager
+     * @return void
+     */
+    public function setEventManager(EventManagerInterface $eventManager)
+    {
+        $this->eventManager = $eventManager;
+    }
+
+    /**
+     * Retrieve the event manager
+     *
+     * Lazy-loads an EventManager instance if none registered.
+     *
+     * @return EventManagerInterface
+     */
+    public function getEventManager()
+    {
+        return $this->eventManager;
     }
 }
