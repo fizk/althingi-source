@@ -133,6 +133,9 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
 
         $this->assertControllerClass('CongressmanController');
         $this->assertActionName('getList');
+        $this->assertResponseStatusCode(206);
+        $this->assertResponseHeaderContains('Content-Range', 'items 0-1/1');
+        $this->assertResponseHeaderContains('Range-Unit', 'items');
     }
 
     /**
@@ -141,7 +144,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
     public function testPutSuccess()
     {
         $this->getMockService(Congressman::class)
-            ->shouldReceive('create')
+            ->shouldReceive('save')
             ->once()
             ->andReturn(1)
             ->getMock();
@@ -198,6 +201,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
 
         $this->dispatch('/thingmenn/1', 'PATCH', [
             'name' => 'some name',
+            'birth' => '1978-04-11'
         ]);
 
         $this->assertControllerClass('CongressmanController');

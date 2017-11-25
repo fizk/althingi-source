@@ -122,6 +122,30 @@ class PlenaryTest extends PHPUnit_Extensions_Database_TestCase
         $this->assertTablesEqual($expectedTable, $queryTable);
     }
 
+    public function testSave()
+    {
+        $plenary = (new PlenaryModel())
+            ->setAssemblyId(1)
+            ->setPlenaryId(5);
+
+        $assemblyService = new Plenary();
+        $assemblyService->setDriver($this->pdo);
+        $assemblyService->save($plenary);
+
+        $expectedTable = $this->createArrayDataSet([
+            'Plenary' => [
+                ['plenary_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => null, 'name' => null],
+                ['plenary_id' => 2, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => null, 'name' => null],
+                ['plenary_id' => 3, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => '2001-01-01 00:00:00', 'name' => null],
+                ['plenary_id' => 4, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => '2001-01-01 00:00:00', 'name' => 'p-name'],
+                ['plenary_id' => 5, 'assembly_id' => 1, 'from' => null, 'to' => null, 'name' => null],
+            ],
+        ])->getTable('Plenary');
+        $queryTable = $this->getConnection()->createQueryTable('Plenary', 'SELECT * FROM Plenary');
+
+        $this->assertTablesEqual($expectedTable, $queryTable);
+    }
+
     public function testUpdate()
     {
         $plenary = (new PlenaryModel())

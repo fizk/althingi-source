@@ -28,6 +28,11 @@ class IssueCategoryController extends AbstractRestfulController implements
      */
     private $categoryService;
 
+    /**
+     * @param mixed $id
+     * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\Category
+     */
     public function get($id)
     {
         $assemblyId = $this->params('id');
@@ -42,6 +47,10 @@ class IssueCategoryController extends AbstractRestfulController implements
             : $this->notFoundAction() ;
     }
 
+    /**
+     * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\Category[]
+     */
     public function getList()
     {
         $assemblyId = $this->params('id');
@@ -50,7 +59,9 @@ class IssueCategoryController extends AbstractRestfulController implements
         $categories = $this->categoryService
             ->fetchByAssemblyAndIssue($assemblyId, $issueId);
         
-        return (new CollectionModel($categories));
+        return (new CollectionModel($categories))
+            ->setStatus(206)
+            ->setRange(0, count($categories), count($categories));
     }
 
     /**
@@ -59,6 +70,7 @@ class IssueCategoryController extends AbstractRestfulController implements
      * @param int $id
      * @param array $data
      * @return \Rend\View\Model\ModelInterface
+     * @input \Althingi\Form\IssueCategory
      */
     public function put($id, $data)
     {
@@ -73,13 +85,19 @@ class IssueCategoryController extends AbstractRestfulController implements
             ));
 
         if ($form->isValid()) {
-            $this->issueCategoryService->create($form->getObject());
-            return (new EmptyModel())->setStatus(201);
+            $affectedRows = $this->issueCategoryService->save($form->getObject());
+            return (new EmptyModel())->setStatus($affectedRows === 1 ? 201 : 205);
         }
 
         return (new ErrorModel($form))->setStatus(400);
     }
 
+    /**
+     * @param $id
+     * @param $data
+     * @return \Rend\View\Model\ModelInterface
+     * @input \Althingi\Form\IssueCategory
+     */
     public function patch($id, $data)
     {
         $assemblyId = $this->params('id');

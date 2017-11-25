@@ -76,6 +76,20 @@ class CommitteeMeeting implements DatabaseAwareInterface
     }
 
     /**
+     * @param \Althingi\Model\CommitteeMeeting $data
+     * @return int affected rows
+     */
+    public function save(CommitteeMeetingModel $data): int
+    {
+        $statement = $this->getDriver()->prepare(
+            $this->toSaveString('CommitteeMeeting', $data)
+        );
+        $statement->execute($this->toSqlValues($data));
+
+        return $statement->rowCount();
+    }
+
+    /**
      * Create one entry.
      *
      * @param \Althingi\Model\CommitteeMeeting $data

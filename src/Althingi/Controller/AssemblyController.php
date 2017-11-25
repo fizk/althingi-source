@@ -2,7 +2,9 @@
 
 namespace Althingi\Controller;
 
+use Althingi\Command\AssemblyStatistics;
 use Althingi\Form\Assembly as AssemblyForm;
+use Althingi\Lib\CommandAssemblyStatisticsAwareInterface;
 use Althingi\Lib\DateAndCountSequence;
 use Althingi\Lib\ServiceAssemblyAwareInterface;
 use Althingi\Lib\ServiceCabinetAwareInterface;
@@ -13,6 +15,7 @@ use Althingi\Lib\ServicePartyAwareInterface;
 use Althingi\Lib\ServiceSpeechAwareInterface;
 use Althingi\Lib\ServiceVoteAwareInterface;
 use Althingi\Model\AssemblyProperties;
+use Althingi\Model\AssemblyStatusProperties;
 use Althingi\Service\Assembly;
 use Althingi\Service\Cabinet;
 use Althingi\Service\Category;
@@ -36,7 +39,8 @@ class AssemblyController extends AbstractRestfulController implements
     ServiceSpeechAwareInterface,
     ServiceCabinetAwareInterface,
     ServiceCategoryAwareInterface,
-    ServiceElectionAwareInterface
+    ServiceElectionAwareInterface,
+    CommandAssemblyStatisticsAwareInterface
 {
     use Range;
 
@@ -64,11 +68,15 @@ class AssemblyController extends AbstractRestfulController implements
     /** @var $issueService \Althingi\Service\Election */
     private $electionService;
 
+    /** @var  \Althingi\Command\AssemblyStatistics */
+    private $assemblyStatisticsCommand;
+
     /**
      * Get one Assembly.
      *
      * @param int $id
      * @return \Rend\View\Model\ModelInterface|array
+     * @output \Althingi\Model\AssemblyProperties
      */
     public function get($id)
     {
@@ -100,6 +108,8 @@ class AssemblyController extends AbstractRestfulController implements
      * Return list of Assemblies.
      *
      * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\AssemblyProperties[]
+     * @query $order asc|desc
      */
     public function getList()
     {
@@ -107,7 +117,11 @@ class AssemblyController extends AbstractRestfulController implements
 
         $count = $this->assemblyService->count();
         $range = $this->getRange($this->getRequest(), $count);
-        $assemblies = $this->assemblyService->fetchAll($range['from'], ($range['to'] - $range['from']), $order);
+        $assemblies = $this->assemblyService->fetchAll(
+            $range->getFrom(),
+            $range->getSize(),
+            $order
+        );
 
         $assemblyCollection = array_map(function (\Althingi\Model\Assembly $assembly) {
             $assemblyProperties = (new AssemblyProperties())
@@ -131,7 +145,7 @@ class AssemblyController extends AbstractRestfulController implements
 
         return (new CollectionModel($assemblyCollection))
             ->setStatus(206)
-            ->setRange(0, $count, $count);
+            ->setRange($range->getFrom(), $range->getFrom() + count($assemblyCollection), $count);
     }
 
     /**
@@ -162,32 +176,15 @@ class AssemblyController extends AbstractRestfulController implements
      * Get statistics about assembly.
      *
      * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\AssemblyStatusProperties
      */
     public function statisticsAction()
     {
         $assemblyId = $this->params('id');
 
-        $assembly = $this->assemblyService->get($assemblyId);
-
-        $response = (object)[
-            'bills' => $this->issueService->fetchNonGovernmentBillStatisticsByAssembly($assemblyId),
-            'government_bills' => $this->issueService->fetchGovernmentBillStatisticsByAssembly($assemblyId),
-            'types' => $this->issueService->fetchStateByAssembly($assemblyId),
-            'votes' => DateAndCountSequence::buildDateRange(
-                $assembly->getFrom(),
-                $assembly->getTo(),
-                $this->voteService->fetchFrequencyByAssembly($assemblyId)
-            ),
-            'speeches' => DateAndCountSequence::buildDateRange(
-                $assembly->getFrom(),
-                $assembly->getTo(),
-                $this->speechService->fetchFrequencyByAssembly($assemblyId)
-            ),
-            'party_times' => $this->partyService->fetchTimeByAssembly($assemblyId),
-            'categories' => $this->categoryService->fetchByAssembly($assemblyId),
-            'election' => $this->electionService->getByAssembly($assemblyId),
-            'election_results' => $this->partyService->fetchElectedByAssembly($assemblyId)
-        ];
+        $response = $this->assemblyStatisticsCommand
+            ->setAssemblyId($assemblyId)
+            ->exec();
 
         return (new ItemModel($response))
             ->setStatus(200);
@@ -199,6 +196,7 @@ class AssemblyController extends AbstractRestfulController implements
      * @param  int $id
      * @param  array $data
      * @return \Rend\View\Model\ModelInterface
+     * @input \Althingi\Form\Assembly
      */
     public function put($id, $data)
     {
@@ -207,9 +205,9 @@ class AssemblyController extends AbstractRestfulController implements
 
         if ($form->isValid()) {
             $object = $form->getObject();
-            $this->assemblyService->create($object);
+            $affectedRows = $this->assemblyService->save($object);
             return (new EmptyModel())
-                ->setStatus(201);
+                ->setStatus($affectedRows === 1 ? 201 : 205);
         }
 
         return (new ErrorModel($form))
@@ -222,6 +220,7 @@ class AssemblyController extends AbstractRestfulController implements
      * @param int $id
      * @param array $data
      * @return \Rend\View\Model\ModelInterface
+     * @input \Althingi\Form\Assembly
      */
     public function patch($id, $data)
     {
@@ -305,5 +304,13 @@ class AssemblyController extends AbstractRestfulController implements
     public function setElectionService(Election $election)
     {
         $this->electionService = $election;
+    }
+
+    /**
+     * @param \Althingi\Command\AssemblyStatistics $assemblyStatistics
+     */
+    public function setAssemblyStatisticsCommand(AssemblyStatistics $assemblyStatistics)
+    {
+        $this->assemblyStatisticsCommand = $assemblyStatistics;
     }
 }

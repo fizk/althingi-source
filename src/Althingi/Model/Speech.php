@@ -2,6 +2,8 @@
 
 namespace Althingi\Model;
 
+use DateTime;
+
 class Speech implements ModelInterface
 {
 
@@ -37,6 +39,9 @@ class Speech implements ModelInterface
 
     /** @var string */
     private $iteration = null;
+
+    /** @var int */
+    private $word_count = 0;
 
     /**
      * @return string
@@ -149,7 +154,7 @@ class Speech implements ModelInterface
     /**
      * @return \DateTime
      */
-    public function getFrom(): ?\DateTime
+    public function getFrom(): ?DateTime
     {
         return $this->from;
     }
@@ -158,7 +163,7 @@ class Speech implements ModelInterface
      * @param \DateTime $from
      * @return Speech
      */
-    public function setFrom(\DateTime $from = null): Speech
+    public function setFrom(DateTime $from = null): Speech
     {
         $this->from = $from;
         return $this;
@@ -167,7 +172,7 @@ class Speech implements ModelInterface
     /**
      * @return \DateTime
      */
-    public function getTo(): ?\DateTime
+    public function getTo(): ?DateTime
     {
         return $this->to;
     }
@@ -176,7 +181,7 @@ class Speech implements ModelInterface
      * @param \DateTime $to
      * @return Speech
      */
-    public function setTo(\DateTime $to = null): Speech
+    public function setTo(DateTime $to = null): Speech
     {
         $this->to = $to;
         return $this;
@@ -236,6 +241,24 @@ class Speech implements ModelInterface
         return $this;
     }
 
+    /**
+     * @return int
+     */
+    public function getWordCount(): int
+    {
+        return $this->word_count;
+    }
+
+    /**
+     * @param int $word_count
+     * @return Speech
+     */
+    public function setWordCount(?int $word_count): Speech
+    {
+        $this->word_count = $word_count ? : 0;
+        return $this;
+    }
+
     public function toArray()
     {
         return [
@@ -250,6 +273,7 @@ class Speech implements ModelInterface
             'text' => $this->text,
             'type' => $this->type,
             'iteration' => $this->iteration,
+            'word_count' => $this->word_count,
         ];
     }
 

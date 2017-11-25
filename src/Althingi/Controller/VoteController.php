@@ -22,6 +22,7 @@ class VoteController extends AbstractRestfulController implements
      *
      * @param int $id
      * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\Vote
      */
     public function get($id)
     {
@@ -36,6 +37,7 @@ class VoteController extends AbstractRestfulController implements
      * Get a list of votes for a given issue.
      *
      * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\Vote[]
      *
      * @attr int id
      * @attr int issue_id
@@ -44,8 +46,12 @@ class VoteController extends AbstractRestfulController implements
     {
         $assemblyId = $this->params('id');
         $issueId = $this->params('issue_id');
+        $count = $this->voteService->countByIssue($assemblyId, $issueId);
+        $issues = $this->voteService->fetchByIssue($assemblyId, $issueId);
 
-        return (new CollectionModel($this->voteService->fetchByIssue($assemblyId, $issueId)));
+        return (new CollectionModel($issues))
+            ->setStatus(206)
+            ->setRange(0, count($issues), $count);
     }
 
     /**
@@ -54,6 +60,7 @@ class VoteController extends AbstractRestfulController implements
      * @param int $id
      * @param array $data
      * @return \Rend\View\Model\ModelInterface
+     * @input \Althingi\Form\Vote
      *
      * @attr int id
      * @attr int issue_id
@@ -73,9 +80,9 @@ class VoteController extends AbstractRestfulController implements
         ]));
 
         if ($form->isValid()) {
-            $this->voteService->create($form->getObject());
+            $affectedRows = $this->voteService->save($form->getObject());
             return (new EmptyModel())
-                ->setStatus(201);
+                ->setStatus($affectedRows === 1 ? 201 : 205);
         }
 
         return (new ErrorModel($form))
@@ -88,6 +95,7 @@ class VoteController extends AbstractRestfulController implements
      * @param $id
      * @param $data
      * @return \Rend\View\Model\ModelInterface
+     * @input \Althingi\Form\Vote
      *
      * @attr int id
      * @attr int issue_id

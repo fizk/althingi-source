@@ -2,6 +2,8 @@
 
 namespace Althingi\Model;
 
+use DateTime;
+
 class CongressmanAndDateRange extends Congressman
 {
     /** @var  int */
@@ -34,7 +36,7 @@ class CongressmanAndDateRange extends Congressman
     /**
      * @return \DateTime
      */
-    public function getBegin(): ?\DateTime
+    public function getBegin(): ?DateTime
     {
         return $this->begin;
     }
@@ -43,7 +45,7 @@ class CongressmanAndDateRange extends Congressman
      * @param \DateTime $begin
      * @return CongressmanAndDateRange
      */
-    public function setBegin(\DateTime $begin = null): CongressmanAndDateRange
+    public function setBegin(DateTime $begin = null): CongressmanAndDateRange
     {
         $this->begin = $begin;
         return $this;
@@ -52,7 +54,7 @@ class CongressmanAndDateRange extends Congressman
     /**
      * @return \DateTime
      */
-    public function getEnd(): ?\DateTime
+    public function getEnd(): ?DateTime
     {
         return $this->end;
     }
@@ -61,7 +63,7 @@ class CongressmanAndDateRange extends Congressman
      * @param \DateTime $end
      * @return CongressmanAndDateRange
      */
-    public function setEnd(\DateTime $end = null): CongressmanAndDateRange
+    public function setEnd(DateTime $end = null): CongressmanAndDateRange
     {
         $this->end = $end;
         return $this;

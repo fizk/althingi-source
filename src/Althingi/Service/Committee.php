@@ -89,6 +89,18 @@ class Committee implements DatabaseAwareInterface
 
     /**
      * @param \Althingi\Model\Committee $data
+     * @return int affected rows
+     */
+    public function save(CommitteeModel $data): int
+    {
+        $statement = $this->getDriver()->prepare($this->toSaveString('Committee', $data));
+        $statement->execute($this->toSqlValues($data));
+
+        return $statement->rowCount();
+    }
+
+    /**
+     * @param \Althingi\Model\Committee $data
      * @return int
      */
     public function update(CommitteeModel $data): int

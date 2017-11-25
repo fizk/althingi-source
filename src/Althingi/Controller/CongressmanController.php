@@ -76,6 +76,7 @@ class CongressmanController extends AbstractRestfulController implements
      *
      * @param int $id
      * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\CongressmanAndParties
      */
     public function get($id)
     {
@@ -95,16 +96,17 @@ class CongressmanController extends AbstractRestfulController implements
      * Return list of congressmen.
      *
      * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\CongressmanAndParties[]
      */
     public function getList()
     {
         $count = $this->congressmanService->count();
         $range = $this->getRange($this->getRequest(), $count);
-        $congressmen = $this->congressmanService->fetchAll($range['from'], $range['to']);
+        $congressmen = $this->congressmanService->fetchAll($range->getFrom(), $range->getTo());
 
         return (new CollectionModel($congressmen))
             ->setStatus(206)
-            ->setRange($range['from'], $range['to'], $count);
+            ->setRange($range->getFrom(), $range->getFrom() + count($congressmen), $count);
     }
 
     /**
@@ -113,6 +115,7 @@ class CongressmanController extends AbstractRestfulController implements
      * @param int $id
      * @param array $data
      * @return \Rend\View\Model\ModelInterface
+     * @input \Althingi\Form\Congressman
      */
     public function put($id, $data)
     {
@@ -120,9 +123,9 @@ class CongressmanController extends AbstractRestfulController implements
         $form->setData(array_merge($data, ['congressman_id' => $id]));
 
         if ($form->isValid()) {
-            $this->congressmanService->create($form->getObject());
+            $affectedRows = $this->congressmanService->save($form->getObject());
             return (new EmptyModel())
-                ->setStatus(201);
+                ->setStatus($affectedRows === 1 ? 201 : 205);
         }
 
         return (new ErrorModel($form))
@@ -135,6 +138,7 @@ class CongressmanController extends AbstractRestfulController implements
      * @param $id
      * @param $data
      * @return \Rend\View\Model\ModelInterface
+     * @input \Althingi\Form\Congressman
      */
     public function patch($id, $data)
     {
@@ -177,6 +181,8 @@ class CongressmanController extends AbstractRestfulController implements
      * Get all members of assembly.
      *
      * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\CongressmanPartyProperties[]
+     * @query tegund thingmadur|varamadur
      */
     public function assemblyAction()
     {
@@ -228,6 +234,17 @@ class CongressmanController extends AbstractRestfulController implements
         $congressmanId = $this->params('congressman_id');
 
         $issues = $this->issueService->fetchByAssemblyAndCongressman($assemblyId, $congressmanId);
+
+        return (new CollectionModel($issues))
+            ->setStatus(200);
+    }
+
+    public function assemblyIssuesSummaryAction()
+    {
+        $assemblyId = $this->params('id');
+        $congressmanId = $this->params('congressman_id');
+
+        $issues = $this->issueService->fetchByAssemblyAndCongressmanSummary($assemblyId, $congressmanId);
 
         return (new CollectionModel($issues))
             ->setStatus(200);

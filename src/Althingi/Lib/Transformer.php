@@ -13,6 +13,7 @@ class Transformer
         }
         
         $text =  preg_replace('/(<frammíkall.*?>)(.*?)(<\/frammíkall>)/i', "**[frammíkall: $2]**", $text);
+        $text =  preg_replace('/(<strong.*?>)(.*?)(<\/strong>)/i', "**$2**", $text);
 
         $dom = new \DOMDocument();
         if (@$dom->loadXML($text) == true) {

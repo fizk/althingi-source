@@ -21,7 +21,11 @@
         "fizk/rend": "1.0.0",
         "squizlabs/php_codesniffer": "*",
         "league/html-to-markdown": "^4.2",
-        "elasticsearch/elasticsearch": "^5.3"
+        "elasticsearch/elasticsearch": "^5.3",
+        "guzzlehttp/ringphp": "^1.1",
+        "mikey179/vfsStream": "^1.6",
+        "zeptech/annotations": "^1.1",
+        "yohang/finite": "^1.1"
     },
   "require-dev": {
     "phpunit/phpunit": "5.6.*",

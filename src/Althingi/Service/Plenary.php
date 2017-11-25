@@ -50,7 +50,7 @@ class Plenary implements DatabaseAwareInterface
      * @param string $order
      * @return \Althingi\Model\Plenary[]
      */
-    public function fetchByAssembly(int $id, int $offset, int $size, string $order = 'desc'): array
+    public function fetchByAssembly(int $id, int $offset, int $size = null, string $order = 'desc'): array
     {
         $order = in_array($order, ['asc', 'desc']) ? $order : 'desc';
         $statement = $this->getDriver()->prepare("
@@ -95,6 +95,20 @@ class Plenary implements DatabaseAwareInterface
         $statement->execute($this->toSqlValues($data));
 
         return $this->getDriver()->lastInsertId();
+    }
+
+    /**
+     * @param \Althingi\Model\Plenary $data
+     * @return string
+     */
+    public function save(PlenaryModel $data)
+    {
+        $statement = $this->getDriver()->prepare(
+            $this->toSaveString('Plenary', $data)
+        );
+        $statement->execute($this->toSqlValues($data));
+
+        return $statement->rowCount();
     }
 
     /**

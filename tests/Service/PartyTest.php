@@ -6,6 +6,7 @@ use Althingi\DatabaseConnection;
 use PHPUnit_Extensions_Database_TestCase;
 use Althingi\Model\Party as PartyModel;
 use Althingi\Model\PartyAndTime as PartyAndTimeModel;
+use Zend\EventManager\EventManager;
 
 class PartyTest extends PHPUnit_Extensions_Database_TestCase
 {
@@ -140,7 +141,32 @@ class PartyTest extends PHPUnit_Extensions_Database_TestCase
 
         $partyService = new Party();
         $partyService->setDriver($this->pdo);
+        $partyService->setEventManager(new EventManager());
         $partyService->create($party);
+
+        $this->assertTablesEqual($expectedTable, $actualTable);
+    }
+
+    public function testSave()
+    {
+        $party = (new PartyModel())
+            ->setName('p4')
+            ->setColor('000000');
+
+        $expectedTable = $this->createArrayDataSet([
+            'Party' => [
+                ['party_id' => 1, 'name' => 'p1', 'abbr_short' => null, 'abbr_long' => null, 'color' => 'ffffff'],
+                ['party_id' => 2, 'name' => 'p2', 'abbr_short' => null, 'abbr_long' => null, 'color' => 'ffffff'],
+                ['party_id' => 3, 'name' => 'p3', 'abbr_short' => null, 'abbr_long' => null, 'color' => 'ffffff'],
+                ['party_id' => 4, 'name' => 'p4', 'abbr_short' => null, 'abbr_long' => null, 'color' => '000000'],
+            ],
+        ])->getTable('Party');
+        $actualTable = $this->getConnection()->createQueryTable('Party', 'SELECT * FROM Party');
+
+        $partyService = new Party();
+        $partyService->setDriver($this->pdo);
+        $partyService->setEventManager(new EventManager());
+        $partyService->save($party);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
@@ -163,6 +189,7 @@ class PartyTest extends PHPUnit_Extensions_Database_TestCase
 
         $partyService = new Party();
         $partyService->setDriver($this->pdo);
+        $partyService->setEventManager(new EventManager());
         $partyService->update($party);
 
         $this->assertTablesEqual($expectedTable, $actualTable);

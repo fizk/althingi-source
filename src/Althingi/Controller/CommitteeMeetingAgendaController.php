@@ -3,11 +3,8 @@
 namespace Althingi\Controller;
 
 use Althingi\Lib\ServiceCommitteeMeetingAgendaAwareInterface;
-use Althingi\Lib\ServiceCommitteeMeetingAwareInterface;
-use Althingi\Service\CommitteeMeeting;
 use Althingi\Service\CommitteeMeetingAgenda;
 use Rend\Controller\AbstractRestfulController;
-use Rend\View\Model\CollectionModel;
 use Rend\View\Model\EmptyModel;
 use Rend\View\Model\ErrorModel;
 use Althingi\Form\CommitteeMeetingAgenda as CommitteeMeetingAgendaForm;
@@ -21,6 +18,11 @@ class CommitteeMeetingAgendaController extends AbstractRestfulController impleme
      */
     private $committeeMeetingAgendaService;
 
+    /**
+     * @param mixed $id
+     * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\CommitteeMeetingAgenda
+     */
     public function get($id)
     {
         $agendaId = $this->params('committee_meeting_agenda_id');
@@ -44,6 +46,12 @@ class CommitteeMeetingAgendaController extends AbstractRestfulController impleme
 //        return (new CollectionModel($meetings));
 //    }
 
+    /**
+     * @param mixed $id
+     * @param mixed $data
+     * @return \Rend\View\Model\ModelInterface
+     * @input \Althingi\Form\CommitteeMeetingAgenda
+     */
     public function put($id, $data)
     {
         $assemblyId = $this->params('id');
@@ -57,14 +65,20 @@ class CommitteeMeetingAgendaController extends AbstractRestfulController impleme
             'committee_meeting_id' => $committeeMeetingId
         ]));
         if ($form->isValid()) {
-            $this->committeeMeetingAgendaService->create($form->getObject());
+            $affectedRows = $this->committeeMeetingAgendaService->save($form->getObject());
             return (new EmptyModel())
-                ->setStatus(201);
+                ->setStatus($affectedRows ===1 ? 201 : 205);
         }
 
         return (new ErrorModel($form))->setStatus(400);
     }
 
+    /**
+     * @param $id
+     * @param $data
+     * @return \Rend\View\Model\ModelInterface
+     * @input Althingi\Form\CommitteeMeetingAgenda
+     */
     public function patch($id, $data)
     {
         $committeeMeetingId = $this->params('committee_meeting_id');

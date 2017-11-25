@@ -47,7 +47,7 @@ class PlenaryControllerTest extends AbstractHttpControllerTestCase
             ->setTo(new \DateTime('2001-01-01'))
         ;
         $this->getMockService(Plenary::class)
-            ->shouldReceive('create')
+            ->shouldReceive('save')
             ->with(\Mockery::on(function ($actualData) use ($expectedData) {
                 return $expectedData == $actualData;
             }))
@@ -165,14 +165,14 @@ class PlenaryControllerTest extends AbstractHttpControllerTestCase
             ->getMock()
 
             ->shouldReceive('fetchByAssembly')
-            ->andReturn(
-                [(new \Althingi\Model\Plenary())
+            ->andReturn(array_map(function () {
+                return (new \Althingi\Model\Plenary())
                     ->setAssemblyId(1)
                     ->setPlenaryId(2)
                     ->setName('n1')
                     ->setFrom(new \DateTime('2001-01-01'))
-                    ->setTo(new \DateTime('2001-01-01'))]
-            )
+                    ->setTo(new \DateTime('2001-01-01'));
+            }, range(0, 24)))
             ->once()
             ->getMock();
 

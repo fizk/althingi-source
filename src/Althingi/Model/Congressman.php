@@ -2,6 +2,8 @@
 
 namespace Althingi\Model;
 
+use DateTime;
+
 class Congressman implements ModelInterface
 {
     /** @var  int */
@@ -55,7 +57,7 @@ class Congressman implements ModelInterface
     /**
      * @return \DateTime
      */
-    public function getBirth(): \DateTime
+    public function getBirth(): DateTime
     {
         return $this->birth;
     }
@@ -64,7 +66,7 @@ class Congressman implements ModelInterface
      * @param \DateTime $birth
      * @return Congressman
      */
-    public function setBirth(\DateTime $birth = null): Congressman
+    public function setBirth(DateTime $birth = null): Congressman
     {
         $this->birth = $birth;
         return $this;
@@ -73,7 +75,7 @@ class Congressman implements ModelInterface
     /**
      * @return \DateTime
      */
-    public function getDeath(): ?\DateTime
+    public function getDeath(): ?DateTime
     {
         return $this->death;
     }
@@ -82,7 +84,7 @@ class Congressman implements ModelInterface
      * @param \DateTime $death
      * @return Congressman
      */
-    public function setDeath(\DateTime $death = null): Congressman
+    public function setDeath(DateTime $death = null): Congressman
     {
         $this->death = $death;
         return $this;

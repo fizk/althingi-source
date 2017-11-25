@@ -93,6 +93,29 @@ class CategoryTest extends PHPUnit_Extensions_Database_TestCase
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
+    public function testSave()
+    {
+        $category = (new CategoryModel())
+            ->setCategoryId(4)
+            ->setSuperCategoryId(1);
+
+        $expectedTable = $this->createArrayDataSet([
+            'Category' => [
+                ['category_id' => 1, 'super_category_id' => 1, 'title' => null, 'description' => null],
+                ['category_id' => 2, 'super_category_id' => 1, 'title' => 't1', 'description' => 'd1'],
+                ['category_id' => 3, 'super_category_id' => 1, 'title' => 't2', 'description' => 'd2'],
+                ['category_id' => 4, 'super_category_id' => 1, 'title' => null, 'description' => null],
+            ],
+        ])->getTable('Category');
+        $actualTable = $this->getConnection()->createQueryTable('Category', 'SELECT * FROM Category');
+
+        $service = new Category();
+        $service->setDriver($this->pdo);
+        $service->save($category);
+
+        $this->assertTablesEqual($expectedTable, $actualTable);
+    }
+
     public function testUpdate()
     {
         $category = (new CategoryModel())

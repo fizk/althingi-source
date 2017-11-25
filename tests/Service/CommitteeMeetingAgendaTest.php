@@ -56,6 +56,32 @@ class CommitteeMeetingAgendaTest extends PHPUnit_Extensions_Database_TestCase
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
+    public function testSave()
+    {
+        $expectedTable = $this->createArrayDataSet([
+            'CommitteeMeetingAgenda' => [
+                ['committee_meeting_agenda_id' => 1, 'committee_meeting_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'title' => 'title'],
+                ['committee_meeting_agenda_id' => 2, 'committee_meeting_id' => 1, 'issue_id' => null, 'assembly_id' => 1, 'title' => 'title'],
+                ['committee_meeting_agenda_id' => 3, 'committee_meeting_id' => 1, 'issue_id' => null, 'assembly_id' => 1, 'title' => null],
+                ['committee_meeting_agenda_id' => 4, 'committee_meeting_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'title' => 'thetitle'],
+            ],
+        ])->getTable('CommitteeMeetingAgenda');
+        $actualTable = $this->getConnection()->createQueryTable('CommitteeMeetingAgenda', 'SELECT * FROM CommitteeMeetingAgenda');
+
+        $committeeMeetingAgenda = (new CommitteeMeetingAgendaModel())
+            ->setCommitteeMeetingId(1)
+            ->setIssueId(1)
+            ->setAssemblyId(1)
+            ->setTitle('thetitle');
+
+
+        $service = new CommitteeMeetingAgenda();
+        $service->setDriver($this->pdo);
+        $service->save($committeeMeetingAgenda);
+
+        $this->assertTablesEqual($expectedTable, $actualTable);
+    }
+
     public function testUpdate()
     {
         $expectedTable = $this->createArrayDataSet([

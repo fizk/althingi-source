@@ -11,6 +11,7 @@ use Althingi\Model\Proponent;
 use Althingi\Model\Congressman as CongressmanModel;
 use PHPUnit_Extensions_Database_DataSet_IDataSet;
 use PHPUnit_Extensions_Database_TestCase;
+use Zend\EventManager\EventManager;
 
 class CongressmanTest extends PHPUnit_Extensions_Database_TestCase
 {
@@ -158,7 +159,33 @@ class CongressmanTest extends PHPUnit_Extensions_Database_TestCase
 
         $congressmanService = new Congressman();
         $congressmanService->setDriver($this->pdo);
+        $congressmanService->setEventManager(new EventManager());
         $congressmanService->create($congressman);
+
+        $this->assertTablesEqual($expectedTable, $actualTable);
+    }
+
+    public function testSave()
+    {
+        $congressman = (new CongressmanModel())
+            ->setName('name5')
+            ->setBirth(new \DateTime('2000-01-01'));
+
+        $expectedTable = $this->createArrayDataSet([
+            'Congressman' => [
+                ['congressman_id' => 1, 'name' => 'name1', 'birth' => '2000-01-01', 'death' => null],
+                ['congressman_id' => 2, 'name' => 'name2', 'birth' => '2000-01-01', 'death' => null],
+                ['congressman_id' => 3, 'name' => 'name3', 'birth' => '2000-01-01', 'death' => null],
+                ['congressman_id' => 4, 'name' => 'name4', 'birth' => '2000-01-01', 'death' => null],
+                ['congressman_id' => 5, 'name' => 'name5', 'birth' => '2000-01-01', 'death' => null],
+            ],
+        ])->getTable('Congressman');
+        $actualTable = $this->getConnection()->createQueryTable('Congressman', 'SELECT * FROM Congressman');
+
+        $congressmanService = new Congressman();
+        $congressmanService->setDriver($this->pdo);
+        $congressmanService->setEventManager(new EventManager());
+        $congressmanService->save($congressman);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
@@ -182,6 +209,7 @@ class CongressmanTest extends PHPUnit_Extensions_Database_TestCase
 
         $congressmanService = new Congressman();
         $congressmanService->setDriver($this->pdo);
+        $congressmanService->setEventManager(new EventManager());
         $congressmanService->update($congressman);
 
         $this->assertTablesEqual($expectedTable, $actualTable);

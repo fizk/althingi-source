@@ -48,6 +48,10 @@ class HighlightController extends AbstractRestfulController implements
     /** @var  \Althingi\Service\Issue */
     private $issueService;
 
+    /**
+     * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\AssemblyProperties
+     */
     public function getCurrentAssemblyAction()
     {
         $assembly = $this->assemblyService->getCurrent();
@@ -72,6 +76,10 @@ class HighlightController extends AbstractRestfulController implements
             ->setStatus(200);
     }
 
+    /**
+     * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\IssueWithSpeechProperties
+     */
     public function getActiveIssueAction()
     {
         $speech = $this->speechService->getLastActive();

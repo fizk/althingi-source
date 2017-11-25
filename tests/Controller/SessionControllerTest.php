@@ -278,8 +278,10 @@ class SessionControllerTest extends AbstractHttpControllerTestCase
             ->getMock();
 
         $this->dispatch('/thingmenn/2/thingseta', 'GET');
-        $this->assertResponseStatusCode(200);
         $this->assertControllerClass('SessionController');
         $this->assertActionName('getList');
+        $this->assertResponseStatusCode(206);
+        $this->assertResponseHeaderContains('Content-Range', 'items 0-0/0');
+        $this->assertResponseHeaderContains('Range-Unit', 'items');
     }
 }

@@ -20,6 +20,7 @@ class CommitteeController extends AbstractRestfulController implements
     /**
      * @param mixed $id
      * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\Committee
      */
     public function get($id)
     {
@@ -32,12 +33,15 @@ class CommitteeController extends AbstractRestfulController implements
 
     /**
      * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\Committee[]
      */
     public function getList()
     {
         $committees = $this->committeeService->fetchAll();
 
-        return new CollectionModel($committees);
+        return (new CollectionModel($committees))
+            ->setStatus(206)
+            ->setRange(0, count($committees), count($committees));
     }
 
     /**
@@ -46,6 +50,7 @@ class CommitteeController extends AbstractRestfulController implements
      * @param  int $id
      * @param  array $data
      * @return \Rend\View\Model\ModelInterface
+     * @input \Althingi\Form\Committee
      */
     public function put($id, $data)
     {
@@ -56,9 +61,9 @@ class CommitteeController extends AbstractRestfulController implements
         $form->bindValues(array_merge($data, ['assembly_id' => $assemblyId, 'committee_id' => $committeeId]));
 
         if ($form->isValid()) {
-            $this->committeeService->create($form->getObject());
+            $affectedRows = $this->committeeService->save($form->getObject());
             return (new EmptyModel())
-                ->setStatus(201);
+                ->setStatus($affectedRows === 1 ? 201 : 205);
         }
 
         return (new ErrorModel($form))
@@ -69,6 +74,7 @@ class CommitteeController extends AbstractRestfulController implements
      * @param  int $id
      * @param  array $data
      * @return \Rend\View\Model\ModelInterface
+     * @input \Althingi\Form\Committee
      */
     public function patch($id, $data)
     {

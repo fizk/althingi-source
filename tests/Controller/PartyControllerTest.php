@@ -47,7 +47,7 @@ class PartyControllerTest extends AbstractHttpControllerTestCase
             ->setColor('blue');
 
         $this->getMockService(Party::class)
-            ->shouldReceive('create')
+            ->shouldReceive('save')
             ->with(\Mockery::on(function ($actualData) use ($expectedData) {
                 return $expectedData == $actualData;
             }))

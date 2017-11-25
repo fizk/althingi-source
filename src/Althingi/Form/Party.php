@@ -54,8 +54,20 @@ class Party extends Form implements InputFilterProviderInterface
                 'allow_empty' => false,
             ],
             'name' => [
-                'required' => true,
-                'allow_empty' => false,
+                'required' => false,
+                'allow_empty' => true,
+                // This is because party_id: 26 is used if an MP does not belong to a party,
+                // the data coming from althingi.xml has no name for this party 26
+                'filters' => [
+                    [
+                        'name' => '\Zend\Filter\Callback',
+                        'options' => ['callback' => function ($value) {
+                            return (empty($value))
+                                ? '-'
+                                : $value;
+                        }]
+                    ]
+                ],
             ],
             'abbr_short' => [
                 'required' => false,

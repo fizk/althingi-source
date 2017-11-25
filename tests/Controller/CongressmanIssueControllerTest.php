@@ -52,6 +52,8 @@ class CongressmanIssueControllerTest extends AbstractHttpControllerTestCase
 
         $this->assertControllerClass('CongressmanIssueController');
         $this->assertActionName('getList');
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(206);
+        $this->assertResponseHeaderContains('Content-Range', 'items 0-1/1');
+        $this->assertResponseHeaderContains('Range-Unit', 'items');
     }
 }

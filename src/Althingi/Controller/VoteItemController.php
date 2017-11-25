@@ -3,21 +3,43 @@
 namespace Althingi\Controller;
 
 use Althingi\Form\VoteItem as VoteItemForm;
+use Althingi\Lib\ServiceCongressmanAwareInterface;
+use Althingi\Lib\ServicePartyAwareInterface;
+use Althingi\Lib\ServiceVoteAwareInterface;
 use Althingi\Lib\ServiceVoteItemAwareInterface;
+use Althingi\Model\CongressmanPartyProperties;
+use Althingi\Model\VoteItemAndCongressman;
+use Althingi\Service\Congressman;
+use Althingi\Service\Party;
+use Althingi\Service\Vote;
 use Althingi\Service\VoteItem;
 use Rend\Controller\AbstractRestfulController;
+use Rend\View\Model\CollectionModel;
 use Rend\View\Model\EmptyModel;
 use Rend\View\Model\ErrorModel;
 
 class VoteItemController extends AbstractRestfulController implements
-    ServiceVoteItemAwareInterface
+    ServiceVoteItemAwareInterface,
+    ServiceVoteAwareInterface,
+    ServiceCongressmanAwareInterface,
+    ServicePartyAwareInterface
 {
     /** @var  \Althingi\Service\VoteItem */
     private $voteItemService;
 
+    /** @var  \Althingi\Service\Vote */
+    private $voteService;
+
+    /** @var  \Althingi\Service\Congressman */
+    private $congressmanService;
+
+    /** @var  \Althingi\Service\Party */
+    private $partyService;
+
     /**
      * @param mixed $data
      * @return \Rend\View\Model\ModelInterface
+     * @input \Althingi\Form\VoteItem
      */
     public function post($data)
     {
@@ -64,9 +86,40 @@ class VoteItemController extends AbstractRestfulController implements
     }
 
     /**
+     * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\VoteItemAndCongressman[]
+     */
+    public function getList()
+    {
+        $vote = $this->voteService->get($this->params('vote_id'));
+
+        $votes = $this->voteItemService->fetchByVote($vote->getVoteId());
+        $date = $vote->getDate();
+
+        $voteItems = array_map(function (\Althingi\Model\VoteItem $voteItem) use ($date) {
+            $congressman = $this->congressmanService->get($voteItem->getCongressmanId());
+            $party = $this->partyService->getByCongressman($voteItem->getCongressmanId(), $date);
+
+            $congressmanAndParty = new CongressmanPartyProperties();
+            $congressmanAndParty->setCongressman($congressman);
+            $congressmanAndParty->setParty($party);
+
+            $voteItemAndCongressman = new VoteItemAndCongressman();
+            $voteItemAndCongressman->setVoteItem($voteItem);
+            $voteItemAndCongressman->setCongressman($congressmanAndParty);
+
+            return $voteItemAndCongressman;
+        }, $votes);
+
+
+        return new CollectionModel($voteItems);
+    }
+
+    /**
      * @param $id
      * @param $data
      * @return \Rend\View\Model\ModelInterface
+     * @input \Althingi\Form\VoteItem
      */
     public function patch($id, $data)
     {
@@ -96,5 +149,29 @@ class VoteItemController extends AbstractRestfulController implements
     public function setVoteItemService(VoteItem $voteItem)
     {
         $this->voteItemService = $voteItem;
+    }
+
+    /**
+     * @param \Althingi\Service\Vote $vote
+     */
+    public function setVoteService(Vote $vote)
+    {
+        $this->voteService = $vote;
+    }
+
+    /**
+     * @param Congressman $congressman
+     */
+    public function setCongressmanService(Congressman $congressman)
+    {
+        $this->congressmanService = $congressman;
+    }
+
+    /**
+     * @param \Althingi\Service\Party $party
+     */
+    public function setPartyService(Party $party)
+    {
+        $this->partyService = $party;
     }
 }

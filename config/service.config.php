@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 17/05/15
- * Time: 9:04 PM
- */
 
 use Althingi\Service\Assembly;
 use Althingi\Service\Congressman;
@@ -27,6 +21,8 @@ use Althingi\Service\SuperCategory;
 use Althingi\Service\Category;
 use Althingi\Service\IssueCategory;
 use Althingi\Service\Election;
+use Althingi\Service\SearchSpeech;
+use Althingi\Service\SearchIssue;
 use Althingi\Lib\DatabaseAwareInterface;
 use Althingi\Lib\LoggerAwareInterface;
 use Zend\ServiceManager\ServiceManager;
@@ -39,6 +35,7 @@ use Althingi\ServiceEvents\ServiceEventsListener;
 use Althingi\Lib\ElasticSearchAwareInterface;
 use Elasticsearch\Client as ElasticsearchClient;
 use Elasticsearch\ClientBuilder as ElasticsearchClientBuilder;
+use Zend\Cache\Storage\StorageInterface;
 
 return [
     'invokables' => [
@@ -63,6 +60,8 @@ return [
         Category::class => Category::class,
         IssueCategory::class => IssueCategory::class,
         Election::class => Election::class,
+        SearchSpeech::class => SearchSpeech::class,
+        SearchIssue::class => SearchIssue::class,
     ],
 
     'factories' => [
@@ -87,8 +86,17 @@ return [
         },
 
         ElasticsearchClient::class => function (ServiceManager $sm) {
-            $hosts = ['localhost:9200',];
+            $esHost = getenv('ES_HOST') ?: 'localhost';
+            $esProto = getenv('ES_PROTO') ?: 'http';
+            $esPort = getenv('ES_PORT') ?: 9200;
+            $esUser = getenv('ES_USER') ?: 'elastic';
+            $esPass = getenv('ES_PASSWORD') ?: 'changeme';
+
+            $hosts = [
+                "{$esProto}://{$esUser}:{$esPass}@{$esHost}:{$esPort}",
+            ];
             $client = ElasticsearchClientBuilder::create()
+                ->setLogger($sm->get(LoggerInterface::class))
                 ->setHosts($hosts)
                 ->build();
 
@@ -103,6 +111,15 @@ return [
             $logger = new Logger('althingi');
             $logger->pushHandler(new StreamHandler('php://stdout'));
             return $logger;
+        },
+
+        StorageInterface::class => function (ServiceManager $sm) {
+            $adapter = new Zend\Cache\Storage\Adapter\Filesystem();
+            $options = new \Zend\Cache\Storage\Adapter\FilesystemOptions();
+            $options->setCacheDir('./data/cache');
+            $adapter->setOptions($options);
+
+            return $adapter;
         },
     ],
 
@@ -128,6 +145,6 @@ return [
                 $eventManager->attach($sm->get(ServiceEventsListener::class));
                 $instance->setEventManager($eventManager);
             }
-        }
+        },
     ],
 ];

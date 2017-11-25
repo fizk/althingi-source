@@ -26,6 +26,7 @@ class PresidentAssemblyController extends AbstractRestfulController implements
      * Return list of Assemblies.
      *
      * @return \Rend\View\Model\ModelInterface
+     * @putput \Althingi\Model\PresidentPartyProperties[]
      */
     public function getList()
     {
@@ -41,7 +42,8 @@ class PresidentAssemblyController extends AbstractRestfulController implements
         }, $residents);
 
         return (new CollectionModel($residents))
-            ->setStatus(200);
+            ->setStatus(206)
+            ->setRange(0, count($residents), count($residents));
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace Althingi\Service;
 
 use Althingi\Lib\DatabaseAwareInterface;
+use Althingi\Presenters\IndexableSpeechPresenter;
 use Althingi\ServiceEvents\AddEvent;
 use Althingi\ServiceEvents\UpdateEvent;
 use PDO;
@@ -22,6 +23,8 @@ use Zend\EventManager\EventManagerAwareInterface;
 class Speech implements DatabaseAwareInterface, EventManagerAwareInterface
 {
     use DatabaseService;
+
+    const MAX_ROW_COUNT = '18446744073709551615';
 
     /**
      * @var \PDO
@@ -177,26 +180,68 @@ class Speech implements DatabaseAwareInterface, EventManagerAwareInterface
     }
 
     /**
+     * This is a Generator
+     * @return \Althingi\Model\Speech[]
+     */
+    public function fetchAll()
+    {
+        $statement = $this->getDriver()->prepare('select * from `Speech`');
+        $statement->execute();
+
+        while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
+            yield (new SpeechHydrator())->hydrate($row, new SpeechModel());
+        }
+
+        $statement->closeCursor();
+
+        return;
+    }
+
+    /**
      * Fetch all speeches by issue.
      *
      * @param int $assemblyId
      * @param int $issueId
      * @param int $offset
      * @param int $size
+     * @param int $words
      * @return \Althingi\Model\SpeechAndPosition[]
      */
-    public function fetchByIssue(int $assemblyId, int $issueId, int $offset = 0, int $size = 25): array
-    {
+    public function fetchByIssue(
+        int $assemblyId,
+        int $issueId,
+        int $offset = 0,
+        int $size = null,
+        int $words = 1500
+    ): array {
+        $resultSize = $size !== null ? $size : self::MAX_ROW_COUNT;
+
         $statement = $this->getDriver()->prepare("
           select *, timestampdiff(SECOND, `from`, `to`) as `time`
           from `Speech`
           where assembly_id = :assembly_id and issue_id = :issue_id
           order by `from`
-          limit {$offset}, {$size};
+          limit {$offset}, {$resultSize};
         ");
         $statement->execute(['assembly_id' => $assemblyId, 'issue_id' => $issueId]);
 
-        $speeches = $statement->fetchAll(PDO::FETCH_ASSOC);
+        if ($size) {
+            $speeches = $statement->fetchAll(PDO::FETCH_ASSOC);
+        } else {
+            $wordCount = 0;
+            $itemCount = 0;
+            $speeches = [];
+            do {
+                $object = $statement->fetch(PDO::FETCH_ASSOC);
+                $wordCount += $object['word_count'];
+                $itemCount++;
+                if ($object) {
+                    $speeches[] = $object;
+                }
+            } while (($wordCount < $words) && ($itemCount < 25) && $object !== false);
+        }
+        $statement->closeCursor();
+
         return array_map(function ($object, $position) {
             return (new SpeechAndPositionHydrator())->hydrate(
                 array_merge($object, ['position' => $position]),
@@ -306,14 +351,32 @@ class Speech implements DatabaseAwareInterface, EventManagerAwareInterface
      */
     public function create(SpeechModel $data)
     {
+        $data->setWordCount(str_word_count($data->getText()));
         $statement = $this->getDriver()->prepare(
             $this->toInsertString('Speech', $data)
         );
         $statement->execute($this->toSqlValues($data));
 
-        $this->getEventManager()->trigger(new AddEvent($data, new \Althingi\Hydrator\Speech()));
+        $this->getEventManager()->trigger(new AddEvent(new IndexableSpeechPresenter($data)));
 
         return $this->getDriver()->lastInsertId();
+    }
+
+    /**
+     * @param \Althingi\Model\Speech $data
+     * @return int
+     */
+    public function save(SpeechModel $data)
+    {
+        $data->setWordCount(str_word_count($data->getText()));
+        $statement = $this->getDriver()->prepare(
+            $this->toSaveString('Speech', $data)
+        );
+        $statement->execute($this->toSqlValues($data));
+
+        $this->getEventManager()->trigger(new AddEvent(new IndexableSpeechPresenter($data)));
+
+        return $statement->rowCount();
     }
 
     /**
@@ -324,12 +387,13 @@ class Speech implements DatabaseAwareInterface, EventManagerAwareInterface
      */
     public function update(SpeechModel $data)
     {
+        $data->setWordCount(str_word_count($data->getText()));
         $statement = $this->getDriver()->prepare(
             $this->toUpdateString('Speech', $data, "speech_id='{$data->getSpeechId()}'")
         );
         $statement->execute($this->toSqlValues($data));
 
-        $this->getEventManager()->trigger(new UpdateEvent($data, new \Althingi\Hydrator\Speech()));
+        $this->getEventManager()->trigger(new UpdateEvent(new IndexableSpeechPresenter($data)));
 
         return $statement->rowCount();
     }

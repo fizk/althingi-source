@@ -7,7 +7,7 @@ use Althingi\Service\Issue;
 interface ServiceIssueAwareInterface
 {
     /**
-     * @param Issue $issue
+     * @param \Althingi\Service\Issue $issue
      */
     public function setIssueService(Issue $issue);
 }

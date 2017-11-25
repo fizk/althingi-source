@@ -21,7 +21,7 @@ trait DatabaseService
      * @param ModelInterface $data
      * @return string valid MySQL insert string
      */
-    protected function toInsertString($table, ModelInterface $data)
+    protected function toInsertString(string $table, ModelInterface $data): string
     {
         $data = array_keys($data->jsonSerialize());
         $columns = implode(',', array_map(function ($i) {
@@ -32,6 +32,27 @@ trait DatabaseService
         }, $data));
 
         return "INSERT INTO `{$table}` ({$columns}) VALUES ({$values});";
+    }
+
+    /**
+     * @param $table
+     * @param ModelInterface $data
+     * @return string
+     */
+    protected function toSaveString(string $table, ModelInterface $data): string
+    {
+        $data = array_keys($data->jsonSerialize());
+        $columns = implode(',', array_map(function ($i) {
+            return " `{$i}`";
+        }, $data));
+        $values = implode(',', array_map(function ($i) {
+            return " :{$i}";
+        }, $data));
+        $update = implode(', ', array_map(function ($i) {
+            return "`{$i}` = :{$i}";
+        }, $data));
+
+        return "INSERT INTO `{$table}` ({$columns}) VALUES ({$values}) on duplicate key update {$update};";
     }
 
     /**
@@ -50,7 +71,7 @@ trait DatabaseService
      * @param string $condition
      * @return string valid MySQL update string
      */
-    protected function toUpdateString($table, ModelInterface $data, $condition)
+    protected function toUpdateString(string $table, ModelInterface $data, $condition): string
     {
         $data = array_keys($data->jsonSerialize());
         $columns = implode(',', array_map(function ($i) {
@@ -71,7 +92,7 @@ trait DatabaseService
      * @param ModelInterface $data
      * @return array
      */
-    protected function toSqlValues(ModelInterface $data)
+    protected function toSqlValues(ModelInterface $data): array
     {
         return array_map(function ($i) {
             if ($i instanceof DateTime) {

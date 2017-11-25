@@ -3,6 +3,9 @@
 namespace Althingi\Service;
 
 use Althingi\Lib\DatabaseAwareInterface;
+use Althingi\Presenters\IndexableCongressmanPresenter;
+use Althingi\ServiceEvents\AddEvent;
+use Althingi\ServiceEvents\UpdateEvent;
 use PDO;
 use Althingi\Model\Congressman as CongressmanModel;
 use Althingi\Model\CongressmanAndParty as CongressmanAndPartyModel;
@@ -16,12 +19,14 @@ use Althingi\Hydrator\CongressmanAndCabinet as CongressmanAndCabinetHydrator;
 use Althingi\Hydrator\CongressmanAndRange as CongressmanAndRangeHydrator;
 use Althingi\Hydrator\Proponent as ProponentHydrator;
 use Althingi\Hydrator\President as PresidentHydrator;
+use Zend\EventManager\EventManagerAwareInterface;
+use Zend\EventManager\EventManagerInterface;
 
 /**
  * Class Congressman
  * @package Althingi\Service
  */
-class Congressman implements DatabaseAwareInterface
+class Congressman implements DatabaseAwareInterface, EventManagerAwareInterface
 {
     const CONGRESSMAN_TYPE_MP = 'parliamentarian';
     const CONGRESSMAN_TYPE_SUBSTITUTE = 'substitute';
@@ -33,6 +38,9 @@ class Congressman implements DatabaseAwareInterface
      * @var \PDO
      */
     private $pdo;
+
+    /** @var  \Zend\EventManager\EventManager */
+    private $eventManager;
 
     /**
      * Get one Congressman.
@@ -58,7 +66,7 @@ class Congressman implements DatabaseAwareInterface
      * @param int $size
      * @return \Althingi\Model\CongressmanAndParty[]
      */
-    public function fetchAll(int $offset, int $size): array
+    public function fetchAll(?int $offset = 0, ?int $size = 25): array
     {
         $statement = $this->getDriver()->prepare("
             select * from `Congressman` C order by C.`name` asc
@@ -187,18 +195,20 @@ class Congressman implements DatabaseAwareInterface
      */
     public function fetchProponentsByIssue(int $assemblyId, int $issueId): array
     {
-        $statement = $this->getDriver()->prepare(
-            'select C.*, A.`minister`, A.`order` from ( 
-                select DC.* from `Document_has_Congressman` DC
-                    join `Document` D on (
-                      D.`document_id` = DC.`document_id` and 
-                      D.`issue_id` = DC.`issue_id` and 
-                      D.`assembly_id` = DC.`assembly_id`)
-                    where DC.`issue_id` = :issue_id and DC.`assembly_id` = :assembly_id
-                    order by D.`date`
-            ) as A
-            join `Congressman` C on (C.`congressman_id` = A.`congressman_id`) order by A.`order`'
-        );
+        $statement = $this->getDriver()->prepare('
+            select C.*, DC.`minister`, DC.`order` from `Document_has_Congressman` DC
+                join `Congressman` C on (C.`congressman_id` = DC.`congressman_id`)
+            where DC.`issue_id` = :issue_id 
+                and DC.`assembly_id` = :assembly_id 
+                and DC.`document_id` = (
+                    select D.`document_id` from `Document` D
+                    where D.`assembly_id` = :assembly_id 
+                        and D.`issue_id` = :issue_id
+                    order by `date` asc limit 0, 1
+                )
+                order by DC.`order`;
+        ');
+
         $statement->execute([
             'assembly_id' => $assemblyId,
             'issue_id' => $issueId
@@ -257,7 +267,23 @@ class Congressman implements DatabaseAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
+        $this->getEventManager()->trigger(new AddEvent(new IndexableCongressmanPresenter($data)));
         return $this->getDriver()->lastInsertId();
+    }
+
+    /**
+     * @param \Althingi\Model\Congressman $data
+     * @return int
+     */
+    public function save(CongressmanModel $data): int
+    {
+        $statement = $this->getDriver()->prepare(
+            $this->toSaveString('Congressman', $data)
+        );
+        $statement->execute($this->toSqlValues($data));
+
+        $this->getEventManager()->trigger(new AddEvent(new IndexableCongressmanPresenter($data)));
+        return $statement->rowCount();
     }
 
     /**
@@ -273,6 +299,8 @@ class Congressman implements DatabaseAwareInterface
             $this->toUpdateString('Congressman', $data, "congressman_id={$data->getCongressmanId()}")
         );
         $statement->execute($this->toSqlValues($data));
+
+        $this->getEventManager()->trigger(new UpdateEvent(new IndexableCongressmanPresenter($data)));
 
         return $statement->rowCount();
     }
@@ -321,5 +349,28 @@ class Congressman implements DatabaseAwareInterface
     public function getDriver()
     {
         return $this->pdo;
+    }
+
+    /**
+     * Inject an EventManager instance
+     *
+     * @param  EventManagerInterface $eventManager
+     * @return void
+     */
+    public function setEventManager(EventManagerInterface $eventManager)
+    {
+        $this->eventManager = $eventManager;
+    }
+
+    /**
+     * Retrieve the event manager
+     *
+     * Lazy-loads an EventManager instance if none registered.
+     *
+     * @return EventManagerInterface
+     */
+    public function getEventManager()
+    {
+        return $this->eventManager;
     }
 }

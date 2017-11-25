@@ -28,6 +28,7 @@ class SessionController extends AbstractRestfulController implements
      *
      * @param int $id
      * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\Session
      */
     public function get($id)
     {
@@ -42,6 +43,7 @@ class SessionController extends AbstractRestfulController implements
      * Get all sessions my congressman.
      *
      * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\Session[]
      */
     public function getList()
     {
@@ -49,7 +51,9 @@ class SessionController extends AbstractRestfulController implements
 
         $sessions = $this->sessionService->fetchByCongressman($congressmanId);
 
-        return (new CollectionModel($sessions));
+        return (new CollectionModel($sessions))
+            ->setStatus(206)
+            ->setRange(0, count($sessions), count($sessions));
     }
 
     /**
@@ -73,6 +77,7 @@ class SessionController extends AbstractRestfulController implements
      *
      * @param mixed $data
      * @return \Rend\View\Model\ModelInterface
+     * @input \Althingi\Form\Session
      */
     public function post($data)
     {
@@ -119,6 +124,7 @@ class SessionController extends AbstractRestfulController implements
      * @param $id
      * @param $data
      * @return \Rend\View\Model\ModelInterface
+     * @input \Althingi\Form\Session
      */
     public function patch($id, $data)
     {

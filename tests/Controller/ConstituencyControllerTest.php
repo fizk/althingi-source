@@ -42,7 +42,7 @@ class ConstituencyControllerTest extends AbstractHttpControllerTestCase
     public function testPutSuccess()
     {
         $this->getMockService(Constituency::class)
-            ->shouldReceive('create')
+            ->shouldReceive('save')
             ->once()
             ->andReturn(1)
             ->getMock();

@@ -25,6 +25,7 @@ class CongressmanSessionController extends AbstractRestfulController implements
      *
      * @param mixed $id (not used)
      * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\Session
      */
     public function get($id)
     {
@@ -41,6 +42,7 @@ class CongressmanSessionController extends AbstractRestfulController implements
      * @param $id (not used)
      * @param $data
      * @return \Rend\View\Model\ModelInterface
+     * @input Althingi\Form\Session
      */
     public function patch($id, $data)
     {

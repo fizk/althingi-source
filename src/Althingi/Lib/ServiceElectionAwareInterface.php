@@ -7,7 +7,7 @@ use Althingi\Service\Election;
 interface ServiceElectionAwareInterface
 {
     /**
-     * @param Election $election
+     * @param \Althingi\Service\Election $election
      */
     public function setElectionService(Election $election);
 }

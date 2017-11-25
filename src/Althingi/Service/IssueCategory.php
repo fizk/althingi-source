@@ -67,6 +67,20 @@ class IssueCategory implements DatabaseAwareInterface
      * @param \Althingi\Model\IssueCategory $data
      * @return int
      */
+    public function save(IssueCategoryModel $data): int
+    {
+        $statement = $this->getDriver()->prepare(
+            $this->toSaveString('Category_has_Issue', $data)
+        );
+        $statement->execute($this->toSqlValues($data));
+
+        return $statement->rowCount();
+    }
+
+    /**
+     * @param \Althingi\Model\IssueCategory $data
+     * @return int
+     */
     public function update(IssueCategoryModel $data): int
     {
         $statement = $this->getDriver()->prepare(

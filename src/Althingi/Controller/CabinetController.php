@@ -28,6 +28,10 @@ class CabinetController extends AbstractRestfulController implements
     /** @var  \Althingi\Service\Cabinet */
     private $cabinetService;
 
+    /**
+     * @return CollectionModel
+     * $output \Althingi\Model\CabinetProperties[]
+     */
     public function assemblyAction()
     {
         $assemblyId = $this->params('id');

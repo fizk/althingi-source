@@ -41,7 +41,7 @@ class CommitteeMeetingControllerTest extends AbstractHttpControllerTestCase
     public function testPutSuccess()
     {
         $this->getMockService(CommitteeMeeting::class)
-            ->shouldReceive('create')
+            ->shouldReceive('save')
             ->andReturn(1)
             ->once()
             ->getMock();

@@ -85,7 +85,12 @@ class AssemblyCommitteeControllerTest extends AbstractHttpControllerTestCase
         $this->getMockService(Committee::class)
             ->shouldReceive('fetchByAssembly')
             ->withArgs([144])
-            ->andReturn([])
+            ->andReturn([
+                (new CommitteeModel()),
+                (new CommitteeModel()),
+                (new CommitteeModel()),
+                (new CommitteeModel()),
+            ])
             ->once()
             ->getMock();
 
@@ -93,7 +98,9 @@ class AssemblyCommitteeControllerTest extends AbstractHttpControllerTestCase
 
         $this->assertControllerClass('AssemblyCommitteeController');
         $this->assertActionName('getList');
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(206);
         $this->assertResponseHeaderContains('Access-Control-Allow-Origin', '*');
+        $this->assertResponseHeaderContains('Content-Range', 'items 0-4/4');
+        $this->assertResponseHeaderContains('Range-Unit', 'items');
     }
 }

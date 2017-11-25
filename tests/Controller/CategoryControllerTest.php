@@ -40,7 +40,7 @@ class CategoryControllerTest extends AbstractHttpControllerTestCase
     public function testPut()
     {
         $this->getMockService(Category::class)
-            ->shouldReceive('create')
+            ->shouldReceive('save')
             ->once()
             ->andReturn(1)
             ->getMock();
@@ -101,6 +101,28 @@ class CategoryControllerTest extends AbstractHttpControllerTestCase
         $this->assertControllerClass('CategoryController');
         $this->assertActionName('patch');
         $this->assertResponseStatusCode(404);
+    }
+
+    /**
+     * @covers ::patch
+     */
+    public function testPatchInvalidFormValues()
+    {
+        $this->getMockService(Category::class)
+            ->shouldReceive('get')
+            ->once()
+            ->with(2)
+            ->andReturn((new \Althingi\Model\Category())->setCategoryId(1)->setSuperCategoryId(2))
+            ->getMock()
+            ->shouldReceive('update')
+            ->never()
+            ->getMock();
+
+        $this->dispatch('/thingmal/efnisflokkar/1/undirflokkar/2', 'PATCH');
+
+        $this->assertControllerClass('CategoryController');
+        $this->assertActionName('patch');
+        $this->assertResponseStatusCode(400);
     }
 
     /**

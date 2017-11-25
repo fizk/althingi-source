@@ -5,15 +5,22 @@ namespace Althingi\Controller;
 use Althingi\Form\Speech as SpeechForm;
 use Althingi\Lib\ServiceCongressmanAwareInterface;
 use Althingi\Lib\ServicePartyAwareInterface;
+use Althingi\Lib\ServicePlenaryAwareInterface;
+use Althingi\Lib\ServiceSearchSpeechAwareInterface;
 use Althingi\Lib\ServiceSpeechAwareInterface;
 use Althingi\Lib\Transformer;
 use Althingi\Model\CongressmanPartyProperties;
 use Althingi\Model\SpeechAndPosition;
+use Althingi\Model\Speech as SpeechModel;
 use Althingi\Model\SpeechCongressmanProperties;
 use Althingi\Service\Congressman;
 use Althingi\Service\Party;
+use Althingi\Service\Plenary;
+use Althingi\Service\SearchSpeech;
 use Althingi\Service\Speech;
+use Finite\Exception\Exception;
 use Rend\Controller\AbstractRestfulController;
+use Rend\Helper\Http\RangeValue;
 use Rend\View\Model\ErrorModel;
 use Rend\View\Model\EmptyModel;
 use Rend\View\Model\CollectionModel;
@@ -23,12 +30,17 @@ use DateTime;
 class SpeechController extends AbstractRestfulController implements
     ServiceSpeechAwareInterface,
     ServiceCongressmanAwareInterface,
-    ServicePartyAwareInterface
+    ServicePartyAwareInterface,
+    ServiceSearchSpeechAwareInterface,
+    ServicePlenaryAwareInterface
 {
     use Range;
 
     /** @var \Althingi\Service\Speech */
     private $speechService;
+
+    /** @var  \Althingi\Service\SearchSpeech */
+    private $speechSearch;
 
     /** @var \Althingi\Service\Congressman */
     private $congressmanService;
@@ -36,11 +48,15 @@ class SpeechController extends AbstractRestfulController implements
     /** @var \Althingi\Service\Party */
     private $partyService;
 
+    /** @var \Althingi\Service\Plenary */
+    private $plenaryService;
+
     /**
      * Get Speech item and speeches surrounding it.
      *
      * @param mixed $id
      * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\SpeechCongressmanProperties
      */
     public function get($id)
     {
@@ -81,40 +97,63 @@ class SpeechController extends AbstractRestfulController implements
      * Paginated.
      *
      * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\SpeechCongressmanProperties
      */
     public function getList()
     {
         $assemblyId = $this->params('id');
         $issueId = $this->params('issue_id');
+        $count = 0;
+        $queryParam = $this->params()->fromQuery('leit', null);
 
-        $count = $this->speechService->countByIssue($assemblyId, $issueId);
-        $range = $this->getRange($this->getRequest(), $count);
+        if ($queryParam) {
+            $speeches = $this->speechSearch->fetchByIssue($queryParam, $assemblyId, $issueId);
+            $count = count($speeches);
+            $range = new RangeValue();
+            $speechesAndProperties = array_map(function (SpeechModel $speech) {
+                $speech->setText(Transformer::speechToMarkdown($speech->getText()));
 
-        $speeches = $this->speechService->fetchByIssue(
-            $assemblyId,
-            $issueId,
-            $range['from'],
-            ($range['to']-$range['from'])
-        );
+                $congressman = $this->congressmanService->get($speech->getCongressmanId());
+                $party = $this->partyService->getByCongressman($speech->getCongressmanId(), $speech->getFrom());
+                $congressmanPartyProperties = (new CongressmanPartyProperties())
+                    ->setCongressman($congressman)
+                    ->setParty($party);
 
-        $speechesAndProperties = array_map(function (SpeechAndPosition $speech) {
-            $speech->setText(Transformer::speechToMarkdown($speech->getText()));
+                return (new SpeechCongressmanProperties())
+                    ->setCongressman($congressmanPartyProperties)
+                    ->setSpeech($speech);
+            }, $speeches);
 
-            $congressman = $this->congressmanService->get($speech->getCongressmanId());
-            $party = $this->partyService->getByCongressman($speech->getCongressmanId(), $speech->getFrom());
-            $congressmanPartyProperties = (new CongressmanPartyProperties())
-                ->setCongressman($congressman)
-                ->setParty($party);
+        } else {
+            $count = $this->speechService->countByIssue($assemblyId, $issueId);
+            $range = $this->getRange($this->getRequest(), $count);
 
-            return (new SpeechCongressmanProperties())
-                ->setCongressman($congressmanPartyProperties)
-                ->setSpeech($speech);
-        }, $speeches);
+            $speeches = $this->speechService->fetchByIssue(
+                $assemblyId,
+                $issueId,
+                $range->getFrom(),
+                $range->getSize(),
+                1500
+            );
+
+            $speechesAndProperties = array_map(function (SpeechAndPosition $speech) {
+                $speech->setText(Transformer::speechToMarkdown($speech->getText()));
+
+                $congressman = $this->congressmanService->get($speech->getCongressmanId());
+                $party = $this->partyService->getByCongressman($speech->getCongressmanId(), $speech->getFrom());
+                $congressmanPartyProperties = (new CongressmanPartyProperties())
+                    ->setCongressman($congressman)
+                    ->setParty($party);
+
+                return (new SpeechCongressmanProperties())
+                    ->setCongressman($congressmanPartyProperties)
+                    ->setSpeech($speech);
+            }, $speeches);
+        }
 
         return (new CollectionModel($speechesAndProperties))
-            ->setOption('Access-Control-Expose-Headers', 'Range-Unit, Content-Range') //TODO should go into Rend
             ->setStatus(206)
-            ->setRange($range['from'], $range['to'], $count);
+            ->setRange($range->getFrom(), (count($speeches) + $range->getFrom()), $count);
     }
 
     /**
@@ -123,6 +162,7 @@ class SpeechController extends AbstractRestfulController implements
      * @param mixed $id
      * @param mixed $data
      * @return \Rend\View\Model\ModelInterface
+     * @input \Althingi\Form\Speech
      */
     public function put($id, $data)
     {
@@ -137,8 +177,8 @@ class SpeechController extends AbstractRestfulController implements
 
         if ($form->isValid()) {
             try {
-                $this->speechService->create($form->getObject());
-                return (new EmptyModel())->setStatus(201);
+                $affectedRows = $this->speechService->save($form->getObject());
+                return (new EmptyModel())->setStatus($affectedRows === 1 ? 201 : 205);
             } catch (\PDOException $e) {
                 /**
                  * @todo damn you althingi.is For some reason, the plenary list is empty for some assemblies
@@ -147,14 +187,25 @@ class SpeechController extends AbstractRestfulController implements
                  *  Example: speeches here have a plenary id
                  *  http://www.althingi.is/altext/xml/thingmalalisti/thingmal/?lthing=20&malnr=1 but the plenary list
                  *  it self is empty http://www.althingi.is/altext/xml/thingfundir/?lthing=20
-                 *
-                 * For the Aggregator not to go crazy and try to do a PATCH request and get a 404 from it (because
-                 *  unattended, this action will return a 409, requesting the aggregator to do a PATCH), this action
-                 *  returns the classic 418 I'm a teapot; making the aggregator just shut up :)
                  */
                 if ($e->getCode() == 23000 && strpos($e->getMessage(), 'fk_Speach_Plenary1') !== false) {
-                    return (new ErrorModel("Plenary({$data['plenary_id']}) not found, can't attach speech to plenary"))
-                        ->setStatus(418);
+
+                    /** @var  $speech \Althingi\Model\Speech */
+                    $speech = $form->getObject();
+                    $plenary = (new \Althingi\Model\Plenary())
+                        ->setAssemblyId($speech->getAssemblyId())
+                        ->setPlenaryId($speech->getPlenaryId())
+                        ->setFrom($speech->getFrom())
+                        ->setTo($speech->getTo());
+
+                    try {
+                        $this->plenaryService->save($plenary);
+                        $affectedRows = $this->speechService->save($speech);
+
+                        return (new EmptyModel())->setStatus($affectedRows === 1 ? 201 : 205);
+                    } catch (Exception $exception) {
+                        throw $exception;
+                    }
                 } else {
                     throw $e;
                 }
@@ -170,6 +221,7 @@ class SpeechController extends AbstractRestfulController implements
      * @param $id
      * @param $data
      * @return \Rend\View\Model\ModelInterface
+     * @input \Althingi\Form\Speech
      */
     public function patch($id, $data)
     {
@@ -243,5 +295,21 @@ class SpeechController extends AbstractRestfulController implements
     public function setSpeechService(Speech $speech)
     {
         $this->speechService = $speech;
+    }
+
+    /**
+     * @param \Althingi\Service\SearchSpeech $speech
+     */
+    public function setSearchSpeechService(SearchSpeech $speech)
+    {
+        $this->speechSearch = $speech;
+    }
+
+    /**
+     * @param Plenary $plenary
+     */
+    public function setPlenaryService(Plenary $plenary)
+    {
+        $this->plenaryService = $plenary;
     }
 }

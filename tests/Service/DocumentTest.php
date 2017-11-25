@@ -69,6 +69,33 @@ class DocumentTest extends PHPUnit_Extensions_Database_TestCase
         $this->assertTablesEqual($expectedTable, $queryTable);
     }
 
+    public function testSave()
+    {
+        $document = (new DocumentModel())
+            ->setAssemblyId(1)
+            ->setIssueId(1)
+            ->setDate(new \DateTime('2000-01-01'))
+            ->setType('type')
+            ->setUrl('http://url.com');
+
+        $documentService = new Document();
+        $documentService->setDriver($this->pdo);
+        $documentService->save($document);
+
+        $expectedTable = $this->createArrayDataSet([
+            'Document' => [
+                ['document_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
+                ['document_id' => 2, 'issue_id' => 1, 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
+                ['document_id' => 3, 'issue_id' => 1, 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
+                ['document_id' => 4, 'issue_id' => 2, 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
+                ['document_id' => 5, 'issue_id' => 1, 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
+            ]
+        ])->getTable('Document');
+        $queryTable = $this->getConnection()->createQueryTable('Document', 'SELECT * FROM Document');
+
+        $this->assertTablesEqual($expectedTable, $queryTable);
+    }
+
     public function testUpdate()
     {
         $document = (new DocumentModel())

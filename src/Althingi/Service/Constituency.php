@@ -57,6 +57,20 @@ class Constituency implements DatabaseAwareInterface
      * @param \Althingi\Model\Constituency $data
      * @return int
      */
+    public function save(ConstituencyModel $data): int
+    {
+        $statement = $this->getDriver()->prepare(
+            $this->toSaveString('Constituency', $data)
+        );
+        $statement->execute($this->toSqlValues($data));
+
+        return $statement->rowCount();
+    }
+
+    /**
+     * @param \Althingi\Model\Constituency $data
+     * @return int
+     */
     public function update(ConstituencyModel $data): int
     {
         $statement = $this->getDriver()->prepare(

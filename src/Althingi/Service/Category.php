@@ -51,7 +51,7 @@ class Category implements DatabaseAwareInterface
         $statement = $this->getDriver()->prepare('
             select count(*) as `count` , C.* from `Issue` I
             join `Category_has_Issue` CI on (CI.`issue_id` = I.`issue_id`)
-            join `Category` C on (C.`category_id` = CI.`category_id`)
+            join `Category` C on (C.`category_id` = CI.`category_id` and CI.assembly_id = :assembly_id)
             where I.`assembly_id` = :assembly_id
             group by CI.`category_id`
             order by `count` desc;
@@ -121,6 +121,20 @@ class Category implements DatabaseAwareInterface
         $statement->execute($this->toSqlValues($data));
 
         return $this->getDriver()->lastInsertId();
+    }
+
+    /**
+     * @param \Althingi\Model\Category $data
+     * @return int
+     */
+    public function save(CategoryModel $data): int
+    {
+        $statement = $this->getDriver()->prepare(
+            $this->toSaveString('Category', $data)
+        );
+        $statement->execute($this->toSqlValues($data));
+
+        return $statement->rowCount();
     }
 
     /**

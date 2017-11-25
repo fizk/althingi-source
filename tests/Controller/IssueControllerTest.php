@@ -170,9 +170,9 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
             ->once()
             ->getMock()
             ->shouldReceive('fetchByAssembly')
-            ->andReturn([
-                (new IssueAndDateModel())->setDate(new \DateTime())->setCongressmanId(1)->setIssueId(1)
-            ])
+            ->andReturn(array_map(function () {
+                    return (new IssueAndDateModel())->setDate(new \DateTime())->setCongressmanId(1)->setIssueId(1);
+            }, range(0, 24)))
             ->once()
             ->getMock()
         ;
@@ -180,14 +180,16 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
         $this->getMockService(Party::class)
             ->shouldReceive('getByCongressman')
             ->andReturn(null)
-            ->once()
-            ->getMock();
+            ->times(25)
+            ->getMock()
+        ;
 
         $this->getMockService(Congressman::class)
             ->shouldReceive('fetchProponentsByIssue')
             ->andReturn([(new Proponent())->setCongressmanId(1)])
-            ->once()
-            ->getMock();
+            ->times(25)
+            ->getMock()
+        ;
 
         $this->dispatch('/loggjafarthing/100/thingmal', 'GET');
         $this->assertControllerClass('IssueController');
@@ -213,7 +215,7 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
         ;
 
         $this->getMockService(Issue::class)
-            ->shouldReceive('create')
+            ->shouldReceive('save')
             ->with(Mockery::on(function ($actualObject) use ($expectedObject) {
                 return $expectedObject == $actualObject;
             }))

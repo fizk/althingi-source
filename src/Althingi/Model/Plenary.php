@@ -2,6 +2,8 @@
 
 namespace Althingi\Model;
 
+use DateTime;
+
 class Plenary implements ModelInterface
 {
     /** @var int */
@@ -58,7 +60,7 @@ class Plenary implements ModelInterface
     /**
      * @return \DateTime
      */
-    public function getFrom(): ?\DateTime
+    public function getFrom(): ?DateTime
     {
         return $this->from;
     }
@@ -67,7 +69,7 @@ class Plenary implements ModelInterface
      * @param \DateTime $from
      * @return Plenary
      */
-    public function setFrom(\DateTime $from = null): Plenary
+    public function setFrom(DateTime $from = null): Plenary
     {
         $this->from = $from;
         return $this;
@@ -76,7 +78,7 @@ class Plenary implements ModelInterface
     /**
      * @return \DateTime
      */
-    public function getTo(): ?\DateTime
+    public function getTo(): ?DateTime
     {
         return $this->to;
     }
@@ -85,7 +87,7 @@ class Plenary implements ModelInterface
      * @param \DateTime $to
      * @return Plenary
      */
-    public function setTo(\DateTime $to = null): Plenary
+    public function setTo(DateTime $to = null): Plenary
     {
         $this->to = $to;
         return $this;
@@ -120,13 +122,6 @@ class Plenary implements ModelInterface
         ];
     }
 
-    /**
-     * Specify data which should be serialized to JSON
-     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
-     * @return mixed data which can be serialized by <b>json_encode</b>,
-     * which is a value of any type other than a resource.
-     * @since 5.4.0
-     */
     public function jsonSerialize()
     {
         return $this->toArray();

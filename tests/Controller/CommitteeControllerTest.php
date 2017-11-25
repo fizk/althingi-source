@@ -3,6 +3,7 @@
 namespace Althingi\Controller;
 
 use Althingi\Service\Committee;
+use Althingi\Model\Committee as CommitteeModel;
 use Mockery;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
@@ -83,14 +84,20 @@ class CommitteeControllerTest extends AbstractHttpControllerTestCase
         $this->getMockService(Committee::class)
             ->shouldReceive('fetchAll')
             ->once()
-            ->andReturn([])
+            ->andReturn([
+                (new CommitteeModel()),
+                (new CommitteeModel()),
+                (new CommitteeModel()),
+            ])
             ->getMock();
 
         $this->dispatch('/nefndir', 'GET');
 
         $this->assertControllerClass('CommitteeController');
         $this->assertActionName('getList');
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(206);
+        $this->assertResponseHeaderContains('Content-Range', 'items 0-3/3');
+        $this->assertResponseHeaderContains('Range-Unit', 'items');
     }
 
     /**
@@ -99,7 +106,7 @@ class CommitteeControllerTest extends AbstractHttpControllerTestCase
     public function testPut()
     {
         $this->getMockService(Committee::class)
-            ->shouldReceive('create')
+            ->shouldReceive('save')
             ->once()
             ->andReturn(1)
             ->getMock();
@@ -169,7 +176,37 @@ class CommitteeControllerTest extends AbstractHttpControllerTestCase
     }
 
     /**
-     * @covers ::get
+     * @covers ::patch
+     */
+    public function testPatchInvalidForm()
+    {
+        $this->getMockService(Committee::class)
+            ->shouldReceive('get')
+            ->once()
+            ->andReturn(
+                (new \Althingi\Model\Committee())
+                ->setCommitteeId(1)
+                ->setFirstAssemblyId(1)
+                ->setLastAssemblyId(1)
+                ->setAbbrShort('n')
+                ->setAbbrLong('na')
+            )
+            ->getMock()
+            ->shouldReceive('update')
+            ->never()
+            ->getMock();
+
+        $this->dispatch('/nefndir/1', 'PATCH', [
+            'first_assembly_id' => 1,
+        ]);
+
+        $this->assertControllerClass('CommitteeController');
+        $this->assertActionName('patch');
+        $this->assertResponseStatusCode(400);
+    }
+
+    /**
+     * @covers ::patch
      */
     public function testPatchNotFound()
     {

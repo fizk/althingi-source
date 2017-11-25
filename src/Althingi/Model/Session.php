@@ -2,6 +2,8 @@
 
 namespace Althingi\Model;
 
+use DateTime;
+
 class Session implements ModelInterface
 {
     /** @var int */
@@ -124,7 +126,7 @@ class Session implements ModelInterface
     /**
      * @return \DateTime|null
      */
-    public function getFrom(): ?\DateTime
+    public function getFrom(): ?DateTime
     {
         return $this->from;
     }
@@ -133,7 +135,7 @@ class Session implements ModelInterface
      * @param \DateTime|null $from
      * @return Session
      */
-    public function setFrom(\DateTime $from = null): Session
+    public function setFrom(DateTime $from = null): Session
     {
         $this->from = $from;
         return $this;
@@ -142,7 +144,7 @@ class Session implements ModelInterface
     /**
      * @return \DateTime|null
      */
-    public function getTo(): ?\DateTime
+    public function getTo(): ?DateTime
     {
         return $this->to;
     }
@@ -151,7 +153,7 @@ class Session implements ModelInterface
      * @param \DateTime|null $to
      * @return Session
      */
-    public function setTo(\DateTime $to = null): Session
+    public function setTo(DateTime $to = null): Session
     {
         $this->to = $to;
         return $this;
@@ -208,13 +210,6 @@ class Session implements ModelInterface
         ];
     }
 
-    /**
-     * Specify data which should be serialized to JSON
-     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
-     * @return mixed data which can be serialized by <b>json_encode</b>,
-     * which is a value of any type other than a resource.
-     * @since 5.4.0
-     */
     public function jsonSerialize()
     {
         return $this->toArray();

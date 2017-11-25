@@ -19,6 +19,7 @@ class CongressmanDocumentController extends AbstractRestfulController implements
      * @param mixed $id
      * @param mixed $data
      * @return \Rend\View\Model\ModelInterface
+     * @input Althingi\Form\CongressmanDocument
      */
     public function put($id, $data)
     {
@@ -39,17 +40,20 @@ class CongressmanDocumentController extends AbstractRestfulController implements
             ));
 
         if ($form->isValid()) {
-            $this->congressmanDocumentService->create($form->getObject());
-            return (new EmptyModel())->setStatus(201);
+            $affectedRows = $this->congressmanDocumentService->save($form->getObject());
+            return (new EmptyModel())
+                ->setStatus($affectedRows === 1 ? 201 : 205);
         }
 
-        return (new ErrorModel($form))->setStatus(400);
+        return (new ErrorModel($form))
+            ->setStatus(400);
     }
 
     /**
      * @param int $id
      * @param array $data
      * @return \Rend\View\Model\ModelInterface
+     * @input Althingi\Form\CongressmanDocument
      */
     public function patch($id, $data)
     {

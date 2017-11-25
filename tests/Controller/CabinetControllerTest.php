@@ -72,7 +72,5 @@ class CabinetControllerTest extends AbstractHttpControllerTestCase
         $this->assertControllerClass('CabinetController');
         $this->assertActionName('assembly');
         $this->assertResponseStatusCode(200);
-
-//        print_r(json_decode($this->getResponse()->getContent()));
     }
 }

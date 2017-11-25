@@ -50,6 +50,26 @@ class ConstituencyTest extends PHPUnit_Extensions_Database_TestCase
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
+    public function testSave()
+    {
+        $constituency = (new ConstituencyModel())
+            ->setName('name');
+
+        $expectedTable = $this->createArrayDataSet([
+            'Constituency' => [
+                ['constituency_id' => 1, 'name' => 'some-place', 'abbr_short' => 's-p', 'abbr_long' => 'so-pl', 'description' => 'none'],
+                ['constituency_id' => 2, 'name' => 'name', 'abbr_short' => null, 'abbr_long' => null, 'description' => null],
+            ],
+        ])->getTable('Constituency');
+        $actualTable = $this->getConnection()->createQueryTable('Constituency', 'SELECT * FROM Constituency');
+
+        $constituencyService = new Constituency();
+        $constituencyService->setDriver($this->pdo);
+        $constituencyService->save($constituency);
+
+        $this->assertTablesEqual($expectedTable, $actualTable);
+    }
+
     public function testUpdate()
     {
         $constituency = (new ConstituencyModel())

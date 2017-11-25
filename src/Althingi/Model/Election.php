@@ -2,6 +2,8 @@
 
 namespace Althingi\Model;
 
+use DateTime;
+
 class Election implements ModelInterface
 {
     /** @var  int */
@@ -37,7 +39,7 @@ class Election implements ModelInterface
     /**
      * @return \DateTime
      */
-    public function getDate(): \DateTime
+    public function getDate(): DateTime
     {
         return $this->date;
     }
@@ -46,7 +48,7 @@ class Election implements ModelInterface
      * @param \DateTime $date
      * @return Election
      */
-    public function setDate(\DateTime $date): Election
+    public function setDate(DateTime $date): Election
     {
         $this->date = $date;
         return $this;

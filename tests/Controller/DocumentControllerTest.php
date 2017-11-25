@@ -129,9 +129,9 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
 
         $this->assertControllerClass('DocumentController');
         $this->assertActionName('getList');
-        $this->assertResponseStatusCode(200);
-
-//        print_r(json_decode($this->getResponse()->getContent()));
+        $this->assertResponseStatusCode(206);
+        $this->assertResponseHeaderContains('Content-Range', 'items 0-2/2');
+        $this->assertResponseHeaderContains('Range-Unit', 'items');
     }
 
     /**
@@ -140,7 +140,7 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
     public function testPut()
     {
         $this->getMockService(Document::class)
-            ->shouldReceive('create')
+            ->shouldReceive('save')
             ->once()
             ->andReturn(1)
             ->getMock();

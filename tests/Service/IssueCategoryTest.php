@@ -44,6 +44,22 @@ class IssueCategoryTest extends PHPUnit_Extensions_Database_TestCase
         $this->assertEquals($issueCategory, $data);
     }
 
+    public function testSave()
+    {
+        $service = new IssueCategory();
+        $service->setDriver($this->pdo);
+
+        $issueCategory = (new IssueCategoryModel())
+            ->setAssemblyId(145)
+            ->setIssueId(2)
+            ->setCategoryId(34);
+
+        $service->save($issueCategory);
+
+        $data = $service->get(145, 2, 34);
+        $this->assertEquals($issueCategory, $data);
+    }
+
     public function testUpdate()
     {
         $service = new IssueCategory();

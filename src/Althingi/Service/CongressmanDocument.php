@@ -63,6 +63,20 @@ class CongressmanDocument implements DatabaseAwareInterface
      * @param \Althingi\Model\CongressmanDocument $data
      * @return int
      */
+    public function save(CongressmanDocumentModel $data): int
+    {
+        $statement = $this->getDriver()->prepare(
+            $this->toSaveString('Document_has_Congressman', $data)
+        );
+        $statement->execute($this->toSqlValues($data));
+
+        return $statement->rowCount();
+    }
+
+    /**
+     * @param \Althingi\Model\CongressmanDocument $data
+     * @return int
+     */
     public function update(CongressmanDocumentModel $data): int
     {
         $statement = $this->getDriver()->prepare(

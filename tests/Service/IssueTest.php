@@ -9,6 +9,7 @@ use PHPUnit_Extensions_Database_DataSet_IDataSet;
 use PHPUnit_Extensions_Database_TestCase;
 use Althingi\Model\Issue as IssueModel;
 use Althingi\Model\IssueAndDate as IssueAndDateModel;
+use Zend\EventManager\EventManager;
 
 class IssueTest extends PHPUnit_Extensions_Database_TestCase
 {
@@ -134,7 +135,33 @@ class IssueTest extends PHPUnit_Extensions_Database_TestCase
 
         $issueService = new Issue();
         $issueService->setDriver($this->pdo);
+        $issueService->setEventManager(new EventManager());
         $issueService->create($issue);
+
+        $expectedTable = $this->createArrayDataSet([
+            'Issue' => [
+                ['issue_id' => 1, 'assembly_id' => 1, 'congressman_id' => 1, 'type' => 'l', 'status' => 'some', 'type_subname' => 'something'],
+                ['issue_id' => 1, 'assembly_id' => 2],
+                ['issue_id' => 2, 'assembly_id' => 1, 'type' => 'l', 'status' => 'some', 'type_subname' => 'stjórnarfrumvarp'],
+                ['issue_id' => 3, 'assembly_id' => 1],
+                ['issue_id' => 4, 'assembly_id' => 1],
+            ],
+        ])->getTable('Issue');
+        $queryTable = $this->getConnection()->createQueryTable('Issue', 'SELECT `issue_id`, `assembly_id`, `congressman_id`, `type`, `status`, `type_subname` FROM Issue');
+
+        $this->assertTablesEqual($expectedTable, $queryTable);
+    }
+
+    public function testSave()
+    {
+        $issue = (new IssueModel())
+            ->setAssemblyId(1)
+            ->setIssueId(4);
+
+        $issueService = new Issue();
+        $issueService->setDriver($this->pdo);
+        $issueService->setEventManager(new EventManager());
+        $issueService->save($issue);
 
         $expectedTable = $this->createArrayDataSet([
             'Issue' => [
@@ -159,6 +186,7 @@ class IssueTest extends PHPUnit_Extensions_Database_TestCase
 
         $issueService = new Issue();
         $issueService->setDriver($this->pdo);
+        $issueService->setEventManager(new EventManager());
         $issueService->update($issue);
 
         $expectedTable = $this->createArrayDataSet([

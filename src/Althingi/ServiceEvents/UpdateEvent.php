@@ -2,58 +2,37 @@
 
 namespace Althingi\ServiceEvents;
 
+use Althingi\Model\ModelIdentityInterface;
+use Althingi\Presenters\IndexablePresenter;
+use Althingi\Presenters\IndexablePresenterAwareInterface;
 use Zend\EventManager\Event;
-use Althingi\Model\ModelInterface;
-use Zend\Hydrator\HydratorInterface;
 
-class UpdateEvent extends Event implements ModelAndHydrator
+class UpdateEvent extends Event implements IndexablePresenterAwareInterface
 {
-    /** @var  \Althingi\Model\ModelInterface */
-    private $model;
+    /** @var  \Althingi\Presenters\IndexablePresenter */
+    private $presenter;
 
-    /** @var  \Zend\Hydrator\HydratorInterface */
-    private $hydrator;
-
-    public function __construct(ModelInterface $mode, HydratorInterface $hydrator)
+    public function __construct(IndexablePresenter $presenter)
     {
-        $this->setName('update');
-        $this->setModel($mode);
-        $this->setHydrator($hydrator);
+        parent::__construct('update');
+        $this->setPresenter($presenter);
     }
 
     /**
-     * @return ModelInterface
+     * @return IndexablePresenter
      */
-    public function getModel(): ModelInterface
+    public function getPresenter(): IndexablePresenter
     {
-        return $this->model;
+        return $this->presenter;
     }
 
     /**
-     * @param ModelInterface $model
-     * @return ModelAndHydrator
+     * @param IndexablePresenter $presenter
+     * @return IndexablePresenterAwareInterface
      */
-    public function setModel(ModelInterface $model): ModelAndHydrator
+    public function setPresenter(IndexablePresenter $presenter): IndexablePresenterAwareInterface
     {
-        $this->model = $model;
-        return $this;
-    }
-
-    /**
-     * @return HydratorInterface
-     */
-    public function getHydrator(): HydratorInterface
-    {
-        return $this->hydrator;
-    }
-
-    /**
-     * @param HydratorInterface $hydrator
-     * @return ModelAndHydrator
-     */
-    public function setHydrator(HydratorInterface $hydrator): ModelAndHydrator
-    {
-        $this->hydrator = $hydrator;
+        $this->presenter = $presenter;
         return $this;
     }
 }

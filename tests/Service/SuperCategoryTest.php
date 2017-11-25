@@ -48,6 +48,27 @@ class SuperCategoryTest extends PHPUnit_Extensions_Database_TestCase
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
+    public function testSave()
+    {
+        $superCategory = (new SuperCategoryModel())
+            ->setSuperCategoryId(10)
+            ->setTitle('MyTitle');
+
+        $expectedTable = $this->createArrayDataSet([
+            'SuperCategory' => [
+                ['super_category_id' => 10, 'title' => 'MyTitle'],
+            ],
+        ])->getTable('SuperCategory');
+        $actualTable = $this->getConnection()
+            ->createQueryTable('SuperCategory', 'SELECT * FROM SuperCategory where `super_category_id` = 10');
+
+        $service = new SuperCategory();
+        $service->setDriver($this->pdo);
+        $service->save($superCategory);
+
+        $this->assertTablesEqual($expectedTable, $actualTable);
+    }
+
     public function testUpdate()
     {
         $superCategory = (new SuperCategoryModel())

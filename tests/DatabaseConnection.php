@@ -7,6 +7,8 @@ use PDO;
 
 trait DatabaseConnection
 {
+    static $connection;
+
     /**
      * Returns the test database connection.
      *
@@ -21,7 +23,8 @@ trait DatabaseConnection
         $dbPort = getenv('DB_PORT') ?: 3306;
         $dbName = $environment === 'production' ? $dbNameProd : $dbNameDev;
 
-        $this->pdo = new PDO(
+
+        self::$connection = $this->pdo = self::$connection ? : new PDO(
             "mysql:host={$dbHost};port={$dbPort};dbname={$dbName}",
             getenv('DB_USER') ?: 'root',
             getenv('DB_PASSWORD') ?: '',

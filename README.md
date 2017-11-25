@@ -135,3 +135,266 @@ if (!class_exists('Zend\Loader\AutoloaderFactory')) {
 ```
 
 This makes PHPUnits tests easier to manage.
+
+
+
+
+
+docker run -p 9200:9200 -p 9300:9300 -v "$PWD/data":/usr/share/elasticsearch/data -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:5.6.3
+
+
+http://www.althingi.is/xml/145
+    fundir
+    dagskra
+    lidaskjol
+    raedur
+    raedur_bradabirgda
+    utbyting
+    fjarvist
+    inn
+    thingmalaskra
+    lestrarsalur
+
+
+```
+PUT althingi_model_speech
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "std_lower_case": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": ["lowercase"],
+          "char_filter":  [ "html_strip" ]
+        }
+      }
+    }
+  }, 
+  "mappings": {
+    "althingi_model_speech": {
+      "properties": {
+        "assembly_id": {
+          "type": "long"
+        },
+        "issue_id": {
+          "type": "long"
+        },
+        "plenary_id": {
+          "type": "long"
+        },
+        "congressman_id": {
+          "type": "long"
+        },
+        "congressman_type": {
+          "type": "keyword"
+        },
+        "to": {
+          "format": "yyyy-MM-dd HH:mm:ss",
+          "type": "date"
+        },
+        "from": {
+          "format": "yyyy-MM-dd HH:mm:ss",
+          "type": "date"
+        },
+        "iteration": {
+          "type": "keyword"
+        },
+        "speech_id": {
+          "type": "keyword"
+        },
+        "text": {
+          "fields": {
+            "raw": {
+              "analyzer": "std_lower_case", 
+              "type": "text"
+            }
+          },
+          "type": "text"
+        },
+
+        "type": {
+          "type": "keyword"
+        }
+      }
+    }
+  }
+}
+```
+
+
+```
+PUT althingi_model_issue
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "std_lower_case": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": ["lowercase"],
+          "char_filter":  [ "html_strip" ]
+        }
+      }
+    }
+  }, 
+  "mappings": {
+    "althingi_model_issue": {
+      "properties": {
+        "assembly_id": {
+          "type": "long"
+        },
+        "issue_id": {
+          "type": "long"
+        },
+        "congressman_id": {
+          "type": "long"
+        },
+        "category": {
+          "type": "keyword"
+        },
+        "name": {
+          "fields": {
+            "raw": {
+              "analyzer": "std_lower_case", 
+              "type": "text"
+            }
+          },
+          "type": "text"
+        },
+        "sub_name": {
+          "fields": {
+            "raw": {
+              "analyzer": "std_lower_case", 
+              "type": "text"
+            }
+          },
+          "type": "text"
+        },
+        "question": {
+          "fields": {
+            "raw": {
+              "analyzer": "std_lower_case", 
+              "type": "text"
+            }
+          },
+          "type": "text"
+        },
+        "goal": {
+          "fields": {
+            "raw": {
+              "analyzer": "std_lower_case", 
+              "type": "text"
+            }
+          },
+          "type": "text"
+        },
+        "changes_in_law": {
+          "fields": {
+            "raw": {
+              "analyzer": "std_lower_case", 
+              "type": "text"
+            }
+          },
+          "type": "text"
+        },
+        "costs_and_revenues": {
+          "fields": {
+            "raw": {
+              "analyzer": "std_lower_case", 
+              "type": "text"
+            }
+          },
+          "type": "text"
+        },
+        "deliveries": {
+          "fields": {
+            "raw": {
+              "analyzer": "std_lower_case", 
+              "type": "text"
+            }
+          },
+          "type": "text"
+        },
+        "additional_information": {
+          "fields": {
+            "raw": {
+              "analyzer": "std_lower_case", 
+              "type": "text"
+            }
+          },
+          "type": "text"
+        },
+        "type": {
+          "type": "keyword"
+        },
+        "type_name": {
+          "type": "keyword"
+        },
+        "type_subname": {
+          "type": "keyword"
+        },
+        "status": {
+          "type": "keyword"
+        }
+      }
+    }
+  }
+}
+```
+
+
+```
+select D.`assembly_id`, 
+		D.`issue_id`, 
+        null as `committee_id`, 
+        null as `speech_id`, 
+        D.`document_id`,
+        null as `committee_name`,
+        D.`date`, 
+        D.`type` as `title`,
+        'document' as `type`,
+        true as `completed`
+	from `Document` D 
+    where D.`assembly_id` = 146 and D.`issue_id` = 258
+	union
+select B.`assembly_id`, 
+		B.`issue_id`, 
+        null as `committee_id`, 
+        B.`speech_id`, 
+        null as `document_id`, 
+        null as `committee_name`,
+        B.`date`, 
+        B.`type` as `title`, 
+        'speech' as `type`,
+        true as `completed`
+        from (
+			select S.`assembly_id`, 
+					S.`issue_id`, 
+                    null as `committee_id`, 
+                    S.speech_id, null, 
+                    S.`from` as `date`, 
+                    CONCAT(S.`iteration`, '. umræða') as `type`, 
+                    S.`iteration` 
+			from `Speech` S 
+			where assembly_id = 146 and issue_id = 258
+			order by S.`from`
+    ) as B
+    group by B.`iteration`
+    union
+select CMA.assembly_id, 
+		CMA.issue_id, 
+        C.committee_id, 
+        null as `speech_id`, 
+        null as `document_id`, 
+        C.name as `committee_name`,
+        CM.`from`, 
+        'í nefnd' as `title`, 
+        'committee' as `type`,
+        true as `completed`
+    from `CommitteeMeetingAgenda` CMA
+	join `CommitteeMeeting` CM on (CM.committee_meeting_id = CMA.committee_meeting_id and CM.`from` is not null)
+	join `Committee` C on (CM.committee_id = C.committee_id)
+	where CMA.assembly_id = 146 and CMA.issue_id = 258
+order by `date`;
+```

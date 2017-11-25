@@ -19,6 +19,11 @@ class ConstituencyController extends AbstractRestfulController implements
     /** @var \Althingi\Service\Constituency */
     private $constituencyService;
 
+    /**
+     * @param mixed $id
+     * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\Constituency
+     */
     public function get($id)
     {
         $constituency = $this->constituencyService->get($id);
@@ -31,15 +36,16 @@ class ConstituencyController extends AbstractRestfulController implements
      * @param mixed $id
      * @param mixed $data
      * @return \Rend\View\Model\ModelInterface
+     * @input Althingi\Form\Constituency
      */
     public function put($id, $data)
     {
         $form = new ConstituencyForm();
         $form->setData(array_merge($data, ['constituency_id' => $id]));
         if ($form->isValid()) {
-            $this->constituencyService->create($form->getObject());
+            $affectedRows = $this->constituencyService->save($form->getObject());
             return (new EmptyModel())
-                ->setStatus(201);
+                ->setStatus($affectedRows === 1 ? 201 : 205);
         }
 
         return (new ErrorModel($form))->setStatus(400);
@@ -51,6 +57,7 @@ class ConstituencyController extends AbstractRestfulController implements
      * @param int $id
      * @param array $data
      * @return \Rend\View\Model\ModelInterface
+     * @input Althingi\Form\Constituency
      */
     public function patch($id, $data)
     {

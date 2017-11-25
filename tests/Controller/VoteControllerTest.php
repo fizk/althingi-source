@@ -84,13 +84,21 @@ class VoteControllerTest extends AbstractHttpControllerTestCase
             ->with(1, 2)
             ->andReturn([(new \Althingi\Model\Vote())])
             ->once()
-            ->getMock();
+            ->getMock()
+            ->shouldReceive('countByIssue')
+            ->with(1, 2)
+            ->andReturn(1)
+            ->once()
+            ->getMock()
+        ;
 
         $this->dispatch('/loggjafarthing/1/thingmal/2/atkvaedagreidslur', 'GET');
 
         $this->assertControllerClass('VoteController');
         $this->assertActionName('getList');
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(206);
+        $this->assertResponseHeaderContains('Content-Range', 'items 0-1/1');
+        $this->assertResponseHeaderContains('Range-Unit', 'items');
     }
 
     /**
@@ -99,7 +107,7 @@ class VoteControllerTest extends AbstractHttpControllerTestCase
     public function testPutSuccess()
     {
         $this->getMockService(Vote::class)
-            ->shouldReceive('create')
+            ->shouldReceive('save')
             ->andReturn(1)
             ->once()
             ->getMock();

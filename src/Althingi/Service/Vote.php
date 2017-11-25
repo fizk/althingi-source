@@ -59,6 +59,19 @@ class Vote implements DatabaseAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
+    public function countByIssue(int $assemblyId, int $issueId): int
+    {
+        $statement =$this->getDriver()->prepare('
+            select count(*) from `Vote` V
+            where V.`issue_id` = :issue_id and V.`assembly_id` = :assembly_id;
+        ');
+        $statement->execute([
+            'issue_id' => $issueId,
+            'assembly_id' => $assemblyId,
+        ]);
+        return $statement->fetchColumn(0);
+    }
+
     /**
      * @param int $assemblyId
      * @param int $issueId
@@ -196,6 +209,20 @@ class Vote implements DatabaseAwareInterface
         $statement->execute($this->toSqlValues($data));
 
         return $this->getDriver()->lastInsertId();
+    }
+
+    /**
+     * @param VoteModel $data
+     * @return int
+     */
+    public function save(VoteModel $data): int
+    {
+        $statement = $this->getDriver()->prepare(
+            $this->toSaveString('Vote', $data)
+        );
+        $statement->execute($this->toSqlValues($data));
+
+        return $statement->rowCount();
     }
 
     /**

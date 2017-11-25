@@ -3,6 +3,8 @@
 namespace Althingi\Service;
 
 use Althingi\Lib\DatabaseAwareInterface;
+use Althingi\Model\CongressmanIssue as CongressmanIssueModel;
+use Althingi\Hydrator\CongressmanIssue as CongressmanIssueHydrator;
 use Althingi\Model\Issue as IssueModel;
 use Althingi\Hydrator\Issue as IssueHydrator;
 use Althingi\Model\IssueAndDate as IssueAndDateModel;
@@ -11,19 +13,25 @@ use Althingi\Model\AssemblyStatus as AssemblyStatusModel;
 use Althingi\Hydrator\AssemblyStatus as AssemblyStatusHydrator;
 use Althingi\Model\IssueTypeStatus as IssueTypeStatusModel;
 use Althingi\Hydrator\IssueTypeStatus as IssueTypeStatusHydrator;
+use Althingi\Presenters\IndexableIssuePresenter;
+use Althingi\ServiceEvents\AddEvent;
+use Althingi\ServiceEvents\UpdateEvent;
 use PDO;
 use InvalidArgumentException;
+use Zend\EventManager\EventManagerAwareInterface;
+use Zend\EventManager\EventManagerInterface;
 
 /**
  * Class Issue
  * @package Althingi\Service
  */
-class Issue implements DatabaseAwareInterface
+class Issue implements DatabaseAwareInterface, EventManagerAwareInterface
 {
     use DatabaseService;
 
     const ALLOWED_TYPES = ['a', 'b', 'f', 'l', 'm', 'n', 'q', 's', 'v'];
     const ALLOWED_ORDER = ['asc', 'desc'];
+    const MAX_ROW_COUNT = '18446744073709551615';
 
     const STATUS_WAITING_ONE    = 'Bíður 1. umræðu';
     const STATUS_WAITING_TWO    = 'Bíður 2. umræðu';
@@ -34,6 +42,9 @@ class Issue implements DatabaseAwareInterface
 
     /** @var \PDO */
     private $pdo;
+
+    /** @var  \Zend\EventManager\EventManager */
+    private $eventManager;
 
     /**
      * Get one Issue along with some metadata.
@@ -58,6 +69,24 @@ class Issue implements DatabaseAwareInterface
         return $object
             ? (new IssueHydrator())->hydrate($object, new IssueModel())
             : null;
+    }
+
+    /**
+     * This is a Generator
+     * @return \Althingi\Model\Issue[]
+     */
+    public function fetchAll()
+    {
+        $statement = $this->getDriver()->prepare('select * from `Issue`');
+        $statement->execute();
+
+        while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
+            yield (new IssueHydrator())->hydrate($row, new IssueModel());
+        }
+
+        $statement->closeCursor();
+
+        return;
     }
 
     /**
@@ -99,28 +128,51 @@ class Issue implements DatabaseAwareInterface
      * @param int $size
      * @param string $order
      * @param array $type
+     * @param array $category
      * @return \Althingi\Model\Issue[]
      */
     public function fetchByAssembly(
         int $assembly_id,
         int $offset,
-        int $size,
+        ?int $size,
         ?string $order = 'asc',
-        array $type = []
+        array $type = [],
+        array $category = []
     ): array {
         $order = in_array($order, self::ALLOWED_ORDER) ? $order : 'asc';
         $typeFilterString = $this->typeFilterString($type);
+        $categoryFilterString = $this->categoryFilterString($category);
+        $size = $size ? : 25;
 
-        $statement = $this->getDriver()->prepare("
-            select
-                *,
-                (select D.`date` from `Document` D
-                where assembly_id = I.assembly_id and issue_id = I.issue_id
-                order by `date` asc limit 0, 1) as `date`
-            from `Issue` I where assembly_id = :id {$typeFilterString}
-            order by I.`issue_id` {$order}
-            limit {$offset}, {$size}
-        ");
+        if (empty($categoryFilterString)) {
+            $statement = $this->getDriver()->prepare("
+                select I.*,
+                    (
+                        select D.`date` from `Document` D
+                        where `assembly_id` = I.`assembly_id` and `issue_id` = I.issue_id
+                        order by `date` asc limit 0, 1
+                    ) as `date`
+                from `Issue` I 
+                where I.`assembly_id` = :id {$typeFilterString}
+                order by I.`issue_id` {$order}
+                limit {$offset}, {$size};
+            ");
+        } else {
+            $statement = $this->getDriver()->prepare("
+                select CI.`category_id`, I.*,
+                    (
+                      select D.`date` from `Document` D
+                      where `assembly_id` = I.`assembly_id` and `issue_id` = I.issue_id
+                      order by `date` asc limit 0, 1
+                    ) as `date`
+                from `Issue` I 
+                    join `Category_has_Issue` CI on (CI.`issue_id` = I.`issue_id` and CI.`assembly_id` = :id)
+                where I.`assembly_id` = :id {$typeFilterString} {$categoryFilterString}
+                order by I.`issue_id` {$order}
+                limit {$offset}, {$size};
+            ");
+        }
+
         $statement->execute(['id' => $assembly_id]);
         return array_map(function ($object) {
             return (new IssueAndDateHydrator())->hydrate($object, new IssueAndDateModel());
@@ -155,8 +207,10 @@ class Issue implements DatabaseAwareInterface
     public function fetchByAssemblyAndCongressman(int $assemblyId, int $congressmanId): array
     {
         $statement = $this->getDriver()->prepare("
-            select * from `Issue` I where I.`congressman_id` = :congressman_id and I.`assembly_id` = :assembly_id
-            order by I.`assembly_id` desc, I.`issue_id` asc;
+            select I.* from `Document_has_Congressman` D
+                join `Issue` I on (I.`issue_id` = D.`issue_id` and I.assembly_id = D.assembly_id)
+                where D.assembly_id = :assembly_id and D.congressman_id = :congressman_id and D.`order` = 1
+                order by I.`type`;
         ");
 
         $statement->execute([
@@ -165,6 +219,32 @@ class Issue implements DatabaseAwareInterface
         ]);
         return array_map(function ($object) {
             return (new IssueHydrator())->hydrate($object, new IssueModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
+    }
+
+    /**
+     * @param int $assemblyId
+     * @param int $congressmanId
+     * @return \Althingi\Model\Issue[]
+     */
+    public function fetchByAssemblyAndCongressmanSummary(int $assemblyId, int $congressmanId): array
+    {
+        $statement = $this->getDriver()->prepare("
+            select count(*) as `count`, DC.`order`, I.`type`, I.`type_name`, I.`type_subname`, D.`type` as `document_type`
+                from `Document` D
+                join `Document_has_Congressman` DC on (D.document_id = DC.document_id and D.assembly_id = DC.assembly_id)
+                join `Issue` I on (D.issue_id = I.issue_id and D.assembly_id = I.assembly_id )
+            where D.assembly_id = :assembly_id and DC.congressman_id = :congressman_id
+            group by DC.`order`, I.`type`, D.`type`
+            order by DC.`order`, I.`type`;
+        ");
+
+        $statement->execute([
+            'assembly_id' => $assemblyId,
+            'congressman_id' => $congressmanId,
+        ]);
+        return array_map(function ($object) {
+            return (new CongressmanIssueHydrator())->hydrate($object, new CongressmanIssueModel());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -255,15 +335,27 @@ class Issue implements DatabaseAwareInterface
      *
      * @param int $id Assembly ID
      * @param array $type
+     * @param array $categories
      * @return int count
      */
-    public function countByAssembly(int $id, array $type = []): int
+    public function countByAssembly(int $id, array $type = [], array $categories = []): int
     {
         $typeFilterString = $this->typeFilterString($type);
-        $statement = $this->getDriver()->prepare("
-            select count(*) from `Issue` I
-            where `assembly_id` = :id {$typeFilterString}
-        ");
+        $categoryFilterString = $this->categoryFilterString($categories);
+
+        if (empty($categoryFilterString)) {
+            $statement = $this->getDriver()->prepare("
+                select count(*) from `Issue` I
+                where `assembly_id` = :id {$typeFilterString}
+            ");
+        } else {
+            $statement = $this->getDriver()->prepare("
+                select count(*) from `Issue` I
+                    join `Category_has_Issue` CI on (CI.issue_id = I.issue_id and CI.assembly_id = :id)
+                where I.assembly_id = :id {$typeFilterString} {$categoryFilterString}
+            ");
+        }
+
         $statement->execute(['id' => $id]);
         return (int) $statement->fetchColumn(0);
     }
@@ -282,7 +374,25 @@ class Issue implements DatabaseAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
+        $this->getEventManager()->trigger(new AddEvent(new IndexableIssuePresenter($data)));
+
         return $this->getDriver()->lastInsertId();
+    }
+
+    /**
+     * @param \Althingi\Model\Issue $data
+     * @return int
+     */
+    public function save(IssueModel $data): int
+    {
+        $statement = $this->getDriver()->prepare(
+            $this->toSaveString('Issue', $data)
+        );
+        $statement->execute($this->toSqlValues($data));
+
+        $this->getEventManager()->trigger(new AddEvent(new IndexableIssuePresenter($data)));
+
+        return $statement->rowCount();
     }
 
     /**
@@ -301,6 +411,8 @@ class Issue implements DatabaseAwareInterface
             )
         );
         $statement->execute($this->toSqlValues($data));
+
+        $this->getEventManager()->trigger(new UpdateEvent(new IndexableIssuePresenter($data)));
 
         return $statement->rowCount();
     }
@@ -343,5 +455,41 @@ class Issue implements DatabaseAwareInterface
                 return "'" . $t . "'";
             }, $type)
         ) . ')';
+    }
+
+    private function categoryFilterString(array $category = []): string
+    {
+        $category = array_filter($category, function ($item) {
+            return is_numeric($item);
+        });
+
+        if (empty($category)) {
+            return '';
+        }
+
+        return ' and CI.`category_id` in (' . implode(',', $category) . ')';
+    }
+
+    /**
+     * Inject an EventManager instance
+     *
+     * @param  EventManagerInterface $eventManager
+     * @return void
+     */
+    public function setEventManager(EventManagerInterface $eventManager)
+    {
+        $this->eventManager = $eventManager;
+    }
+
+    /**
+     * Retrieve the event manager
+     *
+     * Lazy-loads an EventManager instance if none registered.
+     *
+     * @return EventManagerInterface
+     */
+    public function getEventManager()
+    {
+        return $this->eventManager;
     }
 }

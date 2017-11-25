@@ -3,6 +3,7 @@
 namespace Althingi\Form;
 
 use Zend\InputFilter\InputFilterProviderInterface;
+use DateTime;
 
 class Congressman extends Form implements InputFilterProviderInterface
 {
@@ -26,11 +27,23 @@ class Congressman extends Form implements InputFilterProviderInterface
         $this->add(array(
             'name' => 'birth',
             'type' => 'Zend\Form\Element\Date',
+            'options' => [
+                'format' => 'Y-m-d'
+            ],
+            'attributes' => [
+                'step' => 'any'
+            ],
         ));
 
         $this->add(array(
             'name' => 'death',
             'type' => 'Zend\Form\Element\Date',
+            'options' => [
+                'format' => 'Y-m-d'
+            ],
+            'attributes' => [
+                'step' => 'any'
+            ],
         ));
     }
 

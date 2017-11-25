@@ -4,6 +4,7 @@ namespace Althingi\Controller;
 
 use Althingi\Form\Issue as IssueForm;
 use Althingi\Lib\DateAndCountSequence;
+use Althingi\Lib\ServiceSearchIssueAwareInterface;
 use Althingi\Model\CongressmanAndDateRange;
 use Althingi\Model\IssueAndDate as IssueAndDateModel;
 use Althingi\Lib\ServiceAssemblyAwareInterface;
@@ -14,6 +15,7 @@ use Althingi\Lib\ServicePartyAwareInterface;
 use Althingi\Lib\ServiceSpeechAwareInterface;
 use Althingi\Lib\ServiceVoteAwareInterface;
 use Althingi\Model\CongressmanPartyProperties;
+use Althingi\Model\IssueAndDate;
 use Althingi\Model\IssueProperties;
 use Althingi\Model\Proponent;
 use Althingi\Service\Assembly;
@@ -21,6 +23,7 @@ use Althingi\Service\Congressman;
 use Althingi\Service\Document;
 use Althingi\Service\Party;
 use Althingi\Service\Issue;
+use Althingi\Service\SearchIssue;
 use Althingi\Service\Speech;
 use Althingi\Service\Vote;
 use Althingi\Lib\Transformer;
@@ -39,7 +42,8 @@ class IssueController extends AbstractRestfulController implements
     ServiceDocumentAwareInterface,
     ServiceVoteAwareInterface,
     ServiceAssemblyAwareInterface,
-    ServiceSpeechAwareInterface
+    ServiceSpeechAwareInterface,
+    ServiceSearchIssueAwareInterface
 {
     use Range;
 
@@ -64,11 +68,15 @@ class IssueController extends AbstractRestfulController implements
     /** @var  \Althingi\Service\Speech */
     private $speechService;
 
+    /** @var  \Althingi\Service\SearchIssue */
+    private $issueSearchService;
+
     /**
      * Get one issie.
      *
      * @param int $id
      * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\IssueProperties
      */
     public function get($id)
     {
@@ -126,24 +134,42 @@ class IssueController extends AbstractRestfulController implements
      * Get issues per assembly.
      *
      * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\IssueProperties[]
      * @attr id assembly ID
      */
     public function getList()
     {
+        $query = $this->params()->fromQuery('leit', null);
         $assemblyId = $this->params('id', null);
         $typeQuery = $this->params()->fromQuery('type', null);
+        $categoryQuery = $this->params()->fromQuery('category', null);
         $orderQuery = $this->params()->fromQuery('order', null);
         $types = $typeQuery ? str_split($typeQuery) : [];
+        $categories = explode(',', $categoryQuery);
 
-        $count = $this->issueService->countByAssembly($assemblyId, $types);
-        $range = $this->getRange($this->getRequest(), $count);
-        $issues = $this->issueService->fetchByAssembly(
-            $assemblyId,
-            $range['from'],
-            ($range['to']-$range['from']),
-            $orderQuery,
-            $types
-        );
+        if ($query) {
+            $issues = $this->issueSearchService->fetchByAssembly($query, $assemblyId);
+            $count = count($issues);
+            $range = $this->getRange($this->getRequest(), $count);
+
+            $issues = array_map(function (IssueAndDate $issue) {
+                $documents = $this->documentService->fetchByIssue($issue->getAssemblyId(), $issue->getIssueId());
+                $issue->setDate($documents[0]->getDate());
+                return $issue;
+            }, $issues);
+
+        } else {
+            $count = $this->issueService->countByAssembly($assemblyId, $types, $categories);
+            $range = $this->getRange($this->getRequest(), $count);
+            $issues = $this->issueService->fetchByAssembly(
+                $assemblyId,
+                $range->getFrom(),
+                $range->getSize(),
+                $orderQuery,
+                $types,
+                $categories
+            );
+        }
 
         $issuesAndProperties = array_map(function (IssueAndDateModel $issue) use ($assemblyId) {
             $issue->setGoal(Transformer::htmlToMarkdown($issue->getGoal()));
@@ -171,8 +197,7 @@ class IssueController extends AbstractRestfulController implements
 
         return (new CollectionModel($issuesAndProperties))
             ->setStatus(206)
-            ->setOption('Access-Control-Expose-Headers', 'Range, Range-Unit, Content-Range') //TODO should go into Rend
-            ->setRange($range['from'], $range['to'], $count);
+            ->setRange($range->getFrom(), $range->getFrom() + count($issuesAndProperties), $count);
     }
 
     /**
@@ -181,6 +206,7 @@ class IssueController extends AbstractRestfulController implements
      * @param int $id
      * @param array $data
      * @return \Rend\View\Model\ModelInterface
+     * @input \Althingi\Form\Issue
      */
     public function put($id, $data)
     {
@@ -191,8 +217,8 @@ class IssueController extends AbstractRestfulController implements
             ->setData(array_merge($data, ['assembly_id' => $assemblyId, 'issue_id' => $issueId]));
 
         if ($form->isValid()) {
-            $this->issueService->create($form->getObject());
-            return (new EmptyModel())->setStatus(201);
+            $affectedRows = $this->issueService->save($form->getObject());
+            return (new EmptyModel())->setStatus($affectedRows === 1 ? 201 : 205);
         }
 
         return (new ErrorModel($form))->setStatus(400);
@@ -204,6 +230,7 @@ class IssueController extends AbstractRestfulController implements
      * @param int $id
      * @param array $data
      * @return \Rend\View\Model\ModelInterface
+     * @input \Althingi\Form\Issue
      */
     public function patch($id, $data)
     {
@@ -314,5 +341,13 @@ class IssueController extends AbstractRestfulController implements
     public function setSpeechService(Speech $speech)
     {
         $this->speechService = $speech;
+    }
+
+    /**
+     * @param \Althingi\Service\SearchIssue $issue
+     */
+    public function setSearchIssueService(SearchIssue $issue)
+    {
+        $this->issueSearchService = $issue;
     }
 }

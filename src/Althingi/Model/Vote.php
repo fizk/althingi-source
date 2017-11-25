@@ -2,6 +2,8 @@
 
 namespace Althingi\Model;
 
+use DateTime;
+
 class Vote implements ModelInterface
 {
     /** @var int */
@@ -115,7 +117,7 @@ class Vote implements ModelInterface
     /**
      * @return \DateTime
      */
-    public function getDate(): ?\DateTime
+    public function getDate(): ?DateTime
     {
         return $this->date;
     }
@@ -124,7 +126,7 @@ class Vote implements ModelInterface
      * @param \DateTime $date
      * @return Vote
      */
-    public function setDate(\DateTime $date = null): Vote
+    public function setDate(DateTime $date = null): Vote
     {
         $this->date = $date;
         return $this;
@@ -274,13 +276,6 @@ class Vote implements ModelInterface
         ];
     }
 
-    /**
-     * Specify data which should be serialized to JSON
-     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
-     * @return mixed data which can be serialized by <b>json_encode</b>,
-     * which is a value of any type other than a resource.
-     * @since 5.4.0
-     */
     public function jsonSerialize()
     {
         return $this->toArray();

@@ -45,6 +45,11 @@ class DocumentController extends AbstractRestfulController implements
     /** @var  \Althingi\Service\Party */
     private $partyService;
 
+    /**
+     * @param mixed $id
+     * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\Document
+     */
     public function get($id)
     {
         $assemblyId = $this->params('id');
@@ -58,6 +63,10 @@ class DocumentController extends AbstractRestfulController implements
         }
     }
 
+    /**
+     * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\DocumentProperties
+     */
     public function getList()
     {
         $assemblyId = $this->params('id');
@@ -80,26 +89,20 @@ class DocumentController extends AbstractRestfulController implements
                 ->setVotes($votes)
                 ->setProponents($congressmen);
 
-//            $date = $document->date;
-//            array_walk($document->votes, function ($vote) use ($date) {
-//                $vote->items = $this->voteItemService->fetchByVote($vote->vote_id);
-//
-//                array_walk($vote->items, function ($voteItem) use ($date) {
-//                    $voteItem->congressman = $this->congressmanService->get($voteItem->congressman_id);
-//                    $voteItem->congressman->party = $this->partyService->getByCongressman(
-//                        $voteItem->congressman_id,
-//                        new DateTime($date)
-//                    );
-//                });
-//            });
-
             return $documentProperties;
         }, $this->documentService->fetchByIssue($assemblyId, $issueId));
 
         return (new CollectionModel($documents))
+            ->setStatus(206)
             ->setRange(0, count($documents), count($documents));
     }
 
+    /**
+     * @param mixed $id
+     * @param mixed $data
+     * @return \Rend\View\Model\ModelInterface
+     * @input \Althingi\Form\Document
+     */
     public function put($id, $data)
     {
         $assemblyId = $this->params('id');
@@ -113,13 +116,19 @@ class DocumentController extends AbstractRestfulController implements
         ));
 
         if ($form->isValid()) {
-            $this->documentService->create($form->getObject());
-            return (new EmptyModel())->setStatus(201);
+            $affectedRows = $this->documentService->save($form->getObject());
+            return (new EmptyModel())->setStatus($affectedRows === 1 ? 201 : 205);
         }
 
         return (new ErrorModel($form))->setStatus(400);
     }
 
+    /**
+     * @param $id
+     * @param $data
+     * @return \Rend\View\Model\ModelInterface
+     * @input \Althingi\Form\Document
+     */
     public function patch($id, $data)
     {
         $assemblyId = $this->params('id');

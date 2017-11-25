@@ -64,6 +64,31 @@ class CommitteeMeetingTest extends PHPUnit_Extensions_Database_TestCase
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
+    public function testSave()
+    {
+        $expectedTable = $this->createArrayDataSet([
+            'CommitteeMeeting' => [
+                ['committee_meeting_id' => 1, 'committee_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => null, 'description' => null],
+                ['committee_meeting_id' => 2, 'committee_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => null, 'description' => null],
+                ['committee_meeting_id' => 3, 'committee_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => null, 'description' => null],
+                ['committee_meeting_id' => 4, 'committee_id' => 1, 'assembly_id' => 2, 'from' => '2000-01-01 00:00:00', 'to' => null, 'description' => null],
+                ['committee_meeting_id' => 5, 'committee_id' => 1, 'assembly_id' => 2, 'from' => '2000-01-01 00:00:00', 'to' => null, 'description' => null],
+                ['committee_meeting_id' => 6, 'committee_id' => 1, 'assembly_id' => 2, 'from' => null, 'to' => null, 'description' => null],
+            ],
+        ])->getTable('CommitteeMeeting');
+        $actualTable = $this->getConnection()->createQueryTable('CommitteeMeeting', 'SELECT * FROM CommitteeMeeting');
+
+        $committeeMeeting = (new CommitteeMeetingModel())
+            ->setCommitteeId(1)
+            ->setAssemblyId(2);
+
+        $service = new CommitteeMeeting();
+        $service->setDriver($this->pdo);
+        $service->save($committeeMeeting);
+
+        $this->assertTablesEqual($expectedTable, $actualTable);
+    }
+
     public function testUpdate()
     {
         $expectedTable = $this->createArrayDataSet([

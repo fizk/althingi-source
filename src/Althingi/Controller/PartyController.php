@@ -19,6 +19,11 @@ class PartyController extends AbstractRestfulController implements
     /** @var \Althingi\Service\Party */
     private $partyService;
 
+    /**
+     * @param mixed $id
+     * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\Party
+     */
     public function get($id)
     {
         $party = $this->partyService->get($id);
@@ -31,15 +36,16 @@ class PartyController extends AbstractRestfulController implements
      * @param mixed $id
      * @param mixed $data
      * @return \Rend\View\Model\ModelInterface
+     * @input \Althingi\Form\Party
      */
     public function put($id, $data)
     {
         $form = new PartyForm();
         $form->bindValues(array_merge($data, ['party_id' => $id]));
         if ($form->isValid()) {
-            $this->partyService->create($form->getObject());
+            $affectedRow = $this->partyService->save($form->getObject());
             return (new EmptyModel())
-                ->setStatus(201);
+                ->setStatus($affectedRow === 1 ? 201 : 205);
         }
 
         return (new ErrorModel($form))->setStatus(400);
@@ -51,6 +57,7 @@ class PartyController extends AbstractRestfulController implements
      * @param int $id
      * @param array $data
      * @return \Rend\View\Model\ModelInterface
+     * @input \Althingi\Form\Party
      */
     public function patch($id, $data)
     {

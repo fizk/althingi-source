@@ -2,6 +2,8 @@
 
 namespace Althingi\Model;
 
+use DateTime;
+
 class IssueAndDate extends Issue
 {
     /** @var \DateTime */
@@ -10,7 +12,7 @@ class IssueAndDate extends Issue
     /**
      * @return \DateTime
      */
-    public function getDate(): ?\DateTime
+    public function getDate(): ?DateTime
     {
         return $this->date;
     }
@@ -19,7 +21,7 @@ class IssueAndDate extends Issue
      * @param \DateTime $date
      * @return IssueAndDate
      */
-    public function setDate(\DateTime $date = null): IssueAndDate
+    public function setDate(DateTime $date = null): IssueAndDate
     {
         $this->date = $date;
         return $this;
@@ -33,13 +35,6 @@ class IssueAndDate extends Issue
         ]);
     }
 
-    /**
-     * Specify data which should be serialized to JSON
-     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
-     * @return mixed data which can be serialized by <b>json_encode</b>,
-     * which is a value of any type other than a resource.
-     * @since 5.4.0
-     */
     public function jsonSerialize()
     {
         return $this->toArray();

@@ -50,6 +50,7 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
     {
         $service = new Speech();
         $service->setDriver($this->pdo);
+
         $expectedData = [
             (new SpeechAndPositionModel())
                 ->setSpeechId('id--00003')
@@ -77,6 +78,7 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
     {
         $service = new Speech();
         $service->setDriver($this->pdo);
+
         $expectedData = [];
 
         $actualData = $service->fetch('id--invalid', 1, 1, 2);
@@ -88,6 +90,7 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
     {
         $service = new Speech();
         $service->setDriver($this->pdo);
+
         $expectedData = [
             (new SpeechAndPositionModel())
                 ->setSpeechId('id--00001')
@@ -186,6 +189,7 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
                     'text' => null,
                     'type' => null,
                     'iteration' => null,
+                    'word_count' => 0
                 ]
             ],
         ])->getTable('Speech');
@@ -196,6 +200,44 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
         $speechService->setDriver($this->pdo);
         $speechService->setEventManager(new EventManager());
         $speechService->create($speech);
+
+        $this->assertTablesEqual($expectedTable, $actualTable);
+    }
+
+    public function testSave()
+    {
+        $speech = (new SpeechModel())
+            ->setSpeechId('id--20001')
+            ->setPlenaryId(1)
+            ->setAssemblyId(3)
+            ->setIssueId(1)
+            ->setCongressmanId(1);
+
+        $expectedTable = $this->createArrayDataSet([
+            'Speech' => [
+                [
+                    'speech_id' => 'id--20001',
+                    'plenary_id' => 1,
+                    'assembly_id' => 3,
+                    'issue_id' => 1,
+                    'congressman_id' => 1,
+                    'congressman_type' => null,
+                    'from' => null,
+                    'to' => null,
+                    'text' => null,
+                    'type' => null,
+                    'iteration' => null,
+                    'word_count' => 0
+                ]
+            ],
+        ])->getTable('Speech');
+        $actualTable = $this->getConnection()
+            ->createQueryTable('Speech', 'SELECT * FROM Speech where `assembly_id` = 3');
+
+        $speechService = new Speech();
+        $speechService->setDriver($this->pdo);
+        $speechService->setEventManager(new EventManager());
+        $speechService->save($speech);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
@@ -222,7 +264,8 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
                     'to' => null,
                     'text' => null,
                     'type' => null,
-                    'iteration' => null
+                    'iteration' => null,
+                    'word_count' => 0
                 ]
             ],
         ])->getTable('Speech');

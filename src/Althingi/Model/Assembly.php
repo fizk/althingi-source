@@ -2,12 +2,8 @@
 
 namespace Althingi\Model;
 
-/**
- * Created by PhpStorm.
- * User: einar.adalsteinsson
- * Date: 11/27/16
- * Time: 3:33 PM
- */
+use DateTime;
+
 class Assembly implements ModelInterface
 {
     /** @var  int */
@@ -40,7 +36,7 @@ class Assembly implements ModelInterface
     /**
      * @return \DateTime
      */
-    public function getFrom(): \DateTime
+    public function getFrom(): DateTime
     {
         return $this->from;
     }
@@ -49,7 +45,7 @@ class Assembly implements ModelInterface
      * @param \DateTime $from
      * @return $this
      */
-    public function setFrom(\DateTime $from)
+    public function setFrom(DateTime $from)
     {
         $this->from = $from;
         return $this;
@@ -58,7 +54,7 @@ class Assembly implements ModelInterface
     /**
      * @return \DateTime
      */
-    public function getTo(): ?\DateTime
+    public function getTo(): ?DateTime
     {
         return $this->to;
     }
@@ -67,7 +63,7 @@ class Assembly implements ModelInterface
      * @param \DateTime $to
      * @return $this
      */
-    public function setTo(\DateTime $to = null)
+    public function setTo(DateTime $to = null)
     {
         $this->to = $to;
         return $this;

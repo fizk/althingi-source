@@ -58,6 +58,20 @@ class Document implements DatabaseAwareInterface
      * @param \Althingi\Model\Document $data
      * @return int
      */
+    public function save(DocumentModel $data): int
+    {
+        $statement = $this->getDriver()->prepare(
+            $this->toSaveString('Document', $data)
+        );
+        $statement->execute($this->toSqlValues($data));
+
+        return $statement->rowCount();
+    }
+
+    /**
+     * @param \Althingi\Model\Document $data
+     * @return int
+     */
     public function update(DocumentModel$data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -72,6 +86,11 @@ class Document implements DatabaseAwareInterface
         return $statement->rowCount();
     }
 
+    /**
+     * @param int $assemblyId
+     * @param int $issueId
+     * @return \Althingi\Model\Document[]
+     */
     public function fetchByIssue(int $assemblyId, int $issueId): array
     {
         $statement = $this->getDriver()->prepare('

@@ -22,15 +22,16 @@ class SuperCategoryController extends AbstractRestfulController implements
      * @param mixed $id
      * @param mixed $data
      * @return \Rend\View\Model\ModelInterface
+     * @input \Althingi\Form\SuperCategory
      */
     public function put($id, $data)
     {
         $form = new SuperCategoryForm();
         $form->bindValues(array_merge($data, ['super_category_id' => $id]));
         if ($form->isValid()) {
-            $this->superCategoryService->create($form->getObject());
+            $affectedRows = $this->superCategoryService->save($form->getObject());
             return (new EmptyModel())
-                ->setStatus(201);
+                ->setStatus($affectedRows === 1 ? 201 : 205);
         }
 
         return (new ErrorModel($form))->setStatus(400);
@@ -42,6 +43,7 @@ class SuperCategoryController extends AbstractRestfulController implements
      * @param int $id
      * @param array $data
      * @return \Rend\View\Model\ModelInterface
+     * @input \Althingi\Form\SuperCategory
      */
     public function patch($id, $data)
     {

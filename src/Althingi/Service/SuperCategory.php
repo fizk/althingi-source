@@ -53,6 +53,20 @@ class SuperCategory implements DatabaseAwareInterface
         return $this->getDriver()->lastInsertId();
     }
 
+    /**
+     * @param SuperCategoryModel $data
+     * @return int
+     */
+    public function save(SuperCategoryModel $data): int
+    {
+        $statement = $this->getDriver()->prepare(
+            $this->toSaveString('SuperCategory', $data)
+        );
+        $statement->execute($this->toSqlValues($data));
+
+        return $statement->rowCount();
+    }
+
     public function update(SuperCategoryModel $data): int
     {
         $statement = $this->getDriver()->prepare(

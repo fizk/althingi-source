@@ -44,11 +44,11 @@ class SuperCategoryControllerTest extends AbstractHttpControllerTestCase
             ->setTitle('n1');
 
         $this->getMockService(SuperCategory::class)
-            ->shouldReceive('create')
+            ->shouldReceive('save')
             ->with(\Mockery::on(function ($actualDate) use ($expectedData) {
                 return $actualDate == $expectedData;
             }))
-            ->andReturn(10)
+            ->andReturn(1)
             ->once()
             ->getMock();
 

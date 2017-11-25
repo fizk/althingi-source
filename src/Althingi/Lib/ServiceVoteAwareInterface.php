@@ -7,7 +7,7 @@ use Althingi\Service\Vote;
 interface ServiceVoteAwareInterface
 {
     /**
-     * @param Vote $vote
+     * @param \Althingi\Service\Vote $vote
      */
     public function setVoteService(Vote $vote);
 }

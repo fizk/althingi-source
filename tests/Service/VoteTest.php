@@ -139,6 +139,34 @@ class VoteTest extends PHPUnit_Extensions_Database_TestCase
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
+    public function testSave()
+    {
+        $vote = (new VoteModel())
+            ->setVoteId(9)
+            ->setIssueId(2)
+            ->setAssemblyId(1)
+            ->setYes(0)
+            ->setNo(0)
+            ->setInaction(0)
+            ->setDocumentId(2);
+
+        $expectedTable = $this->createArrayDataSet([
+            'Vote' => [
+                ['vote_id' => 9, 'issue_id' => 2, 'assembly_id' => 1, 'document_id' => 2],
+            ],
+        ])->getTable('Vote');
+        $actualTable = $this->getConnection()->createQueryTable(
+            'Vote',
+            'SELECT `vote_id`, `issue_id`, `assembly_id`, `document_id` FROM Vote WHERE vote_id = 9'
+        );
+
+        $voteService = new Vote();
+        $voteService->setDriver($this->pdo);
+        $voteService->save($vote);
+
+        $this->assertTablesEqual($expectedTable, $actualTable);
+    }
+
     public function testUpdate()
     {
         $vote = (new VoteModel())

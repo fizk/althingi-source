@@ -87,7 +87,9 @@ class IssueCategoryControllerTest extends AbstractHttpControllerTestCase
         $this->dispatch('/loggjafarthing/141/thingmal/131/efnisflokkar', 'GET');
         $this->assertControllerClass('IssueCategoryController');
         $this->assertActionName('getList');
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(206);
+        $this->assertResponseHeaderContains('Content-Range', 'items 0-1/1');
+        $this->assertResponseHeaderContains('Range-Unit', 'items');
     }
 
     /**
@@ -96,8 +98,8 @@ class IssueCategoryControllerTest extends AbstractHttpControllerTestCase
     public function testPut()
     {
         $this->getMockService(IssueCategory::class)
-            ->shouldReceive('create')
-            ->andReturn()
+            ->shouldReceive('save')
+            ->andReturn(1)
             ->getMock();
 
         $this->dispatch('/loggjafarthing/141/thingmal/131/efnisflokkar/21', 'PUT');
@@ -112,7 +114,7 @@ class IssueCategoryControllerTest extends AbstractHttpControllerTestCase
     public function testPutInvalidArguments()
     {
         $this->getMockService(IssueCategory::class)
-            ->shouldReceive('create')
+            ->shouldReceive('save')
             ->andReturn()
             ->getMock();
 

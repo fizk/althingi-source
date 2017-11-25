@@ -42,7 +42,7 @@ class CongressmanDocumentControllerTest extends AbstractHttpControllerTestCase
     public function testPutSuccess()
     {
         $this->getMockService(CongressmanDocument::class)
-            ->shouldReceive('create')
+            ->shouldReceive('save')
             ->once()
             ->andReturn(1)
             ->getMock();

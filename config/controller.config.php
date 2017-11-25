@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einarvalur
- * Date: 9/04/2016
- * Time: 11:47 AM
- */
-
 use Althingi\Lib\ServiceCongressmanAwareInterface;
 use Althingi\Lib\ServiceIssueAwareInterface;
 use Althingi\Lib\ServicePartyAwareInterface;
@@ -48,8 +41,16 @@ use Althingi\Service\SuperCategory;
 use Althingi\Service\Category;
 use Althingi\Service\IssueCategory;
 use Althingi\Service\Election;
-
+use Althingi\Service\SearchSpeech;
+use Althingi\Service\SearchIssue;
+use Althingi\Lib\ServiceSearchIssueAwareInterface;
+use Althingi\Lib\ServiceSearchSpeechAwareInterface;
+use Althingi\Lib\ElasticSearchClientAwareInterface;
 use Zend\ServiceManager\AbstractPluginManager;
+use Zend\Cache\Storage\StorageInterface;
+use Elasticsearch\Client as ElasticsearchClient;
+
+use Althingi\Lib\CommandAssemblyStatisticsAwareInterface;
 
 return [
     'initializers' => [
@@ -199,5 +200,43 @@ return [
                 $instance->setElectionService($locator->get(Election::class));
             }
         },
+
+        ServiceSearchSpeechAwareInterface::class => function ($instance, AbstractPluginManager $sm) {
+            if ($instance instanceof ServiceSearchSpeechAwareInterface) {
+                $locator = $sm->getServiceLocator();
+                $instance->setSearchSpeechService($locator->get(SearchSpeech::class));
+            }
+        },
+
+        ServiceSearchIssueAwareInterface::class => function ($instance, AbstractPluginManager $sm) {
+            if ($instance instanceof ServiceSearchIssueAwareInterface) {
+                $locator = $sm->getServiceLocator();
+                $instance->setSearchIssueService($locator->get(SearchIssue::class));
+            }
+        },
+
+        ElasticSearchClientAwareInterface::class => function ($instance, AbstractPluginManager $sm) {
+            if ($instance instanceof ElasticSearchClientAwareInterface) {
+                $locator = $sm->getServiceLocator();
+                $instance->setElasticSearchClient($locator->get(ElasticsearchClient::class));
+            }
+        },
+
+        CommandAssemblyStatisticsAwareInterface::class => function ($instance, AbstractPluginManager $sm) {
+            if ($instance instanceof CommandAssemblyStatisticsAwareInterface) {
+                $locator = $sm->getServiceLocator();
+                $assemblyStatistics = new \Althingi\Command\AssemblyStatistics();
+                $assemblyStatistics->setStorage($locator->get(StorageInterface::class));
+                $assemblyStatistics->setAssemblyService($locator->get(Assembly::class));
+                $assemblyStatistics->setCategoryService($locator->get(Category::class));
+                $assemblyStatistics->setElectionService($locator->get(Election::class));
+                $assemblyStatistics->setIssueService($locator->get(Issue::class));
+                $assemblyStatistics->setPartyService($locator->get(Party::class));
+                $assemblyStatistics->setSpeechService($locator->get(Speech::class));
+                $assemblyStatistics->setVoteService($locator->get(Vote::class));
+
+                $instance->setAssemblyStatisticsCommand($assemblyStatistics);
+            }
+        }
     ]
 ];

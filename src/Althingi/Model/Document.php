@@ -2,6 +2,8 @@
 
 namespace Althingi\Model;
 
+use DateTime;
+
 class Document implements ModelInterface
 {
     /** @var  int */
@@ -79,7 +81,7 @@ class Document implements ModelInterface
     /**
      * @return \DateTime
      */
-    public function getDate(): \DateTime
+    public function getDate(): DateTime
     {
         return $this->date;
     }
@@ -88,7 +90,7 @@ class Document implements ModelInterface
      * @param \DateTime $date
      * @return Document
      */
-    public function setDate(\DateTime $date): Document
+    public function setDate(DateTime $date): Document
     {
         $this->date = $date;
         return $this;

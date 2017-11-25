@@ -23,6 +23,7 @@ class PlenaryController extends AbstractRestfulController implements
     /**
      * @param mixed $id
      * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\Plenary
      */
     public function get($id)
     {
@@ -38,6 +39,7 @@ class PlenaryController extends AbstractRestfulController implements
 
     /**
      * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\Plenary[]
      */
     public function getList()
     {
@@ -47,18 +49,20 @@ class PlenaryController extends AbstractRestfulController implements
 
         $plenaries = $this->plenaryService->fetchByAssembly(
             $assemblyId,
-            $range['from'],
-            ($range['to']-$range['from'])
+            $range->getFrom(),
+            $count
+//            ($range->getFrom()-$range->getTo())
         );
         return (new CollectionModel($plenaries))
             ->setStatus(206)
-            ->setRange($range['from'], $range['to'], $count);
+            ->setRange($range->getFrom(), $range->getFrom() + count($plenaries), $count);
     }
 
     /**
      * @param mixed $id
      * @param mixed $data
      * @return \Rend\View\Model\ModelInterface
+     * @input \Althingi\Form\Plenary
      */
     public function put($id, $data)
     {
@@ -71,8 +75,8 @@ class PlenaryController extends AbstractRestfulController implements
             );
 
         if ($form->isValid()) {
-            $this->plenaryService->create($form->getObject());
-            return (new EmptyModel())->setStatus(201);
+            $affectedRows = $this->plenaryService->save($form->getObject());
+            return (new EmptyModel())->setStatus($affectedRows === 1 ? 201 : 205);
         }
 
         return (new ErrorModel($form))->setStatus(400);
@@ -82,6 +86,7 @@ class PlenaryController extends AbstractRestfulController implements
      * @param $id
      * @param $data
      * @return \Rend\View\Model\ModelInterface
+     * @input \Althingi\Form\Plenary
      */
     public function patch($id, $data)
     {

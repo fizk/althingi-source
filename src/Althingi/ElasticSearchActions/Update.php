@@ -2,7 +2,7 @@
 
 namespace Althingi\ElasticSearchActions;
 
-use Althingi\ServiceEvents\ModelAndHydrator;
+use Althingi\Presenters\IndexablePresenterAwareInterface;
 use Elasticsearch\Client;
 
 class Update
@@ -15,9 +15,17 @@ class Update
         $this->client = $client;
     }
 
-    public function __invoke(ModelAndHydrator $event)
+    /**
+     * @param IndexablePresenterAwareInterface $event
+     */
+    public function __invoke(IndexablePresenterAwareInterface $event)
     {
-        // TODO: Implement __invoke() method.
+        $presenter = $event->getPresenter();
+        $this->client->index([
+            'index' => $presenter->getIndex(),
+            'type' => $presenter->getType(),
+            'id' => $presenter->getIdentifier(),
+            'body' => $presenter->getData(),
+        ]);
     }
-
 }

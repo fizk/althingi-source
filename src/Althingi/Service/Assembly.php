@@ -16,6 +16,7 @@ class Assembly implements DatabaseAwareInterface
     use DatabaseService;
 
     const ALLOWED_TYPES = ['a', 'b', 'l', 'm', 'q', 's'];
+    const MAX_ROW_COUNT = '18446744073709551615';
 
     /**
      * @var \PDO
@@ -58,21 +59,26 @@ class Assembly implements DatabaseAwareInterface
      * @param string $order
      * @return \Althingi\Model\Assembly[]
      */
-    public function fetchAll(int $offset = null, int $size = null, string $order = 'desc'): array
+    public function fetchAll(int $offset = 0, int $size = null, string $order = 'desc'): array
     {
         $order = in_array($order, ['asc', 'desc']) ? $order : 'desc';
+        $size = $size ? : self::MAX_ROW_COUNT;
 
-        $query = "select * from `Assembly` A order by A.`from` {$order}";
-        $limitQuery = "select * from `Assembly` A order by A.`from` {$order} limit {$offset}, {$size}";
-
-        $statement = $this->getDriver()->prepare(
-            ($offset && $size) ? $limitQuery : $query
-        );
+        $statement = $this->getDriver()
+            ->prepare("select * from `Assembly` A order by A.`from` {$order} limit {$offset}, {$size}");
         $statement->execute();
 
         return array_map(function ($assembly) {
             return (new AssemblyHydrator)->hydrate($assembly, new AssemblyModel());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
+    }
+
+    /**
+     * @return string[]
+     */
+    public function fetchTypes(): array
+    {
+        return self::ALLOWED_TYPES;
     }
 
     /**
@@ -102,6 +108,21 @@ class Assembly implements DatabaseAwareInterface
         $statement->execute($this->toSqlValues($data));
 
         return $this->getDriver()->lastInsertId();
+    }
+    /**
+     * Save one entry.
+     *
+     * @param \Althingi\Model\Assembly $data
+     * @return int affected rows
+     */
+    public function save(AssemblyModel $data): int
+    {
+        $statement = $this->getDriver()->prepare(
+            $this->toSaveString('Assembly', $data)
+        );
+        $statement->execute($this->toSqlValues($data));
+
+        return $statement->rowCount();
     }
 
     /**

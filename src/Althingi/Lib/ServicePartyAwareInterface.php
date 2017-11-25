@@ -7,7 +7,7 @@ use Althingi\Service\Party;
 interface ServicePartyAwareInterface
 {
     /**
-     * @param Party $party
+     * @param \Althingi\Service\Party $party
      */
     public function setPartyService(Party $party);
 }

@@ -7,7 +7,7 @@ class Category implements ModelInterface
     /** @var  int */
     private $category_id;
 
-    /** @var  string */
+    /** @var  int */
     private $super_category_id;
 
     /** @var  string */
@@ -35,18 +35,18 @@ class Category implements ModelInterface
     }
 
     /**
-     * @return string
+     * @return int
      */
-    public function getSuperCategoryId(): string
+    public function getSuperCategoryId(): int
     {
         return $this->super_category_id;
     }
 
     /**
-     * @param string $super_category_id
+     * @param int $super_category_id
      * @return Category
      */
-    public function setSuperCategoryId(string $super_category_id): Category
+    public function setSuperCategoryId(int $super_category_id): Category
     {
         $this->super_category_id = $super_category_id;
         return $this;

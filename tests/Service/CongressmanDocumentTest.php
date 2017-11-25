@@ -54,6 +54,30 @@ class CongressmanDocumentTest extends PHPUnit_Extensions_Database_TestCase
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
+    public function testSave()
+    {
+        $congressman = (new CongressmanDocumentModel())
+            ->setDocumentId(1)
+            ->setIssueId(1)
+            ->setAssemblyId(1)
+            ->setCongressmanId(2)
+            ->setOrder(2);
+
+        $expectedTable = $this->createArrayDataSet([
+            'Document_has_Congressman' => [
+                ['document_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'congressman_id' => 1, 'minister' => null, 'order' => 1],
+                ['document_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'congressman_id' => 2, 'minister' => null, 'order' => 2],
+            ],
+        ])->getTable('Document_has_Congressman');
+        $actualTable = $this->getConnection()->createQueryTable('Document_has_Congressman', 'SELECT * FROM Document_has_Congressman');
+
+        $congressmanService = new CongressmanDocument();
+        $congressmanService->setDriver($this->pdo);
+        $congressmanService->save($congressman);
+
+        $this->assertTablesEqual($expectedTable, $actualTable);
+    }
+
     public function testUpdate()
     {
         $congressman = (new CongressmanDocumentModel())

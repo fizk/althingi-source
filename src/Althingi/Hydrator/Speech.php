@@ -26,7 +26,8 @@ class Speech implements HydratorInterface
             ->setTo($data['to'] ? new \DateTime($data['to']) : null)
             ->setText($data['text'])
             ->setType($data['type'])
-            ->setIteration($data['iteration']);
+            ->setIteration($data['iteration'])
+            ->setWordCount(array_key_exists('word_count', $data) ? $data['word_count'] : 0);
     }
 
     /**

@@ -19,6 +19,11 @@ class CommitteeMeetingController extends AbstractRestfulController implements
      */
     private $committeeMeetingService;
 
+    /**
+     * @param mixed $id
+     * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\CommitteeMeeting
+     */
     public function get($id)
     {
         $committeeMeetingId = $this->params('committee_meeting_id');
@@ -32,6 +37,10 @@ class CommitteeMeetingController extends AbstractRestfulController implements
         return $this->notFoundAction();
     }
 
+    /**
+     * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\CommitteeMeeting[]
+     */
     public function getList()
     {
         $assemblyId = $this->params('id');
@@ -39,9 +48,17 @@ class CommitteeMeetingController extends AbstractRestfulController implements
 
         $meetings = $this->committeeMeetingService->fetchByAssembly($assemblyId, $committeeId);
 
-        return (new CollectionModel($meetings));
+        return (new CollectionModel($meetings))
+            ->setStatus(206)
+            ->setRange(0, count($meetings), count($meetings));
     }
 
+    /**
+     * @param mixed $id
+     * @param mixed $data
+     * @return \Rend\View\Model\ModelInterface
+     * @input Althingi\Form\CommitteeMeeting
+     */
     public function put($id, $data)
     {
         $assemblyId = $this->params('id');
@@ -55,14 +72,20 @@ class CommitteeMeetingController extends AbstractRestfulController implements
             'committee_meeting_id' => $committeeMeetingId
         ]));
         if ($form->isValid()) {
-            $this->committeeMeetingService->create($form->getObject());
+            $affectedRows = $this->committeeMeetingService->save($form->getObject());
             return (new EmptyModel())
-                ->setStatus(201);
+                ->setStatus($affectedRows === 1 ? 201 : 205);
         }
 
         return (new ErrorModel($form))->setStatus(400);
     }
 
+    /**
+     * @param $id
+     * @param $data
+     * @return \Rend\View\Model\ModelInterface
+     * @input Althingi\Form\CommitteeMeeting
+     */
     public function patch($id, $data)
     {
         $committeeMeetingId = $this->params('committee_meeting_id');

@@ -2,7 +2,7 @@
 
 namespace Althingi\ElasticSearchActions;
 
-use Althingi\ServiceEvents\ModelAndHydrator;
+use Althingi\Presenters\IndexablePresenterAwareInterface;
 use Elasticsearch\Client;
 
 class Add
@@ -16,11 +16,16 @@ class Add
     }
 
     /**
-     * @param ModelAndHydrator $event
+     * @param IndexablePresenterAwareInterface $event
      */
-    public function __invoke(ModelAndHydrator $event)
+    public function __invoke(IndexablePresenterAwareInterface $event)
     {
-        print_r($event->getHydrator());
-        print_r(get_class($event->getModel()));
+        $presenter = $event->getPresenter();
+        $this->client->index([
+            'index' => $presenter->getIndex(),
+            'type' => $presenter->getType(),
+            'id' => $presenter->getIdentifier(),
+            'body' => $presenter->getData(),
+        ]);
     }
 }

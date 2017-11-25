@@ -34,6 +34,10 @@ use Althingi\Controller\CommitteeMeetingAgendaController;
 use Althingi\Controller\AssemblyCommitteeController;
 use Althingi\Controller\HighlightController;
 
+use Althingi\Controller\Console\SearchIndexerController as ConsoleSearchIndexerController;
+use Althingi\Controller\Console\DocumentApiController as ConsoleDocumentApiController;
+use Althingi\Controller\Console\IssueStatusController as ConsoleIssueStatusController;
+
 return array(
     'router' => [
         'routes' => [
@@ -118,6 +122,16 @@ return array(
                                     'defaults' => [
                                         'controller' => CongressmanController::class,
                                         'action' => 'assembly-issues'
+                                    ],
+                                ],
+                            ],
+                            'thingmal-samantekt' => [
+                                'type' => 'Zend\Mvc\Router\Http\Segment',
+                                'options' => [
+                                    'route'    => '/:congressman_id/thingmal-samantekt',
+                                    'defaults' => [
+                                        'controller' => CongressmanController::class,
+                                        'action' => 'assembly-issues-summary'
                                     ],
                                 ],
                             ],
@@ -311,7 +325,17 @@ return array(
                                 ]
                             ]
                         ],
-                    ]
+                    ],
+                    'efnisflokkar' => [
+                        'type' => 'Zend\Mvc\Router\Http\Literal',
+                        'options' => [
+                            'route' => '/efnisflokkar',
+                            'defaults' => [
+                                'controller' => CategoryController::class,
+                                'action' => 'assembly-summary'
+                            ],
+                        ]
+                    ],
                 ],
             ],
             'nefndir' => [
@@ -470,6 +494,9 @@ return array(
             CommitteeMeetingAgendaController::class => CommitteeMeetingAgendaController::class,
             AssemblyCommitteeController::class => AssemblyCommitteeController::class,
             HighlightController::class => HighlightController::class,
+            ConsoleSearchIndexerController::class => ConsoleSearchIndexerController::class,
+            ConsoleDocumentApiController::class => ConsoleDocumentApiController::class,
+            ConsoleIssueStatusController::class => ConsoleIssueStatusController::class,
         ],
     ],
     'view_manager' => [
@@ -494,7 +521,53 @@ return array(
     // Placeholder for console routes
     'console' => [
         'router' => [
-            'routes' => [],
+            'routes' => [
+                'speech' => [
+                    'options' => [
+                        'route' => 'index:speech',
+                        'defaults' => [
+                            'controller' => ConsoleSearchIndexerController::class,
+                            'action' => 'speech'
+                        ],
+                    ],
+                ],
+                'issue' => [
+                    'options' => [
+                        'route' => 'index:issue',
+                        'defaults' => [
+                            'controller' => ConsoleSearchIndexerController::class,
+                            'action' => 'issue'
+                        ],
+                    ],
+                ],
+                'status' => [
+                    'options' => [
+                        'route' => 'index:status [--assembly=|-a] [--type=|-t]',
+                        'defaults' => [
+                            'controller' => ConsoleIssueStatusController::class,
+                            'action' => 'index'
+                        ],
+                    ],
+                ],
+                'status-list' => [
+                    'options' => [
+                        'route' => 'index:status-list',
+                        'defaults' => [
+                            'controller' => ConsoleIssueStatusController::class,
+                            'action' => 'status-list'
+                        ],
+                    ],
+                ],
+                'document' => [
+                    'options' => [
+                        'route' => 'document:api',
+                        'defaults' => [
+                            'controller' => ConsoleDocumentApiController::class,
+                            'action' => 'index'
+                        ],
+                    ],
+                ],
+            ],
         ],
     ],
 );

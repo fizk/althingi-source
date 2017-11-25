@@ -2,6 +2,8 @@
 
 namespace Althingi\Model;
 
+use DateTime;
+
 class CongressmanAndCabinet extends Congressman
 {
     /** @var  string */
@@ -31,7 +33,7 @@ class CongressmanAndCabinet extends Congressman
     /**
      * @return \DateTime
      */
-    public function getDate(): \DateTime
+    public function getDate(): DateTime
     {
         return $this->date;
     }
@@ -40,7 +42,7 @@ class CongressmanAndCabinet extends Congressman
      * @param \DateTime $date
      * @return CongressmanAndCabinet
      */
-    public function setDate(\DateTime $date = null): CongressmanAndCabinet
+    public function setDate(DateTime $date = null): CongressmanAndCabinet
     {
         $this->date = $date;
         return $this;

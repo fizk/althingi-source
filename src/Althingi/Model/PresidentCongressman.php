@@ -63,7 +63,7 @@ class PresidentCongressman extends Congressman
     /**
      * @return \DateTime
      */
-    public function getFrom(): \DateTime
+    public function getFrom(): DateTime
     {
         return $this->from;
     }
@@ -72,7 +72,7 @@ class PresidentCongressman extends Congressman
      * @param \DateTime $from
      * @return PresidentCongressman
      */
-    public function setFrom(\DateTime $from): PresidentCongressman
+    public function setFrom(DateTime $from): PresidentCongressman
     {
         $this->from = $from;
         return $this;
@@ -81,7 +81,7 @@ class PresidentCongressman extends Congressman
     /**
      * @return \DateTime
      */
-    public function getTo(): ?\DateTime
+    public function getTo(): ?DateTime
     {
         return $this->to;
     }
@@ -90,7 +90,7 @@ class PresidentCongressman extends Congressman
      * @param \DateTime $to
      * @return PresidentCongressman
      */
-    public function setTo(\DateTime $to = null): PresidentCongressman
+    public function setTo(DateTime $to = null): PresidentCongressman
     {
         $this->to = $to;
         return $this;
@@ -143,7 +143,7 @@ class PresidentCongressman extends Congressman
             'president_id' => $this->president_id,
             'assembly_id' => $this->assembly_id,
             'from' => $this->from->format('Y-m-d'),
-            'to' => $this->to ? new DateTime($this->to) : null,
+            'to' => $this->to ? $this->to->format('Y-m-d') : null,
             'title' => $this->title,
             'abbr' => $this->abbr,
         ]);

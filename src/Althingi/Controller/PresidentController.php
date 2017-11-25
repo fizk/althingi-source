@@ -36,6 +36,7 @@ class PresidentController extends AbstractRestfulController implements
      *
      * @param int $id
      * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\CongressmanPartyProperties
      */
     public function get($id)
     {
@@ -58,27 +59,29 @@ class PresidentController extends AbstractRestfulController implements
      * Return list of Presidents.
      *
      * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\PresidentPartyProperties[]
      */
     public function getList()
     {
         $presidents = $this->congressmanService->fetchPresidents();
         $presidentsAndParties = array_map(function (\Althingi\Model\President $president) {
-            $p = (new PresidentPartyProperties)
+            return (new PresidentPartyProperties)
                 ->setPresident($president)
                 ->setParty($this->partyService->getByCongressman(
                     $president->getCongressmanId(),
                     $president->getFrom()
                 ));
-            return $p;
         }, $presidents);
 
         return (new CollectionModel($presidentsAndParties))
-            ->setStatus(200);
+            ->setStatus(206)
+            ->setRange(0, count($presidentsAndParties), count($presidentsAndParties));
     }
 
     /**
      * @param mixed $data
      * @return \Rend\View\Model\ModelInterface
+     * @input \Althingi\Form\President
      */
     public function post($data)
     {
@@ -118,6 +121,7 @@ class PresidentController extends AbstractRestfulController implements
      * @param $id
      * @param $data
      * @return \Rend\View\Model\ModelInterface
+     * @input \Althingi\Form\President
      */
     public function patch($id, $data)
     {

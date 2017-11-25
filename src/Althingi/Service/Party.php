@@ -9,13 +9,18 @@ use Althingi\Model\PartyAndTime as PartyAndTimeModel;
 use Althingi\Hydrator\PartyAndElection as PartyAndElectionHydrator;
 use Althingi\Hydrator\PartyAndTime as PartyAndTimeHydrator;
 use Althingi\Lib\DatabaseAwareInterface;
+use Althingi\Presenters\IndexablePartyPresenter;
+use Althingi\ServiceEvents\AddEvent;
+use Althingi\ServiceEvents\UpdateEvent;
 use PDO;
+use Zend\EventManager\EventManagerAwareInterface;
+use Zend\EventManager\EventManagerInterface;
 
 /**
  * Class Party
  * @package Althingi\Service
  */
-class Party implements DatabaseAwareInterface
+class Party implements DatabaseAwareInterface, EventManagerAwareInterface
 {
     use DatabaseService;
 
@@ -23,6 +28,9 @@ class Party implements DatabaseAwareInterface
      * @var \PDO
      */
     private $pdo;
+
+    /** @var  \Zend\EventManager\EventManager */
+    private $eventManager;
 
     /**
      * Get one party.
@@ -132,7 +140,7 @@ class Party implements DatabaseAwareInterface
 
     /**
      * @param int $assemblyId
-     * @return \Althingi\Model\Party[]
+     * @return \Althingi\Model\PartyAndElection[]
      */
     public function fetchElectedByAssembly(int $assemblyId): array
     {
@@ -199,7 +207,25 @@ class Party implements DatabaseAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
+        $this->getEventManager()->trigger(new AddEvent(new IndexablePartyPresenter($data)));
+
         return $this->getDriver()->lastInsertId();
+    }
+
+    /**
+     * @param \Althingi\Model\Party $data
+     * @return int
+     */
+    public function save(PartyModel $data): int
+    {
+        $statement = $this->getDriver()->prepare(
+            $this->toSaveString('Party', $data)
+        );
+        $statement->execute($this->toSqlValues($data));
+
+        $this->getEventManager()->trigger(new AddEvent(new IndexablePartyPresenter($data)));
+
+        return $statement->rowCount();
     }
 
     /**
@@ -212,6 +238,8 @@ class Party implements DatabaseAwareInterface
             $this->toUpdateString('Party', $data, "party_id={$data->getPartyId()}")
         );
         $statement->execute($this->toSqlValues($data));
+
+        $this->getEventManager()->trigger(new UpdateEvent(new IndexablePartyPresenter($data)));
 
         return $statement->rowCount();
     }
@@ -230,5 +258,28 @@ class Party implements DatabaseAwareInterface
     public function getDriver()
     {
         return $this->pdo;
+    }
+
+    /**
+     * Inject an EventManager instance
+     *
+     * @param  EventManagerInterface $eventManager
+     * @return void
+     */
+    public function setEventManager(EventManagerInterface $eventManager)
+    {
+        $this->eventManager = $eventManager;
+    }
+
+    /**
+     * Retrieve the event manager
+     *
+     * Lazy-loads an EventManager instance if none registered.
+     *
+     * @return EventManagerInterface
+     */
+    public function getEventManager()
+    {
+        return $this->eventManager;
     }
 }
