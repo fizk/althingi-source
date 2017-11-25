@@ -18,18 +18,18 @@
         "zendframework/zendframework": "2.5.*",
         "zendframework/zend-mvc": "2.6.3",
         "monolog/monolog": "~1.13",
-        "fizk/rend": "1.0.0",
-        "squizlabs/php_codesniffer": "*",
+        "fizk/rend": "2.0.0",
         "league/html-to-markdown": "^4.2",
         "elasticsearch/elasticsearch": "^5.3",
         "guzzlehttp/ringphp": "^1.1",
-        "mikey179/vfsStream": "^1.6",
         "zeptech/annotations": "^1.1",
         "yohang/finite": "^1.1"
     },
-  "require-dev": {
-    "phpunit/phpunit": "5.6.*",
-    "phpunit/dbunit": "^2.0",
-    "mockery/mockery": "dev-master"
-  }
+    "require-dev": {
+        "phpunit/phpunit": "5.6.*",
+        "phpunit/dbunit": "^2.0",
+        "mockery/mockery": "dev-master",
+        "squizlabs/php_codesniffer": "*",
+        "mikey179/vfsStream": "^1.6"
+    }
 }
