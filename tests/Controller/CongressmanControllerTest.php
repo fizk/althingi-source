@@ -6,6 +6,7 @@ use Althingi\Model\CongressmanAndParty;
 use Althingi\Model\Session as SessionModel;
 use Althingi\Model\Issue as IssueModel;
 use Althingi\Model\IssueCategoryAndTime as IssueCategoryAndTimeModel;
+use Althingi\Service\Assembly;
 use Althingi\Service\Congressman;
 use Althingi\Service\Issue;
 use Althingi\Service\IssueCategory;
@@ -51,7 +52,8 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
             VoteItem::class,
             Issue::class,
             Speech::class,
-            IssueCategory::class
+            IssueCategory::class,
+            Assembly::class,
 
         ]);
     }
@@ -344,6 +346,13 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
      */
     public function testAssemblyAction()
     {
+        $this->getMockService(Assembly::class)
+            ->shouldReceive('get')
+            ->with(1)
+            ->once()
+            ->andReturn((new \Althingi\Model\Assembly())->setAssemblyId(1))
+            ->getMock();
+
         $this->getMockService(Congressman::class)
             ->shouldReceive('fetchByAssembly')
             ->with(1, null)
@@ -365,8 +374,6 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
         $this->assertControllerClass('CongressmanController');
         $this->assertActionName('assembly');
         $this->assertResponseStatusCode(200);
-
-//        print_r(json_decode($this->getResponse()->getContent()));
     }
 
     /**
