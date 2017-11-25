@@ -161,32 +161,6 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
     /**
      * @covers ::put
      */
-    public function testPutSuccessTeapot()
-    {
-        $this->getMockService(Speech::class)
-            ->shouldReceive('save')
-            ->andThrow(new \PDOException('some fk_Speach_Plenary1 some', 23000))
-            ->getMock();
-
-        $this->dispatch('/loggjafarthing/1/thingmal/3/raedur/4', 'PUT', [
-            'from' => '2001-01-01 00:00:00',
-            'to' => '2001-01-01 00:00:00',
-            'plenary_id' => 20,
-            'congressman_id' => 10,
-            'congressman_type' => null,
-            'iteration' => '*',
-            'type' => 't1',
-            'text' => 't2'
-        ]);
-
-        $this->assertControllerClass('SpeechController');
-        $this->assertActionName('put');
-        $this->assertResponseStatusCode(418);
-    }
-
-    /**
-     * @covers ::put
-     */
     public function testPutInvalidForm()
     {
         $this->getMockService(Speech::class)

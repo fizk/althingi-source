@@ -124,7 +124,5 @@ class StatusNormalizerLTest extends PHPUnit_Framework_TestCase
         }, $data);
 
         $normalizer = new StatusNormalizerL();
-
-        print_r($normalizer($models));
     }
 }
