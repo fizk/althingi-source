@@ -47,10 +47,7 @@ use Althingi\Lib\ServiceSearchIssueAwareInterface;
 use Althingi\Lib\ServiceSearchSpeechAwareInterface;
 use Althingi\Lib\ElasticSearchClientAwareInterface;
 use Zend\ServiceManager\AbstractPluginManager;
-use Zend\Cache\Storage\StorageInterface;
 use Elasticsearch\Client as ElasticsearchClient;
-
-use Althingi\Lib\CommandAssemblyStatisticsAwareInterface;
 
 return [
     'initializers' => [
@@ -221,22 +218,5 @@ return [
                 $instance->setElasticSearchClient($locator->get(ElasticsearchClient::class));
             }
         },
-
-        CommandAssemblyStatisticsAwareInterface::class => function ($instance, AbstractPluginManager $sm) {
-            if ($instance instanceof CommandAssemblyStatisticsAwareInterface) {
-                $locator = $sm->getServiceLocator();
-                $assemblyStatistics = new \Althingi\Command\AssemblyStatistics();
-                $assemblyStatistics->setStorage($locator->get(StorageInterface::class));
-                $assemblyStatistics->setAssemblyService($locator->get(Assembly::class));
-                $assemblyStatistics->setCategoryService($locator->get(Category::class));
-                $assemblyStatistics->setElectionService($locator->get(Election::class));
-                $assemblyStatistics->setIssueService($locator->get(Issue::class));
-                $assemblyStatistics->setPartyService($locator->get(Party::class));
-                $assemblyStatistics->setSpeechService($locator->get(Speech::class));
-                $assemblyStatistics->setVoteService($locator->get(Vote::class));
-
-                $instance->setAssemblyStatisticsCommand($assemblyStatistics);
-            }
-        }
     ]
 ];

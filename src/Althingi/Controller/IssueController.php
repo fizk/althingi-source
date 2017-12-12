@@ -253,6 +253,17 @@ class IssueController extends AbstractRestfulController implements
         return (new ErrorModel($form))->setStatus(400);
     }
 
+    public function progressAction()
+    {
+        $assemblyId = $this->params('id');
+        $issueId = $this->params('issue_id');
+
+        $collection = $this->issueService->fetchProgress($assemblyId, $issueId);
+
+        return (new CollectionModel($collection))
+            ->setStatus(206);
+    }
+
     /**
      * List options for Assembly collection.
      *

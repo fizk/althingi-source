@@ -2,9 +2,7 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Command\AssemblyStatistics;
 use Althingi\Form\Assembly as AssemblyForm;
-use Althingi\Lib\CommandAssemblyStatisticsAwareInterface;
 use Althingi\Lib\DateAndCountSequence;
 use Althingi\Lib\ServiceAssemblyAwareInterface;
 use Althingi\Lib\ServiceCabinetAwareInterface;
@@ -39,8 +37,7 @@ class AssemblyController extends AbstractRestfulController implements
     ServiceSpeechAwareInterface,
     ServiceCabinetAwareInterface,
     ServiceCategoryAwareInterface,
-    ServiceElectionAwareInterface,
-    CommandAssemblyStatisticsAwareInterface
+    ServiceElectionAwareInterface
 {
     use Range;
 
@@ -67,9 +64,6 @@ class AssemblyController extends AbstractRestfulController implements
 
     /** @var $issueService \Althingi\Service\Election */
     private $electionService;
-
-    /** @var  \Althingi\Command\AssemblyStatistics */
-    private $assemblyStatisticsCommand;
 
     /**
      * Get one Assembly.
@@ -180,11 +174,29 @@ class AssemblyController extends AbstractRestfulController implements
      */
     public function statisticsAction()
     {
-        $assemblyId = $this->params('id');
+        $assembly = $this->assemblyService->get($this->params('id'));
 
-        $response = $this->assemblyStatisticsCommand
-            ->setAssemblyId($assemblyId)
-            ->exec();
+        $response = (new AssemblyStatusProperties())
+            ->setBills($this->issueService->fetchNonGovernmentBillStatisticsByAssembly($assembly->getAssemblyId()))
+            ->setGovernmentBills(
+                $this->issueService->fetchGovernmentBillStatisticsByAssembly($assembly->getAssemblyId())
+            )
+            ->setTypes($this->issueService->fetchStateByAssembly($assembly->getAssemblyId()))
+            ->setVotes(DateAndCountSequence::buildDateRange(
+                $assembly->getFrom(),
+                $assembly->getTo(),
+                $this->voteService->fetchFrequencyByAssembly($assembly->getAssemblyId())
+            ))
+            ->setSpeeches(DateAndCountSequence::buildDateRange(
+                $assembly->getFrom(),
+                $assembly->getTo(),
+                $this->speechService->fetchFrequencyByAssembly($assembly->getAssemblyId())
+            ))
+            ->setPartyTimes($this->partyService->fetchTimeByAssembly($assembly->getAssemblyId()))
+            ->setCategories($this->categoryService->fetchByAssembly($assembly->getAssemblyId())) //@todo remove this
+            ->setElection($this->electionService->getByAssembly($assembly->getAssemblyId()))
+            ->setElectionResults($this->partyService->fetchElectedByAssembly($assembly->getAssemblyId()))
+            ;
 
         return (new ItemModel($response))
             ->setStatus(200);
@@ -304,13 +316,5 @@ class AssemblyController extends AbstractRestfulController implements
     public function setElectionService(Election $election)
     {
         $this->electionService = $election;
-    }
-
-    /**
-     * @param \Althingi\Command\AssemblyStatistics $assemblyStatistics
-     */
-    public function setAssemblyStatisticsCommand(AssemblyStatistics $assemblyStatistics)
-    {
-        $this->assemblyStatisticsCommand = $assemblyStatistics;
     }
 }

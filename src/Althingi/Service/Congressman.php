@@ -3,6 +3,7 @@
 namespace Althingi\Service;
 
 use Althingi\Lib\DatabaseAwareInterface;
+use Althingi\Model\CongressmanValue as CongressmanValueModel;
 use Althingi\Presenters\IndexableCongressmanPresenter;
 use Althingi\ServiceEvents\AddEvent;
 use Althingi\ServiceEvents\UpdateEvent;
@@ -17,6 +18,7 @@ use Althingi\Hydrator\Congressman as CongressmanHydrator;
 use Althingi\Hydrator\CongressmanAndParty as CongressmanAndPartyHydrator;
 use Althingi\Hydrator\CongressmanAndCabinet as CongressmanAndCabinetHydrator;
 use Althingi\Hydrator\CongressmanAndRange as CongressmanAndRangeHydrator;
+use Althingi\Hydrator\CongressmanValue as CongressmanValueHydrator;
 use Althingi\Hydrator\Proponent as ProponentHydrator;
 use Althingi\Hydrator\President as PresidentHydrator;
 use Zend\EventManager\EventManagerAwareInterface;
@@ -123,6 +125,81 @@ class Congressman implements DatabaseAwareInterface, EventManagerAwareInterface
     }
 
     /**
+     * Accumulated speech-time per congressman for a given assembly.
+     *
+     * @param int $assemblyId
+     * @param int $size
+     * @param string $order
+     * @return \Althingi\Model\CongressmanValue[]
+     */
+    public function fetchTimeByAssembly(int $assemblyId, ?int $size, ?string $order = 'desc'): array
+    {
+        $limit = $size
+            ? "limit 0, {$size}"
+            : '';
+
+        $statement = $this->getDriver()->prepare(
+            "select C.*,
+                (
+                    select (sum(time_to_sec(timediff(`to`, `from`)))) as `count`
+                    from `Speech` S 
+                    where S.`assembly_id` = :assembly_id and S.`congressman_id` = C.congressman_id
+                    group by `congressman_id`
+                ) as `value`
+                from `Session` S
+                    join `Congressman` C on (C.congressman_id = S.congressman_id)
+                where S.assembly_id = :assembly_id and S.`type` = 'þingmaður'
+                group by S.congressman_id order by `value` {$order} {$limit};"
+        );
+        $statement->execute([
+            'assembly_id' => $assemblyId,
+        ]);
+
+        return array_map(function ($speech) {
+            return (new CongressmanValueHydrator())->hydrate($speech, new CongressmanValueModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
+    }
+
+    /**
+     * Accumulates submitted types of issue per congressman.
+     *
+     * @param int $assemblyId
+     * @param null|int $size
+     * @param null|string[] $type
+     * @param null|string $order
+     * @return \Althingi\Model\CongressmanValue[]
+     */
+    public function fetchIssueTypeCountByAssembly(int $assemblyId, ?int $size, $type = [], ?string $order = 'desc'): array
+    {
+        $limit = $size
+            ? "limit 0, {$size}"
+            : '';
+        $types = count($type) > 0
+            ? "and I.`type` in (" . implode(', ', array_map(function ($i) {
+                return "'{$i}'";
+            }, $type)) . ")"
+            : '';
+
+        $statement = $this->getDriver()->prepare("
+            select C.*, count(*) as `value` from `Document_has_Congressman` DC
+                left join `Issue` I on (I.`issue_id` = DC.`issue_id` and I.`assembly_id` = :assembly_id)
+                join `Congressman` C on (DC.congressman_id = C.congressman_id)
+            where DC.`assembly_id` = :assembly_id 
+                and DC.`order` = 1
+                {$types}
+            group by DC.`congressman_id`
+            order by `value` {$order} {$limit};
+        ");
+        $statement->execute([
+            'assembly_id' => $assemblyId,
+        ]);
+
+        return array_map(function ($speech) {
+            return (new CongressmanValueHydrator())->hydrate($speech, new CongressmanValueModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
+    }
+
+    /**
      * @param int $cabinetId
      * @return \Althingi\Model\CongressmanAndCabinet[]
      */
@@ -188,6 +265,7 @@ class Congressman implements DatabaseAwareInterface, EventManagerAwareInterface
             return (new ProponentHydrator())->hydrate($object, new ProponentModel());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
+
     /**
      * @param int $assemblyId
      * @param int $issueId

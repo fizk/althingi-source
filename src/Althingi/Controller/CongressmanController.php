@@ -206,15 +206,116 @@ class CongressmanController extends AbstractRestfulController implements
             ->setStatus(200);
     }
 
-    public function assemblySpeechTimeAction()
+    /**
+     * Gets a list of congressmen and accumulated speech times.
+     *
+     * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\CongressmanPartyProperties[]
+     * @query rod asc|desc
+     * @query fjoldi [number]
+     */
+    public function assemblyTimesAction()
     {
         $assemblyId = $this->params('id');
-        $congressmanId = $this->params('congressman_id');
+        $order = $this->params()->fromQuery('rod', 'desc');
+        $size = $this->params()->fromQuery('fjoldi');
+        $assembly = $this->assemblyService->get($assemblyId);
+        $congressmen = $this->congressmanService->fetchTimeByAssembly($assemblyId, $size, $order);
 
-        $frequencyData = $this->speechService->getFrequencyByAssemblyAndCongressman($assemblyId, $congressmanId);
+        $collection = array_map(function (\Althingi\Model\Congressman $congressman) use ($assembly) {
+            return (new CongressmanPartyProperties())
+                ->setCongressman($congressman)
+                ->setAssembly($assembly)
+                ->setParty(
+                    $this->partyService->getByCongressman($congressman->getCongressmanId(), $assembly->getFrom())
+                );
+        }, $congressmen);
 
-        return (new ItemModel($frequencyData))
-            ->setStatus(200);
+        return (new CollectionModel($collection));
+    }
+
+    /**
+     * Gets a list of congressmen and accumulated count of questions they have submitted.
+     *
+     * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\CongressmanPartyProperties[]
+     * @query rod asc|desc
+     * @query fjoldi [number]
+     */
+    public function assemblyQuestionsAction()
+    {
+        $assemblyId = $this->params('id');
+        $order = $this->params()->fromQuery('rod', 'desc');
+        $size = $this->params()->fromQuery('fjoldi');
+        $assembly = $this->assemblyService->get($assemblyId);
+        $congressmen = $this->congressmanService->fetchIssueTypeCountByAssembly($assemblyId, $size, ['q', 'm'], $order);
+
+        $collection = array_map(function (\Althingi\Model\Congressman $congressman) use ($assembly) {
+            return (new CongressmanPartyProperties())
+                ->setCongressman($congressman)
+                ->setAssembly($assembly)
+                ->setParty(
+                    $this->partyService->getByCongressman($congressman->getCongressmanId(), $assembly->getFrom())
+                );
+        }, $congressmen);
+
+        return (new CollectionModel($collection));
+    }
+
+    /**
+     * Gets a list of congressmen and accumulated count of resolutions they have submitted.
+     *
+     * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\CongressmanPartyProperties[]
+     * @query rod asc|desc
+     * @query fjoldi [number]
+     */
+    public function assemblyResolutionsAction()
+    {
+        $assemblyId = $this->params('id');
+        $order = $this->params()->fromQuery('rod', 'desc');
+        $size = $this->params()->fromQuery('fjoldi');
+        $assembly = $this->assemblyService->get($assemblyId);
+        $congressmen = $this->congressmanService->fetchIssueTypeCountByAssembly($assemblyId, $size, ['a'], $order);
+
+        $collection = array_map(function (\Althingi\Model\Congressman $congressman) use ($assembly) {
+            return (new CongressmanPartyProperties())
+                ->setCongressman($congressman)
+                ->setAssembly($assembly)
+                ->setParty(
+                    $this->partyService->getByCongressman($congressman->getCongressmanId(), $assembly->getFrom())
+                );
+        }, $congressmen);
+
+        return (new CollectionModel($collection));
+    }
+
+    /**
+     * Gets a list of congressmen and accumulated count of bills they have submitted.
+     *
+     * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\CongressmanPartyProperties[]
+     * @query rod asc|desc
+     * @query fjoldi [number]
+     */
+    public function assemblyBillsAction()
+    {
+        $assemblyId = $this->params('id');
+        $order = $this->params()->fromQuery('rod', 'desc');
+        $size = $this->params()->fromQuery('fjoldi');
+        $assembly = $this->assemblyService->get($assemblyId);
+        $congressmen = $this->congressmanService->fetchIssueTypeCountByAssembly($assemblyId, $size, ['l'], $order);
+
+        $collection = array_map(function (\Althingi\Model\Congressman $congressman) use ($assembly) {
+            return (new CongressmanPartyProperties())
+                ->setCongressman($congressman)
+                ->setAssembly($assembly)
+                ->setParty(
+                    $this->partyService->getByCongressman($congressman->getCongressmanId(), $assembly->getFrom())
+                );
+        }, $congressmen);
+
+        return (new CollectionModel($collection));
     }
 
     public function assemblySessionsAction()

@@ -95,6 +95,46 @@ return array(
                         ],
                         'may_terminate' => true,
                         'child_routes' => [
+                            'raedutimar-allir' => [
+                                'type' => 'Zend\Mvc\Router\Http\Literal',
+                                'options' => [
+                                    'route'    => '/raedutimar',
+                                    'defaults' => [
+                                        'controller' => CongressmanController::class,
+                                        'action' => 'assembly-times'
+                                    ],
+                                ],
+                            ],
+                            'fyrirspurnir' => [
+                                'type' => 'Zend\Mvc\Router\Http\Literal',
+                                'options' => [
+                                    'route'    => '/fyrirspurnir',
+                                    'defaults' => [
+                                        'controller' => CongressmanController::class,
+                                        'action' => 'assembly-questions'
+                                    ],
+                                ],
+                            ],
+                            'thingsalyktanir' => [
+                                'type' => 'Zend\Mvc\Router\Http\Literal',
+                                'options' => [
+                                    'route'    => '/thingsalyktanir',
+                                    'defaults' => [
+                                        'controller' => CongressmanController::class,
+                                        'action' => 'assembly-resolutions'
+                                    ],
+                                ],
+                            ],
+                            'lagafrumvarp' => [
+                                'type' => 'Zend\Mvc\Router\Http\Literal',
+                                'options' => [
+                                    'route'    => '/lagafrumvorp',
+                                    'defaults' => [
+                                        'controller' => CongressmanController::class,
+                                        'action' => 'assembly-bills'
+                                    ],
+                                ],
+                            ],
                             'raedutimar' => [
                                 'type' => 'Zend\Mvc\Router\Http\Segment',
                                 'options' => [
@@ -226,6 +266,17 @@ return array(
                                     'defaults' => [
                                         'controller' => SpeechController::class,
                                         'identifier' => 'speech_id'
+                                    ],
+                                ],
+                            ],
+
+                            'ferli' => [
+                                'type' => 'Zend\Mvc\Router\Http\Literal',
+                                'options' => [
+                                    'route'    => '/ferli',
+                                    'defaults' => [
+                                        'controller' => IssueController::class,
+                                        'action' => 'progress'
                                     ],
                                 ],
                             ],

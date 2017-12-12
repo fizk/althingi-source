@@ -1,39 +1,86 @@
 #Althingi
 
-You will need PHP7 with x-debug.
-You will need MySQL (>=5.7.15)
-...and you will need composer. You can install composer how ever you want. I have installed it as a global bin, so every time you see `composer` in teh description below you will have to call it `php /path/to/composer.phar` if you do not have it in you $PATH
+This is the REST API data server for the **Loggjafarthing** system.
 
+This is a ZF2 module and as such you have to put it into the `module` directory of an
+installed ZF2 application and register it (more in the install section).
 
-then get ZF2 skeleton app
+## Install
+First of all, this code requires PHP 7.1. You also need MySQL (>=5.7.15) and additionally 
+you might require ElasticSearch and Memcached. You need x-debug to run tests and Composer
+to do the install.
+
+### Pre-install.
+This system used ElasticSearch for searching. You do need to set that up. If you are lazy
+you can run it as a Docker service. Just make sure you run it in the project's root directory
+and not the module's as it created files you don't want to get into the GIT repo
+```sh
+$ docker run -p 9200:9200 -p 9300:9300 -v "$PWD/data":/usr/share/elasticsearch/data -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:5.6.3
+```
+
+Elastic search requires some indexes. They are at the bottom of this document.
+
+Before you start the PHP bits, make sure you have [Composer](https://getcomposer.org/) globally installed
+on your system.
+
+Install a [ZF2 skeleton app](https://github.com/zendframework/ZendSkeletonApplication)
+```sh
 composer create-project --stability="dev" zendframework/skeleton-application Althingi
+```
 
-now `cd` into the project's root directory
+The system will listen for some Env variables. For development, the defaults should work but
+if you need to change anything, here is a complete list:
+
+| name            | default   | description                                             |
+|-----------------|-----------|---------------------------------------------------------|
+| DB_HOST         | localhost | MySQL                                                   |
+| DB_PORT         | 3306      |                                                         |
+| DB_NAME         | althingi  |                                                         |
+| DB_USER         | root      |                                                         |
+| DB_DB_PASSWORD  |           |                                                         |
+| ES_HOST         | localhost | ElasticSearch                                           |
+| ES_PROTO        | http      |                                                         |
+| ES_PORT         | 9200      |                                                         |
+| ES_USER         | elastic   |                                                         |
+| ES_PASSWORD     | changeme  |                                                         |
+| CACHE           |           | What to use for response cache: FILE, MEMCACHED or NONE |
+| SEARCH          |           | What to use for searching: ELASTICSEARCH or NONE        |
+
+
+### Install.
+Next you need to clone this repo and hook it into the **ZF2 skeleton app**.
+
+First `cd` into the project's root directory and clone the repo into the `module` directory
+```sh
 cd ./Althingi
-
-then get the module
 git clone https://github.com/fizk/Loggjafarthing.git ./module/Althingi
-
-
-then get the depenencies
+```
+Next you need to get all the 3rd party libraries and dependencies. I like to install them into
+the module and NOT into the root project directory, it makes testing easier. 
+```sh
 composer install -d ./module/Althingi 
-
-
-remove unwanted modules
+```
+I like to remove the default module so it is not in my way as I don't need it.
+```sh
 rm -rf ./module/Application
+```
 
-now, register the new module
-
-./config/application.config.php
+Now you need to tell ZF2 about your new module, so register it
+```php
+//  ./config/application.config.php
 
 'modules' => array(
-        'Althingi',
-    ),
+    'Althingi',
+),
+```
 
-now point to the dependencies
-./init_autoload.php
-
+Because we are not using the normal path to the `vendor` directory, you need to change its include
+path
 ```php
+//  ./init_autoload.php
+
+...
+
 if (file_exists('module/Althingi/vendor/autoload.php')) {
     $loader = include 'module/Althingi/vendor/autoload.php';
 }
@@ -42,105 +89,106 @@ if (file_exists('module/Althingi/vendor/autoload.php')) {
 
 ```
 
-Now to configure the Database... go to ./config/autoload/global.php and set it like this:
-```php
-return [
-    'db' => [
-        'dns' => 'mysql:host=127.0.0.1;dbname=althingi',
-        'user' => 'root',
-        'password' => '',
-    ]
-];
-```
+### Post-install.
+Now it's time to set up the database.
 
-...or what ever the name of your host and database it...
+Start off by creating a `althingi` database. You can call it what you want but I do think
+`althingi` is the best option.
 
-then shell into it and create the database
-```sql
-create database althingi;
-```
-you can get the latest snapshot of the db here http://107.170.87.126/dump.sql
-and then you just have to pipe it in
+There is a snapshot of the schema located in the `assets/database` directory. You can just
+run it into the newly created database.
 ```sh
-$ mysql -u root althingi < ~/Desktop/dump.sql
+$ mysql -u root althingi < ./module/Althingi/assets/database/dump.sql
 ```
-
 if you are having problems with the GROUP BY clauses, add this to /etc/mysql/my.cnf
 ```
 [mysqld]
 sql_mode = STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
 ```
-and restart
 
-now you can run the server to make sure everythinbg is working
-php -S 0.0.0.0:3030 -t public
+Now everything should be working and you could start the system by running it through the built-in
+server. In your terminal go to the project's `public` directory (not the module's) and run
 
-if it says something like this:
-
-```
-Parse error: parse error in ~/workspace/Althingi/module/Althingi/view/althingi/index/index.phtml on line 1
-```
-
-you have to go into that file and remove the XML decleration
-
-```
-<?xml version="1.0" encoding="UTF-8"?>
-```
-
-
-ZF2 application. Place in your module directory under then name **Althingi**. Remember to register in `config/application.config.php`
-
-I usually override `init_autoloader.php` so I can use the `vendor` directory inside the module and not the one in the skeleton application.
-Replace content in  `init_autoloader.php` with
-
-```php
-
-// Composer autoloading
-if (file_exists('module/Althingi/vendor/autoload.php')) {
-    $loader = include 'module/Althingi/vendor/autoload.php';
-}
-
-if (class_exists('Zend\Loader\AutoloaderFactory')) {
-    return;
-}
-
-$zf2Path = false;
-
-if (is_dir('vendor/ZF2/library')) {
-    $zf2Path = 'vendor/ZF2/library';
-} elseif (getenv('ZF2_PATH')) {      // Support for ZF2_PATH environment variable or git submodule
-    $zf2Path = getenv('ZF2_PATH');
-} elseif (get_cfg_var('zf2_path')) { // Support for zf2_path directive value
-    $zf2Path = get_cfg_var('zf2_path');
-}
-
-if ($zf2Path) {
-    if (isset($loader)) {
-        $loader->add('Zend', $zf2Path);
-        $loader->add('ZendXml', $zf2Path);
-    } else {
-        include $zf2Path . '/Zend/Loader/AutoloaderFactory.php';
-        Zend\Loader\AutoloaderFactory::factory(array(
-            'Zend\Loader\StandardAutoloader' => array(
-                'autoregister_zf' => true
-            )
-        ));
-    }
-}
-
-if (!class_exists('Zend\Loader\AutoloaderFactory')) {
-    throw new RuntimeException('Unable to load ZF2. Run `php composer.phar install` or define a ZF2_PATH environment variable.');
-}
+```sh
+$ php -S 0.0.0.0:8080
 
 ```
 
-This makes PHPUnits tests easier to manage.
+## Cache
+The system will cache the response of any successful GET request. During development when you
+constantly changing data in the database, you might want the turned of in that case, don't set
+a value for the `CACHE` env variable.
+
+When you are developing the front-end and want a snappy response but don't care about the data,
+use the value `FILE` for the `CACHE` env variable. It will use a caching-system that writes
+file onto the disk.
+
+When you are in production use the value `MEMCACHED` for the `CACHE` env variable. It will cache
+the data in a MemCached cluster. You then have to give the right `MEMCACHED_*` values for the
+username/pass etc...
+
+If you want yet another caching system you will need to go into `` and return another adapter.
+ZF2 already comes with a few: Apc, Dba, Filesystem , Memcached, Redis, Memory, WinCache, XCache
+and a ZendServerDisk Adapter. If you need yet another you will have to implement the 
+[Zend\Cache\Storage\StorageInterface](https://framework.zend.com/apidoc/2.1/classes/Zend.Cache.Storage.StorageInterface.html)
+interface.
+
+## Search
+This system uses ElasticSearch for full-text-search. If you are just doing development and don't care
+id the search produces any results, DON'T set any value for the `SEARCH` env variable. Else if you
+are interested in searching and have ElasticSearch set up, use `ELASTICSEARCH` as a value for
+the `SEARCH` env variable.
+
+When ever a **POST**, **PUSH** or **PATCH** request is made to a _Party_, _Congressman_, _Issue_ or
+_Speech_, the ElasticSearch index will be updated with the new data.
+
+If you consumed some data while the ElasticSearch adapter was disabled, you can re-index with data
+from your database by running the command-line `index:*` commands. See the **CommandLine** section
+for more information.
 
 
+## Unit-Tests
+You can run the whole unit-test suite by going to the the test directory and running
+```sh
+$ cd ./module/Althingi/tests
+$ ../vendor/bin/phpunit
+```
+Just be aware of the following:
+ 
+The tests will also run tests on the database. Before it starts it will dump a dataless schema from
+you development MySQL database and pipe it into a new database called `althingi_test` and then
+use that database to create and delete records.
+
+For this to work, you need to have `mysql` and `mysqldump` available in you `$PATH`. I just could not
+get it to work on my machine, and therefore needed to have the full path to these binaries.
+
+Head over to `./module/Althingi/tests/phpunit.xml` and change the values of `MYSQL.BIN` and
+`MYSQLDUMP.BIN` if needed.
+```xml
+    <php>
+        <var name="APPLICATION_ENVIRONMENT" value="development" />
+        <var name="MYSQL.BIN" value="/usr/local/mysql/bin/mysql" />
+        <var name="MYSQLDUMP.BIN" value="/usr/local/mysql/bin/mysqldump" />
+    </php>
+```
+You also need `x-debug` if you want code coverage.
+
+## CommandLine
+ 
+This systems comes with a few command-line commands that you can run from the project's `public`
+directory like so:
+
+```sh
+$ php index.php [command-name]
+```
+
+| command-name  | args | description                                                   |
+|---------------|------|---------------------------------------------------------------|
+| index:speech  |      | Creates a record of each Speech in the ElasticSearch cluster  |
+| index:issue   |      | Creates a record of each Issue in the ElasticSearch cluster   |
+| document:api  |      | Prints out all available API endpoints                        |
 
 
-
-docker run -p 9200:9200 -p 9300:9300 -v "$PWD/data":/usr/share/elasticsearch/data -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:5.6.3
 
 
 http://www.althingi.is/xml/145
@@ -156,6 +204,7 @@ http://www.althingi.is/xml/145
     lestrarsalur
 
 
+## ElasticSearch
 ```
 PUT althingi_model_speech
 {
@@ -344,57 +393,7 @@ PUT althingi_model_issue
 ```
 
 
-```
-select D.`assembly_id`, 
-		D.`issue_id`, 
-        null as `committee_id`, 
-        null as `speech_id`, 
-        D.`document_id`,
-        null as `committee_name`,
-        D.`date`, 
-        D.`type` as `title`,
-        'document' as `type`,
-        true as `completed`
-	from `Document` D 
-    where D.`assembly_id` = 146 and D.`issue_id` = 258
-	union
-select B.`assembly_id`, 
-		B.`issue_id`, 
-        null as `committee_id`, 
-        B.`speech_id`, 
-        null as `document_id`, 
-        null as `committee_name`,
-        B.`date`, 
-        B.`type` as `title`, 
-        'speech' as `type`,
-        true as `completed`
-        from (
-			select S.`assembly_id`, 
-					S.`issue_id`, 
-                    null as `committee_id`, 
-                    S.speech_id, null, 
-                    S.`from` as `date`, 
-                    CONCAT(S.`iteration`, '. umræða') as `type`, 
-                    S.`iteration` 
-			from `Speech` S 
-			where assembly_id = 146 and issue_id = 258
-			order by S.`from`
-    ) as B
-    group by B.`iteration`
-    union
-select CMA.assembly_id, 
-		CMA.issue_id, 
-        C.committee_id, 
-        null as `speech_id`, 
-        null as `document_id`, 
-        C.name as `committee_name`,
-        CM.`from`, 
-        'í nefnd' as `title`, 
-        'committee' as `type`,
-        true as `completed`
-    from `CommitteeMeetingAgenda` CMA
-	join `CommitteeMeeting` CM on (CM.committee_meeting_id = CMA.committee_meeting_id and CM.`from` is not null)
-	join `Committee` C on (CM.committee_id = C.committee_id)
-	where CMA.assembly_id = 146 and CMA.issue_id = 258
-order by `date`;
+
+```sh
+$ docker run -e MAX_WIDTH=11402470 -e MAX_HEIGHT=11402470 -e UPLOAD_MAX_SIZE=11982500 -e UPLOAD_ENABLED=True -e UPLOAD_PUT_ALLOWED=True -e DETECTORS="['thumbor.detectors.face_detector','thumbor.detectors.feature_detector']" -p 8000:8000 apsl/thumbor
 ```

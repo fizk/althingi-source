@@ -70,7 +70,24 @@ class Speech implements DatabaseAwareInterface, EventManagerAwareInterface
     }
 
     /**
-     * @todo I don't fully understand what is going on here...
+     * This makes two queries, one that for a single congressman will count time
+     * for each type of speech. The second one will count fime for congressman type.
+     *
+     *  type                 total
+     *  --------------------------
+     *  flutningsræða        27115
+     *  andsvar              16692
+     *  ræða                 8650
+     *  svar                 3201
+     *  um atkvæðagreiðslu   1486
+     *  grein fyrir atkvæði   940
+     *
+     *
+     *
+     *  congressman_type                total
+     *  -------------------------------------
+     *  fjármála- og efnahagsráðherra   58084
+     *
      * @param $assemblyId
      * @param $congressmanId
      * @return object

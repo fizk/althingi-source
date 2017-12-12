@@ -31,7 +31,7 @@ class Status implements HydratorInterface
     /**
      * Extract values from an object
      *
-     * @param  \Althingi\Model\Category $object
+     * @param  \Althingi\Model\Status $object
      * @return array
      */
     public function extract($object)

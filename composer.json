@@ -18,7 +18,7 @@
         "zendframework/zendframework": "2.5.*",
         "zendframework/zend-mvc": "2.6.3",
         "monolog/monolog": "~1.13",
-        "fizk/rend": "2.0.0",
+        "fizk/rend": "3.0.0",
         "league/html-to-markdown": "^4.2",
         "elasticsearch/elasticsearch": "^5.3",
         "guzzlehttp/ringphp": "^1.1",

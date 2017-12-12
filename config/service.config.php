@@ -86,21 +86,29 @@ return [
         },
 
         ElasticsearchClient::class => function (ServiceManager $sm) {
-            $esHost = getenv('ES_HOST') ?: 'localhost';
-            $esProto = getenv('ES_PROTO') ?: 'http';
-            $esPort = getenv('ES_PORT') ?: 9200;
-            $esUser = getenv('ES_USER') ?: 'elastic';
-            $esPass = getenv('ES_PASSWORD') ?: 'changeme';
+            $searchAdapter = getenv('SEARCH');
+            switch (strtolower($searchAdapter)) {
+                case 'elasticsearch':
+                    $esHost = getenv('ES_HOST') ?: 'localhost';
+                    $esProto = getenv('ES_PROTO') ?: 'http';
+                    $esPort = getenv('ES_PORT') ?: 9200;
+                    $esUser = getenv('ES_USER') ?: 'elastic';
+                    $esPass = getenv('ES_PASSWORD') ?: 'changeme';
 
-            $hosts = [
-                "{$esProto}://{$esUser}:{$esPass}@{$esHost}:{$esPort}",
-            ];
-            $client = ElasticsearchClientBuilder::create()
-                ->setLogger($sm->get(LoggerInterface::class))
-                ->setHosts($hosts)
-                ->build();
+                    $hosts = [
+                        "{$esProto}://{$esUser}:{$esPass}@{$esHost}:{$esPort}",
+                    ];
+                    $client = ElasticsearchClientBuilder::create()
+                        ->setLogger($sm->get(LoggerInterface::class))
+                        ->setHosts($hosts)
+                        ->build();
 
-            return $client;
+                    return $client;
+                    break;
+                default:
+                    return new \Althingi\Utils\ElasticBlackHoleClient();
+                    break;
+            }
         },
 
         ServiceEventsListener::class => function (ServiceManager $sm) {
@@ -114,12 +122,21 @@ return [
         },
 
         StorageInterface::class => function (ServiceManager $sm) {
-            $adapter = new Zend\Cache\Storage\Adapter\Filesystem();
-            $options = new \Zend\Cache\Storage\Adapter\FilesystemOptions();
-            $options->setCacheDir('./data/cache');
-            $adapter->setOptions($options);
-
-            return $adapter;
+            $cacheAdapter = getenv('CACHE');
+            switch (strtolower($cacheAdapter)) {
+                case 'file':
+                    return (new Zend\Cache\Storage\Adapter\Filesystem())
+                        ->setOptions(
+                            (new \Zend\Cache\Storage\Adapter\FilesystemOptions())->setCacheDir('./data/cache')
+                        );
+                    break;
+                case 'memcached':
+                    return new Zend\Cache\Storage\Adapter\Memcached();
+                    break;
+                default:
+                    return new \Zend\Cache\Storage\Adapter\BlackHole();
+                    break;
+            }
         },
     ],
 

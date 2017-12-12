@@ -4,7 +4,6 @@ namespace Althingi\Model;
 
 class CongressmanAndParty extends Congressman
 {
-
     /** @var  int */
     private $party_id;
 

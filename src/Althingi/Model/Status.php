@@ -225,7 +225,7 @@ class Status implements ModelInterface
             'committee_id' => $this->committee_id,
             'speech_id' => $this->speech_id,
             'document_id' => $this->document_id,
-            'date' => $this->date,
+            'date' => $this->date ? $this->date->format('Y-m-d H:i:s') : null,
             'title' => $this->title,
             'type' => $this->type,
             'committee_name' => $this->committee_name,

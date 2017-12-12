@@ -360,6 +360,73 @@ class Issue implements DatabaseAwareInterface, EventManagerAwareInterface
         return (int) $statement->fetchColumn(0);
     }
 
+    public function fetchProgress(int $assemblyId, $issueId): array
+    {
+        $statement = $this->getDriver()->prepare('
+            select D.`assembly_id`, 
+                    D.`issue_id`, 
+                    null as `committee_id`, 
+                    null as `speech_id`, 
+                    D.`document_id`,
+                    null as `committee_name`,
+                    D.`date`, 
+                    D.`type` as `title`,
+                    \'document\' as `type`,
+                    true as `completed`
+                from `Document` D 
+                where D.`assembly_id` = :assembly and D.`issue_id` = :issue
+                union
+            select B.`assembly_id`, 
+                    B.`issue_id`, 
+                    null as `committee_id`, 
+                    B.`speech_id`, 
+                    null as `document_id`, 
+                    null as `committee_name`,
+                    B.`date`, 
+                    B.`type` as `title`, 
+                    \'speech\' as `type`,
+                    true as `completed`
+                    from (
+                        select S.`assembly_id`, 
+                                S.`issue_id`, 
+                                null as `committee_id`, 
+                                S.speech_id, null, 
+                                S.`from` as `date`, 
+                                CONCAT(S.`iteration`, \'. umræða\') as `type`, 
+                                S.`iteration` 
+                        from `Speech` S 
+                        where assembly_id = :assembly and issue_id = :issue
+                        order by S.`from`
+                ) as B
+                group by B.`iteration`
+                union
+            select CMA.assembly_id, 
+                    CMA.issue_id, 
+                    C.committee_id, 
+                    null as `speech_id`, 
+                    null as `document_id`, 
+                    C.name as `committee_name`,
+                    CM.`from`, 
+                    \'í nefnd\' as `title`, 
+                    \'committee\' as `type`,
+                    true as `completed`
+                from `CommitteeMeetingAgenda` CMA
+                join `CommitteeMeeting` CM on (
+                  CM.committee_meeting_id = CMA.committee_meeting_id and CM.`from` is not null
+                )
+                join `Committee` C on (CM.committee_id = C.committee_id)
+                where CMA.assembly_id = :assembly and CMA.issue_id = :issue
+            order by `date`;
+        ');
+
+        $statement->execute(['assembly' => $assemblyId, 'issue' => $issueId]);
+
+        return array_map(function ($object) {
+            return (new \Althingi\Hydrator\Status())->hydrate($object, new \Althingi\Model\Status());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
+
+    }
+
     /**
      * Create new Issue. This method
      * accepts object from corresponding Form.
