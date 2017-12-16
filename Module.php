@@ -21,6 +21,9 @@ class Module
         $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, new ApplicationErrorHandler());
 
         $eventManager->attach(MvcEvent::EVENT_ROUTE, function (MvcEvent $event) use ($cache) {
+            if ($event->getRequest() instanceof \Zend\Console\Request) {
+                return;
+            }
             $storageKey = $this->storageKey($event->getRequest());
 
             if ($event->getRequest()->getMethod() === HttpRequest::METHOD_GET && $cache->hasItem($storageKey)) {
@@ -30,6 +33,9 @@ class Module
         });
 
         $eventManager->attach(MvcEvent::EVENT_FINISH, function (MvcEvent $event) use ($cache) {
+            if ($event->getRequest() instanceof \Zend\Console\Request) {
+                return;
+            }
             $storageKey = $this->storageKey($event->getRequest());
 
             if ($event->getRequest()->getMethod() === HttpRequest::METHOD_GET &&

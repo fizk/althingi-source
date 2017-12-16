@@ -15,6 +15,7 @@ use Althingi\Model\Issue as IssueModel;
 use Althingi\Model\Party as PartyModel;
 use Althingi\Model\Assembly as AssemblyModel;
 use Althingi\Model\IssueAndDate as IssueAndDateModel;
+use Althingi\Model\IssueValue as IssueValueModel;
 use Mockery;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
@@ -109,6 +110,48 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
 
         $this->assertControllerClass('IssueController');
         $this->assertActionName('get');
+        $this->assertResponseStatusCode(200);
+    }
+
+    /**
+     * @covers ::speechTimesAction
+     */
+    public function testGetSpeechTime()
+    {
+        $this->getMockService(Assembly::class)
+            ->shouldReceive('get')
+            ->andReturn((new \Althingi\Model\Assembly())->setAssemblyId(1)->setFrom(new \DateTime()))
+            ->once()
+            ->getMock()
+        ;
+
+        $this->getMockService(Issue::class)
+            ->shouldReceive('fetchByAssemblyAndSpeechTime')
+            ->andReturn(array_map(function ($i) {
+                return (new IssueValueModel())->setCongressmanId(1)->setIssueId($i)->setValue($i);
+            }, range(0, 24)))
+            ->once()
+            ->getMock()
+        ;
+
+        $this->getMockService(Party::class)
+            ->shouldReceive('getByCongressman')
+            ->andReturn(null)
+            ->times(25)
+            ->getMock()
+        ;
+
+        $this->getMockService(Congressman::class)
+            ->shouldReceive('fetchProponentsByIssue')
+            ->andReturn([(new Proponent())->setCongressmanId(1)])
+            ->times(25)
+            ->getMock()
+        ;
+
+        $this->dispatch('/loggjafarthing/100/thingmal/raedutimar', 'GET');
+
+        $this->assertControllerClass('IssueController');
+        $this->assertActionName('speech-times');
         $this->assertResponseStatusCode(200);
     }
 

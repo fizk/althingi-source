@@ -103,7 +103,7 @@ class AssemblyController extends AbstractRestfulController implements
      *
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\AssemblyProperties[]
-     * @query $order asc|desc
+     * @query order asc|desc
      */
     public function getList()
     {

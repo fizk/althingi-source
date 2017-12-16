@@ -141,14 +141,14 @@ class Vote implements DatabaseAwareInterface
      * @param $congressmanId
      * @param \DateTime|null $from
      * @param \DateTime|null $to
-     * @return array
+     * @return \Althingi\Model\VoteTypeAndCount[]
      */
     public function getFrequencyByAssemblyAndCongressman(
         int $assemblyId,
         int $congressmanId,
         \DateTime $from = null,
         \DateTime $to = null
-    ) {
+    ): array {
         $statement = null;
         if ($from) {
             $to = $to ? $to : new \DateTime();

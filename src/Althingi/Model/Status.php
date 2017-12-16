@@ -148,7 +148,7 @@ class Status implements ModelInterface
     /**
      * @return string
      */
-    public function getTitle(): string
+    public function getTitle(): ?string
     {
         return $this->title;
     }
@@ -157,7 +157,7 @@ class Status implements ModelInterface
      * @param string $title
      * @return Status
      */
-    public function setTitle(string $title): Status
+    public function setTitle(?string $title): Status
     {
         $this->title = $title;
         return $this;

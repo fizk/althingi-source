@@ -377,27 +377,6 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
     }
 
     /**
-     * @covers ::assemblySpeechTimeAction
-     */
-    public function testAssemblySpeechTimeAction()
-    {
-        $this->getMockService(Speech::class)
-            ->shouldReceive('getFrequencyByAssemblyAndCongressman')
-            ->with(1, 2)
-            ->once()
-            ->andReturn(1)
-            ->getMock();
-
-        $this->dispatch('/loggjafarthing/1/thingmenn/2/raedutimar');
-
-        $this->assertControllerClass('CongressmanController');
-        $this->assertActionName('assembly-speech-time');
-        $this->assertResponseStatusCode(200);
-
-//        print_r(json_decode($this->getResponse()->getContent()));
-    }
-
-    /**
      * @covers ::assemblySessionsAction
      */
     public function testAssemblySessionsAction()

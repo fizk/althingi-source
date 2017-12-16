@@ -17,6 +17,7 @@ use Althingi\Lib\ServiceVoteAwareInterface;
 use Althingi\Model\CongressmanPartyProperties;
 use Althingi\Model\IssueAndDate;
 use Althingi\Model\IssueProperties;
+use Althingi\Model\IssueValue;
 use Althingi\Model\Proponent;
 use Althingi\Service\Assembly;
 use Althingi\Service\Congressman;
@@ -135,7 +136,10 @@ class IssueController extends AbstractRestfulController implements
      *
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\IssueProperties[]
-     * @attr id assembly ID
+     * @query leit [string]
+     * @query type [string]
+     * @query category [string]
+     * @query order [string]
      */
     public function getList()
     {
@@ -253,6 +257,10 @@ class IssueController extends AbstractRestfulController implements
         return (new ErrorModel($form))->setStatus(400);
     }
 
+    /**
+     * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\Status[]
+     */
     public function progressAction()
     {
         $assemblyId = $this->params('id');
@@ -262,6 +270,51 @@ class IssueController extends AbstractRestfulController implements
 
         return (new CollectionModel($collection))
             ->setStatus(206);
+    }
+
+    /**
+     * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\IssueValue[]
+     * @query rod asc|desc
+     * @query fjoldi [number]
+     */
+    public function speechTimesAction()
+    {
+        $assemblyId = $this->params('id', 0);
+        $assembly = $this->assemblyService->get($assemblyId);
+        $order = $this->params()->fromQuery('rod', null);
+        $size = $this->params()->fromQuery('fjoldi', null);
+        $collection = $this->issueService->fetchByAssemblyAndSpeechTime($assemblyId, $size, $order);
+
+        $issuesAndProperties = array_map(function (IssueValue $issue) use ($assembly) {
+            $issue->setGoal(Transformer::htmlToMarkdown($issue->getGoal()));
+            $issue->setMajorChanges(Transformer::htmlToMarkdown($issue->getMajorChanges()));
+            $issue->setChangesInLaw(Transformer::htmlToMarkdown($issue->getChangesInLaw()));
+            $issue->setCostsAndRevenues(Transformer::htmlToMarkdown($issue->getCostsAndRevenues()));
+            $issue->setAdditionalInformation(Transformer::htmlToMarkdown($issue->getAdditionalInformation()));
+            $issue->setDeliveries(Transformer::htmlToMarkdown($issue->getDeliveries()));
+
+            $issueAndProperty = (new IssueProperties())
+                ->setIssue($issue);
+
+            $proponents = $this->congressmanService->fetchProponentsByIssue(
+                $assembly->getAssemblyId(),
+                $issue->getIssueId()
+            );
+            $proponentsAndParty = array_map(function (Proponent $proponent) use ($issue, $assembly) {
+                return (new CongressmanPartyProperties())
+                    ->setCongressman($proponent)
+                    ->setParty(
+                        $this->partyService->getByCongressman($proponent->getCongressmanId(), $assembly->getFrom())
+                    );
+            }, $proponents);
+            $issueAndProperty->setProponents($proponentsAndParty);
+
+            return $issueAndProperty;
+        }, $collection);
+
+
+        return (new CollectionModel($issuesAndProperties));
     }
 
     /**

@@ -1,11 +1,4 @@
 <?php
-/**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
- */
 
 use Althingi\Controller\IndexController;
 use Althingi\Controller\AssemblyController;
@@ -135,16 +128,16 @@ return array(
                                     ],
                                 ],
                             ],
-                            'raedutimar' => [
-                                'type' => 'Zend\Mvc\Router\Http\Segment',
-                                'options' => [
-                                    'route'    => '/:congressman_id/raedutimar',
-                                    'defaults' => [
-                                        'controller' => CongressmanController::class,
-                                        'action' => 'assembly-speech-time'
-                                    ],
-                                ],
-                            ],
+//                            'raedutimar' => [
+//                                'type' => 'Zend\Mvc\Router\Http\Segment',
+//                                'options' => [
+//                                    'route'    => '/:congressman_id/raedutimar',
+//                                    'defaults' => [
+//                                        'controller' => CongressmanController::class,
+//                                        'action' => 'assembly-speech-time'
+//                                    ],
+//                                ],
+//                            ],
                             'thingseta' => [
                                 'type' => 'Zend\Mvc\Router\Http\Segment',
                                 'options' => [
@@ -252,13 +245,27 @@ return array(
                         'type' => 'Zend\Mvc\Router\Http\Segment',
                         'options' => [
                             'route'    => '/thingmal[/:issue_id]',
+                            'constraints' => [
+                                'issue_id' => '[0-9]+',
+                            ],
                             'defaults' => [
                                 'controller' => IssueController::class,
-                                'identifier' => 'issue_id'
+                                'identifier' => 'issue_id',
                             ],
                         ],
                         'may_terminate' => true,
                         'child_routes' => [
+                            'thingmal-raedutimar' => [
+                                'type' => 'Zend\Mvc\Router\Http\Literal',
+                                'options' => [
+                                    'route'    => '/raedutimar',
+                                    'defaults' => [
+                                        'controller' => IssueController::class,
+                                        'action' => 'speech-times'
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                            ],
                             'thingraedur' => [
                                 'type' => 'Zend\Mvc\Router\Http\Segment',
                                 'options' => [
@@ -280,7 +287,6 @@ return array(
                                     ],
                                 ],
                             ],
-
                             'efnisflokkar' => [
                                 'type' => 'Zend\Mvc\Router\Http\Segment',
                                 'options' => [
@@ -292,7 +298,6 @@ return array(
                                 ],
                                 'may_terminate' => true,
                             ],
-
                             'thingskjal' => [
                                 'type' => 'Zend\Mvc\Router\Http\Segment',
                                 'options' => [

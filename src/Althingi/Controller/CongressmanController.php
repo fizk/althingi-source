@@ -329,6 +329,10 @@ class CongressmanController extends AbstractRestfulController implements
             ->setStatus(200);
     }
 
+    /**
+     * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\Issue[]
+     */
     public function assemblyIssuesAction()
     {
         $assemblyId = $this->params('id');
@@ -340,6 +344,10 @@ class CongressmanController extends AbstractRestfulController implements
             ->setStatus(200);
     }
 
+    /**
+     * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\Issue[]
+     */
     public function assemblyIssuesSummaryAction()
     {
         $assemblyId = $this->params('id');
@@ -351,6 +359,12 @@ class CongressmanController extends AbstractRestfulController implements
             ->setStatus(200);
     }
 
+    /**
+     * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\VoteTypeAndCount[]
+     * @query fra [date]
+     * @query til [date]
+     */
     public function assemblyVotingAction()
     {
         $fromString = $this->params()->fromQuery('fra', null);
@@ -372,6 +386,10 @@ class CongressmanController extends AbstractRestfulController implements
             ->setStatus(200);
     }
 
+    /**
+     * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\IssueCategoryAndTime[]
+     */
     public function assemblyCategoriesAction()
     {
         $assemblyId = $this->params('id');
@@ -383,6 +401,10 @@ class CongressmanController extends AbstractRestfulController implements
             ->setStatus(200);
     }
 
+    /**
+     * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\VoteItem[]
+     */
     public function assemblyVoteCategoriesAction()
     {
         $assemblyId = $this->params('id');

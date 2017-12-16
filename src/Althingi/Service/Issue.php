@@ -16,6 +16,8 @@ use Althingi\Hydrator\IssueTypeStatus as IssueTypeStatusHydrator;
 use Althingi\Presenters\IndexableIssuePresenter;
 use Althingi\ServiceEvents\AddEvent;
 use Althingi\ServiceEvents\UpdateEvent;
+use Althingi\Hydrator\IssueValue as IssueValueHydrator;
+use Althingi\Model\IssueValue as IssueValueModel;
 use PDO;
 use InvalidArgumentException;
 use Zend\EventManager\EventManagerAwareInterface;
@@ -360,6 +362,11 @@ class Issue implements DatabaseAwareInterface, EventManagerAwareInterface
         return (int) $statement->fetchColumn(0);
     }
 
+    /**
+     * @param int $assemblyId
+     * @param $issueId
+     * @return \Althingi\Model\Status[]
+     */
     public function fetchProgress(int $assemblyId, $issueId): array
     {
         $statement = $this->getDriver()->prepare('
@@ -424,7 +431,38 @@ class Issue implements DatabaseAwareInterface, EventManagerAwareInterface
         return array_map(function ($object) {
             return (new \Althingi\Hydrator\Status())->hydrate($object, new \Althingi\Model\Status());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
+    }
 
+    /**
+     * Get all issues from an assembly plus accumulated speech times.
+     *
+     * @param int $assemblyId
+     * @param int|null $size
+     * @param null|string $order
+     * @return \Althingi\Model\IssueValue[]
+     */
+    public function fetchByAssemblyAndSpeechTime(int $assemblyId, ?int $size = null, ?string $order = 'desc'): array
+    {
+        $limit = $size
+            ? "limit 0, {$size}"
+            : '';
+        $statement = $this->getDriver()->prepare("
+            select 
+                (sum(time_to_sec(timediff(`to`, `from`)))) as `value`,
+                I.*
+            from `Speech` S
+                join `Issue` I on (I.`issue_id` = S.`issue_id` and I.assembly_id = :assembly)
+            where S.assembly_id = :assembly
+                group by S.`issue_id`
+                order by `value` {$order}
+                {$limit};
+        ");
+
+        $statement->execute(['assembly' => $assemblyId]);
+
+        return array_map(function ($object) {
+            return (new IssueValueHydrator())->hydrate($object, new IssueValueModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
     /**
