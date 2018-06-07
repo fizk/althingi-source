@@ -109,22 +109,6 @@ class IssueCategoryControllerTest extends AbstractHttpControllerTestCase
     }
 
     /**
-     * @covers ::put
-     */
-    public function testPutInvalidArguments()
-    {
-        $this->getMockService(IssueCategory::class)
-            ->shouldReceive('save')
-            ->andReturn()
-            ->getMock();
-
-        $this->dispatch('/loggjafarthing/141/thingmal/not-a-number/efnisflokkar/21', 'PUT');
-        $this->assertControllerClass('IssueCategoryController');
-        $this->assertActionName('put');
-        $this->assertResponseStatusCode(400);
-    }
-
-    /**
      * @covers ::patch
      */
     public function testPatch()

@@ -59,6 +59,34 @@ class CommitteeMeetingControllerTest extends AbstractHttpControllerTestCase
     }
 
     /**
+     * @covers ::getList
+     */
+    public function testGetList()
+    {
+        $this->getMockService(CommitteeMeeting::class)
+            ->shouldReceive('fetchByAssembly')
+            ->with(145, 202)
+            ->andReturn([
+                (new CommitteeMeetingModel())
+                    ->setCommitteeId(202)
+                    ->setCommitteeMeetingId(1646)
+                    ->setAssemblyId(145),
+                (new CommitteeMeetingModel())
+                    ->setCommitteeId(202)
+                    ->setCommitteeMeetingId(1647)
+                    ->setAssemblyId(145)
+            ])
+            ->once()
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/145/nefndir/202/nefndarfundir', 'GET');
+
+        $this->assertControllerClass('CommitteeMeetingController');
+        $this->assertActionName('getList');
+        $this->assertResponseStatusCode(206);
+    }
+
+    /**
      * @covers ::patch
      */
     public function testPatchSuccess()

@@ -38,10 +38,11 @@ class CommitteeController extends AbstractRestfulController implements
     public function getList()
     {
         $committees = $this->committeeService->fetchAll();
+        $committeesCount = count($committees);
 
         return (new CollectionModel($committees))
             ->setStatus(206)
-            ->setRange(0, count($committees), count($committees));
+            ->setRange(0, $committeesCount, $committeesCount);
     }
 
     /**

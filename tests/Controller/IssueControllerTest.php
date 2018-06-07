@@ -152,7 +152,7 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
 
         $this->assertControllerClass('IssueController');
         $this->assertActionName('speech-times');
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(206);
     }
 
     /**

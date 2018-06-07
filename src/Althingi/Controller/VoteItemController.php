@@ -110,9 +110,12 @@ class VoteItemController extends AbstractRestfulController implements
 
             return $voteItemAndCongressman;
         }, $votes);
+        $voteItemsCount = count($voteItems);
 
 
-        return new CollectionModel($voteItems);
+        return (new CollectionModel($voteItems))
+            ->setStatus(206)
+            ->setRange(0, $voteItemsCount, $voteItemsCount);
     }
 
     /**

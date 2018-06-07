@@ -26,10 +26,11 @@ class CongressmanIssueController extends AbstractRestfulController implements
         $congressmanId = $this->params('congressman_id');
 
         $issues = $this->issueService->fetchByCongressman($congressmanId);
+        $issuesCount = count($issues);
 
         return (new CollectionModel($issues))
             ->setStatus(206)
-            ->setRange(0, count($issues), count($issues));
+            ->setRange(0, $issuesCount, $issuesCount);
     }
 
     /**

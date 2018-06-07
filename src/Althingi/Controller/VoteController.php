@@ -46,12 +46,12 @@ class VoteController extends AbstractRestfulController implements
     {
         $assemblyId = $this->params('id');
         $issueId = $this->params('issue_id');
-        $count = $this->voteService->countByIssue($assemblyId, $issueId);
         $issues = $this->voteService->fetchByIssue($assemblyId, $issueId);
+        $issuesCount = count($issues);
 
         return (new CollectionModel($issues))
             ->setStatus(206)
-            ->setRange(0, count($issues), $count);
+            ->setRange(0, $issuesCount, $issuesCount);
     }
 
     /**

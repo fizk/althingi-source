@@ -72,10 +72,11 @@ class PresidentController extends AbstractRestfulController implements
                     $president->getFrom()
                 ));
         }, $presidents);
+        $presidentsAndPartiesCount = count($presidentsAndParties);
 
         return (new CollectionModel($presidentsAndParties))
             ->setStatus(206)
-            ->setRange(0, count($presidentsAndParties), count($presidentsAndParties));
+            ->setRange(0, $presidentsAndPartiesCount, $presidentsAndPartiesCount);
     }
 
     /**

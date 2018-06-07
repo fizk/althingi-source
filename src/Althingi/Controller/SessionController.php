@@ -50,10 +50,11 @@ class SessionController extends AbstractRestfulController implements
         $congressmanId = $this->params('congressman_id');
 
         $sessions = $this->sessionService->fetchByCongressman($congressmanId);
+        $sessionsCount = count($sessions);
 
         return (new CollectionModel($sessions))
             ->setStatus(206)
-            ->setRange(0, count($sessions), count($sessions));
+            ->setRange(0, $sessionsCount, $sessionsCount);
     }
 
     /**

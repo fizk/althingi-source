@@ -47,10 +47,11 @@ class CommitteeMeetingController extends AbstractRestfulController implements
         $committeeId = $this->params('committee_id');
 
         $meetings = $this->committeeMeetingService->fetchByAssembly($assemblyId, $committeeId);
+        $meetingsCount = count($meetings);
 
         return (new CollectionModel($meetings))
             ->setStatus(206)
-            ->setRange(0, count($meetings), count($meetings));
+            ->setRange(0, $meetingsCount, $meetingsCount);
     }
 
     /**

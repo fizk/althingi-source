@@ -73,7 +73,6 @@ class DocumentController extends AbstractRestfulController implements
         $issueId = $this->params('issue_id');
 
         $documents = array_map(function (DocumentModel $document) use ($assemblyId, $issueId) {
-
             $votes = $this->voteService->fetchByDocument($assemblyId, $issueId, $document->getDocumentId());
             $congressmen = array_map(function (ProponentModel $proponent) use ($document) {
                 return (new ProponentPartyPropertiesModel())
@@ -91,10 +90,11 @@ class DocumentController extends AbstractRestfulController implements
 
             return $documentProperties;
         }, $this->documentService->fetchByIssue($assemblyId, $issueId));
+        $documentsCount = count($documents);
 
         return (new CollectionModel($documents))
             ->setStatus(206)
-            ->setRange(0, count($documents), count($documents));
+            ->setRange(0, $documentsCount, $documentsCount);
     }
 
     /**

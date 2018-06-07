@@ -40,10 +40,11 @@ class PresidentAssemblyController extends AbstractRestfulController implements
                     $this->partyService->getByCongressman($president->getPresidentId(), $president->getFrom())
                 );
         }, $residents);
+        $residentsCount = count($residents);
 
         return (new CollectionModel($residents))
             ->setStatus(206)
-            ->setRange(0, count($residents), count($residents));
+            ->setRange(0, $residentsCount, $residentsCount);
     }
 
     /**

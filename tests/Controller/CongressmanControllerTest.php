@@ -31,6 +31,7 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * @covers \Althingi\Controller\CongressmanController::setSpeechService
  * @covers \Althingi\Controller\CongressmanController::setIssueCategoryService
  * @covers \Althingi\Controller\CongressmanController::setVoteItemService
+ * @covers \Althingi\Controller\CongressmanController::setAssemblyService
  */
 class CongressmanControllerTest extends AbstractHttpControllerTestCase
 {
@@ -373,7 +374,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
 
         $this->assertControllerClass('CongressmanController');
         $this->assertActionName('assembly');
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(206);
     }
 
     /**
@@ -394,7 +395,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
 
         $this->assertControllerClass('CongressmanController');
         $this->assertActionName('assembly-sessions');
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(206);
 
 //        print_r(json_decode($this->getResponse()->getContent()));
     }
@@ -415,7 +416,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
 
         $this->assertControllerClass('CongressmanController');
         $this->assertActionName('assembly-issues');
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(206);
 
 //        print_r(json_decode($this->getResponse()->getContent()));
     }
@@ -436,7 +437,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
 
         $this->assertControllerClass('CongressmanController');
         $this->assertActionName('assembly-voting');
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(206);
 
 //        print_r(json_decode($this->getResponse()->getContent()));
     }
@@ -457,7 +458,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
 
         $this->assertControllerClass('CongressmanController');
         $this->assertActionName('assembly-categories');
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(206);
 
 //        print_r(json_decode($this->getResponse()->getContent()));
     }
@@ -478,8 +479,157 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
 
         $this->assertControllerClass('CongressmanController');
         $this->assertActionName('assembly-vote-categories');
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(206);
 
 //        print_r(json_decode($this->getResponse()->getContent()));
+    }
+
+    /**
+     * @covers ::assemblyTimesAction
+     */
+    public function testAssemblyTimesAction()
+    {
+        $this->getMockService(Assembly::class)
+            ->shouldReceive('get')
+            ->with(1)
+            ->andReturn((new \Althingi\Model\Assembly())->setAssemblyId(1)->setFrom(new \DateTime()))
+            ->once()
+            ->getMock();
+
+        $this->getMockService(Congressman::class)
+            ->shouldReceive('fetchTimeByAssembly')
+            ->with(1, null, 'desc')
+            ->once()
+            ->andReturn([
+                (new \Althingi\Model\Congressman())->setCongressmanId(1)
+            ]);
+
+        $this->getMockService(Party::class)
+            ->shouldReceive('getByCongressman')
+            ->andReturn((new \Althingi\Model\Party()))
+            ->once();
+
+        $this->dispatch('/loggjafarthing/1/thingmenn/raedutimar');
+
+        $this->assertControllerClass('CongressmanController');
+        $this->assertActionName('assembly-times');
+        $this->assertResponseStatusCode(206);
+    }
+
+    /**
+     * @covers ::assemblyQuestionsAction
+     */
+    public function testAssemblyQuestionsAction()
+    {
+        $this->getMockService(Assembly::class)
+            ->shouldReceive('get')
+            ->with(1)
+            ->andReturn((new \Althingi\Model\Assembly())->setAssemblyId(1)->setFrom(new \DateTime()))
+            ->once()
+            ->getMock();
+
+        $this->getMockService(Congressman::class)
+            ->shouldReceive('fetchIssueTypeCountByAssembly')
+            ->with(1, null, ['q', 'm'], 'desc')
+            ->once()
+            ->andReturn([
+                (new \Althingi\Model\Congressman())->setCongressmanId(1)
+            ]);
+
+        $this->getMockService(Party::class)
+            ->shouldReceive('getByCongressman')
+            ->andReturn((new \Althingi\Model\Party()))
+            ->once();
+
+        $this->dispatch('/loggjafarthing/1/thingmenn/fyrirspurnir');
+
+        $this->assertControllerClass('CongressmanController');
+        $this->assertActionName('assembly-questions');
+        $this->assertResponseStatusCode(206);
+    }
+
+    /**
+     * @covers ::assemblyResolutionsAction
+     */
+    public function testAssemblyResolutionsAction()
+    {
+        $this->getMockService(Assembly::class)
+            ->shouldReceive('get')
+            ->with(1)
+            ->andReturn((new \Althingi\Model\Assembly())->setAssemblyId(1)->setFrom(new \DateTime()))
+            ->once()
+            ->getMock();
+
+        $this->getMockService(Congressman::class)
+            ->shouldReceive('fetchIssueTypeCountByAssembly')
+            ->with(1, null, ['a'], 'desc')
+            ->once()
+            ->andReturn([
+                (new \Althingi\Model\Congressman())->setCongressmanId(1)
+            ]);
+
+        $this->getMockService(Party::class)
+            ->shouldReceive('getByCongressman')
+            ->andReturn((new \Althingi\Model\Party()))
+            ->once();
+
+        $this->dispatch('/loggjafarthing/1/thingmenn/thingsalyktanir');
+
+        $this->assertControllerClass('CongressmanController');
+        $this->assertActionName('assembly-resolutions');
+        $this->assertResponseStatusCode(206);
+    }
+
+    /**
+     * @covers ::assemblyBillsAction
+     */
+    public function testAssemblyBillsAction()
+    {
+        $this->getMockService(Assembly::class)
+            ->shouldReceive('get')
+            ->with(1)
+            ->andReturn((new \Althingi\Model\Assembly())->setAssemblyId(1)->setFrom(new \DateTime()))
+            ->once()
+            ->getMock();
+
+        $this->getMockService(Congressman::class)
+            ->shouldReceive('fetchIssueTypeCountByAssembly')
+            ->with(1, null, ['l'], 'desc')
+            ->once()
+            ->andReturn([
+                (new \Althingi\Model\Congressman())->setCongressmanId(1)
+            ]);
+
+        $this->getMockService(Party::class)
+            ->shouldReceive('getByCongressman')
+            ->andReturn((new \Althingi\Model\Party()))
+            ->once();
+
+        $this->dispatch('/loggjafarthing/1/thingmenn/lagafrumvorp');
+
+        $this->assertControllerClass('CongressmanController');
+        $this->assertActionName('assembly-bills');
+        $this->assertResponseStatusCode(206);
+    }
+
+    /**
+     * @covers ::assemblyIssuesSummaryAction
+     */
+    public function testAssemblyIssuesSummaryAction()
+    {
+        $this->getMockService(Issue::class)
+            ->shouldReceive('fetchByAssemblyAndCongressmanSummary')
+            ->with(1, 2)
+            ->andReturn([
+                (new \Althingi\Model\Issue())
+            ])
+            ->once()
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/1/thingmenn/2/thingmal-samantekt');
+
+        $this->assertControllerClass('CongressmanController');
+        $this->assertActionName('assembly-issues-summary');
+        $this->assertResponseStatusCode(206);
     }
 }

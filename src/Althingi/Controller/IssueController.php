@@ -267,9 +267,11 @@ class IssueController extends AbstractRestfulController implements
         $issueId = $this->params('issue_id');
 
         $collection = $this->issueService->fetchProgress($assemblyId, $issueId);
+        $collectionCount = count($collection);
 
         return (new CollectionModel($collection))
-            ->setStatus(206);
+            ->setStatus(206)
+            ->setRange(0, $collectionCount, $collectionCount);
     }
 
     /**
@@ -312,9 +314,11 @@ class IssueController extends AbstractRestfulController implements
 
             return $issueAndProperty;
         }, $collection);
+        $issuesAndPropertiesCount = count($issuesAndProperties);
 
-
-        return (new CollectionModel($issuesAndProperties));
+        return (new CollectionModel($issuesAndProperties))
+            ->setStatus(206)
+            ->setRange(0, $issuesAndPropertiesCount, $issuesAndPropertiesCount);
     }
 
     /**

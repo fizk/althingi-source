@@ -85,11 +85,6 @@ class VoteControllerTest extends AbstractHttpControllerTestCase
             ->andReturn([(new \Althingi\Model\Vote())])
             ->once()
             ->getMock()
-            ->shouldReceive('countByIssue')
-            ->with(1, 2)
-            ->andReturn(1)
-            ->once()
-            ->getMock()
         ;
 
         $this->dispatch('/loggjafarthing/1/thingmal/2/atkvaedagreidslur', 'GET');
@@ -185,62 +180,6 @@ class VoteControllerTest extends AbstractHttpControllerTestCase
         $this->assertControllerClass('VoteController');
         $this->assertActionName('patch');
         $this->assertResponseStatusCode(205);
-    }
-
-    /**
-     * @covers ::patch
-     */
-    public function testPatchInvalid()
-    {
-        $returnedData = (new \Althingi\Model\Vote())
-            ->setVoteId(3)
-            ->setIssueId(2)
-            ->setAssemblyId(1)
-            ->setDate(new \DateTime('2000-01-01 00:00:00'))
-            ->setType('type')
-            ->setMethod('method');
-
-        $this->getMockService(Vote::class)
-            ->shouldReceive('get')
-            ->andReturn($returnedData)
-            ->once()
-            ->getMock()
-
-            ->shouldReceive('update')
-            ->never()
-            ->getMock();
-
-        $this->dispatch('/loggjafarthing/1/thingmal/NaN/atkvaedagreidslur/3', 'PATCH', [
-            'date' => '2001-01-01 01:02:03',
-        ]);
-
-        $this->assertControllerClass('VoteController');
-        $this->assertActionName('patch');
-        $this->assertResponseStatusCode(400);
-    }
-
-    /**
-     * @covers ::patch
-     */
-    public function testPatchNotFound()
-    {
-        $this->getMockService(Vote::class)
-            ->shouldReceive('get')
-            ->andReturn(null)
-            ->once()
-            ->getMock()
-
-            ->shouldReceive('update')
-            ->never()
-            ->getMock();
-
-        $this->dispatch('/loggjafarthing/1/thingmal/NaN/atkvaedagreidslur/3', 'PATCH', [
-            'date' => '2001-01-01 01:02:03',
-        ]);
-
-        $this->assertControllerClass('VoteController');
-        $this->assertActionName('patch');
-        $this->assertResponseStatusCode(404);
     }
 
     /**

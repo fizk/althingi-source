@@ -58,10 +58,11 @@ class IssueCategoryController extends AbstractRestfulController implements
 
         $categories = $this->categoryService
             ->fetchByAssemblyAndIssue($assemblyId, $issueId);
-        
+        $categoriesCount = count($categories);
+
         return (new CollectionModel($categories))
             ->setStatus(206)
-            ->setRange(0, count($categories), count($categories));
+            ->setRange(0, $categoriesCount, $categoriesCount);
     }
 
     /**

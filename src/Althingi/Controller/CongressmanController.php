@@ -201,9 +201,11 @@ class CongressmanController extends AbstractRestfulController implements
                 ->setParty($this->partyService->get($congressman->getPartyId()))
                 ->setAssembly($assembly);
         }, $this->congressmanService->fetchByAssembly($assemblyId, $typeParam));
+        $congressmenCount = count($congressmen);
 
         return (new CollectionModel($congressmen))
-            ->setStatus(200);
+            ->setStatus(206)
+            ->setRange(0, $congressmenCount, $congressmenCount);
     }
 
     /**
@@ -230,8 +232,11 @@ class CongressmanController extends AbstractRestfulController implements
                     $this->partyService->getByCongressman($congressman->getCongressmanId(), $assembly->getFrom())
                 );
         }, $congressmen);
+        $collectionCount = count($collection);
 
-        return (new CollectionModel($collection));
+        return (new CollectionModel($collection))
+            ->setStatus(206)
+            ->setRange(0, $collectionCount, $collectionCount);
     }
 
     /**
@@ -258,8 +263,11 @@ class CongressmanController extends AbstractRestfulController implements
                     $this->partyService->getByCongressman($congressman->getCongressmanId(), $assembly->getFrom())
                 );
         }, $congressmen);
+        $collectionCount = count($collection);
 
-        return (new CollectionModel($collection));
+        return (new CollectionModel($collection))
+            ->setStatus(206)
+            ->setRange(0, $collectionCount, $collectionCount);
     }
 
     /**
@@ -286,8 +294,11 @@ class CongressmanController extends AbstractRestfulController implements
                     $this->partyService->getByCongressman($congressman->getCongressmanId(), $assembly->getFrom())
                 );
         }, $congressmen);
+        $collectionCount = count($collection);
 
-        return (new CollectionModel($collection));
+        return (new CollectionModel($collection))
+            ->setStatus(206)
+            ->setRange(0, $collectionCount, $collectionCount);
     }
 
     /**
@@ -314,8 +325,11 @@ class CongressmanController extends AbstractRestfulController implements
                     $this->partyService->getByCongressman($congressman->getCongressmanId(), $assembly->getFrom())
                 );
         }, $congressmen);
+        $collectionCount = count($collection);
 
-        return (new CollectionModel($collection));
+        return (new CollectionModel($collection))
+            ->setStatus(206)
+            ->setRange(0, $collectionCount, $collectionCount);
     }
 
     public function assemblySessionsAction()
@@ -324,9 +338,11 @@ class CongressmanController extends AbstractRestfulController implements
         $congressmanId = $this->params('congressman_id');
 
         $sessions = $this->sessionService->fetchByAssemblyAndCongressman($assemblyId, $congressmanId);
+        $sessionsCount = count($sessions);
 
         return (new CollectionModel($sessions))
-            ->setStatus(200);
+            ->setStatus(206)
+            ->setRange(0, $sessionsCount, $sessionsCount);
     }
 
     /**
@@ -339,9 +355,11 @@ class CongressmanController extends AbstractRestfulController implements
         $congressmanId = $this->params('congressman_id');
 
         $issues = $this->issueService->fetchByAssemblyAndCongressman($assemblyId, $congressmanId);
+        $issuesCount = count($issues);
 
         return (new CollectionModel($issues))
-            ->setStatus(200);
+            ->setStatus(206)
+            ->setRange(0, $issuesCount, $issuesCount);
     }
 
     /**
@@ -354,9 +372,11 @@ class CongressmanController extends AbstractRestfulController implements
         $congressmanId = $this->params('congressman_id');
 
         $issues = $this->issueService->fetchByAssemblyAndCongressmanSummary($assemblyId, $congressmanId);
+        $issuesCount = count($issues);
 
         return (new CollectionModel($issues))
-            ->setStatus(200);
+            ->setStatus(206)
+            ->setRange(0, $issuesCount, $issuesCount);
     }
 
     /**
@@ -381,9 +401,11 @@ class CongressmanController extends AbstractRestfulController implements
             $fromDate,
             $toDate
         );
+        $votingCount = count($voting);
 
         return (new CollectionModel($voting))
-            ->setStatus(200);
+            ->setStatus(206)
+            ->setRange(0, $votingCount, $votingCount);
     }
 
     /**
@@ -396,9 +418,11 @@ class CongressmanController extends AbstractRestfulController implements
         $congressmanId = $this->params('congressman_id');
 
         $categories = $this->issueCategoryService->fetchFrequencyByAssemblyAndCongressman($assemblyId, $congressmanId);
+        $categoriesCount = count($categories);
 
         return (new CollectionModel($categories))
-            ->setStatus(200);
+            ->setStatus(206)
+            ->setRange(0, $categoriesCount, $categoriesCount);
     }
 
     /**
@@ -414,9 +438,11 @@ class CongressmanController extends AbstractRestfulController implements
             $assemblyId,
             $congressmanId
         );
+        $voteCategoriesCount = count($voteCategories);
 
         return (new CollectionModel($voteCategories))
-            ->setStatus(200);
+            ->setStatus(206)
+            ->setRange(0, $voteCategoriesCount, $voteCategoriesCount);
     }
 
     public function optionsList()

@@ -37,10 +37,11 @@ class AssemblyCommitteeController extends AbstractRestfulController implements
     {
         $assemblyId = $this->params('id');
         $committees = $this->committeeService->fetchByAssembly($assemblyId);
+        $committeesCount = count($committees);
 
         return (new CollectionModel($committees))
             ->setStatus(206)
-            ->setRange(0, count($committees), count($committees));
+            ->setRange(0, $committeesCount, $committeesCount);
     }
 
     /**
