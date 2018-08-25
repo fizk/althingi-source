@@ -90,7 +90,7 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
         $this->getMockService(Party::class)
             ->shouldReceive('getByCongressman')
             ->andReturn((new PartyModel()))
-            ->twice()
+            ->once()
             ->getMock();
 
         $this->getMockService(Vote::class)
@@ -128,7 +128,7 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
         $this->getMockService(Issue::class)
             ->shouldReceive('fetchByAssemblyAndSpeechTime')
             ->andReturn(array_map(function ($i) {
-                return (new IssueValueModel())->setCongressmanId(1)->setIssueId($i)->setValue($i);
+                return (new IssueValueModel())->setCongressmanId(1)->setCategory('A')->setIssueId($i)->setValue($i);
             }, range(0, 24)))
             ->once()
             ->getMock()
@@ -214,7 +214,11 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
             ->getMock()
             ->shouldReceive('fetchByAssembly')
             ->andReturn(array_map(function () {
-                    return (new IssueAndDateModel())->setDate(new \DateTime())->setCongressmanId(1)->setIssueId(1);
+                    return (new IssueAndDateModel())
+                        ->setDate(new \DateTime())
+                        ->setCategory('A')
+                        ->setCongressmanId(1)
+                        ->setIssueId(1);
             }, range(0, 24)))
             ->once()
             ->getMock()
@@ -319,8 +323,8 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
         $this->getMockService(Issue::class)
             ->shouldReceive('get')
             ->once()
-            ->with(200, 100)
-            ->andReturn((new IssueModel())->setIssueId(200)->setAssemblyId(100))
+            ->with(200, 100, 'A')
+            ->andReturn((new IssueModel())->setIssueId(200)->setAssemblyId(100)->setCategory('A'))
             ->getMock()
 
             ->shouldReceive('update')

@@ -53,6 +53,10 @@ class Document extends Form implements InputFilterProviderInterface
             'name' => 'note',
             'type' => 'Zend\Form\Element\Text',
         ));
+        $this->add(array(
+            'name' => 'category',
+            'type' => 'Zend\Form\Element\Text',
+        ));
     }
 
     /**
@@ -107,6 +111,10 @@ class Document extends Form implements InputFilterProviderInterface
                 ],
             ],
             'type' => [
+                'required' => true,
+                'allow_empty' => false,
+            ],
+            'category' => [
                 'required' => true,
                 'allow_empty' => false,
             ],

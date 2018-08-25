@@ -34,6 +34,11 @@ class Vote extends Form implements InputFilterProviderInterface
         ));
 
         $this->add(array(
+            'name' => 'category',
+            'type' => 'Zend\Form\Element\Text',
+        ));
+
+        $this->add(array(
             'name' => 'date',
             'type' => 'Zend\Form\Element\DateTime',
             'options' => [
@@ -95,6 +100,10 @@ class Vote extends Form implements InputFilterProviderInterface
                 'allow_empty' => false,
             ],
             'assembly_id' => [
+                'required' => true,
+                'allow_empty' => false,
+            ],
+            'category' => [
                 'required' => true,
                 'allow_empty' => false,
             ],

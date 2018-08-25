@@ -19,6 +19,7 @@ use Althingi\Service\Issue;
 use Althingi\Service\Party;
 use Althingi\Lib\ServicePartyAwareInterface;
 use Althingi\Service\Speech;
+use Althingi\Utils\CategoryParam;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ItemModel;
 
@@ -30,6 +31,8 @@ class HighlightController extends AbstractRestfulController implements
     ServiceCongressmanAwareInterface,
     ServiceIssueAwareInterface
 {
+    use CategoryParam;
+
     /** @var  \Althingi\Service\Assembly */
     private $assemblyService;
 
@@ -82,6 +85,7 @@ class HighlightController extends AbstractRestfulController implements
      */
     public function getActiveIssueAction()
     {
+        $categories = $this->getCategoriesFromQuery();
         $speech = $this->speechService->getLastActive();
 
         $speech->setText(Transformer::speechToMarkdown($speech->getText()));
@@ -95,7 +99,7 @@ class HighlightController extends AbstractRestfulController implements
             ->setCongressman($congressmanPartyProperties)
             ->setSpeech($speech);
 
-        $issue = $this->issueService->getWithDate($speech->getIssueId(), $speech->getAssemblyId());
+        $issue = $this->issueService->getWithDate($speech->getIssueId(), $speech->getAssemblyId(), $categories);
 
         $issueWithSpeech = (new IssueWithSpeechProperties())->setIssue($issue)->setSpeech($speechCongressmanProperties);
 

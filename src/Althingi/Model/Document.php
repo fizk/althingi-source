@@ -24,6 +24,9 @@ class Document implements ModelInterface
     /** @var  string */
     private $type;
 
+    /** @var  string */
+    private $category;
+
     /**
      * @return int
      */
@@ -133,6 +136,24 @@ class Document implements ModelInterface
     }
 
     /**
+     * @return string
+     */
+    public function getCategory(): string
+    {
+        return $this->category;
+    }
+
+    /**
+     * @param string $category
+     * @return Document
+     */
+    public function setCategory(string $category)
+    {
+        $this->category = $category;
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function toArray()
@@ -140,6 +161,7 @@ class Document implements ModelInterface
         return [
             'document_id' => $this->document_id,
             'issue_id' => $this->issue_id,
+            'category' => $this->category,
             'assembly_id' => $this->assembly_id,
             'date' => $this->date ? $this->date->format('Y-m-d H:i:s') : null,
             'url' => $this->url,

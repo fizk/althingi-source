@@ -18,6 +18,7 @@ use Althingi\Service\Party;
 use Althingi\Service\Plenary;
 use Althingi\Service\SearchSpeech;
 use Althingi\Service\Speech;
+use Althingi\Utils\CategoryParam;
 use Finite\Exception\Exception;
 use Rend\Controller\AbstractRestfulController;
 use Rend\Helper\Http\RangeValue;
@@ -35,6 +36,8 @@ class SpeechController extends AbstractRestfulController implements
     ServicePlenaryAwareInterface
 {
     use Range;
+
+    use CategoryParam;
 
     /** @var \Althingi\Service\Speech */
     private $speechService;
@@ -63,9 +66,10 @@ class SpeechController extends AbstractRestfulController implements
         $assemblyId = $this->params('id');
         $issueId = $this->params('issue_id');
         $speechId = $id;
+        $category = $this->getCategoryFromQuery();
 
-        $count = $this->speechService->countByIssue($assemblyId, $issueId);
-        $speeches = $this->speechService->fetch($speechId, $assemblyId, $issueId);
+        $count = $this->speechService->countByIssue($assemblyId, $issueId, $category);
+        $speeches = $this->speechService->fetch($speechId, $assemblyId, $issueId, $category);
         $positionBegin = (count($speeches) > 0)
             ? $speeches[0]->getPosition()
             : 0 ;
@@ -106,6 +110,7 @@ class SpeechController extends AbstractRestfulController implements
         $issueId = $this->params('issue_id');
         $count = 0;
         $queryParam = $this->params()->fromQuery('leit', null);
+        $category = $this->getCategoryFromQuery();
 
         if ($queryParam) {
             $speeches = $this->speechSearch->fetchByIssue($queryParam, $assemblyId, $issueId);
@@ -126,12 +131,13 @@ class SpeechController extends AbstractRestfulController implements
             }, $speeches);
 
         } else {
-            $count = $this->speechService->countByIssue($assemblyId, $issueId);
+            $count = $this->speechService->countByIssue($assemblyId, $issueId, $category);
             $range = $this->getRange($this->getRequest(), $count);
 
             $speeches = $this->speechService->fetchByIssue(
                 $assemblyId,
                 $issueId,
+                $category,
                 $range->getFrom(),
                 $range->getSize(),
                 1500

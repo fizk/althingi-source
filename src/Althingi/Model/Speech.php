@@ -19,6 +19,9 @@ class Speech implements ModelInterface
     /** @var int */
     private $issue_id;
 
+    /** @var  string */
+    private $category;
+
     /** @var int */
     private $congressman_id;
 
@@ -112,6 +115,24 @@ class Speech implements ModelInterface
     public function setIssueId(int $issue_id): Speech
     {
         $this->issue_id = $issue_id;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCategory(): ?string
+    {
+        return $this->category;
+    }
+
+    /**
+     * @param string $category
+     * @return Speech
+     */
+    public function setCategory(?string $category): Speech
+    {
+        $this->category = $category;
         return $this;
     }
 
@@ -266,6 +287,7 @@ class Speech implements ModelInterface
             'plenary_id' => $this->plenary_id,
             'assembly_id' => $this->assembly_id,
             'issue_id' => $this->issue_id,
+            'category' => $this->category,
             'congressman_id' => $this->congressman_id,
             'congressman_type' => $this->congressman_type,
             'from' => $this->from ? $this->from->format('Y-m-d H:i:s') : null,

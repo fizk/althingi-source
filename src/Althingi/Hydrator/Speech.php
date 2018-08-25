@@ -17,6 +17,7 @@ class Speech implements HydratorInterface
     {
         return $object
             ->setSpeechId($data['speech_id'])
+            ->setCategory(empty($data['category']) ? null : $data['category'])
             ->setPlenaryId($data['plenary_id'])
             ->setAssemblyId($data['assembly_id'])
             ->setIssueId($data['issue_id'])

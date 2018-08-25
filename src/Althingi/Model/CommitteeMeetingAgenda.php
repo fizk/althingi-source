@@ -19,6 +19,9 @@ class CommitteeMeetingAgenda implements ModelInterface
     /** @var  string */
     private $title = null;
 
+    /** @var  string */
+    private $category;
+
     /**
      * @return int
      */
@@ -110,6 +113,24 @@ class CommitteeMeetingAgenda implements ModelInterface
     }
 
     /**
+     * @return string
+     */
+    public function getCategory(): ?string
+    {
+        return $this->category;
+    }
+
+    /**
+     * @param string $category
+     * @return CommitteeMeetingAgenda
+     */
+    public function setCategory(?string $category)
+    {
+        $this->category = $category;
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function toArray()
@@ -118,6 +139,7 @@ class CommitteeMeetingAgenda implements ModelInterface
             'committee_meeting_agenda_id' => $this->committee_meeting_agenda_id,
             'committee_meeting_id' => $this->committee_meeting_id,
             'issue_id' => $this->issue_id,
+            'category' => $this->category,
             'assembly_id' => $this->assembly_id,
             'title' => $this->title,
         ];

@@ -188,6 +188,7 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
                     ->setAssemblyId(145)
                     ->setIssueId(2)
                     ->setDocumentId(2)
+                    ->setCategory('A')
                     ->setDate(new \DateTime())
                     ->setType('some-type')
             )

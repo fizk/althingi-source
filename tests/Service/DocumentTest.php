@@ -22,6 +22,7 @@ class DocumentTest extends PHPUnit_Extensions_Database_TestCase
         $expectedData = (new DocumentModel())
             ->setDocumentId(1)
             ->setAssemblyId(1)
+            ->setCategory('A')
             ->setIssueId(1)
             ->setDate(new \DateTime('2000-01-01'))
             ->setType('type')
@@ -47,6 +48,7 @@ class DocumentTest extends PHPUnit_Extensions_Database_TestCase
         $document = (new DocumentModel())
             ->setAssemblyId(1)
             ->setIssueId(1)
+            ->setCategory('A')
             ->setDate(new \DateTime('2000-01-01'))
             ->setType('type')
             ->setUrl('http://url.com');
@@ -57,14 +59,26 @@ class DocumentTest extends PHPUnit_Extensions_Database_TestCase
 
         $expectedTable = $this->createArrayDataSet([
             'Document' => [
-                ['document_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
-                ['document_id' => 2, 'issue_id' => 1, 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
-                ['document_id' => 3, 'issue_id' => 1, 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
-                ['document_id' => 4, 'issue_id' => 2, 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
-                ['document_id' => 5, 'issue_id' => 1, 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
+                [
+                    'document_id' => 1, 'issue_id' => 1, 'category' => 'A', 'assembly_id' => 1,
+                    'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
+                ], [
+                    'document_id' => 2, 'issue_id' => 1, 'category' => 'A', 'assembly_id' => 1,
+                    'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
+                ], [
+                    'document_id' => 3, 'issue_id' => 1, 'category' => 'A', 'assembly_id' => 1,
+                    'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
+                ], [
+                    'document_id' => 4, 'issue_id' => 2, 'category' => 'A', 'assembly_id' => 1,
+                    'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
+                ], [
+                    'document_id' => 5, 'issue_id' => 1, 'category' => 'A', 'assembly_id' => 1,
+                    'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
+                ],
             ]
         ])->getTable('Document');
-        $queryTable = $this->getConnection()->createQueryTable('Document', 'SELECT * FROM Document');
+        $queryTable = $this->getConnection()
+            ->createQueryTable('Document', 'SELECT * FROM Document');
 
         $this->assertTablesEqual($expectedTable, $queryTable);
     }
@@ -74,6 +88,7 @@ class DocumentTest extends PHPUnit_Extensions_Database_TestCase
         $document = (new DocumentModel())
             ->setAssemblyId(1)
             ->setIssueId(1)
+            ->setCategory('A')
             ->setDate(new \DateTime('2000-01-01'))
             ->setType('type')
             ->setUrl('http://url.com');
@@ -84,11 +99,22 @@ class DocumentTest extends PHPUnit_Extensions_Database_TestCase
 
         $expectedTable = $this->createArrayDataSet([
             'Document' => [
-                ['document_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
-                ['document_id' => 2, 'issue_id' => 1, 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
-                ['document_id' => 3, 'issue_id' => 1, 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
-                ['document_id' => 4, 'issue_id' => 2, 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
-                ['document_id' => 5, 'issue_id' => 1, 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
+                [
+                    'document_id' => 1, 'issue_id' => 1, 'category' => 'A', 'assembly_id' => 1,
+                    'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
+                ], [
+                    'document_id' => 2, 'issue_id' => 1, 'category' => 'A', 'assembly_id' => 1,
+                    'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
+                ], [
+                    'document_id' => 3, 'issue_id' => 1, 'category' => 'A', 'assembly_id' => 1,
+                    'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
+                ], [
+                    'document_id' => 4, 'issue_id' => 2, 'category' => 'A', 'assembly_id' => 1,
+                    'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
+                ], [
+                    'document_id' => 5, 'issue_id' => 1, 'category' => 'A', 'assembly_id' => 1,
+                    'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
+                ],
             ]
         ])->getTable('Document');
         $queryTable = $this->getConnection()->createQueryTable('Document', 'SELECT * FROM Document');
@@ -102,6 +128,7 @@ class DocumentTest extends PHPUnit_Extensions_Database_TestCase
             ->setDocumentId(1)
             ->setAssemblyId(1)
             ->setIssueId(1)
+            ->setCategory('A')
             ->setDate(new \DateTime('2000-01-01'))
             ->setType('thisismytype')
             ->setUrl('http://url.com');
@@ -112,10 +139,19 @@ class DocumentTest extends PHPUnit_Extensions_Database_TestCase
 
         $expectedTable = $this->createArrayDataSet([
             'Document' => [
-                ['document_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'thisismytype'],
-                ['document_id' => 2, 'issue_id' => 1, 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
-                ['document_id' => 3, 'issue_id' => 1, 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
-                ['document_id' => 4, 'issue_id' => 2, 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
+                [
+                    'document_id' => 1, 'issue_id' => 1, 'category' => 'A', 'assembly_id' => 1,
+                    'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'thisismytype'
+                ], [
+                    'document_id' => 2, 'issue_id' => 1, 'category' => 'A', 'assembly_id' => 1,
+                    'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
+                ], [
+                    'document_id' => 3, 'issue_id' => 1, 'category' => 'A', 'assembly_id' => 1,
+                    'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
+                ], [
+                    'document_id' => 4, 'issue_id' => 2, 'category' => 'A', 'assembly_id' => 1,
+                    'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
+                ],
             ]
         ])->getTable('Document');
         $queryTable = $this->getConnection()->createQueryTable('Document', 'SELECT * FROM Document');
@@ -130,14 +166,23 @@ class DocumentTest extends PHPUnit_Extensions_Database_TestCase
                 ['assembly_id' => 1, 'from' => '2000-01-01', 'to' => null]
             ],
             'Issue' => [
-                ['issue_id' => 1, 'assembly_id' => 1],
-                ['issue_id' => 2, 'assembly_id' => 1],
+                ['issue_id' => 1, 'assembly_id' => 1, 'category' => 'A' ,],
+                ['issue_id' => 2, 'assembly_id' => 1, 'category' => 'A' ,],
             ],
             'Document' => [
-                ['document_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
-                ['document_id' => 2, 'issue_id' => 1, 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
-                ['document_id' => 3, 'issue_id' => 1, 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
-                ['document_id' => 4, 'issue_id' => 2, 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
+                [
+                    'document_id' => 1, 'issue_id' => 1, 'category' => 'A' ,'assembly_id' => 1,
+                    'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
+                ], [
+                    'document_id' => 2, 'issue_id' => 1, 'category' => 'A' ,'assembly_id' => 1,
+                    'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
+                ], [
+                    'document_id' => 3, 'issue_id' => 1, 'category' => 'A' ,'assembly_id' => 1,
+                    'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
+                ], [
+                    'document_id' => 4, 'issue_id' => 2, 'category' => 'A' ,'assembly_id' => 1,
+                    'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
+                ],
             ]
         ]);
     }

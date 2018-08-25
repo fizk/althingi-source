@@ -147,8 +147,16 @@ class Issue extends Form implements InputFilterProviderInterface
                 'allow_empty' => false,
             ],
             'type_subname' => [
-                'required' => true,
-                'allow_empty' => false,
+                'required' => false,
+                'allow_empty' => true,
+                'filters' => [
+                    [
+                        'name' => '\Zend\Filter\ToNull',
+                        'options' => ['type' => 'all']
+                    ], [
+                        'name' => '\Althingi\Filter\ItemStatusFilter'
+                    ]
+                ],
             ],
             'status' => [
                 'required' => false,

@@ -69,6 +69,7 @@ class CongressmanDocumentControllerTest extends AbstractHttpControllerTestCase
                 (new CongressmanDocumentModel())
                     ->setAssemblyId(145)
                     ->setIssueId(2)
+                    ->setCategory('A')
                     ->setCongressmanId(637)
                     ->setDocumentId(1018)
             )

@@ -12,6 +12,9 @@ class Vote implements ModelInterface
     /** @var int */
     private $issue_id;
 
+    /** @var string */
+    private $category;
+
     /** @var int */
     private $assembly_id;
 
@@ -258,11 +261,30 @@ class Vote implements ModelInterface
         return $this;
     }
 
+    /**
+     * @return string
+     */
+    public function getCategory(): string
+    {
+        return $this->category;
+    }
+
+    /**
+     * @param string $category
+     * @return Vote
+     */
+    public function setCategory(string $category)
+    {
+        $this->category = $category;
+        return $this;
+    }
+
     public function toArray()
     {
         return [
             'vote_id' => $this->vote_id,
             'issue_id' => $this->issue_id,
+            'category' => $this->category,
             'assembly_id' => $this->assembly_id,
             'document_id' => $this->document_id,
             'date' => $this->date ? $this->date->format('Y-m-d H:m:s') : null,

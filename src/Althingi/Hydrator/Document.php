@@ -19,6 +19,7 @@ class Document implements HydratorInterface
         return $object
             ->setDocumentId($data['document_id'])
             ->setIssueId($data['issue_id'])
+            ->setCategory($data['category'])
             ->setAssemblyId($data['assembly_id'])
             ->setDate(new DateTime($data['date']))
             ->setUrl($data['url'])

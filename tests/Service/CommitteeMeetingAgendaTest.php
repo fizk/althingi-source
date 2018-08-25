@@ -21,6 +21,7 @@ class CommitteeMeetingAgendaTest extends PHPUnit_Extensions_Database_TestCase
             ->setAssemblyId(1)
             ->setCommitteeMeetingAgendaId(1)
             ->setIssueId(1)
+            ->setCategory('A')
             ->setTitle('title');
         $service = new CommitteeMeetingAgenda();
         $service->setDriver($this->pdo);
@@ -34,17 +35,28 @@ class CommitteeMeetingAgendaTest extends PHPUnit_Extensions_Database_TestCase
     {
         $expectedTable = $this->createArrayDataSet([
             'CommitteeMeetingAgenda' => [
-                ['committee_meeting_agenda_id' => 1, 'committee_meeting_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'title' => 'title'],
-                ['committee_meeting_agenda_id' => 2, 'committee_meeting_id' => 1, 'issue_id' => null, 'assembly_id' => 1, 'title' => 'title'],
-                ['committee_meeting_agenda_id' => 3, 'committee_meeting_id' => 1, 'issue_id' => null, 'assembly_id' => 1, 'title' => null],
-                ['committee_meeting_agenda_id' => 4, 'committee_meeting_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'title' => 'thetitle'],
+                [
+                    'committee_meeting_agenda_id' => 1, 'committee_meeting_id' => 1, 'issue_id' => 1,
+                    'category' => 'A', 'assembly_id' => 1, 'title' => 'title',
+                ], [
+                    'committee_meeting_agenda_id' => 2, 'committee_meeting_id' => 1, 'issue_id' => null,
+                    'category' => 'A', 'assembly_id' => 1, 'title' => 'title',
+                ], [
+                    'committee_meeting_agenda_id' => 3, 'committee_meeting_id' => 1, 'issue_id' => null,
+                    'category' => 'A', 'assembly_id' => 1, 'title' => null,
+                ], [
+                    'committee_meeting_agenda_id' => 4, 'committee_meeting_id' => 1, 'issue_id' => 1,
+                    'category' => 'A', 'assembly_id' => 1, 'title' => 'thetitle',
+                ],
             ],
         ])->getTable('CommitteeMeetingAgenda');
-        $actualTable = $this->getConnection()->createQueryTable('CommitteeMeetingAgenda', 'SELECT * FROM CommitteeMeetingAgenda');
+        $actualTable = $this->getConnection()
+            ->createQueryTable('CommitteeMeetingAgenda', 'SELECT * FROM CommitteeMeetingAgenda');
 
         $committeeMeetingAgenda = (new CommitteeMeetingAgendaModel())
             ->setCommitteeMeetingId(1)
             ->setIssueId(1)
+            ->setCategory('A')
             ->setAssemblyId(1)
             ->setTitle('thetitle');
 
@@ -60,17 +72,28 @@ class CommitteeMeetingAgendaTest extends PHPUnit_Extensions_Database_TestCase
     {
         $expectedTable = $this->createArrayDataSet([
             'CommitteeMeetingAgenda' => [
-                ['committee_meeting_agenda_id' => 1, 'committee_meeting_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'title' => 'title'],
-                ['committee_meeting_agenda_id' => 2, 'committee_meeting_id' => 1, 'issue_id' => null, 'assembly_id' => 1, 'title' => 'title'],
-                ['committee_meeting_agenda_id' => 3, 'committee_meeting_id' => 1, 'issue_id' => null, 'assembly_id' => 1, 'title' => null],
-                ['committee_meeting_agenda_id' => 4, 'committee_meeting_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'title' => 'thetitle'],
+                [
+                    'committee_meeting_agenda_id' => 1, 'committee_meeting_id' => 1, 'issue_id' => 1,
+                    'category' => 'A', 'assembly_id' => 1, 'title' => 'title'
+                ], [
+                    'committee_meeting_agenda_id' => 2, 'committee_meeting_id' => 1, 'issue_id' => null,
+                    'category' => 'A', 'assembly_id' => 1, 'title' => 'title'
+                ], [
+                    'committee_meeting_agenda_id' => 3, 'committee_meeting_id' => 1, 'issue_id' => null,
+                    'category' => 'A', 'assembly_id' => 1, 'title' => null
+                ], [
+                    'committee_meeting_agenda_id' => 4, 'committee_meeting_id' => 1, 'issue_id' => 1,
+                    'category' => 'A', 'assembly_id' => 1, 'title' => 'thetitle'
+                ],
             ],
         ])->getTable('CommitteeMeetingAgenda');
-        $actualTable = $this->getConnection()->createQueryTable('CommitteeMeetingAgenda', 'SELECT * FROM CommitteeMeetingAgenda');
+        $actualTable = $this->getConnection()
+            ->createQueryTable('CommitteeMeetingAgenda', 'SELECT * FROM CommitteeMeetingAgenda');
 
         $committeeMeetingAgenda = (new CommitteeMeetingAgendaModel())
             ->setCommitteeMeetingId(1)
             ->setIssueId(1)
+            ->setCategory('A')
             ->setAssemblyId(1)
             ->setTitle('thetitle');
 
@@ -86,17 +109,26 @@ class CommitteeMeetingAgendaTest extends PHPUnit_Extensions_Database_TestCase
     {
         $expectedTable = $this->createArrayDataSet([
             'CommitteeMeetingAgenda' => [
-                ['committee_meeting_agenda_id' => 1, 'committee_meeting_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'title' => 'thisismynewtitle'],
-                ['committee_meeting_agenda_id' => 2, 'committee_meeting_id' => 1, 'issue_id' => null, 'assembly_id' => 1, 'title' => 'title'],
-                ['committee_meeting_agenda_id' => 3, 'committee_meeting_id' => 1, 'issue_id' => null, 'assembly_id' => 1, 'title' => null],
+                [
+                    'committee_meeting_agenda_id' => 1, 'committee_meeting_id' => 1, 'issue_id' => 1,
+                    'category' => 'A', 'assembly_id' => 1, 'title' => 'thisismynewtitle'
+                ], [
+                    'committee_meeting_agenda_id' => 2, 'committee_meeting_id' => 1, 'issue_id' => null,
+                    'category' => 'A', 'assembly_id' => 1, 'title' => 'title'
+                ], [
+                    'committee_meeting_agenda_id' => 3, 'committee_meeting_id' => 1, 'issue_id' => null,
+                    'category' => 'A', 'assembly_id' => 1, 'title' => null
+                ],
             ],
         ])->getTable('CommitteeMeetingAgenda');
-        $actualTable = $this->getConnection()->createQueryTable('CommitteeMeetingAgenda', 'SELECT * FROM CommitteeMeetingAgenda');
+        $actualTable = $this->getConnection()
+            ->createQueryTable('CommitteeMeetingAgenda', 'SELECT * FROM CommitteeMeetingAgenda');
 
         $committeeMeetingAgenda = (new CommitteeMeetingAgendaModel())
             ->setCommitteeMeetingAgendaId(1)
             ->setCommitteeMeetingId(1)
             ->setIssueId(1)
+            ->setCategory('A')
             ->setAssemblyId(1)
             ->setTitle('thisismynewtitle');
 
@@ -116,7 +148,7 @@ class CommitteeMeetingAgendaTest extends PHPUnit_Extensions_Database_TestCase
                 ['assembly_id' => 2, 'from' => '2000-01-01'],
             ],
             'Issue' => [
-                ['issue_id' => 1, 'assembly_id' => 1],
+                ['issue_id' => 1, 'assembly_id' => 1, 'category' => 'A'],
             ],
             'Committee' => [
                 ['committee_id' => 1, 'name' => 'committee1', 'first_assembly_id' => 1],
@@ -132,9 +164,16 @@ class CommitteeMeetingAgendaTest extends PHPUnit_Extensions_Database_TestCase
                 ['committee_meeting_id' => 5, 'committee_id' => 1, 'assembly_id' => 2, 'from' => '2000-01-01 00:00'],
             ],
             'CommitteeMeetingAgenda' => [
-                ['committee_meeting_agenda_id' => 1, 'committee_meeting_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'title' => 'title'],
-                ['committee_meeting_agenda_id' => 2, 'committee_meeting_id' => 1, 'issue_id' => null, 'assembly_id' => 1, 'title' => 'title'],
-                ['committee_meeting_agenda_id' => 3, 'committee_meeting_id' => 1, 'issue_id' => null, 'assembly_id' => 1, 'title' => null],
+                [
+                    'committee_meeting_agenda_id' => 1, 'committee_meeting_id' => 1,
+                    'issue_id' => 1, 'assembly_id' => 1, 'title' => 'title', 'category' => 'A'
+                ], [
+                    'committee_meeting_agenda_id' => 2, 'committee_meeting_id' => 1,
+                    'issue_id' => null, 'assembly_id' => 1, 'title' => 'title', 'category' => 'A'
+                ], [
+                    'committee_meeting_agenda_id' => 3, 'committee_meeting_id' => 1,
+                    'issue_id' => null, 'assembly_id' => 1, 'title' => null, 'category' => 'A'
+                ],
             ],
         ]);
     }

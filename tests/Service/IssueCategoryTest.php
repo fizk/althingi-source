@@ -36,6 +36,7 @@ class IssueCategoryTest extends PHPUnit_Extensions_Database_TestCase
         $issueCategory = (new IssueCategoryModel())
             ->setAssemblyId(145)
             ->setIssueId(2)
+            ->setCategory('A')
             ->setCategoryId(34);
 
         $service->create($issueCategory);
@@ -52,6 +53,7 @@ class IssueCategoryTest extends PHPUnit_Extensions_Database_TestCase
         $issueCategory = (new IssueCategoryModel())
             ->setAssemblyId(145)
             ->setIssueId(2)
+            ->setCategory('A')
             ->setCategoryId(34);
 
         $service->save($issueCategory);
@@ -68,6 +70,7 @@ class IssueCategoryTest extends PHPUnit_Extensions_Database_TestCase
         $issueCategory = (new IssueCategoryModel())
             ->setAssemblyId(145)
             ->setIssueId(1)
+            ->setCategory('A')
             ->setCategoryId(1);
 
         $service->update($issueCategory);
@@ -162,19 +165,19 @@ class IssueCategoryTest extends PHPUnit_Extensions_Database_TestCase
                     'issue_id' => 1,
                     'assembly_id' => 145,
                     'congressman_id' => null,
-                    'category' => '',
+                    'category' => 'A',
                     'name' => '',
                     'sub_name' => '',
                     'type' => '',
                     'type_name' => '',
                     'type_subname' => '',
                     'status' => '',
-                    'question' => null
+                    'question' => null,
                 ], [
                     'issue_id' => 2,
                     'assembly_id' => 145,
                     'congressman_id' => null,
-                    'category' => '',
+                    'category' => 'A',
                     'name' => '',
                     'sub_name' => '',
                     'type' => '',
@@ -185,7 +188,7 @@ class IssueCategoryTest extends PHPUnit_Extensions_Database_TestCase
                 ],
             ],
             'Category_has_Issue' => [
-                ['category_id' => 1, 'issue_id' => 1, 'assembly_id' => 145],
+                ['category_id' => 1, 'issue_id' => 1, 'assembly_id' => 145, 'category' => 'A'],
             ],
             'Speech' => [
                 [
@@ -193,6 +196,7 @@ class IssueCategoryTest extends PHPUnit_Extensions_Database_TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 145,
                     'issue_id' => 1,
+                    'category' => 'A',
                     'congressman_id' => 1,
                     'from' => '2000-01-01 00:00:00',
                     'to' =>  null,
@@ -201,6 +205,7 @@ class IssueCategoryTest extends PHPUnit_Extensions_Database_TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 145,
                     'issue_id' => 1,
+                    'category' => 'A',
                     'congressman_id' => 1,
                     'from' => null,
                     'to' =>  '2000-01-01 00:0:10',
@@ -209,6 +214,7 @@ class IssueCategoryTest extends PHPUnit_Extensions_Database_TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 145,
                     'issue_id' => 1,
+                    'category' => 'A',
                     'congressman_id' => 1,
                     'from' => '2000-01-01 00:00:00',
                     'to' =>  '2000-01-01 00:0:10',
@@ -217,6 +223,7 @@ class IssueCategoryTest extends PHPUnit_Extensions_Database_TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 145,
                     'issue_id' => 1,
+                    'category' => 'A',
                     'congressman_id' => 1,
                     'from' => '2000-01-01 00:00:00',
                     'to' =>  '2000-01-01 00:0:10',

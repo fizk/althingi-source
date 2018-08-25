@@ -138,6 +138,61 @@ class Speech implements DatabaseAwareInterface, EventManagerAwareInterface
     }
 
     /**
+     * Fetch all speeches by issue.
+     *
+     * @param int $assemblyId
+     * @param int $issueId
+     * @param int $offset
+     * @param int $size
+     * @param int $words
+     * @param string $category
+     * @return \Althingi\Model\SpeechAndPosition[]
+     */
+    public function fetchByIssue(
+        int $assemblyId,
+        int $issueId,
+        ?string $category = 'A',
+        ?int $offset = 0,
+        ?int $size = null,
+        ?int $words = 1500
+    ): array {
+        $resultSize = $size !== null ? $size : self::MAX_ROW_COUNT;
+
+        $statement = $this->getDriver()->prepare("
+          select *, timestampdiff(SECOND, `from`, `to`) as `time`
+          from `Speech`
+          where assembly_id = :assembly_id and issue_id = :issue_id and `category` = :category
+          order by `from`
+          limit {$offset}, {$resultSize};
+        ");
+        $statement->execute(['assembly_id' => $assemblyId, 'issue_id' => $issueId, 'category' => $category]);
+
+        if ($size) {
+            $speeches = $statement->fetchAll(PDO::FETCH_ASSOC);
+        } else {
+            $wordCount = 0;
+            $itemCount = 0;
+            $speeches = [];
+            do {
+                $object = $statement->fetch(PDO::FETCH_ASSOC);
+                $wordCount += $object['word_count'];
+                $itemCount++;
+                if ($object) {
+                    $speeches[] = $object;
+                }
+            } while (($wordCount < $words) && ($itemCount < 25) && $object !== false);
+        }
+        $statement->closeCursor();
+
+        return array_map(function ($object, $position) {
+            return (new SpeechAndPositionHydrator())->hydrate(
+                array_merge($object, ['position' => $position]),
+                new SpeechAndPositionModel()
+            );
+        }, $speeches, count($speeches) > 0 ? range($offset, $offset + count($speeches) - 1) : []);
+    }
+
+    /**
      * Get a fixed size section of the speech list which will contain
      * the speech with the given ID.
      *
@@ -151,18 +206,19 @@ class Speech implements DatabaseAwareInterface, EventManagerAwareInterface
      * @param int $assemblyId
      * @param int $issueId
      * @param int $size
+     * @param string $category
      * @return \Althingi\Model\SpeechAndPosition[]
      */
-    public function fetch(string $id, int $assemblyId, int $issueId, int $size = 25): array
+    public function fetch(string $id, int $assemblyId, int $issueId, ?int $size = 25, ?string $category = 'A'): array
     {
         $pointer = 0;
         $hasResult = false;
         $statement = $this->getDriver()->prepare(
             'select * from `Speech` s 
-            where s.`assembly_id` = :assembly_id and s.`issue_id` = :issue_id
+            where s.`assembly_id` = :assembly_id and s.`issue_id` = :issue_id and s.category = :category
             order by s.`from`'
         );
-        $statement->execute(['assembly_id' => $assemblyId, ':issue_id' => $issueId]);
+        $statement->execute(['assembly_id' => $assemblyId, ':issue_id' => $issueId, 'category' => $category]);
 
         while ($row = $statement->fetch(PDO::FETCH_OBJ)) {
             if ($row->speech_id == $id) {
@@ -215,72 +271,20 @@ class Speech implements DatabaseAwareInterface, EventManagerAwareInterface
     }
 
     /**
-     * Fetch all speeches by issue.
-     *
-     * @param int $assemblyId
-     * @param int $issueId
-     * @param int $offset
-     * @param int $size
-     * @param int $words
-     * @return \Althingi\Model\SpeechAndPosition[]
-     */
-    public function fetchByIssue(
-        int $assemblyId,
-        int $issueId,
-        int $offset = 0,
-        int $size = null,
-        int $words = 1500
-    ): array {
-        $resultSize = $size !== null ? $size : self::MAX_ROW_COUNT;
-
-        $statement = $this->getDriver()->prepare("
-          select *, timestampdiff(SECOND, `from`, `to`) as `time`
-          from `Speech`
-          where assembly_id = :assembly_id and issue_id = :issue_id
-          order by `from`
-          limit {$offset}, {$resultSize};
-        ");
-        $statement->execute(['assembly_id' => $assemblyId, 'issue_id' => $issueId]);
-
-        if ($size) {
-            $speeches = $statement->fetchAll(PDO::FETCH_ASSOC);
-        } else {
-            $wordCount = 0;
-            $itemCount = 0;
-            $speeches = [];
-            do {
-                $object = $statement->fetch(PDO::FETCH_ASSOC);
-                $wordCount += $object['word_count'];
-                $itemCount++;
-                if ($object) {
-                    $speeches[] = $object;
-                }
-            } while (($wordCount < $words) && ($itemCount < 25) && $object !== false);
-        }
-        $statement->closeCursor();
-
-        return array_map(function ($object, $position) {
-            return (new SpeechAndPositionHydrator())->hydrate(
-                array_merge($object, ['position' => $position]),
-                new SpeechAndPositionModel()
-            );
-        }, $speeches, count($speeches) > 0 ? range($offset, $offset + count($speeches) - 1) : []);
-    }
-
-    /**
      * Count all speeches by issue.
      *
      * @param int $assemblyId
      * @param int $issueId
+     * @param string $category
      * @return int
      */
-    public function countByIssue(int $assemblyId, int $issueId): int
+    public function countByIssue(int $assemblyId, int $issueId, ?string $category = 'A'): int
     {
         $statement = $this->getDriver()->prepare("
           select count(*) from `Speech`
-          where assembly_id = :assembly_id and issue_id = :issue_id
+          where assembly_id = :assembly_id and issue_id = :issue_id and category = :category
         ");
-        $statement->execute(['assembly_id' => $assemblyId, 'issue_id' => $issueId]);
+        $statement->execute(['assembly_id' => $assemblyId, 'issue_id' => $issueId, 'category' => $category]);
         return $statement->fetchColumn(0);
     }
 
@@ -290,15 +294,16 @@ class Speech implements DatabaseAwareInterface, EventManagerAwareInterface
      *
      * @param $assemblyId
      * @param $issueId
+     * @param $category
      * @return \Althingi\Model\DateAndCount[]
      */
-    public function fetchFrequencyByIssue(int $assemblyId, int $issueId): array
+    public function fetchFrequencyByIssue(int $assemblyId, int $issueId, ?string $category = 'A'): array
     {
         $statement = $this->getDriver()->prepare('
             select date_format(`from`, "%Y-%m-%d 00:00:00") as `date`, 
             (sum(time_to_sec(timediff(`to`, `from`)))) as `count`
             from `Speech`
-            where assembly_id = :assembly_id and issue_id = :issue_id
+            where assembly_id = :assembly_id and issue_id = :issue_id and category = :category
             group by date_format(`from`, "%Y-%m-%d")
             having `count` is not null
             order by `from`;
@@ -306,7 +311,8 @@ class Speech implements DatabaseAwareInterface, EventManagerAwareInterface
 
         $statement->execute([
             'assembly_id' => $assemblyId,
-            'issue_id' => $issueId
+            'issue_id' => $issueId,
+            'category' => $category
         ]);
 
         return array_map(function ($speech) {
@@ -321,16 +327,23 @@ class Speech implements DatabaseAwareInterface, EventManagerAwareInterface
      * Return date and time in seconds.
      *
      * @param int $assemblyId
+     * @param array $category
      * @return \Althingi\Model\DateAndCount[]
      */
-    public function fetchFrequencyByAssembly(int $assemblyId): array
+    public function fetchFrequencyByAssembly(int $assemblyId, ?array $category = ['A']): array
     {
+        $categories = count($category) > 0
+            ? 'and `category` in (' . implode(',', array_map(function ($c) {
+                return '"' . $c . '"';
+            }, $category)) . ')'
+            : '';
+
         $statement = $this->getDriver()->prepare(
-            'select date_format(`date`, "%Y-%m-%d 00:00:00") as `date`, sum(`diff`) as `count` from (
+            "select date_format(`date`, \"%Y-%m-%d 00:00:00\") as `date`, sum(`diff`) as `count` from (
                 select date(`from`) as `date`, time_to_sec(timediff(`to`, `from`)) as `diff`
                 from `Speech`
-                where assembly_id = :assembly_id and (`from` is not null or `to` is not null)
-            ) as G group by `date` order by `date`;'
+                where assembly_id = :assembly_id and (`from` is not null or `to` is not null) {$categories}
+            ) as G group by `date` order by `date`;"
         );
         $statement->execute(['assembly_id' => $assemblyId]);
 
@@ -342,16 +355,29 @@ class Speech implements DatabaseAwareInterface, EventManagerAwareInterface
     /**
      * @param int $assemblyId
      * @param int $congressmanId
+     * @param array $category
      * @return int
      */
-    public function countTotalTimeByAssemblyAndCongressman(int $assemblyId, int $congressmanId): int
-    {
-        $statement = $this->getDriver()->prepare('
+    public function countTotalTimeByAssemblyAndCongressman(
+        int $assemblyId,
+        int $congressmanId,
+        ?array $category = ['A']
+    ): int {
+        $categories = count($category) > 0
+            ? 'and S.category in (' . implode(',', array_map(function ($c) {
+                return '"' . $c . '"';
+            }, $category)) . ')'
+            : '';
+
+        $statement = $this->getDriver()->prepare("
             select sum(`diff`) from (
                 select *, time_to_sec(timediff(S.`to`, S.`from`)) as `diff` 
-                from `Speech` S where S.`assembly_id` = :assembly_id and S.`congressman_id` = :congressman_id
+                from `Speech` S 
+                where S.`assembly_id` = :assembly_id 
+                  and S.`congressman_id` = :congressman_id
+                  {$categories}
             ) as D;
-        ');
+        ");
         $statement->execute([
             'assembly_id' => $assemblyId,
             'congressman_id' => $congressmanId,

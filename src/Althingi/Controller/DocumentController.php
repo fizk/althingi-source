@@ -112,7 +112,12 @@ class DocumentController extends AbstractRestfulController implements
         $form = new DocumentForm();
         $form->bindValues(array_merge(
             $data,
-            ['assembly_id' => $assemblyId, 'issue_id' => $issueId, 'document_id' => $documentId]
+            [
+                'assembly_id' => $assemblyId,
+                'issue_id' => $issueId,
+                'document_id' => $documentId,
+                'category' => 'A',
+            ]
         ));
 
         if ($form->isValid()) {

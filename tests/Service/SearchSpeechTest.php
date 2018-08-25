@@ -40,6 +40,7 @@ class SearchSpeechTest extends PHPUnit_Framework_TestCase
             ->setSpeechId('00001-id')
             ->setPlenaryId(1)
             ->setAssemblyId(1)
+            ->setCategory('A')
             ->setIssueId(1)
             ->setCongressmanId(1)
             ->setText('<mgr>hani [...] krummi [...] hundur [...] svin</mgr>')];
@@ -92,6 +93,7 @@ class SearchSpeechTest extends PHPUnit_Framework_TestCase
                             (new Speech())
                                 ->setSpeechId('00001-id')
                                 ->setPlenaryId(1)
+                                ->setCategory('A')
                                 ->setAssemblyId(1)
                                 ->setIssueId(1)
                                 ->setCongressmanId(1)

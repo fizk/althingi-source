@@ -9,6 +9,7 @@ use Althingi\Controller\PartyController;
 use Althingi\Controller\ConstituencyController;
 use Althingi\Controller\PlenaryController;
 use Althingi\Controller\IssueController;
+use Althingi\Controller\UndocumentedIssueController;
 use Althingi\Controller\SpeechController;
 use Althingi\Controller\VoteController;
 use Althingi\Controller\VoteItemController;
@@ -240,6 +241,20 @@ return array(
                                 'identifier' => 'plenary_id'
                             ],
                         ],
+                    ],
+                    'bmal' => [
+                        'type' => 'Zend\Mvc\Router\Http\Segment',
+                        'options' => [
+                            'route'    => '/bmal[/:issue_id]',
+                            'constraints' => [
+                                'issue_id' => '[0-9]+',
+                            ],
+                            'defaults' => [
+                                'controller' => UndocumentedIssueController::class,
+                                'identifier' => 'issue_id',
+                            ],
+                        ],
+                        'may_terminate' => true,
                     ],
                     'thingmal' => [
                         'type' => 'Zend\Mvc\Router\Http\Segment',
@@ -533,6 +548,7 @@ return array(
             ConstituencyController::class => ConstituencyController::class,
             PlenaryController::class => PlenaryController::class,
             IssueController::class => IssueController::class,
+            UndocumentedIssueController::class => UndocumentedIssueController::class,
             SpeechController::class => SpeechController::class,
             VoteController::class => VoteController::class,
             VoteItemController::class => VoteItemController::class,

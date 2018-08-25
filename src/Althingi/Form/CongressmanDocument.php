@@ -37,6 +37,10 @@ class CongressmanDocument extends Form implements InputFilterProviderInterface
             'name' => 'minister',
             'type' => 'Zend\Form\Element\Text',
         ));
+        $this->add(array(
+            'name' => 'category',
+            'type' => 'Zend\Form\Element\Text',
+        ));
     }
 
 
@@ -62,6 +66,10 @@ class CongressmanDocument extends Form implements InputFilterProviderInterface
                 'allow_empty' => false,
             ],
             'congressman_id' => [
+                'required' => true,
+                'allow_empty' => false,
+            ],
+            'category' => [
                 'required' => true,
                 'allow_empty' => false,
             ],

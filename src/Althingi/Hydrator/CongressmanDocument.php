@@ -20,6 +20,7 @@ class CongressmanDocument implements HydratorInterface
         return $object
             ->setDocumentId($data['document_id'])
             ->setIssueId($data['issue_id'])
+            ->setCategory($data['category'])
             ->setAssemblyId($data['assembly_id'])
             ->setCongressmanId($data['congressman_id'])
             ->setMinister(isset($data['minister']) ? $data['minister'] : null)

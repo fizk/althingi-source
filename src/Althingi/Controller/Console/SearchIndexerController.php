@@ -38,6 +38,9 @@ class SearchIndexerController extends AbstractActionController implements
         }
     }
 
+    /**
+     * @todo add $category to fetchAll() | [A, B]
+     */
     public function issueAction()
     {
         $elasticSearchAdd = new Add($this->elasticSearchClient);

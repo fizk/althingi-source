@@ -18,6 +18,7 @@ class Vote implements HydratorInterface
         return $object
             ->setVoteId($data['vote_id'])
             ->setIssueId($data['issue_id'])
+            ->setCategory($data['category'])
             ->setAssemblyId($data['assembly_id'])
             ->setDocumentId(isset($data['document_id']) ? $data['document_id'] : null)
             ->setDate($data['date'] ? new \DateTime($data['date']) : null)

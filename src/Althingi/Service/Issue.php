@@ -31,7 +31,7 @@ class Issue implements DatabaseAwareInterface, EventManagerAwareInterface
 {
     use DatabaseService;
 
-    const ALLOWED_TYPES = ['a', 'b', 'f', 'l', 'm', 'n', 'q', 's', 'v'];
+    const ALLOWED_TYPES = ['a', 'b', 'f', 'l', 'm', 'n', 'q', 's', 'v', 'ft', 'um'];
     const ALLOWED_ORDER = ['asc', 'desc'];
     const MAX_ROW_COUNT = '18446744073709551615';
 
@@ -56,15 +56,22 @@ class Issue implements DatabaseAwareInterface, EventManagerAwareInterface
      *
      * @param $issue_id
      * @param $assembly_id
+     * @param $category
      * @return null|\Althingi\Model\Issue
      */
-    public function get(int $issue_id, int $assembly_id): ?IssueModel
+    public function get(int $issue_id, int $assembly_id, $category = 'A'): ?IssueModel
     {
         $issueStatement = $this->getDriver()->prepare(
             'select * from `Issue` I 
-              where I.assembly_id = :assembly_id and I.issue_id = :issue_id'
+              where I.assembly_id = :assembly_id 
+              and I.issue_id = :issue_id
+              and I.category = :category'
         );
-        $issueStatement->execute(['issue_id'=>$issue_id, 'assembly_id'=>$assembly_id]);
+        $issueStatement->execute([
+            'issue_id'=>$issue_id,
+            'assembly_id'=>$assembly_id,
+            'category' => $category
+        ]);
 
         $object = $issueStatement->fetch(PDO::FETCH_ASSOC);
 
@@ -75,11 +82,16 @@ class Issue implements DatabaseAwareInterface, EventManagerAwareInterface
 
     /**
      * This is a Generator
+     * @param $category
      * @return \Althingi\Model\Issue[]
      */
-    public function fetchAll()
+    public function fetchAll(array $category = ['A'])
     {
-        $statement = $this->getDriver()->prepare('select * from `Issue`');
+        $statement = $this->getDriver()->prepare(
+            'select * from `Issue` I where I.category in (' .  implode(', ', array_map(function ($c) {
+                return '"' . $c . '"';
+            }, $category)) . ');'
+        );
         $statement->execute();
 
         while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
@@ -99,19 +111,23 @@ class Issue implements DatabaseAwareInterface, EventManagerAwareInterface
      *
      * @param $issue_id
      * @param $assembly_id
+     * @param $category
      * @return null|\Althingi\Model\IssueAndDate
      */
-    public function getWithDate(int $issue_id, int $assembly_id): ?IssueAndDateModel
+    public function getWithDate(int $issue_id, int $assembly_id, ?string $category = 'A'): ?IssueAndDateModel
     {
         $issueStatement = $this->getDriver()->prepare(
             'select
                 *,  (select D.`date` from `Document` D
-                        where assembly_id = I.assembly_id and issue_id = I.issue_id
+                        where assembly_id = I.assembly_id and issue_id = I.issue_id and I.category = "A"
                         order by date asc limit 0, 1)
                     as `date`
-             from `Issue` I where I.assembly_id = :assembly_id and I.issue_id = :issue_id'
+             from `Issue` I 
+              where I.assembly_id = :assembly_id 
+                and I.issue_id = :issue_id
+                and I.category = :category'
         );
-        $issueStatement->execute(['issue_id'=>$issue_id, 'assembly_id'=>$assembly_id]);
+        $issueStatement->execute(['issue_id'=>$issue_id, 'assembly_id'=>$assembly_id, 'category' => $category]);
 
         $object = $issueStatement->fetch(PDO::FETCH_ASSOC);
 
@@ -130,8 +146,9 @@ class Issue implements DatabaseAwareInterface, EventManagerAwareInterface
      * @param int $size
      * @param string $order
      * @param array $type
+     * @param array $categoryType
      * @param array $category
-     * @return \Althingi\Model\Issue[]
+     * @return \Althingi\Model\IssueAndDate[]
      */
     public function fetchByAssembly(
         int $assembly_id,
@@ -139,11 +156,13 @@ class Issue implements DatabaseAwareInterface, EventManagerAwareInterface
         ?int $size,
         ?string $order = 'asc',
         array $type = [],
-        array $category = []
+        array $categoryType = [],
+        array $category = ['A']
     ): array {
         $order = in_array($order, self::ALLOWED_ORDER) ? $order : 'asc';
         $typeFilterString = $this->typeFilterString($type);
-        $categoryFilterString = $this->categoryFilterString($category);
+        $categoryFilterString = $this->categoryTypeFilterString($categoryType);
+        $categoryString = $this->categoryString($category);
         $size = $size ? : 25;
 
         if (empty($categoryFilterString)) {
@@ -151,26 +170,40 @@ class Issue implements DatabaseAwareInterface, EventManagerAwareInterface
                 select I.*,
                     (
                         select D.`date` from `Document` D
-                        where `assembly_id` = I.`assembly_id` and `issue_id` = I.issue_id
+                        where `assembly_id` = I.`assembly_id` 
+                        and `issue_id` = I.issue_id 
+                        and D.`category` = I.`category`
                         order by `date` asc limit 0, 1
                     ) as `date`
                 from `Issue` I 
-                where I.`assembly_id` = :id {$typeFilterString}
+                where I.`assembly_id` = :id
+                   {$typeFilterString}
+                   {$categoryString}
                 order by I.`issue_id` {$order}
                 limit {$offset}, {$size};
             ");
         } else {
             $statement = $this->getDriver()->prepare("
-                select CI.`category_id`, I.*,
-                    (
-                      select D.`date` from `Document` D
-                      where `assembly_id` = I.`assembly_id` and `issue_id` = I.issue_id
-                      order by `date` asc limit 0, 1
-                    ) as `date`
-                from `Issue` I 
-                    join `Category_has_Issue` CI on (CI.`issue_id` = I.`issue_id` and CI.`assembly_id` = :id)
-                where I.`assembly_id` = :id {$typeFilterString} {$categoryFilterString}
-                order by I.`issue_id` {$order}
+                select I.*, CI.`category_id`,
+                (
+                    select D.`date` from `Document` D
+                    where `assembly_id` = I.`assembly_id` 
+                    and `issue_id` = I.issue_id 
+                    and D.`category` = I.category
+                    order by `date` asc limit 0, 1
+                ) as `date`
+                
+                from `Issue` I
+                left outer join `Category_has_Issue` CI on (
+                    CI.`issue_id` = I.`issue_id` 
+                    and CI.`assembly_id` = I.assembly_id
+                    and (CI.`category` = I.category or CI.`category` is null)
+                )
+                where I.assembly_id = :id
+                    {$typeFilterString}
+                    {$categoryString}
+                    {$categoryFilterString}
+                order by I.issue_id {$order}
                 limit {$offset}, {$size};
             ");
         }
@@ -179,6 +212,41 @@ class Issue implements DatabaseAwareInterface, EventManagerAwareInterface
         return array_map(function ($object) {
             return (new IssueAndDateHydrator())->hydrate($object, new IssueAndDateModel());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
+    }
+
+
+    /**
+     * Count all Issues per Assembly.
+     *
+     * @param int $id Assembly ID
+     * @param array $type
+     * @param array $categoryTypes
+     * @param array $category
+     * @return int count
+     */
+    public function countByAssembly(int $id, array $type = [], array $categoryTypes = [], ?array $category = ['A']): int
+    {
+        $typeFilterString = $this->typeFilterString($type);
+        $categoryFilterString = $this->categoryTypeFilterString($categoryTypes);
+        $categoryString = $this->categoryString($category);
+
+        if (empty($categoryFilterString)) {
+            $statement = $this->getDriver()->prepare("
+                select count(*) from `Issue` I 
+                where `assembly_id` = :id {$typeFilterString} {$categoryString}
+            ");
+        } else {
+            $statement = $this->getDriver()->prepare("
+                select count(*) from `Issue` I
+                    join `Category_has_Issue` CI on (
+                      CI.issue_id = I.issue_id and CI.assembly_id = :id {$categoryString}
+                    )
+                where I.assembly_id = :id {$typeFilterString} {$categoryFilterString} {$categoryString}
+            ");
+        }
+
+        $statement->execute(['id' => $id]);
+        return (int) $statement->fetchColumn(0);
     }
 
     /**
@@ -191,7 +259,9 @@ class Issue implements DatabaseAwareInterface, EventManagerAwareInterface
     public function fetchByCongressman(int $id): array
     {
         $statement = $this->getDriver()->prepare("
-            select * from `Issue` I where I.`congressman_id` = :id
+            select * from `Issue` I 
+              where I.`congressman_id` = :id
+              and I.category = 'A'
             order by I.`assembly_id` desc, I.`issue_id` asc;
         ");
 
@@ -202,6 +272,8 @@ class Issue implements DatabaseAwareInterface, EventManagerAwareInterface
     }
 
     /**
+     * This will only return A-issue.
+     *
      * @param int $assemblyId
      * @param int $congressmanId
      * @return \Althingi\Model\Issue[]
@@ -210,8 +282,10 @@ class Issue implements DatabaseAwareInterface, EventManagerAwareInterface
     {
         $statement = $this->getDriver()->prepare("
             select I.* from `Document_has_Congressman` D
-                join `Issue` I on (I.`issue_id` = D.`issue_id` and I.assembly_id = D.assembly_id)
-                where D.assembly_id = :assembly_id and D.congressman_id = :congressman_id and D.`order` = 1
+                join `Issue` I on (I.`issue_id` = D.`issue_id` and I.assembly_id = D.assembly_id and I.category = 'A')
+                where D.assembly_id = :assembly_id 
+                  and D.congressman_id = :congressman_id 
+                  and D.`order` = 1
                 order by I.`type`;
         ");
 
@@ -227,16 +301,25 @@ class Issue implements DatabaseAwareInterface, EventManagerAwareInterface
     /**
      * @param int $assemblyId
      * @param int $congressmanId
-     * @return \Althingi\Model\Issue[]
+     * @return \Althingi\Model\CongressmanIssue[]
      */
     public function fetchByAssemblyAndCongressmanSummary(int $assemblyId, int $congressmanId): array
     {
         $statement = $this->getDriver()->prepare("
             select count(*) as `count`, DC.`order`, I.`type`, I.`type_name`, I.`type_subname`, D.`type` as `document_type`
                 from `Document` D
-                join `Document_has_Congressman` DC on (D.document_id = DC.document_id and D.assembly_id = DC.assembly_id)
-                join `Issue` I on (D.issue_id = I.issue_id and D.assembly_id = I.assembly_id )
-            where D.assembly_id = :assembly_id and DC.congressman_id = :congressman_id
+                join `Issue` I on (
+                    D.issue_id = I.issue_id 
+                    and D.assembly_id = I.assembly_id
+                    and I.category = 'A'
+                )
+                join `Document_has_Congressman` DC on (
+                    D.document_id = DC.document_id 
+                    and D.assembly_id = DC.assembly_id 
+                    and I.category = 'A'
+                )
+            where D.assembly_id = :assembly_id 
+              and DC.congressman_id = :congressman_id
             group by DC.`order`, I.`type`, D.`type`
             order by DC.`order`, I.`type`;
         ");
@@ -261,8 +344,10 @@ class Issue implements DatabaseAwareInterface, EventManagerAwareInterface
     public function fetchStateByAssembly(int $assemblyId): array
     {
         $statement = $this->getDriver()->prepare(
-            'select count(*) as `count`, `type`, `type_name`, `type_subname` from `Issue`
-            where assembly_id = :assembly_id group by `type` order by `type_name`;'
+            'select count(*) as `count`, I.`type`, I.`type_name`, I.`type_subname` from `Issue` I
+            where I.assembly_id = :assembly_id
+             and I.category = \'A\'
+            group by I.`type` order by I.`type_name`;'
         );
 
         $statement->execute(['assembly_id' => $assemblyId]);
@@ -281,8 +366,10 @@ class Issue implements DatabaseAwareInterface, EventManagerAwareInterface
     public function fetchBillStatisticsByAssembly(int $id): array
     {
         $statement = $this->getDriver()->prepare(
-            'select count(*) as `count`, `status` from `Issue`
-            where `type` = \'l\' and assembly_id = :assembly_id group by `status`;'
+            'select count(*) as `count`, I.`status` from `Issue` I
+            where I.`type` = \'l\' and I.assembly_id = :assembly_id
+              and I.category = \'A\'
+              group by `status`;'
         );
 
         $statement->execute(['assembly_id' => $id]);
@@ -299,8 +386,12 @@ class Issue implements DatabaseAwareInterface, EventManagerAwareInterface
     public function fetchNonGovernmentBillStatisticsByAssembly(int $id): array
     {
         $statement = $this->getDriver()->prepare(
-            'select count(*) as `count`, `status` from `Issue`
-            where `type` = \'l\' and assembly_id = :assembly_id and `type_subname` != \'stjórnarfrumvarp\' group by `status`;'
+            'select count(*) as `count`, I.`status` from `Issue` I
+            where `type` = \'l\' 
+              and assembly_id = :assembly_id 
+              and `type_subname` != \'stjórnarfrumvarp\' 
+              and I.category = \'A\'
+            group by `status`;'
         );
 
         $statement->execute(['assembly_id' => $id]);
@@ -320,9 +411,11 @@ class Issue implements DatabaseAwareInterface, EventManagerAwareInterface
     public function fetchGovernmentBillStatisticsByAssembly(int $id): array
     {
         $statement = $this->getDriver()->prepare(
-            'SELECT count(*) AS `count`, `status`
-            FROM `Issue`
-            WHERE `type_subname` = \'stjórnarfrumvarp\' AND assembly_id = :assembly_id GROUP BY `status`;'
+            'select count(*) AS `count`, I.`status` from `Issue` I
+            where I.`type_subname` = \'stjórnarfrumvarp\' 
+              and I.assembly_id = :assembly_id
+             and I.category = \'A\'
+            group by I.`status`;'
         );
 
         $statement->execute(['assembly_id' => $id]);
@@ -330,36 +423,6 @@ class Issue implements DatabaseAwareInterface, EventManagerAwareInterface
         return array_map(function ($object) {
             return (new IssueTypeStatusHydrator())->hydrate($object, new IssueTypeStatusModel());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
-    }
-
-    /**
-     * Count all Issues per Assembly.
-     *
-     * @param int $id Assembly ID
-     * @param array $type
-     * @param array $categories
-     * @return int count
-     */
-    public function countByAssembly(int $id, array $type = [], array $categories = []): int
-    {
-        $typeFilterString = $this->typeFilterString($type);
-        $categoryFilterString = $this->categoryFilterString($categories);
-
-        if (empty($categoryFilterString)) {
-            $statement = $this->getDriver()->prepare("
-                select count(*) from `Issue` I
-                where `assembly_id` = :id {$typeFilterString}
-            ");
-        } else {
-            $statement = $this->getDriver()->prepare("
-                select count(*) from `Issue` I
-                    join `Category_has_Issue` CI on (CI.issue_id = I.issue_id and CI.assembly_id = :id)
-                where I.assembly_id = :id {$typeFilterString} {$categoryFilterString}
-            ");
-        }
-
-        $statement->execute(['id' => $id]);
-        return (int) $statement->fetchColumn(0);
     }
 
     /**
@@ -439,10 +502,15 @@ class Issue implements DatabaseAwareInterface, EventManagerAwareInterface
      * @param int $assemblyId
      * @param int|null $size
      * @param null|string $order
+     * @param array $categories
      * @return \Althingi\Model\IssueValue[]
      */
-    public function fetchByAssemblyAndSpeechTime(int $assemblyId, ?int $size = null, ?string $order = 'desc'): array
-    {
+    public function fetchByAssemblyAndSpeechTime(
+        int $assemblyId,
+        ?int $size = null,
+        ?string $order = 'desc',
+        $categories = ['A']
+    ): array {
         $limit = $size
             ? "limit 0, {$size}"
             : '';
@@ -451,11 +519,20 @@ class Issue implements DatabaseAwareInterface, EventManagerAwareInterface
                 (sum(time_to_sec(timediff(`to`, `from`)))) as `value`,
                 I.*
             from `Speech` S
-                join `Issue` I on (I.`issue_id` = S.`issue_id` and I.assembly_id = :assembly)
-            where S.assembly_id = :assembly
+                join `Issue` I on (
+                    I.`issue_id` = S.`issue_id` 
+                    and I.`assembly_id` = S.`assembly_id`
+                    and I.`category` = S.`category`
+                )
+            where S.`assembly_id` = :assembly and S.`category` in (" .
+                implode(', ', array_map(function ($c) {
+                    return '"' . $c . '"';
+                }, $categories))
+            . ")
                 group by S.`issue_id`
                 order by `value` {$order}
-                {$limit};
+                {$limit}
+            ;
         ");
 
         $statement->execute(['assembly' => $assemblyId]);
@@ -548,7 +625,7 @@ class Issue implements DatabaseAwareInterface, EventManagerAwareInterface
             return '';
         }
 
-        if (count(array_diff($type, self::ALLOWED_TYPES)) > 0) {
+        if (count(array_diff($type, self::ALLOWED_TYPES)) > 0) { //@todo B mál have different types
             throw new InvalidArgumentException(
                 sprintf('Invalid \'type\' params %s', implode(', ', $type))
             );
@@ -562,7 +639,7 @@ class Issue implements DatabaseAwareInterface, EventManagerAwareInterface
         ) . ')';
     }
 
-    private function categoryFilterString(array $category = []): string
+    private function categoryTypeFilterString(array $category = []): string
     {
         $category = array_filter($category, function ($item) {
             return is_numeric($item);
@@ -573,6 +650,27 @@ class Issue implements DatabaseAwareInterface, EventManagerAwareInterface
         }
 
         return ' and CI.`category_id` in (' . implode(',', $category) . ')';
+    }
+
+    private function categoryString(array $categories = [], $prefix = 'and')
+    {
+        $formattedCategories = array_map(function ($c) {
+            return strtoupper($c);
+        }, $categories);
+
+        $filteredCategories = array_filter($formattedCategories, function ($c) {
+            return $c === 'A' || $c === 'B';
+        });
+
+        if (empty($filteredCategories)) {
+            return '';
+        }
+
+        $quotedCategories = array_map(function ($c) {
+            return "'" . $c . "'";
+        }, $filteredCategories);
+
+        return " {$prefix} I.`category` in (" . implode(',', $quotedCategories) . ')';
     }
 
     /**

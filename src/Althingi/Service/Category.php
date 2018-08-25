@@ -50,7 +50,7 @@ class Category implements DatabaseAwareInterface
     {
         $statement = $this->getDriver()->prepare('
             select count(*) as `count` , C.* from `Issue` I
-            join `Category_has_Issue` CI on (CI.`issue_id` = I.`issue_id`)
+            join `Category_has_Issue` CI on (CI.`issue_id` = I.`issue_id` and CI.`category` = I.`category`)
             join `Category` C on (C.`category_id` = CI.`category_id` and CI.assembly_id = :assembly_id)
             where I.`assembly_id` = :assembly_id
             group by CI.`category_id`

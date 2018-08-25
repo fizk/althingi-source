@@ -22,6 +22,7 @@ use Althingi\Service\Issue;
 use Althingi\Service\Party;
 use Althingi\Service\Speech;
 use Althingi\Service\Vote;
+use Althingi\Utils\CategoryParam;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ErrorModel;
 use Rend\View\Model\EmptyModel;
@@ -40,6 +41,8 @@ class AssemblyController extends AbstractRestfulController implements
     ServiceElectionAwareInterface
 {
     use Range;
+
+    use CategoryParam;
 
     /** @var $assemblyService \Althingi\Service\Assembly */
     private $assemblyService;
@@ -175,6 +178,7 @@ class AssemblyController extends AbstractRestfulController implements
     public function statisticsAction()
     {
         $assembly = $this->assemblyService->get($this->params('id'));
+        $categories = $this->getCategoriesFromQuery();
 
         $response = (new AssemblyStatusProperties())
             ->setBills($this->issueService->fetchNonGovernmentBillStatisticsByAssembly($assembly->getAssemblyId()))
@@ -190,9 +194,9 @@ class AssemblyController extends AbstractRestfulController implements
             ->setSpeeches(DateAndCountSequence::buildDateRange(
                 $assembly->getFrom(),
                 $assembly->getTo(),
-                $this->speechService->fetchFrequencyByAssembly($assembly->getAssemblyId())
+                $this->speechService->fetchFrequencyByAssembly($assembly->getAssemblyId(), $categories)
             ))
-            ->setPartyTimes($this->partyService->fetchTimeByAssembly($assembly->getAssemblyId()))
+            ->setPartyTimes($this->partyService->fetchTimeByAssembly($assembly->getAssemblyId(), $categories))
             ->setCategories($this->categoryService->fetchByAssembly($assembly->getAssemblyId())) //@todo remove this
             ->setElection($this->electionService->getByAssembly($assembly->getAssemblyId()))
             ->setElectionResults($this->partyService->fetchElectedByAssembly($assembly->getAssemblyId()))

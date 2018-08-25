@@ -26,6 +26,7 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
             ->setSpeechId('id--00001')
             ->setAssemblyId(1)
             ->setPlenaryId(1)
+            ->setCategory('A')
             ->setIssueId(1)
             ->setCongressmanId(1);
 
@@ -56,6 +57,7 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
                 ->setSpeechId('id--00003')
                 ->setAssemblyId(1)
                 ->setPlenaryId(1)
+                ->setCategory('A')
                 ->setIssueId(1)
                 ->setCongressmanId(1)
                 ->setPosition(2),
@@ -64,6 +66,7 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
                 ->setSpeechId('id--00004')
                 ->setAssemblyId(1)
                 ->setPlenaryId(1)
+                ->setCategory('A')
                 ->setIssueId(1)
                 ->setCongressmanId(1)
                 ->setPosition(3),
@@ -96,6 +99,7 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
                 ->setSpeechId('id--00001')
                 ->setAssemblyId(1)
                 ->setPlenaryId(1)
+                ->setCategory('A')
                 ->setIssueId(1)
                 ->setCongressmanId(1)
                 ->setPosition(0),
@@ -104,12 +108,13 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
                 ->setSpeechId('id--00002')
                 ->setAssemblyId(1)
                 ->setPlenaryId(1)
+                ->setCategory('A')
                 ->setIssueId(1)
                 ->setCongressmanId(1)
                 ->setPosition(1),
         ];
 
-        $actualData = $service->fetchByIssue(1, 1, 0, 2);
+        $actualData = $service->fetchByIssue(1, 1, 'A', 0, 2);
 
         $this->assertEquals($expectedData, $actualData);
     }
@@ -173,6 +178,7 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
             ->setPlenaryId(1)
             ->setAssemblyId(3)
             ->setIssueId(1)
+            ->setCategory('A')
             ->setCongressmanId(1);
 
         $expectedTable = $this->createArrayDataSet([
@@ -182,6 +188,7 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 3,
                     'issue_id' => 1,
+                    'category' => 'A',
                     'congressman_id' => 1,
                     'congressman_type' => null,
                     'from' => null,
@@ -209,6 +216,7 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
         $speech = (new SpeechModel())
             ->setSpeechId('id--20001')
             ->setPlenaryId(1)
+            ->setCategory('A')
             ->setAssemblyId(3)
             ->setIssueId(1)
             ->setCongressmanId(1);
@@ -220,6 +228,7 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 3,
                     'issue_id' => 1,
+                    'category' => 'A',
                     'congressman_id' => 1,
                     'congressman_type' => null,
                     'from' => null,
@@ -248,6 +257,7 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
             ->setSpeechId('id--00001')
             ->setPlenaryId(1)
             ->setAssemblyId(1)
+            ->setCategory('A')
             ->setIssueId(1)
             ->setCongressmanId(2);
 
@@ -258,6 +268,7 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 1,
                     'issue_id' => 1,
+                    'category' => 'A',
                     'congressman_id' => 2,
                     'congressman_type' => null,
                     'from' => null,
@@ -289,12 +300,14 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
               ['assembly_id' => 3, 'from' => '2000-01-01'],
             ],
             'Issue' => [
-                ['assembly_id' => 1, 'issue_id' => 1],
-                ['assembly_id' => 1, 'issue_id' => 2],
-                ['assembly_id' => 1, 'issue_id' => 3],
-                ['assembly_id' => 2, 'issue_id' => 1],
-                ['assembly_id' => 2, 'issue_id' => 2],
-                ['assembly_id' => 2, 'issue_id' => 3],
+                ['assembly_id' => 1, 'issue_id' => 1, 'category' => 'A',],
+                ['assembly_id' => 1, 'issue_id' => 2, 'category' => 'A',],
+                ['assembly_id' => 1, 'issue_id' => 3, 'category' => 'A',],
+                ['assembly_id' => 2, 'issue_id' => 1, 'category' => 'A',],
+                ['assembly_id' => 2, 'issue_id' => 2, 'category' => 'A',],
+                ['assembly_id' => 2, 'issue_id' => 3, 'category' => 'A',],
+
+                ['assembly_id' => 3, 'issue_id' => 1, 'category' => 'A',],
             ],
             'Congressman' => [
                 ['congressman_id' => 1, 'name' => 'congressman 1', 'birth' => '2000-01-01'],
@@ -313,6 +326,7 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 1,
                     'issue_id' => 1,
+                    'category' => 'A',
                     'congressman_id' => 1,
                     'from' => null,
                     'to' => null,
@@ -321,6 +335,7 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 1,
                     'issue_id' => 1,
+                    'category' => 'A',
                     'congressman_id' => 1,
                     'from' => null,
                     'to' => null,
@@ -329,6 +344,7 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 1,
                     'issue_id' => 1,
+                    'category' => 'A',
                     'congressman_id' => 1,
                     'from' => null,
                     'to' => null,
@@ -337,6 +353,7 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 1,
                     'issue_id' => 1,
+                    'category' => 'A',
                     'congressman_id' => 1,
                     'from' => null,
                     'to' => null,
@@ -345,6 +362,7 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 1,
                     'issue_id' => 2,
+                    'category' => 'A',
                     'congressman_id' => 1,
                     'from' => null,
                     'to' => null,
@@ -353,6 +371,7 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 1,
                     'issue_id' => 2,
+                    'category' => 'A',
                     'congressman_id' => 1,
                     'from' => '2000-01-01 00:00:00',
                     'to' => '2000-01-01 00:01:00',
@@ -361,6 +380,7 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 1,
                     'issue_id' => 2,
+                    'category' => 'A',
                     'congressman_id' => 1,
                     'from' => '2000-02-01 00:00:00',
                     'to' => '2000-02-01 00:01:00',
@@ -369,6 +389,7 @@ class SpeechTest extends PHPUnit_Extensions_Database_TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 1,
                     'issue_id' => 2,
+                    'category' => 'A',
                     'congressman_id' => 2,
                     'from' => '2000-03-01 00:00:00',
                     'to' => '2000-03-01 00:01:00',

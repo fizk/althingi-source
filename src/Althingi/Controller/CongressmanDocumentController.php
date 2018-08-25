@@ -35,7 +35,8 @@ class CongressmanDocumentController extends AbstractRestfulController implements
                     'assembly_id' => $assemblyId,
                     'issue_id' => $issueId,
                     'document_id' => $documentId,
-                    'congressman_id' => $congressmanId
+                    'congressman_id' => $congressmanId,
+                    'category' => 'A',
                 ]
             ));
 

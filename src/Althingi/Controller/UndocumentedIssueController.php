@@ -35,8 +35,9 @@ use Rend\View\Model\EmptyModel;
 use Rend\View\Model\ItemModel;
 use Rend\View\Model\CollectionModel;
 use Rend\Helper\Http\Range;
+use DateTime;
 
-class IssueController extends AbstractRestfulController implements
+class UndocumentedIssueController extends AbstractRestfulController implements
     ServiceCongressmanAwareInterface,
     ServiceIssueAwareInterface,
     ServicePartyAwareInterface,
@@ -47,6 +48,7 @@ class IssueController extends AbstractRestfulController implements
     ServiceSearchIssueAwareInterface
 {
     use Range;
+
     use CategoryParam;
 
     /** @var  \Althingi\Service\Issue */
@@ -86,7 +88,7 @@ class IssueController extends AbstractRestfulController implements
         $issueId = $this->params('issue_id', 0);
         $category = $this->getCategoryFromQuery();
 
-        $issue = $this->issueService->getWithDate($issueId, $assemblyId, $category);
+        $issue = $this->issueService->getWithDate($issueId, $assemblyId, $category ? : 'B');
 
         if (!$issue) {
             return $this->notFoundAction();
@@ -101,10 +103,9 @@ class IssueController extends AbstractRestfulController implements
 
         $assembly = $this->assemblyService->get($assemblyId);
 //        $proponent = $issue->getCongressmanId() ? $this->congressmanService->get($issue->getCongressmanId()) : null;
-        $proponents = $this->congressmanService->fetchProponentsByIssue($assemblyId, $issueId);
         $voteDates = $this->voteService->fetchDateFrequencyByIssue($assemblyId, $issueId);
-        $speech = $this->speechService->fetchFrequencyByIssue($assemblyId, $issueId, $category);
-        $speakers = $this->congressmanService->fetchAccumulatedTimeByIssue($assemblyId, $issueId, $category);
+        $speech = $this->speechService->fetchFrequencyByIssue($assemblyId, $issueId, $category ? : 'B');
+        $speakers = $this->congressmanService->fetchAccumulatedTimeByIssue($assemblyId, $issueId, $category ? : 'B');
 
         $speakersWithParties = array_map(function (CongressmanAndDateRange $congressman) {
             return (new CongressmanPartyProperties())
@@ -121,16 +122,7 @@ class IssueController extends AbstractRestfulController implements
             ->setSpeechRange(DateAndCountSequence::buildDateRange($assembly->getFrom(), $assembly->getTo(), $speech))
             ->setSpeakers($speakersWithParties);
 
-        $proponentsAndParty = $issue->isA()
-            ? array_map(function (Proponent $proponent) use ($issue) {
-                return (new CongressmanPartyProperties())
-                    ->setCongressman($proponent)
-                    ->setParty(
-                        $this->partyService->getByCongressman($proponent->getCongressmanId(), $issue->getDate())
-                    );
-            }, $proponents)
-            : [];
-        $issueProperties->setProponents($proponentsAndParty);
+        $issueProperties->setProponents([]);
 
         return (new ItemModel($issueProperties));
     }
@@ -154,7 +146,7 @@ class IssueController extends AbstractRestfulController implements
         $orderQuery = $this->params()->fromQuery('order', null);
         $types = $typeQuery ? str_split($typeQuery) : [];
         $kinds = explode(',', $kindQuery);
-        $categories = $this->getCategoriesFromQuery();
+        $categories = $this->getCategoryFromQuery();
 
         if ($query) {
             $issues = $this->issueSearchService->fetchByAssembly($query, $assemblyId);
@@ -177,7 +169,7 @@ class IssueController extends AbstractRestfulController implements
                 $orderQuery,
                 $types,
                 $kinds,
-                $categories ? : ['A']
+                $categories ? : ['B']
             );
         }
 
@@ -192,17 +184,7 @@ class IssueController extends AbstractRestfulController implements
             $issueAndProperty = (new IssueProperties())
                 ->setIssue($issue);
 
-            $proponents = $issue->getCategory() === 'A'
-                ? $this->congressmanService->fetchProponentsByIssue($assemblyId, $issue->getIssueId())
-                : [];
-            $proponentsAndParty = array_map(function (Proponent $proponent) use ($issue) {
-                return (new CongressmanPartyProperties())
-                    ->setCongressman($proponent)
-                    ->setParty(
-                        $this->partyService->getByCongressman($proponent->getCongressmanId(), $issue->getDate())
-                    );
-            }, $proponents);
-            $issueAndProperty->setProponents($proponentsAndParty);
+            $issueAndProperty->setProponents([]);
 
             return $issueAndProperty;
         }, $issues);
@@ -247,7 +229,7 @@ class IssueController extends AbstractRestfulController implements
     public function patch($id, $data)
     {
         $assemblyId = $this->params('id');
-        $issue = $this->issueService->get($id, $assemblyId, 'A');
+        $issue = $this->issueService->get($id, $assemblyId, 'B');
 
         if (!$issue) {
             return $this->notFoundAction();
@@ -299,7 +281,7 @@ class IssueController extends AbstractRestfulController implements
             $assemblyId,
             $size,
             $order,
-            $category ? : ['A']
+            $category ? : ['B']
         );
 
         $issuesAndProperties = array_map(function (IssueValue $issue) use ($assembly) {
@@ -312,21 +294,7 @@ class IssueController extends AbstractRestfulController implements
 
             $issueAndProperty = (new IssueProperties())
                 ->setIssue($issue);
-
-            $proponents = $this->congressmanService->fetchProponentsByIssue(
-                $assembly->getAssemblyId(),
-                $issue->getIssueId()
-            );
-            $proponentsAndParty = $issue->isA()
-                ? array_map(function (Proponent $proponent) use ($issue, $assembly) {
-                    return (new CongressmanPartyProperties())
-                        ->setCongressman($proponent)
-                        ->setParty(
-                            $this->partyService->getByCongressman($proponent->getCongressmanId(), $assembly->getFrom())
-                        );
-                }, $proponents)
-                : [];
-            $issueAndProperty->setProponents($proponentsAndParty);
+            $issueAndProperty->setProponents([]);
 
             return $issueAndProperty;
         }, $collection);

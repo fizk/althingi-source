@@ -18,6 +18,7 @@ class CommitteeMeetingAgenda implements HydratorInterface
         return $object
             ->setCommitteeMeetingAgendaId($data['committee_meeting_agenda_id'])
             ->setCommitteeMeetingId($data['committee_meeting_id'])
+            ->setCategory(empty($data['category']) ? null : $data['category'])
             ->setIssueId(isset($data['issue_id']) ? $data['issue_id']: null)
             ->setAssemblyId($data['assembly_id'])
             ->setTitle(isset($data['title']) ? $data['title'] : null);

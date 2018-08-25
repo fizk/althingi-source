@@ -78,7 +78,9 @@ class Document implements DatabaseAwareInterface
             $this->toUpdateString(
                 'Document',
                 $data,
-                "assembly_id={$data->getAssemblyId()} and issue_id={$data->getIssueId()} and document_id={$data->getDocumentId()}"
+                "assembly_id={$data->getAssemblyId()} " .
+                "and issue_id={$data->getIssueId()} " .
+                "and document_id={$data->getDocumentId()}"
             )
         );
         $statement->execute($this->toSqlValues($data));

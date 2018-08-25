@@ -31,14 +31,27 @@ class IssueTest extends PHPUnit_Extensions_Database_TestCase
             ->setType('l')
             ->setTypeSubname('something')
             ->setStatus('some')
+            ->setCategory('A')
             ->setDate(new \DateTime('2000-01-01'));
         $this->assertEquals($expectedDataWithDate, $actualDataWithDate);
+    }
 
-        $expectedData = $service->getWithDate(1, 2);
-        $actualData = (new IssueAndDateModel())
+    public function testGetB()
+    {
+        $service = new Issue();
+        $service->setDriver($this->pdo);
+
+        $expectedDataWithDate = $service->getWithDate(1, 1, 'B');
+        $actualDataWithDate = (new IssueAndDateModel())
             ->setIssueId(1)
-            ->setAssemblyId(2);
-        $this->assertEquals($expectedData, $actualData);
+            ->setAssemblyId(1)
+            ->setCongressmanId(null)
+            ->setType(null)
+            ->setTypeSubname(null)
+            ->setStatus(null)
+            ->setCategory('B')
+            ->setDate(null);
+        $this->assertEquals($expectedDataWithDate, $actualDataWithDate);
     }
 
     public function testGetByAssembly()
@@ -49,6 +62,39 @@ class IssueTest extends PHPUnit_Extensions_Database_TestCase
         $issues = $service->fetchByAssembly(1, 0, 25);
 
         $this->assertCount(3, $issues);
+        $this->assertInstanceOf(IssueAndDateModel::class, $issues[0]);
+    }
+
+    public function testGetByAssemblyType()
+    {
+        $service = new Issue();
+        $service->setDriver($this->pdo);
+
+        $issues = $service->fetchByAssembly(1, 0, 25, null, ['l']);
+
+        $this->assertCount(2, $issues);
+        $this->assertInstanceOf(IssueAndDateModel::class, $issues[0]);
+    }
+
+    public function testGetByAssemblyB()
+    {
+        $service = new Issue();
+        $service->setDriver($this->pdo);
+
+        $issues = $service->fetchByAssembly(1, 0, 25, null, [], [], ['B']);
+
+        $this->assertCount(1, $issues);
+        $this->assertInstanceOf(IssueAndDateModel::class, $issues[0]);
+    }
+
+    public function testGetByAssemblyBandA()
+    {
+        $service = new Issue();
+        $service->setDriver($this->pdo);
+
+        $issues = $service->fetchByAssembly(1, 0, 25, null, [], [], ['A', 'B']);
+
+        $this->assertCount(4, $issues);
         $this->assertInstanceOf(IssueAndDateModel::class, $issues[0]);
     }
 
@@ -133,7 +179,8 @@ class IssueTest extends PHPUnit_Extensions_Database_TestCase
     {
         $issue = (new IssueModel())
             ->setAssemblyId(1)
-            ->setIssueId(4);
+            ->setIssueId(4)
+            ->setCategory('A');
 
         $issueService = new Issue();
         $issueService->setDriver($this->pdo);
@@ -142,14 +189,22 @@ class IssueTest extends PHPUnit_Extensions_Database_TestCase
 
         $expectedTable = $this->createArrayDataSet([
             'Issue' => [
-                ['issue_id' => 1, 'assembly_id' => 1, 'congressman_id' => 1, 'type' => 'l', 'status' => 'some', 'type_subname' => 'something'],
-                ['issue_id' => 1, 'assembly_id' => 2],
-                ['issue_id' => 2, 'assembly_id' => 1, 'type' => 'l', 'status' => 'some', 'type_subname' => 'stjórnarfrumvarp'],
-                ['issue_id' => 3, 'assembly_id' => 1],
-                ['issue_id' => 4, 'assembly_id' => 1],
+                [
+                    'issue_id' => 4,
+                    'assembly_id' => 1,
+                    'congressman_id' => null,
+                    'type' => null,
+                    'status' => null,
+                    'type_subname' => null
+                ],
             ],
         ])->getTable('Issue');
-        $queryTable = $this->getConnection()->createQueryTable('Issue', 'SELECT `issue_id`, `assembly_id`, `congressman_id`, `type`, `status`, `type_subname` FROM Issue');
+        $queryTable = $this->getConnection()->createQueryTable(
+            'Issue',
+            'SELECT `issue_id`, `assembly_id`, `congressman_id`, `type`, `status`, `type_subname` 
+                FROM Issue 
+                WHERE issue_id = 4 AND assembly_id = 1'
+        );
 
         $this->assertTablesEqual($expectedTable, $queryTable);
     }
@@ -158,7 +213,9 @@ class IssueTest extends PHPUnit_Extensions_Database_TestCase
     {
         $issue = (new IssueModel())
             ->setAssemblyId(1)
-            ->setIssueId(4);
+            ->setIssueId(4)
+            ->setType('ab')
+            ->setCategory('A');
 
         $issueService = new Issue();
         $issueService->setDriver($this->pdo);
@@ -167,14 +224,22 @@ class IssueTest extends PHPUnit_Extensions_Database_TestCase
 
         $expectedTable = $this->createArrayDataSet([
             'Issue' => [
-                ['issue_id' => 1, 'assembly_id' => 1, 'congressman_id' => 1, 'type' => 'l', 'status' => 'some', 'type_subname' => 'something'],
-                ['issue_id' => 1, 'assembly_id' => 2],
-                ['issue_id' => 2, 'assembly_id' => 1, 'type' => 'l', 'status' => 'some', 'type_subname' => 'stjórnarfrumvarp'],
-                ['issue_id' => 3, 'assembly_id' => 1],
-                ['issue_id' => 4, 'assembly_id' => 1],
+                [
+                    'issue_id' => 4,
+                    'assembly_id' => 1,
+                    'congressman_id' => null,
+                    'type' => 'ab',
+                    'status' => null,
+                    'type_subname' => null
+                ],
             ],
         ])->getTable('Issue');
-        $queryTable = $this->getConnection()->createQueryTable('Issue', 'SELECT `issue_id`, `assembly_id`, `congressman_id`, `type`, `status`, `type_subname` FROM Issue');
+        $queryTable = $this->getConnection()->createQueryTable(
+            'Issue',
+            'SELECT `issue_id`, `assembly_id`, `congressman_id`, `type`, `status`, `type_subname` 
+              FROM Issue
+              WHERE issue_id = 4 AND assembly_id = 1'
+        );
 
         $this->assertTablesEqual($expectedTable, $queryTable);
     }
@@ -193,13 +258,22 @@ class IssueTest extends PHPUnit_Extensions_Database_TestCase
 
         $expectedTable = $this->createArrayDataSet([
             'Issue' => [
-                ['issue_id' => 1, 'assembly_id' => 1, 'congressman_id' => 1, 'type' => 'l', 'status' => 'some', 'type_subname' => 'something'],
-                ['issue_id' => 1, 'assembly_id' => 2],
-                ['issue_id' => 2, 'assembly_id' => 1, 'type' => 'l', 'status' => 'some', 'type_subname' => 'stjórnarfrumvarp'],
-                ['issue_id' => 3, 'assembly_id' => 1, 'status' => 'awesome'],
+                [
+                    'issue_id' => 3,
+                    'assembly_id' => 1,
+                    'congressman_id' => null,
+                    'type' => null,
+                    'status' => 'awesome',
+                    'type_subname' => null
+                ],
             ],
         ])->getTable('Issue');
-        $queryTable = $this->getConnection()->createQueryTable('Issue', 'SELECT `issue_id`, `assembly_id`, `congressman_id`, `type`, `status`, `type_subname` FROM Issue');
+        $queryTable = $this->getConnection()->createQueryTable(
+            'Issue',
+            'SELECT `issue_id`, `assembly_id`, `congressman_id`, `type`, `status`, `type_subname` 
+              FROM Issue
+              WHERE issue_id = 3 AND assembly_id = 1'
+        );
 
         $this->assertTablesEqual($expectedTable, $queryTable);
     }
@@ -216,15 +290,19 @@ class IssueTest extends PHPUnit_Extensions_Database_TestCase
                 ['assembly_id' => 3, 'from' => '2000-01-01', 'to' => null],
             ],
             'Issue' => [
-                ['issue_id' => 1, 'assembly_id' => 1, 'congressman_id' => 1, 'type' => 'l', 'status' => 'some', 'type_subname' => 'something'],
-                ['issue_id' => 2, 'assembly_id' => 1, 'type' => 'l', 'status' => 'some', 'type_subname' => 'stjórnarfrumvarp'],
-                ['issue_id' => 3, 'assembly_id' => 1],
-                ['issue_id' => 1, 'assembly_id' => 2],
+                ['issue_id' => 1, 'assembly_id' => 1, 'category' => 'A', 'congressman_id' => 1, 'type' => 'l', 'status' => 'some', 'type_subname' => 'something'],
+                ['issue_id' => 2, 'assembly_id' => 1, 'category' => 'A', 'type' => 'l', 'status' => 'some', 'type_subname' => 'stjórnarfrumvarp'],
+                ['issue_id' => 3, 'assembly_id' => 1, 'category' => 'A'],
+                ['issue_id' => 1, 'assembly_id' => 2, 'category' => 'A'],
+
+
+                ['issue_id' => 1, 'assembly_id' => 1, 'category' => 'B'],
+                ['issue_id' => 1, 'assembly_id' => 2, 'category' => 'B'],
             ],
             'Document' => [
-                ['document_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'date' => '2000-01-01', 'url' => '', 'type' => ''],
-                ['document_id' => 2, 'issue_id' => 1, 'assembly_id' => 1, 'date' => '2000-01-02', 'url' => '', 'type' => ''],
-                ['document_id' => 3, 'issue_id' => 1, 'assembly_id' => 1, 'date' => '2000-01-03', 'url' => '', 'type' => ''],
+                ['document_id' => 1, 'issue_id' => 1, 'category' => 'A', 'assembly_id' => 1, 'date' => '2000-01-01', 'url' => '', 'type' => ''],
+                ['document_id' => 2, 'issue_id' => 1, 'category' => 'A', 'assembly_id' => 1, 'date' => '2000-01-02', 'url' => '', 'type' => ''],
+                ['document_id' => 3, 'issue_id' => 1, 'category' => 'A', 'assembly_id' => 1, 'date' => '2000-01-03', 'url' => '', 'type' => ''],
             ],
         ]);
     }

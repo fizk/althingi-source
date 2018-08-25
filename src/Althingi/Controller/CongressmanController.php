@@ -24,6 +24,7 @@ use Althingi\Service\Session;
 use Althingi\Service\Speech;
 use Althingi\Service\Vote;
 use Althingi\Service\VoteItem;
+use Althingi\Utils\CategoryParam;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ErrorModel;
 use Rend\View\Model\EmptyModel;
@@ -43,6 +44,8 @@ class CongressmanController extends AbstractRestfulController implements
     ServiceAssemblyAwareInterface
 {
     use Range;
+
+    use CategoryParam;
 
     /** @var \Althingi\Service\Congressman */
     private $congressmanService;
@@ -221,8 +224,9 @@ class CongressmanController extends AbstractRestfulController implements
         $assemblyId = $this->params('id');
         $order = $this->params()->fromQuery('rod', 'desc');
         $size = $this->params()->fromQuery('fjoldi');
+        $categories = $this->getCategoriesFromQuery();
         $assembly = $this->assemblyService->get($assemblyId);
-        $congressmen = $this->congressmanService->fetchTimeByAssembly($assemblyId, $size, $order);
+        $congressmen = $this->congressmanService->fetchTimeByAssembly($assemblyId, $size, $order, $categories);
 
         $collection = array_map(function (\Althingi\Model\Congressman $congressman) use ($assembly) {
             return (new CongressmanPartyProperties())
@@ -416,8 +420,13 @@ class CongressmanController extends AbstractRestfulController implements
     {
         $assemblyId = $this->params('id');
         $congressmanId = $this->params('congressman_id');
+        $category = $this->getCategoriesFromQuery();
 
-        $categories = $this->issueCategoryService->fetchFrequencyByAssemblyAndCongressman($assemblyId, $congressmanId);
+        $categories = $this->issueCategoryService->fetchFrequencyByAssemblyAndCongressman(
+            $assemblyId,
+            $congressmanId,
+            $category
+        );
         $categoriesCount = count($categories);
 
         return (new CollectionModel($categories))

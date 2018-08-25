@@ -56,6 +56,11 @@ class Speech extends Form implements InputFilterProviderInterface
         ));
 
         $this->add(array(
+            'name' => 'category',
+            'type' => 'Zend\Form\Element\Text',
+        ));
+
+        $this->add(array(
             'name' => 'congressman_id',
             'type' => 'Zend\Form\Element\Number',
         ));
@@ -114,6 +119,16 @@ class Speech extends Form implements InputFilterProviderInterface
             'issue_id' => [
                 'required' => true,
                 'allow_empty' => false,
+            ],
+            'category' => [
+                'required' => false,
+                'allow_empty' => true,
+                'filters' => [
+                    [
+                        'name' => '\Zend\Filter\ToNull',
+                        'options' => ['type' => 'all']
+                    ]
+                ],
             ],
             'congressman_id' => [
                 'required' => true,

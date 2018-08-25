@@ -9,6 +9,7 @@ use Althingi\Model\CongressmanAndDateRange;
 use Althingi\Model\President;
 use Althingi\Model\Proponent;
 use Althingi\Model\Congressman as CongressmanModel;
+use Althingi\Model\CongressmanValue as CongressmanValueModel;
 use PHPUnit_Extensions_Database_DataSet_IDataSet;
 use PHPUnit_Extensions_Database_TestCase;
 use Zend\EventManager\EventManager;
@@ -138,6 +139,27 @@ class CongressmanTest extends PHPUnit_Extensions_Database_TestCase
 
         $this->assertCount(1, $presidents);
         $this->assertInstanceOf(President::class, $presidents[0]);
+    }
+
+    public function testFetchTimeByAssembly()
+    {
+        $congressmanService = new Congressman();
+        $congressmanService->setDriver($this->pdo);
+
+        $expectedData = [
+            (new CongressmanValueModel())
+                ->setCongressmanId(1)
+                ->setName('name1')
+                ->setBirth(new \DateTime('2000-01-01')),
+            (new CongressmanValueModel())
+                ->setCongressmanId(2)
+                ->setName('name2')
+                ->setBirth(new \DateTime('2000-01-01')),
+        ];
+
+        $actualData = $congressmanService->fetchTimeByAssembly(1, null);
+
+        $this->assertEquals($expectedData, $actualData);
     }
 
     public function testCreate()
@@ -276,19 +298,19 @@ class CongressmanTest extends PHPUnit_Extensions_Database_TestCase
                 ['session_id' => 5, 'congressman_id' => 2, 'constituency_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-05', 'type' => 'varamaður', 'party_id' => 1],
             ],
             'Issue' => [
-                ['issue_id' => 1, 'assembly_id' => 1]
+                ['issue_id' => 1, 'assembly_id' => 1, 'category' => 'A']
             ],
             'Document' => [
-                ['document_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'date' => '2000-01-01', 'url' => '', 'type' => '']
+                ['document_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'category' => 'A', 'date' => '2000-01-01', 'url' => '', 'type' => '']
             ],
             'Document_has_Congressman' => [
-                ['document_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'congressman_id' => 1, 'order' => 1]
+                ['document_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'category' => 'A', 'congressman_id' => 1, 'order' => 1]
             ],
             'Plenary' => [
                 ['plenary_id' => 1, 'assembly_id' => 1],
             ],
             'Speech' => [
-                ['speech_id' => 1, 'plenary_id' => 1, 'assembly_id' => 1, 'issue_id' => 1, 'congressman_id' => 1]
+                ['speech_id' => 1, 'plenary_id' => 1, 'assembly_id' => 1, 'issue_id' => 1, 'category' => 'A', 'congressman_id' => 1]
             ]
         ]);
     }

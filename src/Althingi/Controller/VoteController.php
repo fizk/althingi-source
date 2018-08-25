@@ -77,6 +77,7 @@ class VoteController extends AbstractRestfulController implements
             'assembly_id' => $assemblyId,
             'issue_id' => $issueId,
             'vote_id' => $voteId,
+            'category' => 'A'
         ]));
 
         if ($form->isValid()) {

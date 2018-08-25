@@ -27,7 +27,8 @@ class Constituency implements DatabaseAwareInterface
     public function get(int $id): ?ConstituencyModel
     {
         $statement = $this->getDriver()->prepare(
-            'select * from `Constituency` where constituency_id = :constituency_id'
+            'select * from `Constituency` 
+            where constituency_id = :constituency_id'
         );
         $statement->execute(['constituency_id' => $id]);
         $object = $statement->fetch(PDO::FETCH_ASSOC);

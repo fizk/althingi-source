@@ -22,6 +22,7 @@ class CongressmanDocumentTest extends PHPUnit_Extensions_Database_TestCase
         $expectedData = (new CongressmanDocumentModel())
             ->setDocumentId(1)
             ->setIssueId(1)
+            ->setCategory('A')
             ->setAssemblyId(1)
             ->setCongressmanId(1)
             ->setOrder(1);
@@ -35,17 +36,24 @@ class CongressmanDocumentTest extends PHPUnit_Extensions_Database_TestCase
         $congressman = (new CongressmanDocumentModel())
             ->setDocumentId(1)
             ->setIssueId(1)
+            ->setCategory('A')
             ->setAssemblyId(1)
             ->setCongressmanId(2)
             ->setOrder(2);
 
         $expectedTable = $this->createArrayDataSet([
             'Document_has_Congressman' => [
-                ['document_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'congressman_id' => 1, 'minister' => null, 'order' => 1],
-                ['document_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'congressman_id' => 2, 'minister' => null, 'order' => 2],
+                [
+                    'document_id' => 1, 'issue_id' => 1, 'category' => 'A',
+                    'assembly_id' => 1, 'congressman_id' => 1, 'minister' => null, 'order' => 1
+                ], [
+                    'document_id' => 1, 'issue_id' => 1, 'category' => 'A',
+                    'assembly_id' => 1, 'congressman_id' => 2, 'minister' => null, 'order' => 2
+                ],
             ],
         ])->getTable('Document_has_Congressman');
-        $actualTable = $this->getConnection()->createQueryTable('Document_has_Congressman', 'SELECT * FROM Document_has_Congressman');
+        $actualTable = $this->getConnection()
+            ->createQueryTable('Document_has_Congressman', 'SELECT * FROM Document_has_Congressman');
 
         $congressmanService = new CongressmanDocument();
         $congressmanService->setDriver($this->pdo);
@@ -59,17 +67,24 @@ class CongressmanDocumentTest extends PHPUnit_Extensions_Database_TestCase
         $congressman = (new CongressmanDocumentModel())
             ->setDocumentId(1)
             ->setIssueId(1)
+            ->setCategory('A')
             ->setAssemblyId(1)
             ->setCongressmanId(2)
             ->setOrder(2);
 
         $expectedTable = $this->createArrayDataSet([
             'Document_has_Congressman' => [
-                ['document_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'congressman_id' => 1, 'minister' => null, 'order' => 1],
-                ['document_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'congressman_id' => 2, 'minister' => null, 'order' => 2],
+                [
+                    'document_id' => 1, 'issue_id' => 1, 'category' => 'A', 'assembly_id' => 1,
+                    'congressman_id' => 1, 'minister' => null, 'order' => 1
+                ], [
+                    'document_id' => 1, 'issue_id' => 1, 'category' => 'A', 'assembly_id' => 1,
+                    'congressman_id' => 2, 'minister' => null, 'order' => 2
+                ],
             ],
         ])->getTable('Document_has_Congressman');
-        $actualTable = $this->getConnection()->createQueryTable('Document_has_Congressman', 'SELECT * FROM Document_has_Congressman');
+        $actualTable = $this->getConnection()
+            ->createQueryTable('Document_has_Congressman', 'SELECT * FROM Document_has_Congressman');
 
         $congressmanService = new CongressmanDocument();
         $congressmanService->setDriver($this->pdo);
@@ -83,6 +98,7 @@ class CongressmanDocumentTest extends PHPUnit_Extensions_Database_TestCase
         $congressman = (new CongressmanDocumentModel())
             ->setDocumentId(1)
             ->setIssueId(1)
+            ->setCategory('A')
             ->setAssemblyId(1)
             ->setCongressmanId(1)
             ->setMinister('hello')
@@ -90,10 +106,14 @@ class CongressmanDocumentTest extends PHPUnit_Extensions_Database_TestCase
 
         $expectedTable = $this->createArrayDataSet([
             'Document_has_Congressman' => [
-                ['document_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'congressman_id' => 1, 'minister' => 'hello', 'order' => 2]
+                [
+                    'document_id' => 1, 'issue_id' => 1, 'category' => 'A' ,'assembly_id' => 1,
+                    'congressman_id' => 1, 'minister' => 'hello', 'order' => 2
+                ]
             ],
         ])->getTable('Document_has_Congressman');
-        $actualTable = $this->getConnection()->createQueryTable('Document_has_Congressman', 'SELECT * FROM Document_has_Congressman');
+        $actualTable = $this->getConnection()
+            ->createQueryTable('Document_has_Congressman', 'SELECT * FROM Document_has_Congressman');
 
         $congressmanService = new CongressmanDocument();
         $congressmanService->setDriver($this->pdo);
@@ -117,13 +137,28 @@ class CongressmanDocumentTest extends PHPUnit_Extensions_Database_TestCase
                 ['congressman_id' => 4, 'name' => 'name4', 'birth' => '2000-01-01', 'death' => null],
             ],
             'Issue' => [
-                ['issue_id' => 1, 'assembly_id' => 1]
+                ['issue_id' => 1, 'assembly_id' => 1, 'category' => 'A']
             ],
             'Document' => [
-                ['document_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'date' => '2000-01-01', 'url' => '', 'type' => '']
+                [
+                    'document_id' => 1,
+                    'issue_id' => 1,
+                    'category' => 'A',
+                    'assembly_id' => 1,
+                    'date' => '2000-01-01',
+                    'url' => '',
+                    'type' => ''
+                ]
             ],
             'Document_has_Congressman' => [
-                ['document_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'congressman_id' => 1, 'order' => 1]
+                [
+                    'document_id' => 1,
+                    'issue_id' => 1,
+                    'category' => 'A',
+                    'assembly_id' => 1,
+                    'congressman_id' => 1,
+                    'order' => 1
+                ]
             ],
         ]);
     }

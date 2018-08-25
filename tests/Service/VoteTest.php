@@ -24,6 +24,7 @@ class VoteTest extends PHPUnit_Extensions_Database_TestCase
         $expectedData = (new VoteModel())
             ->setVoteId(1)
             ->setIssueId(1)
+            ->setCategory('A')
             ->setAssemblyId(1)
             ->setDocumentId(1)
             ->setDate(new \DateTime('2000-01-01'));
@@ -52,12 +53,14 @@ class VoteTest extends PHPUnit_Extensions_Database_TestCase
             (new VoteModel())
                 ->setVoteId(1)
                 ->setIssueId(1)
+                ->setCategory('A')
                 ->setAssemblyId(1)
                 ->setDocumentId(1)
                 ->setDate(new \DateTime('2000-01-01')),
             (new VoteModel())
                 ->setVoteId(2)
                 ->setIssueId(1)
+                ->setCategory('A')
                 ->setAssemblyId(1)
                 ->setDocumentId(2)
                 ->setDate(new \DateTime('2000-02-01')),
@@ -104,6 +107,7 @@ class VoteTest extends PHPUnit_Extensions_Database_TestCase
         $expectedData = [(new VoteModel())
             ->setVoteId(7)
             ->setIssueId(2)
+            ->setCategory('A')
             ->setAssemblyId(1)
             ->setDocumentId(2)];
         $actualData = $service->fetchByDocument(1, 2, 2);
@@ -117,6 +121,7 @@ class VoteTest extends PHPUnit_Extensions_Database_TestCase
             ->setVoteId(9)
             ->setIssueId(2)
             ->setAssemblyId(1)
+            ->setCategory('A')
             ->setYes(0)
             ->setNo(0)
             ->setInaction(0)
@@ -145,6 +150,7 @@ class VoteTest extends PHPUnit_Extensions_Database_TestCase
             ->setVoteId(9)
             ->setIssueId(2)
             ->setAssemblyId(1)
+            ->setCategory('A')
             ->setYes(0)
             ->setNo(0)
             ->setInaction(0)
@@ -173,6 +179,7 @@ class VoteTest extends PHPUnit_Extensions_Database_TestCase
             ->setVoteId(1)
             ->setIssueId(1)
             ->setAssemblyId(1)
+            ->setCategory('A')
             ->setYes(0)
             ->setNo(0)
             ->setInaction(0)
@@ -249,28 +256,28 @@ class VoteTest extends PHPUnit_Extensions_Database_TestCase
                 ['congressman_id' => 4, 'name' => 'name4', 'birth' => '2000-01-01', 'death' => null],
             ],
             'Issue' => [
-                ['assembly_id' => 1, 'issue_id' => 1],
-                ['assembly_id' => 1, 'issue_id' => 2],
-                ['assembly_id' => 1, 'issue_id' => 3],
-                ['assembly_id' => 2, 'issue_id' => 1],
-                ['assembly_id' => 2, 'issue_id' => 2],
-                ['assembly_id' => 2, 'issue_id' => 3],
+                ['assembly_id' => 1, 'issue_id' => 1, 'category' => 'A'],
+                ['assembly_id' => 1, 'issue_id' => 2, 'category' => 'A'],
+                ['assembly_id' => 1, 'issue_id' => 3, 'category' => 'A'],
+                ['assembly_id' => 2, 'issue_id' => 1, 'category' => 'A'],
+                ['assembly_id' => 2, 'issue_id' => 2, 'category' => 'A'],
+                ['assembly_id' => 2, 'issue_id' => 3, 'category' => 'A'],
             ],
             'Document' => [
-                ['document_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
-                ['document_id' => 2, 'issue_id' => 1, 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
-                ['document_id' => 3, 'issue_id' => 1, 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
-                ['document_id' => 4, 'issue_id' => 2, 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
+                ['document_id' => 1, 'issue_id' => 1, 'category' => 'A', 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
+                ['document_id' => 2, 'issue_id' => 1, 'category' => 'A', 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
+                ['document_id' => 3, 'issue_id' => 1, 'category' => 'A', 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
+                ['document_id' => 4, 'issue_id' => 2, 'category' => 'A', 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
             ],
             'Vote' => [
-                ['vote_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'document_id' => 1, 'date' => '2000-01-01'],
-                ['vote_id' => 2, 'issue_id' => 1, 'assembly_id' => 1, 'document_id' => 2, 'date' => '2000-02-01'],
-                ['vote_id' => 3, 'issue_id' => 2, 'assembly_id' => 1, 'document_id' => 1],
-                ['vote_id' => 4, 'issue_id' => 2, 'assembly_id' => 1, 'document_id' => 1],
-                ['vote_id' => 5, 'issue_id' => 2, 'assembly_id' => 1, 'document_id' => 1],
-                ['vote_id' => 6, 'issue_id' => 2, 'assembly_id' => 1, 'document_id' => 1],
-                ['vote_id' => 7, 'issue_id' => 2, 'assembly_id' => 1, 'document_id' => 2],
-                ['vote_id' => 8, 'issue_id' => 2, 'assembly_id' => 2, 'document_id' => 2],
+                ['vote_id' => 1, 'issue_id' => 1, 'category' => 'A', 'assembly_id' => 1, 'document_id' => 1, 'date' => '2000-01-01'],
+                ['vote_id' => 2, 'issue_id' => 1, 'category' => 'A', 'assembly_id' => 1, 'document_id' => 2, 'date' => '2000-02-01'],
+                ['vote_id' => 3, 'issue_id' => 2, 'category' => 'A', 'assembly_id' => 1, 'document_id' => 1],
+                ['vote_id' => 4, 'issue_id' => 2, 'category' => 'A', 'assembly_id' => 1, 'document_id' => 1],
+                ['vote_id' => 5, 'issue_id' => 2, 'category' => 'A', 'assembly_id' => 1, 'document_id' => 1],
+                ['vote_id' => 6, 'issue_id' => 2, 'category' => 'A', 'assembly_id' => 1, 'document_id' => 1],
+                ['vote_id' => 7, 'issue_id' => 2, 'category' => 'A', 'assembly_id' => 1, 'document_id' => 2],
+                ['vote_id' => 8, 'issue_id' => 2, 'category' => 'A', 'assembly_id' => 2, 'document_id' => 2],
             ],
             'VoteItem' => [
                 ['vote_id' => 1, 'congressman_id' => 1, 'vote' => 'ja', 'vote_item_id' => 1],

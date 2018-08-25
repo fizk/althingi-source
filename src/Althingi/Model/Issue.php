@@ -112,7 +112,7 @@ class Issue implements ModelInterface
     /**
      * @return string
      */
-    public function getCategory(): ?string
+    public function getCategory(): string
     {
         return $this->category;
     }
@@ -121,7 +121,7 @@ class Issue implements ModelInterface
      * @param string $category
      * @return Issue
      */
-    public function setCategory(string $category = null): Issue
+    public function setCategory(string $category): Issue
     {
         $this->category = $category;
         return $this;
@@ -359,6 +359,16 @@ class Issue implements ModelInterface
     {
         $this->additional_information = $additional_information;
         return $this;
+    }
+
+    public function isA()
+    {
+        return $this->category === 'A';
+    }
+
+    public function isB()
+    {
+        return $this->category === 'B';
     }
 
     public function toArray()

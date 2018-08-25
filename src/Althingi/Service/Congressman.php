@@ -130,12 +130,23 @@ class Congressman implements DatabaseAwareInterface, EventManagerAwareInterface
      * @param int $assemblyId
      * @param int $size
      * @param string $order
+     * @param array $category
      * @return \Althingi\Model\CongressmanValue[]
      */
-    public function fetchTimeByAssembly(int $assemblyId, ?int $size, ?string $order = 'desc'): array
-    {
+    public function fetchTimeByAssembly(
+        int $assemblyId,
+        ?int $size = null,
+        ?string $order = 'desc',
+        ?array $category = ['A']
+    ): array {
         $limit = $size
             ? "limit 0, {$size}"
+            : '';
+
+        $categories = count($category) > 0
+            ? 'and S.category in (' . implode(', ', array_map(function ($c) {
+                return '"' . $c . '"';
+            }, $category)) . ')'
             : '';
 
         $statement = $this->getDriver()->prepare(
@@ -143,7 +154,7 @@ class Congressman implements DatabaseAwareInterface, EventManagerAwareInterface
                 (
                     select (sum(time_to_sec(timediff(`to`, `from`)))) as `count`
                     from `Speech` S 
-                    where S.`assembly_id` = :assembly_id and S.`congressman_id` = C.congressman_id
+                    where S.`assembly_id` = :assembly_id and S.`congressman_id` = C.congressman_id {$categories}
                     group by `congressman_id`
                 ) as `value`
                 from `Session` S
@@ -182,7 +193,9 @@ class Congressman implements DatabaseAwareInterface, EventManagerAwareInterface
 
         $statement = $this->getDriver()->prepare("
             select C.*, count(*) as `value` from `Document_has_Congressman` DC
-                left join `Issue` I on (I.`issue_id` = DC.`issue_id` and I.`assembly_id` = :assembly_id)
+                left join `Issue` I on (
+                  I.`issue_id` = DC.`issue_id` and I.`assembly_id` = :assembly_id and I.category = 'A'
+                )
                 join `Congressman` C on (DC.congressman_id = C.congressman_id)
             where DC.`assembly_id` = :assembly_id 
                 and DC.`order` = 1
@@ -219,23 +232,25 @@ class Congressman implements DatabaseAwareInterface, EventManagerAwareInterface
     /**
      * @param int $assemblyId
      * @param int $issueId
+     * @param string $category
      * @return \Althingi\Model\CongressmanAndDateRange[]
      */
-    public function fetchAccumulatedTimeByIssue(int $assemblyId, int $issueId): array
+    public function fetchAccumulatedTimeByIssue(int $assemblyId, int $issueId, ?string $category = 'A'): array
     {
-        $statement = $this->getDriver()->prepare('
+        $statement = $this->getDriver()->prepare("
             select C.*, (sum(`diff`)) as `time`, date(`from`) as `begin`, null as `end` from (
                 select *, timediff(`to`, `from`) as `diff`
                 from `Speech` D
-                where D.assembly_id = :assembly_id and D.issue_id = :issue_id
+                where D.assembly_id = :assembly_id and D.issue_id = :issue_id and D.category = :category
             ) S
             join `Congressman` C on (C.congressman_id = S.congressman_id)
             group by S.congressman_id
             order by `time` desc;
-        ');
+        ");
         $statement->execute([
             'issue_id' => $issueId,
-            'assembly_id' => $assemblyId
+            'assembly_id' => $assemblyId,
+            'category' => $category
         ]);
 
         return array_map(function ($object) {
@@ -282,6 +297,7 @@ class Congressman implements DatabaseAwareInterface, EventManagerAwareInterface
                     select D.`document_id` from `Document` D
                     where D.`assembly_id` = :assembly_id 
                         and D.`issue_id` = :issue_id
+                        and D.`category` = \'A\'
                     order by `date` asc limit 0, 1
                 )
                 order by DC.`order`;

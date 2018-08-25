@@ -87,7 +87,9 @@ class IssueCategory implements DatabaseAwareInterface
             $this->toUpdateString(
                 'Category_has_Issue',
                 $data,
-                "category_id={$data->getCategoryId()} and issue_id={$data->getIssueId()} and assembly_id={$data->getAssemblyId()}"
+                "category_id={$data->getCategoryId()} ".
+                "and issue_id={$data->getIssueId()} ".
+                "and assembly_id={$data->getAssemblyId()}"
             )
         );
         $statement->execute($this->toSqlValues($data));
@@ -98,21 +100,31 @@ class IssueCategory implements DatabaseAwareInterface
     /**
      * @param int $assemblyId
      * @param int $congressmanId
+     * @param array $category
      * @return \Althingi\Model\IssueCategoryAndTime[]
      */
-    public function fetchFrequencyByAssemblyAndCongressman(int $assemblyId, int $congressmanId): array
-    {
-        $statement = $this->getDriver()->prepare('
+    public function fetchFrequencyByAssemblyAndCongressman(
+        int $assemblyId,
+        int $congressmanId,
+        ?array $category = ['A']
+    ): array {
+        $categories = count($category) > 0
+            ? 'and SP.category in (' . implode(',', array_map(function ($c) {
+                return '"' . $c . '"';
+            }, $category)) . ')'
+            : '';
+
+        $statement = $this->getDriver()->prepare("
             select C.`category_id`, C.`super_category_id`, C.`title`, sum(`speech_sum`) as `time` from (
                 select CI.*, TIME_TO_SEC(timediff(SP.`to`, SP.`from`)) as `speech_sum`
                 from `Speech` SP
                 join `Category_has_Issue` CI on (CI.`issue_id` = SP.`issue_id`)
-                where SP.`assembly_id` = :assembly_id and SP.`congressman_id` = :congressman_id
+                where SP.`assembly_id` = :assembly_id and SP.`congressman_id` = :congressman_id {$categories}
             ) as T
             join `Category` C on (C.`category_id` = T.`category_id`)
             group by T.`category_id`
             order by `time` desc;
-        ');
+        ");
         $statement->execute([
             'assembly_id' => $assemblyId,
             'congressman_id' => $congressmanId,

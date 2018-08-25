@@ -10,6 +10,9 @@ class CongressmanDocument implements ModelInterface
     /** @var int */
     private $issue_id;
 
+    /** @var  string */
+    private $category;
+
     /** @var int */
     private $assembly_id;
 
@@ -55,6 +58,24 @@ class CongressmanDocument implements ModelInterface
     public function setIssueId(int $issue_id): CongressmanDocument
     {
         $this->issue_id = $issue_id;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCategory(): string
+    {
+        return $this->category;
+    }
+
+    /**
+     * @param string $category
+     * @return CongressmanDocument
+     */
+    public function setCategory(string $category)
+    {
+        $this->category = $category;
         return $this;
     }
 
@@ -138,6 +159,7 @@ class CongressmanDocument implements ModelInterface
         return [
             'document_id' => $this->document_id,
             'issue_id' => $this->issue_id,
+            'category' => $this->category,
             'assembly_id' => $this->assembly_id,
             'congressman_id' => $this->congressman_id,
             'minister' => $this->minister,

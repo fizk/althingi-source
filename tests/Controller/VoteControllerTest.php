@@ -150,12 +150,14 @@ class VoteControllerTest extends AbstractHttpControllerTestCase
             ->setAssemblyId(1)
             ->setDate(new \DateTime('2000-01-01 00:00:00'))
             ->setType('type')
+            ->setCategory('A')
             ->setMethod('method');
 
         $expectedData = (new \Althingi\Model\Vote())
             ->setVoteId(3)
             ->setIssueId(2)
             ->setAssemblyId(1)
+            ->setCategory('A')
             ->setDate(new \DateTime('2001-01-01 01:02:03'))
             ->setType('type')
             ->setMethod('method');

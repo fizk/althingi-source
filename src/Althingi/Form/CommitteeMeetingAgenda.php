@@ -37,6 +37,11 @@ class CommitteeMeetingAgenda extends Form implements InputFilterProviderInterfac
             'name' => 'title',
             'type' => 'Zend\Form\Element\Text',
         ));
+
+        $this->add(array(
+            'name' => 'category',
+            'type' => 'Zend\Form\Element\Text',
+        ));
     }
 
 
@@ -66,6 +71,16 @@ class CommitteeMeetingAgenda extends Form implements InputFilterProviderInterfac
             'assembly_id' => [
                 'required' => true,
                 'allow_empty' => false,
+            ],
+            'category' => [
+                'required' => false,
+                'allow_empty' => true,
+                'filters' => [
+                    [
+                        'name' => '\Zend\Filter\ToNull',
+                        'options' => ['type' => 'all']
+                    ]
+                ],
             ],
             'issue_id' => [
                 'required' => false,

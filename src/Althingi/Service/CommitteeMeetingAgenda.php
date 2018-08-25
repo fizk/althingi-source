@@ -84,7 +84,8 @@ class CommitteeMeetingAgenda implements DatabaseAwareInterface
             $this->toUpdateString(
                 'CommitteeMeetingAgenda',
                 $data,
-                "committee_meeting_id={$data->getCommitteeMeetingId()} and committee_meeting_agenda_id={$data->getCommitteeMeetingAgendaId()}"
+                "committee_meeting_id={$data->getCommitteeMeetingId()} " .
+                "and committee_meeting_agenda_id={$data->getCommitteeMeetingAgendaId()}"
             )
         );
         $statement->execute($this->toSqlValues($data));

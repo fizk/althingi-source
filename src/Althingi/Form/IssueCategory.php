@@ -19,6 +19,11 @@ class IssueCategory extends Form implements InputFilterProviderInterface
         ));
 
         $this->add(array(
+            'name' => 'category',
+            'type' => 'Zend\Form\Element\Text',
+        ));
+
+        $this->add(array(
             'name' => 'assembly_id',
             'type' => 'Zend\Form\Element\Number',
         ));
@@ -47,6 +52,10 @@ class IssueCategory extends Form implements InputFilterProviderInterface
                 'allow_empty' => false,
             ],
             'category_id' => [
+                'required' => true,
+                'allow_empty' => false,
+            ],
+            'category' => [
                 'required' => true,
                 'allow_empty' => false,
             ],

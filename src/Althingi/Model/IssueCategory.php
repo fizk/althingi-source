@@ -13,6 +13,9 @@ class IssueCategory implements ModelInterface
     /** @var  int */
     private $assembly_id;
 
+    /** @var  string */
+    private $category;
+
     /**
      * @return int
      */
@@ -67,12 +70,31 @@ class IssueCategory implements ModelInterface
         return $this;
     }
 
+    /**
+     * @return string
+     */
+    public function getCategory(): string
+    {
+        return $this->category;
+    }
+
+    /**
+     * @param string $category
+     * @return IssueCategory
+     */
+    public function setCategory(string $category)
+    {
+        $this->category = $category;
+        return $this;
+    }
+
     public function toArray()
     {
         return [
             'category_id' => $this->category_id,
             'issue_id' => $this->issue_id,
             'assembly_id' => $this->assembly_id,
+            'category' => $this->category,
         ];
     }
 

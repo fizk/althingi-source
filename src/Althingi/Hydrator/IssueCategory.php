@@ -17,6 +17,7 @@ class IssueCategory implements HydratorInterface
     {
         return $object
             ->setCategoryId($data['category_id'])
+            ->setCategory($data['category'])
             ->setIssueId($data['issue_id'])
             ->setAssemblyId($data['assembly_id']);
     }

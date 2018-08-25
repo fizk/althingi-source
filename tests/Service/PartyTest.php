@@ -245,13 +245,22 @@ class PartyTest extends PHPUnit_Extensions_Database_TestCase
                 ['cabinet_id' => 1, 'congressman_id' => 1, 'title' => 'dude', 'from' => '2000-01-01']
             ],
             'Issue' => [
-                ['issue_id' => 1, 'assembly_id' => 1],
+                ['issue_id' => 1, 'assembly_id' => 1, 'category' => 'A'],
             ],
             'Plenary' => [
                 ['plenary_id' => 1, 'assembly_id' => 1],
             ],
             'Speech' => [
-                ['speech_id' => 1, 'plenary_id' => 1, 'assembly_id' => 1, 'issue_id' => 1, 'congressman_id' => 1, 'from' => '2001-01-01 01:00:00', 'to' => '2001-01-01 01:10:00']
+                [
+                    'speech_id' => 1,
+                    'plenary_id' => 1,
+                    'assembly_id' => 1,
+                    'issue_id' => 1,
+                    'category' => 'A',
+                    'congressman_id' => 1,
+                    'from' => '2001-01-01 01:00:00',
+                    'to' => '2001-01-01 01:10:00'
+                ]
             ],
 
         ]);

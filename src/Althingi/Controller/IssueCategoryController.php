@@ -82,7 +82,12 @@ class IssueCategoryController extends AbstractRestfulController implements
         $form = (new IssueCategoryForm())
             ->setData(array_merge(
                 $data,
-                ['assembly_id' => $assemblyId, 'issue_id' => $issueId, 'category_id' => $categoryId]
+                [
+                    'assembly_id' => $assemblyId,
+                    'issue_id' => $issueId,
+                    'category_id' => $categoryId,
+                    'category' => 'A'
+                ]
             ));
 
         if ($form->isValid()) {
