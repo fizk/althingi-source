@@ -652,11 +652,11 @@ class Issue implements DatabaseAwareInterface, EventManagerAwareInterface
         return ' and CI.`category_id` in (' . implode(',', $category) . ')';
     }
 
-    private function categoryString(array $categories = [], $prefix = 'and')
+    private function categoryString(?array $categories = [], $prefix = 'and')
     {
         $formattedCategories = array_map(function ($c) {
             return strtoupper($c);
-        }, $categories);
+        }, $categories ? : []);
 
         $filteredCategories = array_filter($formattedCategories, function ($c) {
             return $c === 'A' || $c === 'B';
