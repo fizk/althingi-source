@@ -15,8 +15,8 @@
     ],
     "require": {
         "php": ">=7.1",
-        "zendframework/zendframework": "2.4.*",
-        "zendframework/zend-mvc": "2.4.*",
+        "zendframework/zendframework": "2.5.*",
+        "zendframework/zend-mvc": "2.6.*",
         "monolog/monolog": "~1.13",
         "fizk/rend": "3.0.0",
         "league/html-to-markdown": "^4.2",
