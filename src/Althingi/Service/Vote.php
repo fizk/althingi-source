@@ -104,7 +104,8 @@ class Vote implements DatabaseAwareInterface
             'select count(*) as `count`, date_format(`date`, "%Y-%m-%d") as `date`
             from `Vote`
             where assembly_id = :assembly_id
-            group by `date`;'
+            group by `date`
+            order by `date`;'
         );
         $statement->execute(['assembly_id' => $assemblyId]);
         return array_map(function ($vote) {

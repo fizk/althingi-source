@@ -73,12 +73,13 @@ return [
             $dbName = getenv('DB_NAME') ?: 'althingi';
             $dbUser = getenv('DB_USER') ?: 'root';
             $dbPass = getenv('DB_PASSWORD') ?: '';
+
             return new PDO(
                 "mysql:host={$dbHost};port={$dbPort};dbname={$dbName}",
                 $dbUser,
                 $dbPass,
                 [
-                    PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'",
+                    PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8', sql_mode='STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'",
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
                 ]
@@ -122,16 +123,19 @@ return [
         },
 
         StorageInterface::class => function (ServiceManager $sm) {
-            $cacheAdapter = getenv('CACHE');
-            switch (strtolower($cacheAdapter)) {
+            switch (strtolower(getenv('CACHE_TYPE'))) {
                 case 'file':
                     return (new Zend\Cache\Storage\Adapter\Filesystem())
                         ->setOptions(
                             (new \Zend\Cache\Storage\Adapter\FilesystemOptions())->setCacheDir('./data/cache')
                         );
                     break;
-                case 'memcached':
-                    return new Zend\Cache\Storage\Adapter\Memcached();
+                case 'memory':
+                    $options = (new Zend\Cache\Storage\Adapter\RedisOptions())->setServer([
+                        'host' => getenv('CACHE_HOST'),
+                        'port' => getenv('CACHE_PORT')
+                    ]);
+                    return new Zend\Cache\Storage\Adapter\Redis($options);
                     break;
                 default:
                     return new \Zend\Cache\Storage\Adapter\BlackHole();

@@ -251,7 +251,7 @@ class SessionTest extends PHPUnit_Extensions_Database_TestCase
                 ['session_id' => 5, 'congressman_id' => 2, 'constituency_id' => 1, 'assembly_id' => 1, 'party_id' => 2, 'from' => '2000-01-05', 'to' => null, 'type' => 'varamaður', 'abbr' => null],
             ],
             'Issue' => [
-                ['issue_id' => 1, 'assembly_id' => 1],
+                ['issue_id' => 1, 'assembly_id' => 1, 'category' => 'A'],
             ],
             'Plenary' => [
                 ['plenary_id' => 1, 'assembly_id' => 1],

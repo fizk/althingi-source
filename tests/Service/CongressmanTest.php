@@ -259,7 +259,7 @@ class CongressmanTest extends PHPUnit_Extensions_Database_TestCase
     {
         return $this->createArrayDataSet([
             'Party' => [
-                ['party_id' => 1, 'name' => 'party name', 'color' => '#000000'],
+                ['party_id' => 1, 'name' => 'party name', 'color' => '000000'],
             ],
             'Assembly' => [
                 ['assembly_id' => 1, 'from' => '2000-01-01', 'to' => null],

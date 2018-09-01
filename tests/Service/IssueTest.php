@@ -249,6 +249,7 @@ class IssueTest extends PHPUnit_Extensions_Database_TestCase
         $issue = (new IssueModel())
             ->setAssemblyId(1)
             ->setIssueId(3)
+            ->setCategory('A')
             ->setStatus('awesome');
 
         $issueService = new Issue();
@@ -264,13 +265,14 @@ class IssueTest extends PHPUnit_Extensions_Database_TestCase
                     'congressman_id' => null,
                     'type' => null,
                     'status' => 'awesome',
-                    'type_subname' => null
+                    'type_subname' => null,
+                    'category' => 'A'
                 ],
             ],
         ])->getTable('Issue');
         $queryTable = $this->getConnection()->createQueryTable(
             'Issue',
-            'SELECT `issue_id`, `assembly_id`, `congressman_id`, `type`, `status`, `type_subname` 
+            'SELECT `issue_id`, `assembly_id`, `congressman_id`, `type`, `status`, `type_subname`, `category` 
               FROM Issue
               WHERE issue_id = 3 AND assembly_id = 1'
         );
