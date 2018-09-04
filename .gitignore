@@ -121,6 +121,8 @@ config/autoload/*.local.php
 # Data
 data/logs/
 data/cache/
+!data/cache/.gitkeep
+!data/cache/*.php
 data/sessions/
 data/tmp/
 temp/
