@@ -1,17 +1,10 @@
 language: php
 
 php:
-  - '7.1'
+  - '7.2'
 services:
   - docker
 
 script:
   - docker-compose build
   - docker-compose run tests
-
-deploy:
-  - provider: script
-    script: auto/deploy.sh production
-    on:
-      branch: master
-

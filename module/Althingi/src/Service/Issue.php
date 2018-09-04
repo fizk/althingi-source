@@ -3,6 +3,7 @@
 namespace Althingi\Service;
 
 use Althingi\Lib\DatabaseAwareInterface;
+use Althingi\Lib\EventsAwareInterface;
 use Althingi\Model\CongressmanIssue as CongressmanIssueModel;
 use Althingi\Hydrator\CongressmanIssue as CongressmanIssueHydrator;
 use Althingi\Model\Issue as IssueModel;
@@ -18,22 +19,18 @@ use Althingi\ServiceEvents\AddEvent;
 use Althingi\ServiceEvents\UpdateEvent;
 use Althingi\Hydrator\IssueValue as IssueValueHydrator;
 use Althingi\Model\IssueValue as IssueValueModel;
-use PDO;
 use InvalidArgumentException;
 use Zend\EventManager\EventManager;
-use Zend\EventManager\EventManagerAwareInterface;
-use Zend\EventManager\EventManagerAwareTrait;
 use Zend\EventManager\EventManagerInterface;
+use PDO;
 
 /**
  * Class Issue
  * @package Althingi\Service
  */
-class Issue implements DatabaseAwareInterface, EventManagerAwareInterface
+class Issue implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
-
-//    use EventManagerAwareTrait;
 
     const ALLOWED_TYPES = ['a', 'b', 'f', 'l', 'm', 'n', 'q', 's', 'v', 'ft', 'um'];
     const ALLOWED_ORDER = ['asc', 'desc'];
@@ -684,10 +681,6 @@ class Issue implements DatabaseAwareInterface, EventManagerAwareInterface
 
     public function setEventManager(EventManagerInterface $events)
     {
-        $events->setIdentifiers([
-            __CLASS__,
-            get_called_class(),
-        ]);
         $this->events = $events;
         return $this;
     }

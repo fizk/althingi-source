@@ -82,17 +82,24 @@ class DatabaseSetup implements TestListener
 
     public function startTestSuite(TestSuite $suite): void
     {
-        foreach ($suite->tests() as $test) {
-            if (in_array(DatabaseConnection::class, class_uses($test))) {
-                $this->setupDatabase();
-                break;
+        if (strtolower(getenv('DB_SETUP')) === 'false') {
+        } else {
+            foreach ($suite->tests() as $test) {
+                if (in_array(DatabaseConnection::class, class_uses($test))) {
+                    $this->setupDatabase();
+                    break;
+                }
             }
         }
+
     }
 
     public function endTestSuite(TestSuite $suite): void
     {
-        $this->tearDownDatabase();
+        if (strtolower(getenv('DB_SETUP')) === 'false') {
+        } else {
+            $this->tearDownDatabase();
+        }
     }
 
     public function startTest(Test $test): void

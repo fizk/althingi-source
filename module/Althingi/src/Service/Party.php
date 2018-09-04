@@ -2,6 +2,7 @@
 
 namespace Althingi\Service;
 
+use Althingi\Lib\EventsAwareInterface;
 use Althingi\Model\Party as PartyModel;
 use Althingi\Hydrator\Party as PartyHydrator;
 use Althingi\Model\PartyAndElection;
@@ -12,15 +13,15 @@ use Althingi\Lib\DatabaseAwareInterface;
 use Althingi\Presenters\IndexablePartyPresenter;
 use Althingi\ServiceEvents\AddEvent;
 use Althingi\ServiceEvents\UpdateEvent;
-use PDO;
-use Zend\EventManager\EventManagerAwareInterface;
+use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
+use PDO;
 
 /**
  * Class Party
  * @package Althingi\Service
  */
-class Party implements DatabaseAwareInterface, EventManagerAwareInterface
+class Party implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
 
@@ -30,7 +31,7 @@ class Party implements DatabaseAwareInterface, EventManagerAwareInterface
     private $pdo;
 
     /** @var  \Zend\EventManager\EventManager */
-    private $eventManager;
+    private $events;
 
     /**
      * Get one party.
@@ -275,27 +276,17 @@ class Party implements DatabaseAwareInterface, EventManagerAwareInterface
         return $this->pdo;
     }
 
-    /**
-     * Inject an EventManager instance
-     *
-     * @param  EventManagerInterface $eventManager
-     * @return $this
-     */
-    public function setEventManager(EventManagerInterface $eventManager)
+    public function setEventManager(EventManagerInterface $events)
     {
-        $this->eventManager = $eventManager;
+        $this->events = $events;
         return $this;
     }
 
-    /**
-     * Retrieve the event manager
-     *
-     * Lazy-loads an EventManager instance if none registered.
-     *
-     * @return EventManagerInterface
-     */
     public function getEventManager()
     {
-        return $this->eventManager;
+        if (null === $this->events) {
+            $this->setEventManager(new EventManager());
+        }
+        return $this->events;
     }
 }

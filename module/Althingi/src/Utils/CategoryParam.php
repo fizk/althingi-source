@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: einar.adalsteinsson
- * Date: 8/25/18
- * Time: 2:07 PM
- */
-
 namespace Althingi\Utils;
 
 trait CategoryParam
@@ -27,7 +20,7 @@ trait CategoryParam
     {
         $categories = $this->params()->fromQuery('category', null);
         if (!$categories) {
-            return null;
+            return 'A';
         }
         $results = [];
         preg_match_all('/([aA]|[bB])/', $categories, $results);

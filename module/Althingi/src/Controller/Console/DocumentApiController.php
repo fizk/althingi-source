@@ -11,8 +11,7 @@ class DocumentApiController extends AbstractActionController
 {
     public function indexAction()
     {
-        $conf = require __DIR__ . '/../../../../config/module.config.php';
-//        print_r($conf['router']['routes']);
+        $conf = require __DIR__ . '/../../../config/module.config.php';
 
         $tree = $this->processRoute($conf['router']['routes'], [], '');
 

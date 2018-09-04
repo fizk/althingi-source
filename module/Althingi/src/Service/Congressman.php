@@ -3,11 +3,11 @@
 namespace Althingi\Service;
 
 use Althingi\Lib\DatabaseAwareInterface;
+use Althingi\Lib\EventsAwareInterface;
 use Althingi\Model\CongressmanValue as CongressmanValueModel;
 use Althingi\Presenters\IndexableCongressmanPresenter;
 use Althingi\ServiceEvents\AddEvent;
 use Althingi\ServiceEvents\UpdateEvent;
-use PDO;
 use Althingi\Model\Congressman as CongressmanModel;
 use Althingi\Model\CongressmanAndParty as CongressmanAndPartyModel;
 use Althingi\Model\CongressmanAndCabinet as CongressmanAndCabinetModel;
@@ -21,14 +21,15 @@ use Althingi\Hydrator\CongressmanAndRange as CongressmanAndRangeHydrator;
 use Althingi\Hydrator\CongressmanValue as CongressmanValueHydrator;
 use Althingi\Hydrator\Proponent as ProponentHydrator;
 use Althingi\Hydrator\President as PresidentHydrator;
-use Zend\EventManager\EventManagerAwareInterface;
+use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
+use PDO;
 
 /**
  * Class Congressman
  * @package Althingi\Service
  */
-class Congressman implements DatabaseAwareInterface, EventManagerAwareInterface
+class Congressman implements DatabaseAwareInterface, EventsAwareInterface
 {
     const CONGRESSMAN_TYPE_MP = 'parliamentarian';
     const CONGRESSMAN_TYPE_SUBSTITUTE = 'substitute';
@@ -42,7 +43,7 @@ class Congressman implements DatabaseAwareInterface, EventManagerAwareInterface
     private $pdo;
 
     /** @var  \Zend\EventManager\EventManager */
-    private $eventManager;
+    private $events;
 
     /**
      * Get one Congressman.
@@ -361,7 +362,8 @@ class Congressman implements DatabaseAwareInterface, EventManagerAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
-        $this->getEventManager()->trigger(AddEvent::class, $this, new AddEvent(new IndexableCongressmanPresenter($data)));
+        $this->getEventManager()
+            ->trigger(AddEvent::class, new AddEvent(new IndexableCongressmanPresenter($data)));
         return $this->getDriver()->lastInsertId();
     }
 
@@ -376,7 +378,8 @@ class Congressman implements DatabaseAwareInterface, EventManagerAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
-        $this->getEventManager()->trigger(AddEvent::class, $this, new AddEvent(new IndexableCongressmanPresenter($data)));
+        $this->getEventManager()
+            ->trigger(AddEvent::class, new AddEvent(new IndexableCongressmanPresenter($data)));
         return $statement->rowCount();
     }
 
@@ -394,7 +397,8 @@ class Congressman implements DatabaseAwareInterface, EventManagerAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
-        $this->getEventManager()->trigger(UpdateEvent::class, $this, new UpdateEvent(new IndexableCongressmanPresenter($data)));
+        $this->getEventManager()
+            ->trigger(UpdateEvent::class, new UpdateEvent(new IndexableCongressmanPresenter($data)));
 
         return $statement->rowCount();
     }
@@ -450,12 +454,12 @@ class Congressman implements DatabaseAwareInterface, EventManagerAwareInterface
     /**
      * Inject an EventManager instance
      *
-     * @param  EventManagerInterface $eventManager
+     * @param  EventManagerInterface $events
      * @return $this
      */
-    public function setEventManager(EventManagerInterface $eventManager)
+    public function setEventManager(EventManagerInterface $events)
     {
-        $this->eventManager = $eventManager;
+        $this->events = $events;
         return $this;
     }
 
@@ -468,6 +472,9 @@ class Congressman implements DatabaseAwareInterface, EventManagerAwareInterface
      */
     public function getEventManager()
     {
-        return $this->eventManager;
+        if (null === $this->events) {
+            $this->setEventManager(new EventManager());
+        }
+        return $this->events;
     }
 }

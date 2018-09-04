@@ -1,12 +1,17 @@
-FROM php:7.0-apache
+FROM php:7.2.9
 
 RUN apt-get update \
- && apt-get install -y git zlib1g-dev \
+ && apt-get install -y git zlib1g-dev vim\
  && docker-php-ext-install zip \
- && a2enmod rewrite \
- && sed -i 's!/var/www/html!/var/www/public!g' /etc/apache2/sites-available/000-default.conf \
- && mv /var/www/html /var/www/public \
+ && docker-php-ext-install pdo_mysql \
  && curl -sS https://getcomposer.org/installer \
   | php -- --install-dir=/usr/local/bin --filename=composer
+
+RUN pecl install -o -f redis \
+    && pecl install xdebug-2.6.0 \
+    && rm -rf /tmp/pear \
+    && docker-php-ext-enable redis xdebug
+
+COPY ./auto/php/php.ini /usr/local/etc/php/
 
 WORKDIR /var/www

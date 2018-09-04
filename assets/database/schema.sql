@@ -15,6 +15,9 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
+CREATE DATABASE IF NOT EXISTS  `althingi`;
+USE `althingi`;
+
 --
 -- Table structure for table `Assembly`
 --
@@ -497,7 +500,7 @@ CREATE TABLE `Speech` (
   `plenary_id` int(11) NOT NULL,
   `assembly_id` int(11) NOT NULL,
   `issue_id` int(11) NOT NULL,
-  `category` char(2) DEFAULT NULL,
+  `category` char(2) NOT NULL,
   `congressman_id` int(11) NOT NULL,
   `congressman_type` varchar(255) DEFAULT NULL,
   `from` datetime DEFAULT NULL,
@@ -509,10 +512,10 @@ CREATE TABLE `Speech` (
   PRIMARY KEY (`speech_id`),
   KEY `fk_Speach_Congressman1_idx` (`congressman_id`),
   KEY `fk_Speach_Plenary1_idx` (`plenary_id`,`assembly_id`),
-  KEY `fk_Speech_Issue1_idx` (`assembly_id`,`issue_id`,`category`),
+  KEY `fk_Speech_Issue1_idx` (`issue_id`,`assembly_id`,`category`),
   CONSTRAINT `fk_Speach_Congressman1` FOREIGN KEY (`congressman_id`) REFERENCES `Congressman` (`congressman_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_Speach_Plenary1` FOREIGN KEY (`plenary_id`, `assembly_id`) REFERENCES `Plenary` (`plenary_id`, `assembly_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_Speech_Issue1` FOREIGN KEY (`assembly_id`, `issue_id`, `category`) REFERENCES `Issue` (`assembly_id`, `issue_id`, `category`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_Speech_Issue1` FOREIGN KEY (`issue_id`,`assembly_id`,`category`) REFERENCES `Issue` (`issue_id`,`assembly_id`,`category`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

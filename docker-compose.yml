@@ -1,7 +1,37 @@
-zf:
-  build: .
-  dockerfile: Dockerfile
-  ports:
-   - "8080:80"
-  volumes:
-   - .:/var/www
+version: '3'
+
+services:
+
+
+  test:
+    container_name: althingi_test_container
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/var/www
+    depends_on:
+      - database
+    links:
+      - database
+    environment:
+      - DB_HOST=database
+      - DB_PORT=3306
+      - DB_NAME=althingi
+      - DB_NAME_TEST=althingi
+      - DB_USER=root
+      - DB_PASSWORD=example
+      - DB_SETUP=false
+      - CACHE_TYPE=none
+      - SEARCH=none
+    command: bash -c "/var/www/vendor/bin/phpunit"
+
+  database:
+    container_name: althingi_test_database
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    volumes:
+      - ./auto/db/:/docker-entrypoint-initdb.d
+    environment:
+      - MYSQL_ROOT_PASSWORD=example

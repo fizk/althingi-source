@@ -3,24 +3,25 @@
 namespace Althingi\Service;
 
 use Althingi\Lib\DatabaseAwareInterface;
+use Althingi\Lib\EventsAwareInterface;
 use Althingi\Presenters\IndexableSpeechPresenter;
 use Althingi\ServiceEvents\AddEvent;
 use Althingi\ServiceEvents\UpdateEvent;
-use PDO;
 use Althingi\Hydrator\Speech as SpeechHydrator;
 use Althingi\Hydrator\SpeechAndPosition as SpeechAndPositionHydrator;
 use Althingi\Hydrator\DateAndCount as DateAndCountHydrator;
 use Althingi\Model\Speech as SpeechModel;
 use Althingi\Model\SpeechAndPosition as SpeechAndPositionModel;
 use Althingi\Model\DateAndCount as DateAndCountModel;
+use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
-use Zend\EventManager\EventManagerAwareInterface;
+use PDO;
 
 /**
  * Class Speech
  * @package Althingi\Service
  */
-class Speech implements DatabaseAwareInterface, EventManagerAwareInterface
+class Speech implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
 
@@ -32,7 +33,7 @@ class Speech implements DatabaseAwareInterface, EventManagerAwareInterface
     private $pdo;
 
     /** @var  \Zend\EventManager\EventManager */
-    private $eventManager;
+    private $events;
 
     /**
      * Get one speech item.
@@ -462,27 +463,17 @@ class Speech implements DatabaseAwareInterface, EventManagerAwareInterface
         return $this->pdo;
     }
 
-    /**
-     * Inject an EventManager instance
-     *
-     * @param  EventManagerInterface $eventManager
-     * @return $this
-     */
-    public function setEventManager(EventManagerInterface $eventManager)
+    public function setEventManager(EventManagerInterface $events)
     {
-        $this->eventManager = $eventManager;
+        $this->events = $events;
         return $this;
     }
 
-    /**
-     * Retrieve the event manager
-     *
-     * Lazy-loads an EventManager instance if none registered.
-     *
-     * @return EventManagerInterface
-     */
     public function getEventManager()
     {
-        return $this->eventManager;
+        if (null === $this->events) {
+            $this->setEventManager(new EventManager());
+        }
+        return $this->events;
     }
 }
