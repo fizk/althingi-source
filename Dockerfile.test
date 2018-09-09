@@ -19,7 +19,7 @@ RUN pecl install -o -f redis \
     && docker-php-ext-enable redis xdebug
 
 ADD . /usr/src
-COPY ./assets/php/php.ini /usr/local/etc/php/
+COPY ./auto/php/php.ini /usr/local/etc/php/
 
 EXPOSE 80
 

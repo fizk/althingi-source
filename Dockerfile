@@ -21,7 +21,7 @@ RUN pecl install -o -f redis \
     &&  rm -rf /tmp/pear \
     &&  docker-php-ext-enable redis
 
-COPY ./assets/php/php.ini /usr/local/etc/php/
+COPY ./auto/php/php.ini /usr/local/etc/php/
 
 EXPOSE 80
 
