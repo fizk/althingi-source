@@ -23,16 +23,9 @@ use Althingi\Service\IssueCategory;
 use Althingi\Service\Election;
 use Althingi\Service\SearchSpeech;
 use Althingi\Service\SearchIssue;
-use Althingi\Lib\DatabaseAwareInterface;
-use Althingi\Lib\LoggerAwareInterface;
 use Zend\ServiceManager\ServiceManager;
-use Rend\View\Strategy\MessageFactory;
 use Psr\Log\LoggerInterface;
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
-use Zend\EventManager\EventManagerAwareInterface;
 use Althingi\ServiceEvents\ServiceEventsListener;
-use Althingi\Lib\ElasticSearchAwareInterface;
 use Elasticsearch\Client as ElasticsearchClient;
 use Elasticsearch\ClientBuilder as ElasticsearchClientBuilder;
 use Zend\Cache\Storage\StorageInterface;
@@ -85,6 +78,7 @@ return [
                 ->setDriver($sm->get(PDO::class));
         },
         Issue::class => function (ServiceManager $sm) {
+            $sm->get(LoggerInterface::class);
             return (new Issue())
                 ->setDriver($sm->get(PDO::class))
                 ->setEventManager($sm->get(ServiceEventsListener::class));
@@ -192,8 +186,37 @@ return [
         },
 
         LoggerInterface::class => function (ServiceManager $sm) {
-            $logger = new Logger('althingi');
-            $logger->pushHandler(new StreamHandler('php://stdout'));
+            $handlers = [];
+            $logger = (new \Monolog\Logger('althingi-api'))
+                ->pushProcessor(new \Monolog\Processor\MemoryPeakUsageProcessor())
+                ->pushProcessor(new \Monolog\Processor\MemoryUsageProcessor());
+
+            if (!empty(getenv('LOG_PATH')) && getenv('LOG_PATH')) {
+                $handlers[] = new \Monolog\Handler\StreamHandler(getenv('LOG_PATH')?:'php://stdout');
+            }
+
+            $formattedHandlers = array_map(function (\Monolog\Handler\HandlerInterface $handler) {
+                switch (strtolower(getenv('LOG_FORMAT'))) {
+                    case 'logstash':
+                        $handler->setFormatter(new \Monolog\Formatter\LogstashFormatter('althingi-api'));
+                        break;
+                    case 'json':
+                        $handler->setFormatter(new \Monolog\Formatter\JsonFormatter());
+                        break;
+                    case 'line':
+                        $handler->setFormatter(new \Monolog\Formatter\LineFormatter());
+                        break;
+                    case 'color':
+                        $handler->setFormatter(new \Bramus\Monolog\Formatter\ColoredLineFormatter());
+                        break;
+                }
+                return $handler;
+            }, $handlers);
+
+            array_walk($formattedHandlers, function ($handler) use ($logger) {
+                $logger->pushHandler($handler);
+            });
+
             return $logger;
         },
 
@@ -207,8 +230,8 @@ return [
                     break;
                 case 'memory':
                     $options = (new Zend\Cache\Storage\Adapter\RedisOptions())->setServer([
-                        'host' => getenv('CACHE_HOST'),
-                        'port' => getenv('CACHE_PORT')
+                        'host' => getenv('CACHE_HOST') ?: 'localhost',
+                        'port' => getenv('CACHE_PORT') ?: 6379
                     ]);
                     return new Zend\Cache\Storage\Adapter\Redis($options);
                     break;

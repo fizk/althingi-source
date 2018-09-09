@@ -1,5 +1,61 @@
 # Althingi
 
+This is an API application that serves althingi (icelandic parliament) data through a HTTP API calls.
+
+Built with [ZF3](https://github.com/zendframework/zf3-web).
+
+## Pre-requirements
+
+* PHP 7.2 ([pdo_mysql](http://php.net/manual/en/ref.pdo-mysql.php), [redis](https://pecl.php.net/package/redis))
+* MySQL 5.6
+* [Composer](https://getcomposer.org/)
+* (ElasticSearch)
+* (Redis)
+
+## Install
+Clone this repository. Run `$ composer install` and you are pretty much done.
+
+## Configure
+This application is configured via environment variables:
+
+| name                | default                          | Options                               | description                   |
+|---------------------|----------------------------------|---------------------------------------|-------------------------------|
+| DB_HOST             | localhost                        | <string>                              |
+| DB_PORT             | 3306                             | <number>                              |
+| DB_NAME             | althingi                         | <string>                              |
+| DB_USER             | root                             | <string>                              |
+| DB_PASSWORD         |                                  | <string>                              |
+| SEARCH              | elasticsearch                    | elasticsearch / none                  |
+| LOGGER_SAVE         | true                             | true / false                          | Save logs to disk
+| LOGGER_STREAM       | true                             | true / false                          | Print logs to stdout
+| LOGGER_PATH_LOGS    | ./data/log/althingi.log          | <string>                              | Where to save logs
+| LOGGER_PATH_ERROR   | ./data/log/althingi.error.json   | <string>                              | Where to save error logs
+| LOGGER_FORMAT       | none                             | logstash / json / line / color / none |
+| CACHE_TYPE          | none                             | file / memory / none                  |
+| CACHE_HOST          |                                  | <string>                              |
+| CACHE_PORT          |                                  | <number>                              |
+| ES_HOST             | localhost                        | <string>                              |
+| ES_PROTO            | http                             | <string>                              |
+| ES_PORT             | 9200                             | <number>                              |
+| ES_USER             | elastic                          | <string>                              |
+| ES_PASSWORD         | changeme                         | <string>                              |
+
+
+## Database
+Under `./auto/db/schema.sql` is a file containing the database schema. Import it anyway you want.
+One way is to first create the database (often called `althingi`) via command-line and then pipe it in.
+
+```bash
+$ mysql -u root -p althingi < ./auto/db/schema
+```
+
+
+
+
+
+
+
+
 This is the REST API data server for the **Loggjafarthing** system.
 
 This is a ZF2 module and as such you have to put it into the `module` directory of an

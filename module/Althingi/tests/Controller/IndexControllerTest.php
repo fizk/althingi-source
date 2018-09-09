@@ -33,13 +33,6 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
         ));
         parent::setUp();
     }
-//
-//    public function tearDown()
-//    {
-//        $this->destroyServices();
-//        Mockery::close();
-//        return parent::tearDown();
-//    }
 
     /**
      * @covers ::indexAction

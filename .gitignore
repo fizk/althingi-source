@@ -119,7 +119,8 @@ config/autoload/*.local.php
 *.mo
 
 # Data
-data/logs/
+data/log/*
+!data/log/.gitkeep
 data/cache/*
 !data/cache/.gitkeep
 !data/cache/*.php
