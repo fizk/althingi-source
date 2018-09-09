@@ -69,7 +69,7 @@ class SpeechController extends AbstractRestfulController implements
         $category = $this->getCategoryFromQuery();
 
         $count = $this->speechService->countByIssue($assemblyId, $issueId, $category);
-        $speeches = $this->speechService->fetch($speechId, $assemblyId, $issueId, $category);
+        $speeches = $this->speechService->fetch($speechId, $assemblyId, $issueId, 25, $category);
         $positionBegin = (count($speeches) > 0)
             ? $speeches[0]->getPosition()
             : 0 ;

@@ -55,7 +55,7 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
             ->getMock()
 
             ->shouldReceive('fetch')
-            ->with(4, 1, 3, null)
+            ->with(4, 1, 3, 25, 'A')
             ->andReturn([
                 (new SpeechAndPosition())->setPosition(1)->setCongressmanId(1)->setFrom(new \DateTime())
             ])
@@ -108,7 +108,7 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
             ->getMock();
 
         $this->dispatch('/loggjafarthing/1/thingmal/3/raedur/4', 'GET');
-
+$resp = $this->getResponse();
         /** @var  $contentRange \Zend\Http\Header\ContentRange */
         $contentRange = $this->getResponse()
             ->getHeaders()
@@ -190,7 +190,7 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
     {
         $this->getMockService(Speech::class)
             ->shouldReceive('fetchByIssue')
-            ->with(144, 3, null, 0, null, 1500)
+            ->with(144, 3, 'A', 0, null, 1500)
             ->andReturn([
                 (new SpeechAndPosition())->setCongressmanId(1)->setFrom(new \DateTime()),
             ])
@@ -230,7 +230,7 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
 
         $this->getMockService(Speech::class)
             ->shouldReceive('fetchByIssue')
-            ->with(144, 3, null, 0, null, 1500)
+            ->with(144, 3, 'A', 0, null, 1500)
             ->andReturn([
                 (new SpeechAndPosition())->setCongressmanId(1)->setFrom(new \DateTime()),
             ])
@@ -272,7 +272,7 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
 
         $this->getMockService(Speech::class)
             ->shouldReceive('fetchByIssue')
-            ->with(144, 3, null, 0, 20, 1500)
+            ->with(144, 3, 'A', 0, 20, 1500)
             ->andReturn(array_map(function ($i) {
                 return  (new SpeechAndPosition())
                     ->setCongressmanId(1)
