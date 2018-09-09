@@ -3,32 +3,6 @@
 use Zend\Mvc\Application;
 use Zend\Stdlib\ArrayUtils;
 
-//var_dump([
-//    getenv('DB_HOST'),
-//    getenv('DB_PORT'),
-//    getenv('DB_NAME'),
-//    getenv('DB_USER'),
-//    getenv('DB_PASSWORD'),
-//
-//    getenv('CACHE_HOST'),
-//    getenv('CACHE_PORT'),
-//    getenv('CACHE_TYPE'),
-//
-//    getenv('SEARCH'),
-//
-//    getenv('ES_HOST'),
-//    getenv('ES_PROTO'),
-//    getenv('ES_PORT'),
-//    getenv('ES_USER'),
-//    getenv('ES_PASSWORD'),
-//
-//    getenv('LOGGER_PATH_LOGS'),
-//    getenv('LOGGER_PATH_ERROR'),
-//    getenv('LOGGER_SAVE'),
-//    getenv('LOGGER_STREAM'),
-//    getenv('LOGGER_FORMAT'),
-//]);
-
 /**
  * This makes our life easier when dealing with paths. Everything is relative
  * to the application root now.
