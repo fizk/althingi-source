@@ -7,7 +7,7 @@ trait CategoryParam
     {
         $categories = $this->params()->fromQuery('category', null);
         if (! $categories) {
-            return null;
+            return ['A'];
         }
         $results = [];
         preg_match_all('/([aA]|[bB])/', $categories, $results);
