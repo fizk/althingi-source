@@ -1,84 +1,43 @@
-version: '2'
+version: '3'
 
 services:
 
-#  elasticsearch1:
-#    image: docker.elastic.co/elasticsearch/elasticsearch:5.5.2
-#    container_name: althingielasticsearch1
-#    environment:
-#      - cluster.name=docker-cluster
-#      - bootstrap.memory_lock=true
-#      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-#    ulimits:
-#      memlock:
-#        soft: -1
-#        hard: -1
-#    mem_limit: 1g
-#    volumes:
-#      - esdata1:/usr/share/elasticsearch/data
-#    ports:
-#      - 9200:9200
-#    networks:
-#      - esnet
-#
-#  elasticsearch2:
-#    image: docker.elastic.co/elasticsearch/elasticsearch:5.5.2
-#    environment:
-#      - cluster.name=docker-cluster
-#      - bootstrap.memory_lock=true
-#      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-#      - "discovery.zen.ping.unicast.hosts=althingielasticsearch1"
-#    ulimits:
-#      memlock:
-#        soft: -1
-#        hard: -1
-#    mem_limit: 1g
-#    volumes:
-#      - esdata2:/usr/share/elasticsearch/data
-#    networks:
-#      - esnet
-
-  db:
-    image: centurylink/mysql
-    environment:
-      MYSQL_DATABASE: althingi_test
-      MYSQL_USER: root
-
-  web:
-    build: .
-    environment:
-      DB_HOST: db
-      DB_PORT: 3306
-      DB_NAME: althingi_test
-      DB_USER: root
+  # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+  # TEST
+  #
+  # Run PHPUnit is a container
+  # mostly used for CI but can bes used for local development as well
+  # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+  test:
+    container_name: althingi_test_container
+    build:
+      context: .
+      dockerfile: Dockerfile.test
     volumes:
-      - .:/var/www/module/Althingi
-
-  server:
-    container_name: server-container
-    extends: web
+      - .:/var/src
     depends_on:
-      - db
-    command: bash -c "php ./auto/import-schema.php && cd ../../public && php -S 0.0.0.0:8080"
-    ports:
-      - '8000:8080'
+      - database
     links:
-      - db
+      - database
+    environment:
+      - APPLICATION_ENVIRONMENT=development
+      - DB_HOST=database
+      - DB_PORT=3306
+      - DB_NAME=althingi
+      - DB_NAME_TEST=althingi
+      - DB_USER=root
+      - DB_PASSWORD=example
+      - DB_SETUP=false
+      - CACHE_TYPE=none
+      - SEARCH=none
+    command: bash -c "/usr/local/bin/composer install && /usr/local/bin/composer dump-autoload -o && /usr/src/vendor/bin/phpunit && /usr/src/vendor/bin/phpcs"
 
-  tests:
-    container_name: test-container
-    extends: web
-    depends_on:
-      - db
-    command: bash -c "composer install && php ./auto/import-schema.php && cd tests && ../vendor/bin/phpunit -c `pwd`/phpunit.deploy.xml"
-    links:
-      - db
-
-#volumes:
-#  esdata1:
-#    driver: local
-#  esdata2:
-#    driver: local
-#
-#networks:
-#  esnet:
+  database:
+    container_name: althingi_test_database
+    image: mysql:5.6.41
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    volumes:
+      - ./auto/db/:/docker-entrypoint-initdb.d
+    environment:
+      - MYSQL_ROOT_PASSWORD=example

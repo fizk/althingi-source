@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit colors="true" bootstrap="./module/Althingi/tests/bootstrap.php">
+    <testsuites>
+        <testsuite name="ZendSkeletonApplication Test Suite">
+            <directory>./module/Althingi/tests/.</directory>
+        </testsuite>
+    </testsuites>
+
+    <listeners>
+        <listener class="AlthingiTest\DatabaseSetup" file="./module/Althingi/tests/DatabaseSetup.php" />
+    </listeners>
+
+    <!--<logging>-->
+        <!--<log type="coverage-html" target="../assets/docs/tests/report" charset="UTF-8"-->
+             <!--yui="true" highlight="true" lowUpperBound="50" highLowerBound="80"/>-->
+    <!--</logging>-->
+
+    <php>
+        <var name="APPLICATION_ENVIRONMENT" value="development" />
+        <var name="MYSQL.BIN" value="/usr/local/mysql/bin/mysql" />
+        <var name="MYSQLDUMP.BIN" value="/usr/local/mysql/bin/mysqldump" />
+    </php>
+</phpunit>
