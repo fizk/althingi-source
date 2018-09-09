@@ -31,9 +31,18 @@ class ServiceEventsListener implements
      */
     public function attach(EventManagerInterface $events, $priority = 1)
     {
-        $this->listeners[] = $events->attach(AddEvent::class, new Add($this->getElasticSearchClient(), $this->getLogger()));
-        $this->listeners[] = $events->attach(UpdateEvent::class, new Update($this->getElasticSearchClient(), $this->getLogger()));
-        $this->listeners[] = $events->attach(DeleteEvent::class, new Delete($this->getElasticSearchClient(), $this->getLogger()));
+        $this->listeners[] = $events->attach(
+            AddEvent::class,
+            new Add($this->getElasticSearchClient(), $this->getLogger())
+        );
+        $this->listeners[] = $events->attach(
+            UpdateEvent::class,
+            new Update($this->getElasticSearchClient(), $this->getLogger())
+        );
+        $this->listeners[] = $events->attach(
+            DeleteEvent::class,
+            new Delete($this->getElasticSearchClient(), $this->getLogger())
+        );
     }
 
     /**

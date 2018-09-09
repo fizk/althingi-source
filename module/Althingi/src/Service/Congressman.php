@@ -180,8 +180,12 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
      * @param null|string $order
      * @return \Althingi\Model\CongressmanValue[]
      */
-    public function fetchIssueTypeCountByAssembly(int $assemblyId, ?int $size, $type = [], ?string $order = 'desc'): array
-    {
+    public function fetchIssueTypeCountByAssembly(
+        int $assemblyId,
+        ?int $size,
+        $type = [],
+        ?string $order = 'desc'
+    ): array {
         $limit = $size
             ? "limit 0, {$size}"
             : '';

@@ -163,14 +163,55 @@ class VoteItemTest extends TestCase
                 ['congressman_id' => 3, 'name' => '', 'birth' => '2001-01-01'],
             ],
             'Document' => [
-                ['document_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type', 'category' => 'A'],
-                ['document_id' => 2, 'issue_id' => 1, 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type', 'category' => 'A'],
-                ['document_id' => 3, 'issue_id' => 1, 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type', 'category' => 'A'],
-                ['document_id' => 4, 'issue_id' => 2, 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type', 'category' => 'A'],
+                ['document_id' => 1,
+                    'issue_id' => 1,
+                    'assembly_id' => 1,
+                    'date' => '2000-01-01 00:00:00',
+                    'url' => 'http://url.com',
+                    'type' => 'type',
+                    'category' => 'A'
+                ], [
+                    'document_id' => 2,
+                    'issue_id' => 1,
+                    'assembly_id' => 1,
+                    'date' => '2000-01-01 00:00:00',
+                    'url' => 'http://url.com',
+                    'type' => 'type',
+                    'category' => 'A'
+                ], [
+                    'document_id' => 3,
+                    'issue_id' => 1,
+                    'assembly_id' => 1,
+                    'date' => '2000-01-01 00:00:00',
+                    'url' => 'http://url.com',
+                    'type' => 'type',
+                    'category' => 'A'
+                ], [
+                    'document_id' => 4,
+                    'issue_id' => 2,
+                    'assembly_id' => 1,
+                    'date' => '2000-01-01 00:00:00',
+                    'url' => 'http://url.com',
+                    'type' => 'type',
+                    'category' => 'A'
+                ],
             ],
             'Vote' => [
-                ['vote_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'document_id' => 1, 'date' => '2000-01-01', 'category' => 'A'],
-                ['vote_id' => 2, 'issue_id' => 1, 'assembly_id' => 1, 'document_id' => 2, 'date' => '2000-02-01', 'category' => 'A'],
+                [
+                    'vote_id' => 1,
+                    'issue_id' => 1,
+                    'assembly_id' => 1,
+                    'document_id' => 1,
+                    'date' => '2000-01-01',
+                    'category' => 'A'
+                ], [
+                    'vote_id' => 2,
+                    'issue_id' => 1,
+                    'assembly_id' => 1,
+                    'document_id' => 2,
+                    'date' => '2000-02-01',
+                    'category' => 'A'
+                ],
             ],
             'VoteItem' => [
                 ['vote_id' => 1, 'congressman_id' => 1, 'vote' => 'ja', 'vote_item_id' => 1],

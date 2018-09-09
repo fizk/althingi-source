@@ -156,7 +156,9 @@ class Vote implements DatabaseAwareInterface
             $statement = $this->getDriver()->prepare('
                 select count(*) as `count`, VI.`vote` from `Vote` V 
                 join `VoteItem` VI on (V.`vote_id` = VI.`vote_id`)
-                where V.`assembly_id` = :assembly_id and VI.`congressman_id` = :congressman_id  and (V.`date` between :from and :to)
+                where V.`assembly_id` = :assembly_id 
+                  and VI.`congressman_id` = :congressman_id  
+                  and (V.`date` between :from and :to)
                 group by VI.`vote`;
             ');
             $statement->execute([

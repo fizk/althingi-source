@@ -315,8 +315,22 @@ class IssueTest extends TestCase
                 ['assembly_id' => 3, 'from' => '2000-01-01', 'to' => null],
             ],
             'Issue' => [
-                ['issue_id' => 1, 'assembly_id' => 1, 'category' => 'A', 'congressman_id' => 1, 'type' => 'l', 'status' => 'some', 'type_subname' => 'something'],
-                ['issue_id' => 2, 'assembly_id' => 1, 'category' => 'A', 'type' => 'l', 'status' => 'some', 'type_subname' => 'stjórnarfrumvarp'],
+                [
+                    'issue_id' => 1,
+                    'assembly_id' => 1,
+                    'category' => 'A',
+                    'congressman_id' => 1,
+                    'type' => 'l',
+                    'status' => 'some',
+                    'type_subname' => 'something'
+                ], [
+                    'issue_id' => 2,
+                    'assembly_id' => 1,
+                    'category' => 'A',
+                    'type' => 'l',
+                    'status' => 'some',
+                    'type_subname' => 'stjórnarfrumvarp'
+                ],
                 ['issue_id' => 3, 'assembly_id' => 1, 'category' => 'A'],
                 ['issue_id' => 1, 'assembly_id' => 2, 'category' => 'A'],
 
@@ -325,9 +339,31 @@ class IssueTest extends TestCase
                 ['issue_id' => 1, 'assembly_id' => 2, 'category' => 'B'],
             ],
             'Document' => [
-                ['document_id' => 1, 'issue_id' => 1, 'category' => 'A', 'assembly_id' => 1, 'date' => '2000-01-01', 'url' => '', 'type' => ''],
-                ['document_id' => 2, 'issue_id' => 1, 'category' => 'A', 'assembly_id' => 1, 'date' => '2000-01-02', 'url' => '', 'type' => ''],
-                ['document_id' => 3, 'issue_id' => 1, 'category' => 'A', 'assembly_id' => 1, 'date' => '2000-01-03', 'url' => '', 'type' => ''],
+                [
+                    'document_id' => 1,
+                    'issue_id' => 1,
+                    'category' => 'A',
+                    'assembly_id' => 1,
+                    'date' => '2000-01-01',
+                    'url' => '',
+                    'type' => ''
+                ], [
+                    'document_id' => 2,
+                    'issue_id' => 1,
+                    'category' => 'A',
+                    'assembly_id' => 1,
+                    'date' => '2000-01-02',
+                    'url' => '',
+                    'type' => ''
+                ], [
+                    'document_id' => 3,
+                    'issue_id' => 1,
+                    'category' => 'A',
+                    'assembly_id' => 1,
+                    'date' => '2000-01-03',
+                    'url' => '',
+                    'type' => ''
+                ],
             ],
         ]);
     }

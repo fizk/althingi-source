@@ -188,7 +188,13 @@ class VoteTest extends TestCase
 
         $expectedTable = $this->createArrayDataSet([
             'Vote' => [
-                ['vote_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'document_id' => 1, 'date' => '2001-01-01 00:01:00'],
+                [
+                    'vote_id' => 1,
+                    'issue_id' => 1,
+                    'assembly_id' => 1,
+                    'document_id' => 1,
+                    'date' => '2001-01-01 00:01:00'
+                ],
             ],
         ])->getTable('Vote');
         $actualTable = $this->getConnection()->createQueryTable(
@@ -264,14 +270,55 @@ class VoteTest extends TestCase
                 ['assembly_id' => 2, 'issue_id' => 3, 'category' => 'A'],
             ],
             'Document' => [
-                ['document_id' => 1, 'issue_id' => 1, 'category' => 'A', 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
-                ['document_id' => 2, 'issue_id' => 1, 'category' => 'A', 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
-                ['document_id' => 3, 'issue_id' => 1, 'category' => 'A', 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
-                ['document_id' => 4, 'issue_id' => 2, 'category' => 'A', 'assembly_id' => 1, 'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'],
+                ['document_id' => 1,
+                    'issue_id' => 1,
+                    'category' => 'A',
+                    'assembly_id' => 1,
+                    'date' => '2000-01-01 00:00:00',
+                    'url' => 'http://url.com',
+                    'type' => 'type'
+                ], [
+                    'document_id' => 2,
+                    'issue_id' => 1,
+                    'category' => 'A',
+                    'assembly_id' => 1,
+                    'date' => '2000-01-01 00:00:00',
+                    'url' => 'http://url.com',
+                    'type' => 'type'
+                ], [
+                    'document_id' => 3,
+                    'issue_id' => 1,
+                    'category' => 'A',
+                    'assembly_id' => 1,
+                    'date' => '2000-01-01 00:00:00',
+                    'url' => 'http://url.com',
+                    'type' => 'type'
+                ], [
+                    'document_id' => 4,
+                    'issue_id' => 2,
+                    'category' => 'A',
+                    'assembly_id' => 1,
+                    'date' => '2000-01-01 00:00:00',
+                    'url' => 'http://url.com',
+                    'type' => 'type'
+                ],
             ],
             'Vote' => [
-                ['vote_id' => 1, 'issue_id' => 1, 'category' => 'A', 'assembly_id' => 1, 'document_id' => 1, 'date' => '2000-01-01'],
-                ['vote_id' => 2, 'issue_id' => 1, 'category' => 'A', 'assembly_id' => 1, 'document_id' => 2, 'date' => '2000-02-01'],
+                [
+                    'vote_id' => 1,
+                    'issue_id' => 1,
+                    'category' => 'A',
+                    'assembly_id' => 1,
+                    'document_id' => 1,
+                    'date' => '2000-01-01'
+                ], [
+                    'vote_id' => 2,
+                    'issue_id' => 1,
+                    'category' => 'A',
+                    'assembly_id' => 1,
+                    'document_id' => 2,
+                    'date' => '2000-02-01'
+                ],
                 ['vote_id' => 3, 'issue_id' => 2, 'category' => 'A', 'assembly_id' => 1, 'document_id' => 1],
                 ['vote_id' => 4, 'issue_id' => 2, 'category' => 'A', 'assembly_id' => 1, 'document_id' => 1],
                 ['vote_id' => 5, 'issue_id' => 2, 'category' => 'A', 'assembly_id' => 1, 'document_id' => 1],

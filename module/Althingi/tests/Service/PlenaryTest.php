@@ -112,8 +112,19 @@ class PlenaryTest extends TestCase
             'Plenary' => [
                 ['plenary_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => null, 'name' => null],
                 ['plenary_id' => 2, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => null, 'name' => null],
-                ['plenary_id' => 3, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => '2001-01-01 00:00:00', 'name' => null],
-                ['plenary_id' => 4, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => '2001-01-01 00:00:00', 'name' => 'p-name'],
+                [
+                    'plenary_id' => 3,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => '2001-01-01 00:00:00',
+                    'name' => null
+                ], [
+                    'plenary_id' => 4,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => '2001-01-01 00:00:00',
+                    'name' => 'p-name'
+                ],
                 ['plenary_id' => 5, 'assembly_id' => 1, 'from' => null, 'to' => null, 'name' => null],
             ],
         ])->getTable('Plenary');
@@ -136,8 +147,19 @@ class PlenaryTest extends TestCase
             'Plenary' => [
                 ['plenary_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => null, 'name' => null],
                 ['plenary_id' => 2, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => null, 'name' => null],
-                ['plenary_id' => 3, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => '2001-01-01 00:00:00', 'name' => null],
-                ['plenary_id' => 4, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => '2001-01-01 00:00:00', 'name' => 'p-name'],
+                [
+                    'plenary_id' => 3,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => '2001-01-01 00:00:00',
+                    'name' => null
+                ], [
+                    'plenary_id' => 4,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => '2001-01-01 00:00:00',
+                    'name' => 'p-name'
+                ],
                 ['plenary_id' => 5, 'assembly_id' => 1, 'from' => null, 'to' => null, 'name' => null],
             ],
         ])->getTable('Plenary');
@@ -160,10 +182,31 @@ class PlenaryTest extends TestCase
 
         $expectedTable = $this->createArrayDataSet([
             'Plenary' => [
-                ['plenary_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => null, 'name' => 'NewName'],
-                ['plenary_id' => 2, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => null, 'name' => null],
-                ['plenary_id' => 3, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => '2001-01-01 00:00:00', 'name' => null],
-                ['plenary_id' => 4, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => '2001-01-01 00:00:00', 'name' => 'p-name'],
+                [
+                    'plenary_id' => 1,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => null,
+                    'name' => 'NewName'
+                ], [
+                    'plenary_id' => 2,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => null,
+                    'name' => null
+                ], [
+                    'plenary_id' => 3,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => '2001-01-01 00:00:00',
+                    'name' => null
+                ], [
+                    'plenary_id' => 4,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => '2001-01-01 00:00:00',
+                    'name' => 'p-name'
+                ],
             ],
         ])->getTable('Plenary');
         $queryTable = $this->getConnection()->createQueryTable('Plenary', 'SELECT * FROM Plenary');
@@ -180,8 +223,19 @@ class PlenaryTest extends TestCase
             'Plenary' => [
                 ['plenary_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => null, 'name' => null],
                 ['plenary_id' => 2, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => null, 'name' => null],
-                ['plenary_id' => 3, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => '2001-01-01 00:00:00', 'name' => null],
-                ['plenary_id' => 4, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => '2001-01-01 00:00:00', 'name' => 'p-name'],
+                [
+                    'plenary_id' => 3,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => '2001-01-01 00:00:00',
+                    'name' => null
+                ], [
+                    'plenary_id' => 4,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => '2001-01-01 00:00:00',
+                    'name' => 'p-name'
+                ],
             ]
         ]);
     }

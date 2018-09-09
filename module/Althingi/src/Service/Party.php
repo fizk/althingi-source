@@ -193,7 +193,11 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
     {
         $statement = $this->getDriver()->prepare('
             select P.* from `Cabinet_has_Congressman` CC
-            join `Session` SE ON (SE.`congressman_id` = CC.`congressman_id` and ((CC.`from` between SE.`from` and SE.`to`) or (CC.`from` >= SE.`from` and SE.`to` is null)))
+            join `Session` SE ON 
+              (
+                SE.`congressman_id` = CC.`congressman_id` and ((CC.`from` between SE.`from` and SE.`to`) or 
+                (CC.`from` >= SE.`from` and SE.`to` is null))
+              )
             join `Party` P on (SE.`party_id` = P.`party_id`)
             where cabinet_id = :cabinet_id
             group by SE.`party_id`;    

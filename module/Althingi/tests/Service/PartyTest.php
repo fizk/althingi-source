@@ -242,11 +242,47 @@ class PartyTest extends TestCase
                 ['constituency_id' => 1]
             ],
             'Session' => [
-                ['session_id' => 1, 'congressman_id' => 1, 'constituency_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-01', 'type' => 'þingmaður', 'party_id' => 1],
-                ['session_id' => 2, 'congressman_id' => 1, 'constituency_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-02', 'type' => 'þingmaður', 'party_id' => 2],
-                ['session_id' => 3, 'congressman_id' => 2, 'constituency_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-03', 'type' => 'varamaður', 'party_id' => 2],
-                ['session_id' => 4, 'congressman_id' => 2, 'constituency_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-04', 'type' => 'þingmaður', 'party_id' => 2],
-                ['session_id' => 5, 'congressman_id' => 2, 'constituency_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-05', 'type' => 'varamaður', 'party_id' => 2],
+                [
+                    'session_id' => 1,
+                    'congressman_id' => 1,
+                    'constituency_id' => 1,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-01',
+                    'type' => 'þingmaður',
+                    'party_id' => 1
+                ], [
+                    'session_id' => 2,
+                    'congressman_id' => 1,
+                    'constituency_id' => 1,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-02',
+                    'type' => 'þingmaður',
+                    'party_id' => 2
+                ], [
+                    'session_id' => 3,
+                    'congressman_id' => 2,
+                    'constituency_id' => 1,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-03',
+                    'type' => 'varamaður',
+                    'party_id' => 2
+                ], [
+                    'session_id' => 4,
+                    'congressman_id' => 2,
+                    'constituency_id' => 1,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-04',
+                    'type' => 'þingmaður',
+                    'party_id' => 2
+                ], [
+                    'session_id' => 5,
+                    'congressman_id' => 2,
+                    'constituency_id' => 1,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-05',
+                    'type' => 'varamaður',
+                    'party_id' => 2
+                ],
             ],
             'Election' => [
                 ['election_id' => 1, 'date' => '2000-01-01'],

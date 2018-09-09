@@ -273,9 +273,25 @@ class CongressmanTest extends TestCase
                 ['congressman_id' => 4, 'name' => 'name4', 'birth' => '2000-01-01', 'death' => null],
             ],
             'President' => [
-                ['president_id' => 1, 'congressman_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-01', 'title' => 'p1'],
-                ['president_id' => 2, 'congressman_id' => 2, 'assembly_id' => 2, 'from' => '2000-01-01', 'title' => 'p2'],
-                ['president_id' => 3, 'congressman_id' => 2, 'assembly_id' => 3, 'from' => '2000-01-01', 'title' => 'p3'],
+                [
+                    'president_id' => 1,
+                    'congressman_id' => 1,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-01',
+                    'title' => 'p1'
+                ], [
+                    'president_id' => 2,
+                    'congressman_id' => 2,
+                    'assembly_id' => 2,
+                    'from' => '2000-01-01',
+                    'title' => 'p2'
+                ], [
+                    'president_id' => 3,
+                    'congressman_id' => 2,
+                    'assembly_id' => 3,
+                    'from' => '2000-01-01',
+                    'title' => 'p3'
+                ],
             ],
             'Constituency' => [
                 ['constituency_id' => 1]
@@ -291,26 +307,84 @@ class CongressmanTest extends TestCase
                 ['cabinet_id' => 3, 'congressman_id' => 2, 'title' => 'some_title'],
             ],
             'Session' => [
-                ['session_id' => 1, 'congressman_id' => 1, 'constituency_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-01', 'type' => 'þingmaður', 'party_id' => 1],
-                ['session_id' => 2, 'congressman_id' => 1, 'constituency_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-02', 'type' => 'þingmaður', 'party_id' => 1],
-                ['session_id' => 3, 'congressman_id' => 2, 'constituency_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-03', 'type' => 'varamaður', 'party_id' => 1],
-                ['session_id' => 4, 'congressman_id' => 2, 'constituency_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-04', 'type' => 'þingmaður', 'party_id' => 1],
-                ['session_id' => 5, 'congressman_id' => 2, 'constituency_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-05', 'type' => 'varamaður', 'party_id' => 1],
+                [
+                    'session_id' => 1,
+                    'congressman_id' => 1,
+                    'constituency_id' => 1,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-01',
+                    'type' => 'þingmaður',
+                    'party_id' => 1
+                ], [
+                    'session_id' => 2,
+                    'congressman_id' => 1,
+                    'constituency_id' => 1,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-02',
+                    'type' => 'þingmaður',
+                    'party_id' => 1
+                ], [
+                    'session_id' => 3,
+                    'congressman_id' => 2,
+                    'constituency_id' => 1,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-03',
+                    'type' => 'varamaður',
+                    'party_id' => 1
+                ], [
+                    'session_id' => 4,
+                    'congressman_id' => 2,
+                    'constituency_id' => 1,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-04',
+                    'type' => 'þingmaður',
+                    'party_id' => 1
+                ], [
+                    'session_id' => 5,
+                    'congressman_id' => 2,
+                    'constituency_id' => 1,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-05',
+                    'type' => 'varamaður',
+                    'party_id' => 1
+                ],
             ],
             'Issue' => [
                 ['issue_id' => 1, 'assembly_id' => 1, 'category' => 'A']
             ],
             'Document' => [
-                ['document_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'category' => 'A', 'date' => '2000-01-01', 'url' => '', 'type' => '']
+                [
+                    'document_id' => 1,
+                    'issue_id' => 1,
+                    'assembly_id' => 1,
+                    'category' => 'A',
+                    'date' => '2000-01-01',
+                    'url' => '',
+                    'type' => ''
+                ]
             ],
             'Document_has_Congressman' => [
-                ['document_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'category' => 'A', 'congressman_id' => 1, 'order' => 1]
+                [
+                    'document_id' => 1,
+                    'issue_id' => 1,
+                    'assembly_id' => 1,
+                    'category' => 'A',
+                    'congressman_id' => 1,
+                    'order' => 1
+                ]
             ],
             'Plenary' => [
                 ['plenary_id' => 1, 'assembly_id' => 1],
             ],
             'Speech' => [
-                ['speech_id' => 1, 'plenary_id' => 1, 'assembly_id' => 1, 'issue_id' => 1, 'category' => 'A', 'congressman_id' => 1]
+                [
+                    'speech_id' => 1,
+                    'plenary_id' => 1,
+                    'assembly_id' => 1,
+                    'issue_id' => 1,
+                    'category' => 'A',
+                    'congressman_id' => 1
+                ]
             ]
         ]);
     }

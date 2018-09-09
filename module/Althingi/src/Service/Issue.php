@@ -307,7 +307,8 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
     public function fetchByAssemblyAndCongressmanSummary(int $assemblyId, int $congressmanId): array
     {
         $statement = $this->getDriver()->prepare("
-            select count(*) as `count`, DC.`order`, I.`type`, I.`type_name`, I.`type_subname`, D.`type` as `document_type`
+            select count(*) as `count`, 
+              DC.`order`, I.`type`, I.`type_name`, I.`type_subname`, D.`type` as `document_type`
                 from `Document` D
                 join `Issue` I on (
                     D.issue_id = I.issue_id 

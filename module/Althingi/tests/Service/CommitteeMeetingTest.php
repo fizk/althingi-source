@@ -43,12 +43,49 @@ class CommitteeMeetingTest extends TestCase
     {
         $expectedTable = $this->createArrayDataSet([
             'CommitteeMeeting' => [
-                ['committee_meeting_id' => 1, 'committee_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => null, 'description' => null],
-                ['committee_meeting_id' => 2, 'committee_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => null, 'description' => null],
-                ['committee_meeting_id' => 3, 'committee_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => null, 'description' => null],
-                ['committee_meeting_id' => 4, 'committee_id' => 1, 'assembly_id' => 2, 'from' => '2000-01-01 00:00:00', 'to' => null, 'description' => null],
-                ['committee_meeting_id' => 5, 'committee_id' => 1, 'assembly_id' => 2, 'from' => '2000-01-01 00:00:00', 'to' => null, 'description' => null],
-                ['committee_meeting_id' => 6, 'committee_id' => 1, 'assembly_id' => 2, 'from' => null, 'to' => null, 'description' => null],
+                [
+                    'committee_meeting_id' => 1,
+                    'committee_id' => 1,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => null,
+                    'description' => null
+                ], [
+                    'committee_meeting_id' => 2,
+                    'committee_id' => 1,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => null,
+                    'description' => null
+                ], [
+                    'committee_meeting_id' => 3,
+                    'committee_id' => 1,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => null,
+                    'description' => null
+                ], [
+                    'committee_meeting_id' => 4,
+                    'committee_id' => 1,
+                    'assembly_id' => 2,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => null,
+                    'description' => null
+                ], [
+                    'committee_meeting_id' => 5,
+                    'committee_id' => 1,
+                    'assembly_id' => 2,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => null,
+                    'description' => null
+                ], [
+                    'committee_meeting_id' => 6,
+                    'committee_id' => 1,
+                    'assembly_id' => 2,
+                    'from' => null,
+                    'to' => null,
+                    'description' => null
+                ],
             ],
         ])->getTable('CommitteeMeeting');
         $actualTable = $this->getConnection()->createQueryTable('CommitteeMeeting', 'SELECT * FROM CommitteeMeeting');
@@ -68,12 +105,49 @@ class CommitteeMeetingTest extends TestCase
     {
         $expectedTable = $this->createArrayDataSet([
             'CommitteeMeeting' => [
-                ['committee_meeting_id' => 1, 'committee_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => null, 'description' => null],
-                ['committee_meeting_id' => 2, 'committee_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => null, 'description' => null],
-                ['committee_meeting_id' => 3, 'committee_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => null, 'description' => null],
-                ['committee_meeting_id' => 4, 'committee_id' => 1, 'assembly_id' => 2, 'from' => '2000-01-01 00:00:00', 'to' => null, 'description' => null],
-                ['committee_meeting_id' => 5, 'committee_id' => 1, 'assembly_id' => 2, 'from' => '2000-01-01 00:00:00', 'to' => null, 'description' => null],
-                ['committee_meeting_id' => 6, 'committee_id' => 1, 'assembly_id' => 2, 'from' => null, 'to' => null, 'description' => null],
+                [
+                    'committee_meeting_id' => 1,
+                    'committee_id' => 1,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => null,
+                    'description' => null
+                ], [
+                    'committee_meeting_id' => 2,
+                    'committee_id' => 1,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => null,
+                    'description' => null
+                ], [
+                    'committee_meeting_id' => 3,
+                    'committee_id' => 1,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => null,
+                    'description' => null
+                ], [
+                    'committee_meeting_id' => 4,
+                    'committee_id' => 1,
+                    'assembly_id' => 2,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => null,
+                    'description' => null
+                ], [
+                    'committee_meeting_id' => 5,
+                    'committee_id' => 1,
+                    'assembly_id' => 2,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => null,
+                    'description' => null
+                ], [
+                    'committee_meeting_id' => 6,
+                    'committee_id' => 1,
+                    'assembly_id' => 2,
+                    'from' => null,
+                    'to' => null,
+                    'description' => null
+                ],
             ],
         ])->getTable('CommitteeMeeting');
         $actualTable = $this->getConnection()->createQueryTable('CommitteeMeeting', 'SELECT * FROM CommitteeMeeting');
@@ -93,11 +167,42 @@ class CommitteeMeetingTest extends TestCase
     {
         $expectedTable = $this->createArrayDataSet([
             'CommitteeMeeting' => [
-                ['committee_meeting_id' => 1, 'committee_id' => 1, 'assembly_id' => 1, 'from' => null, 'to' => null, 'description' => 'description'],
-                ['committee_meeting_id' => 2, 'committee_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => null, 'description' => null],
-                ['committee_meeting_id' => 3, 'committee_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => null, 'description' => null],
-                ['committee_meeting_id' => 4, 'committee_id' => 1, 'assembly_id' => 2, 'from' => '2000-01-01 00:00:00', 'to' => null, 'description' => null],
-                ['committee_meeting_id' => 5, 'committee_id' => 1, 'assembly_id' => 2, 'from' => '2000-01-01 00:00:00', 'to' => null, 'description' => null],
+                [
+                    'committee_meeting_id' => 1,
+                    'committee_id' => 1,
+                    'assembly_id' => 1,
+                    'from' => null,
+                    'to' => null,
+                    'description' => 'description'
+                ], [
+                    'committee_meeting_id' => 2,
+                    'committee_id' => 1,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => null,
+                    'description' => null
+                ], [
+                    'committee_meeting_id' => 3,
+                    'committee_id' => 1,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => null,
+                    'description' => null
+                ], [
+                    'committee_meeting_id' => 4,
+                    'committee_id' => 1,
+                    'assembly_id' => 2,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => null,
+                    'description' => null
+                ], [
+                    'committee_meeting_id' => 5,
+                    'committee_id' => 1,
+                    'assembly_id' => 2,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => null,
+                    'description' => null
+                ],
             ],
         ])->getTable('CommitteeMeeting');
         $actualTable = $this->getConnection()->createQueryTable('CommitteeMeeting', 'SELECT * FROM CommitteeMeeting');

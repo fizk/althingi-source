@@ -155,12 +155,67 @@ class SessionTest extends TestCase
 
         $expectedTable = $this->createArrayDataSet([
             'Session' => [
-                ['session_id' => 1, 'congressman_id' => 1, 'constituency_id' => 1, 'assembly_id' => 1, 'party_id' => 1, 'from' => '2000-01-01', 'to' => null, 'type' => 'þingmaður', 'abbr' => null],
-                ['session_id' => 2, 'congressman_id' => 1, 'constituency_id' => 1, 'assembly_id' => 1, 'party_id' => 2, 'from' => '2000-01-02', 'to' => null, 'type' => 'þingmaður', 'abbr' => null],
-                ['session_id' => 3, 'congressman_id' => 2, 'constituency_id' => 1, 'assembly_id' => 1, 'party_id' => 2, 'from' => '2000-01-03', 'to' => null, 'type' => 'varamaður', 'abbr' => null],
-                ['session_id' => 4, 'congressman_id' => 2, 'constituency_id' => 1, 'assembly_id' => 1, 'party_id' => 2, 'from' => '2000-01-04', 'to' => null, 'type' => 'þingmaður', 'abbr' => null],
-                ['session_id' => 5, 'congressman_id' => 2, 'constituency_id' => 1, 'assembly_id' => 1, 'party_id' => 2, 'from' => '2000-01-05', 'to' => null, 'type' => 'varamaður', 'abbr' => null],
-                ['session_id' => 6, 'congressman_id' => 1, 'constituency_id' => 1, 'assembly_id' => 2, 'party_id' => 1, 'from' => '2001-01-01', 'to' => null, 'type' => 'þingmaður', 'abbr' => null],
+                [
+                    'session_id' => 1,
+                    'congressman_id' => 1,
+                    'constituency_id' => 1,
+                    'assembly_id' => 1,
+                    'party_id' => 1,
+                    'from' => '2000-01-01',
+                    'to' => null,
+                    'type' => 'þingmaður',
+                    'abbr' => null
+                ], [
+                    'session_id' => 2,
+                    'congressman_id' => 1,
+                    'constituency_id' => 1,
+                    'assembly_id' => 1,
+                    'party_id' => 2,
+                    'from' => '2000-01-02',
+                    'to' => null,
+                    'type' => 'þingmaður',
+                    'abbr' => null
+                ], [
+                    'session_id' => 3,
+                    'congressman_id' => 2,
+                    'constituency_id' => 1,
+                    'assembly_id' => 1,
+                    'party_id' => 2,
+                    'from' => '2000-01-03',
+                    'to' => null,
+                    'type' => 'varamaður',
+                    'abbr' => null
+                ], [
+                    'session_id' => 4,
+                    'congressman_id' => 2,
+                    'constituency_id' => 1,
+                    'assembly_id' => 1,
+                    'party_id' => 2,
+                    'from' => '2000-01-04',
+                    'to' => null,
+                    'type' => 'þingmaður',
+                    'abbr' => null
+                ], [
+                    'session_id' => 5,
+                    'congressman_id' => 2,
+                    'constituency_id' => 1,
+                    'assembly_id' => 1,
+                    'party_id' => 2,
+                    'from' => '2000-01-05',
+                    'to' => null,
+                    'type' => 'varamaður',
+                    'abbr' => null
+                ], [
+                    'session_id' => 6,
+                    'congressman_id' => 1,
+                    'constituency_id' => 1,
+                    'assembly_id' => 2,
+                    'party_id' => 1,
+                    'from' => '2001-01-01',
+                    'to' => null,
+                    'type' => 'þingmaður',
+                    'abbr' => null
+                ],
             ]
         ])->getTable('Session');
         $actualTable = $this->getConnection()->createQueryTable('Session', 'SELECT * FROM Session');
@@ -185,11 +240,57 @@ class SessionTest extends TestCase
 
         $expectedTable = $this->createArrayDataSet([
             'Session' => [
-                ['session_id' => 1, 'congressman_id' => 1, 'constituency_id' => 1, 'assembly_id' => 1, 'party_id' => 1, 'from' => '2000-01-01', 'to' => null, 'type' => 'varamaður', 'abbr' => null],
-                ['session_id' => 2, 'congressman_id' => 1, 'constituency_id' => 1, 'assembly_id' => 1, 'party_id' => 2, 'from' => '2000-01-02', 'to' => null, 'type' => 'þingmaður', 'abbr' => null],
-                ['session_id' => 3, 'congressman_id' => 2, 'constituency_id' => 1, 'assembly_id' => 1, 'party_id' => 2, 'from' => '2000-01-03', 'to' => null, 'type' => 'varamaður', 'abbr' => null],
-                ['session_id' => 4, 'congressman_id' => 2, 'constituency_id' => 1, 'assembly_id' => 1, 'party_id' => 2, 'from' => '2000-01-04', 'to' => null, 'type' => 'þingmaður', 'abbr' => null],
-                ['session_id' => 5, 'congressman_id' => 2, 'constituency_id' => 1, 'assembly_id' => 1, 'party_id' => 2, 'from' => '2000-01-05', 'to' => null, 'type' => 'varamaður', 'abbr' => null],
+                [
+                    'session_id' => 1,
+                    'congressman_id' => 1,
+                    'constituency_id' => 1,
+                    'assembly_id' => 1,
+                    'party_id' => 1,
+                    'from' => '2000-01-01',
+                    'to' => null,
+                    'type' => 'varamaður',
+                    'abbr' => null
+                ], [
+                    'session_id' => 2,
+                    'congressman_id' => 1,
+                    'constituency_id' => 1,
+                    'assembly_id' => 1,
+                    'party_id' => 2,
+                    'from' => '2000-01-02',
+                    'to' => null,
+                    'type' => 'þingmaður',
+                    'abbr' => null
+                ], [
+                    'session_id' => 3,
+                    'congressman_id' => 2,
+                    'constituency_id' => 1,
+                    'assembly_id' => 1,
+                    'party_id' => 2,
+                    'from' => '2000-01-03',
+                    'to' => null,
+                    'type' => 'varamaður',
+                    'abbr' => null
+                ], [
+                    'session_id' => 4,
+                    'congressman_id' => 2,
+                    'constituency_id' => 1,
+                    'assembly_id' => 1,
+                    'party_id' => 2,
+                    'from' => '2000-01-04',
+                    'to' => null,
+                    'type' => 'þingmaður',
+                    'abbr' => null
+                ], [
+                    'session_id' => 5,
+                    'congressman_id' => 2,
+                    'constituency_id' => 1,
+                    'assembly_id' => 1,
+                    'party_id' => 2,
+                    'from' => '2000-01-05',
+                    'to' => null,
+                    'type' => 'varamaður',
+                    'abbr' => null
+                ],
             ]
         ])->getTable('Session');
         $actualTable = $this->getConnection()->createQueryTable('Session', 'SELECT * FROM Session');
@@ -205,10 +306,47 @@ class SessionTest extends TestCase
     {
         $expectedTable = $this->createArrayDataSet([
             'Session' => [
-                ['session_id' => 2, 'congressman_id' => 1, 'constituency_id' => 1, 'assembly_id' => 1, 'party_id' => 2, 'from' => '2000-01-02', 'to' => null, 'type' => 'þingmaður', 'abbr' => null],
-                ['session_id' => 3, 'congressman_id' => 2, 'constituency_id' => 1, 'assembly_id' => 1, 'party_id' => 2, 'from' => '2000-01-03', 'to' => null, 'type' => 'varamaður', 'abbr' => null],
-                ['session_id' => 4, 'congressman_id' => 2, 'constituency_id' => 1, 'assembly_id' => 1, 'party_id' => 2, 'from' => '2000-01-04', 'to' => null, 'type' => 'þingmaður', 'abbr' => null],
-                ['session_id' => 5, 'congressman_id' => 2, 'constituency_id' => 1, 'assembly_id' => 1, 'party_id' => 2, 'from' => '2000-01-05', 'to' => null, 'type' => 'varamaður', 'abbr' => null],
+                [
+                    'session_id' => 2,
+                    'congressman_id' => 1,
+                    'constituency_id' => 1,
+                    'assembly_id' => 1,
+                    'party_id' => 2,
+                    'from' => '2000-01-02',
+                    'to' => null,
+                    'type' => 'þingmaður',
+                    'abbr' => null
+                ], [
+                    'session_id' => 3,
+                    'congressman_id' => 2,
+                    'constituency_id' => 1,
+                    'assembly_id' => 1,
+                    'party_id' => 2,
+                    'from' => '2000-01-03',
+                    'to' => null,
+                    'type' => 'varamaður',
+                    'abbr' => null
+                ], [
+                    'session_id' => 4,
+                    'congressman_id' => 2,
+                    'constituency_id' => 1,
+                    'assembly_id' => 1,
+                    'party_id' => 2,
+                    'from' => '2000-01-04',
+                    'to' => null,
+                    'type' => 'þingmaður',
+                    'abbr' => null
+                ], [
+                    'session_id' => 5,
+                    'congressman_id' => 2,
+                    'constituency_id' => 1,
+                    'assembly_id' => 1,
+                    'party_id' => 2,
+                    'from' => '2000-01-05',
+                    'to' => null,
+                    'type' => 'varamaður',
+                    'abbr' => null
+                ],
             ]
         ])->getTable('Session');
         $actualTable = $this->getConnection()->createQueryTable('Session', 'SELECT * FROM Session');
@@ -244,11 +382,57 @@ class SessionTest extends TestCase
                 ['constituency_id' => 1]
             ],
             'Session' => [
-                ['session_id' => 1, 'congressman_id' => 1, 'constituency_id' => 1, 'assembly_id' => 1, 'party_id' => 1, 'from' => '2000-01-01', 'to' => null, 'type' => 'þingmaður', 'abbr' => null],
-                ['session_id' => 2, 'congressman_id' => 1, 'constituency_id' => 1, 'assembly_id' => 1, 'party_id' => 2, 'from' => '2000-01-02', 'to' => null, 'type' => 'þingmaður', 'abbr' => null],
-                ['session_id' => 3, 'congressman_id' => 2, 'constituency_id' => 1, 'assembly_id' => 1, 'party_id' => 2, 'from' => '2000-01-03', 'to' => null, 'type' => 'varamaður', 'abbr' => null],
-                ['session_id' => 4, 'congressman_id' => 2, 'constituency_id' => 1, 'assembly_id' => 1, 'party_id' => 2, 'from' => '2000-01-04', 'to' => null, 'type' => 'þingmaður', 'abbr' => null],
-                ['session_id' => 5, 'congressman_id' => 2, 'constituency_id' => 1, 'assembly_id' => 1, 'party_id' => 2, 'from' => '2000-01-05', 'to' => null, 'type' => 'varamaður', 'abbr' => null],
+                [
+                    'session_id' => 1,
+                    'congressman_id' => 1,
+                    'constituency_id' => 1,
+                    'assembly_id' => 1,
+                    'party_id' => 1,
+                    'from' => '2000-01-01',
+                    'to' => null,
+                    'type' => 'þingmaður',
+                    'abbr' => null
+                ], [
+                    'session_id' => 2,
+                    'congressman_id' => 1,
+                    'constituency_id' => 1,
+                    'assembly_id' => 1,
+                    'party_id' => 2,
+                    'from' => '2000-01-02',
+                    'to' => null,
+                    'type' => 'þingmaður',
+                    'abbr' => null
+                ], [
+                    'session_id' => 3,
+                    'congressman_id' => 2,
+                    'constituency_id' => 1,
+                    'assembly_id' => 1,
+                    'party_id' => 2,
+                    'from' => '2000-01-03',
+                    'to' => null,
+                    'type' => 'varamaður',
+                    'abbr' => null
+                ], [
+                    'session_id' => 4,
+                    'congressman_id' => 2,
+                    'constituency_id' => 1,
+                    'assembly_id' => 1,
+                    'party_id' => 2,
+                    'from' => '2000-01-04',
+                    'to' => null,
+                    'type' => 'þingmaður',
+                    'abbr' => null
+                ], [
+                    'session_id' => 5,
+                    'congressman_id' => 2,
+                    'constituency_id' => 1,
+                    'assembly_id' => 1,
+                    'party_id' => 2,
+                    'from' => '2000-01-05',
+                    'to' => null,
+                    'type' => 'varamaður',
+                    'abbr' => null
+                ],
             ],
             'Issue' => [
                 ['issue_id' => 1, 'assembly_id' => 1, 'category' => 'A'],

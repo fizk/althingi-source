@@ -87,7 +87,9 @@ class VoteItem implements DatabaseAwareInterface
     public function fetchVoteByAssemblyAndCongressmanAndCategory(int $assemblyId, int $congressmanId): array
     {
         $statement = $this->getDriver()->prepare('
-        select CI.`category_id`, C.`title`, VI.vote_item_id, V.vote_id, VI.`congressman_id`, V.`assembly_id`, VI.`vote`, count(VI.`vote`) as `count` from `Vote` V
+        select CI.`category_id`, C.`title`, VI.vote_item_id, V.vote_id, 
+              VI.`congressman_id`, V.`assembly_id`, VI.`vote`, count(VI.`vote`) as `count` 
+        from `Vote` V
             join `VoteItem` VI on (VI.`vote_id` = V.`vote_id`)
             join `Category_has_Issue` CI on (CI.`assembly_id` = V.`assembly_id` and V.`issue_id` = CI.`issue_id`)
             join `Category` C on (C.`category_id` = CI.`category_id`)
