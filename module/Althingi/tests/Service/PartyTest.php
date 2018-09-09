@@ -119,8 +119,8 @@ class PartyTest extends TestCase
         $partyService = new Party();
         $partyService->setDriver($this->pdo);
         $expectedParties = [
-            (new PartyAndTimeModel())->setPartyId(1)->setName('p1')->setColor('ffffff')->setTotalTime(600),
             (new PartyAndTimeModel())->setPartyId(2)->setName('p2')->setColor('ffffff')->setTotalTime(600),
+            (new PartyAndTimeModel())->setPartyId(1)->setName('p1')->setColor('ffffff')->setTotalTime(600),
         ];
         $actualParties = $partyService->fetchTimeByAssembly(1);
 

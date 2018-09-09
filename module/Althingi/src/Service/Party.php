@@ -110,7 +110,7 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
             ) as T
             join `Party` P on (P.`party_id` = T.`party_id`)
             group by T.`party_id`
-            order by `total_time` desc;
+            order by `total_time`, P.`party_id` desc;
         ");
         $statement->execute(['assembly_id' => $assemblyId]);
         return array_map(function ($object) {
