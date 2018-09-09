@@ -13,30 +13,30 @@ class Constituency extends Form implements InputFilterProviderInterface
             ->setHydrator(new \Althingi\Hydrator\Constituency())
             ->setObject(new \Althingi\Model\Constituency());
 
-        $this->add(array(
+        $this->add([
             'name' => 'constituency_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'name',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'abbr_short',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'abbr_long',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'description',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
     }
 
 

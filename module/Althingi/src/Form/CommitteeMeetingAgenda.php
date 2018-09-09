@@ -13,35 +13,35 @@ class CommitteeMeetingAgenda extends Form implements InputFilterProviderInterfac
             ->setHydrator(new \Althingi\Hydrator\CommitteeMeetingAgenda())
             ->setObject(new \Althingi\Model\CommitteeMeetingAgenda());
 
-        $this->add(array(
+        $this->add([
             'name' => 'committee_meeting_agenda_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'committee_meeting_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'assembly_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'issue_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'title',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'category',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
     }
 
 

@@ -69,8 +69,8 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
               and I.category = :category'
         );
         $issueStatement->execute([
-            'issue_id'=>$issue_id,
-            'assembly_id'=>$assembly_id,
+            'issue_id' => $issue_id,
+            'assembly_id' => $assembly_id,
             'category' => $category
         ]);
 
@@ -128,7 +128,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
                 and I.issue_id = :issue_id
                 and I.category = :category'
         );
-        $issueStatement->execute(['issue_id'=>$issue_id, 'assembly_id'=>$assembly_id, 'category' => $category]);
+        $issueStatement->execute(['issue_id' => $issue_id, 'assembly_id' => $assembly_id, 'category' => $category]);
 
         $object = $issueStatement->fetch(PDO::FETCH_ASSOC);
 

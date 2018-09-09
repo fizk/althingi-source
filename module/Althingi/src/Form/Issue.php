@@ -13,83 +13,83 @@ class Issue extends Form implements InputFilterProviderInterface
             ->setHydrator(new \Althingi\Hydrator\Issue())
             ->setObject(new \Althingi\Model\Issue());
 
-        $this->add(array(
+        $this->add([
             'name' => 'issue_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'assembly_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
-        $this->add(array(
+        ]);
+        $this->add([
             'name' => 'congressman_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'name',
             'type' => 'Zend\Form\Element\Text',
-        ));
-        $this->add(array(
+        ]);
+        $this->add([
             'name' => 'sub_name',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'category',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'type',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'type_name',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'type_subname',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'status',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'question',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'goal',
             'type' => 'Zend\Form\Element\Text',
-        ));
-        $this->add(array(
+        ]);
+        $this->add([
             'name' => 'major_changes',
             'type' => 'Zend\Form\Element\Text',
-        ));
-        $this->add(array(
+        ]);
+        $this->add([
             'name' => 'changes_in_law',
             'type' => 'Zend\Form\Element\Text',
-        ));
-        $this->add(array(
+        ]);
+        $this->add([
             'name' => 'costs_and_revenues',
             'type' => 'Zend\Form\Element\Text',
-        ));
-        $this->add(array(
+        ]);
+        $this->add([
             'name' => 'deliveries',
             'type' => 'Zend\Form\Element\Text',
-        ));
-        $this->add(array(
+        ]);
+        $this->add([
             'name' => 'additional_information',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
     }
 
 

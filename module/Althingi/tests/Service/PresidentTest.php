@@ -98,8 +98,8 @@ class PresidentTest extends TestCase
 
         $expectedTable = $this->createArrayDataSet([
             'President' => [
-                ['president_id' => 1, 'congressman_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-01', 'to' => null, 'title' => 't', 'abbr'=> null],
-                ['president_id' => 2, 'congressman_id' => 1, 'assembly_id' => 1, 'from' => '2001-01-01', 'to' => null, 'title' => 't', 'abbr'=> null],
+                ['president_id' => 1, 'congressman_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-01', 'to' => null, 'title' => 't', 'abbr' => null],
+                ['president_id' => 2, 'congressman_id' => 1, 'assembly_id' => 1, 'from' => '2001-01-01', 'to' => null, 'title' => 't', 'abbr' => null],
             ],
         ])->getTable('President');
         $actualTable = $this->getConnection()->createQueryTable('President', 'SELECT * FROM President');
@@ -122,7 +122,7 @@ class PresidentTest extends TestCase
 
         $expectedTable = $this->createArrayDataSet([
             'President' => [
-                ['president_id' => 1, 'congressman_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-01', 'to' => null, 'title' => 'newTitle', 'abbr'=> null],
+                ['president_id' => 1, 'congressman_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-01', 'to' => null, 'title' => 'newTitle', 'abbr' => null],
             ],
         ])->getTable('President');
         $actualTable = $this->getConnection()->createQueryTable('President', 'SELECT * FROM President');

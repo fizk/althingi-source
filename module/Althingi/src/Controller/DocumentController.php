@@ -184,7 +184,7 @@ class DocumentController extends AbstractRestfulController implements
      */
     public function setPartyService(Party $party)
     {
-        $this->partyService= $party;
+        $this->partyService = $party;
         return $this;
     }
 

@@ -91,7 +91,6 @@ class DatabaseSetup implements TestListener
                 }
             }
         }
-
     }
 
     public function endTestSuite(TestSuite $suite): void

@@ -56,7 +56,7 @@ class DocumentApiController extends AbstractActionController
         if (key_exists('output', $annotations)) {
             $res = $this->processOutput($path, 'get', $annotations['output']);
             foreach ($res as $key => $value) {
-                if (!key_exists($key, $result)) {
+                if (! key_exists($key, $result)) {
                     $result[$key] = [];
                 }
                 $result[$key][] = $value;
@@ -80,7 +80,7 @@ class DocumentApiController extends AbstractActionController
                 if (key_exists('output', $annotations)) {
                     $res = $this->processOutput($path, $item->getName(), $annotations['output']);
                     foreach ($res as $key => $value) {
-                        if (!key_exists($key, $result)) {
+                        if (! key_exists($key, $result)) {
                             $result[$key] = [];
                         }
                         $result[$key][] = $value;
@@ -90,7 +90,7 @@ class DocumentApiController extends AbstractActionController
                 if (key_exists('input', $annotations)) {
                     $res = $this->processInput($path, $item->getName(), $annotations['input']);
                     foreach ($res as $key => $value) {
-                        if (!key_exists($key, $result)) {
+                        if (! key_exists($key, $result)) {
                             $result[$key] = [];
                         }
                         $result[$key][] = $value;

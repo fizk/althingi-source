@@ -13,24 +13,24 @@ class IssueCategory extends Form implements InputFilterProviderInterface
             ->setHydrator(new \Althingi\Hydrator\IssueCategory())
             ->setObject(new \Althingi\Model\IssueCategory());
 
-        $this->add(array(
+        $this->add([
             'name' => 'issue_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'category',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'assembly_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
-        $this->add(array(
+        ]);
+        $this->add([
             'name' => 'category_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
     }
 
 

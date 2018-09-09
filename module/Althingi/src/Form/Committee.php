@@ -13,35 +13,35 @@ class Committee extends Form implements InputFilterProviderInterface
             ->setObject(new \Althingi\Model\Committee())
             ->setHydrator(new \Althingi\Hydrator\Committee());
 
-        $this->add(array(
+        $this->add([
             'name' => 'committee_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'first_assembly_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'last_assembly_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'name',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'abbr_short',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'abbr_long',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
     }
 
 

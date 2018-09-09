@@ -108,7 +108,7 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
             ->getMock();
 
         $this->dispatch('/loggjafarthing/1/thingmal/3/raedur/4', 'GET');
-$resp = $this->getResponse();
+        $resp = $this->getResponse();
         /** @var  $contentRange \Zend\Http\Header\ContentRange */
         $contentRange = $this->getResponse()
             ->getHeaders()

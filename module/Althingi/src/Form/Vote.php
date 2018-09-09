@@ -13,32 +13,32 @@ class Vote extends Form implements InputFilterProviderInterface
             ->setHydrator(new \Althingi\Hydrator\Vote())
             ->setObject(new \Althingi\Model\Vote());
 
-        $this->add(array(
+        $this->add([
             'name' => 'vote_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'assembly_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'document_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'issue_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'category',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'date',
             'type' => 'Zend\Form\Element\DateTime',
             'options' => [
@@ -48,41 +48,41 @@ class Vote extends Form implements InputFilterProviderInterface
             'attributes' => [
                 'step' => 'any'
             ],
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'type',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'outcome',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'method',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'yes',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'no',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'inaction',
             'type' => 'Zend\Form\Element\Number',
-        ));
-        $this->add(array(
+        ]);
+        $this->add([
             'name' => 'committee_to',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
     }
 
 

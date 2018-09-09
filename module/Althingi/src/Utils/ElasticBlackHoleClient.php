@@ -36,17 +36,17 @@ class ElasticBlackHoleClient extends ElasticsearchClient
         return [];
     }
 
-    public function deleteByQuery($params = array())
+    public function deleteByQuery($params = [])
     {
         return [];
     }
 
-    public function count($params = array())
+    public function count($params = [])
     {
         return [];
     }
 
-    public function countPercolate($params = array())
+    public function countPercolate($params = [])
     {
         return [];
     }
@@ -56,17 +56,17 @@ class ElasticBlackHoleClient extends ElasticsearchClient
         return [];
     }
 
-    public function mpercolate($params = array())
+    public function mpercolate($params = [])
     {
         return [];
     }
 
-    public function termvectors($params = array())
+    public function termvectors($params = [])
     {
         return [];
     }
 
-    public function mtermvectors($params = array())
+    public function mtermvectors($params = [])
     {
         return [];
     }
@@ -76,17 +76,17 @@ class ElasticBlackHoleClient extends ElasticsearchClient
         return false;
     }
 
-    public function mget($params = array())
+    public function mget($params = [])
     {
         return [];
     }
 
-    public function msearch($params = array())
+    public function msearch($params = [])
     {
         return [];
     }
 
-    public function msearchTemplate($params = array())
+    public function msearchTemplate($params = [])
     {
         return [];
     }
@@ -96,7 +96,7 @@ class ElasticBlackHoleClient extends ElasticsearchClient
         return [];
     }
 
-    public function bulk($params = array())
+    public function bulk($params = [])
     {
         return [];
     }
@@ -111,7 +111,7 @@ class ElasticBlackHoleClient extends ElasticsearchClient
         return [];
     }
 
-    public function suggest($params = array())
+    public function suggest($params = [])
     {
         return [];
     }
@@ -121,7 +121,7 @@ class ElasticBlackHoleClient extends ElasticsearchClient
         return [];
     }
 
-    public function search($params = array())
+    public function search($params = [])
     {
         return [
             'hits' => [
@@ -130,22 +130,22 @@ class ElasticBlackHoleClient extends ElasticsearchClient
         ];
     }
 
-    public function searchShards($params = array())
+    public function searchShards($params = [])
     {
         return [];
     }
 
-    public function searchTemplate($params = array())
+    public function searchTemplate($params = [])
     {
         return [];
     }
 
-    public function scroll($params = array())
+    public function scroll($params = [])
     {
         return [];
     }
 
-    public function clearScroll($params = array())
+    public function clearScroll($params = [])
     {
         return [];
     }
@@ -155,7 +155,7 @@ class ElasticBlackHoleClient extends ElasticsearchClient
         return [];
     }
 
-    public function updateByQuery($params = array())
+    public function updateByQuery($params = [])
     {
         return [];
     }
@@ -190,17 +190,17 @@ class ElasticBlackHoleClient extends ElasticsearchClient
         return [];
     }
 
-    public function fieldStats($params = array())
+    public function fieldStats($params = [])
     {
         return [];
     }
 
-    public function fieldCaps($params = array())
+    public function fieldCaps($params = [])
     {
         return [];
     }
 
-    public function renderSearchTemplate($params = array())
+    public function renderSearchTemplate($params = [])
     {
         return [];
     }

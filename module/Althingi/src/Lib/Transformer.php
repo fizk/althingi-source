@@ -8,12 +8,12 @@ class Transformer
 {
     public static function speechToMarkdown($text)
     {
-        if (empty($text) || !is_string($text)) {
+        if (empty($text) || ! is_string($text)) {
             return '';
         }
-        
-        $text =  preg_replace('/(<frammíkall.*?>)(.*?)(<\/frammíkall>)/i', "**[frammíkall: $2]**", $text);
-        $text =  preg_replace('/(<strong.*?>)(.*?)(<\/strong>)/i', "**$2**", $text);
+
+        $text = preg_replace('/(<frammíkall.*?>)(.*?)(<\/frammíkall>)/i', "**[frammíkall: $2]**", $text);
+        $text = preg_replace('/(<strong.*?>)(.*?)(<\/strong>)/i', "**$2**", $text);
 
         $dom = new \DOMDocument();
         if (@$dom->loadXML($text) == true) {
@@ -28,7 +28,7 @@ class Transformer
 
     public static function htmlToMarkdown($html)
     {
-        if (!$html) {
+        if (! $html) {
             return null;
         }
         $converter = new HtmlConverter(['strip_tags' => true]);

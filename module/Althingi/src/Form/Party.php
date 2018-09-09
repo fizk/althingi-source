@@ -13,30 +13,30 @@ class Party extends Form implements InputFilterProviderInterface
             ->setHydrator(new \Althingi\Hydrator\Party())
             ->setObject(new \Althingi\Model\Party());
 
-        $this->add(array(
+        $this->add([
             'name' => 'party_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'name',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'abbr_short',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'abbr_long',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'color',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
     }
 
 

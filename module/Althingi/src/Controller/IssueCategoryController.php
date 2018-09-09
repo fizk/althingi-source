@@ -13,7 +13,6 @@ use Rend\View\Model\ErrorModel;
 use Rend\View\Model\EmptyModel;
 use Rend\View\Model\ItemModel;
 
-
 class IssueCategoryController extends AbstractRestfulController implements
     ServiceIssueCategoryAwareInterface,
     ServiceCategoryAwareInterface

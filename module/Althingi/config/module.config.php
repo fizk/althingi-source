@@ -60,7 +60,7 @@ use Zend\Router\Http\Literal;
 use Zend\Router\Http\Segment;
 use Zend\ServiceManager\ServiceManager;
 
-return array(
+return [
     'router' => [
         'routes' => [
             'index' => [
@@ -798,4 +798,4 @@ return array(
             ],
         ],
     ],
-);
+];

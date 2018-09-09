@@ -42,7 +42,7 @@ class Module
             $storageKey = $this->storageKey($event->getRequest());
 
             if ($event->getRequest()->getMethod() === HttpRequest::METHOD_GET &&
-                !$cache->hasItem($storageKey) &&
+                ! $cache->hasItem($storageKey) &&
                 $event->getResponse()->isSuccess()) {
                 $cache->addItem($storageKey, serialize($event->getResult()));
             }

@@ -51,7 +51,7 @@ class PlenaryController extends AbstractRestfulController implements
             $assemblyId,
             $range->getFrom(),
             $count
-//            ($range->getFrom()-$range->getTo())
+            //            ($range->getFrom()-$range->getTo())
         );
         return (new CollectionModel($plenaries))
             ->setStatus(206)

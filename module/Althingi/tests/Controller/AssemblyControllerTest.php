@@ -188,7 +188,7 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
             ->with(0, 10, 'desc')
             ->andReturn(array_map(function () {
                 return (new AssemblyModel())->setAssemblyId(144)->setFrom(new \DateTime());
-            }, range (0, 9)))
+            }, range(0, 9)))
             ->getMock();
 
         $this->getMockService(Cabinet::class)
@@ -237,7 +237,7 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
             ->with(10, 10, 'desc')
             ->andReturn(array_map(function () {
                 return (new AssemblyModel())->setAssemblyId(144)->setFrom(new \DateTime());
-            }, range (0, 9)))
+            }, range(0, 9)))
             ->getMock();
 
         $this->getMockService(Cabinet::class)

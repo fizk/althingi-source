@@ -90,7 +90,7 @@ class UndocumentedIssueController extends AbstractRestfulController implements
 
         $issue = $this->issueService->getWithDate($issueId, $assemblyId, $category ? : 'B');
 
-        if (!$issue) {
+        if (! $issue) {
             return $this->notFoundAction();
         }
 
@@ -158,7 +158,6 @@ class UndocumentedIssueController extends AbstractRestfulController implements
                 $issue->setDate($documents[0]->getDate());
                 return $issue;
             }, $issues);
-
         } else {
             $count = $this->issueService->countByAssembly($assemblyId, $types, $kinds, $categories);
             $range = $this->getRange($this->getRequest(), $count);
@@ -231,7 +230,7 @@ class UndocumentedIssueController extends AbstractRestfulController implements
         $assemblyId = $this->params('id');
         $issue = $this->issueService->get($id, $assemblyId, 'B');
 
-        if (!$issue) {
+        if (! $issue) {
             return $this->notFoundAction();
         }
 

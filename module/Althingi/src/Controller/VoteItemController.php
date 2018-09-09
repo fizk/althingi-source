@@ -57,7 +57,7 @@ class VoteItemController extends AbstractRestfulController implements
                 return (new EmptyModel())->setStatus(201);
             } catch (\PDOException $e) {
                 if (23000 == $e->getCode()) {
-                    $voteObject =$this->voteItemService->getByVote(
+                    $voteObject = $this->voteItemService->getByVote(
                         $formData->getVoteId(),
                         $formData->getCongressmanId()
                     );

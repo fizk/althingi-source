@@ -27,7 +27,7 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
         $configOverrides = [];
 
         $this->setApplicationConfig(ArrayUtils::merge(
-        // Grabbing the full application configuration:
+            // Grabbing the full application configuration:
             include __DIR__ .'/../../../../config/application.config.php',
             $configOverrides
         ));

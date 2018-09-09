@@ -129,7 +129,6 @@ class SpeechController extends AbstractRestfulController implements
                     ->setCongressman($congressmanPartyProperties)
                     ->setSpeech($speech);
             }, $speeches);
-
         } else {
             $count = $this->speechService->countByIssue($assemblyId, $issueId, $category);
             $range = $this->getRange($this->getRequest(), $count);

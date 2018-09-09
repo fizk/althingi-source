@@ -6,7 +6,7 @@ trait CategoryParam
     public function getCategoriesFromQuery()
     {
         $categories = $this->params()->fromQuery('category', null);
-        if (!$categories) {
+        if (! $categories) {
             return null;
         }
         $results = [];
@@ -19,7 +19,7 @@ trait CategoryParam
     public function getCategoryFromQuery()
     {
         $categories = $this->params()->fromQuery('category', null);
-        if (!$categories) {
+        if (! $categories) {
             return 'A';
         }
         $results = [];

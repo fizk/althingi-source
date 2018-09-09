@@ -13,34 +13,34 @@ class CongressmanDocument extends Form implements InputFilterProviderInterface
             ->setHydrator(new \Althingi\Hydrator\CongressmanDocument())
             ->setObject(new \Althingi\Model\CongressmanDocument());
 
-        $this->add(array(
+        $this->add([
             'name' => 'issue_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
-        $this->add(array(
+        ]);
+        $this->add([
             'name' => 'assembly_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
-        $this->add(array(
+        ]);
+        $this->add([
             'name' => 'document_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
-        $this->add(array(
+        ]);
+        $this->add([
             'name' => 'congressman_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
-        $this->add(array(
+        ]);
+        $this->add([
             'name' => 'order',
             'type' => 'Zend\Form\Element\Number',
-        ));
-        $this->add(array(
+        ]);
+        $this->add([
             'name' => 'minister',
             'type' => 'Zend\Form\Element\Text',
-        ));
-        $this->add(array(
+        ]);
+        $this->add([
             'name' => 'category',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
     }
 
 

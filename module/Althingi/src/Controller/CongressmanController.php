@@ -473,7 +473,7 @@ class CongressmanController extends AbstractRestfulController implements
             ->setAllow(['GET', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'])
             ->setOption('Access-Control-Allow-Headers', 'Range');
     }
-    
+
     /**
      * @param Congressman $congressman
      * @return $this

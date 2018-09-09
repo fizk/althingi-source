@@ -33,7 +33,8 @@ class IssueStatusController extends AbstractActionController implements
 
         foreach ($ids as $id) {
             $client->setUri(
-                "http://www.althingi.is/thingstorf/thingmalalistar-eftir-thingum/ferill/?ltg={$assemblyNumber}&mnr={$id}"
+                "http://www.althingi.is".
+                "/thingstorf/thingmalalistar-eftir-thingum/ferill/?ltg={$assemblyNumber}&mnr={$id}"
             );
             $client->send();
             $response = $client->getResponse();
@@ -41,7 +42,7 @@ class IssueStatusController extends AbstractActionController implements
             $items = $dom->execute('.related .status li');
             $progressBar->update($count++);
             $result[$id] = implode(',', array_merge([$id], array_map(function (\DOMElement $item) {
-                $done =  $item->hasAttribute('class') ? ' x ' : '';
+                $done = $item->hasAttribute('class') ? ' x ' : '';
                 return "\"{$item->nodeValue} : {$done}\"";
             }, iterator_to_array($items))));
         }
@@ -69,7 +70,8 @@ class IssueStatusController extends AbstractActionController implements
 
         foreach ($objects as $id) {
             $client->setUri(
-                "http://www.althingi.is/thingstorf/thingmalalistar-eftir-thingum/ferill/?ltg={$id->assembly_id}&mnr={$id->issue_id}"
+                "http://www.althingi.is/thingstorf".
+                "/thingmalalistar-eftir-thingum/ferill/?ltg={$id->assembly_id}&mnr={$id->issue_id}"
             );
             try {
                 $client->send();
@@ -95,7 +97,7 @@ class IssueStatusController extends AbstractActionController implements
         preg_match_all("/[a-zA-Z0-9\\.: áðéíóúýþæöÁÉÍÓÚÝÞÆÖ]*\",\"{$type[1]}(.+?)/", $csv, $match);
 
         $hey = array_reduce($match[0], function ($a, $b) {
-            if (!key_exists($b, $a)) {
+            if (! key_exists($b, $a)) {
                 $a[$b] = $b;
             }
             return $a;

@@ -29,5 +29,4 @@ class SpeechAndPosition extends Speech
     {
         return array_merge(parent::toArray(), ['position' => $this->position]);
     }
-
 }

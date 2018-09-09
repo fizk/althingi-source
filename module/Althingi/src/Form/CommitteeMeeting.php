@@ -15,22 +15,22 @@ class CommitteeMeeting extends Form implements InputFilterProviderInterface
             ->setObject(new \Althingi\Model\CommitteeMeeting());
         ;
 
-        $this->add(array(
+        $this->add([
             'name' => 'committee_meeting_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'assembly_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'committee_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'from',
             'type' => 'Zend\Form\Element\DateTime',
             'options' => [
@@ -39,9 +39,9 @@ class CommitteeMeeting extends Form implements InputFilterProviderInterface
             'attributes' => [
                 'step' => 'any'
             ],
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'to',
             'type' => 'Zend\Form\Element\DateTime',
             'options' => [
@@ -50,12 +50,12 @@ class CommitteeMeeting extends Form implements InputFilterProviderInterface
             'attributes' => [
                 'step' => 'any'
             ],
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'description',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
     }
 
 

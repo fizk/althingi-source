@@ -13,25 +13,25 @@ class VoteItem extends Form implements InputFilterProviderInterface
             ->setHydrator(new \Althingi\Hydrator\VoteItem())
             ->setObject(new \Althingi\Model\VoteItem());
 
-        $this->add(array(
+        $this->add([
             'name' => 'vote_item_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'vote_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'congressman_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'vote',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
     }
 
     /**

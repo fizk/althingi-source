@@ -134,7 +134,7 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
                 group by S.`party_id`;
             ';
         } else {
-            $query ='
+            $query = '
                 select P.* from `Session` S
                 join `Party` P on (P.`party_id` = S.`party_id`)
                 where S.`assembly_id` = :assembly_id and P.`party_id` not in ('.implode(',', $exclude).')

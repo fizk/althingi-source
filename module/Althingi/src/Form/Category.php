@@ -13,24 +13,24 @@ class Category extends Form implements InputFilterProviderInterface
             ->setHydrator(new \Althingi\Hydrator\Category())
             ->setObject(new \Althingi\Model\Category());
 
-        $this->add(array(
+        $this->add([
             'name' => 'super_category_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
-        $this->add(array(
+        ]);
+        $this->add([
             'name' => 'category_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'title',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'description',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
     }
 
 

@@ -48,7 +48,7 @@ class Session implements DatabaseAwareInterface
      */
     public function fetchByCongressman(int $id): array
     {
-        $statement =$this->getDriver()->prepare("
+        $statement = $this->getDriver()->prepare("
             select * from `Session` where congressman_id = :id
             order by `from` desc
         ");

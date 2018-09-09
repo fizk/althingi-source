@@ -44,7 +44,7 @@ class Vote implements DatabaseAwareInterface
      */
     public function fetchByIssue(int $assemblyId, int $issueId): array
     {
-        $statement =$this->getDriver()->prepare('
+        $statement = $this->getDriver()->prepare('
             select * from `Vote` V
             where V.`issue_id` = :issue_id and V.`assembly_id` = :assembly_id
             order by V.`date` asc;
@@ -61,7 +61,7 @@ class Vote implements DatabaseAwareInterface
 
     public function countByIssue(int $assemblyId, int $issueId): int
     {
-        $statement =$this->getDriver()->prepare('
+        $statement = $this->getDriver()->prepare('
             select count(*) from `Vote` V
             where V.`issue_id` = :issue_id and V.`assembly_id` = :assembly_id;
         ');

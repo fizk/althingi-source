@@ -13,25 +13,25 @@ class Document extends Form implements InputFilterProviderInterface
             ->setHydrator(new \Althingi\Hydrator\Document())
             ->setObject(new \Althingi\Model\Document());
 
-        $this->add(array(
+        $this->add([
             'name' => 'issue_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'assembly_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'document_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
-        $this->add(array(
+        ]);
+        $this->add([
             'name' => 'committee_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
-        $this->add(array(
+        ]);
+        $this->add([
             'name' => 'date',
             'type' => 'Zend\Form\Element\DateTime',
             'options' => [
@@ -40,23 +40,23 @@ class Document extends Form implements InputFilterProviderInterface
             'attributes' => [
                 'step' => 'any'
             ],
-        ));
-        $this->add(array(
+        ]);
+        $this->add([
             'name' => 'url',
             'type' => 'Zend\Form\Element\Text',
-        ));
-        $this->add(array(
+        ]);
+        $this->add([
             'name' => 'type',
             'type' => 'Zend\Form\Element\Text',
-        ));
-        $this->add(array(
+        ]);
+        $this->add([
             'name' => 'note',
             'type' => 'Zend\Form\Element\Text',
-        ));
-        $this->add(array(
+        ]);
+        $this->add([
             'name' => 'category',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
     }
 
     /**

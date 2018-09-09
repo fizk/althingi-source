@@ -67,7 +67,7 @@ class CommitteeMeetingAgendaController extends AbstractRestfulController impleme
         if ($form->isValid()) {
             $affectedRows = $this->committeeMeetingAgendaService->save($form->getObject());
             return (new EmptyModel())
-                ->setStatus($affectedRows ===1 ? 201 : 205);
+                ->setStatus($affectedRows === 1 ? 201 : 205);
         }
 
         return (new ErrorModel($form))->setStatus(400);

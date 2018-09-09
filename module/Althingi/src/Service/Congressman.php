@@ -55,7 +55,7 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
     {
         $statement = $this->getDriver()->prepare("select * from `Congressman` C where congressman_id = :id");
         $statement->execute(['id' => $id]);
-        $object =  $statement->fetch(PDO::FETCH_ASSOC);
+        $object = $statement->fetch(PDO::FETCH_ASSOC);
 
         return $object
             ? (new CongressmanHydrator())->hydrate($object, new CongressmanModel())
@@ -88,7 +88,6 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
      */
     public function fetchByAssembly(int $assemblyId, string $congressmanType = null): array
     {
-        $statement;
         switch ($congressmanType) {
             case self::CONGRESSMAN_TYPE_MP:
                 $statement = $this->getDriver()->prepare(

@@ -16,12 +16,12 @@
 </dl>
 <?php
     $e = $this->exception->getPrevious();
-    if ($e) :
-?>
+if ($e) :
+    ?>
 <hr/>
 <h2>'Previous exceptions</h2>
 <ul class="unstyled">
-    <?php while($e) : ?>
+    <?php while ($e) : ?>
     <li>
         <h3><?php echo get_class($e); ?></h3>
         <dl>
@@ -39,9 +39,9 @@
             </dd>
         </dl>
     </li>
-    <?php
+        <?php
         $e = $e->getPrevious();
-        endwhile;
-    ?>
+    endwhile;
+?>
 </ul>
 <?php endif; ?>

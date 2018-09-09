@@ -249,8 +249,8 @@ class PartyTest extends TestCase
                 ['session_id' => 5, 'congressman_id' => 2, 'constituency_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-05', 'type' => 'varamaður', 'party_id' => 2],
             ],
             'Election' => [
-                ['election_id' => 1, 'date'=> '2000-01-01'],
-                ['election_id' => 2, 'date'=> '2004-01-01'],
+                ['election_id' => 1, 'date' => '2000-01-01'],
+                ['election_id' => 2, 'date' => '2004-01-01'],
             ],
             'ElectionResult' => [
                 ['election_result_id' => 1, 'election_id' => 1, 'party_id' => 1, 'result' => 99.00],

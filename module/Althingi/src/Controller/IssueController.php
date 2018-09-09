@@ -88,7 +88,7 @@ class IssueController extends AbstractRestfulController implements
 
         $issue = $this->issueService->getWithDate($issueId, $assemblyId, $category);
 
-        if (!$issue) {
+        if (! $issue) {
             return $this->notFoundAction();
         }
 
@@ -166,7 +166,6 @@ class IssueController extends AbstractRestfulController implements
                 $issue->setDate($documents[0]->getDate());
                 return $issue;
             }, $issues);
-
         } else {
             $count = $this->issueService->countByAssembly($assemblyId, $types, $kinds, $categories);
             $range = $this->getRange($this->getRequest(), $count);
@@ -249,7 +248,7 @@ class IssueController extends AbstractRestfulController implements
         $assemblyId = $this->params('id');
         $issue = $this->issueService->get($id, $assemblyId, 'A');
 
-        if (!$issue) {
+        if (! $issue) {
             return $this->notFoundAction();
         }
 

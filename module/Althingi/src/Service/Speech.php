@@ -124,11 +124,11 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
         ]);
 
         return (object) [
-            'type' =>  array_map(function ($speech) {
+            'type' => array_map(function ($speech) {
                 $speech->total = (int) $speech->total;
                 return $speech;
             }, $speechTypeStatement->fetchAll()),
-            'congressman_type' =>  array_map(function ($speech) {
+            'congressman_type' => array_map(function ($speech) {
                 $speech->congressman_type = $speech->congressman_type
                     ? $speech->congressman_type
                     : 'þingmaður';

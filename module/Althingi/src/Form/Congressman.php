@@ -14,17 +14,17 @@ class Congressman extends Form implements InputFilterProviderInterface
             ->setHydrator(new \Althingi\Hydrator\Congressman())
             ->setObject(new \Althingi\Model\Congressman());
 
-        $this->add(array(
+        $this->add([
             'name' => 'congressman_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'name',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'birth',
             'type' => 'Zend\Form\Element\Date',
             'options' => [
@@ -33,9 +33,9 @@ class Congressman extends Form implements InputFilterProviderInterface
             'attributes' => [
                 'step' => 'any'
             ],
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'death',
             'type' => 'Zend\Form\Element\Date',
             'options' => [
@@ -44,7 +44,7 @@ class Congressman extends Form implements InputFilterProviderInterface
             'attributes' => [
                 'step' => 'any'
             ],
-        ));
+        ]);
     }
 
 

@@ -48,7 +48,7 @@ class CongressmanSessionController extends AbstractRestfulController implements
     {
         $session = $this->sessionService->get($this->params('session_id'));
 
-        if (!$session) {
+        if (! $session) {
             return $this->notFoundAction();
         }
 

@@ -13,12 +13,12 @@ class Speech extends Form implements InputFilterProviderInterface
             ->setHydrator(new \Althingi\Hydrator\Speech())
             ->setObject(new \Althingi\Model\Speech());
 
-        $this->add(array(
+        $this->add([
             'name' => 'speech_id',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'from',
             'type' => 'Zend\Form\Element\DateTime',
             'options' => [
@@ -27,9 +27,9 @@ class Speech extends Form implements InputFilterProviderInterface
             'attributes' => [
                 'step' => 'any'
             ],
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'to',
             'type' => 'Zend\Form\Element\DateTime',
             'options' => [
@@ -38,52 +38,52 @@ class Speech extends Form implements InputFilterProviderInterface
             'attributes' => [
                 'step' => 'any'
             ],
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'plenary_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'assembly_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'issue_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'category',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'congressman_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'congressman_type',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'iteration',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'type',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'text',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
     }
 
 

@@ -10,7 +10,7 @@ trait DatabaseConnection
 {
     use TestCaseTrait;
 
-    static $connection;
+    static protected $connection;
 
     /**
      * Returns the test database connection.

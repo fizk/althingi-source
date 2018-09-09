@@ -13,40 +13,40 @@ class President extends Form implements InputFilterProviderInterface
             ->setObject(new \Althingi\Model\President())
             ->setHydrator(new \Althingi\Hydrator\President());
 
-        $this->add(array(
+        $this->add([
             'name' => 'president_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'assembly_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'congressman_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'from',
             'type' => 'Zend\Form\Element\Date',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'to',
             'type' => 'Zend\Form\Element\Date',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'title',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'abbr',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
     }
 
 

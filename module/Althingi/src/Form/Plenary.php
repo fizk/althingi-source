@@ -13,22 +13,22 @@ class Plenary extends Form implements InputFilterProviderInterface
             ->setHydrator(new \Althingi\Hydrator\Plenary())
             ->setObject(new \Althingi\Model\Plenary());
 
-        $this->add(array(
+        $this->add([
             'name' => 'plenary_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'assembly_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'name',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'from',
             'type' => 'Zend\Form\Element\DateTime',
             'options' => [
@@ -37,9 +37,9 @@ class Plenary extends Form implements InputFilterProviderInterface
             'attributes' => [
                 'step' => 'any'
             ],
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'to',
             'type' => 'Zend\Form\Element\DateTime',
             'options' => [
@@ -48,7 +48,7 @@ class Plenary extends Form implements InputFilterProviderInterface
             'attributes' => [
                 'step' => 'any'
             ],
-        ));
+        ]);
     }
 
 

@@ -13,15 +13,15 @@ class SuperCategory extends Form implements InputFilterProviderInterface
             ->setHydrator(new \Althingi\Hydrator\SuperCategory())
             ->setObject(new \Althingi\Model\SuperCategory());
 
-        $this->add(array(
+        $this->add([
             'name' => 'super_category_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'title',
             'type' => 'Zend\Form\Element\Text',
-        ));
+        ]);
     }
 
 

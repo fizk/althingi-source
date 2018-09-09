@@ -26,7 +26,7 @@ class DateAndCountSequence
         string $interval = 'P1D'
     ): array {
         $end = $end ? : new \DateTime();
-        $end = $end->modify( '+1 day' );
+        $end = $end->modify('+1 day');
         $interval = new \DateInterval($interval);
         $dateRange = new \DatePeriod($begin, $interval, $end);
 

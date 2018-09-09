@@ -13,20 +13,20 @@ class Assembly extends Form implements InputFilterProviderInterface
             ->setObject(new \Althingi\Model\Assembly())
             ->setHydrator(new \Althingi\Hydrator\Assembly());
 
-        $this->add(array(
+        $this->add([
             'name' => 'assembly_id',
             'type' => 'Zend\Form\Element\Number',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'from',
             'type' => 'Zend\Form\Element\Date',
-        ));
+        ]);
 
-        $this->add(array(
+        $this->add([
             'name' => 'to',
             'type' => 'Zend\Form\Element\Date',
-        ));
+        ]);
     }
 
 

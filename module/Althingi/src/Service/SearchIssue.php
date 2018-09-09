@@ -118,7 +118,7 @@ class SearchIssue implements ElasticSearchAwareInterface
 
     private function stringifyHighlight($highlights, $key)
     {
-        if (!array_key_exists('highlight', $highlights)) {
+        if (! array_key_exists('highlight', $highlights)) {
             return '';
         }
 
