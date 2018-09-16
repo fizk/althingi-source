@@ -77,8 +77,7 @@ The service is a part of a bigger system that includes:
 
 This system is the blue box in this diagram: 
 
-![loggjafarthing-schema](https://user-images.githubusercontent.com/386336/33863222-d396775c-df3a-11e7-8ed1-34a67bebecdc.png)
-
+![althingi-schema 2 0](https://user-images.githubusercontent.com/386336/45269836-f8352180-b4d7-11e8-9085-b18a33f6efec.png)
 http://www.althingi.is/xml/145
     fundir
     dagskra
