@@ -31,6 +31,9 @@ class Module
 
             if ($event->getRequest()->getMethod() === HttpRequest::METHOD_GET && $cache->hasItem($storageKey)) {
                 $event->getApplication()->getEventManager()->clearListeners(MvcEvent::EVENT_DISPATCH);
+                $event->getResponse()->setHeaders((new \Zend\Http\Headers())->addHeaders([
+                    'X-Cache' => 'HIT'
+                ]));
                 $event->setViewModel(unserialize($cache->getItem($storageKey)));
             }
         });
@@ -44,6 +47,9 @@ class Module
             if ($event->getRequest()->getMethod() === HttpRequest::METHOD_GET &&
                 ! $cache->hasItem($storageKey) &&
                 $event->getResponse()->isSuccess()) {
+                $event->getResponse()->setHeaders((new \Zend\Http\Headers())->addHeaders([
+                    'X-Cache' => 'MISS'
+                ]));
                 $cache->addItem($storageKey, serialize($event->getResult()));
             }
         });
