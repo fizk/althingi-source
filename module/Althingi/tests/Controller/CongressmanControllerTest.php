@@ -456,7 +456,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
     {
         $this->getMockService(IssueCategory::class)
             ->shouldReceive('fetchFrequencyByAssemblyAndCongressman')
-            ->with(1, 2, null)
+            ->with(1, 2, ['A'])
             ->once()
             ->andReturn([new IssueCategoryAndTimeModel()])
             ->getMock();
@@ -505,7 +505,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
 
         $this->getMockService(Congressman::class)
             ->shouldReceive('fetchTimeByAssembly')
-            ->with(1, null, 'desc', null)
+            ->with(1, null, 'desc', ['A'])
             ->once()
             ->andReturn([
                 (new \Althingi\Model\Congressman())->setCongressmanId(1)
