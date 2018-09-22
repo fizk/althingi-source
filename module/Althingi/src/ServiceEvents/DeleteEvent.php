@@ -2,7 +2,6 @@
 
 namespace Althingi\ServiceEvents;
 
-use Althingi\Model\ModelIdentityInterface;
 use Althingi\Presenters\IndexablePresenter;
 use Althingi\Presenters\IndexablePresenterAwareInterface;
 use Zend\EventManager\Event;
@@ -14,7 +13,7 @@ class DeleteEvent extends Event implements IndexablePresenterAwareInterface
 
     public function __construct(IndexablePresenter $presenter)
     {
-        parent::__construct('delete');
+        parent::__construct('delete', $this);
         $this->setPresenter($presenter);
     }
 

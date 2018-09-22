@@ -59,6 +59,7 @@ use Althingi\Service\VoteItem;
 use Zend\Router\Http\Literal;
 use Zend\Router\Http\Segment;
 use Zend\ServiceManager\ServiceManager;
+use Psr\Log\LoggerInterface;
 
 return [
     'router' => [
@@ -715,7 +716,8 @@ return [
                 return (new ConsoleSearchIndexerController())
                     ->setSpeechService($container->get(Speech::class))
                     ->setIssueService($container->get(Issue::class))
-                    ->setElasticSearchClient($container->get(\Elasticsearch\Client::class));
+                    ->setElasticSearchClient($container->get(\Elasticsearch\Client::class))
+                    ->setLogger($container->get(LoggerInterface::class));
             },
             ConsoleDocumentApiController::class => function (ServiceManager $container) {
                 return (new ConsoleDocumentApiController());

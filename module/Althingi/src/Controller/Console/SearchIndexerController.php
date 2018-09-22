@@ -4,6 +4,7 @@ namespace Althingi\Controller\Console;
 
 use Althingi\ElasticSearchActions\Add;
 use Althingi\Lib\ElasticSearchClientAwareInterface;
+use Althingi\Lib\LoggerAwareInterface;
 use Althingi\Lib\ServiceIssueAwareInterface;
 use Althingi\Lib\ServiceSpeechAwareInterface;
 use Althingi\Presenters\IndexableIssuePresenter;
@@ -12,12 +13,14 @@ use Althingi\Service\Issue;
 use Althingi\Service\Speech;
 use Althingi\ServiceEvents\AddEvent;
 use Elasticsearch\Client;
+use Psr\Log\LoggerInterface;
 use Zend\Mvc\Controller\AbstractActionController;
 
 class SearchIndexerController extends AbstractActionController implements
     ServiceSpeechAwareInterface,
     ServiceIssueAwareInterface,
-    ElasticSearchClientAwareInterface
+    ElasticSearchClientAwareInterface,
+    LoggerAwareInterface
 {
     /** @var  \Althingi\Service\Speech */
     private $speechService;
@@ -28,9 +31,12 @@ class SearchIndexerController extends AbstractActionController implements
     /** @var  \Elasticsearch\Client */
     private $elasticSearchClient;
 
+    /** @var \Psr\Log\LoggerInterface */
+    private $logger;
+
     public function speechAction()
     {
-        $elasticSearchAdd = new Add($this->elasticSearchClient);
+        $elasticSearchAdd = new Add($this->elasticSearchClient, $this->logger);
         foreach ($this->speechService->fetchAll() as $model) {
             $elasticSearchAdd(
                 new AddEvent(new IndexableSpeechPresenter($model))
@@ -43,7 +49,7 @@ class SearchIndexerController extends AbstractActionController implements
      */
     public function issueAction()
     {
-        $elasticSearchAdd = new Add($this->elasticSearchClient);
+        $elasticSearchAdd = new Add($this->elasticSearchClient, $this->logger);
         foreach ($this->issueService->fetchAll() as $model) {
             $elasticSearchAdd(
                 new AddEvent(new IndexableIssuePresenter($model))
@@ -79,5 +85,23 @@ class SearchIndexerController extends AbstractActionController implements
     {
         $this->issueService = $issue;
         return $this;
+    }
+
+    /**
+     * @param LoggerInterface $logger
+     * @return mixed
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+        return $this;
+    }
+
+    /**
+     * @return LoggerInterface
+     */
+    public function getLogger()
+    {
+        return $this->logger;
     }
 }

@@ -13,7 +13,7 @@ class AddEvent extends Event implements IndexablePresenterAwareInterface
 
     public function __construct(IndexablePresenter $presenter)
     {
-        parent::__construct('add');
+        parent::__construct('add', $this);
         $this->setPresenter($presenter);
     }
 
