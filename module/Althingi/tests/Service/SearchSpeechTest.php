@@ -59,7 +59,7 @@ class SearchSpeechTest extends TestCase
             ->setIssueId(1)
             ->setCongressmanId(1)
             ->setText('<mgr>hani [...] krummi [...] hundur [...] svin</mgr>')];
-        $actual = $this->service->fetchByIssue(1, 1, 'some query');
+        $actual = $this->service->fetchByIssue(1, 1, 'some query', 'A');
 
         $this->assertEquals($expected, $actual);
     }
@@ -100,7 +100,7 @@ class SearchSpeechTest extends TestCase
                                 ->setCongressmanId(1)
                                 ->toArray(),
                         'highlight' => [
-                            'text.raw' => [
+                            'text' => [
                                 'hani',
                                 'krummi',
                                 'hundur',
