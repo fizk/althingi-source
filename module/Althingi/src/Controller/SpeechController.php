@@ -113,9 +113,14 @@ class SpeechController extends AbstractRestfulController implements
         $category = $this->getCategoryFromQuery();
 
         if ($queryParam) {
-            $speeches = $this->speechSearch->fetchByIssue($queryParam, $assemblyId, $issueId);
+            $speeches = $this->speechSearch->fetchByIssue(
+                $queryParam,
+                $assemblyId,
+                $issueId,
+                $category
+            );
             $count = count($speeches);
-            $range = new RangeValue();
+            $range = (new RangeValue())->setFrom(0)->setTo($count);
             $speechesAndProperties = array_map(function (SpeechModel $speech) {
                 $speech->setText(Transformer::speechToMarkdown($speech->getText()));
 

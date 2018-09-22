@@ -2,7 +2,6 @@
 
 namespace Althingi\ServiceEvents;
 
-use Althingi\Model\ModelIdentityInterface;
 use Althingi\Presenters\IndexablePresenter;
 use Althingi\Presenters\IndexablePresenterAwareInterface;
 use Zend\EventManager\Event;
@@ -14,7 +13,7 @@ class UpdateEvent extends Event implements IndexablePresenterAwareInterface
 
     public function __construct(IndexablePresenter $presenter)
     {
-        parent::__construct('update');
+        parent::__construct('update', $this);
         $this->setPresenter($presenter);
     }
 

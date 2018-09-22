@@ -21,16 +21,18 @@ class SearchSpeech implements ElasticSearchAwareInterface
      * @param string $query
      * @param int $assemblyId
      * @param int $issueId
+     * @param string $category
      * @return \Althingi\Model\Speech[]
      */
-    public function fetchByIssue(string $query, int $assemblyId, int $issueId): array
+    public function fetchByIssue(string $query, int $assemblyId, int $issueId, string $category): array
     {
         return $this->search([
             'bool' => [
                 'must' => [
-                    ['match' => ['text.raw' => $query]],
+                    ['match' => ['text' => $query]],
                     ['match' => ['assembly_id' => $assemblyId]],
                     ['match' => ['issue_id' => $issueId]],
+                    ['match' => ['category' => $category]],
                 ],
             ],
         ]);
@@ -40,13 +42,14 @@ class SearchSpeech implements ElasticSearchAwareInterface
      * @param string $query
      * @param int $assemblyId
      * @return \Althingi\Model\Speech[]
+     * @todo not used anywhere
      */
     public function fetchByAssembly(string $query, int $assemblyId): array
     {
         return $this->search([
             'bool' => [
                 'must' => [
-                    ['fuzzy' => ['text.raw' => $query]],
+                    ['fuzzy' => ['text' => $query]],
                     ['match' => ['assembly_id' => $assemblyId]],
                 ],
             ],
@@ -56,13 +59,14 @@ class SearchSpeech implements ElasticSearchAwareInterface
     /**
      * @param string $query
      * @return \Althingi\Model\Speech[]
+     * @todo not used anywhere
      */
     public function fetch(string $query): array
     {
         return $this->search([
             'bool' => [
                 'must' => [
-                    ['fuzzy' => ['text.raw' => $query]],
+                    ['fuzzy' => ['text' => $query]],
                 ],
             ],
         ]);
@@ -100,7 +104,7 @@ class SearchSpeech implements ElasticSearchAwareInterface
                     'pre_tags' => ['<strong>'],
                     'post_tags' => ['</strong>'],
                     'fields' => [
-                        'text.raw' => new \stdClass()
+                        'text' => new \stdClass()
                     ],
                     'require_field_match' => false
                 ],
@@ -110,7 +114,7 @@ class SearchSpeech implements ElasticSearchAwareInterface
         return array_map(function ($object) {
             $object['_source']['text'] = '<mgr>' . implode(' [...] ', array_map(function ($paragraph) {
                 return strip_tags($paragraph, '<strong>');
-            }, $object['highlight']['text.raw'])) . '</mgr>';
+            }, $object['highlight']['text'])) . '</mgr>';
             return (new SpeechHydrator())->hydrate($object['_source'], new SpeechModel());
         }, $results['hits']['hits']);
     }
