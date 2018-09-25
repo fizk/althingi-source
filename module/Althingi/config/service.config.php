@@ -6,6 +6,7 @@ use Althingi\Service\Session;
 use Althingi\Service\Party;
 use Althingi\Service\Constituency;
 use Althingi\Service\Plenary;
+use Althingi\Service\PlenaryAgenda;
 use Althingi\Service\Issue;
 use Althingi\Service\Speech;
 use Althingi\Service\Vote;
@@ -98,6 +99,10 @@ return [
         },
         Plenary::class => function (ServiceManager $sm) {
             return (new Plenary())
+                ->setDriver($sm->get(PDO::class));
+        },
+        PlenaryAgenda::class => function (ServiceManager $sm) {
+            return (new PlenaryAgenda())
                 ->setDriver($sm->get(PDO::class));
         },
         Session::class => function (ServiceManager $sm) {
