@@ -21,21 +21,14 @@ RUN pecl install -o -f redis \
 ADD . /usr/src
 COPY ./auto/php/php.ini /usr/local/etc/php/
 
-EXPOSE 80
-
 ENV APPLICATION_ENVIRONMENT development
-
 ENV DB_HOST localhost
 ENV DB_PORT 3306
 ENV DB_NAME althingi
 ENV DB_USER root
-#ENV DB_PASSWORD
-
 ENV SEARCH none
-
-
+ENV LOG_PATH none
 ENV CACHE_TYPE none
-    # | file (path ./data/cache) | memory | none
 ENV CACHE_HOST localhost
 ENV CACHE_PORT 6379
 

@@ -13,8 +13,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.test
-    volumes:
-      - .:/var/src
     depends_on:
       - database
     links:
@@ -30,7 +28,7 @@ services:
       - DB_SETUP=false
       - CACHE_TYPE=none
       - SEARCH=none
-    command: bash -c "/usr/local/bin/composer install && /usr/local/bin/composer dump-autoload -o && /usr/src/vendor/bin/phpunit && /usr/src/vendor/bin/phpcs"
+    command: bash -c "/usr/src/vendor/bin/phpunit && /usr/src/vendor/bin/phpcs"
 
   database:
     container_name: althingi_test_database

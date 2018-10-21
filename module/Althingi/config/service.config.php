@@ -198,7 +198,7 @@ return [
                 ->pushProcessor(new \Monolog\Processor\MemoryPeakUsageProcessor(true, false))
                 ->pushProcessor(new \Monolog\Processor\MemoryUsageProcessor(true, false));
 
-            if (! empty(getenv('LOG_PATH')) && getenv('LOG_PATH')) {
+            if (! empty(getenv('LOG_PATH')) && strtolower(getenv('LOG_PATH')) !== 'none' && getenv('LOG_PATH')) {
                 $handlers[] = new \Monolog\Handler\StreamHandler(getenv('LOG_PATH') ? : 'php://stdout');
             }
 
