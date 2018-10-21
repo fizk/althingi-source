@@ -10,7 +10,7 @@ class RequestErrorHandler implements ListenerAggregateInterface
 {
     public function attach(EventManagerInterface $events, $priority = 1)
     {
-        $events->attach(MvcEvent::EVENT_DISPATCH_ERROR, new ApplicationErrorHandler());
+        $events->attach(MvcEvent::EVENT_DISPATCH_ERROR, new ApplicationErrorHandler(), $priority);
     }
 
     public function detach(EventManagerInterface $events)

@@ -33,7 +33,6 @@ class Delete
                 'type' => $presenter->getType(),
                 'id' => $presenter->getIdentifier(),
             ]);
-            $this->logger->debug("Indexing [{$presenter->getIndex()} : {$presenter->getIdentifier()}]");
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage());
         }

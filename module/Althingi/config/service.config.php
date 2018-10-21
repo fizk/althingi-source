@@ -195,8 +195,8 @@ return [
         LoggerInterface::class => function (ServiceManager $sm) {
             $handlers = [];
             $logger = (new \Monolog\Logger('althingi-api'))
-                ->pushProcessor(new \Monolog\Processor\MemoryPeakUsageProcessor())
-                ->pushProcessor(new \Monolog\Processor\MemoryUsageProcessor());
+                ->pushProcessor(new \Monolog\Processor\MemoryPeakUsageProcessor(true, false))
+                ->pushProcessor(new \Monolog\Processor\MemoryUsageProcessor(true, false));
 
             if (! empty(getenv('LOG_PATH')) && getenv('LOG_PATH')) {
                 $handlers[] = new \Monolog\Handler\StreamHandler(getenv('LOG_PATH') ? : 'php://stdout');
@@ -236,10 +236,12 @@ return [
                         );
                     break;
                 case 'memory':
-                    $options = (new Zend\Cache\Storage\Adapter\RedisOptions())->setServer([
-                        'host' => getenv('CACHE_HOST') ?: 'localhost',
-                        'port' => getenv('CACHE_PORT') ?: 6379
-                    ]);
+                    $options = (new Zend\Cache\Storage\Adapter\RedisOptions())
+                        ->setTtl(60 * 60)
+                        ->setServer([
+                            'host' => getenv('CACHE_HOST') ?: 'localhost',
+                            'port' => getenv('CACHE_PORT') ?: 6379
+                        ]);
                     return new Zend\Cache\Storage\Adapter\Redis($options);
                     break;
                 default:
