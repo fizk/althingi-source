@@ -32,5 +32,7 @@ ENV CACHE_TYPE none
 ENV CACHE_HOST localhost
 ENV CACHE_PORT 6379
 
+RUN /usr/local/bin/composer install --no-interaction  \
+    && /usr/local/bin/composer dump-autoload -o
 
 WORKDIR /usr/src
