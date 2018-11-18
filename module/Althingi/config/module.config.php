@@ -9,6 +9,7 @@ use Althingi\Controller\CongressmanSessionController;
 use Althingi\Controller\PartyController;
 use Althingi\Controller\ConstituencyController;
 use Althingi\Controller\PlenaryController;
+use Althingi\Controller\PlenaryAgendaController;
 use Althingi\Controller\IssueController;
 use Althingi\Controller\UndocumentedIssueController;
 use Althingi\Controller\SpeechController;
@@ -47,6 +48,7 @@ use Althingi\Service\Issue;
 use Althingi\Service\IssueCategory;
 use Althingi\Service\Party;
 use Althingi\Service\Plenary;
+use Althingi\Service\PlenaryAgenda;
 use Althingi\Service\President;
 use Althingi\Service\SearchIssue;
 use Althingi\Service\SearchSpeech;
@@ -268,6 +270,19 @@ return [
                             'defaults' => [
                                 'controller' => PlenaryController::class,
                                 'identifier' => 'plenary_id'
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'thingfundir-lidir' => [
+                                'type' => Segment::class,
+                                'options' => [
+                                    'route'    => '/lidir[/:item_id]',
+                                    'defaults' => [
+                                        'controller' => PlenaryAgendaController::class,
+                                        'identifier' => 'item_id'
+                                    ],
+                                ],
                             ],
                         ],
                     ],
@@ -599,6 +614,14 @@ return [
             PlenaryController::class => function (ServiceManager $container) {
                 return (new PlenaryController())
                     ->setPlenaryService($container->get(Plenary::class));
+            },
+            PlenaryAgendaController::class => function (ServiceManager $container) {
+                return (new PlenaryAgendaController())
+                    ->setPlenaryAgendaService($container->get(PlenaryAgenda::class))
+                    ->setPlenaryService($container->get(Plenary::class))
+                    ->setIssueService($container->get(Issue::class))
+                    ->setCongressmanService($container->get(Congressman::class))
+                    ->setPartyService($container->get(Party::class));
             },
             IssueController::class => function (ServiceManager $container) {
                 return (new IssueController())

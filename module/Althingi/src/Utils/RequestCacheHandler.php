@@ -2,6 +2,8 @@
 namespace Althingi\Utils;
 
 use Althingi\Lib\CacheAwareInterface;
+use Althingi\Lib\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 use Zend\Cache\Storage\StorageInterface;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
@@ -9,12 +11,15 @@ use Zend\Http\Request as HttpRequest;
 use Zend\Http\PhpEnvironment\Request as PhpRequest;
 use Zend\Mvc\MvcEvent;
 
-class RequestCacheHandler implements ListenerAggregateInterface, CacheAwareInterface
+class RequestCacheHandler implements ListenerAggregateInterface, CacheAwareInterface, LoggerAwareInterface
 {
     /**
      * @var \Zend\Cache\Storage\StorageInterface
      */
     private $storage;
+
+    /** @var \Psr\Log\LoggerInterface */
+    private $logger;
 
     public function attach(EventManagerInterface $events, $priority = 1)
     {
@@ -23,28 +28,39 @@ class RequestCacheHandler implements ListenerAggregateInterface, CacheAwareInter
             if ($event->getRequest() instanceof \Zend\Console\Request) {
                 return;
             }
-            $storageKey = $this->storageKey($event->getRequest());
 
-            if ($event->getRequest()->getMethod() === HttpRequest::METHOD_GET && $cache->hasItem($storageKey)) {
-                $event->getApplication()->getEventManager()->clearListeners(MvcEvent::EVENT_DISPATCH);
+            try {
+                $storageKey = $this->storageKey($event->getRequest());
+                if ($event->getRequest()->getMethod() === HttpRequest::METHOD_GET && $cache->hasItem($storageKey)) {
+                    $event->getApplication()->getEventManager()->clearListeners(MvcEvent::EVENT_DISPATCH);
+                    $event->getResponse()->getHeaders()->addHeaderLine("X-Cache: HIT");
+                    $event->setViewModel(unserialize($cache->getItem($storageKey)));
+                }
+            } catch (\Exception $e) {
                 $event->getResponse()->getHeaders()->addHeaderLine("X-Cache: HIT");
-                $event->setViewModel(unserialize($cache->getItem($storageKey)));
+                $this->getLogger()->error('CACHE', [0, "GET", $e->getMessage(), $event->getRequest()->getUri()]);
+                return;
             }
-        });
+        }, $priority);
         $events->attach(MvcEvent::EVENT_FINISH, function (MvcEvent $event) use ($cache) {
             if ($event->getRequest() instanceof \Zend\Console\Request) {
                 return;
             }
-            $storageKey = $this->storageKey($event->getRequest());
 
-            if ($event->getRequest()->getMethod() === HttpRequest::METHOD_GET
-                && ! $cache->hasItem($storageKey)
-                && $event->getResponse()->isSuccess()
-            ) {
+            try {
+                $storageKey = $this->storageKey($event->getRequest());
+                if ($event->getRequest()->getMethod() === HttpRequest::METHOD_GET
+                    && ! $cache->hasItem($storageKey)
+                    && $event->getResponse()->isSuccess()
+                ) {
+                    $event->getResponse()->getHeaders()->addHeaderLine("X-Cache: MISS");
+                    $cache->addItem($storageKey, serialize($event->getResult()));
+                }
+            } catch (\Exception $e) {
                 $event->getResponse()->getHeaders()->addHeaderLine("X-Cache: MISS");
-                $cache->addItem($storageKey, serialize($event->getResult()));
+                return;
             }
-        });
+        }, $priority);
     }
 
     public function detach(EventManagerInterface $events)
@@ -80,5 +96,23 @@ class RequestCacheHandler implements ListenerAggregateInterface, CacheAwareInter
             ? $request->getHeaders()->get('Range')->getFieldValue()
             : '';
         return md5($uri->getPath() . $range . json_encode($query));
+    }
+
+    /**
+     * @param LoggerInterface $logger
+     * @return $this
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+        return $this;
+    }
+
+    /**
+     * @return LoggerInterface
+     */
+    public function getLogger()
+    {
+        return $this->logger;
     }
 }
