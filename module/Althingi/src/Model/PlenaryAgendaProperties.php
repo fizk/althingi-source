@@ -135,10 +135,10 @@ class PlenaryAgendaProperties implements ModelInterface
     {
         return array_merge($this->plenaryAgenda->toArray(), [
             'issue' => $this->issue,
-            'posedCongressman' => $this->posedCongressman,
-            'answererCongressman' => $this->answererCongressman,
-            'counterAnswererCongressman' => $this->counterAnswererCongressman,
-            'instigatorCongressman' => $this->instigatorCongressman,
+            'posed_congressman' => $this->posedCongressman,
+            'answerer_congressman' => $this->answererCongressman,
+            'counter_answerer_congressman' => $this->counterAnswererCongressman,
+            'instigator_congressman' => $this->instigatorCongressman,
         ]);
     }
 

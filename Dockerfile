@@ -7,6 +7,7 @@
 FROM php:7.2.9-apache
 
 RUN apt-get update \
+ && apt-get install -y zip unzip \
  && apt-get install -y git zlib1g-dev vim \
  && docker-php-ext-install zip \
  && docker-php-ext-install pdo_mysql \
