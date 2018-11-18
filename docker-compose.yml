@@ -28,7 +28,7 @@ services:
       - DB_SETUP=false
       - CACHE_TYPE=none
       - SEARCH=none
-    command: bash -c "/usr/src/vendor/bin/phpunit && /usr/src/vendor/bin/phpcs"
+    command: bash -c "/usr/src/auto/run-test.sh"
 
   database:
     container_name: althingi_test_database
