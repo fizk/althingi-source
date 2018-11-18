@@ -35,7 +35,6 @@ class Update
                 'id' => $presenter->getIdentifier(),
                 'body' => $presenter->getData(),
             ]);
-            $this->logger->debug("Indexing [{$presenter->getIndex()} : {$presenter->getIdentifier()}]");
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage());
         }
