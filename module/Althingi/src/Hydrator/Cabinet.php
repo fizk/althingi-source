@@ -18,8 +18,11 @@ class Cabinet implements HydratorInterface
     public function hydrate(array $data, $object)
     {
         return $object->setCabinetId($data['cabinet_id'])
-            ->setName($data['name'] ? : null)
-            ->setTitle($data['title'] ? : null);
+            ->setTitle($data['title'] ? : null)
+            ->setDescription(isset($data['description']) ? $data['description'] : null)
+            ->setFrom($data['from'] ? new DateTime($data['from']) : null)
+            ->setTo($data['to'] ? new DateTime($data['to']) : null)
+            ;
     }
 
 

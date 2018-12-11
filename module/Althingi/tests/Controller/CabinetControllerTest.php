@@ -47,24 +47,9 @@ class CabinetControllerTest extends AbstractHttpControllerTestCase
     public function testGet()
     {
         $this->getMockService(Cabinet::class)
-            ->shouldReceive('fetchByAssembly')
+            ->shouldReceive('fetchAll')
             ->andReturn([
                 (new \Althingi\Model\Cabinet())->setCabinetId(1)
-            ])
-            ->getMock();
-
-        $this->getMockService(Party::class)
-            ->shouldReceive('getByCongressman')
-            ->andReturn((new \Althingi\Model\Party())->setPartyId(1))
-            ->getMock();
-
-        $this->getMockService(Congressman::class)
-            ->shouldReceive('fetchByCabinet')
-            ->andReturn([
-                (new \Althingi\Model\CongressmanAndCabinet())
-                    ->setDate(new DateTime('2000-01-01'))
-                    ->setCongressmanId(1)
-                    ->setBirth(new DateTime('2001-01-01'))
             ])
             ->getMock();
 

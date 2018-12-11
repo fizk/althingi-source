@@ -237,6 +237,16 @@ return [
                             ]
                         ]
                     ],
+                    'verdbolga' => [
+                        'type' => Literal::class,
+                        'options' => [
+                            'route'    => '/verdbolga',
+                            'defaults' => [
+                                'controller' => InflationController::class,
+                                'action' => 'fetch-assembly'
+                            ],
+                        ],
+                    ],
                     'forsetar' => [
                         'type' => Segment::class,
                         'options' => [
@@ -563,6 +573,26 @@ return [
                     ]
                 ]
             ],
+            'verdbolga' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route'    => '/verdbolga[/:id]',
+                    'defaults' => [
+                        'controller' => InflationController::class,
+                        'identifier' => 'id'
+                    ],
+                ],
+            ],
+            'raduneyti' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route'    => '/raduneyti[/:id]',
+                    'defaults' => [
+                        'controller' => CabinetController::class,
+                        'identifier' => 'id'
+                    ],
+                ],
+            ],
             'samantekt' => [
                 'type' => Literal::class,
                 'options' => [
@@ -711,7 +741,6 @@ return [
                         ]
                     ],
                 ]
-            ],
         ]
     ],
 
@@ -842,6 +871,7 @@ return [
                 return (new CabinetController())
                     ->setPartyService($container->get(Party::class))
                     ->setCongressmanService($container->get(Congressman::class))
+                    ->setAssemblyService($container->get(Assembly::class))
                     ->setCabinetService($container->get(Cabinet::class));
             },
             PresidentController::class => function (ServiceManager $container) {
@@ -922,7 +952,13 @@ return [
                 return (new Aggregate\IssueCategoryController())
                     ->setCategoryService($container->get(Category::class))
                     ->setSuperCategoryService($container->get(SuperCategory::class));
-            }
+            },
+            InflationController::class => function (ServiceManager $container) {
+                return (new InflationController())
+                    ->setInflationService($container->get(Inflation::class))
+                    ->setCabinetService($container->get(Cabinet::class))
+                    ->setAssemblyService($container->get(Assembly::class));
+            },
         ],
     ],
 

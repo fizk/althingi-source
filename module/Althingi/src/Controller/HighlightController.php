@@ -82,6 +82,7 @@ class HighlightController extends AbstractRestfulController implements
     /**
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\IssueWithSpeechProperties
+     * @query category
      */
     public function getActiveIssueAction()
     {

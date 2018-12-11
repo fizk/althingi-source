@@ -24,6 +24,7 @@ use Althingi\Service\IssueCategory;
 use Althingi\Service\Election;
 use Althingi\Service\SearchSpeech;
 use Althingi\Service\SearchIssue;
+use Althingi\Service\Inflation;
 use Zend\ServiceManager\ServiceManager;
 use Psr\Log\LoggerInterface;
 use Althingi\ElasticSearchActions\ElasticSearchEventsListener;
@@ -139,6 +140,10 @@ return [
         },
         VoteItem::class => function (ServiceManager $sm) {
             return (new VoteItem())
+                ->setDriver($sm->get(PDO::class));
+        },
+        Inflation::class => function (ServiceManager $sm) {
+            return (new Inflation())
                 ->setDriver($sm->get(PDO::class));
         },
 

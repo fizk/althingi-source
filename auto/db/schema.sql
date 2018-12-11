@@ -62,27 +62,12 @@ DROP TABLE IF EXISTS `Cabinet`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `Cabinet` (
   `cabinet_id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) DEFAULT NULL,
   `title` varchar(255) DEFAULT NULL,
+  `aka` varchar(255) DEFAULT NULL,
+  `from` date default null,
+  `to` date default null,
+  `description` text default null,
   PRIMARY KEY (`cabinet_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `Cabinet_has_Assembly`
---
-
-DROP TABLE IF EXISTS `Cabinet_has_Assembly`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `Cabinet_has_Assembly` (
-  `cabinet_id` int(11) NOT NULL,
-  `assembly_id` int(11) NOT NULL,
-  PRIMARY KEY (`cabinet_id`,`assembly_id`),
-  KEY `fk_Cabinet_has_Assembly_Assembly1_idx` (`assembly_id`),
-  KEY `fk_Cabinet_has_Assembly_Cabinet1_idx` (`cabinet_id`),
-  CONSTRAINT `fk_Cabinet_has_Assembly_Assembly1` FOREIGN KEY (`assembly_id`) REFERENCES `Assembly` (`assembly_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_Cabinet_has_Assembly_Cabinet1` FOREIGN KEY (`cabinet_id`) REFERENCES `Cabinet` (`cabinet_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -620,6 +605,23 @@ CREATE TABLE `PlenaryAgenda` (
   CONSTRAINT `fk_PlenaryAgenda_Congressman2` FOREIGN KEY (`answerer_id`) REFERENCES `Congressman` (`congressman_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_PlenaryAgenda_Congressman3` FOREIGN KEY (`counter_answerer_id`) REFERENCES `Congressman` (`congressman_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_PlenaryAgenda_Congressman4` FOREIGN KEY (`instigator_id`) REFERENCES `Congressman` (`congressman_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+
+--
+-- Table structure for table `Inflation`
+--
+
+DROP TABLE IF EXISTS `Inflation`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Inflation` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `date` date NOT NULL,
+  `value` decimal(8,2) NOT NULL DEFAULT '0.00',
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

@@ -343,7 +343,7 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
             "select date_format(`date`, \"%Y-%m-%d 00:00:00\") as `date`, sum(`diff`) as `count` from (
                 select date(`from`) as `date`, time_to_sec(timediff(`to`, `from`)) as `diff`
                 from `Speech`
-                where assembly_id = :assembly_id and (`from` is not null or `to` is not null) {$categories}
+                where assembly_id = :assembly_id and (`from` is not null or `to` is not null)
             ) as G group by `date` order by `date`;"
         );
         $statement->execute(['assembly_id' => $assemblyId]);
