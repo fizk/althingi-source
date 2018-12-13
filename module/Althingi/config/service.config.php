@@ -60,7 +60,8 @@ return [
         },
         Cabinet::class => function (ServiceManager $sm) {
             return (new Cabinet())
-                ->setDriver($sm->get(PDO::class));
+                ->setDriver($sm->get(PDO::class))
+                ->setEventManager($sm->get(ServiceEventsListener::class));
         },
         Constituency::class => function (ServiceManager $sm) {
             return (new Constituency())
