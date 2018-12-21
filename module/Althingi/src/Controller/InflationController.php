@@ -79,7 +79,6 @@ class InflationController extends AbstractRestfulController implements
             return (new CollectionModel($inflationCollection))
                 ->setStatus(206)
                 ->setRange(0, $inflationCollectionCount, $inflationCollectionCount);
-
         }
     }
 

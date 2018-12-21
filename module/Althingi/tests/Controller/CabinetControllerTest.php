@@ -2,6 +2,7 @@
 
 namespace AlthingiTest\Controller;
 
+use Althingi\Service\Assembly;
 use Althingi\Service\Cabinet;
 use Althingi\Service\Congressman;
 use Althingi\Service\Party;
@@ -31,6 +32,7 @@ class CabinetControllerTest extends AbstractHttpControllerTestCase
             Congressman::class,
             Party::class,
             Cabinet::class,
+            Assembly::class,
         ]);
     }
 
@@ -51,6 +53,16 @@ class CabinetControllerTest extends AbstractHttpControllerTestCase
             ->andReturn([
                 (new \Althingi\Model\Cabinet())->setCabinetId(1)
             ])
+            ->getMock();
+
+        $this->getMockService(Assembly::class)
+            ->shouldReceive('get')
+            ->andReturn(
+                (new \Althingi\Model\Assembly())
+                    ->setFrom(new DateTime('2001-01-01'))
+                    ->setTo(new DateTime('2001-01-01'))
+                    ->setAssemblyId(1)
+            )
             ->getMock();
 
         $this->dispatch('/loggjafarthing/1/raduneyti', 'GET');
