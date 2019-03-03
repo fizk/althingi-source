@@ -25,6 +25,11 @@ class Congressman extends Form implements InputFilterProviderInterface
         ]);
 
         $this->add([
+            'name' => 'abbreviation',
+            'type' => 'Zend\Form\Element\Text',
+        ]);
+
+        $this->add([
             'name' => 'birth',
             'type' => 'Zend\Form\Element\Date',
             'options' => [
@@ -68,6 +73,16 @@ class Congressman extends Form implements InputFilterProviderInterface
             'birth' => [
                 'required' => true,
                 'allow_empty' => false,
+            ],
+            'abbreviation' => [
+                'required' => false,
+                'allow_empty' => true,
+                'filters' => [
+                    [
+                        'name' => '\Zend\Filter\ToNull',
+                        'options' => ['type' => 'all']
+                    ]
+                ],
             ],
             'death' => [
                 'required' => false,

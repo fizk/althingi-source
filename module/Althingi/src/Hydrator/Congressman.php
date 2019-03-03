@@ -21,7 +21,8 @@ class Congressman implements HydratorInterface
             ->setCongressmanId($data['congressman_id'])
             ->setName($data['name'])
             ->setBirth($data['birth'] ? new DateTime($data['birth']) : null)
-            ->setDeath(isset($data['death']) && $data['death'] ? new DateTime($data['death']) : null);
+            ->setDeath(isset($data['death']) && $data['death'] ? new DateTime($data['death']) : null)
+            ->setAbbreviation($data['abbreviation']);
     }
 
 

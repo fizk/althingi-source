@@ -151,7 +151,8 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
             'congressman_type' => null,
             'iteration' => '*',
             'type' => 't1',
-            'text' => 't2'
+            'text' => 't2',
+            'validated' => 'false'
         ]);
 
         $this->assertControllerClass('SpeechController');
