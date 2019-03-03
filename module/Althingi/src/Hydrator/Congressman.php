@@ -22,7 +22,7 @@ class Congressman implements HydratorInterface
             ->setName($data['name'])
             ->setBirth($data['birth'] ? new DateTime($data['birth']) : null)
             ->setDeath(isset($data['death']) && $data['death'] ? new DateTime($data['death']) : null)
-            ->setAbbreviation($data['abbreviation']);
+            ->setAbbreviation(array_key_exists('abbreviation', $data) ? $data['abbreviation'] : null);
     }
 
 
