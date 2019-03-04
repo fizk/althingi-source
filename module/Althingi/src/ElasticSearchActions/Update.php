@@ -24,7 +24,7 @@ class Update
      */
     public function __invoke(\Zend\EventManager\Event $event): void
     {
-        /** @var  $target \Althingi\ServiceEvents\UpdateEvent */
+        /** @var  $target \Althingi\Events\UpdateEvent */
         $target = $event->getTarget();
 
         $presenter = $target->getPresenter();

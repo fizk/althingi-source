@@ -26,7 +26,8 @@ use Althingi\Service\SearchSpeech;
 use Althingi\Service\SearchIssue;
 use Zend\ServiceManager\ServiceManager;
 use Psr\Log\LoggerInterface;
-use Althingi\ServiceEvents\ServiceEventsListener;
+use Althingi\ElasticSearchActions\ElasticSearchEventsListener;
+use Althingi\Events\EventsListener;
 use Elasticsearch\Client as ElasticsearchClient;
 use Elasticsearch\ClientBuilder as ElasticsearchClientBuilder;
 use Zend\Cache\Storage\StorageInterface;
@@ -40,7 +41,7 @@ return [
         Congressman::class => function (ServiceManager $sm) {
             return (new Congressman())
                 ->setDriver($sm->get(PDO::class))
-                ->setEventManager($sm->get(ServiceEventsListener::class));
+                ->setEventManager($sm->get(EventsListener::class));
         },
         Committee::class => function (ServiceManager $sm) {
             return (new Committee())
@@ -82,7 +83,7 @@ return [
             $sm->get(LoggerInterface::class);
             return (new Issue())
                 ->setDriver($sm->get(PDO::class))
-                ->setEventManager($sm->get(ServiceEventsListener::class));
+                ->setEventManager($sm->get(EventsListener::class));
         },
         IssueCategory::class => function (ServiceManager $sm) {
             return (new IssueCategory())
@@ -91,7 +92,7 @@ return [
         Party::class => function (ServiceManager $sm) {
             return (new Party())
                 ->setDriver($sm->get(PDO::class))
-                ->setEventManager($sm->get(ServiceEventsListener::class));
+                ->setEventManager($sm->get(EventsListener::class));
         },
         President::class => function (ServiceManager $sm) {
             return (new President())
@@ -120,7 +121,7 @@ return [
         Speech::class => function (ServiceManager $sm) {
             return (new Speech())
                 ->setDriver($sm->get(PDO::class))
-                ->setEventManager($sm->get(ServiceEventsListener::class));
+                ->setEventManager($sm->get(EventsListener::class));
         },
         SuperCategory::class => function (ServiceManager $sm) {
             return (new SuperCategory())
@@ -182,9 +183,9 @@ return [
             }
         },
 
-        ServiceEventsListener::class => function (ServiceManager $sm) {
+        EventsListener::class => function (ServiceManager $sm) {
             $eventManager = (new \Zend\EventManager\EventManager());
-            $serviceEventsListener = (new ServiceEventsListener())
+            $serviceEventsListener = (new ElasticSearchEventsListener())
                 ->setElasticSearchClient($sm->get(ElasticsearchClient::class))
                 ->setLogger($sm->get(LoggerInterface::class));
             $serviceEventsListener->attach($eventManager);

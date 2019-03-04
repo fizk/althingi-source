@@ -3,7 +3,7 @@
 namespace AlthingiTest\Service;
 
 use Althingi\Service\Speech;
-use Althingi\ServiceEvents\ServiceEventsListener;
+use Althingi\ElasticSearchActions\ElasticSearchEventsListener;
 use AlthingiTest\DatabaseConnection;
 use AlthingiTest\ElasticBlackHoleClient;
 use PHPUnit\Framework\TestCase;
@@ -176,7 +176,7 @@ class SpeechTest extends TestCase
 
     public function testCreate()
     {
-        $serviceEventListener = (new ServiceEventsListener())
+        $serviceEventListener = (new ElasticSearchEventsListener())
             ->setElasticSearchClient(new ElasticBlackHoleClient())
             ->setLogger(new NullLogger());
         $eventManager = new EventManager();
@@ -210,7 +210,13 @@ class SpeechTest extends TestCase
             ],
         ])->getTable('Speech');
         $actualTable = $this->getConnection()
-            ->createQueryTable('Speech', 'SELECT * FROM Speech where `assembly_id` = 3');
+            ->createQueryTable(
+                'Speech',
+                'SELECT 
+                  speech_id, plenary_id, assembly_id, issue_id, category, 
+                  congressman_id, congressman_type, `from`, `to`, `text`, type, iteration, word_count 
+                  FROM Speech where `assembly_id` = 3'
+            );
 
         $speechService = new Speech();
         $speechService->setDriver($this->pdo);
@@ -222,7 +228,7 @@ class SpeechTest extends TestCase
 
     public function testSave()
     {
-        $serviceEventListener = (new ServiceEventsListener())
+        $serviceEventListener = (new ElasticSearchEventsListener())
             ->setElasticSearchClient(new ElasticBlackHoleClient())
             ->setLogger(new NullLogger());
         $eventManager = new EventManager();
@@ -256,7 +262,13 @@ class SpeechTest extends TestCase
             ],
         ])->getTable('Speech');
         $actualTable = $this->getConnection()
-            ->createQueryTable('Speech', 'SELECT * FROM Speech where `assembly_id` = 3');
+            ->createQueryTable(
+                'Speech',
+                'SELECT 
+                  speech_id, plenary_id, assembly_id, issue_id, category, 
+                  congressman_id, congressman_type, `from`, `to`, `text`, type, iteration, word_count 
+                  FROM Speech where `assembly_id` = 3'
+            );
 
         $speechService = new Speech();
         $speechService->setDriver($this->pdo);
@@ -268,7 +280,7 @@ class SpeechTest extends TestCase
 
     public function testUpdate()
     {
-        $serviceEventListener = (new ServiceEventsListener())
+        $serviceEventListener = (new ElasticSearchEventsListener())
             ->setElasticSearchClient(new ElasticBlackHoleClient())
             ->setLogger(new NullLogger());
         $eventManager = new EventManager();
@@ -302,7 +314,13 @@ class SpeechTest extends TestCase
             ],
         ])->getTable('Speech');
         $actualTable = $this->getConnection()
-            ->createQueryTable('Speech', 'SELECT * FROM Speech where `speech_id` = "id--00001"');
+            ->createQueryTable(
+                'Speech',
+                'SELECT 
+                  speech_id, plenary_id, assembly_id, issue_id, category, 
+                  congressman_id, congressman_type, `from`, `to`, `text`, type, iteration, word_count  
+                FROM Speech where `speech_id` = "id--00001"'
+            );
 
         $speechService = new Speech();
         $speechService->setDriver($this->pdo);

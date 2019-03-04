@@ -177,7 +177,8 @@ class CongressmanTest extends TestCase
                 ['congressman_id' => 5, 'name' => 'name5', 'birth' => '2000-01-01', 'death' => null],
             ],
         ])->getTable('Congressman');
-        $actualTable = $this->getConnection()->createQueryTable('Congressman', 'SELECT * FROM Congressman');
+        $actualTable = $this->getConnection()
+            ->createQueryTable('Congressman', 'SELECT congressman_id, name, birth, death FROM Congressman');
 
         $congressmanService = new Congressman();
         $congressmanService->setDriver($this->pdo);
@@ -202,7 +203,8 @@ class CongressmanTest extends TestCase
                 ['congressman_id' => 5, 'name' => 'name5', 'birth' => '2000-01-01', 'death' => null],
             ],
         ])->getTable('Congressman');
-        $actualTable = $this->getConnection()->createQueryTable('Congressman', 'SELECT * FROM Congressman');
+        $actualTable = $this->getConnection()
+            ->createQueryTable('Congressman', 'SELECT congressman_id, name, birth, death FROM Congressman');
 
         $congressmanService = new Congressman();
         $congressmanService->setDriver($this->pdo);
@@ -227,7 +229,8 @@ class CongressmanTest extends TestCase
                 ['congressman_id' => 4, 'name' => 'name4', 'birth' => '2000-01-01', 'death' => null],
             ],
         ])->getTable('Congressman');
-        $actualTable = $this->getConnection()->createQueryTable('Congressman', 'SELECT * FROM Congressman');
+        $actualTable = $this->getConnection()
+            ->createQueryTable('Congressman', 'SELECT congressman_id, name, birth, death FROM Congressman');
 
         $congressmanService = new Congressman();
         $congressmanService->setDriver($this->pdo);
@@ -246,7 +249,8 @@ class CongressmanTest extends TestCase
                 ['congressman_id' => 4, 'name' => 'name4', 'birth' => '2000-01-01', 'death' => null],
             ],
         ])->getTable('Congressman');
-        $actualTable = $this->getConnection()->createQueryTable('Congressman', 'SELECT * FROM Congressman');
+        $actualTable = $this->getConnection()
+            ->createQueryTable('Congressman', 'SELECT congressman_id, name, birth, death FROM Congressman');
 
         $congressmanService = new Congressman();
         $congressmanService->setDriver($this->pdo);

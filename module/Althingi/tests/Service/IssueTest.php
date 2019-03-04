@@ -2,10 +2,9 @@
 
 namespace AlthingiTest\Service;
 
-use Althingi\Model\AssemblyStatus;
 use Althingi\Model\IssueTypeStatus;
 use Althingi\Service\Issue;
-use Althingi\ServiceEvents\ServiceEventsListener;
+use Althingi\ElasticSearchActions\ElasticSearchEventsListener;
 use AlthingiTest\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\Issue as IssueModel;
@@ -181,7 +180,7 @@ class IssueTest extends TestCase
 
     public function testCreate()
     {
-        $serviceEventListener = (new ServiceEventsListener())
+        $serviceEventListener = (new ElasticSearchEventsListener())
                 ->setElasticSearchClient(new ElasticBlackHoleClient())
                 ->setLogger(new NullLogger());
         $eventManager = new EventManager();
@@ -221,7 +220,7 @@ class IssueTest extends TestCase
 
     public function testSave()
     {
-        $serviceEventListener = (new ServiceEventsListener())
+        $serviceEventListener = (new ElasticSearchEventsListener())
             ->setElasticSearchClient(new ElasticBlackHoleClient())
             ->setLogger(new NullLogger());
 
@@ -263,7 +262,7 @@ class IssueTest extends TestCase
 
     public function testUpdate()
     {
-        $serviceEventListener = (new ServiceEventsListener())
+        $serviceEventListener = (new ElasticSearchEventsListener())
             ->setElasticSearchClient(new ElasticBlackHoleClient())
             ->setLogger(new NullLogger());
 
