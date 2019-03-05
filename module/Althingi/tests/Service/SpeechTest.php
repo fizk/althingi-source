@@ -210,13 +210,7 @@ class SpeechTest extends TestCase
             ],
         ])->getTable('Speech');
         $actualTable = $this->getConnection()
-            ->createQueryTable(
-                'Speech',
-                'SELECT 
-                  speech_id, plenary_id, assembly_id, issue_id, category, 
-                  congressman_id, congressman_type, `from`, `to`, `text`, type, iteration, word_count 
-                  FROM Speech where `assembly_id` = 3'
-            );
+            ->createQueryTable('Speech', 'SELECT *FROM Speech where `assembly_id` = 3');
 
         $speechService = new Speech();
         $speechService->setDriver($this->pdo);
@@ -262,13 +256,7 @@ class SpeechTest extends TestCase
             ],
         ])->getTable('Speech');
         $actualTable = $this->getConnection()
-            ->createQueryTable(
-                'Speech',
-                'SELECT 
-                  speech_id, plenary_id, assembly_id, issue_id, category, 
-                  congressman_id, congressman_type, `from`, `to`, `text`, type, iteration, word_count 
-                  FROM Speech where `assembly_id` = 3'
-            );
+            ->createQueryTable('Speech', 'SELECT * FROM Speech where `assembly_id` = 3');
 
         $speechService = new Speech();
         $speechService->setDriver($this->pdo);
@@ -314,13 +302,7 @@ class SpeechTest extends TestCase
             ],
         ])->getTable('Speech');
         $actualTable = $this->getConnection()
-            ->createQueryTable(
-                'Speech',
-                'SELECT 
-                  speech_id, plenary_id, assembly_id, issue_id, category, 
-                  congressman_id, congressman_type, `from`, `to`, `text`, type, iteration, word_count  
-                FROM Speech where `speech_id` = "id--00001"'
-            );
+            ->createQueryTable('Speech', 'SELECT *  FROM Speech where `speech_id` = "id--00001"');
 
         $speechService = new Speech();
         $speechService->setDriver($this->pdo);
