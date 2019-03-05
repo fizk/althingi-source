@@ -416,9 +416,8 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
         $data->setWordCount(str_word_count($data->getText()));
         $statement = $this->getDriver()->prepare($this->toSaveString('Speech', $data));
         $statement->execute($this->toSqlValues($data));
-        $rowCount = $statement->rowCount();
 
-        switch ($rowCount) {
+        switch ($statement->rowCount()) {
             case 1:
                 $this->getEventManager()
                     ->trigger(AddEvent::class, new AddEvent(new IndexableSpeechPresenter($data)));
@@ -428,7 +427,7 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
                     ->trigger(UpdateEvent::class, new UpdateEvent(new IndexableSpeechPresenter($data)));
                 break;
         }
-        return $rowCount;
+        return $statement->rowCount();
     }
 
     /**

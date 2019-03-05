@@ -572,9 +572,8 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
     {
         $statement = $this->getDriver()->prepare($this->toSaveString('Issue', $data));
         $statement->execute($this->toSqlValues($data));
-        $rowCount = $statement->rowCount();
 
-        switch ($rowCount) {
+        switch ($statement->rowCount()) {
             case 1:
                 $this->getEventManager()
                     ->trigger(AddEvent::class, new AddEvent(new IndexableIssuePresenter($data)));
@@ -584,7 +583,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
                     ->trigger(UpdateEvent::class, new UpdateEvent(new IndexableIssuePresenter($data)));
                 break;
         }
-        return $rowCount;
+        return $statement->rowCount();
     }
 
     /**

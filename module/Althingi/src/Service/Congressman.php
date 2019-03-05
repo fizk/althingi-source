@@ -378,9 +378,8 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
     {
         $statement = $this->getDriver()->prepare($this->toSaveString('Congressman', $data));
         $statement->execute($this->toSqlValues($data));
-        $rowCount = $statement->rowCount();
 
-        switch ($rowCount) {
+        switch ($statement->rowCount()) {
             case 1:
                 $this->getEventManager()
                     ->trigger(AddEvent::class, new AddEvent(new IndexableCongressmanPresenter($data)));
@@ -390,7 +389,7 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
                     ->trigger(UpdateEvent::class, new UpdateEvent(new IndexableCongressmanPresenter($data)));
                 break;
         }
-        return $rowCount;
+        return $statement->rowCount();
     }
 
     /**
