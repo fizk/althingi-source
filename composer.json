@@ -35,7 +35,8 @@
         "zeptech/annotations": "^1.1",
         "yohang/finite": "^1.1",
         "monolog/monolog": "^1.23",
-        "bramus/monolog-colored-line-formatter": "^2.0"
+        "bramus/monolog-colored-line-formatter": "^2.0",
+        "php-amqplib/php-amqplib": "^2.8"
     },
   "autoload": {
     "psr-4": {

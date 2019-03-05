@@ -414,15 +414,21 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
     public function save(SpeechModel $data)
     {
         $data->setWordCount(str_word_count($data->getText()));
-        $statement = $this->getDriver()->prepare(
-            $this->toSaveString('Speech', $data)
-        );
+        $statement = $this->getDriver()->prepare($this->toSaveString('Speech', $data));
         $statement->execute($this->toSqlValues($data));
+        $rowCount = $statement->rowCount();
 
-        $this->getEventManager()
-            ->trigger(AddEvent::class, new AddEvent(new IndexableSpeechPresenter($data)));
-
-        return $statement->rowCount();
+        switch ($rowCount) {
+            case 1:
+                $this->getEventManager()
+                    ->trigger(AddEvent::class, new AddEvent(new IndexableSpeechPresenter($data)));
+                break;
+            case 2:
+                $this->getEventManager()
+                    ->trigger(UpdateEvent::class, new UpdateEvent(new IndexableSpeechPresenter($data)));
+                break;
+        }
+        return $rowCount;
     }
 
     /**
@@ -439,8 +445,10 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
-        $this->getEventManager()
-            ->trigger(UpdateEvent::class, new UpdateEvent(new IndexableSpeechPresenter($data)));
+        if ($statement->rowCount() > 0) {
+            $this->getEventManager()
+                ->trigger(UpdateEvent::class, new UpdateEvent(new IndexableSpeechPresenter($data)));
+        }
 
         return $statement->rowCount();
     }

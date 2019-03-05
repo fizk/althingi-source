@@ -376,14 +376,21 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
      */
     public function save(CongressmanModel $data): int
     {
-        $statement = $this->getDriver()->prepare(
-            $this->toSaveString('Congressman', $data)
-        );
+        $statement = $this->getDriver()->prepare($this->toSaveString('Congressman', $data));
         $statement->execute($this->toSqlValues($data));
+        $rowCount = $statement->rowCount();
 
-        $this->getEventManager()
-            ->trigger(AddEvent::class, new AddEvent(new IndexableCongressmanPresenter($data)));
-        return $statement->rowCount();
+        switch ($rowCount) {
+            case 1:
+                $this->getEventManager()
+                    ->trigger(AddEvent::class, new AddEvent(new IndexableCongressmanPresenter($data)));
+                break;
+            case 2:
+                $this->getEventManager()
+                    ->trigger(UpdateEvent::class, new UpdateEvent(new IndexableCongressmanPresenter($data)));
+                break;
+        }
+        return $rowCount;
     }
 
     /**
@@ -400,8 +407,10 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
-        $this->getEventManager()
-            ->trigger(UpdateEvent::class, new UpdateEvent(new IndexableCongressmanPresenter($data)));
+        if ($statement->rowCount() > 0) {
+            $this->getEventManager()
+                ->trigger(UpdateEvent::class, new UpdateEvent(new IndexableCongressmanPresenter($data)));
+        }
 
         return $statement->rowCount();
     }

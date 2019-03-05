@@ -28,7 +28,7 @@ This application is configured via environment variables:
 | DB_NAME_TEST        | althingi_test                    | <string>                              |
 | DB_SETUP            | false                            | true / false                          |
 | SEARCH              | elasticsearch                    | elasticsearch / none                  |
-| LOG_PATH            |                                  | <string>                              | Save logs to disk
+| LOG_PATH            |                                  | <string>                              | Save logs to disk or php://stdout
 | LOG_FORMAT          | none                             | logstash / json / line / color / none |
 | CACHE_TYPE          | none                             | file / memory / none                  |
 | CACHE_HOST          |                                  | <string>                              |
@@ -38,6 +38,12 @@ This application is configured via environment variables:
 | ES_PORT             | 9200                             | <number>                              |
 | ES_USER             | elastic                          | <string>                              |
 | ES_PASSWORD         | changeme                         | <string>                              |
+| QUEUE               | none                             | rabbitmq / none                       |
+| QUEUE_HOST          | localhost                        | <string>                              |
+| QUEUE_PORT          | 5672                             | <string>                              |
+| QUEUE_USER          | guest                            | <string>                              |
+| QUEUE_PASSWORD      | guest                            | <string>                              |
+| QUEUE_VHOST         | /                                | <string>                              |
 
 
 ## Database

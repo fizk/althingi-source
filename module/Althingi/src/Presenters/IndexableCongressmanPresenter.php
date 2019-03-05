@@ -7,6 +7,9 @@ use Zend\Hydrator\HydratorInterface;
 
 class IndexableCongressmanPresenter implements IndexablePresenter
 {
+    const INDEX = 'althingi_model_congressman';
+    const TYPE = 'congressman';
+
     /** @var  \Zend\Hydrator\HydratorInterface; */
     private $hydrator;
 
@@ -48,12 +51,12 @@ class IndexableCongressmanPresenter implements IndexablePresenter
 
     public function getType(): string
     {
-        return strtolower(str_replace('\\', '_', get_class($this->model)));
+        return self::TYPE;
     }
 
     public function getIndex(): string
     {
-        return strtolower(str_replace('\\', '_', get_class($this->model)));
+        return self::INDEX;
     }
 
     public function getData(): array

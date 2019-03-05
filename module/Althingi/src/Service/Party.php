@@ -234,15 +234,21 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
      */
     public function save(PartyModel $data): int
     {
-        $statement = $this->getDriver()->prepare(
-            $this->toSaveString('Party', $data)
-        );
+        $statement = $this->getDriver()->prepare($this->toSaveString('Party', $data));
         $statement->execute($this->toSqlValues($data));
+        $rowCount = $statement->rowCount();
 
-        $this->getEventManager()
-            ->trigger(AddEvent::class, new AddEvent(new IndexablePartyPresenter($data)));
-
-        return $statement->rowCount();
+        switch ($rowCount) {
+            case 1:
+                $this->getEventManager()
+                    ->trigger(AddEvent::class, new AddEvent(new IndexablePartyPresenter($data)));
+                break;
+            case 2:
+                $this->getEventManager()
+                    ->trigger(UpdateEvent::class, new UpdateEvent(new IndexablePartyPresenter($data)));
+                break;
+        }
+        return $rowCount;
     }
 
     /**
@@ -256,8 +262,10 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
-        $this->getEventManager()
-            ->trigger(UpdateEvent::class, new UpdateEvent(new IndexablePartyPresenter($data)));
+        if ($statement->rowCount() > 0) {
+            $this->getEventManager()
+                ->trigger(UpdateEvent::class, new UpdateEvent(new IndexablePartyPresenter($data)));
+        }
 
         return $statement->rowCount();
     }

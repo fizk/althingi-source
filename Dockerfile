@@ -11,6 +11,8 @@ RUN apt-get update \
  && apt-get install -y git zlib1g-dev vim \
  && docker-php-ext-install zip \
  && docker-php-ext-install pdo_mysql \
+ && docker-php-ext-install bcmath \
+ && docker-php-ext-install sockets \
  && a2enmod rewrite \
  && sed -i 's!/var/www/html!/var/www/public!g' /etc/apache2/apache2.conf \
  && sed -i 's!/var/www/html!/var/www/public!g' /etc/apache2/sites-available/000-default.conf \
@@ -51,6 +53,8 @@ ENV CACHE_TYPE none
 #    | file (path ./data/cache) | memory | none
 ENV CACHE_HOST localhost
 ENV CACHE_PORT 6379
+
+ENV QUEUE RabbitMQ
 
 # with x-debug version
 #RUN pecl install -o -f redis \

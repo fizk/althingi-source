@@ -8,7 +8,7 @@ use Zend\Hydrator\HydratorInterface;
 class IndexableSpeechPresenter implements IndexablePresenter
 {
     const INDEX = 'althingi_model_speech';
-    const TYPE = 'althingi_model_speech';
+    const TYPE = 'speech';
 
     /** @var  \Zend\Hydrator\HydratorInterface; */
     private $hydrator;

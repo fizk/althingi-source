@@ -27,10 +27,12 @@ use Althingi\Service\SearchIssue;
 use Zend\ServiceManager\ServiceManager;
 use Psr\Log\LoggerInterface;
 use Althingi\ElasticSearchActions\ElasticSearchEventsListener;
+use Althingi\QueueActions\QueueEventsListener;
 use Althingi\Events\EventsListener;
 use Elasticsearch\Client as ElasticsearchClient;
 use Elasticsearch\ClientBuilder as ElasticsearchClientBuilder;
 use Zend\Cache\Storage\StorageInterface;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
 
 return [
     'factories' => [
@@ -185,10 +187,16 @@ return [
 
         EventsListener::class => function (ServiceManager $sm) {
             $eventManager = (new \Zend\EventManager\EventManager());
-            $serviceEventsListener = (new ElasticSearchEventsListener())
+
+            $elasticSearchEventsListener = (new ElasticSearchEventsListener())
                 ->setElasticSearchClient($sm->get(ElasticsearchClient::class))
                 ->setLogger($sm->get(LoggerInterface::class));
-            $serviceEventsListener->attach($eventManager);
+            $elasticSearchEventsListener->attach($eventManager);
+
+            $queueEventsListener = (new QueueEventsListener())
+                ->setLogger($sm->get(LoggerInterface::class))
+                ->setQueue($sm->get(AMQPStreamConnection::class));
+            $queueEventsListener->attach($eventManager);
 
             return $eventManager;
         },
@@ -247,6 +255,28 @@ return [
                     break;
                 default:
                     return new \Zend\Cache\Storage\Adapter\BlackHole();
+                    break;
+            }
+        },
+
+        AMQPStreamConnection::class => function (ServiceManager $sm) {
+            $queueAdapter = getenv('QUEUE');
+            switch (strtolower($queueAdapter)) {
+                case 'rabbitmq':
+                    return AMQPStreamConnection::create_connection(
+                        [
+                            [
+                                'host' => getenv('QUEUE_HOST') ?: 'localhost',
+                                'port' => getenv('QUEUE_PORT') ?: 5672,
+                                'user' => getenv('QUEUE_USER') ?: 'guest',
+                                'password' => getenv('QUEUE_PASSWORD') ?: 'guest',
+                                'vhost' => getenv('QUEUE_VHOST') ?: '/'
+                            ]
+                        ]
+                    );
+                    break;
+                default:
+                    return new \Althingi\Utils\RabbitMQBlackHoleClient();
                     break;
             }
         },

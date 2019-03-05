@@ -570,15 +570,21 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
      */
     public function save(IssueModel $data): int
     {
-        $statement = $this->getDriver()->prepare(
-            $this->toSaveString('Issue', $data)
-        );
+        $statement = $this->getDriver()->prepare($this->toSaveString('Issue', $data));
         $statement->execute($this->toSqlValues($data));
+        $rowCount = $statement->rowCount();
 
-        $this->getEventManager()
-            ->trigger(AddEvent::class, new AddEvent(new IndexableIssuePresenter($data)));
-
-        return $statement->rowCount();
+        switch ($rowCount) {
+            case 1:
+                $this->getEventManager()
+                    ->trigger(AddEvent::class, new AddEvent(new IndexableIssuePresenter($data)));
+                break;
+            case 2:
+                $this->getEventManager()
+                    ->trigger(UpdateEvent::class, new UpdateEvent(new IndexableIssuePresenter($data)));
+                break;
+        }
+        return $rowCount;
     }
 
     /**
@@ -598,9 +604,10 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
-        $this->getEventManager()
-            ->trigger(UpdateEvent::class, new UpdateEvent(new IndexableIssuePresenter($data)));
-
+        if ($statement->rowCount() > 0) {
+            $this->getEventManager()
+                ->trigger(UpdateEvent::class, new UpdateEvent(new IndexableIssuePresenter($data)));
+        }
         return $statement->rowCount();
     }
 
