@@ -1,19 +1,19 @@
 <?php
 
-namespace Althingi\ServiceEvents;
+namespace Althingi\Events;
 
 use Althingi\Presenters\IndexablePresenter;
 use Althingi\Presenters\IndexablePresenterAwareInterface;
 use Zend\EventManager\Event;
 
-class UpdateEvent extends Event implements IndexablePresenterAwareInterface
+class AddEvent extends Event implements IndexablePresenterAwareInterface
 {
     /** @var  \Althingi\Presenters\IndexablePresenter */
     private $presenter;
 
     public function __construct(IndexablePresenter $presenter)
     {
-        parent::__construct('update', $this);
+        parent::__construct('add', $this);
         $this->setPresenter($presenter);
     }
 

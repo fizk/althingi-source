@@ -24,7 +24,7 @@ class Delete
      */
     public function __invoke(\Zend\EventManager\Event $event)
     {
-        /** @var  $target \Althingi\ServiceEvents\DeleteEvent */
+        /** @var  $target \Althingi\Events\DeleteEvent */
         $target = $event->getTarget();
         try {
             $presenter = $target->getPresenter();

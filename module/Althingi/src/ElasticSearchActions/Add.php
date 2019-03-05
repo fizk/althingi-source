@@ -24,7 +24,7 @@ class Add
      */
     public function __invoke(\Zend\EventManager\Event $event): void
     {
-        /** @var  $target \Althingi\ServiceEvents\AddEvent */
+        /** @var  $target \Althingi\Events\AddEvent */
         $target = $event->getTarget();
         try {
             $presenter = $target->getPresenter();
