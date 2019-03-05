@@ -29,6 +29,7 @@ class RabbitMQBlackHoleClient extends AMQPStreamConnection
         return null;
     }
 
+    // phpcs:ignore
     public function set_close_on_destruct($close = true)
     {
     }
@@ -37,14 +38,17 @@ class RabbitMQBlackHoleClient extends AMQPStreamConnection
     {
     }
 
+    // phpcs:ignore
     public function get_free_channel_id()
     {
     }
 
+    // phpcs:ignore
     public function send_content($channel, $class_id, $weight, $body_size, $packed_properties, $body, $pkt = null)
     {
     }
 
+    // phpcs:ignore
     public function prepare_content($channel, $class_id, $weight, $body_size, $packed_properties, $body, $pkt = null)
     {
         return new AMQPWriter();
@@ -55,7 +59,7 @@ class RabbitMQBlackHoleClient extends AMQPStreamConnection
         return new AMQPChannel(null/*$this->connection*/, $channel_id);
     }
 
-    public function close($reply_code = 0, $reply_text = '', $method_sig = array(0, 0))
+    public function close($reply_code = 0, $reply_text = '', $method_sig = [0, 0])
     {
         return null;
     }
@@ -69,11 +73,11 @@ class RabbitMQBlackHoleClient extends AMQPStreamConnection
         return $this->io;
     }
 
-    public function set_connection_block_handler($callback)
+    public function set_connection_block_handler($callback) // phpcs:ignore
     {
     }
 
-    public function set_connection_unblock_handler($callback)
+    public function set_connection_unblock_handler($callback) // phpcs:ignore
     {
     }
 
@@ -97,10 +101,12 @@ class RabbitMQBlackHoleClient extends AMQPStreamConnection
         return self::$LIBRARY_PROPERTIES;
     }
 
-    public static function create_connection($hosts, $options = array())
+    // phpcs:ignore
+    public static function create_connection($hosts, $options = [])
     {
     }
 
+    // phpcs:ignore
     public static function validate_host($host)
     {
     }
