@@ -3,7 +3,7 @@
 namespace AlthingiTest\Service;
 
 use Althingi\Service\Speech;
-use Althingi\ServiceEvents\ServiceEventsListener;
+use Althingi\ElasticSearchActions\ElasticSearchEventsListener;
 use AlthingiTest\DatabaseConnection;
 use AlthingiTest\ElasticBlackHoleClient;
 use PHPUnit\Framework\TestCase;
@@ -176,7 +176,7 @@ class SpeechTest extends TestCase
 
     public function testCreate()
     {
-        $serviceEventListener = (new ServiceEventsListener())
+        $serviceEventListener = (new ElasticSearchEventsListener())
             ->setElasticSearchClient(new ElasticBlackHoleClient())
             ->setLogger(new NullLogger());
         $eventManager = new EventManager();
@@ -222,7 +222,7 @@ class SpeechTest extends TestCase
 
     public function testSave()
     {
-        $serviceEventListener = (new ServiceEventsListener())
+        $serviceEventListener = (new ElasticSearchEventsListener())
             ->setElasticSearchClient(new ElasticBlackHoleClient())
             ->setLogger(new NullLogger());
         $eventManager = new EventManager();
@@ -268,7 +268,7 @@ class SpeechTest extends TestCase
 
     public function testUpdate()
     {
-        $serviceEventListener = (new ServiceEventsListener())
+        $serviceEventListener = (new ElasticSearchEventsListener())
             ->setElasticSearchClient(new ElasticBlackHoleClient())
             ->setLogger(new NullLogger());
         $eventManager = new EventManager();

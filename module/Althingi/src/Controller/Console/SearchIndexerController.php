@@ -11,7 +11,7 @@ use Althingi\Presenters\IndexableIssuePresenter;
 use Althingi\Presenters\IndexableSpeechPresenter;
 use Althingi\Service\Issue;
 use Althingi\Service\Speech;
-use Althingi\ServiceEvents\AddEvent;
+use Althingi\Events\AddEvent;
 use Elasticsearch\Client;
 use Psr\Log\LoggerInterface;
 use Zend\Mvc\Controller\AbstractActionController;
