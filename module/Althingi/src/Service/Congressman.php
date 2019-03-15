@@ -366,7 +366,11 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
         $statement->execute($this->toSqlValues($data));
 
         $this->getEventManager()
-            ->trigger(AddEvent::class, new AddEvent(new IndexableCongressmanPresenter($data)));
+            ->trigger(
+                AddEvent::class,
+                new AddEvent(new IndexableCongressmanPresenter($data)),
+                ['rows' => $statement->rowCount()]
+            );
         return $this->getDriver()->lastInsertId();
     }
 
@@ -382,11 +386,20 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
         switch ($statement->rowCount()) {
             case 1:
                 $this->getEventManager()
-                    ->trigger(AddEvent::class, new AddEvent(new IndexableCongressmanPresenter($data)));
+                    ->trigger(
+                        AddEvent::class,
+                        new AddEvent(new IndexableCongressmanPresenter($data)),
+                        ['rows' => $statement->rowCount()]
+                    );
                 break;
+            case 0:
             case 2:
                 $this->getEventManager()
-                    ->trigger(UpdateEvent::class, new UpdateEvent(new IndexableCongressmanPresenter($data)));
+                    ->trigger(
+                        UpdateEvent::class,
+                        new UpdateEvent(new IndexableCongressmanPresenter($data)),
+                        ['rows' => $statement->rowCount()]
+                    );
                 break;
         }
         return $statement->rowCount();
@@ -406,10 +419,12 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
-        if ($statement->rowCount() > 0) {
-            $this->getEventManager()
-                ->trigger(UpdateEvent::class, new UpdateEvent(new IndexableCongressmanPresenter($data)));
-        }
+        $this->getEventManager()
+            ->trigger(
+                UpdateEvent::class,
+                new UpdateEvent(new IndexableCongressmanPresenter($data)),
+                ['rows' => $statement->rowCount()]
+            );
 
         return $statement->rowCount();
     }

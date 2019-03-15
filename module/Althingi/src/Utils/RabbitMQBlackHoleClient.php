@@ -1,5 +1,4 @@
 <?php
-
 namespace Althingi\Utils;
 
 use PhpAmqpLib\Channel\AMQPChannel;
@@ -56,7 +55,7 @@ class RabbitMQBlackHoleClient extends AMQPStreamConnection
 
     public function channel($channel_id = null)
     {
-        return new AMQPChannel(null/*$this->connection*/, $channel_id);
+        return new RabbitMQChannelBlackHoleClient(null);
     }
 
     public function close($reply_code = 0, $reply_text = '', $method_sig = [0, 0])

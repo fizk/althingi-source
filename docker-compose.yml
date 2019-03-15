@@ -28,6 +28,14 @@ services:
       - DB_SETUP=false
       - CACHE_TYPE=none
       - SEARCH=none
+      - LOG_PATH=none
+      - QUEUE=none
+      - QUEUE_FORCED=false
+    volumes:
+      - ./auto/:/usr/src/auto
+      - ./config/:/usr/src/config
+      - ./module/:/usr/src/module
+      - ./public/:/usr/src/public
     command: bash -c "/usr/src/auto/run-test.sh"
 
   database:

@@ -1,62 +1,67 @@
 <?php
 namespace Althingi;
 
-use Althingi\Controller\IndexController;
-use Althingi\Controller\AssemblyController;
-use Althingi\Controller\CongressmanController;
-use Althingi\Controller\SessionController;
-use Althingi\Controller\CongressmanSessionController;
-use Althingi\Controller\PartyController;
-use Althingi\Controller\ConstituencyController;
-use Althingi\Controller\PlenaryController;
-use Althingi\Controller\PlenaryAgendaController;
-use Althingi\Controller\IssueController;
-use Althingi\Controller\UndocumentedIssueController;
-use Althingi\Controller\SpeechController;
-use Althingi\Controller\VoteController;
-use Althingi\Controller\VoteItemController;
-use Althingi\Controller\CongressmanIssueController;
-use Althingi\Controller\CongressmanDocumentController;
-use Althingi\Controller\DocumentController;
-use Althingi\Controller\CommitteeController;
-use Althingi\Controller\CabinetController;
-use Althingi\Controller\PresidentController;
-use Althingi\Controller\PresidentAssemblyController;
-use Althingi\Controller\SuperCategoryController;
-use Althingi\Controller\CategoryController;
-use Althingi\Controller\IssueCategoryController;
-use Althingi\Controller\CommitteeMeetingController;
-use Althingi\Controller\CommitteeMeetingAgendaController;
-use Althingi\Controller\AssemblyCommitteeController;
-use Althingi\Controller\HighlightController;
+use Althingi\Controller\{
+    IndexController,
+    AssemblyController,
+    CongressmanController,
+    SessionController,
+    CongressmanSessionController,
+    PartyController,
+    ConstituencyController,
+    PlenaryController,
+    PlenaryAgendaController,
+    IssueController,
+    UndocumentedIssueController,
+    SpeechController,
+    VoteController,
+    VoteItemController,
+    CongressmanIssueController,
+    CongressmanDocumentController,
+    DocumentController,
+    CommitteeController,
+    CabinetController,
+    PresidentController,
+    PresidentAssemblyController,
+    SuperCategoryController,
+    CategoryController,
+    IssueCategoryController,
+    CommitteeMeetingController,
+    CommitteeMeetingAgendaController,
+    AssemblyCommitteeController,
+    HighlightController,
+    Console\SearchIndexerController as ConsoleSearchIndexerController,
+    Console\DocumentApiController as ConsoleDocumentApiController,
+    Console\IssueStatusController as ConsoleIssueStatusController,
+    Aggregate
+};
 
-use Althingi\Controller\Console\SearchIndexerController as ConsoleSearchIndexerController;
-use Althingi\Controller\Console\DocumentApiController as ConsoleDocumentApiController;
-use Althingi\Controller\Console\IssueStatusController as ConsoleIssueStatusController;
-use Althingi\Service\Assembly;
-use Althingi\Service\Cabinet;
-use Althingi\Service\Category;
-use Althingi\Service\Committee;
-use Althingi\Service\CommitteeMeeting;
-use Althingi\Service\CommitteeMeetingAgenda;
-use Althingi\Service\Congressman;
-use Althingi\Service\CongressmanDocument;
-use Althingi\Service\Constituency;
-use Althingi\Service\Document;
-use Althingi\Service\Election;
-use Althingi\Service\Issue;
-use Althingi\Service\IssueCategory;
-use Althingi\Service\Party;
-use Althingi\Service\Plenary;
-use Althingi\Service\PlenaryAgenda;
-use Althingi\Service\President;
-use Althingi\Service\SearchIssue;
-use Althingi\Service\SearchSpeech;
-use Althingi\Service\Session;
-use Althingi\Service\Speech;
-use Althingi\Service\SuperCategory;
-use Althingi\Service\Vote;
-use Althingi\Service\VoteItem;
+use Althingi\Service\{
+    Assembly,
+    Cabinet,
+    Category,
+    Committee,
+    CommitteeMeeting,
+    CommitteeMeetingAgenda,
+    Congressman,
+    CongressmanDocument,
+    Constituency,
+    Document,
+    Election,
+    Issue,
+    IssueCategory,
+    Party,
+    Plenary,
+    PlenaryAgenda,
+    President,
+    SearchIssue,
+    SearchSpeech,
+    Session,
+    Speech,
+    SuperCategory,
+    Vote,
+    VoteItem
+};
 
 use Zend\Router\Http\Literal;
 use Zend\Router\Http\Segment;
@@ -557,7 +562,116 @@ return [
                         ],
                     ]
                 ]
-            ]
+            ],
+            'samantekt' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route'    => '/samantekt',
+                    'defaults' => [
+                        'controller' => IndexController::class,
+                    ],
+                ],
+                'may_terminate' => true,
+                'child_routes' => [
+                    'thingmal' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route'    => '/loggjafarthing/:assembly_id/thingmal[/:issue_id]',
+                            'constraints' => [
+                                'issue_id' => '[0-9]+',
+                            ],
+                            'defaults' => [
+                                'controller' => Aggregate\DocumentController::class, //todo
+                                'identifier' => 'document_id'
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'ferill' => [
+                                'type' => Segment::class,
+                                'options' => [
+                                    'route'    => '/ferill',
+                                    'defaults' => [
+                                        'controller' => Aggregate\IssueController::class,
+                                        'action' => 'progress'
+                                    ],
+                                ],
+                            ],
+                            'thingskjalahopar' => [
+                                'type' => Segment::class,
+                                'options' => [
+                                    'route'    => '/thingskjalahopar',
+                                    'defaults' => [
+                                        'controller' => Aggregate\DocumentController::class,
+                                        'action' => 'document-types'
+                                    ],
+                                ],
+                            ],
+                            'thingskjol' => [
+                                'type' => Segment::class,
+                                'options' => [
+                                    'route'    => '/thingskjol[/:document_id]',
+                                    'constraints' => [
+                                        'document_id' => '[0-9]+',
+                                    ],
+                                    'defaults' => [
+                                        'controller' => Aggregate\DocumentController::class,
+                                        'identifier' => 'document_id'
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                                'child_routes' => [
+                                    'thingmenn' => [
+                                        'type' => Segment::class,
+                                        'options' => [
+                                            'route'    => '/thingmenn',
+                                            'defaults' => [
+                                                'controller' => Aggregate\DocumentController::class,
+                                                'action' => 'proponents'
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+
+
+                    'thingmenn' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route'    => '/thingmenn/:congressman_id',
+                            'defaults' => [
+                                'controller' => Aggregate\CongressmanController::class,
+                                'action' => 'get'
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'thingmenn-flokkar' => [
+                                'type' => Segment::class,
+                                'options' => [
+                                    'route'    => '/thingflokkar',
+                                    'defaults' => [
+                                        'controller' => Aggregate\CongressmanController::class,
+                                        'action' => 'party'
+                                    ],
+                                ],
+                            ],
+                            'thingmenn-kjordaemi' => [
+                                'type' => Segment::class,
+                                'options' => [
+                                    'route'    => '/kjordaemi',
+                                    'defaults' => [
+                                        'controller' => Aggregate\CongressmanController::class,
+                                        'action' => 'constituency'
+                                    ],
+                                ],
+                            ],
+                        ]
+                    ],
+                ]
+            ],
         ]
     ],
 
@@ -749,6 +863,21 @@ return [
                 return (new ConsoleIssueStatusController())
                     ->setIssueService($container->get(Issue::class));
             },
+            Aggregate\CongressmanController::class => function (ServiceManager $container) {
+                return (new Aggregate\CongressmanController())
+                    ->setPartyService($container->get(Party::class))
+                    ->setCongressmanService($container->get(Congressman::class))
+                    ->setConstituencyService($container->get(Constituency::class));
+            },
+            Aggregate\DocumentController::class => function (ServiceManager $container) {
+                return (new Aggregate\DocumentController())
+                    ->setDocumentService($container->get(Document::class))
+                    ->setCongressmanDocumentService($container->get(CongressmanDocument::class));
+            },
+            Aggregate\IssueController::class => function (ServiceManager $container) {
+                return (new Aggregate\IssueController())
+                    ->setIssueService($container->get(Issue::class));
+            }
         ],
     ],
 

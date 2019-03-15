@@ -14,10 +14,14 @@ class Add
     /** @var \PhpAmqpLib\Connection\AMQPStreamConnection */
     private $client;
 
-    public function __construct(AMQPStreamConnection $client, LoggerInterface $logger)
+    /** @var bool */
+    private $forced;
+
+    public function __construct(AMQPStreamConnection $client, LoggerInterface $logger, bool $isForced = false)
     {
         $this->logger = $logger;
         $this->client = $client;
+        $this->forced = $isForced;
     }
 
     /**
@@ -27,17 +31,24 @@ class Add
     {
         /** @var  $target \Althingi\Events\UpdateEvent */
         $target = $event->getTarget();
+        $params = $event->getParams();
 
-        $presenter = $target->getPresenter();
-        $channel = $this->client->channel();
+        if ($params['rows'] > 0 || $this->forced === true) {
+            $presenter = $target->getPresenter();
+            $channel = $this->client->channel();
 
-        $msg = new AMQPMessage(json_encode([
-            'id' => $presenter->getIdentifier(),
-            'body' => $presenter->getData(),
-        ]));
+            $msg = new AMQPMessage(json_encode([
+                'id' => $presenter->getIdentifier(),
+                'body' => $presenter->getData(),
+            ]));
 
-        $channel->basic_publish($msg, 'service', "{$presenter->getType()}.add");
+            $channel->basic_publish($msg, 'service', "{$presenter->getType()}.add");
 
-        $this->logger->info(print_r($event, true));
+            $this->logger->info('QUEUE', [
+                'service',
+                "{$presenter->getType()}.add",
+                $presenter->getIdentifier()
+            ]);
+        }
     }
 }

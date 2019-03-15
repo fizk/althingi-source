@@ -3,11 +3,17 @@
 namespace Althingi\Service;
 
 use Althingi\Lib\DatabaseAwareInterface;
+use Althingi\Lib\EventsAwareInterface;
 use Althingi\Hydrator\CongressmanDocument as CongressmanDocumentHydrator;
 use Althingi\Model\CongressmanDocument as CongressmanDocumentModel;
+use Althingi\Events\AddEvent;
+use Althingi\Events\UpdateEvent;
+use Althingi\Presenters\IndexableCongressmanDocumentPresenter;
+use Zend\EventManager\EventManager;
+use Zend\EventManager\EventManagerInterface;
 use PDO;
 
-class CongressmanDocument implements DatabaseAwareInterface
+class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
 
@@ -15,6 +21,9 @@ class CongressmanDocument implements DatabaseAwareInterface
      * @var \PDO
      */
     private $pdo;
+
+    /** @var \Zend\EventManager\EventManagerInterface */
+    protected $events;
 
     /**
      * @param int $assemblyId
@@ -46,6 +55,28 @@ class CongressmanDocument implements DatabaseAwareInterface
     }
 
     /**
+     * @param int $assemblyId
+     * @param int $issueId
+     * @param int $documentId
+     * @return \Althingi\Model\CongressmanDocument|null
+     */
+    public function countProponents(int $assemblyId, int $issueId, int $documentId): ?int
+    {
+        $statement = $this->getDriver()->prepare("
+            select count(*) 
+            from Document_has_Congressman 
+            where assembly_id = :assembly_id and issue_id = :issue_id and document_id = :document_id
+        ");
+        $statement->execute([
+            'assembly_id' => $assemblyId,
+            'issue_id' => $issueId,
+            'document_id' => $documentId,
+        ]);
+
+        return $statement->fetchColumn(0);
+    }
+
+    /**
      * @param \Althingi\Model\CongressmanDocument $data
      * @return int
      */
@@ -55,6 +86,13 @@ class CongressmanDocument implements DatabaseAwareInterface
             $this->toInsertString('Document_has_Congressman', $data)
         );
         $statement->execute($this->toSqlValues($data));
+
+        $this->getEventManager()
+            ->trigger(
+                AddEvent::class,
+                new AddEvent(new IndexableCongressmanDocumentPresenter($data)),
+                ['rows' => $statement->rowCount()]
+            );
 
         return $this->getDriver()->lastInsertId();
     }
@@ -70,6 +108,25 @@ class CongressmanDocument implements DatabaseAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
+        switch ($statement->rowCount()) {
+            case 1:
+                $this->getEventManager()
+                    ->trigger(
+                        AddEvent::class,
+                        new AddEvent(new IndexableCongressmanDocumentPresenter($data)),
+                        ['rows' => $statement->rowCount()]
+                    );
+                break;
+            case 0:
+            case 2:
+                $this->getEventManager()
+                    ->trigger(
+                        UpdateEvent::class,
+                        new UpdateEvent(new IndexableCongressmanDocumentPresenter($data)),
+                        ['rows' => $statement->rowCount()]
+                    );
+                break;
+        }
         return $statement->rowCount();
     }
 
@@ -91,6 +148,13 @@ class CongressmanDocument implements DatabaseAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
+        $this->getEventManager()
+            ->trigger(
+                UpdateEvent::class,
+                new UpdateEvent(new IndexableCongressmanDocumentPresenter($data)),
+                ['rows' => $statement->rowCount()]
+            );
+
         return $statement->rowCount();
     }
 
@@ -110,5 +174,19 @@ class CongressmanDocument implements DatabaseAwareInterface
     public function getDriver()
     {
         return $this->pdo;
+    }
+
+    public function setEventManager(EventManagerInterface $events)
+    {
+        $this->events = $events;
+        return $this;
+    }
+
+    public function getEventManager()
+    {
+        if (null === $this->events) {
+            $this->setEventManager(new EventManager());
+        }
+        return $this->events;
     }
 }

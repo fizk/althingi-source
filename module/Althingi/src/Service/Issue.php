@@ -559,7 +559,11 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
         $statement->execute($this->toSqlValues($data));
 
         $this->getEventManager()
-            ->trigger(AddEvent::class, new AddEvent(new IndexableIssuePresenter($data)));
+            ->trigger(
+                AddEvent::class,
+                new AddEvent(new IndexableIssuePresenter($data)),
+                ['rows' => $statement->rowCount()]
+            );
 
         return $this->getDriver()->lastInsertId();
     }
@@ -576,11 +580,20 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
         switch ($statement->rowCount()) {
             case 1:
                 $this->getEventManager()
-                    ->trigger(AddEvent::class, new AddEvent(new IndexableIssuePresenter($data)));
+                    ->trigger(
+                        AddEvent::class,
+                        new AddEvent(new IndexableIssuePresenter($data)),
+                        ['rows' => $statement->rowCount()]
+                    );
                 break;
+            case 0:
             case 2:
                 $this->getEventManager()
-                    ->trigger(UpdateEvent::class, new UpdateEvent(new IndexableIssuePresenter($data)));
+                    ->trigger(
+                        UpdateEvent::class,
+                        new UpdateEvent(new IndexableIssuePresenter($data)),
+                        ['rows' => $statement->rowCount()]
+                    );
                 break;
         }
         return $statement->rowCount();
@@ -602,11 +615,13 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
             )
         );
         $statement->execute($this->toSqlValues($data));
+        $this->getEventManager()
+            ->trigger(
+                UpdateEvent::class,
+                new UpdateEvent(new IndexableIssuePresenter($data)),
+                ['rows' => $statement->rowCount()]
+            );
 
-        if ($statement->rowCount() > 0) {
-            $this->getEventManager()
-                ->trigger(UpdateEvent::class, new UpdateEvent(new IndexableIssuePresenter($data)));
-        }
         return $statement->rowCount();
     }
 

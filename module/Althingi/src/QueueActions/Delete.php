@@ -4,6 +4,7 @@ namespace Althingi\QueueActions;
 
 use Psr\Log\LoggerInterface;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Message\AMQPMessage;
 
 class Delete
 {
@@ -13,10 +14,14 @@ class Delete
     /** @var \PhpAmqpLib\Connection\AMQPStreamConnection */
     private $client;
 
-    public function __construct(AMQPStreamConnection $client, LoggerInterface $logger)
+    /** @var bool */
+    private $forced;
+
+    public function __construct(AMQPStreamConnection $client, LoggerInterface $logger, bool $isForced = false)
     {
         $this->logger = $logger;
         $this->client = $client;
+        $this->forced = $isForced;
     }
 
     /**
@@ -24,6 +29,25 @@ class Delete
      */
     public function __invoke(\Zend\EventManager\Event $event)
     {
-        $this->logger->info(print_r($event, true));
+        /** @var  $target \Althingi\Events\UpdateEvent */
+        $target = $event->getTarget();
+        $params = $event->getParams();
+
+        if ($params['rows'] > 0 || $this->forced === true) {
+            $presenter = $target->getPresenter();
+            $channel = $this->client->channel();
+
+            $msg = new AMQPMessage(json_encode([
+                'id' => $presenter->getIdentifier(),
+                'body' => $presenter->getData(),
+            ]));
+
+            $channel->basic_publish($msg, 'service', "{$presenter->getType()}.remove");
+            $this->logger->info('QUEUE', [
+                'service',
+                "{$presenter->getType()}.remove",
+                $presenter->getIdentifier()
+            ]);
+        }
     }
 }

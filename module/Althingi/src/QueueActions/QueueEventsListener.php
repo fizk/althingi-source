@@ -15,6 +15,9 @@ class QueueEventsListener extends EventsListener implements QueueAwareInterface
     /** @var \PhpAmqpLib\Connection\AMQPStreamConnection  */
     protected $client;
 
+    /** @var bool */
+    protected $isForced = false;
+
     /**
      * @param EventManagerInterface $events
      * @param int $priority
@@ -23,15 +26,15 @@ class QueueEventsListener extends EventsListener implements QueueAwareInterface
     {
         $this->listeners[] = $events->attach(
             AddEvent::class,
-            new Add($this->getQueue(), $this->getLogger())
+            new Add($this->getQueue(), $this->getLogger(), $this->isForced)
         );
         $this->listeners[] = $events->attach(
             UpdateEvent::class,
-            new Update($this->getQueue(), $this->getLogger())
+            new Update($this->getQueue(), $this->getLogger(), $this->isForced)
         );
         $this->listeners[] = $events->attach(
             DeleteEvent::class,
-            new Delete($this->getQueue(), $this->getLogger())
+            new Delete($this->getQueue(), $this->getLogger(), $this->isForced)
         );
     }
 
@@ -44,5 +47,23 @@ class QueueEventsListener extends EventsListener implements QueueAwareInterface
     public function getQueue(): AMQPStreamConnection
     {
         return $this->client;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isForced(): bool
+    {
+        return $this->isForced;
+    }
+
+    /**
+     * @param bool $isForced
+     * @return QueueEventsListener
+     */
+    public function setIsForced(bool $isForced): QueueEventsListener
+    {
+        $this->isForced = $isForced;
+        return $this;
     }
 }
