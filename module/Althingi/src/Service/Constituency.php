@@ -26,7 +26,7 @@ class Constituency implements DatabaseAwareInterface
      * @param int $id
      * @return \Althingi\Model\Constituency | null
      */
-    public function get(int $id): ?ConstituencyDateModel
+    public function get(int $id): ?ConstituencyModel
     {
         $statement = $this->getDriver()->prepare(
             'select * from `Constituency` 
