@@ -139,5 +139,4 @@ class AggregateCongressmanControllerTest extends AbstractHttpControllerTestCase
         $this->assertActionName('constituency');
         $this->assertResponseStatusCode(200);
     }
-
 }

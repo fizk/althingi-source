@@ -65,5 +65,4 @@ class AggregateIssueControllerTest extends AbstractHttpControllerTestCase
         $this->assertActionName('progress');
         $this->assertResponseStatusCode(200);
     }
-
 }
