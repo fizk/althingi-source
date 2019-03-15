@@ -46,7 +46,11 @@ class IndexableDocumentPresenter implements IndexablePresenter
 
     public function getIdentifier(): string
     {
-        return (string) "{$this->model->getAssemblyId()}-{$this->model->getIssueId()}-{$this->model->getDocumentId()}";
+        return implode('-', [
+            $this->model->getAssemblyId(),
+            $this->model->getIssueId(),
+            $this->model->getDocumentId()
+        ]);
     }
 
     public function getType(): string

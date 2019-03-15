@@ -148,12 +148,12 @@ class CongressmanTest extends TestCase
 
         $expectedData = [
             (new CongressmanValueModel())
-                ->setCongressmanId(1)
-                ->setName('name1')
-                ->setBirth(new \DateTime('2000-01-01')),
-            (new CongressmanValueModel())
                 ->setCongressmanId(2)
                 ->setName('name2')
+                ->setBirth(new \DateTime('2000-01-01')),
+            (new CongressmanValueModel())
+                ->setCongressmanId(1)
+                ->setName('name1')
                 ->setBirth(new \DateTime('2000-01-01')),
         ];
 
