@@ -2,12 +2,23 @@
 
 namespace Althingi\Service;
 
+use Althingi\Lib\EventsAwareInterface;
 use Althingi\Lib\DatabaseAwareInterface;
+
 use Althingi\Model\Document as DocumentModel;
 use Althingi\Hydrator\Document as DocumentHydrator;
-use PDO;
 
-class Document implements DatabaseAwareInterface
+use Althingi\Model\ValueAndCount as ValueAndCountModel;
+use Althingi\Hydrator\ValueAndCount as ValueAndCountHydrator;
+
+use Althingi\Events\AddEvent;
+use Althingi\Events\UpdateEvent;
+use Althingi\Presenters\IndexableDocumentPresenter;
+use PDO;
+use Zend\EventManager\EventManager;
+use Zend\EventManager\EventManagerInterface;
+
+class Document implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
 
@@ -15,6 +26,9 @@ class Document implements DatabaseAwareInterface
      * @var \PDO
      */
     private $pdo;
+
+    /** @var \Zend\EventManager\EventManagerInterface */
+    protected $events;
 
     /**
      * @param int $assemblyId
@@ -40,6 +54,24 @@ class Document implements DatabaseAwareInterface
             : null ;
     }
 
+    public function countTypeByIssue($assemblyId, $issueId)
+    {
+        $statement = $this->getDriver()->prepare("
+            select count(*) as `count`, `type` as `value` from `Document`
+             where assembly_id = :assembly_id and issue_id = :issue_id
+             group by `type`
+        ");
+        $statement->execute([
+            'assembly_id' => $assemblyId,
+            'issue_id' => $issueId,
+        ]);
+
+
+        return array_map(function ($object) {
+            return (new ValueAndCountHydrator())->hydrate($object, new ValueAndCountModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
+    }
+
     /**
      * @param \Althingi\Model\Document $data
      * @return int
@@ -50,6 +82,13 @@ class Document implements DatabaseAwareInterface
             $this->toInsertString('Document', $data)
         );
         $statement->execute($this->toSqlValues($data));
+
+        $this->getEventManager()
+            ->trigger(
+                AddEvent::class,
+                new AddEvent(new IndexableDocumentPresenter($data)),
+                ['rows' => $statement->rowCount()]
+            );
 
         return $this->getDriver()->lastInsertId();
     }
@@ -65,6 +104,25 @@ class Document implements DatabaseAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
+        switch ($statement->rowCount()) {
+            case 1:
+                $this->getEventManager()
+                    ->trigger(
+                        AddEvent::class,
+                        new AddEvent(new IndexableDocumentPresenter($data)),
+                        ['rows' => $statement->rowCount()]
+                    );
+                break;
+            case 0:
+            case 2:
+                $this->getEventManager()
+                    ->trigger(
+                        UpdateEvent::class,
+                        new UpdateEvent(new IndexableDocumentPresenter($data)),
+                        ['rows' => $statement->rowCount()]
+                    );
+                break;
+        }
         return $statement->rowCount();
     }
 
@@ -84,6 +142,13 @@ class Document implements DatabaseAwareInterface
             )
         );
         $statement->execute($this->toSqlValues($data));
+
+        $this->getEventManager()
+            ->trigger(
+                UpdateEvent::class,
+                new UpdateEvent(new IndexableDocumentPresenter($data)),
+                ['rows' => $statement->rowCount()]
+            );
 
         return $statement->rowCount();
     }
@@ -126,5 +191,19 @@ class Document implements DatabaseAwareInterface
     public function getDriver()
     {
         return $this->pdo;
+    }
+
+    public function setEventManager(EventManagerInterface $events)
+    {
+        $this->events = $events;
+        return $this;
+    }
+
+    public function getEventManager()
+    {
+        if (null === $this->events) {
+            $this->setEventManager(new EventManager());
+        }
+        return $this->events;
     }
 }

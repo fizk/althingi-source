@@ -2,23 +2,23 @@
 namespace Althingi\Presenters;
 
 use Althingi\Model\ModelInterface;
-use Althingi\Model\Party;
+use Althingi\Model\IssueCategory;
 use Zend\Hydrator\HydratorInterface;
 
-class IndexablePartyPresenter implements IndexablePresenter
+class IndexableIssueCategoryPresenter implements IndexablePresenter
 {
-    const INDEX = 'althingi_model_party';
-    const TYPE = 'issue';
+    const INDEX = 'althingi_model_issue-category';
+    const TYPE = 'issue-category';
 
     /** @var  \Zend\Hydrator\HydratorInterface; */
     private $hydrator;
 
-    /** @var  \Althingi\Model\Party */
+    /** @var  \Althingi\Model\IssueCategory */
     private $model;
 
-    public function __construct(Party $model)
+    public function __construct(IssueCategory $model)
     {
-        $this->setHydrator(new \Althingi\Hydrator\Party());
+        $this->setHydrator(new \Althingi\Hydrator\IssueCategory());
         $this->setModel($model);
     }
 
@@ -46,7 +46,12 @@ class IndexablePartyPresenter implements IndexablePresenter
 
     public function getIdentifier(): string
     {
-        return (string) $this->model->getPartyId();
+        return implode('-', [
+            $this->model->getAssemblyId(),
+            $this->model->getIssueId(),
+            $this->model->getCategory(),
+            $this->model->getCategoryId()
+        ]);
     }
 
     public function getType(): string

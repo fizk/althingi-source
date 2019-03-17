@@ -4,6 +4,10 @@
 
     <exclude-pattern>*.phtml</exclude-pattern>
 
+    <rule ref="PSR2.Namespaces.UseDeclaration">
+        <exclude-pattern>*.config.php</exclude-pattern>
+    </rule>
+
     <!-- display progress -->
     <arg value="p"/>
     <arg name="colors"/>

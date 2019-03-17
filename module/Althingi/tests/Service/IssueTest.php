@@ -3,8 +3,10 @@
 namespace AlthingiTest\Service;
 
 use Althingi\Model\IssueTypeStatus;
+use Althingi\QueueActions\QueueEventsListener;
 use Althingi\Service\Issue;
 use Althingi\ElasticSearchActions\ElasticSearchEventsListener;
+use Althingi\Utils\RabbitMQBlackHoleClient;
 use AlthingiTest\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\Issue as IssueModel;
@@ -180,9 +182,10 @@ class IssueTest extends TestCase
 
     public function testCreate()
     {
-        $serviceEventListener = (new ElasticSearchEventsListener())
-                ->setElasticSearchClient(new ElasticBlackHoleClient())
-                ->setLogger(new NullLogger());
+        $serviceEventListener = (new QueueEventsListener())
+                ->setQueue(new RabbitMQBlackHoleClient())
+                ->setLogger(new NullLogger())
+                ->setIsForced(true);
         $eventManager = new EventManager();
         $serviceEventListener->attach($eventManager);
 

@@ -25,6 +25,10 @@ class ItemStatusFilter implements FilterInterface
      * Samþykkt sem lög frá Alþingi.
      * Vísað til ríkisstjórnar.
      *
+     * @todo "Ekki útrætt á 148. þingi. (Beið fyrri umræðu.)"
+     * @todo "Ekki útrætt á 148. þingi. (Var í nefnd eftir fyrri umræðu.)"
+     * @todo these are no caught in the regex.
+     *
      * @param  mixed $value
      * @throws Exception\RuntimeException If filtering $value is impossible
      * @return mixed

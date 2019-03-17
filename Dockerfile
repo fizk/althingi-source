@@ -11,6 +11,8 @@ RUN apt-get update \
  && apt-get install -y git zlib1g-dev vim \
  && docker-php-ext-install zip \
  && docker-php-ext-install pdo_mysql \
+ && docker-php-ext-install bcmath \
+ && docker-php-ext-install sockets \
  && a2enmod rewrite \
  && sed -i 's!/var/www/html!/var/www/public!g' /etc/apache2/apache2.conf \
  && sed -i 's!/var/www/html!/var/www/public!g' /etc/apache2/sites-available/000-default.conf \
@@ -26,32 +28,6 @@ COPY ./auto/php/php.ini /usr/local/etc/php/
 
 EXPOSE 80
 
-ENV APPLICATION_ENVIRONMENT production
-
-ENV DB_HOST localhost
-ENV DB_PORT 3306
-ENV DB_NAME althingi
-ENV DB_USER root
-#ENV DB_PASSWORD
-
-ENV SEARCH none
-#   | elasticsearch | none
-
-ENV ES_HOST localhost
-ENV ES_PROTO http
-ENV ES_PORT 9200
-ENV ES_USER elastic
-ENV ES_PASSWORD changeme
-
-ENV LOG_PATH php://stdout
-ENV LOG_FORMAT line
-#    | logstash | json | line | color | none
-
-ENV CACHE_TYPE none
-#    | file (path ./data/cache) | memory | none
-ENV CACHE_HOST localhost
-ENV CACHE_PORT 6379
-
 # with x-debug version
 #RUN pecl install -o -f redis \
 #    && pecl install xdebug-2.6.0 \
@@ -59,8 +35,13 @@ ENV CACHE_PORT 6379
 #    && docker-php-ext-enable redis xdebug
 
 # - - -  Option 1
-COPY . /var/www
 WORKDIR /var/www
+
+COPY ./composer.json .
+COPY ./composer.lock .
+COPY ./phpcs.xml .
+COPY ./phpunit.xml.dist .
+
 RUN /usr/local/bin/composer install --prefer-source --no-interaction --no-dev \
     && /usr/local/bin/composer dump-autoload -o
 # - - -  end of Option 1

@@ -3,6 +3,8 @@
 namespace Althingi\Service;
 
 use Althingi\Lib\DatabaseAwareInterface;
+use Althingi\Model\ConstituencyDate as ConstituencyDateModel;
+use Althingi\Hydrator\ConstituencyDate as ConstituencyDateHydrator;
 use Althingi\Model\Constituency as ConstituencyModel;
 use Althingi\Hydrator\Constituency as ConstituencyHydrator;
 use PDO;
@@ -22,7 +24,7 @@ class Constituency implements DatabaseAwareInterface
 
     /**
      * @param int $id
-     * @return \Althingi\Model\Constituency
+     * @return \Althingi\Model\Constituency | null
      */
     public function get(int $id): ?ConstituencyModel
     {
@@ -35,6 +37,59 @@ class Constituency implements DatabaseAwareInterface
         return $object
             ? (new ConstituencyHydrator())->hydrate($object, new ConstituencyModel())
             : null;
+    }
+
+    /**
+     * Get Constituency by congressman on a specific date.
+     *
+     * @param int $congressmanId
+     * @param \DateTime $date
+     * @return ConstituencyDateModel | null
+     */
+    public function getByCongressman(int $congressmanId, \DateTime $date)
+    {
+        $statement = $this->getDriver()->prepare('
+            select C.*, S.`from` as `date` from
+            (
+                select * from `Session` S where
+                (:date between S.`from` and S.`to`) or
+                (:date >= S.`from` and S.`to` is null)
+            ) S
+            Join `Constituency` C on (C.constituency_id = S.constituency_id)
+            where S.congressman_id = :congressman_id;
+        ');
+        $statement->execute([
+            'congressman_id' => $congressmanId,
+            'date' => $date->format('Y-m-d'),
+        ]);
+
+        $object = $statement->fetch(PDO::FETCH_ASSOC);
+        return $object
+            ? (new ConstituencyDateHydrator())->hydrate($object, new ConstituencyDateModel())
+            : null ;
+    }
+
+    /**
+     * Get all Constituencies by congressman, order by first occupied.
+     *
+     * @param int $congressmanId
+     * @return array
+     */
+    public function fetchByCongressman(int $congressmanId)
+    {
+        $statement = $this->getDriver()->prepare('
+            select C.*, S.`from` as `date` from `Session` S
+                join `Constituency` C on (C.constituency_id = S.constituency_id)
+            where S.congressman_id = :constituency_id
+            group by C.constituency_id
+            having min(S.`from`)
+            order by S.`from`;
+        ');
+        $statement->execute(['constituency_id' => $congressmanId]);
+
+        return array_map(function ($object) {
+            return (new ConstituencyDateHydrator())->hydrate($object, new ConstituencyDateModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
     /**
