@@ -223,7 +223,11 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
         $statement->execute($this->toSqlValues($data));
 
         $this->getEventManager()
-            ->trigger(AddEvent::class, new AddEvent(new IndexablePartyPresenter($data)));
+            ->trigger(
+                AddEvent::class,
+                new AddEvent(new IndexablePartyPresenter($data)),
+                ['rows' => $statement->rowCount()]
+            );
 
         return $this->getDriver()->lastInsertId();
     }
@@ -234,14 +238,24 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
      */
     public function save(PartyModel $data): int
     {
-        $statement = $this->getDriver()->prepare(
-            $this->toSaveString('Party', $data)
-        );
+        $statement = $this->getDriver()->prepare($this->toSaveString('Party', $data));
         $statement->execute($this->toSqlValues($data));
 
-        $this->getEventManager()
-            ->trigger(AddEvent::class, new AddEvent(new IndexablePartyPresenter($data)));
-
+        switch ($statement->rowCount()) {
+            case 1:
+                $this->getEventManager()
+                    ->trigger(AddEvent::class, new AddEvent(new IndexablePartyPresenter($data)));
+                break;
+            case 0:
+            case 2:
+                $this->getEventManager()
+                    ->trigger(
+                        UpdateEvent::class,
+                        new UpdateEvent(new IndexablePartyPresenter($data)),
+                        ['rows' => $statement->rowCount()]
+                    );
+                break;
+        }
         return $statement->rowCount();
     }
 
@@ -257,7 +271,11 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
         $statement->execute($this->toSqlValues($data));
 
         $this->getEventManager()
-            ->trigger(UpdateEvent::class, new UpdateEvent(new IndexablePartyPresenter($data)));
+            ->trigger(
+                UpdateEvent::class,
+                new UpdateEvent(new IndexablePartyPresenter($data)),
+                ['rows' => $statement->rowCount()]
+            );
 
         return $statement->rowCount();
     }

@@ -402,7 +402,11 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
         $statement->execute($this->toSqlValues($data));
 
         $this->getEventManager()
-            ->trigger(AddEvent::class, new AddEvent(new IndexableSpeechPresenter($data)));
+            ->trigger(
+                AddEvent::class,
+                new AddEvent(new IndexableSpeechPresenter($data)),
+                ['rows' => $statement->rowCount()]
+            );
 
         return $this->getDriver()->lastInsertId();
     }
@@ -414,14 +418,28 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
     public function save(SpeechModel $data)
     {
         $data->setWordCount(str_word_count($data->getText()));
-        $statement = $this->getDriver()->prepare(
-            $this->toSaveString('Speech', $data)
-        );
+        $statement = $this->getDriver()->prepare($this->toSaveString('Speech', $data));
         $statement->execute($this->toSqlValues($data));
 
-        $this->getEventManager()
-            ->trigger(AddEvent::class, new AddEvent(new IndexableSpeechPresenter($data)));
-
+        switch ($statement->rowCount()) {
+            case 1:
+                $this->getEventManager()
+                    ->trigger(
+                        AddEvent::class,
+                        new AddEvent(new IndexableSpeechPresenter($data)),
+                        ['rows' => $statement->rowCount()]
+                    );
+                break;
+            case 0:
+            case 2:
+                $this->getEventManager()
+                    ->trigger(
+                        UpdateEvent::class,
+                        new UpdateEvent(new IndexableSpeechPresenter($data)),
+                        ['rows' => $statement->rowCount()]
+                    );
+                break;
+        }
         return $statement->rowCount();
     }
 
@@ -440,7 +458,11 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
         $statement->execute($this->toSqlValues($data));
 
         $this->getEventManager()
-            ->trigger(UpdateEvent::class, new UpdateEvent(new IndexableSpeechPresenter($data)));
+            ->trigger(
+                UpdateEvent::class,
+                new UpdateEvent(new IndexableSpeechPresenter($data)),
+                ['rows' => $statement->rowCount()]
+            );
 
         return $statement->rowCount();
     }

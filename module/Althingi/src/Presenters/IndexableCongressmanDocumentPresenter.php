@@ -1,24 +1,24 @@
 <?php
 namespace Althingi\Presenters;
 
+use Althingi\Model\CongressmanDocument;
 use Althingi\Model\ModelInterface;
-use Althingi\Model\Party;
 use Zend\Hydrator\HydratorInterface;
 
-class IndexablePartyPresenter implements IndexablePresenter
+class IndexableCongressmanDocumentPresenter implements IndexablePresenter
 {
-    const INDEX = 'althingi_model_party';
-    const TYPE = 'issue';
+    const INDEX = 'althingi_model_congressman-document';
+    const TYPE = 'congressman-document';
 
     /** @var  \Zend\Hydrator\HydratorInterface; */
     private $hydrator;
 
-    /** @var  \Althingi\Model\Party */
+    /** @var  \Althingi\Model\CongressmanDocument */
     private $model;
 
-    public function __construct(Party $model)
+    public function __construct(CongressmanDocument $model)
     {
-        $this->setHydrator(new \Althingi\Hydrator\Party());
+        $this->setHydrator(new \Althingi\Hydrator\CongressmanDocument());
         $this->setModel($model);
     }
 
@@ -46,7 +46,12 @@ class IndexablePartyPresenter implements IndexablePresenter
 
     public function getIdentifier(): string
     {
-        return (string) $this->model->getPartyId();
+        return implode('-', [
+            $this->model->getAssemblyId(),
+            $this->model->getIssueId(),
+            $this->model->getDocumentId(),
+            $this->model->getCongressmanId()
+        ]);
     }
 
     public function getType(): string

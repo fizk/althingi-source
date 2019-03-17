@@ -1,19 +1,24 @@
 <?php
-
 namespace Althingi\Service;
 
 use Althingi\Lib\DatabaseAwareInterface;
+use Althingi\Presenters\IndexableIssueCategoryPresenter;
 use PDO;
 use Althingi\Model\IssueCategory as IssueCategoryModel;
 use Althingi\Hydrator\IssueCategory as IssueCategoryHydrator;
 use Althingi\Model\IssueCategoryAndTime as IssueCategoryAndTimeModel;
 use Althingi\Hydrator\IssueCategoryAndTime as IssueCategoryAndTimeHydrator;
+use Althingi\Lib\EventsAwareInterface;
+use Althingi\Events\AddEvent;
+use Althingi\Events\UpdateEvent;
+use Zend\EventManager\EventManager;
+use Zend\EventManager\EventManagerInterface;
 
 /**
  * Class Issue
  * @package Althingi\Service
  */
-class IssueCategory implements DatabaseAwareInterface
+class IssueCategory implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
 
@@ -21,6 +26,9 @@ class IssueCategory implements DatabaseAwareInterface
      * @var \PDO
      */
     private $pdo;
+
+    /** @var \Zend\EventManager\EventManagerInterface */
+    protected $events;
 
     /**
      * @param int $assemblyId
@@ -59,7 +67,12 @@ class IssueCategory implements DatabaseAwareInterface
             $this->toInsertString('Category_has_Issue', $data)
         );
         $statement->execute($this->toSqlValues($data));
-
+        $this->getEventManager()
+            ->trigger(
+                AddEvent::class,
+                new AddEvent(new IndexableIssueCategoryPresenter($data)),
+                ['rows' => $statement->rowCount()]
+            );
         return $this->getDriver()->lastInsertId();
     }
 
@@ -73,7 +86,25 @@ class IssueCategory implements DatabaseAwareInterface
             $this->toSaveString('Category_has_Issue', $data)
         );
         $statement->execute($this->toSqlValues($data));
-
+        switch ($statement->rowCount()) {
+            case 1:
+                $this->getEventManager()
+                    ->trigger(
+                        AddEvent::class,
+                        new AddEvent(new IndexableIssueCategoryPresenter($data)),
+                        ['rows' => $statement->rowCount()]
+                    );
+                break;
+            case 0:
+            case 2:
+                $this->getEventManager()
+                    ->trigger(
+                        UpdateEvent::class,
+                        new UpdateEvent(new IndexableIssueCategoryPresenter($data)),
+                        ['rows' => $statement->rowCount()]
+                    );
+                break;
+        }
         return $statement->rowCount();
     }
 
@@ -93,7 +124,12 @@ class IssueCategory implements DatabaseAwareInterface
             )
         );
         $statement->execute($this->toSqlValues($data));
-
+        $this->getEventManager()
+            ->trigger(
+                UpdateEvent::class,
+                new UpdateEvent(new IndexableIssueCategoryPresenter($data)),
+                ['rows' => $statement->rowCount()]
+            );
         return $statement->rowCount();
     }
 
@@ -151,5 +187,19 @@ class IssueCategory implements DatabaseAwareInterface
     public function getDriver()
     {
         return $this->pdo;
+    }
+
+    public function setEventManager(EventManagerInterface $events)
+    {
+        $this->events = $events;
+        return $this;
+    }
+
+    public function getEventManager()
+    {
+        if (null === $this->events) {
+            $this->setEventManager(new EventManager());
+        }
+        return $this->events;
     }
 }

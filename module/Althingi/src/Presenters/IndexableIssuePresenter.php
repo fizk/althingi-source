@@ -8,7 +8,7 @@ use Zend\Hydrator\HydratorInterface;
 class IndexableIssuePresenter implements IndexablePresenter
 {
     const INDEX = 'althingi_model_issue';
-    const TYPE = 'althingi_model_issue';
+    const TYPE = 'issue';
 
     /** @var  \Zend\Hydrator\HydratorInterface; */
     private $hydrator;
