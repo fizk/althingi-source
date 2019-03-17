@@ -69,8 +69,7 @@ return [
         },
         Category::class => function (ServiceManager $sm) {
             return (new Category())
-                ->setDriver($sm->get(PDO::class))
-                ;
+                ->setDriver($sm->get(PDO::class));
         },
         CongressmanDocument::class => function (ServiceManager $sm) {
             return (new CongressmanDocument())
@@ -218,11 +217,10 @@ return [
                 ->pushProcessor(new \Monolog\Processor\MemoryPeakUsageProcessor(true, false))
                 ->pushProcessor(new \Monolog\Processor\MemoryUsageProcessor(true, false));
 
-            if (strtolower(getenv('LOG_PATH')) === 'none') {
-                return $logger;
-            }
-            if (! empty(getenv('LOG_PATH')) && strtolower(getenv('LOG_PATH')) !== 'none' && getenv('LOG_PATH')) {
-                $handlers[] = new \Monolog\Handler\StreamHandler(getenv('LOG_PATH') ? : 'php://stdout');
+            if (getenv('LOG_PATH') === false || strtolower(getenv('LOG_PATH')) === 'none') {
+                return $logger->setHandlers([new \Monolog\Handler\NullHandler()]);
+            } else {
+                $handlers[] = new \Monolog\Handler\StreamHandler(getenv('LOG_PATH'));
             }
 
             $formattedHandlers = array_map(function (\Monolog\Handler\HandlerInterface $handler) {
