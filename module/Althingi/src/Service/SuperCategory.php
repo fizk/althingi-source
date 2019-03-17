@@ -21,7 +21,7 @@ class SuperCategory implements DatabaseAwareInterface
     private $pdo;
 
     /**
-     * Get one party.
+     * Get one super category.
      *
      * @param int $id
      * @return \Althingi\Model\SuperCategory
@@ -37,6 +37,34 @@ class SuperCategory implements DatabaseAwareInterface
         return $object
             ? (new SuperCategoryHydrator())->hydrate($object, new SuperCategoryModel())
             : null;
+    }
+
+    /**
+     * Get all super categories on an issue.
+     *
+     * @param int $assemblyId
+     * @param int $issueId
+     * @param string $category
+     * @return array
+     */
+    public function fetchByIssue(int $assemblyId, int $issueId, string$category = 'A')
+    {
+        $statement = $this->getDriver()->prepare('
+            select SC.* from Category_has_Issue CI
+              join Category C on (CI.category_id = C.category_id)
+              join SuperCategory SC on (C.super_category_id = SC.super_category_id)
+            where CI.assembly_id = :assembly_id and CI.issue_id = :issue_id and CI.category = :category
+            group by C.super_category_id;
+        ');
+        $statement->execute([
+            'assembly_id' => $assemblyId,
+            'issue_id' => $issueId,
+            'category' => $category,
+        ]);
+
+        return array_map(function ($object) {
+            return (new SuperCategoryHydrator())->hydrate($object, new SuperCategoryModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
     /**

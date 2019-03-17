@@ -573,6 +573,26 @@ return [
                 ],
                 'may_terminate' => true,
                 'child_routes' => [
+                    'thingmal-flokkar-stada' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route'    => '/loggjafarthing/:assembly_id/thingmal/flokkar-stada',
+                            'defaults' => [
+                                'controller' => Aggregate\IssueController::class,
+                                'action' => 'count-type-status'
+                            ],
+                        ],
+                    ],
+                    'thingmal-government' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route'    => '/loggjafarthing/:assembly_id/thingmal/stjornarfrumvorp',
+                            'defaults' => [
+                                'controller' => Aggregate\IssueController::class,
+                                'action' => 'count-government'
+                            ],
+                        ],
+                    ],
                     'thingmal' => [
                         'type' => Segment::class,
                         'options' => [
@@ -587,6 +607,26 @@ return [
                         ],
                         'may_terminate' => true,
                         'child_routes' => [
+                            'malaflokkar' => [
+                                'type' => Segment::class,
+                                'options' => [
+                                    'route'    => '/malaflokkar',
+                                    'defaults' => [
+                                        'controller' => Aggregate\IssueCategoryController::class,
+                                        'action' => 'fetch-categories'
+                                    ],
+                                ],
+                            ],
+                            'yfir-malaflokkar' => [
+                                'type' => Segment::class,
+                                'options' => [
+                                    'route'    => '/yfir-malaflokkar',
+                                    'defaults' => [
+                                        'controller' => Aggregate\IssueCategoryController::class,
+                                        'action' => 'fetch-super-categories'
+                                    ],
+                                ],
+                            ],
                             'ferill' => [
                                 'type' => Segment::class,
                                 'options' => [
@@ -877,6 +917,11 @@ return [
             Aggregate\IssueController::class => function (ServiceManager $container) {
                 return (new Aggregate\IssueController())
                     ->setIssueService($container->get(Issue::class));
+            },
+            Aggregate\IssueCategoryController::class => function (ServiceManager $container) {
+                return (new Aggregate\IssueCategoryController())
+                    ->setCategoryService($container->get(Category::class))
+                    ->setSuperCategoryService($container->get(SuperCategory::class));
             }
         ],
     ],

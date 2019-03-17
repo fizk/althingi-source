@@ -2,20 +2,14 @@
 
 namespace Althingi\Controller\Aggregate;
 
-use Althingi\Lib\ServiceCongressmanAwareInterface;
-use Althingi\Lib\ServiceConstituencyAwareInterface;
 use Althingi\Lib\ServiceIssueAwareInterface;
-use Althingi\Lib\ServicePartyAwareInterface;
-use Althingi\Service\Congressman;
-use Althingi\Service\Constituency;
 use Althingi\Service\Issue;
-use Althingi\Service\Party;
 use Althingi\Utils\CategoryParam;
 use Rend\Controller\AbstractRestfulController;
-use Rend\View\Model\ItemModel;
 use Rend\View\Model\CollectionModel;
 use Rend\Helper\Http\Range;
-use DateTime;
+use Althingi\Model\IssueTypeAndStatus;
+use Althingi\Model\IssueTypeStatus;
 
 class IssueController extends AbstractRestfulController implements
     ServiceIssueAwareInterface
@@ -35,6 +29,41 @@ class IssueController extends AbstractRestfulController implements
         $issueId = $this->params('issue_id', null);
 
         return (new CollectionModel($this->issueService->fetchProgress($assemblyId, $issueId)));
+    }
+
+    public function countGovernmentAction()
+    {
+        $assemblyId = $this->params('assembly_id', null);
+
+        return (new CollectionModel($this->issueService->fetchCountByGovernment($assemblyId)));
+    }
+
+    public function countTypeStatusAction()
+    {
+        $assemblyId = $this->params('assembly_id', null);
+        $category = $this->params()->fromQuery('tegund', 'A');
+
+        $issues = $this->issueService->fetchCountByCategoryAndStatus($assemblyId, $category);
+
+        $groups = array_values(array_reduce($issues, function (array $carry, \Althingi\Model\AssemblyStatus $item) {
+            if (! array_key_exists($item->getType(), $carry)) {
+                $carry[$item->getType()] = (new IssueTypeAndStatus())
+                    ->setType($item->getType())
+                    ->setTypeName($item->getTypeName())
+                    ->setTypeSubName($item->getTypeSubname());
+            }
+
+            $carry[$item->getType()]->addStatus(
+                (new IssueTypeStatus())
+                    ->setStatus($item->getStatus())
+                    ->setCount($item->getCount())
+            )->addCount($item->getCount());
+
+            return $carry;
+        }, []));
+
+
+        return (new CollectionModel($groups));
     }
 
     /**

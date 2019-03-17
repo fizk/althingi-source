@@ -65,4 +65,38 @@ class AggregateIssueControllerTest extends AbstractHttpControllerTestCase
         $this->assertActionName('progress');
         $this->assertResponseStatusCode(200);
     }
+
+    /**
+     * @covers ::countTypeStatusAction
+     */
+    public function testCountTypeAction()
+    {
+        $this->getMockService(Issue::class)
+            ->shouldReceive('fetchCountByCategoryAndStatus')
+            ->once()
+            ->getMock();
+
+        $this->dispatch('/samantekt/loggjafarthing/1/thingmal/flokkar-stada', 'GET');
+
+        $this->assertControllerClass('IssueController');
+        $this->assertActionName('count-type-status');
+        $this->assertResponseStatusCode(200);
+    }
+
+    /**
+     * @covers ::countGovernmentAction
+     */
+    public function testCountGovernmentAction()
+    {
+        $this->getMockService(Issue::class)
+            ->shouldReceive('fetchCountByGovernment')
+            ->once()
+            ->getMock();
+
+        $this->dispatch('/samantekt/loggjafarthing/1/thingmal/stjornarfrumvorp', 'GET');
+
+        $this->assertControllerClass('IssueController');
+        $this->assertActionName('count-government');
+        $this->assertResponseStatusCode(200);
+    }
 }

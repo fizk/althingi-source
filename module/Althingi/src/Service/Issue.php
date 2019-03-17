@@ -12,6 +12,7 @@ use Althingi\Model\IssueAndDate as IssueAndDateModel;
 use Althingi\Hydrator\IssueAndDate as IssueAndDateHydrator;
 use Althingi\Model\AssemblyStatus as AssemblyStatusModel;
 use Althingi\Hydrator\AssemblyStatus as AssemblyStatusHydrator;
+use Althingi\Model\IssueTypeAndStatus as IssueTypeAndStatusModel;
 use Althingi\Model\IssueTypeStatus as IssueTypeStatusModel;
 use Althingi\Hydrator\IssueTypeStatus as IssueTypeStatusHydrator;
 use Althingi\Presenters\IndexableIssuePresenter;
@@ -19,6 +20,8 @@ use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;
 use Althingi\Hydrator\IssueValue as IssueValueHydrator;
 use Althingi\Model\IssueValue as IssueValueModel;
+use Althingi\Model\ValueAndCount as ValueAndCountModel;
+use Althingi\Hydrator\ValueAndCount as ValueAndCountHydrator;
 use InvalidArgumentException;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
@@ -336,26 +339,53 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * Get the state of issues by assembly.
+     * Count each type and status.
      *
-     * Group and count `type` by assembly.
+     * Group and count `type` and `status` by assembly.
+     *
+     * @param int $assemblyId
+     * @param string $category
+     * @return \Althingi\Model\AssemblyStatus[]
+     */
+    public function fetchCountByCategoryAndStatus(int $assemblyId, string $category = 'A'): array
+    {
+        $statement = $this->getDriver()->prepare('
+            select count(*) as `count`, I.`status`, I.`type`, I.`type_name`, I.`type_subname` from `Issue` I
+                where I.assembly_id = :assembly_id
+                 and I.category = :category
+                group by I.`type`, I.`status` order by I.`type_name`
+        ');
+
+        $statement->execute([
+            'assembly_id' => $assemblyId,
+            'category' => $category,
+        ]);
+
+        return array_map(function ($object) {
+            return (new AssemblyStatusHydrator())->hydrate($object, new AssemblyStatusModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
+    }
+    /**
+     * Count status of Government bills.
      *
      * @param int $assemblyId
      * @return \Althingi\Model\AssemblyStatus[]
      */
-    public function fetchStateByAssembly(int $assemblyId): array
+    public function fetchCountByGovernment(int $assemblyId): array
     {
-        $statement = $this->getDriver()->prepare(
-            'select count(*) as `count`, I.`type`, I.`type_name`, I.`type_subname` from `Issue` I
-            where I.assembly_id = :assembly_id
-             and I.category = \'A\'
-            group by I.`type` order by I.`type_name`;'
-        );
+        $statement = $this->getDriver()->prepare('
+            select I.`status` as `value`, count(*) as `count` from Document D
+                join Issue I on (D.assembly_id = I.assembly_id and D.issue_id = I.issue_id and I.category = \'A\')
+            where D.assembly_id = :assembly_id and D.`type` = \'stjórnarfrumvarp\'
+            group by I.`status`;
+        ');
 
-        $statement->execute(['assembly_id' => $assemblyId]);
+        $statement->execute([
+            'assembly_id' => $assemblyId,
+        ]);
 
         return array_map(function ($object) {
-            return (new AssemblyStatusHydrator())->hydrate($object, new AssemblyStatusModel());
+            return (new ValueAndCountHydrator())->hydrate($object, new ValueAndCountModel());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 

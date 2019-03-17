@@ -67,7 +67,8 @@ return [
         },
         Category::class => function (ServiceManager $sm) {
             return (new Category())
-                ->setDriver($sm->get(PDO::class));
+                ->setDriver($sm->get(PDO::class))
+                ;
         },
         CongressmanDocument::class => function (ServiceManager $sm) {
             return (new CongressmanDocument())
@@ -91,7 +92,8 @@ return [
         },
         IssueCategory::class => function (ServiceManager $sm) {
             return (new IssueCategory())
-                ->setDriver($sm->get(PDO::class));
+                ->setDriver($sm->get(PDO::class))
+                ->setEventManager($sm->get(EventsListener::class));
         },
         Party::class => function (ServiceManager $sm) {
             return (new Party())

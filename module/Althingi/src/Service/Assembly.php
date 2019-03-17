@@ -3,15 +3,21 @@
 namespace Althingi\Service;
 
 use Althingi\Lib\DatabaseAwareInterface;
+use Althingi\Lib\EventsAwareInterface;
 use Althingi\Model\Assembly as AssemblyModel;
 use Althingi\Hydrator\Assembly as AssemblyHydrator;
+use Althingi\Events\AddEvent;
+use Althingi\Events\UpdateEvent;
+use Althingi\Presenters\IndexableAssemblyPresenter;
+use Zend\EventManager\EventManager;
+use Zend\EventManager\EventManagerInterface;
 use PDO;
 
 /**
  * Class Assembly
  * @package Althingi\Service
  */
-class Assembly implements DatabaseAwareInterface
+class Assembly implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
 
@@ -22,6 +28,9 @@ class Assembly implements DatabaseAwareInterface
      * @var \PDO
      */
     private $pdo;
+
+    /** @var \Zend\EventManager\EventManagerInterface */
+    protected $events;
 
     /**
      * Get one Assembly.
@@ -107,6 +116,13 @@ class Assembly implements DatabaseAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
+        $this->getEventManager()
+            ->trigger(
+                AddEvent::class,
+                new AddEvent(new IndexableAssemblyPresenter($data)),
+                ['rows' => $statement->rowCount()]
+            );
+
         return $this->getDriver()->lastInsertId();
     }
     /**
@@ -122,6 +138,25 @@ class Assembly implements DatabaseAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
+        switch ($statement->rowCount()) {
+            case 1:
+                $this->getEventManager()
+                    ->trigger(
+                        AddEvent::class,
+                        new AddEvent(new IndexableAssemblyPresenter($data)),
+                        ['rows' => $statement->rowCount()]
+                    );
+                break;
+            case 0:
+            case 2:
+                $this->getEventManager()
+                    ->trigger(
+                        UpdateEvent::class,
+                        new UpdateEvent(new IndexableAssemblyPresenter($data)),
+                        ['rows' => $statement->rowCount()]
+                    );
+                break;
+        }
         return $statement->rowCount();
     }
 
@@ -137,6 +172,13 @@ class Assembly implements DatabaseAwareInterface
             $this->toUpdateString('Assembly', $data, "assembly_id={$data->getAssemblyId()}")
         );
         $statement->execute($this->toSqlValues($data));
+
+        $this->getEventManager()
+            ->trigger(
+                UpdateEvent::class,
+                new UpdateEvent(new IndexableAssemblyPresenter($data)),
+                ['rows' => $statement->rowCount()]
+            );
 
         return $statement->rowCount();
     }
@@ -172,5 +214,19 @@ class Assembly implements DatabaseAwareInterface
     public function getDriver()
     {
         return $this->pdo;
+    }
+
+    public function setEventManager(EventManagerInterface $events)
+    {
+        $this->events = $events;
+        return $this;
+    }
+
+    public function getEventManager()
+    {
+        if (null === $this->events) {
+            $this->setEventManager(new EventManager());
+        }
+        return $this->events;
     }
 }
