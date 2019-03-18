@@ -84,7 +84,8 @@ The service is a part of a bigger system that includes:
 
 This system is the blue box in this diagram: 
 
-![althingi-schema 2 0](https://user-images.githubusercontent.com/386336/45269836-f8352180-b4d7-11e8-9085-b18a33f6efec.png)
+![althingi-schema 2 0](https://user-images.githubusercontent.com/386336/54566370-c53e8e00-4a24-11e9-99e7-8cedad9113b2.png)
+
 http://www.althingi.is/xml/145
     fundir
     dagskra
