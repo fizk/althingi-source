@@ -205,7 +205,8 @@ class SpeechTest extends TestCase
                     'text' => null,
                     'type' => null,
                     'iteration' => null,
-                    'word_count' => 0
+                    'word_count' => 0,
+                    'validated' => 1,
                 ]
             ],
         ])->getTable('Speech');
@@ -251,7 +252,8 @@ class SpeechTest extends TestCase
                     'text' => null,
                     'type' => null,
                     'iteration' => null,
-                    'word_count' => 0
+                    'word_count' => 0,
+                    'validated' => 1,
                 ]
             ],
         ])->getTable('Speech');
@@ -297,7 +299,8 @@ class SpeechTest extends TestCase
                     'text' => null,
                     'type' => null,
                     'iteration' => null,
-                    'word_count' => 0
+                    'word_count' => 0,
+                    'validated' => 1,
                 ]
             ],
         ])->getTable('Speech');
@@ -351,6 +354,7 @@ class SpeechTest extends TestCase
                     'congressman_id' => 1,
                     'from' => null,
                     'to' => null,
+                    'validated' => true,
                 ],[
                     'speech_id' => 'id--00002',
                     'plenary_id' => 1,
@@ -360,6 +364,7 @@ class SpeechTest extends TestCase
                     'congressman_id' => 1,
                     'from' => null,
                     'to' => null,
+                    'validated' => true,
                 ],[
                     'speech_id' => 'id--00003',
                     'plenary_id' => 1,
@@ -369,6 +374,7 @@ class SpeechTest extends TestCase
                     'congressman_id' => 1,
                     'from' => null,
                     'to' => null,
+                    'validated' => true,
                 ],[
                     'speech_id' => 'id--00004',
                     'plenary_id' => 1,
@@ -378,6 +384,7 @@ class SpeechTest extends TestCase
                     'congressman_id' => 1,
                     'from' => null,
                     'to' => null,
+                    'validated' => true,
                 ],[
                     'speech_id' => 'id--10001',
                     'plenary_id' => 1,
@@ -387,6 +394,7 @@ class SpeechTest extends TestCase
                     'congressman_id' => 1,
                     'from' => null,
                     'to' => null,
+                    'validated' => true,
                 ],[
                     'speech_id' => 'id--10002',
                     'plenary_id' => 1,
@@ -396,6 +404,7 @@ class SpeechTest extends TestCase
                     'congressman_id' => 1,
                     'from' => '2000-01-01 00:00:00',
                     'to' => '2000-01-01 00:01:00',
+                    'validated' => true,
                 ],[
                     'speech_id' => 'id--10003',
                     'plenary_id' => 1,
@@ -405,6 +414,7 @@ class SpeechTest extends TestCase
                     'congressman_id' => 1,
                     'from' => '2000-02-01 00:00:00',
                     'to' => '2000-02-01 00:01:00',
+                    'validated' => true,
                 ],[
                     'speech_id' => 'id--10004',
                     'plenary_id' => 1,
@@ -414,6 +424,7 @@ class SpeechTest extends TestCase
                     'congressman_id' => 2,
                     'from' => '2000-03-01 00:00:00',
                     'to' => '2000-03-01 00:01:00',
+                    'validated' => true,
                 ]
             ],
 

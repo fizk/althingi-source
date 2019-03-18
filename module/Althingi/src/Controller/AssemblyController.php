@@ -81,6 +81,7 @@ class AssemblyController extends AbstractRestfulController implements
             $assemblyProperties = (new AssemblyProperties())
                 ->setAssembly($assembly);
             $cabinets = $this->cabinetService->fetchByAssembly($assembly->getAssemblyId());
+            $assemblyProperties->setCabinet(count($cabinets) > 0 ? $cabinets[0] : null);
 
             foreach ($cabinets as $cabinet) {
                 $assemblyProperties->setMajority(
@@ -174,6 +175,7 @@ class AssemblyController extends AbstractRestfulController implements
      *
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\AssemblyStatusProperties
+     * @query category
      */
     public function statisticsAction()
     {

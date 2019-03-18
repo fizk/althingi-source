@@ -80,7 +80,6 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
                 (new CabinetModel())
                     ->setCabinetId(1)
                     ->setTitle('title')
-                    ->setName('name')
             ])
             ->once()
             ->getMock();
@@ -149,7 +148,6 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
                 (new CabinetModel())
                     ->setCabinetId(1)
                     ->setTitle('title')
-                    ->setName('name')
             ])
             ->times(3)
             ->getMock();
@@ -197,7 +195,6 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
                 (new CabinetModel())
                     ->setCabinetId(1)
                     ->setTitle('title')
-                    ->setName('name')
             ])
             ->times(10)
             ->getMock();
@@ -246,7 +243,6 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
                 (new CabinetModel())
                     ->setCabinetId(1)
                     ->setTitle('title')
-                    ->setName('name')
             ])
             ->times(10)
             ->getMock();

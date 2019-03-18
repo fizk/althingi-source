@@ -218,6 +218,7 @@ class CongressmanController extends AbstractRestfulController implements
      * @output \Althingi\Model\CongressmanPartyProperties[]
      * @query rod asc|desc
      * @query fjoldi [number]
+     * @query category
      */
     public function assemblyTimesAction()
     {
@@ -415,6 +416,7 @@ class CongressmanController extends AbstractRestfulController implements
     /**
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\IssueCategoryAndTime[]
+     * @query category
      */
     public function assemblyCategoriesAction()
     {

@@ -13,6 +13,9 @@ class AssemblyProperties implements ModelInterface
     /** @var  \Althingi\Model\Party[] */
     private $minority = [];
 
+    /** @var  \Althingi\Model\Cabinet */
+    private $cabinet;
+
     /**
      * @return Assembly
      */
@@ -98,6 +101,24 @@ class AssemblyProperties implements ModelInterface
     }
 
     /**
+     * @return Cabinet
+     */
+    public function getCabinet(): ?Cabinet
+    {
+        return $this->cabinet;
+    }
+
+    /**
+     * @param Cabinet $cabinet
+     * @return AssemblyProperties
+     */
+    public function setCabinet(?Cabinet $cabinet): AssemblyProperties
+    {
+        $this->cabinet = $cabinet;
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function toArray()
@@ -106,7 +127,8 @@ class AssemblyProperties implements ModelInterface
             'party' => [
                 'majority' => $this->majority,
                 'minority' => $this->minority
-            ]
+            ],
+            'cabinet' => $this->cabinet
         ]);
     }
 

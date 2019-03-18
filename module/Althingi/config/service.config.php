@@ -24,6 +24,7 @@ use Althingi\Service\IssueCategory;
 use Althingi\Service\Election;
 use Althingi\Service\SearchSpeech;
 use Althingi\Service\SearchIssue;
+use Althingi\Service\Inflation;
 use Zend\ServiceManager\ServiceManager;
 use Psr\Log\LoggerInterface;
 use Althingi\ElasticSearchActions\ElasticSearchEventsListener;
@@ -59,7 +60,8 @@ return [
         },
         Cabinet::class => function (ServiceManager $sm) {
             return (new Cabinet())
-                ->setDriver($sm->get(PDO::class));
+                ->setDriver($sm->get(PDO::class))
+                ->setEventManager($sm->get(ServiceEventsListener::class));
         },
         Constituency::class => function (ServiceManager $sm) {
             return (new Constituency())
@@ -67,8 +69,7 @@ return [
         },
         Category::class => function (ServiceManager $sm) {
             return (new Category())
-                ->setDriver($sm->get(PDO::class))
-                ;
+                ->setDriver($sm->get(PDO::class));
         },
         CongressmanDocument::class => function (ServiceManager $sm) {
             return (new CongressmanDocument())
@@ -139,6 +140,10 @@ return [
         },
         VoteItem::class => function (ServiceManager $sm) {
             return (new VoteItem())
+                ->setDriver($sm->get(PDO::class));
+        },
+        Inflation::class => function (ServiceManager $sm) {
+            return (new Inflation())
                 ->setDriver($sm->get(PDO::class));
         },
 
@@ -212,11 +217,10 @@ return [
                 ->pushProcessor(new \Monolog\Processor\MemoryPeakUsageProcessor(true, false))
                 ->pushProcessor(new \Monolog\Processor\MemoryUsageProcessor(true, false));
 
-            if (strtolower(getenv('LOG_PATH')) === 'none') {
-                return $logger;
-            }
-            if (! empty(getenv('LOG_PATH')) && strtolower(getenv('LOG_PATH')) !== 'none' && getenv('LOG_PATH')) {
-                $handlers[] = new \Monolog\Handler\StreamHandler(getenv('LOG_PATH') ? : 'php://stdout');
+            if (getenv('LOG_PATH') === false || strtolower(getenv('LOG_PATH')) === 'none') {
+                return $logger->setHandlers([new \Monolog\Handler\NullHandler()]);
+            } else {
+                $handlers[] = new \Monolog\Handler\StreamHandler(getenv('LOG_PATH'));
             }
 
             $formattedHandlers = array_map(function (\Monolog\Handler\HandlerInterface $handler) {

@@ -84,6 +84,11 @@ class Speech extends Form implements InputFilterProviderInterface
             'name' => 'text',
             'type' => 'Zend\Form\Element\Text',
         ]);
+
+        $this->add([
+            'name' => 'validated',
+            'type' => 'Zend\Form\Element\Text',
+        ]);
     }
 
 
@@ -171,6 +176,16 @@ class Speech extends Form implements InputFilterProviderInterface
                     [
                         'name' => '\Zend\Filter\ToNull',
                         'options' => ['type' => 'all']
+                    ]
+                ],
+            ],
+            'validated' => [
+                'required' => false,
+                'allow_empty' => true,
+                'filters' => [
+                    [
+                        'name' => '\Zend\Filter\Boolean',
+                        'options' => ['type' => ['all']]
                     ]
                 ],
             ],

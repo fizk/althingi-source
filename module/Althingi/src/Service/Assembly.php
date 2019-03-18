@@ -82,6 +82,27 @@ class Assembly implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
+    public function fetchByCabinet(int $id)
+    {
+        $statement = $this->getDriver()->prepare("
+            select * from (
+                select 
+                    A.*, 
+                    C.cabinet_id
+                from Assembly A
+                join Cabinet C on (
+                    (A.`to` between C.`from` and C.`to`) or
+                    (A.`to` > C.`from` and C.`to` is null) or
+                    (A.`to` is null and C.`to` is null)
+                )
+            ) as AssemblyAndCabinet where cabinet_id = :id;
+        ");
+        $statement->execute(['id' => $id]);
+
+        return array_map(function ($assembly) {
+            return (new AssemblyHydrator)->hydrate($assembly, new AssemblyModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
+    }
     /**
      * @return string[]
      */

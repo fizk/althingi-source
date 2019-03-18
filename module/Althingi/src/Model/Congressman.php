@@ -18,6 +18,9 @@ class Congressman implements ModelInterface
     /** @var  \DateTime */
     private $death;
 
+    /** @var  string */
+    private $abbreviation;
+
     /**
      * @return int
      */
@@ -91,6 +94,24 @@ class Congressman implements ModelInterface
     }
 
     /**
+     * @return string | null
+     */
+    public function getAbbreviation(): ?string
+    {
+        return $this->abbreviation;
+    }
+
+    /**
+     * @param string $abbreviation | null
+     * @return Congressman
+     */
+    public function setAbbreviation(?string $abbreviation): Congressman
+    {
+        $this->abbreviation = $abbreviation;
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function toArray()
@@ -100,6 +121,7 @@ class Congressman implements ModelInterface
             'name' => $this->name,
             'birth' => $this->birth ? $this->birth->format('Y-m-d') : null,
             'death' => $this->death ? $this->death->format('Y-m-d') : null,
+            'abbreviation' => $this->abbreviation,
         ];
     }
 

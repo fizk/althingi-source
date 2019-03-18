@@ -46,6 +46,9 @@ class Speech implements ModelInterface
     /** @var int */
     private $word_count = 0;
 
+    /** @var bool */
+    private $validated = true;
+
     /**
      * @return string
      */
@@ -280,6 +283,24 @@ class Speech implements ModelInterface
         return $this;
     }
 
+    /**
+     * @return bool
+     */
+    public function isValidated(): bool
+    {
+        return $this->validated;
+    }
+
+    /**
+     * @param bool $validated
+     * @return Speech
+     */
+    public function setValidated(bool $validated): Speech
+    {
+        $this->validated = $validated;
+        return $this;
+    }
+
     public function toArray()
     {
         return [
@@ -296,6 +317,7 @@ class Speech implements ModelInterface
             'type' => $this->type,
             'iteration' => $this->iteration,
             'word_count' => $this->word_count,
+            'validated' => $this->validated,
         ];
     }
 

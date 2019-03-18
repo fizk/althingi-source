@@ -132,7 +132,8 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
             ->setFrom(new \DateTime('2001-01-01 00:00:00'))
             ->setTo(new \DateTime('2001-01-01 00:00:00'))
             ->setType('t1')
-            ->setText('t2');
+            ->setText('t2')
+            ->setValidated(false);
 
         $this->getMockService(Speech::class)
             ->shouldReceive('save')
@@ -151,7 +152,8 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
             'congressman_type' => null,
             'iteration' => '*',
             'type' => 't1',
-            'text' => 't2'
+            'text' => 't2',
+            'validated' => 'false'
         ]);
 
         $this->assertControllerClass('SpeechController');
