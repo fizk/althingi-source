@@ -89,6 +89,9 @@ trait DatabaseService
      * the model is a DateTime, it will be converted into something
      * that a Database would understand.
      *
+     * Same goes for boolean values, since MySQL doesn't have a bool type
+     * but PHP does, this function converts bools to ints.
+     *
      * @param ModelInterface $data
      * @return array
      */
@@ -97,6 +100,9 @@ trait DatabaseService
         return array_map(function ($i) {
             if ($i instanceof DateTime) {
                 return $i->format('Y-m-d H:i:s');
+            }
+            if (is_bool($i)) {
+                return (int) $i;
             }
             return $i;
         }, $data->toArray());

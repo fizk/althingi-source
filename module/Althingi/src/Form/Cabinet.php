@@ -3,35 +3,24 @@
 namespace Althingi\Form;
 
 use Zend\InputFilter\InputFilterProviderInterface;
-use DateTime;
 
-class Congressman extends Form implements InputFilterProviderInterface
+class Cabinet extends Form implements InputFilterProviderInterface
 {
     public function __construct()
     {
         parent::__construct(get_class($this));
         $this
-            ->setHydrator(new \Althingi\Hydrator\Congressman())
-            ->setObject(new \Althingi\Model\Congressman());
+            ->setObject(new \Althingi\Model\Cabinet())
+            ->setHydrator(new \Althingi\Hydrator\Cabinet());
 
         $this->add([
-            'name' => 'congressman_id',
+            'name' => 'cabinet_id',
             'type' => 'Zend\Form\Element\Number',
         ]);
 
         $this->add([
-            'name' => 'name',
-            'type' => 'Zend\Form\Element\Text',
-        ]);
-
-        $this->add([
-            'name' => 'abbreviation',
-            'type' => 'Zend\Form\Element\Text',
-        ]);
-
-        $this->add([
-            'name' => 'birth',
-            'type' => 'Zend\Form\Element\Date',
+            'name' => 'from',
+            'type' => 'Zend\Form\Element\DateTime',
             'options' => [
                 'format' => 'Y-m-d'
             ],
@@ -41,14 +30,24 @@ class Congressman extends Form implements InputFilterProviderInterface
         ]);
 
         $this->add([
-            'name' => 'death',
-            'type' => 'Zend\Form\Element\Date',
+            'name' => 'to',
+            'type' => 'Zend\Form\Element\DateTime',
             'options' => [
                 'format' => 'Y-m-d'
             ],
             'attributes' => [
                 'step' => 'any'
             ],
+        ]);
+
+        $this->add([
+            'name' => 'title',
+            'type' => 'Zend\Form\Element\Text',
+        ]);
+
+        $this->add([
+            'name' => 'description',
+            'type' => 'Zend\Form\Element\Text',
         ]);
     }
 
@@ -62,19 +61,15 @@ class Congressman extends Form implements InputFilterProviderInterface
     public function getInputFilterSpecification()
     {
         return [
-            'name' => [
+            'cabinet_id' => [
                 'required' => true,
                 'allow_empty' => false,
             ],
-            'congressman_id' => [
+            'from' => [
                 'required' => true,
                 'allow_empty' => false,
             ],
-            'birth' => [
-                'required' => true,
-                'allow_empty' => false,
-            ],
-            'abbreviation' => [
+            'to' => [
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
@@ -84,7 +79,11 @@ class Congressman extends Form implements InputFilterProviderInterface
                     ]
                 ],
             ],
-            'death' => [
+            'title' => [
+                'required' => true,
+                'allow_empty' => false,
+            ],
+            'description' => [
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [

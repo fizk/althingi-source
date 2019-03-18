@@ -49,6 +49,9 @@ class Module
             ->attach($eventManager, 2);
 
         $eventManager->attach(MvcEvent::EVENT_FINISH, function (MvcEvent $event) use ($loggerInterface) {
+            if ($event->getResponse() instanceof \Zend\Console\Response) {
+                return;
+            }
             if ($event->getResponse()->getStatusCode() >= 400) {
                 $loggerInterface->error('REQUEST', [
                     $event->getResponse()->getStatusCode(),

@@ -3,13 +3,14 @@
 namespace Althingi\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Stdlib\DateTime;
 use Zend\View\Model\ViewModel;
 
 class IndexController extends AbstractActionController
 {
     public function indexAction()
     {
-        return new ViewModel();
+        return new ViewModel([
+            'routes' => (new \Althingi\Utils\RouteInspector())->run(require __DIR__ . '/../../config/module.config.php')
+        ]);
     }
 }

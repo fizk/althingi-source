@@ -60,6 +60,7 @@ class SpeechController extends AbstractRestfulController implements
      * @param mixed $id
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\SpeechCongressmanProperties
+     * @query category
      */
     public function get($id)
     {
@@ -103,6 +104,7 @@ class SpeechController extends AbstractRestfulController implements
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\SpeechCongressmanProperties
      * @query leit [string]
+     * @query category
      */
     public function getList()
     {

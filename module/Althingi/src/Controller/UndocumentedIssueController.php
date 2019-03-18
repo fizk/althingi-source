@@ -81,6 +81,7 @@ class UndocumentedIssueController extends AbstractRestfulController implements
      * @param int $id
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\IssueProperties
+     * @query category
      */
     public function get($id)
     {
@@ -268,6 +269,7 @@ class UndocumentedIssueController extends AbstractRestfulController implements
      * @output \Althingi\Model\IssueValue[]
      * @query rod asc|desc
      * @query fjoldi [number]
+     * @query category
      */
     public function speechTimesAction()
     {

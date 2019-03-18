@@ -20,6 +20,7 @@ class CongressmanAndParty implements HydratorInterface
         return $object
             ->setCongressmanId($data['congressman_id'])
             ->setName($data['name'])
+            ->setAbbreviation(array_key_exists('abbreviation', $data) ? $data['abbreviation'] : null)
             ->setBirth($data['birth'] ? new DateTime($data['birth']) : null)
             ->setDeath($data['death'] ? new DateTime($data['death']) : null)
             ->setPartyId($data['party_id']);

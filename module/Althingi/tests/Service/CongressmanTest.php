@@ -170,11 +170,16 @@ class CongressmanTest extends TestCase
 
         $expectedTable = $this->createArrayDataSet([
             'Congressman' => [
-                ['congressman_id' => 1, 'name' => 'name1', 'birth' => '2000-01-01', 'death' => null],
-                ['congressman_id' => 2, 'name' => 'name2', 'birth' => '2000-01-01', 'death' => null],
-                ['congressman_id' => 3, 'name' => 'name3', 'birth' => '2000-01-01', 'death' => null],
-                ['congressman_id' => 4, 'name' => 'name4', 'birth' => '2000-01-01', 'death' => null],
-                ['congressman_id' => 5, 'name' => 'name5', 'birth' => '2000-01-01', 'death' => null],
+                ['congressman_id' => 1, 'name' => 'name1',
+                    'abbreviation' => null, 'birth' => '2000-01-01', 'death' => null],
+                ['congressman_id' => 2, 'name' => 'name2',
+                    'abbreviation' => null, 'birth' => '2000-01-01', 'death' => null],
+                ['congressman_id' => 3, 'name' => 'name3',
+                    'abbreviation' => null, 'birth' => '2000-01-01', 'death' => null],
+                ['congressman_id' => 4, 'name' => 'name4',
+                    'abbreviation' => null, 'birth' => '2000-01-01', 'death' => null],
+                ['congressman_id' => 5, 'name' => 'name5',
+                    'abbreviation' => null, 'birth' => '2000-01-01', 'death' => null],
             ],
         ])->getTable('Congressman');
         $actualTable = $this->getConnection()->createQueryTable('Congressman', 'SELECT * FROM Congressman');
@@ -195,11 +200,16 @@ class CongressmanTest extends TestCase
 
         $expectedTable = $this->createArrayDataSet([
             'Congressman' => [
-                ['congressman_id' => 1, 'name' => 'name1', 'birth' => '2000-01-01', 'death' => null],
-                ['congressman_id' => 2, 'name' => 'name2', 'birth' => '2000-01-01', 'death' => null],
-                ['congressman_id' => 3, 'name' => 'name3', 'birth' => '2000-01-01', 'death' => null],
-                ['congressman_id' => 4, 'name' => 'name4', 'birth' => '2000-01-01', 'death' => null],
-                ['congressman_id' => 5, 'name' => 'name5', 'birth' => '2000-01-01', 'death' => null],
+                ['congressman_id' => 1, 'name' => 'name1',
+                    'abbreviation' => null, 'birth' => '2000-01-01', 'death' => null],
+                ['congressman_id' => 2, 'name' => 'name2',
+                    'abbreviation' => null, 'birth' => '2000-01-01', 'death' => null],
+                ['congressman_id' => 3, 'name' => 'name3',
+                    'abbreviation' => null, 'birth' => '2000-01-01', 'death' => null],
+                ['congressman_id' => 4, 'name' => 'name4',
+                    'abbreviation' => null, 'birth' => '2000-01-01', 'death' => null],
+                ['congressman_id' => 5, 'name' => 'name5',
+                    'abbreviation' => null, 'birth' => '2000-01-01', 'death' => null],
             ],
         ])->getTable('Congressman');
         $actualTable = $this->getConnection()->createQueryTable('Congressman', 'SELECT * FROM Congressman');
@@ -221,10 +231,14 @@ class CongressmanTest extends TestCase
 
         $expectedTable = $this->createArrayDataSet([
             'Congressman' => [
-                ['congressman_id' => 1, 'name' => 'hundur', 'birth' => '2000-01-01', 'death' => null],
-                ['congressman_id' => 2, 'name' => 'name2', 'birth' => '2000-01-01', 'death' => null],
-                ['congressman_id' => 3, 'name' => 'name3', 'birth' => '2000-01-01', 'death' => null],
-                ['congressman_id' => 4, 'name' => 'name4', 'birth' => '2000-01-01', 'death' => null],
+                ['congressman_id' => 1, 'name' => 'hundur',
+                    'abbreviation' => null, 'birth' => '2000-01-01', 'death' => null],
+                ['congressman_id' => 2, 'name' => 'name2',
+                    'abbreviation' => null, 'birth' => '2000-01-01', 'death' => null],
+                ['congressman_id' => 3, 'name' => 'name3',
+                    'abbreviation' => null, 'birth' => '2000-01-01', 'death' => null],
+                ['congressman_id' => 4, 'name' => 'name4',
+                    'abbreviation' => null, 'birth' => '2000-01-01', 'death' => null],
             ],
         ])->getTable('Congressman');
         $actualTable = $this->getConnection()->createQueryTable('Congressman', 'SELECT * FROM Congressman');
@@ -241,9 +255,12 @@ class CongressmanTest extends TestCase
     {
         $expectedTable = $this->createArrayDataSet([
             'Congressman' => [
-                ['congressman_id' => 2, 'name' => 'name2', 'birth' => '2000-01-01', 'death' => null],
-                ['congressman_id' => 3, 'name' => 'name3', 'birth' => '2000-01-01', 'death' => null],
-                ['congressman_id' => 4, 'name' => 'name4', 'birth' => '2000-01-01', 'death' => null],
+                ['congressman_id' => 2, 'name' => 'name2',
+                    'abbreviation' => null, 'birth' => '2000-01-01', 'death' => null],
+                ['congressman_id' => 3, 'name' => 'name3',
+                    'abbreviation' => null, 'birth' => '2000-01-01', 'death' => null],
+                ['congressman_id' => 4, 'name' => 'name4',
+                    'abbreviation' => null, 'birth' => '2000-01-01', 'death' => null],
             ],
         ])->getTable('Congressman');
         $actualTable = $this->getConnection()->createQueryTable('Congressman', 'SELECT * FROM Congressman');
