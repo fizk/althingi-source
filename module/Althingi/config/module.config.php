@@ -30,6 +30,7 @@ use Althingi\Controller\{
     CommitteeMeetingAgendaController,
     AssemblyCommitteeController,
     HighlightController,
+    InflationController,
     Console\SearchIndexerController as ConsoleSearchIndexerController,
     Console\DocumentApiController as ConsoleDocumentApiController,
     Console\IssueStatusController as ConsoleIssueStatusController,
@@ -50,6 +51,7 @@ use Althingi\Service\{
     Election,
     Issue,
     IssueCategory,
+    Inflation,
     Party,
     Plenary,
     PlenaryAgenda,
@@ -741,6 +743,7 @@ return [
                         ]
                     ],
                 ]
+            ]
         ]
     ],
 

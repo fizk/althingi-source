@@ -70,11 +70,11 @@ class CabinetController extends AbstractRestfulController implements
             $from ? new \DateTime($from) : null,
             $to ? new \DateTime($to) : null
         );
-        $inflationCollectionCount = count($cabinetCollection);
+        $cabinetCollectionCount = count($cabinetCollection);
 
         return (new CollectionModel($cabinetCollection))
             ->setStatus(206)
-            ->setRange(0, $inflationCollectionCount, $inflationCollectionCount);
+            ->setRange(0, $cabinetCollectionCount, $cabinetCollectionCount);
     }
 
     /**

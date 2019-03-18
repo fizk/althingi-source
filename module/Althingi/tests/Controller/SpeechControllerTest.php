@@ -133,7 +133,7 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
             ->setTo(new \DateTime('2001-01-01 00:00:00'))
             ->setType('t1')
             ->setText('t2')
-            ->setValidated(true);
+            ->setValidated(false);
 
         $this->getMockService(Speech::class)
             ->shouldReceive('save')

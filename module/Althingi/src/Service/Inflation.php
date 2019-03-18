@@ -23,6 +23,11 @@ class Inflation implements DatabaseAwareInterface
     /** @var  \Zend\EventManager\EventManager */
     private $events;
 
+    /**
+     * @param \DateTime|null $from
+     * @param \DateTime|null $to
+     * @return \Althingi\Model\Inflation[]
+     */
     public function fetchAll(?\DateTime $from = null, ?\DateTime $to = null)
     {
         if ($from !== null && $to === null) {

@@ -2,18 +2,22 @@
 
 namespace AlthingiTest\Controller;
 
+use Althingi\Service\Assembly;
 use Althingi\Service\Cabinet;
 use AlthingiTest\ServiceHelper;
 use Mockery;
 use Althingi\Service\Inflation;
 use Althingi\Model\Inflation as InflationModel;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+use DateTime;
 
 /**
  * Class InflationControllerTest
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\InflationController
  * @covers \Althingi\Controller\InflationController::setInflationService
+ * @covers \Althingi\Controller\InflationController::setCabinetService
+ * @covers \Althingi\Controller\InflationController::setAssemblyService
  */
 class InflationControllerTest extends AbstractHttpControllerTestCase
 {
@@ -30,6 +34,7 @@ class InflationControllerTest extends AbstractHttpControllerTestCase
         $this->buildServices([
             Inflation::class,
             Cabinet::class,
+            Assembly::class,
         ]);
     }
 
@@ -107,6 +112,87 @@ class InflationControllerTest extends AbstractHttpControllerTestCase
     }
 
     /**
+     * @covers ::getList
+     */
+    public function testGetListWithAssembly()
+    {
+        $this->getMockService(Cabinet::class)
+            ->shouldReceive('fetchByAssembly')
+            ->andReturn([
+                (new \Althingi\Model\Cabinet())
+                    ->setFrom(new DateTime())
+                    ->setTo(new DateTime()),
+            ])
+            ->once()
+            ->getMock();
+
+        $this->getMockService(Inflation::class)
+            ->shouldReceive('fetchAll')
+            ->andReturn([
+                (new InflationModel()),
+                (new InflationModel()),
+                (new InflationModel()),
+                (new InflationModel()),
+            ])
+            ->once()
+            ->getMock();
+
+        $this->dispatch('/verdbolga?loggjafarthing=1', 'GET');
+
+        $this->assertControllerClass('InflationController');
+        $this->assertActionName('getList');
+        $this->assertResponseStatusCode(206);
+        $this->assertResponseHeaderContains('Access-Control-Allow-Origin', '*');
+        $this->assertResponseHeaderContains('Content-Range', 'items 0-4/4');
+        $this->assertResponseHeaderContains('Range-Unit', 'items');
+    }
+
+    /**
+     * @covers ::fetchAssemblyAction
+     */
+    public function testFetchAssembly()
+    {
+        $this->getMockService(Assembly::class)
+            ->shouldReceive('get')
+            ->andReturn(
+                (new \Althingi\Model\Assembly())
+                    ->setAssemblyId(1)
+                    ->setFrom(new DateTime())
+                    ->setTo(new DateTime())
+            )
+            ->once()
+            ->getMock();
+
+        $this->getMockService(Cabinet::class)
+            ->shouldReceive('fetchByAssembly')
+            ->andReturn([
+                (new \Althingi\Model\Cabinet())
+            ])
+            ->once()
+            ->getMock();
+
+        $this->getMockService(Inflation::class)
+            ->shouldReceive('fetchAll')
+            ->andReturn([
+                (new InflationModel()),
+                (new InflationModel()),
+                (new InflationModel()),
+                (new InflationModel()),
+            ])
+            ->once()
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/1/verdbolga', 'GET');
+
+        $this->assertControllerClass('InflationController');
+        $this->assertActionName('fetch-assembly');
+        $this->assertResponseStatusCode(206);
+        $this->assertResponseHeaderContains('Access-Control-Allow-Origin', '*');
+        $this->assertResponseHeaderContains('Content-Range', 'items 0-4/4');
+        $this->assertResponseHeaderContains('Range-Unit', 'items');
+    }
+
+    /**
      * @covers ::put
      */
     public function testPut()
@@ -123,5 +209,33 @@ class InflationControllerTest extends AbstractHttpControllerTestCase
         $this->assertControllerClass('InflationController');
         $this->assertActionName('put');
         $this->assertResponseStatusCode(201);
+    }
+
+    /**
+     * @covers ::patch
+     */
+    public function testPatch()
+    {
+        $this->getMockService(Inflation::class)
+            ->shouldReceive('update')
+            ->andReturn(1)
+            ->getMock()
+
+            ->shouldReceive('get')
+            ->andReturn(
+                (new InflationModel())
+                ->setId(1)
+                ->setValue(0)
+                ->setDate(new DateTime())
+            )
+            ->getMock();
+
+        $this->dispatch('/verdbolga/1', 'PATCH', [
+            'value' => 1,
+            'date' => '2001-01-01'
+        ]);
+        $this->assertControllerClass('InflationController');
+        $this->assertActionName('patch');
+        $this->assertResponseStatusCode(205);
     }
 }

@@ -82,6 +82,10 @@ class InflationController extends AbstractRestfulController implements
         }
     }
 
+    /**
+     * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\Inflation[]
+     */
     public function fetchAssemblyAction()
     {
         $assembly = $this->assemblyService->get($this->params('id'));
@@ -152,30 +156,6 @@ class InflationController extends AbstractRestfulController implements
         }
 
         return $this->notFoundAction();
-    }
-
-    /**
-     * List options for Assembly collection.
-     *
-     * @return \Rend\View\Model\ModelInterface
-     */
-    public function optionsList()
-    {
-        return (new EmptyModel())
-            ->setStatus(200)
-            ->setAllow(['GET', 'OPTIONS']);
-    }
-
-    /**
-     * List options for Assembly entry.
-     *
-     * @return \Rend\View\Model\ModelInterface
-     */
-    public function options()
-    {
-        return (new EmptyModel())
-            ->setStatus(200)
-            ->setAllow(['GET', 'OPTIONS', 'PUT', 'PATCH']);
     }
 
     /**
