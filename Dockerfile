@@ -24,6 +24,9 @@ RUN pecl install -o -f redis \
     &&  rm -rf /tmp/pear \
     &&  docker-php-ext-enable redis
 
+RUN pecl install mongodb \
+    && docker-php-ext-enable mongodb
+
 COPY ./auto/php/php.ini /usr/local/etc/php/
 
 EXPOSE 80

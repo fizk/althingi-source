@@ -45,6 +45,8 @@ This application is configured via environment variables:
 | QUEUE_PASSWORD      | guest                            | <string>                              |
 | QUEUE_VHOST         | /                                | <string>                              |
 | QUEUE_FORCED        | false                            | true / false                          | if event should be sent to queue even though no update occurred
+| STORAGE_HOST        | localhost                        | <string>                              | MongoDB host
+| STORAGE_PORT        | 27017                            | <number>                              | MongoDB port
 
 
 ## Database

@@ -2,19 +2,12 @@
 
 namespace AlthingiTest\Controller;
 
-use Althingi\Model\Assembly as AssemblyModel;
-use Althingi\Model\Cabinet as CabinetModel;
-use Althingi\Service\Assembly;
-use Althingi\Service\President;
-use Althingi\Service\Issue;
-use Althingi\Service\Party;
-use Althingi\Service\Vote;
-use Althingi\Service\Speech;
-use Althingi\Service\Cabinet;
-use Althingi\Service\Category;
-use Althingi\Service\Election;
+use Althingi\Service;
+use Althingi\Model;
+use Althingi\Store;
 use AlthingiTest\ServiceHelper;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+use DateTime;
 
 /**
  * Class AssemblyControllerTest
@@ -42,15 +35,16 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
         parent::setUp();
 
         $this->buildServices([
-            Assembly::class,
-            President::class,
-            Issue::class,
-            Party::class,
-            Vote::class,
-            Speech::class,
-            Cabinet::class,
-            Category::class,
-            Election::class,
+            Service\Assembly::class,
+            Service\President::class,
+            Service\Issue::class,
+            Service\Party::class,
+            Service\Vote::class,
+            Service\Speech::class,
+            Service\Cabinet::class,
+            Service\Category::class,
+            Service\Election::class,
+            Store\Assembly::class
         ]);
     }
 
@@ -66,31 +60,40 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
      */
     public function testGet()
     {
-        $this->getMockService(Assembly::class)
+//        $this->getMockService(Store\Assembly::class)
+//            ->shouldReceive('get')
+//            ->andReturn((new Model\AssemblyProperties())
+//                ->setAssembly((new Model\Assembly())
+//                    ->setAssemblyId(144)
+//                    ->setFrom(new DateTime())))
+//            ->once()
+//            ->getMock();
+
+        $this->getMockService(Service\Assembly::class)
             ->shouldReceive('get')
-            ->andReturn((new AssemblyModel())
+            ->andReturn((new Model\Assembly())
                 ->setAssemblyId(144)
-                ->setFrom(new \DateTime()))
+                ->setFrom(new DateTime()))
             ->once()
             ->getMock();
 
-        $this->getMockService(Cabinet::class)
+        $this->getMockService(Service\Cabinet::class)
             ->shouldReceive('fetchByAssembly')
             ->andReturn([
-                (new CabinetModel())
+                (new Model\Cabinet())
                     ->setCabinetId(1)
                     ->setTitle('title')
             ])
             ->once()
             ->getMock();
 
-        $this->getMockService(Party::class)
+        $this->getMockService(Service\Party::class)
             ->shouldReceive('fetchByCabinet')
-            ->andReturn([(new \Althingi\Model\Party())->setPartyId(1)])
+            ->andReturn([(new Model\Party())->setPartyId(1)])
             ->once()
             ->getMock()
             ->shouldReceive('fetchByAssembly')
-            ->andReturn([(new \Althingi\Model\Party())->setPartyId(1)])
+            ->andReturn([(new Model\Party())->setPartyId(1)])
             ->once()
             ->getMock();
 
@@ -99,8 +102,6 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
         $this->assertControllerClass('AssemblyController');
         $this->assertActionName('get');
         $this->assertResponseStatusCode(200);
-
-//        print_r(json_decode($this->getResponse()->getContent()));
     }
 
     /**
@@ -108,7 +109,13 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
      */
     public function testGetNotFound()
     {
-        $this->getMockService(Assembly::class)
+//        $this->getMockService(Store\Assembly::class)
+//            ->shouldReceive('get')
+//            ->andReturn(null)
+//            ->once()
+//            ->getMock();
+
+        $this->getMockService(Service\Assembly::class)
             ->shouldReceive('get')
             ->andReturn(null)
             ->once()
@@ -119,8 +126,6 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
         $this->assertActionName('get');
         $this->assertResponseStatusCode(404);
         $this->assertResponseHeaderContains('Access-Control-Allow-Origin', '*');
-
-//        print_r(json_decode($this->getResponse()->getContent()));
     }
 
     /**
@@ -128,7 +133,7 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
      */
     public function testGetListAll()
     {
-        $this->getMockService(Assembly::class)
+        $this->getMockService(Service\Assembly::class)
             ->shouldReceive('count')
             ->andReturn(3)
             ->once()
@@ -136,23 +141,23 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
             ->shouldReceive('fetchAll')
             ->with(0, null, 'desc')
             ->andReturn([
-                (new AssemblyModel())->setAssemblyId(144)->setFrom(new \DateTime()),
-                (new AssemblyModel())->setAssemblyId(143)->setFrom(new \DateTime()),
-                (new AssemblyModel())->setAssemblyId(144)->setFrom(new \DateTime()),
+                (new Model\Assembly())->setAssemblyId(144)->setFrom(new DateTime()),
+                (new Model\Assembly())->setAssemblyId(143)->setFrom(new DateTime()),
+                (new Model\Assembly())->setAssemblyId(144)->setFrom(new DateTime()),
             ])
             ->getMock();
 
-        $this->getMockService(Cabinet::class)
+        $this->getMockService(Service\Cabinet::class)
             ->shouldReceive('fetchByAssembly')
             ->andReturn([
-                (new CabinetModel())
+                (new Model\Cabinet())
                     ->setCabinetId(1)
                     ->setTitle('title')
             ])
             ->times(3)
             ->getMock();
 
-        $this->getMockService(Party::class)
+        $this->getMockService(Service\Party::class)
             ->shouldReceive('fetchByCabinet')
             ->andReturn([])
             ->times(3)
@@ -177,7 +182,7 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
      */
     public function testGetList()
     {
-        $this->getMockService(Assembly::class)
+        $this->getMockService(Service\Assembly::class)
             ->shouldReceive('count')
             ->andReturn(147)
             ->once()
@@ -185,21 +190,21 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
             ->shouldReceive('fetchAll')
             ->with(0, 10, 'desc')
             ->andReturn(array_map(function () {
-                return (new AssemblyModel())->setAssemblyId(144)->setFrom(new \DateTime());
+                return (new Model\Assembly())->setAssemblyId(144)->setFrom(new DateTime());
             }, range(0, 9)))
             ->getMock();
 
-        $this->getMockService(Cabinet::class)
+        $this->getMockService(Service\Cabinet::class)
             ->shouldReceive('fetchByAssembly')
             ->andReturn([
-                (new CabinetModel())
+                (new Model\Cabinet())
                     ->setCabinetId(1)
                     ->setTitle('title')
             ])
             ->times(10)
             ->getMock();
 
-        $this->getMockService(Party::class)
+        $this->getMockService(Service\Party::class)
             ->shouldReceive('fetchByCabinet')
             ->andReturn([])
             ->times(10)
@@ -225,7 +230,7 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
      */
     public function testGetListSubset()
     {
-        $this->getMockService(Assembly::class)
+        $this->getMockService(Service\Assembly::class)
             ->shouldReceive('count')
             ->andReturn(147)
             ->once()
@@ -233,21 +238,21 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
             ->shouldReceive('fetchAll')
             ->with(10, 10, 'desc')
             ->andReturn(array_map(function () {
-                return (new AssemblyModel())->setAssemblyId(144)->setFrom(new \DateTime());
+                return (new Model\Assembly())->setAssemblyId(144)->setFrom(new DateTime());
             }, range(0, 9)))
             ->getMock();
 
-        $this->getMockService(Cabinet::class)
+        $this->getMockService(Service\Cabinet::class)
             ->shouldReceive('fetchByAssembly')
             ->andReturn([
-                (new CabinetModel())
+                (new Model\Cabinet())
                     ->setCabinetId(1)
                     ->setTitle('title')
             ])
             ->times(10)
             ->getMock();
 
-        $this->getMockService(Party::class)
+        $this->getMockService(Service\Party::class)
             ->shouldReceive('fetchByCabinet')
             ->andReturn([])
             ->times(10)
@@ -274,7 +279,7 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
      */
     public function testPut()
     {
-        $this->getMockService(Assembly::class)
+        $this->getMockService(Service\Assembly::class)
             ->shouldReceive('save')
             ->andReturn(1)
             ->once()
@@ -294,7 +299,7 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
      */
     public function testPutInvalidParams()
     {
-        $this->getMockService(Assembly::class)
+        $this->getMockService(Service\Assembly::class)
             ->shouldReceive('create')
             ->andReturn(1)
             ->never()
@@ -314,11 +319,11 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
      */
     public function testPatch()
     {
-        $assembly = (new AssemblyModel())
+        $assembly = (new Model\Assembly())
             ->setAssemblyId(144)
-            ->setFrom(new \DateTime());
+            ->setFrom(new DateTime());
 
-        $this->getMockService(Assembly::class)
+        $this->getMockService(Service\Assembly::class)
             ->shouldReceive('get')
             ->andReturn($assembly)
             ->once()
@@ -341,7 +346,7 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
      */
     public function testPatchNotFound()
     {
-        $this->getMockService(Assembly::class)
+        $this->getMockService(Service\Assembly::class)
             ->shouldReceive('get')
             ->andReturn(null)
             ->once()
@@ -361,11 +366,11 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
      */
     public function testPatchInvalidParams()
     {
-        $assembly = (new AssemblyModel())
+        $assembly = (new Model\Assembly())
             ->setAssemblyId(144)
-            ->setFrom(new \DateTime('2000-01-01'));
+            ->setFrom(new DateTime('2000-01-01'));
 
-        $this->getMockService(Assembly::class)
+        $this->getMockService(Service\Assembly::class)
             ->shouldReceive('get')
             ->andReturn($assembly)
             ->once()
@@ -389,7 +394,7 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
      */
     public function testPatchResourceNotFound()
     {
-        $this->getMockService(Assembly::class)
+        $this->getMockService(Service\Assembly::class)
             ->shouldReceive('get')
             ->andReturn(null)
             ->once()

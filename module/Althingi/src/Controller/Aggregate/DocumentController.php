@@ -56,7 +56,7 @@ class DocumentController extends AbstractRestfulController implements
         $issueId = $this->params('issue_id', null);
         $documentId = $this->params('document_id', null);
 
-        return (new ItemModel($this->congressmanDocumentService->countProponents(
+        return (new ItemModel($this->congressmanDocumentService->fetchByDocument(
             $assemblyId,
             $issueId,
             $documentId

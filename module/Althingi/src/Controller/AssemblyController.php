@@ -2,7 +2,12 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Form\Assembly as AssemblyForm;
+use Rend\Controller\AbstractRestfulController;
+use Rend\View\Model\ErrorModel;
+use Rend\View\Model\EmptyModel;
+use Rend\View\Model\ItemModel;
+use Rend\View\Model\CollectionModel;
+use Rend\Helper\Http\Range;
 use Althingi\Lib\DateAndCountSequence;
 use Althingi\Lib\ServiceAssemblyAwareInterface;
 use Althingi\Lib\ServiceCabinetAwareInterface;
@@ -12,23 +17,12 @@ use Althingi\Lib\ServiceIssueAwareInterface;
 use Althingi\Lib\ServicePartyAwareInterface;
 use Althingi\Lib\ServiceSpeechAwareInterface;
 use Althingi\Lib\ServiceVoteAwareInterface;
-use Althingi\Model\AssemblyProperties;
-use Althingi\Model\AssemblyStatusProperties;
-use Althingi\Service\Assembly;
-use Althingi\Service\Cabinet;
-use Althingi\Service\Category;
-use Althingi\Service\Election;
-use Althingi\Service\Issue;
-use Althingi\Service\Party;
-use Althingi\Service\Speech;
-use Althingi\Service\Vote;
+use Althingi\Lib\StoreAssemblyAwareInterface;
 use Althingi\Utils\CategoryParam;
-use Rend\Controller\AbstractRestfulController;
-use Rend\View\Model\ErrorModel;
-use Rend\View\Model\EmptyModel;
-use Rend\View\Model\ItemModel;
-use Rend\View\Model\CollectionModel;
-use Rend\Helper\Http\Range;
+use Althingi\Form;
+use Althingi\Model;
+use Althingi\Service;
+use Althingi\Store;
 
 class AssemblyController extends AbstractRestfulController implements
     ServiceAssemblyAwareInterface,
@@ -38,7 +32,8 @@ class AssemblyController extends AbstractRestfulController implements
     ServiceSpeechAwareInterface,
     ServiceCabinetAwareInterface,
     ServiceCategoryAwareInterface,
-    ServiceElectionAwareInterface
+    ServiceElectionAwareInterface,
+    StoreAssemblyAwareInterface
 {
     use Range;
 
@@ -68,6 +63,9 @@ class AssemblyController extends AbstractRestfulController implements
     /** @var $issueService \Althingi\Service\Election */
     private $electionService;
 
+    /** @var $issueService \Althingi\Store\Assembly */
+    private $assemblyStore;
+
     /**
      * Get one Assembly.
      *
@@ -77,8 +75,13 @@ class AssemblyController extends AbstractRestfulController implements
      */
     public function get($id)
     {
+//        if (($assembly = $this->assemblyStore->get($id)) !== null) {
+//            return (new ItemModel($assembly))
+//                ->setStatus(200);
+//        }
+
         if (($assembly = $this->assemblyService->get($id)) != null) {
-            $assemblyProperties = (new AssemblyProperties())
+            $assemblyProperties = (new Model\AssemblyProperties())
                 ->setAssembly($assembly);
             $cabinets = $this->cabinetService->fetchByAssembly($assembly->getAssemblyId());
             $assemblyProperties->setCabinet(count($cabinets) > 0 ? $cabinets[0] : null);
@@ -121,8 +124,8 @@ class AssemblyController extends AbstractRestfulController implements
             $order
         );
 
-        $assemblyCollection = array_map(function (\Althingi\Model\Assembly $assembly) {
-            $assemblyProperties = (new AssemblyProperties())
+        $assemblyCollection = array_map(function (Model\Assembly $assembly) {
+            $assemblyProperties = (new Model\AssemblyProperties())
                 ->setAssembly($assembly);
             $cabinets = $this->cabinetService->fetchByAssembly($assembly->getAssemblyId());
 
@@ -132,7 +135,7 @@ class AssemblyController extends AbstractRestfulController implements
                 ));
                 $assemblyProperties->setMinority($this->partyService->fetchByAssembly(
                     $assembly->getAssemblyId(),
-                    array_map(function (\Althingi\Model\Party $party) {
+                    array_map(function (Model\Party $party) {
                         return $party->getPartyId();
                     }, $assemblyProperties->getMajority())
                 ));
@@ -182,7 +185,7 @@ class AssemblyController extends AbstractRestfulController implements
         $assembly = $this->assemblyService->get($this->params('id'));
         $categories = $this->getCategoriesFromQuery();
 
-        $response = (new AssemblyStatusProperties())
+        $response = (new MOdel\AssemblyStatusProperties())
             ->setBills($this->issueService->fetchNonGovernmentBillStatisticsByAssembly($assembly->getAssemblyId()))
             ->setGovernmentBills(
                 $this->issueService->fetchGovernmentBillStatisticsByAssembly($assembly->getAssemblyId())
@@ -218,7 +221,7 @@ class AssemblyController extends AbstractRestfulController implements
      */
     public function put($id, $data)
     {
-        $form = new AssemblyForm();
+        $form = new Form\Assembly();
         $form->bindValues(array_merge($data, ['assembly_id' => $id]));
 
         if ($form->isValid()) {
@@ -243,7 +246,7 @@ class AssemblyController extends AbstractRestfulController implements
     public function patch($id, $data)
     {
         if (($assembly = $this->assemblyService->get($id)) != null) {
-            $form = new AssemblyForm();
+            $form = new Form\Assembly();
             $form->bind($assembly);
             $form->setData($data);
 
@@ -261,82 +264,92 @@ class AssemblyController extends AbstractRestfulController implements
     }
 
     /**
-     * @param Assembly $assembly
+     * @param \Althingi\Service\Assembly $assembly
      * @return $this
      */
-    public function setAssemblyService(Assembly $assembly)
+    public function setAssemblyService(Service\Assembly $assembly)
     {
         $this->assemblyService = $assembly;
         return $this;
     }
 
     /**
-     * @param Issue $issue
+     * @param \Althingi\Service\Issue $issue
      * @return $this
      */
-    public function setIssueService(Issue $issue)
+    public function setIssueService(Service\Issue $issue)
     {
         $this->issueService = $issue;
         return $this;
     }
 
     /**
-     * @param Party $party
+     * @param \Althingi\Service\Party $party
      * @return $this
      */
-    public function setPartyService(Party $party)
+    public function setPartyService(Service\Party $party)
     {
         $this->partyService = $party;
         return $this;
     }
 
     /**
-     * @param Speech $speech
+     * @param \Althingi\Service\Speech $speech
      * @return $this
      */
-    public function setSpeechService(Speech $speech)
+    public function setSpeechService(Service\Speech $speech)
     {
         $this->speechService = $speech;
         return $this;
     }
 
     /**
-     * @param Vote $vote
+     * @param \Althingi\Service\Vote $vote
      * @return $this
      */
-    public function setVoteService(Vote $vote)
+    public function setVoteService(Service\Vote $vote)
     {
         $this->voteService = $vote;
         return $this;
     }
 
     /**
-     * @param Cabinet $cabinet
+     * @param \Althingi\Service\Cabinet $cabinet
      * @return $this;
      */
-    public function setCabinetService(Cabinet $cabinet)
+    public function setCabinetService(Service\Cabinet $cabinet)
     {
         $this->cabinetService = $cabinet;
         return $this;
     }
 
     /**
-     * @param Category $category
+     * @param \Althingi\Service\Category $category
      * @return $this
      */
-    public function setCategoryService(Category $category)
+    public function setCategoryService(Service\Category $category)
     {
         $this->categoryService = $category;
         return $this;
     }
 
     /**
-     * @param Election $election
+     * @param \Althingi\Service\Election $election
      * @return $this
      */
-    public function setElectionService(Election $election)
+    public function setElectionService(Service\Election $election)
     {
         $this->electionService = $election;
+        return $this;
+    }
+
+    /**
+     * @param \Althingi\Store\Assembly $assembly
+     * @return $this
+     */
+    public function setAssemblyStore(Store\Assembly $assembly)
+    {
+        $this->assemblyStore = $assembly;
         return $this;
     }
 }

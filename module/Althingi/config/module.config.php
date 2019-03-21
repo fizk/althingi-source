@@ -767,7 +767,10 @@ return [
                     ->setIssueService($container->get(Issue::class))
                     ->setPartyService($container->get(Party::class))
                     ->setSpeechService($container->get(Speech::class))
-                    ->setVoteService($container->get(Vote::class));
+                    ->setVoteService($container->get(Vote::class))
+
+                    ->setAssemblyStore($container->get(\Althingi\Store\Assembly::class))
+                    ;
             },
             CongressmanController::class => function (ServiceManager $container) {
                 return (new CongressmanController())
@@ -818,7 +821,8 @@ return [
                     ->setSpeechService($container->get(Speech::class))
                     ->setVoteService($container->get(Vote::class))
                     ->setDocumentService($container->get(Document::class))
-                    ->setSearchIssueService($container->get(SearchIssue::class));
+                    ->setSearchIssueService($container->get(SearchIssue::class))
+                    ->setIssueStore($container->get(Store\Issue::class));
             },
             UndocumentedIssueController::class => function (ServiceManager $container) {
                 return (new UndocumentedIssueController())

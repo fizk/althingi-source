@@ -184,7 +184,7 @@ class Assembly implements DatabaseAwareInterface, EventsAwareInterface
     /**
      * Update one entry.
      *
-     * @param \Althingi\Model\Assembly $data
+     * @param \Althingi\Model\Assembly|object $data
      * @return int affected rows
      */
     public function update(AssemblyModel $data): int
