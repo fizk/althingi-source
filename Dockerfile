@@ -20,12 +20,10 @@ RUN apt-get update \
  && curl -sS https://getcomposer.org/installer \
   | php -- --install-dir=/usr/local/bin --filename=composer
 
-RUN pecl install -o -f redis \
-    &&  rm -rf /tmp/pear \
-    &&  docker-php-ext-enable redis
-
-RUN pecl install mongodb \
-    && docker-php-ext-enable mongodb
+RUN pecl install -o -f redis-4.3.0 \
+    && pecl install mongodb-1.2.9 \
+    && rm -rf /tmp/pear \
+    && docker-php-ext-enable redis mongodb
 
 COPY ./auto/php/php.ini /usr/local/etc/php/
 
