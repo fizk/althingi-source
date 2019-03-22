@@ -9,6 +9,7 @@ FROM php:7.2.9-apache
 RUN apt-get update \
  && apt-get install -y zip unzip \
  && apt-get install -y git zlib1g-dev vim \
+ && apt-get install -y pkg-config \
  && docker-php-ext-install zip \
  && docker-php-ext-install pdo_mysql \
  && docker-php-ext-install bcmath \
