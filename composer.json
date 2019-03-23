@@ -22,13 +22,14 @@
         "ext-pdo": "*",
         "ext-json": "*",
         "ext-dom": "*",
+        "ext-mongodb": "*",
         "zendframework/zend-mvc": "^3.0.1",
         "zendframework/zend-mvc-console": "^1.2",
         "zendframework/zend-eventmanager": "^3.2",
         "zendframework/zend-cache": "^2.8",
         "zendframework/zend-json": "^3.1",
         "zendframework/zend-hydrator": "^2.4",
-        "fizk/rend": "5.2",
+        "fizk/rend": "5.2.1",
         "league/html-to-markdown": "^4.7",
         "elasticsearch/elasticsearch": "^6.0",
         "guzzlehttp/ringphp": "^1.1",
@@ -36,7 +37,8 @@
         "yohang/finite": "^1.1",
         "monolog/monolog": "^1.23",
         "bramus/monolog-colored-line-formatter": "^2.0",
-        "php-amqplib/php-amqplib": "^2.8"
+        "php-amqplib/php-amqplib": "^2.8",
+        "mongodb/mongodb": "1.1.2"
     },
   "autoload": {
     "psr-4": {

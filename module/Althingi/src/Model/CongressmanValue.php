@@ -17,7 +17,7 @@ class CongressmanValue extends Congressman
 
     /**
      * @param int $value
-     * @return CongressmanValue
+     * @return $this
      */
     public function setValue(?int $value): CongressmanValue
     {

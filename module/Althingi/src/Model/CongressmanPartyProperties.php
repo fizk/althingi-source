@@ -10,6 +10,9 @@ class CongressmanPartyProperties implements ModelInterface
     /** @var  \Althingi\Model\Party */
     private $party;
 
+    /** @var \Althingi\Model\Constituency */
+    private $constituency = null;
+
     /** @var  \Althingi\Model\Assembly */
     private $assembly;
 
@@ -69,6 +72,24 @@ class CongressmanPartyProperties implements ModelInterface
     }
 
     /**
+     * @return Constituency
+     */
+    public function getConstituency(): ?Constituency
+    {
+        return $this->constituency;
+    }
+
+    /**
+     * @param Constituency $constituency
+     * @return CongressmanPartyProperties
+     */
+    public function setConstituency(?Constituency $constituency): CongressmanPartyProperties
+    {
+        $this->constituency = $constituency;
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function toArray()
@@ -76,6 +97,7 @@ class CongressmanPartyProperties implements ModelInterface
         return array_merge($this->congressman->toArray(), [
             'party' => $this->party,
             'assembly' => $this->assembly,
+            'constituency' => $this->constituency
         ]);
     }
 

@@ -1,30 +1,7 @@
 <?php
 
-use Althingi\Service\Assembly;
-use Althingi\Service\Congressman;
-use Althingi\Service\Session;
-use Althingi\Service\Party;
-use Althingi\Service\Constituency;
-use Althingi\Service\Plenary;
-use Althingi\Service\PlenaryAgenda;
-use Althingi\Service\Issue;
-use Althingi\Service\Speech;
-use Althingi\Service\Vote;
-use Althingi\Service\VoteItem;
-use Althingi\Service\CongressmanDocument;
-use Althingi\Service\Document;
-use Althingi\Service\Committee;
-use Althingi\Service\CommitteeMeeting;
-use Althingi\Service\CommitteeMeetingAgenda;
-use Althingi\Service\Cabinet;
-use Althingi\Service\President;
-use Althingi\Service\SuperCategory;
-use Althingi\Service\Category;
-use Althingi\Service\IssueCategory;
-use Althingi\Service\Election;
-use Althingi\Service\SearchSpeech;
-use Althingi\Service\SearchIssue;
-use Althingi\Service\Inflation;
+use Althingi\Service;
+use Althingi\Store;
 use Zend\ServiceManager\ServiceManager;
 use Psr\Log\LoggerInterface;
 use Althingi\ElasticSearchActions\ElasticSearchEventsListener;
@@ -37,114 +14,121 @@ use PhpAmqpLib\Connection\AMQPStreamConnection;
 
 return [
     'factories' => [
-        Assembly::class => function (ServiceManager $sm) {
-            return (new Assembly())
+        Service\Assembly::class => function (ServiceManager $sm) {
+            return (new Service\Assembly())
                 ->setDriver($sm->get(PDO::class));
         },
-        Congressman::class => function (ServiceManager $sm) {
-            return (new Congressman())
+        Service\Congressman::class => function (ServiceManager $sm) {
+            return (new Service\Congressman())
                 ->setDriver($sm->get(PDO::class))
                 ->setEventManager($sm->get(EventsListener::class));
         },
-        Committee::class => function (ServiceManager $sm) {
-            return (new Committee())
+        Service\Committee::class => function (ServiceManager $sm) {
+            return (new Service\Committee())
                 ->setDriver($sm->get(PDO::class));
         },
-        CommitteeMeeting::class => function (ServiceManager $sm) {
-            return (new CommitteeMeeting())
+        Service\CommitteeMeeting::class => function (ServiceManager $sm) {
+            return (new Service\CommitteeMeeting())
                 ->setDriver($sm->get(PDO::class));
         },
-        CommitteeMeetingAgenda::class => function (ServiceManager $sm) {
-            return (new CommitteeMeetingAgenda())
+        Service\CommitteeMeetingAgenda::class => function (ServiceManager $sm) {
+            return (new Service\CommitteeMeetingAgenda())
                 ->setDriver($sm->get(PDO::class));
         },
-        Cabinet::class => function (ServiceManager $sm) {
-            return (new Cabinet())
+        Service\Cabinet::class => function (ServiceManager $sm) {
+            return (new Service\Cabinet())
                 ->setDriver($sm->get(PDO::class))
                 ->setEventManager($sm->get(EventsListener::class));
         },
-        Constituency::class => function (ServiceManager $sm) {
-            return (new Constituency())
+        Service\Constituency::class => function (ServiceManager $sm) {
+            return (new Service\Constituency())
                 ->setDriver($sm->get(PDO::class));
         },
-        Category::class => function (ServiceManager $sm) {
-            return (new Category())
+        Service\Category::class => function (ServiceManager $sm) {
+            return (new Service\Category())
                 ->setDriver($sm->get(PDO::class));
         },
-        CongressmanDocument::class => function (ServiceManager $sm) {
-            return (new CongressmanDocument())
+        Service\CongressmanDocument::class => function (ServiceManager $sm) {
+            return (new Service\CongressmanDocument())
                 ->setDriver($sm->get(PDO::class))
                 ->setEventManager($sm->get(EventsListener::class));
         },
-        Document::class => function (ServiceManager $sm) {
-            return (new Document())
+        Service\Document::class => function (ServiceManager $sm) {
+            return (new Service\Document())
                 ->setDriver($sm->get(PDO::class))
                 ->setEventManager($sm->get(EventsListener::class));
         },
-        Election::class => function (ServiceManager $sm) {
-            return (new Election())
+        Service\Election::class => function (ServiceManager $sm) {
+            return (new Service\Election())
                 ->setDriver($sm->get(PDO::class));
         },
-        Issue::class => function (ServiceManager $sm) {
-            $sm->get(LoggerInterface::class);
-            return (new Issue())
+        Service\Issue::class => function (ServiceManager $sm) {
+            return (new Service\Issue())
                 ->setDriver($sm->get(PDO::class))
                 ->setEventManager($sm->get(EventsListener::class));
         },
-        IssueCategory::class => function (ServiceManager $sm) {
-            return (new IssueCategory())
+        Service\IssueCategory::class => function (ServiceManager $sm) {
+            return (new Service\IssueCategory())
                 ->setDriver($sm->get(PDO::class))
                 ->setEventManager($sm->get(EventsListener::class));
         },
-        Party::class => function (ServiceManager $sm) {
-            return (new Party())
+        Service\Party::class => function (ServiceManager $sm) {
+            return (new Service\Party())
                 ->setDriver($sm->get(PDO::class))
                 ->setEventManager($sm->get(EventsListener::class));
         },
-        President::class => function (ServiceManager $sm) {
-            return (new President())
+        Service\President::class => function (ServiceManager $sm) {
+            return (new Service\President())
                 ->setDriver($sm->get(PDO::class));
         },
-        Plenary::class => function (ServiceManager $sm) {
-            return (new Plenary())
+        Service\Plenary::class => function (ServiceManager $sm) {
+            return (new Service\Plenary())
                 ->setDriver($sm->get(PDO::class));
         },
-        PlenaryAgenda::class => function (ServiceManager $sm) {
-            return (new PlenaryAgenda())
+        Service\PlenaryAgenda::class => function (ServiceManager $sm) {
+            return (new Service\PlenaryAgenda())
                 ->setDriver($sm->get(PDO::class));
         },
-        Session::class => function (ServiceManager $sm) {
-            return (new Session())
+        Service\Session::class => function (ServiceManager $sm) {
+            return (new Service\Session())
                 ->setDriver($sm->get(PDO::class));
         },
-        SearchSpeech::class => function (ServiceManager $sm) {
-            return (new SearchSpeech())
+        Service\SearchSpeech::class => function (ServiceManager $sm) {
+            return (new Service\SearchSpeech())
                 ->setElasticSearchClient($sm->get(ElasticsearchClient::class));
         },
-        SearchIssue::class => function (ServiceManager $sm) {
-            return (new SearchIssue())
+        Service\SearchIssue::class => function (ServiceManager $sm) {
+            return (new Service\SearchIssue())
                 ->setElasticSearchClient($sm->get(ElasticsearchClient::class));
         },
-        Speech::class => function (ServiceManager $sm) {
-            return (new Speech())
+        Service\Speech::class => function (ServiceManager $sm) {
+            return (new Service\Speech())
                 ->setDriver($sm->get(PDO::class))
                 ->setEventManager($sm->get(EventsListener::class));
         },
-        SuperCategory::class => function (ServiceManager $sm) {
-            return (new SuperCategory())
+        Service\SuperCategory::class => function (ServiceManager $sm) {
+            return (new Service\SuperCategory())
                 ->setDriver($sm->get(PDO::class));
         },
-        Vote::class => function (ServiceManager $sm) {
-            return (new Vote())
+        Service\Vote::class => function (ServiceManager $sm) {
+            return (new Service\Vote())
                 ->setDriver($sm->get(PDO::class));
         },
-        VoteItem::class => function (ServiceManager $sm) {
-            return (new VoteItem())
+        Service\VoteItem::class => function (ServiceManager $sm) {
+            return (new Service\VoteItem())
                 ->setDriver($sm->get(PDO::class));
         },
-        Inflation::class => function (ServiceManager $sm) {
-            return (new Inflation())
+        Service\Inflation::class => function (ServiceManager $sm) {
+            return (new Service\Inflation())
                 ->setDriver($sm->get(PDO::class));
+        },
+        Store\Assembly::class => function (ServiceManager $sm) {
+            return (new Store\Assembly())
+                ->setStore($sm->get(\MongoDB\Database::class));
+        },
+        Store\Issue::class => function (ServiceManager $sm) {
+            return (new Store\Issue())
+                ->setStore($sm->get(\MongoDB\Database::class));
         },
 
         PDO::class => function (ServiceManager $sm) {
@@ -292,5 +276,15 @@ return [
                     break;
             }
         },
+
+        \MongoDB\Database::class => function (ServiceManager $sm) {
+            $host = getenv('STORAGE_HOST') ? : 'localhost';
+            $port = getenv('STORAGE_PORT') ? : 27017;
+
+            //mongodb://${user}:${pwd}@127.0.0.1:27017"
+
+            return (new \MongoDB\Client("mongodb://{$host}:{$port}"))
+                ->selectDatabase('althingi');
+        }
     ],
 ];
