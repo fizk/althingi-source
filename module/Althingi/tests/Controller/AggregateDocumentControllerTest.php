@@ -2,6 +2,7 @@
 
 namespace AlthingiTest\Controller;
 
+use Althingi\Controller\Aggregate\DocumentController;
 use Althingi\Model\Assembly as AssemblyModel;
 use Althingi\Model\Cabinet as CabinetModel;
 use Althingi\Service\Assembly;
@@ -91,13 +92,14 @@ class AggregateDocumentControllerTest extends AbstractHttpControllerTestCase
     public function testProponentsAction()
     {
         $this->getMockService(CongressmanDocument::class)
-            ->shouldReceive('countProponents')
+            ->shouldReceive('fetchByDocument')
+            ->andReturn([])
             ->once()
             ->getMock();
 
         $this->dispatch('/samantekt/loggjafarthing/1/thingmal/2/thingskjol/3/thingmenn', 'GET');
 
-        $this->assertControllerClass('DocumentController');
+        $this->assertControllerName(DocumentController::class);
         $this->assertActionName('proponents');
         $this->assertResponseStatusCode(200);
     }

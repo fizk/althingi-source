@@ -768,8 +768,7 @@ return [
                     ->setPartyService($container->get(Party::class))
                     ->setSpeechService($container->get(Speech::class))
                     ->setVoteService($container->get(Vote::class))
-
-                    ->setAssemblyStore($container->get(\Althingi\Store\Assembly::class))
+                    ->setAssemblyStore($container->get(Store\Assembly::class))
                     ;
             },
             CongressmanController::class => function (ServiceManager $container) {
