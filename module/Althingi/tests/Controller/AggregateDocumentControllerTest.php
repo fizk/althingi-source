@@ -3,19 +3,8 @@
 namespace AlthingiTest\Controller;
 
 use Althingi\Controller\Aggregate\DocumentController;
-use Althingi\Model\Assembly as AssemblyModel;
-use Althingi\Model\Cabinet as CabinetModel;
-use Althingi\Service\Assembly;
 use Althingi\Service\CongressmanDocument;
 use Althingi\Service\Document;
-use Althingi\Service\President;
-use Althingi\Service\Issue;
-use Althingi\Service\Party;
-use Althingi\Service\Vote;
-use Althingi\Service\Speech;
-use Althingi\Service\Cabinet;
-use Althingi\Service\Category;
-use Althingi\Service\Election;
 use AlthingiTest\ServiceHelper;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
@@ -64,13 +53,13 @@ class AggregateDocumentControllerTest extends AbstractHttpControllerTestCase
 
         $this->dispatch('/samantekt/loggjafarthing/1/thingmal/2/thingskjol/3', 'GET');
 
-        $this->assertControllerClass('DocumentController');
+        $this->assertControllerName(DocumentController::class);
         $this->assertActionName('get');
         $this->assertResponseStatusCode(200);
     }
 
     /**
-     * @covers ::get
+     * @covers ::getList
      */
     public function testGetList()
     {
@@ -81,7 +70,7 @@ class AggregateDocumentControllerTest extends AbstractHttpControllerTestCase
 
         $this->dispatch('/samantekt/loggjafarthing/1/thingmal/2/thingskjol', 'GET');
 
-        $this->assertControllerClass('DocumentController');
+        $this->assertControllerName(DocumentController::class);
         $this->assertActionName('getList');
         $this->assertResponseStatusCode(200);
     }

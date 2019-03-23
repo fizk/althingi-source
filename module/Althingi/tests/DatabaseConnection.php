@@ -10,7 +10,7 @@ trait DatabaseConnection
 {
     use TestCaseTrait;
 
-    static protected $connection;
+    static protected $connection;   // phpcs:ignore
 
     /**
      * Returns the test database connection.
