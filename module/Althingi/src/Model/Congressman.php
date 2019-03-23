@@ -31,7 +31,7 @@ class Congressman implements ModelInterface
 
     /**
      * @param int $congressman_id
-     * @return Congressman
+     * @return $this
      */
     public function setCongressmanId(int $congressman_id): Congressman
     {
@@ -49,7 +49,7 @@ class Congressman implements ModelInterface
 
     /**
      * @param string $name
-     * @return Congressman
+     * @return $this
      */
     public function setName(string $name): Congressman
     {
@@ -67,7 +67,7 @@ class Congressman implements ModelInterface
 
     /**
      * @param \DateTime $birth
-     * @return Congressman
+     * @return $this
      */
     public function setBirth(DateTime $birth = null): Congressman
     {
@@ -85,7 +85,7 @@ class Congressman implements ModelInterface
 
     /**
      * @param \DateTime $death
-     * @return Congressman
+     * @return $this
      */
     public function setDeath(DateTime $death = null): Congressman
     {
@@ -103,7 +103,7 @@ class Congressman implements ModelInterface
 
     /**
      * @param string $abbreviation | null
-     * @return Congressman
+     * @return $this
      */
     public function setAbbreviation(?string $abbreviation): Congressman
     {

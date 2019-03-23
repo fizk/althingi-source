@@ -5,7 +5,9 @@ namespace Althingi\Service;
 use Althingi\Lib\DatabaseAwareInterface;
 use Althingi\Lib\EventsAwareInterface;
 use Althingi\Hydrator\CongressmanDocument as CongressmanDocumentHydrator;
+use Althingi\Hydrator\CongressmanValue as CongressmanValueHydrator;
 use Althingi\Model\CongressmanDocument as CongressmanDocumentModel;
+use Althingi\Model\CongressmanValue as CongressmanValueModel;
 use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;
 use Althingi\Presenters\IndexableCongressmanDocumentPresenter;
@@ -54,6 +56,24 @@ class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterfac
             : null ;
     }
 
+    public function fetchByDocument(int $assemblyId, int $issueId, int $documentId)
+    {
+        $statement = $this->getDriver()->prepare("
+            select DC.* from Document_has_Congressman DC
+              where DC.assembly_id = :assembly_id and DC.issue_id = :issue_id and DC.document_id = :document_id
+            order by DC.`order`;
+        ");
+        $statement->execute([
+            'assembly_id' => $assemblyId,
+            'issue_id' => $issueId,
+            'document_id' => $documentId,
+        ]);
+
+        return array_map(function ($congressmanDocument) {
+            return (new CongressmanDocumentHydrator())->hydrate($congressmanDocument, new CongressmanDocumentModel());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
+    }
+
     /**
      * @param int $assemblyId
      * @param int $issueId
@@ -74,6 +94,26 @@ class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterfac
         ]);
 
         return $statement->fetchColumn(0);
+    }
+
+    public function fetchProponents($assemblyId, $issueId, $documentId)
+    {
+        $statement = $this->getDriver()->prepare("
+            select C.*, DC.`order` as `value` from Document_has_Congressman DC
+              join Congressman C on (DC.congressman_id = C.congressman_id)
+              where DC.assembly_id = :assembly_id and DC.issue_id = :issue_id and DC.document_id = :document_id
+            order by DC.`order`;
+        ");
+        $statement->execute([
+            'assembly_id' => $assemblyId,
+            'issue_id' => $issueId,
+            'document_id' => $documentId,
+        ]);
+
+        $congressmanDocument = $statement->fetch(PDO::FETCH_ASSOC);
+        return $congressmanDocument
+            ? (new CongressmanValueHydrator())->hydrate($congressmanDocument, new CongressmanValueModel())
+            : null ;
     }
 
     /**
