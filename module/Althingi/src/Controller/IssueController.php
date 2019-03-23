@@ -366,8 +366,13 @@ class IssueController extends AbstractRestfulController implements
      * @return CollectionModel
      * @deprecated
      */
-    private function getListFromDatabase(int $assemblyId, array $types = [], array $kinds = [], array $categories = [], string $orderQuery = null)
-    {
+    private function getListFromDatabase(
+        int $assemblyId,
+        array $types = [],
+        array $kinds = [],
+        array $categories = [],
+        string $orderQuery = null
+    ) {
         $query = $this->params()->fromQuery('leit', null);
 
         if ($query) {
@@ -433,8 +438,13 @@ class IssueController extends AbstractRestfulController implements
      * @param string|null $orderQuery
      * @return CollectionModel
      */
-    private function getListFromStore(int $assemblyId, array $types = [], array $kinds = [], array $categories = [], string $orderQuery = null)
-    {
+    private function getListFromStore(
+        int $assemblyId,
+        array $types = [],
+        array $kinds = [],
+        array $categories = [],
+        string $orderQuery = null
+    ) {
 
         $issues = $this->issueStore->fetchByAssembly($assemblyId, $types, $kinds, $categories);
         $count = $this->issueStore->countByAssembly($assemblyId, $types, $kinds, $categories);
