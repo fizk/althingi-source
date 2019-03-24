@@ -2,10 +2,10 @@
 
 namespace Althingi\Service;
 
-use Althingi\Lib\ElasticSearchAwareInterface;
+use Althingi\Hydrator;
+use Althingi\Model;
+use Althingi\Injector\ElasticSearchAwareInterface;
 use Althingi\Presenters\IndexableSpeechPresenter;
-use Althingi\Hydrator\Speech as SpeechHydrator;
-use Althingi\Model\Speech as SpeechModel;
 use Elasticsearch\Client;
 
 /**
@@ -115,7 +115,7 @@ class SearchSpeech implements ElasticSearchAwareInterface
             $object['_source']['text'] = '<mgr>' . implode(' [...] ', array_map(function ($paragraph) {
                 return strip_tags($paragraph, '<strong>');
             }, $object['highlight']['text'])) . '</mgr>';
-            return (new SpeechHydrator())->hydrate($object['_source'], new SpeechModel());
+            return (new Hydrator\Speech())->hydrate($object['_source'], new Model\Speech());
         }, $results['hits']['hits']);
     }
 }

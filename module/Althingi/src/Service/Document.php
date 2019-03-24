@@ -2,21 +2,16 @@
 
 namespace Althingi\Service;
 
-use Althingi\Lib\EventsAwareInterface;
-use Althingi\Lib\DatabaseAwareInterface;
-
-use Althingi\Model\Document as DocumentModel;
-use Althingi\Hydrator\Document as DocumentHydrator;
-
-use Althingi\Model\ValueAndCount as ValueAndCountModel;
-use Althingi\Hydrator\ValueAndCount as ValueAndCountHydrator;
-
+use Althingi\Model;
+use Althingi\Hydrator;
+use Althingi\Injector\EventsAwareInterface;
+use Althingi\Injector\DatabaseAwareInterface;
 use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;
 use Althingi\Presenters\IndexableDocumentPresenter;
-use PDO;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
+use PDO;
 
 class Document implements DatabaseAwareInterface, EventsAwareInterface
 {
@@ -36,7 +31,7 @@ class Document implements DatabaseAwareInterface, EventsAwareInterface
      * @param int $documentId
      * @return \Althingi\Model\Document|null
      */
-    public function get(int $assemblyId, int $issueId, int $documentId): ?DocumentModel
+    public function get(int $assemblyId, int $issueId, int $documentId): ? Model\Document
     {
         $statement = $this->getDriver()->prepare("
             select * from `Document` D 
@@ -50,11 +45,11 @@ class Document implements DatabaseAwareInterface, EventsAwareInterface
 
         $object = $statement->fetch(PDO::FETCH_ASSOC);
         return $object
-            ? (new DocumentHydrator())->hydrate($object, new DocumentModel())
+            ? (new Hydrator\Document())->hydrate($object, new Model\Document())
             : null ;
     }
 
-    public function countTypeByIssue($assemblyId, $issueId)
+    public function countTypeByIssue($assemblyId, $issueId): ? Model\ValueAndCount
     {
         $statement = $this->getDriver()->prepare("
             select count(*) as `count`, `type` as `value` from `Document`
@@ -68,7 +63,7 @@ class Document implements DatabaseAwareInterface, EventsAwareInterface
 
 
         return array_map(function ($object) {
-            return (new ValueAndCountHydrator())->hydrate($object, new ValueAndCountModel());
+            return (new Hydrator\ValueAndCount())->hydrate($object, new Model\ValueAndCount());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -76,7 +71,7 @@ class Document implements DatabaseAwareInterface, EventsAwareInterface
      * @param \Althingi\Model\Document $data
      * @return int
      */
-    public function create(DocumentModel $data): int
+    public function create(Model\Document $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toInsertString('Document', $data)
@@ -97,7 +92,7 @@ class Document implements DatabaseAwareInterface, EventsAwareInterface
      * @param \Althingi\Model\Document $data
      * @return int
      */
-    public function save(DocumentModel $data): int
+    public function save(Model\Document $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toSaveString('Document', $data)
@@ -127,10 +122,10 @@ class Document implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param \Althingi\Model\Document $data
+     * @param \Althingi\Model\Document | object $data
      * @return int
      */
-    public function update(DocumentModel$data): int
+    public function update(Model\Document $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toUpdateString(
@@ -171,7 +166,7 @@ class Document implements DatabaseAwareInterface, EventsAwareInterface
         ]);
 
         return array_map(function ($object) {
-            return (new DocumentHydrator())->hydrate($object, new DocumentModel());
+            return (new Hydrator\Document())->hydrate($object, new Model\Document());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 

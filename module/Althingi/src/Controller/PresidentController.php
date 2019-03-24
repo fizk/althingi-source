@@ -2,20 +2,20 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Lib\ServiceCongressmanAwareInterface;
-use Althingi\Lib\ServicePartyAwareInterface;
-use Althingi\Lib\ServicePresidentAwareInterface;
+use Althingi\Injector\ServiceCongressmanAwareInterface;
+use Althingi\Injector\ServicePartyAwareInterface;
+use Althingi\Injector\ServicePresidentAwareInterface;
 use Althingi\Model\CongressmanPartyProperties;
 use Althingi\Model\PresidentPartyProperties;
 use Althingi\Service\Congressman;
 use Althingi\Service\Party;
 use Althingi\Service\President;
+use Althingi\Form;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\CollectionModel;
 use Rend\View\Model\EmptyModel;
 use Rend\View\Model\ErrorModel;
 use Rend\View\Model\ItemModel;
-use Althingi\Form\President as PresidentForm;
 
 class PresidentController extends AbstractRestfulController implements
     ServicePresidentAwareInterface,
@@ -86,7 +86,7 @@ class PresidentController extends AbstractRestfulController implements
      */
     public function post($data)
     {
-        $form = new PresidentForm();
+        $form = new Form\President();
         $form->bindValues($data);
 
         if ($form->isValid()) {
@@ -127,7 +127,7 @@ class PresidentController extends AbstractRestfulController implements
     public function patch($id, $data)
     {
         if (($president = $this->presidentService->get($id)) != null) {
-            $form = new PresidentForm();
+            $form = new Form\President();
             $form->bind($president);
             $form->setData($data);
 

@@ -2,8 +2,8 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Form\Party as PartyForm;
-use Althingi\Lib\ServicePartyAwareInterface;
+use Althingi\Form;
+use Althingi\Injector\ServicePartyAwareInterface;
 use Althingi\Service\Party;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ErrorModel;
@@ -40,7 +40,7 @@ class PartyController extends AbstractRestfulController implements
      */
     public function put($id, $data)
     {
-        $form = new PartyForm();
+        $form = new Form\Party();
         $form->bindValues(array_merge($data, ['party_id' => $id]));
         if ($form->isValid()) {
             $affectedRow = $this->partyService->save($form->getObject());
@@ -62,7 +62,7 @@ class PartyController extends AbstractRestfulController implements
     public function patch($id, $data)
     {
         if (($party = $this->partyService->get($id)) != null) {
-            $form = new PartyForm();
+            $form = new Form\Party();
             $form->bind($party);
             $form->setData($data);
 

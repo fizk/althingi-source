@@ -3,7 +3,7 @@ namespace Althingi\QueueActions;
 
 use Althingi\Events\EventsListener;
 
-use Althingi\Lib\QueueAwareInterface;
+use Althingi\Injector\QueueAwareInterface;
 use Zend\EventManager\EventManagerInterface;
 use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;

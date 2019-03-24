@@ -2,10 +2,10 @@
 
 namespace Althingi\Service;
 
-use Althingi\Lib\DatabaseAwareInterface;
+use Althingi\Model;
+use Althingi\Hydrator;
+use Althingi\Injector\DatabaseAwareInterface;
 use PDO;
-use Althingi\Model\SuperCategory as SuperCategoryModel;
-use Althingi\Hydrator\SuperCategory as SuperCategoryHydrator;
 
 /**
  * Class Party
@@ -26,7 +26,7 @@ class SuperCategory implements DatabaseAwareInterface
      * @param int $id
      * @return \Althingi\Model\SuperCategory
      */
-    public function get(int $id): ?SuperCategoryModel
+    public function get(int $id): ? Model\SuperCategory
     {
         $statement = $this->getDriver()->prepare('
             select * from `SuperCategory` where super_category_id = :super_category_id
@@ -35,7 +35,7 @@ class SuperCategory implements DatabaseAwareInterface
         $object = $statement->fetch(PDO::FETCH_ASSOC);
 
         return $object
-            ? (new SuperCategoryHydrator())->hydrate($object, new SuperCategoryModel())
+            ? (new Hydrator\SuperCategory())->hydrate($object, new Model\SuperCategory())
             : null;
     }
 
@@ -47,7 +47,7 @@ class SuperCategory implements DatabaseAwareInterface
      * @param string $category
      * @return array
      */
-    public function fetchByIssue(int $assemblyId, int $issueId, string$category = 'A')
+    public function fetchByIssue(int $assemblyId, int $issueId, string$category = 'A'): array
     {
         $statement = $this->getDriver()->prepare('
             select SC.* from Category_has_Issue CI
@@ -63,15 +63,15 @@ class SuperCategory implements DatabaseAwareInterface
         ]);
 
         return array_map(function ($object) {
-            return (new SuperCategoryHydrator())->hydrate($object, new SuperCategoryModel());
+            return (new Hydrator\SuperCategory())->hydrate($object, new Model\SuperCategory());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
     /**
-     * @param SuperCategoryModel $data
+     * @param \Althingi\Model\SuperCategory $data
      * @return int
      */
-    public function create(SuperCategoryModel $data): int
+    public function create(Model\SuperCategory $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toInsertString('SuperCategory', $data)
@@ -82,10 +82,10 @@ class SuperCategory implements DatabaseAwareInterface
     }
 
     /**
-     * @param SuperCategoryModel $data
+     * @param \Althingi\Model\SuperCategory $data
      * @return int
      */
-    public function save(SuperCategoryModel $data): int
+    public function save(Model\SuperCategory $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toSaveString('SuperCategory', $data)
@@ -95,7 +95,11 @@ class SuperCategory implements DatabaseAwareInterface
         return $statement->rowCount();
     }
 
-    public function update(SuperCategoryModel $data): int
+    /**
+     * @param \Althingi\Model\SuperCategory | object $data
+     * @return int
+     */
+    public function update(Model\SuperCategory $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toUpdateString('SuperCategory', $data, "super_category_id={$data->getSuperCategoryId()}")

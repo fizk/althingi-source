@@ -2,25 +2,13 @@
 
 namespace Althingi\Service;
 
-use Althingi\Lib\DatabaseAwareInterface;
-use Althingi\Lib\EventsAwareInterface;
-use Althingi\Model\CongressmanValue as CongressmanValueModel;
+use Althingi\Model;
+use Althingi\Hydrator;
+use Althingi\Injector\DatabaseAwareInterface;
+use Althingi\Injector\EventsAwareInterface;
 use Althingi\Presenters\IndexableCongressmanPresenter;
 use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;
-use Althingi\Model\Congressman as CongressmanModel;
-use Althingi\Model\CongressmanAndParty as CongressmanAndPartyModel;
-use Althingi\Model\CongressmanAndCabinet as CongressmanAndCabinetModel;
-use Althingi\Model\CongressmanAndDateRange as CongressmanAndDateRangeModel;
-use Althingi\Model\Proponent as ProponentModel;
-use Althingi\Model\President as PresidentModel;
-use Althingi\Hydrator\Congressman as CongressmanHydrator;
-use Althingi\Hydrator\CongressmanAndParty as CongressmanAndPartyHydrator;
-use Althingi\Hydrator\CongressmanAndCabinet as CongressmanAndCabinetHydrator;
-use Althingi\Hydrator\CongressmanAndRange as CongressmanAndRangeHydrator;
-use Althingi\Hydrator\CongressmanValue as CongressmanValueHydrator;
-use Althingi\Hydrator\Proponent as ProponentHydrator;
-use Althingi\Hydrator\President as PresidentHydrator;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
 use PDO;
@@ -51,14 +39,14 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
      * @param int $id
      * @return \Althingi\Model\Congressman
      */
-    public function get(int $id): ?CongressmanModel
+    public function get(int $id): ? Model\Congressman
     {
         $statement = $this->getDriver()->prepare("select * from `Congressman` C where congressman_id = :id");
         $statement->execute(['id' => $id]);
         $object = $statement->fetch(PDO::FETCH_ASSOC);
 
         return $object
-            ? (new CongressmanHydrator())->hydrate($object, new CongressmanModel())
+            ? (new Hydrator\Congressman())->hydrate($object, new Model\Congressman())
             : null ;
     }
 
@@ -77,7 +65,7 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
         ");
         $statement->execute();
         return array_map(function ($object) {
-            return (new CongressmanHydrator())->hydrate($object, new CongressmanModel());
+            return (new Hydrator\Congressman())->hydrate($object, new Model\Congressman());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -120,7 +108,7 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
         }
         $statement->execute(['assembly_id' => $assemblyId]);
         return array_map(function ($object) {
-            return (new CongressmanAndPartyHydrator())->hydrate($object, new CongressmanAndPartyModel());
+            return (new Hydrator\CongressmanAndParty())->hydrate($object, new Model\CongressmanAndParty());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -167,7 +155,7 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
         ]);
 
         return array_map(function ($speech) {
-            return (new CongressmanValueHydrator())->hydrate($speech, new CongressmanValueModel());
+            return (new Hydrator\CongressmanValue())->hydrate($speech, new Model\CongressmanValue());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -212,7 +200,7 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
         ]);
 
         return array_map(function ($speech) {
-            return (new CongressmanValueHydrator())->hydrate($speech, new CongressmanValueModel());
+            return (new Hydrator\CongressmanValue())->hydrate($speech, new Model\CongressmanValue());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -229,7 +217,7 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
         );
         $statement->execute(['cabinet_id' => $cabinetId]);
         return array_map(function ($object) {
-            return (new CongressmanAndCabinetHydrator())->hydrate($object, new CongressmanAndCabinetModel());
+            return (new Hydrator\CongressmanAndCabinet())->hydrate($object, new Model\CongressmanAndCabinet());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -258,7 +246,7 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
         ]);
 
         return array_map(function ($object) {
-            return (new CongressmanAndRangeHydrator())->hydrate($object, new CongressmanAndDateRangeModel());
+            return (new Hydrator\CongressmanAndRange())->hydrate($object, new Model\CongressmanAndDateRange());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -281,7 +269,7 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
         ]);
 
         return array_map(function ($object) {
-            return (new ProponentHydrator())->hydrate($object, new ProponentModel());
+            return (new Hydrator\Proponent())->hydrate($object, new Model\Proponent());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -313,7 +301,7 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
         ]);
 
         return array_map(function ($object) {
-            return (new ProponentHydrator())->hydrate($object, new ProponentModel());
+            return (new Hydrator\Proponent())->hydrate($object, new Model\Proponent());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -329,7 +317,7 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
         $statement->execute();
 
         return array_map(function ($object) {
-            return (new PresidentHydrator())->hydrate($object, new PresidentModel());
+            return (new Hydrator\President())->hydrate($object, new Model\President());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -347,7 +335,7 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
         $statement->execute(['assembly_id' => $assemblyId]);
 
         return array_map(function ($object) {
-            return (new PresidentHydrator())->hydrate($object, new PresidentModel());
+            return (new Hydrator\President())->hydrate($object, new Model\President());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -358,7 +346,7 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
      * @param \Althingi\Model\Congressman $data
      * @return int
      */
-    public function create(CongressmanModel $data): int
+    public function create(Model\Congressman $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toInsertString('Congressman', $data)
@@ -378,7 +366,7 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
      * @param \Althingi\Model\Congressman $data
      * @return int
      */
-    public function save(CongressmanModel $data): int
+    public function save(Model\Congressman $data): int
     {
         $statement = $this->getDriver()->prepare($this->toSaveString('Congressman', $data));
         $statement->execute($this->toSqlValues($data));
@@ -412,7 +400,7 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
      * @param \Althingi\Model\Congressman $data
      * @return int Should be 1, for one entry updated.
      */
-    public function update(CongressmanModel $data): int
+    public function update(Model\Congressman $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toUpdateString('Congressman', $data, "congressman_id={$data->getCongressmanId()}")

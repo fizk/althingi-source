@@ -2,17 +2,13 @@
 
 namespace Althingi\Service;
 
-use Althingi\Lib\DatabaseAwareInterface;
-use Althingi\Lib\EventsAwareInterface;
+use Althingi\Hydrator;
+use Althingi\Model;
+use Althingi\Injector\DatabaseAwareInterface;
+use Althingi\Injector\EventsAwareInterface;
 use Althingi\Presenters\IndexableSpeechPresenter;
 use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;
-use Althingi\Hydrator\Speech as SpeechHydrator;
-use Althingi\Hydrator\SpeechAndPosition as SpeechAndPositionHydrator;
-use Althingi\Hydrator\DateAndCount as DateAndCountHydrator;
-use Althingi\Model\Speech as SpeechModel;
-use Althingi\Model\SpeechAndPosition as SpeechAndPositionModel;
-use Althingi\Model\DateAndCount as DateAndCountModel;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
 use PDO;
@@ -41,7 +37,7 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
      * @param string $id
      * @return \Althingi\Model\Speech
      */
-    public function get(string $id): ?SpeechModel
+    public function get(string $id): ? Model\Speech
     {
         $statement = $this->getDriver()->prepare(
             'select * from `Speech` where speech_id = :speech_id'
@@ -50,14 +46,14 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
 
         $object = $statement->fetch(PDO::FETCH_ASSOC);
         return $object
-            ? (new SpeechHydrator())->hydrate($object, new SpeechModel())
+            ? (new Hydrator\Speech())->hydrate($object, new Model\Speech())
             : null ;
     }
 
     /**
-     * @return SpeechModel|null
+     * @return \Althingi\Model\Speech | null
      */
-    public function getLastActive(): ?SpeechModel
+    public function getLastActive(): ? Model\Speech
     {
         $statement = $this->getDriver()->prepare(
             'select * from `Speech` where `text` is not null order by `from` desc;'
@@ -66,13 +62,13 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
 
         $object = $statement->fetch(PDO::FETCH_ASSOC);
         return $object
-            ? (new SpeechHydrator())->hydrate($object, new SpeechModel())
+            ? (new Hydrator\Speech())->hydrate($object, new Model\Speech())
             : null ;
     }
 
     /**
      * This makes two queries, one that for a single congressman will count time
-     * for each type of speech. The second one will count fime for congressman type.
+     * for each type of speech. The second one will count time for congressman type.
      *
      *  type                 total
      *  --------------------------
@@ -93,7 +89,7 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
      * @param $congressmanId
      * @return object
      */
-    public function getFrequencyByAssemblyAndCongressman(int $assemblyId, int $congressmanId)
+    public function getFrequencyByAssemblyAndCongressman(int $assemblyId, int $congressmanId): \stdClass
     {
         $speechTypeStatement = $this->getDriver()->prepare('
             select `type`, sum(`diff`) as `total` from (
@@ -186,9 +182,9 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
         $statement->closeCursor();
 
         return array_map(function ($object, $position) {
-            return (new SpeechAndPositionHydrator())->hydrate(
+            return (new Hydrator\SpeechAndPosition())->hydrate(
                 array_merge($object, ['position' => $position]),
-                new SpeechAndPositionModel()
+                new Model\SpeechAndPosition()
             );
         }, $speeches, count($speeches) > 0 ? range($offset, $offset + count($speeches) - 1) : []);
     }
@@ -246,16 +242,16 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
         $rangeEnd = $rangeBegin + count($speeches);
 
         return array_map(function ($object, $position) {
-            return (new SpeechAndPositionHydrator())->hydrate(
+            return (new Hydrator\SpeechAndPosition())->hydrate(
                 array_merge($object, ['position' => $position]),
-                new SpeechAndPositionModel()
+                new Model\SpeechAndPosition()
             );
         }, $speeches, range($rangeBegin, $rangeEnd - 1));
     }
 
     /**
      * This is a Generator
-     * @return \Althingi\Model\Speech[]
+     * @return \Althingi\Model\Speech[] | void
      */
     public function fetchAll()
     {
@@ -263,7 +259,7 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
         $statement->execute();
 
         while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
-            yield (new SpeechHydrator())->hydrate($row, new SpeechModel());
+            yield (new Hydrator\Speech())->hydrate($row, new Model\Speech());
         }
 
         $statement->closeCursor();
@@ -317,7 +313,7 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
         ]);
 
         return array_map(function ($speech) {
-            return (new DateAndCountHydrator())->hydrate($speech, new DateAndCountModel());
+            return (new Hydrator\DateAndCount())->hydrate($speech, new Model\DateAndCount());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -349,7 +345,7 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
         $statement->execute(['assembly_id' => $assemblyId]);
 
         return array_map(function ($speech) {
-            return (new DateAndCountHydrator())->hydrate($speech, new DateAndCountModel());
+            return (new Hydrator\DateAndCount())->hydrate($speech, new Model\DateAndCount());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -391,9 +387,9 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
      * corresponding Form.
      *
      * @param \Althingi\Model\Speech $data
-     * @return int
+     * @return string
      */
-    public function create(SpeechModel $data)
+    public function create(Model\Speech $data): string
     {
         $data->setWordCount(str_word_count($data->getText()));
         $statement = $this->getDriver()->prepare(
@@ -415,7 +411,7 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
      * @param \Althingi\Model\Speech $data
      * @return int
      */
-    public function save(SpeechModel $data)
+    public function save(Model\Speech $data): int
     {
         $data->setWordCount(str_word_count($data->getText()));
         $statement = $this->getDriver()->prepare($this->toSaveString('Speech', $data));
@@ -446,10 +442,10 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
     /**
      * Update one entry.
      *
-     * @param \Althingi\Model\Speech $data
+     * @param \Althingi\Model\Speech | object $data
      * @return int
      */
-    public function update(SpeechModel $data)
+    public function update(Model\Speech $data): int
     {
         $data->setWordCount(str_word_count($data->getText()));
         $statement = $this->getDriver()->prepare(

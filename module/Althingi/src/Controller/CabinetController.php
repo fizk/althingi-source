@@ -2,21 +2,19 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Lib\ServiceAssemblyAwareInterface;
-use Althingi\Lib\ServiceCabinetAwareInterface;
-use Althingi\Lib\ServiceCongressmanAwareInterface;
-use Althingi\Lib\ServicePartyAwareInterface;
-use Althingi\Model\CabinetAndAssemblies;
-use Althingi\Service\Assembly;
-use Althingi\Service\Cabinet;
-use Althingi\Service\Congressman;
-use Althingi\Service\Party;
-use Althingi\Form\Cabinet as CabinetForm;
+use Althingi\Injector\ServiceAssemblyAwareInterface;
+use Althingi\Injector\ServiceCabinetAwareInterface;
+use Althingi\Injector\ServiceCongressmanAwareInterface;
+use Althingi\Injector\ServicePartyAwareInterface;
+use Althingi\Service;
+use Althingi\Model;
+use Althingi\Form;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\CollectionModel;
 use Rend\View\Model\ItemModel;
 use Rend\View\Model\EmptyModel;
 use Rend\View\Model\ErrorModel;
+use DateTime;
 
 class CabinetController extends AbstractRestfulController implements
     ServiceCongressmanAwareInterface,
@@ -46,7 +44,7 @@ class CabinetController extends AbstractRestfulController implements
         $cabinet = $this->cabinetService->get($id);
         $assemblies = $this->assemblyService->fetchByCabinet($id);
 
-        $cabinetAndAssembliesModel = (new CabinetAndAssemblies())
+        $cabinetAndAssembliesModel = (new Model\CabinetAndAssemblies())
             ->setCabinet($cabinet)
             ->setAssemblies($assemblies);
 
@@ -67,8 +65,8 @@ class CabinetController extends AbstractRestfulController implements
         $to = $this->params()->fromQuery('til');
 
         $cabinetCollection = $this->cabinetService->fetchAll(
-            $from ? new \DateTime($from) : null,
-            $to ? new \DateTime($to) : null
+            $from ? new DateTime($from) : null,
+            $to ? new DateTime($to) : null
         );
         $cabinetCollectionCount = count($cabinetCollection);
 
@@ -89,7 +87,7 @@ class CabinetController extends AbstractRestfulController implements
     {
         $id = $this->params('id');
 
-        $form = new CabinetForm();
+        $form = new Form\Cabinet();
         $form->bindValues(array_merge($data, ['cabinet_id' => $id]));
 
         if ($form->isValid()) {
@@ -111,7 +109,7 @@ class CabinetController extends AbstractRestfulController implements
     public function patch($id, $data)
     {
         if (($committee = $this->cabinetService->get($id)) != null) {
-            $form = new CabinetForm();
+            $form = new Form\Cabinet();
             $form->bind($committee);
             $form->setData($data);
 
@@ -146,30 +144,30 @@ class CabinetController extends AbstractRestfulController implements
     }
 
     /**
-     * @param Congressman $congressman
+     * @param \Althingi\Service\Congressman $congressman
      * @return $this
      */
-    public function setCongressmanService(Congressman $congressman)
+    public function setCongressmanService(Service\Congressman $congressman)
     {
         $this->congressmanService = $congressman;
         return $this;
     }
 
     /**
-     * @param Party $party
+     * @param \Althingi\Service\Party $party
      * @return $this
      */
-    public function setPartyService(Party $party)
+    public function setPartyService(Service\Party $party)
     {
         $this->partyService = $party;
         return $this;
     }
 
     /**
-     * @param Cabinet $cabinet
+     * @param \Althingi\Service\Cabinet $cabinet
      * @return $this
      */
-    public function setCabinetService(Cabinet $cabinet)
+    public function setCabinetService(Service\Cabinet $cabinet)
     {
         $this->cabinetService = $cabinet;
         return $this;
@@ -179,7 +177,7 @@ class CabinetController extends AbstractRestfulController implements
      * @param \Althingi\Service\Assembly $assembly
      * @return $this
      */
-    public function setAssemblyService(Assembly $assembly)
+    public function setAssemblyService(Service\Assembly $assembly)
     {
         $this->assemblyService = $assembly;
         return $this;

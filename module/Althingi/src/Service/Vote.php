@@ -2,14 +2,11 @@
 
 namespace Althingi\Service;
 
-use Althingi\Lib\DatabaseAwareInterface;
+use Althingi\Model;
+use Althingi\Hydrator;
+use Althingi\Injector\DatabaseAwareInterface;
 use PDO;
-use Althingi\Model\Vote as VoteModel;
-use Althingi\Model\DateAndCount as DateAndCountModel;
-use Althingi\Model\VoteTypeAndCount as VoteTypeAndCountModel;
-use Althingi\Hydrator\Vote as VoteHydrator;
-use Althingi\Hydrator\DateAndCount as DateAndCountHydrator;
-use Althingi\Hydrator\VoteTypeAndCount as VoteTypeAndCountHydrator;
+use DateTime;
 
 class Vote implements DatabaseAwareInterface
 {
@@ -22,9 +19,9 @@ class Vote implements DatabaseAwareInterface
 
     /**
      * @param int $id
-     * @return \Althingi\Model\Vote|null
+     * @return \Althingi\Model\Vote | null
      */
-    public function get(int $id): ?VoteModel
+    public function get(int $id): ? Model\Vote
     {
         $statement = $this->getDriver()->prepare('
             select * from `Vote` where vote_id = :vote_id
@@ -33,7 +30,7 @@ class Vote implements DatabaseAwareInterface
         $object = $statement->fetch(PDO::FETCH_ASSOC);
 
         return $object
-            ? (new VoteHydrator())->hydrate($object, new VoteModel())
+            ? (new Hydrator\Vote())->hydrate($object, new Model\Vote())
             : null ;
     }
 
@@ -55,7 +52,7 @@ class Vote implements DatabaseAwareInterface
         ]);
 
         return array_map(function ($object) {
-            return (new VoteHydrator())->hydrate($object, new VoteModel());
+            return (new Hydrator\Vote())->hydrate($object, new Model\Vote());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -90,7 +87,7 @@ class Vote implements DatabaseAwareInterface
             'issue_id' => $issueId
         ]);
         return array_map(function ($vote) {
-            return (new DateAndCountHydrator())->hydrate($vote, new DateAndCountModel());
+            return (new Hydrator\DateAndCount())->hydrate($vote, new Model\DateAndCount());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -109,7 +106,7 @@ class Vote implements DatabaseAwareInterface
         );
         $statement->execute(['assembly_id' => $assemblyId]);
         return array_map(function ($vote) {
-            return (new DateAndCountHydrator())->hydrate($vote, new DateAndCountModel());
+            return (new Hydrator\DateAndCount())->hydrate($vote, new Model\DateAndCount());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -132,7 +129,7 @@ class Vote implements DatabaseAwareInterface
             'document_id' => $documentId,
         ]);
         return array_map(function ($object) {
-            return (new VoteHydrator())->hydrate($object, new VoteModel());
+            return (new Hydrator\Vote())->hydrate($object, new Model\Vote());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -147,12 +144,12 @@ class Vote implements DatabaseAwareInterface
     public function getFrequencyByAssemblyAndCongressman(
         int $assemblyId,
         int $congressmanId,
-        \DateTime $from = null,
-        \DateTime $to = null
+        DateTime $from = null,
+        DateTime $to = null
     ): array {
         $statement = null;
         if ($from) {
-            $to = $to ? $to : new \DateTime();
+            $to = $to ? $to : new DateTime();
             $statement = $this->getDriver()->prepare('
                 select count(*) as `count`, VI.`vote` from `Vote` V 
                 join `VoteItem` VI on (V.`vote_id` = VI.`vote_id`)
@@ -181,7 +178,7 @@ class Vote implements DatabaseAwareInterface
         }
 
         return array_map(function ($object) {
-            return (new VoteTypeAndCountHydrator())->hydrate($object, new VoteTypeAndCountModel());
+            return (new Hydrator\VoteTypeAndCount())->hydrate($object, new Model\VoteTypeAndCount());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -201,10 +198,10 @@ class Vote implements DatabaseAwareInterface
     }
 
     /**
-     * @param VoteModel $data
+     * @param \Althingi\Model\Vote $data
      * @return int
      */
-    public function create(VoteModel $data): int
+    public function create(Model\Vote $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toInsertString('Vote', $data)
@@ -215,10 +212,10 @@ class Vote implements DatabaseAwareInterface
     }
 
     /**
-     * @param VoteModel $data
+     * @param \Althingi\Model\Vote $data
      * @return int
      */
-    public function save(VoteModel $data): int
+    public function save(Model\Vote $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toSaveString('Vote', $data)
@@ -229,10 +226,10 @@ class Vote implements DatabaseAwareInterface
     }
 
     /**
-     * @param VoteModel $data
+     * @param \Althingi\Model\Vote | object $data
      * @return int
      */
-    public function update(VoteModel $data): int
+    public function update(Model\Vote $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toUpdateString('Vote', $data, "vote_id={$data->getVoteId()}")

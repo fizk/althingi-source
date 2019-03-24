@@ -2,8 +2,8 @@
 
 namespace Althingi\Controller\Aggregate;
 
-use Althingi\Lib\ServiceCategoryAwareInterface;
-use Althingi\Lib\ServiceSuperCategoryAwareInterface;
+use Althingi\Injector\ServiceCategoryAwareInterface;
+use Althingi\Injector\ServiceSuperCategoryAwareInterface;
 use Althingi\Service\Category;
 use Althingi\Service\SuperCategory;
 use Althingi\Utils\CategoryParam;

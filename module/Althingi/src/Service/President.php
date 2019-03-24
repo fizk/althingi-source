@@ -2,11 +2,9 @@
 
 namespace Althingi\Service;
 
-use Althingi\Lib\DatabaseAwareInterface;
-use Althingi\Model\President as PresidentModel;
-use Althingi\Model\PresidentCongressman as PresidentCongressmanModel;
-use Althingi\Hydrator\President as PresidentHydrator;
-use Althingi\Hydrator\PresidentCongressman as PresidentCongressmanHydrator;
+use Althingi\Model;
+use Althingi\Hydrator;
+use Althingi\Injector\DatabaseAwareInterface;
 use PDO;
 use DateTime;
 
@@ -23,7 +21,7 @@ class President implements DatabaseAwareInterface
      */
     private $pdo;
 
-    public function get(int $id): ?PresidentModel
+    public function get(int $id): ? Model\President
     {
         $statement = $this->getDriver()->prepare(
             "select * 
@@ -34,7 +32,7 @@ class President implements DatabaseAwareInterface
 
         $object = $statement->fetch(PDO::FETCH_ASSOC);
         return $object
-            ? (new PresidentHydrator())->hydrate($object, new PresidentModel())
+            ? (new Hydrator\President())->hydrate($object, new Model\President())
             : null;
     }
 
@@ -42,7 +40,7 @@ class President implements DatabaseAwareInterface
      * @param int $id
      * @return \Althingi\Model\PresidentCongressman|null
      */
-    public function getWithCongressman(int $id): ?PresidentCongressmanModel
+    public function getWithCongressman(int $id): ? Model\PresidentCongressman
     {
         $statement = $this->getDriver()->prepare(
             "select P.`president_id`, P.`assembly_id`, P.`from`, P.`to`, P.`title`, P.`abbr`, C.* 
@@ -54,7 +52,7 @@ class President implements DatabaseAwareInterface
 
         $object = $statement->fetch(PDO::FETCH_ASSOC);
         return $object
-            ? (new PresidentCongressmanHydrator())->hydrate($object, new PresidentCongressmanModel())
+            ? (new Hydrator\PresidentCongressman())->hydrate($object, new Model\PresidentCongressman())
             : null;
     }
 
@@ -70,7 +68,7 @@ class President implements DatabaseAwareInterface
         int $congressmanId,
         DateTime $from,
         string $title
-    ): ?PresidentCongressmanModel {
+    ): ? Model\PresidentCongressman {
         $statement = $this->getDriver()->prepare("
             select P.`president_id`, P.`assembly_id`, P.`from`, P.`to`, P.`title`, P.`abbr`, C.* 
             from `President` P 
@@ -89,7 +87,7 @@ class President implements DatabaseAwareInterface
 
         $object = $statement->fetch(PDO::FETCH_ASSOC);
         return $object
-            ? (new PresidentCongressmanHydrator())->hydrate($object, new PresidentCongressmanModel())
+            ? (new Hydrator\PresidentCongressman())->hydrate($object, new Model\PresidentCongressman())
             : null;
     }
 
@@ -97,7 +95,7 @@ class President implements DatabaseAwareInterface
      * @param \Althingi\Model\President $data
      * @return int
      */
-    public function create(PresidentModel $data): int
+    public function create(Model\President $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toInsertString('President', $data)
@@ -108,10 +106,10 @@ class President implements DatabaseAwareInterface
     }
 
     /**
-     * @param \Althingi\Model\President $data
+     * @param \Althingi\Model\President | object $data
      * @return int
      */
-    public function update(PresidentModel $data): int
+    public function update(Model\President $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toUpdateString('President', $data, "president_id={$data->getPresidentId()}")

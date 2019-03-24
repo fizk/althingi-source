@@ -2,22 +2,15 @@
 
 namespace Althingi\Controller\Aggregate;
 
-use Althingi\Lib\ServiceCongressmanAwareInterface;
-use Althingi\Lib\ServiceConstituencyAwareInterface;
-use Althingi\Lib\ServiceDocumentAwareInterface;
-use Althingi\Lib\ServicePartyAwareInterface;
-use Althingi\Lib\ServiceProponentAwareInterface;
-use Althingi\Service\Congressman;
+use Althingi\Injector\ServiceDocumentAwareInterface;
+use Althingi\Injector\ServiceProponentAwareInterface;
 use Althingi\Service\CongressmanDocument;
-use Althingi\Service\Constituency;
 use Althingi\Service\Document;
-use Althingi\Service\Party;
 use Althingi\Utils\CategoryParam;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ItemModel;
 use Rend\View\Model\CollectionModel;
 use Rend\Helper\Http\Range;
-use DateTime;
 
 class DocumentController extends AbstractRestfulController implements
     ServiceDocumentAwareInterface,

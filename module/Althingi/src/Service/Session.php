@@ -2,9 +2,9 @@
 
 namespace Althingi\Service;
 
-use Althingi\Lib\DatabaseAwareInterface;
-use Althingi\Model\Session as SessionModel;
-use Althingi\Hydrator\Session as SessionHydrator;
+use Althingi\Model;
+use Althingi\Hydrator;
+use Althingi\Injector\DatabaseAwareInterface;
 use PDO;
 use DateTime;
 
@@ -27,7 +27,7 @@ class Session implements DatabaseAwareInterface
      * @param int $id
      * @return null|\Althingi\Model\Session
      */
-    public function get(int $id): ?SessionModel
+    public function get(int $id): ? Model\Session
     {
         $statement = $this->getDriver()->prepare(
             "select * from `Session` where session_id = :session_id"
@@ -36,7 +36,7 @@ class Session implements DatabaseAwareInterface
         $object = $statement->fetch(PDO::FETCH_ASSOC);
 
         return $object
-            ? (new SessionHydrator())->hydrate($object, new SessionModel())
+            ? (new Hydrator\Session())->hydrate($object, new Model\Session())
             : null;
     }
 
@@ -55,7 +55,7 @@ class Session implements DatabaseAwareInterface
         $statement->execute(['id' => $id]);
 
         return array_map(function ($object) {
-            return (new SessionHydrator())->hydrate($object, new SessionModel());
+            return (new Hydrator\Session())->hydrate($object, new Model\Session());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -76,7 +76,7 @@ class Session implements DatabaseAwareInterface
             'congressman_id' => $congressmanId,
         ]);
         return array_map(function ($object) {
-            return (new SessionHydrator())->hydrate($object, new SessionModel());
+            return (new Hydrator\Session())->hydrate($object, new Model\Session());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -107,7 +107,7 @@ class Session implements DatabaseAwareInterface
      * @param \Althingi\Model\Session $data
      * @return int affected rows
      */
-    public function create(SessionModel $data): int
+    public function create(Model\Session $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toInsertString('Session', $data)
@@ -121,10 +121,10 @@ class Session implements DatabaseAwareInterface
      * Update one Congressman's Session. Accepts object from
      * corresponding Form.
      *
-     * @param \Althingi\Model\Session $data
+     * @param \Althingi\Model\Session | object $data
      * @return int
      */
-    public function update(SessionModel $data): int
+    public function update(Model\Session $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toUpdateString('Session', $data, "session_id={$data->getSessionId()}")

@@ -2,9 +2,9 @@
 
 namespace Althingi\Service;
 
-use Althingi\Lib\DatabaseAwareInterface;
-use Althingi\Model\Plenary as PlenaryModel;
-use Althingi\Hydrator\Plenary as PlenaryHydrator;
+use Althingi\Model;
+use Althingi\Hydrator;
+use Althingi\Injector\DatabaseAwareInterface;
 use PDO;
 
 /**
@@ -25,7 +25,7 @@ class Plenary implements DatabaseAwareInterface
      * @param int $plenaryId
      * @return \Althingi\Model\Plenary|null
      */
-    public function get(int $assemblyId, int $plenaryId): ?PlenaryModel
+    public function get(int $assemblyId, int $plenaryId): ? Model\Plenary
     {
         $statement = $this->getDriver()->prepare('
             select * from `Plenary` where assembly_id = :assembly_id and plenary_id = :plenary_id
@@ -37,7 +37,7 @@ class Plenary implements DatabaseAwareInterface
 
         $object = $statement->fetch(PDO::FETCH_ASSOC);
         return $object
-            ? (new PlenaryHydrator())->hydrate($object, new PlenaryModel())
+            ? (new Hydrator\Plenary())->hydrate($object, new Model\Plenary())
             : null;
     }
 
@@ -61,7 +61,7 @@ class Plenary implements DatabaseAwareInterface
         $statement->execute(['id' => $id]);
 
         return array_map(function ($object) {
-            return (new PlenaryHydrator())->hydrate($object, new PlenaryModel());
+            return (new Hydrator\Plenary())->hydrate($object, new Model\Plenary());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -87,7 +87,7 @@ class Plenary implements DatabaseAwareInterface
      * @param \Althingi\Model\Plenary $data
      * @return string
      */
-    public function create(PlenaryModel $data)
+    public function create(Model\Plenary $data)
     {
         $statement = $this->getDriver()->prepare(
             $this->toInsertString('Plenary', $data)
@@ -101,7 +101,7 @@ class Plenary implements DatabaseAwareInterface
      * @param \Althingi\Model\Plenary $data
      * @return string
      */
-    public function save(PlenaryModel $data)
+    public function save(Model\Plenary $data)
     {
         $statement = $this->getDriver()->prepare(
             $this->toSaveString('Plenary', $data)
@@ -112,10 +112,10 @@ class Plenary implements DatabaseAwareInterface
     }
 
     /**
-     * @param \Althingi\Model\Plenary $data
+     * @param \Althingi\Model\Plenary | object $data
      * @return int
      */
-    public function update(PlenaryModel $data): int
+    public function update(Model\Plenary $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toUpdateString(

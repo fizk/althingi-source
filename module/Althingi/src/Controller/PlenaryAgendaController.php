@@ -1,19 +1,14 @@
 <?php
 namespace Althingi\Controller;
 
-use Althingi\Lib\ServiceCongressmanAwareInterface;
-use Althingi\Lib\ServiceIssueAwareInterface;
-use Althingi\Lib\ServicePartyAwareInterface;
-use Althingi\Lib\ServicePlenaryAgendaAwareInterface;
-use Althingi\Lib\ServicePlenaryAwareInterface;
-use Althingi\Model\CongressmanPartyProperties;
-use Althingi\Model\PlenaryAgendaProperties;
-use Althingi\Service\Congressman;
-use Althingi\Service\Issue;
-use Althingi\Service\Party;
-use Althingi\Service\Plenary;
-use Althingi\Service\PlenaryAgenda;
-use Althingi\Form\PlenaryAgenda as PlenaryAgendaForm;
+use Althingi\Injector\ServiceCongressmanAwareInterface;
+use Althingi\Injector\ServiceIssueAwareInterface;
+use Althingi\Injector\ServicePartyAwareInterface;
+use Althingi\Injector\ServicePlenaryAgendaAwareInterface;
+use Althingi\Injector\ServicePlenaryAwareInterface;
+use Althingi\Form;
+use Althingi\Model;
+use Althingi\Service;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\CollectionModel;
 use Rend\View\Model\EmptyModel;
@@ -48,8 +43,8 @@ class PlenaryAgendaController extends AbstractRestfulController implements
 
         $plenary = $this->plenaryService->get($assemblyId, $plenaryId);
 
-        $collection = array_map(function (\Althingi\Model\PlenaryAgenda $item) use ($plenary) {
-            $returnObject = (new PlenaryAgendaProperties())->setPlenaryAgenda($item);
+        $collection = array_map(function (Model\PlenaryAgenda $item) use ($plenary) {
+            $returnObject = (new Model\PlenaryAgendaProperties())->setPlenaryAgenda($item);
 
             if ($item->getIssueId()) {
                  $returnObject->setIssue(
@@ -59,7 +54,7 @@ class PlenaryAgendaController extends AbstractRestfulController implements
 
             if ($item->getAnswererId()) {
                 $returnObject->setAnswererCongressman(
-                    (new CongressmanPartyProperties())
+                    (new Model\CongressmanPartyProperties())
                         ->setCongressman($this->congressmanService->get($item->getAnswererId()))
                         ->setParty(
                             $this->partyService->getByCongressman($item->getAnswererId(), $plenary->getFrom())
@@ -69,7 +64,7 @@ class PlenaryAgendaController extends AbstractRestfulController implements
 
             if ($item->getCounterAnswererId()) {
                 $returnObject->setCounterAnswererCongressman(
-                    (new CongressmanPartyProperties())
+                    (new Model\CongressmanPartyProperties())
                         ->setCongressman($this->congressmanService->get($item->getCounterAnswererId()))
                         ->setParty(
                             $this->partyService->getByCongressman($item->getCounterAnswererId(), $plenary->getFrom())
@@ -79,7 +74,7 @@ class PlenaryAgendaController extends AbstractRestfulController implements
 
             if ($item->getInstigatorId()) {
                 $returnObject->setInstigatorCongressman(
-                    (new CongressmanPartyProperties())
+                    (new Model\CongressmanPartyProperties())
                         ->setCongressman($this->congressmanService->get($item->getInstigatorId()))
                         ->setParty(
                             $this->partyService->getByCongressman($item->getInstigatorId(), $plenary->getFrom())
@@ -89,7 +84,7 @@ class PlenaryAgendaController extends AbstractRestfulController implements
 
             if ($item->getPosedId()) {
                 $returnObject->setPosedCongressman(
-                    (new CongressmanPartyProperties())
+                    (new Model\CongressmanPartyProperties())
                         ->setCongressman($this->congressmanService->get($item->getPosedId()))
                         ->setParty(
                             $this->partyService->getByCongressman($item->getPosedId(), $plenary->getFrom())
@@ -107,7 +102,7 @@ class PlenaryAgendaController extends AbstractRestfulController implements
     {
         $assemblyId = $this->params('id');
         $plenaryId  = $this->params('plenary_id');
-        $form = new PlenaryAgendaForm();
+        $form = new Form\PlenaryAgenda();
         $form->bindValues(array_merge($data, [
             'item_id' => $id,
             'assembly_id' => $assemblyId,
@@ -131,12 +126,12 @@ class PlenaryAgendaController extends AbstractRestfulController implements
         $plenaryId  = $this->params('plenary_id');
 
         if (($plenaryAgenda = $this->plenaryAgendaService->get($assemblyId, $plenaryId, $id)) != null) {
-            $form = new PlenaryAgendaForm();
+            $form = new Form\PlenaryAgenda();
             $form->bind($plenaryAgenda);
             $form->setData($data);
 
             if ($form->isValid()) {
-                $this->plenaryAgendaService->update($form->getData());
+                $this->plenaryAgendaService->update($form->getData()); //@todo ... this doesn't exists
                 return (new EmptyModel())
                     ->setStatus(205);
             }
@@ -149,20 +144,20 @@ class PlenaryAgendaController extends AbstractRestfulController implements
     }
 
     /**
-     * @param PlenaryAgenda $plenaryAgenda
+     * @param \Althingi\Service\PlenaryAgenda $plenaryAgenda
      * @return $this
      */
-    public function setPlenaryAgendaService(PlenaryAgenda $plenaryAgenda)
+    public function setPlenaryAgendaService(Service\PlenaryAgenda $plenaryAgenda)
     {
         $this->plenaryAgendaService = $plenaryAgenda;
         return $this;
     }
 
     /**
-     * @param Congressman $congressman
+     * @param \Althingi\Service\Congressman $congressman
      * @return $this
      */
-    public function setCongressmanService(Congressman $congressman)
+    public function setCongressmanService(Service\Congressman $congressman)
     {
         $this->congressmanService = $congressman;
         return $this;
@@ -172,7 +167,7 @@ class PlenaryAgendaController extends AbstractRestfulController implements
      * @param \Althingi\Service\Issue $issue
      * @return $this
      */
-    public function setIssueService(Issue $issue)
+    public function setIssueService(Service\Issue $issue)
     {
         $this->issueService = $issue;
         return $this;
@@ -182,17 +177,17 @@ class PlenaryAgendaController extends AbstractRestfulController implements
      * @param \Althingi\Service\Party $party
      * @return $this
      */
-    public function setPartyService(Party $party)
+    public function setPartyService(Service\Party $party)
     {
         $this->partyService = $party;
         return $this;
     }
 
     /**
-     * @param Plenary $plenary
+     * @param \Althingi\Service\Plenary $plenary
      * @return $this
      */
-    public function setPlenaryService(Plenary $plenary)
+    public function setPlenaryService(Service\Plenary $plenary)
     {
         $this->plenaryService = $plenary;
         return $this;

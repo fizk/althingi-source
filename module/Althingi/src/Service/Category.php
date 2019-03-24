@@ -2,12 +2,10 @@
 
 namespace Althingi\Service;
 
+use Althingi\Hydrator;
+use Althingi\Model;
+use Althingi\Injector\DatabaseAwareInterface;
 use PDO;
-use Althingi\Lib\DatabaseAwareInterface;
-use Althingi\Model\Category as CategoryModel;
-use Althingi\Hydrator\Category as CategoryHydrator;
-use Althingi\Hydrator\CategoryAndCount as CategoryAndCountHydrator;
-use Althingi\Model\CategoryAndCount as CategoryAndCountModel;
 
 /**
  * Class Party
@@ -28,7 +26,7 @@ class Category implements DatabaseAwareInterface
      * @param int $id
      * @return \Althingi\Model\Category
      */
-    public function get(int $id): ?CategoryModel
+    public function get(int $id): ? Model\Category
     {
         $statement = $this->getDriver()->prepare('
             select * from `Category` where category_id = :category_id
@@ -38,7 +36,7 @@ class Category implements DatabaseAwareInterface
         $object = $statement->fetch(PDO::FETCH_ASSOC);
 
         return $object
-            ? (new CategoryHydrator())->hydrate($object, new CategoryModel())
+            ? (new Hydrator\Category())->hydrate($object, new Model\Category())
             : null;
     }
 
@@ -59,7 +57,7 @@ class Category implements DatabaseAwareInterface
         $statement->execute(['assembly_id' => $assemblyId]);
 
         return array_map(function ($object) {
-            return (new CategoryAndCountHydrator())->hydrate($object, new CategoryAndCountModel());
+            return (new Hydrator\CategoryAndCount())->hydrate($object, new Model\CategoryAndCount());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -80,7 +78,7 @@ class Category implements DatabaseAwareInterface
             'issue_id' => $issueId,
         ]);
         return array_map(function ($object) {
-            return (new CategoryHydrator())->hydrate($object, new CategoryModel());
+            return (new Hydrator\Category())->hydrate($object, new Model\Category());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -90,7 +88,7 @@ class Category implements DatabaseAwareInterface
      * @param int $categoryId
      * @return \Althingi\Model\Category|null
      */
-    public function fetchByAssemblyIssueAndCategory(int $assemblyId, int $issueId, int $categoryId): ?CategoryModel
+    public function fetchByAssemblyIssueAndCategory(int $assemblyId, int $issueId, int $categoryId): ? Model\Category
     {
         $statement = $this->getDriver()->prepare('
             select C.* from `Category_has_Issue` CI
@@ -105,7 +103,7 @@ class Category implements DatabaseAwareInterface
         $object = $statement->fetch(PDO::FETCH_ASSOC);
 
         return $object
-            ? (new CategoryHydrator())->hydrate($object, new CategoryModel())
+            ? (new Hydrator\Category())->hydrate($object, new Model\Category())
             : null;
     }
 
@@ -113,7 +111,7 @@ class Category implements DatabaseAwareInterface
      * @param \Althingi\Model\Category $data
      * @return int
      */
-    public function create(CategoryModel $data): int
+    public function create(Model\Category $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toInsertString('Category', $data)
@@ -127,7 +125,7 @@ class Category implements DatabaseAwareInterface
      * @param \Althingi\Model\Category $data
      * @return int
      */
-    public function save(CategoryModel $data): int
+    public function save(Model\Category $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toSaveString('Category', $data)
@@ -138,10 +136,10 @@ class Category implements DatabaseAwareInterface
     }
 
     /**
-     * @param \Althingi\Model\Category $data
+     * @param \Althingi\Model\Category | object $data
      * @return int
      */
-    public function update(CategoryModel $data): int
+    public function update(Model\Category $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toUpdateString('Category', $data, "category_id={$data->getCategoryId()}")
