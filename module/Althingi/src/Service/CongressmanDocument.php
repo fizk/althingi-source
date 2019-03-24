@@ -54,6 +54,12 @@ class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterfac
             : null ;
     }
 
+    /**
+     * @param int $assemblyId
+     * @param int $issueId
+     * @param int $documentId
+     * @return \Althingi\Model\CongressmanDocument[]
+     */
     public function fetchByDocument(int $assemblyId, int $issueId, int $documentId): array
     {
         $statement = $this->getDriver()->prepare("

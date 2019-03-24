@@ -49,7 +49,12 @@ class Document implements DatabaseAwareInterface, EventsAwareInterface
             : null ;
     }
 
-    public function countTypeByIssue($assemblyId, $issueId): ? Model\ValueAndCount
+    /**
+     * @param $assemblyId
+     * @param $issueId
+     * @return \Althingi\Model\ValueAndCount[] |null
+     */
+    public function countTypeByIssue($assemblyId, $issueId): array
     {
         $statement = $this->getDriver()->prepare("
             select count(*) as `count`, `type` as `value` from `Document`

@@ -20,7 +20,10 @@ class IssueController extends AbstractRestfulController implements
     /** @var $issueService \Althingi\Service\Issue */
     private $issueService;
 
-
+    /**
+     * @return CollectionModel
+     * @output \Althingi\Model\Status[]
+     */
     public function progressAction()
     {
         $assemblyId = $this->params('assembly_id', null);
@@ -29,6 +32,10 @@ class IssueController extends AbstractRestfulController implements
         return (new CollectionModel($this->issueService->fetchProgress($assemblyId, $issueId)));
     }
 
+    /**
+     * @return CollectionModel
+     * @output \Althingi\Model\AssemblyStatus[]
+     */
     public function countGovernmentAction()
     {
         $assemblyId = $this->params('assembly_id', null);
@@ -36,6 +43,10 @@ class IssueController extends AbstractRestfulController implements
         return (new CollectionModel($this->issueService->fetchCountByGovernment($assemblyId)));
     }
 
+    /**
+     * @return CollectionModel
+     * @output \Althingi\Model\AssemblyStatus[]
+     */
     public function countTypeStatusAction()
     {
         $assemblyId = $this->params('assembly_id', null);

@@ -45,7 +45,7 @@ class SuperCategory implements DatabaseAwareInterface
      * @param int $assemblyId
      * @param int $issueId
      * @param string $category
-     * @return array
+     * @return \Althingi\Model\SuperCategory[]
      */
     public function fetchByIssue(int $assemblyId, int $issueId, string$category = 'A'): array
     {
