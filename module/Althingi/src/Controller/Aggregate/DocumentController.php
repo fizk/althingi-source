@@ -2,29 +2,21 @@
 
 namespace Althingi\Controller\Aggregate;
 
-use Althingi\Lib\ServiceCongressmanAwareInterface;
-use Althingi\Lib\ServiceConstituencyAwareInterface;
-use Althingi\Lib\ServiceDocumentAwareInterface;
-use Althingi\Lib\ServicePartyAwareInterface;
-use Althingi\Lib\ServiceProponentAwareInterface;
-use Althingi\Service\Congressman;
+use Althingi\Injector\ServiceDocumentAwareInterface;
+use Althingi\Injector\ServiceProponentAwareInterface;
 use Althingi\Service\CongressmanDocument;
-use Althingi\Service\Constituency;
 use Althingi\Service\Document;
-use Althingi\Service\Party;
 use Althingi\Utils\CategoryParam;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ItemModel;
 use Rend\View\Model\CollectionModel;
 use Rend\Helper\Http\Range;
-use DateTime;
 
 class DocumentController extends AbstractRestfulController implements
     ServiceDocumentAwareInterface,
     ServiceProponentAwareInterface
 {
     use Range;
-
     use CategoryParam;
 
     /** @var $issueService \Althingi\Service\Document */
@@ -33,6 +25,11 @@ class DocumentController extends AbstractRestfulController implements
     /** @var $issueService \Althingi\Service\CongressmanDocument */
     private $congressmanDocumentService;
 
+    /**
+     * @param mixed $id
+     * @return ItemModel|\Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\Document
+     */
     public function get($id)
     {
         $assemblyId = $this->params('assembly_id', null);
@@ -42,6 +39,10 @@ class DocumentController extends AbstractRestfulController implements
         return (new ItemModel($this->documentService->get($assemblyId, $issueId, $documentId)));
     }
 
+    /**
+     * @return CollectionModel|\Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\Document[]
+     */
     public function getList()
     {
         $assemblyId = $this->params('assembly_id', null);
@@ -50,6 +51,10 @@ class DocumentController extends AbstractRestfulController implements
         return (new CollectionModel($this->documentService->fetchByIssue($assemblyId, $issueId)));
     }
 
+    /**
+     * @return ItemModel
+     * @output \Althingi\Model\CongressmanDocument[]
+     */
     public function proponentsAction()
     {
         $assemblyId = $this->params('assembly_id', null);
@@ -63,6 +68,10 @@ class DocumentController extends AbstractRestfulController implements
         )));
     }
 
+    /**
+     * @return CollectionModel
+     * @output \Althingi\Model\ValueAndCount[]
+     */
     public function documentTypesAction()
     {
         $assemblyId = $this->params('assembly_id', null);

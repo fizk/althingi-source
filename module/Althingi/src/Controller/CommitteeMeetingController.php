@@ -2,13 +2,13 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Lib\ServiceCommitteeMeetingAwareInterface;
+use Althingi\Injector\ServiceCommitteeMeetingAwareInterface;
 use Althingi\Service\CommitteeMeeting;
+use Althingi\Form;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\CollectionModel;
 use Rend\View\Model\EmptyModel;
 use Rend\View\Model\ErrorModel;
-use Althingi\Form\CommitteeMeeting as CommitteeMeetingForm;
 use Rend\View\Model\ItemModel;
 
 class CommitteeMeetingController extends AbstractRestfulController implements
@@ -66,7 +66,7 @@ class CommitteeMeetingController extends AbstractRestfulController implements
         $committeeId = $this->params('committee_id');
         $committeeMeetingId = $this->params('committee_meeting_id');
 
-        $form = new CommitteeMeetingForm();
+        $form = new Form\CommitteeMeeting();
         $form->bindValues(array_merge($data, [
             'committee_id' => $committeeId,
             'assembly_id' => $assemblyId,
@@ -92,7 +92,7 @@ class CommitteeMeetingController extends AbstractRestfulController implements
         $committeeMeetingId = $this->params('committee_meeting_id');
 
         if (($committeeMeeting = $this->committeeMeetingService->get($committeeMeetingId)) != null) {
-            $form = new CommitteeMeetingForm();
+            $form = new Form\CommitteeMeeting();
             $form->bind($committeeMeeting);
             $form->setData($data);
 

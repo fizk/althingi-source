@@ -2,16 +2,17 @@
 
 namespace Althingi\Service;
 
-use Althingi\Lib\DatabaseAwareInterface;
-use Althingi\Model\Cabinet as CabinetModel;
-use Althingi\Hydrator\Cabinet as CabinetHydrator;
-use Althingi\Lib\EventsAwareInterface;
+use Althingi\Injector\DatabaseAwareInterface;
+use Althingi\Injector\EventsAwareInterface;
 use Althingi\Presenters\IndexableCabinetPresenter;
-use Althingi\ServiceEvents\AddEvent;
-use Althingi\ServiceEvents\UpdateEvent;
+use Althingi\Model;
+use Althingi\Hydrator;
+use Althingi\Events\AddEvent;
+use Althingi\Events\UpdateEvent;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
 use PDO;
+use DateTime;
 
 /**
  * Class Assembly
@@ -27,7 +28,7 @@ class Cabinet implements DatabaseAwareInterface, EventsAwareInterface
     /** @var \Zend\EventManager\EventManagerInterface */
     protected $events;
 
-    public function fetchAll(?\DateTime $from = null, ?\DateTime $to = null)
+    public function fetchAll(?DateTime $from = null, ?DateTime $to = null)
     {
         if ($from !== null && $to === null) {
             $statement = $this->getDriver()->prepare(
@@ -61,7 +62,7 @@ class Cabinet implements DatabaseAwareInterface, EventsAwareInterface
         }
 
         return array_map(function ($object) {
-            return (new CabinetHydrator)->hydrate($object, new CabinetModel());
+            return (new Hydrator\Cabinet)->hydrate($object, new Model\Cabinet());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -69,14 +70,14 @@ class Cabinet implements DatabaseAwareInterface, EventsAwareInterface
      * @param int $id
      * @return \Althingi\Model\Cabinet
      */
-    public function get(int $id)
+    public function get(int $id): ? Model\Cabinet
     {
         $statement = $this->getDriver()->prepare("select * from `Cabinet` where cabinet_id = :id");
         $statement->execute(['id' => $id]);
         $object = $statement->fetch(PDO::FETCH_ASSOC);
 
-        return $object ? (new CabinetHydrator())
-            ->hydrate($object, new CabinetModel())
+        return $object
+            ? (new Hydrator\Cabinet())->hydrate($object, new Model\Cabinet())
             : null;
     }
 
@@ -84,7 +85,7 @@ class Cabinet implements DatabaseAwareInterface, EventsAwareInterface
      * @param \Althingi\Model\Cabinet $data
      * @return int
      */
-    public function save(CabinetModel $data): int
+    public function save(Model\Cabinet $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toSaveString('Cabinet', $data)
@@ -98,10 +99,10 @@ class Cabinet implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param \Althingi\Model\Cabinet $data
+     * @param \Althingi\Model\Cabinet | object $data
      * @return int
      */
-    public function update(CabinetModel $data): int
+    public function update(Model\Cabinet $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toUpdateString('Cabinet', $data, "cabinet_id={$data->getCabinetId()}")
@@ -143,7 +144,7 @@ class Cabinet implements DatabaseAwareInterface, EventsAwareInterface
         $statement->execute(['assembly_id' => $assemblyId]);
 
         return array_map(function ($object) {
-            return (new CabinetHydrator())->hydrate($object, new CabinetModel());
+            return (new Hydrator\Cabinet())->hydrate($object, new Model\Cabinet());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 

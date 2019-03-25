@@ -2,10 +2,10 @@
 
 namespace Althingi\Service;
 
-use Althingi\Lib\ElasticSearchAwareInterface;
+use Althingi\Hydrator;
+use Althingi\Model;
+use Althingi\Injector\ElasticSearchAwareInterface;
 use Althingi\Presenters\IndexableIssuePresenter;
-use Althingi\Hydrator\Issue as IssueHydrator;
-use Althingi\Model\IssueAndDate as IssueModel;
 use Elasticsearch\Client;
 
 /**
@@ -112,7 +112,7 @@ class SearchIssue implements ElasticSearchAwareInterface
             $object['_source']['additional_information'] =
                 $this->stringifyHighlight($object, 'additional_information.raw');
 
-            return (new IssueHydrator())->hydrate($object['_source'], new IssueModel());
+            return (new Hydrator\Issue())->hydrate($object['_source'], new Model\Issue());
         }, $results['hits']['hits']);
     }
 

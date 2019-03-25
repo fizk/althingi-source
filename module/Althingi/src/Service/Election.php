@@ -2,9 +2,9 @@
 
 namespace Althingi\Service;
 
-use Althingi\Lib\DatabaseAwareInterface;
-use Althingi\Model\Election as ElectionModel;
-use Althingi\Hydrator\Election as ElectionHydrator;
+use Althingi\Model;
+use Althingi\Hydrator;
+use Althingi\Injector\DatabaseAwareInterface;
 use PDO;
 
 /**
@@ -26,7 +26,7 @@ class Election implements DatabaseAwareInterface
      * @param int $id
      * @return null|\Althingi\Model\Election
      */
-    public function get(int $id): ?ElectionModel
+    public function get(int $id): ? Model\Election
     {
         $statement = $this->getDriver()->prepare("
             select * from `Election` where election_id = :election_id
@@ -35,17 +35,17 @@ class Election implements DatabaseAwareInterface
 
         $object = $statement->fetch(PDO::FETCH_ASSOC);
         return $object
-            ? (new ElectionHydrator())->hydrate($object, new ElectionModel())
+            ? (new Hydrator\Election())->hydrate($object, new Model\Election())
             : null;
     }
 
     /**
-     * Get one Electin by Assembly.
+     * Get one Election by Assembly.
      *
      * @param int $assemblyId
      * @return null|\Althingi\Model\Election
      */
-    public function getByAssembly(int $assemblyId): ?ElectionModel
+    public function getByAssembly(int $assemblyId): ? Model\Election
     {
         $statement = $this->getDriver()->prepare("
             select E.* from `Election` E 
@@ -56,7 +56,7 @@ class Election implements DatabaseAwareInterface
 
         $object = $statement->fetch(PDO::FETCH_ASSOC);
         return $object
-            ? (new ElectionHydrator())->hydrate($object, new ElectionModel())
+            ? (new Hydrator\Election())->hydrate($object, new Model\Election())
             : null;
     }
 

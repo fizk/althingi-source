@@ -1,74 +1,14 @@
 <?php
 namespace Althingi;
 
-use Althingi\Controller\{
-    IndexController,
-    AssemblyController,
-    CongressmanController,
-    SessionController,
-    CongressmanSessionController,
-    PartyController,
-    ConstituencyController,
-    PlenaryController,
-    PlenaryAgendaController,
-    IssueController,
-    UndocumentedIssueController,
-    SpeechController,
-    VoteController,
-    VoteItemController,
-    CongressmanIssueController,
-    CongressmanDocumentController,
-    DocumentController,
-    CommitteeController,
-    CabinetController,
-    PresidentController,
-    PresidentAssemblyController,
-    SuperCategoryController,
-    CategoryController,
-    IssueCategoryController,
-    CommitteeMeetingController,
-    CommitteeMeetingAgendaController,
-    AssemblyCommitteeController,
-    HighlightController,
-    InflationController,
-    Console\SearchIndexerController as ConsoleSearchIndexerController,
-    Console\DocumentApiController as ConsoleDocumentApiController,
-    Console\IssueStatusController as ConsoleIssueStatusController,
-    Aggregate
-};
-
-use Althingi\Service\{
-    Assembly,
-    Cabinet,
-    Category,
-    Committee,
-    CommitteeMeeting,
-    CommitteeMeetingAgenda,
-    Congressman,
-    CongressmanDocument,
-    Constituency,
-    Document,
-    Election,
-    Issue,
-    IssueCategory,
-    Inflation,
-    Party,
-    Plenary,
-    PlenaryAgenda,
-    President,
-    SearchIssue,
-    SearchSpeech,
-    Session,
-    Speech,
-    SuperCategory,
-    Vote,
-    VoteItem
-};
-
 use Zend\Router\Http\Literal;
 use Zend\Router\Http\Segment;
 use Zend\ServiceManager\ServiceManager;
 use Psr\Log\LoggerInterface;
+use Althingi\Controller;
+use Althingi\Controller\Aggregate;
+use Althingi\Controller\Console;
+use Althingi\Service;
 
 return [
     'router' => [
@@ -78,7 +18,7 @@ return [
                 'options' => [
                     'route'    => '/',
                     'defaults' => [
-                        'controller' => IndexController::class,
+                        'controller' => Controller\IndexController::class,
                         'action' => 'index'
                     ],
                 ],
@@ -88,7 +28,7 @@ return [
                 'options' => [
                     'route'    => '/thingmal/nuverandi',
                     'defaults' => [
-                        'controller' => HighlightController::class,
+                        'controller' => Controller\HighlightController::class,
                         'action' => 'get-active-issue'
                     ],
                 ],
@@ -98,7 +38,7 @@ return [
                 'options' => [
                     'route'    => '/loggjafarthing/nuverandi',
                     'defaults' => [
-                        'controller' => HighlightController::class,
+                        'controller' => Controller\HighlightController::class,
                         'action' => 'get-current-assembly'
                     ],
                 ],
@@ -111,7 +51,7 @@ return [
                         'id' => '[0-9]*'
                     ],
                     'defaults' => [
-                        'controller' => AssemblyController::class,
+                        'controller' => Controller\AssemblyController::class,
                     ],
                 ],
                 'may_terminate' => true,
@@ -121,7 +61,7 @@ return [
                         'options' => [
                             'route'    => '/thingmenn',
                             'defaults' => [
-                                'controller' => CongressmanController::class,
+                                'controller' => Controller\CongressmanController::class,
                                 'action' => 'assembly'
                             ],
                         ],
@@ -132,7 +72,7 @@ return [
                                 'options' => [
                                     'route'    => '/raedutimar',
                                     'defaults' => [
-                                        'controller' => CongressmanController::class,
+                                        'controller' => Controller\CongressmanController::class,
                                         'action' => 'assembly-times'
                                     ],
                                 ],
@@ -142,7 +82,7 @@ return [
                                 'options' => [
                                     'route'    => '/fyrirspurnir',
                                     'defaults' => [
-                                        'controller' => CongressmanController::class,
+                                        'controller' => Controller\CongressmanController::class,
                                         'action' => 'assembly-questions'
                                     ],
                                 ],
@@ -152,7 +92,7 @@ return [
                                 'options' => [
                                     'route'    => '/thingsalyktanir',
                                     'defaults' => [
-                                        'controller' => CongressmanController::class,
+                                        'controller' => Controller\CongressmanController::class,
                                         'action' => 'assembly-resolutions'
                                     ],
                                 ],
@@ -162,7 +102,7 @@ return [
                                 'options' => [
                                     'route'    => '/lagafrumvorp',
                                     'defaults' => [
-                                        'controller' => CongressmanController::class,
+                                        'controller' => Controller\CongressmanController::class,
                                         'action' => 'assembly-bills'
                                     ],
                                 ],
@@ -172,7 +112,7 @@ return [
 //                                'options' => [
 //                                    'route'    => '/:congressman_id/raedutimar',
 //                                    'defaults' => [
-//                                        'controller' => CongressmanController::class,
+//                                        'controller' => Controller\CongressmanController::class,
 //                                        'action' => 'assembly-speech-time'
 //                                    ],
 //                                ],
@@ -182,7 +122,7 @@ return [
                                 'options' => [
                                     'route'    => '/:congressman_id/thingseta',
                                     'defaults' => [
-                                        'controller' => CongressmanController::class,
+                                        'controller' => Controller\CongressmanController::class,
                                         'action' => 'assembly-sessions'
                                     ],
                                 ],
@@ -192,7 +132,7 @@ return [
                                 'options' => [
                                     'route'    => '/:congressman_id/thingmal',
                                     'defaults' => [
-                                        'controller' => CongressmanController::class,
+                                        'controller' => Controller\CongressmanController::class,
                                         'action' => 'assembly-issues'
                                     ],
                                 ],
@@ -202,7 +142,7 @@ return [
                                 'options' => [
                                     'route'    => '/:congressman_id/thingmal-samantekt',
                                     'defaults' => [
-                                        'controller' => CongressmanController::class,
+                                        'controller' => Controller\CongressmanController::class,
                                         'action' => 'assembly-issues-summary'
                                     ],
                                 ],
@@ -212,7 +152,7 @@ return [
                                 'options' => [
                                     'route'    => '/:congressman_id/atvaedagreidslur',
                                     'defaults' => [
-                                        'controller' => CongressmanController::class,
+                                        'controller' => Controller\CongressmanController::class,
                                         'action' => 'assembly-voting'
                                     ],
                                 ],
@@ -222,7 +162,7 @@ return [
                                 'options' => [
                                     'route'    => '/:congressman_id/malaflokkar',
                                     'defaults' => [
-                                        'controller' => CongressmanController::class,
+                                        'controller' => Controller\CongressmanController::class,
                                         'action' => 'assembly-categories'
                                     ],
                                 ],
@@ -232,7 +172,7 @@ return [
                                 'options' => [
                                     'route'    => '/:congressman_id/atvaedagreidslur-malaflokkar',
                                     'defaults' => [
-                                        'controller' => CongressmanController::class,
+                                        'controller' => Controller\CongressmanController::class,
                                         'action' => 'assembly-vote-categories'
                                     ],
                                 ],
@@ -244,7 +184,7 @@ return [
                         'options' => [
                             'route'    => '/verdbolga',
                             'defaults' => [
-                                'controller' => InflationController::class,
+                                'controller' => Controller\InflationController::class,
                                 'action' => 'fetch-assembly'
                             ],
                         ],
@@ -254,7 +194,7 @@ return [
                         'options' => [
                             'route'    => '/forsetar[/:congressman_id]',
                             'defaults' => [
-                                'controller' => PresidentAssemblyController::class,
+                                'controller' => Controller\PresidentAssemblyController::class,
                                 'identifier' => 'congressman_id'
                             ],
                         ],
@@ -265,7 +205,7 @@ return [
                         'options' => [
                             'route'    => '/samantekt',
                             'defaults' => [
-                                'controller' => AssemblyController::class,
+                                'controller' => Controller\AssemblyController::class,
                                 'action' => 'statistics'
                             ],
                         ],
@@ -275,7 +215,7 @@ return [
                         'options' => [
                             'route'    => '/raduneyti',
                             'defaults' => [
-                                'controller' => CabinetController::class,
+                                'controller' => Controller\CabinetController::class,
                                 'action' => 'assembly'
                             ],
                         ],
@@ -285,7 +225,7 @@ return [
                         'options' => [
                             'route'    => '/thingfundir[/:plenary_id]',
                             'defaults' => [
-                                'controller' => PlenaryController::class,
+                                'controller' => Controller\PlenaryController::class,
                                 'identifier' => 'plenary_id'
                             ],
                         ],
@@ -296,7 +236,7 @@ return [
                                 'options' => [
                                     'route'    => '/lidir[/:item_id]',
                                     'defaults' => [
-                                        'controller' => PlenaryAgendaController::class,
+                                        'controller' => Controller\PlenaryAgendaController::class,
                                         'identifier' => 'item_id'
                                     ],
                                 ],
@@ -311,7 +251,7 @@ return [
                                 'issue_id' => '[0-9]+',
                             ],
                             'defaults' => [
-                                'controller' => UndocumentedIssueController::class,
+                                'controller' => Controller\UndocumentedIssueController::class,
                                 'identifier' => 'issue_id',
                             ],
                         ],
@@ -325,7 +265,7 @@ return [
                                 'issue_id' => '[0-9]+',
                             ],
                             'defaults' => [
-                                'controller' => IssueController::class,
+                                'controller' => Controller\IssueController::class,
                                 'identifier' => 'issue_id',
                             ],
                         ],
@@ -336,7 +276,7 @@ return [
                                 'options' => [
                                     'route'    => '/raedutimar',
                                     'defaults' => [
-                                        'controller' => IssueController::class,
+                                        'controller' => Controller\IssueController::class,
                                         'action' => 'speech-times'
                                     ],
                                 ],
@@ -347,7 +287,7 @@ return [
                                 'options' => [
                                     'route'    => '/raedur[/:speech_id]',
                                     'defaults' => [
-                                        'controller' => SpeechController::class,
+                                        'controller' => Controller\SpeechController::class,
                                         'identifier' => 'speech_id'
                                     ],
                                 ],
@@ -358,7 +298,7 @@ return [
                                 'options' => [
                                     'route'    => '/ferli',
                                     'defaults' => [
-                                        'controller' => IssueController::class,
+                                        'controller' => Controller\IssueController::class,
                                         'action' => 'progress'
                                     ],
                                 ],
@@ -368,7 +308,7 @@ return [
                                 'options' => [
                                     'route'    => '/efnisflokkar[/:category_id]',
                                     'defaults' => [
-                                        'controller' => IssueCategoryController::class,
+                                        'controller' => Controller\IssueCategoryController::class,
                                         'identifier' => 'category_id'
                                     ],
                                 ],
@@ -379,7 +319,7 @@ return [
                                 'options' => [
                                     'route'    => '/thingskjal[/:document_id]',
                                     'defaults' => [
-                                        'controller' => DocumentController::class,
+                                        'controller' => Controller\DocumentController::class,
                                         'identifier' => 'document_id'
                                     ],
                                 ],
@@ -390,7 +330,7 @@ return [
                                         'options' => [
                                             'route'    => '/flutningsmenn[/:congressman_id]',
                                             'defaults' => [
-                                                'controller' => CongressmanDocumentController::class,
+                                                'controller' => Controller\CongressmanDocumentController::class,
                                                 'identifier' => 'congressman_id'
                                             ],
                                         ],
@@ -402,7 +342,7 @@ return [
                                 'options' => [
                                     'route'    => '/atkvaedagreidslur[/:vote_id]',
                                     'defaults' => [
-                                        'controller' => VoteController::class,
+                                        'controller' => Controller\VoteController::class,
                                         'identifier' => 'vote_id'
                                     ],
                                 ],
@@ -413,7 +353,7 @@ return [
                                         'options' => [
                                             'route'    => '/atkvaedi[/:vote_item_id]',
                                             'defaults' => [
-                                                'controller' => VoteItemController::class,
+                                                'controller' => Controller\VoteItemController::class,
                                                 'identifier' => 'vote_item_id'
                                             ],
                                         ],
@@ -427,7 +367,7 @@ return [
                         'options' => [
                             'route'    => '/nefndir[/:committee_id]',
                             'defaults' => [
-                                'controller' => AssemblyCommitteeController::class,
+                                'controller' => Controller\AssemblyCommitteeController::class,
                                 'identifier' => 'committee_id'
                             ],
                         ],
@@ -438,7 +378,7 @@ return [
                                 'options' => [
                                     'route'    => '/nefndarfundir[/:committee_meeting_id]',
                                     'defaults' => [
-                                        'controller' => CommitteeMeetingController::class,
+                                        'controller' => Controller\CommitteeMeetingController::class,
                                         'identifier' => 'committee_meeting_id'
                                     ],
                                 ],
@@ -449,7 +389,7 @@ return [
                                         'options' => [
                                             'route'    => '/dagskralidir[/:committee_meeting_agenda_id]',
                                             'defaults' => [
-                                                'controller' => CommitteeMeetingAgendaController::class,
+                                                'controller' => Controller\CommitteeMeetingAgendaController::class,
                                                 'identifier' => 'committee_meeting_agenda_id'
                                             ],
                                         ],
@@ -463,7 +403,7 @@ return [
                         'options' => [
                             'route' => '/efnisflokkar',
                             'defaults' => [
-                                'controller' => CategoryController::class,
+                                'controller' => Controller\CategoryController::class,
                                 'action' => 'assembly-summary'
                             ],
                         ]
@@ -475,7 +415,7 @@ return [
                 'options' => [
                     'route'    => '/nefndir[/:committee_id]',
                     'defaults' => [
-                        'controller' => CommitteeController::class,
+                        'controller' => Controller\CommitteeController::class,
                         'identifier' => 'committee_id'
                     ],
                 ],
@@ -485,7 +425,7 @@ return [
                 'options' => [
                     'route'    => '/thingmenn[/:congressman_id]',
                     'defaults' => [
-                        'controller' => CongressmanController::class,
+                        'controller' => Controller\CongressmanController::class,
                         'identifier' => 'congressman_id'
                     ],
                 ],
@@ -496,7 +436,7 @@ return [
                         'options' => [
                             'route'    => '/thingmal[/:issue_id]',
                             'defaults' => [
-                                'controller' => CongressmanIssueController::class,
+                                'controller' => Controller\CongressmanIssueController::class,
                                 'identifier' => 'issue_id'
                             ],
                         ]
@@ -506,7 +446,7 @@ return [
                         'options' => [
                             'route'    => '/thingseta[/:session_id]',
                             'defaults' => [
-                                'controller' => SessionController::class,
+                                'controller' => Controller\SessionController::class,
                                 'identifier' => 'session_id'
                             ],
                         ],
@@ -517,7 +457,7 @@ return [
 //                                        'options' => [
 //                                            'route'    => '/:session_id',
 //                                            'defaults' => [
-//                                                'controller' => CongressmanSessionController::class,
+//                                                'controller' => Controller\CongressmanSessionController::class,
 //                                            ],
 //                                        ],
 //                                    ],
@@ -530,7 +470,7 @@ return [
                 'options' => [
                     'route'    => '/thingflokkar[/:id]',
                     'defaults' => [
-                        'controller' => PartyController::class,
+                        'controller' => Controller\PartyController::class,
                     ],
                 ],
             ],
@@ -539,7 +479,7 @@ return [
                 'options' => [
                     'route'    => '/kjordaemi[/:id]',
                     'defaults' => [
-                        'controller' => ConstituencyController::class,
+                        'controller' => Controller\ConstituencyController::class,
                     ],
                 ],
             ],
@@ -548,7 +488,7 @@ return [
                 'options' => [
                     'route'    => '/forsetar[/:id]',
                     'defaults' => [
-                        'controller' => PresidentController::class,
+                        'controller' => Controller\PresidentController::class,
                     ],
                 ],
             ],
@@ -557,7 +497,7 @@ return [
                 'options' => [
                     'route'    => '/thingmal/efnisflokkar[/:super_category_id]',
                     'defaults' => [
-                        'controller' => SuperCategoryController::class,
+                        'controller' => Controller\SuperCategoryController::class,
                         'identifier' => 'super_category_id'
                     ],
                 ],
@@ -568,7 +508,7 @@ return [
                         'options' => [
                             'route'    => '/undirflokkar[/:category_id]',
                             'defaults' => [
-                                'controller' => CategoryController::class,
+                                'controller' => Controller\CategoryController::class,
                                 'identifier' => 'category_id'
                             ],
                         ],
@@ -580,7 +520,7 @@ return [
                 'options' => [
                     'route'    => '/verdbolga[/:id]',
                     'defaults' => [
-                        'controller' => InflationController::class,
+                        'controller' => Controller\InflationController::class,
                         'identifier' => 'id'
                     ],
                 ],
@@ -590,7 +530,7 @@ return [
                 'options' => [
                     'route'    => '/raduneyti[/:id]',
                     'defaults' => [
-                        'controller' => CabinetController::class,
+                        'controller' => Controller\CabinetController::class,
                         'identifier' => 'id'
                     ],
                 ],
@@ -600,7 +540,7 @@ return [
                 'options' => [
                     'route'    => '/samantekt',
                     'defaults' => [
-                        'controller' => IndexController::class,
+                        'controller' => Controller\IndexController::class,
                     ],
                 ],
                 'may_terminate' => true,
@@ -755,215 +695,215 @@ return [
 
     'controllers' => [
         'factories' => [
-            IndexController::class => function () {
-                return (new IndexController());
+            Controller\IndexController::class => function () {
+                return (new Controller\IndexController());
             },
-            AssemblyController::class => function (ServiceManager $container) {
-                return (new AssemblyController())
-                    ->setAssemblyService($container->get(Assembly::class))
-                    ->setCabinetService($container->get(Cabinet::class))
-                    ->setCategoryService($container->get(Category::class))
-                    ->setElectionService($container->get(Election::class))
-                    ->setIssueService($container->get(Issue::class))
-                    ->setPartyService($container->get(Party::class))
-                    ->setSpeechService($container->get(Speech::class))
-                    ->setVoteService($container->get(Vote::class))
+            Controller\AssemblyController::class => function (ServiceManager $container) {
+                return (new Controller\AssemblyController())
+                    ->setAssemblyService($container->get(Service\Assembly::class))
+                    ->setCabinetService($container->get(Service\Cabinet::class))
+                    ->setCategoryService($container->get(Service\Category::class))
+                    ->setElectionService($container->get(Service\Election::class))
+                    ->setIssueService($container->get(Service\Issue::class))
+                    ->setPartyService($container->get(Service\Party::class))
+                    ->setSpeechService($container->get(Service\Speech::class))
+                    ->setVoteService($container->get(Service\Vote::class))
                     ->setAssemblyStore($container->get(Store\Assembly::class))
                     ;
             },
-            CongressmanController::class => function (ServiceManager $container) {
-                return (new CongressmanController())
-                    ->setVoteService($container->get(Vote::class))
-                    ->setSpeechService($container->get(Speech::class))
-                    ->setPartyService($container->get(Party::class))
-                    ->setIssueService($container->get(Issue::class))
-                    ->setAssemblyService($container->get(Assembly::class))
-                    ->setCongressmanService($container->get(Congressman::class))
-                    ->setIssueCategoryService($container->get(IssueCategory::class))
-                    ->setVoteItemService($container->get(VoteItem::class))
-                    ->setSessionService($container->get(Session::class));
+            Controller\CongressmanController::class => function (ServiceManager $container) {
+                return (new Controller\CongressmanController())
+                    ->setVoteService($container->get(Service\Vote::class))
+                    ->setSpeechService($container->get(Service\Speech::class))
+                    ->setPartyService($container->get(Service\Party::class))
+                    ->setIssueService($container->get(Service\Issue::class))
+                    ->setAssemblyService($container->get(Service\Assembly::class))
+                    ->setCongressmanService($container->get(Service\Congressman::class))
+                    ->setIssueCategoryService($container->get(Service\IssueCategory::class))
+                    ->setVoteItemService($container->get(Service\VoteItem::class))
+                    ->setSessionService($container->get(Service\Session::class));
             },
-            SessionController::class => function (ServiceManager $container) {
-                return (new SessionController())
-                    ->setSessionService($container->get(Session::class));
+            Controller\SessionController::class => function (ServiceManager $container) {
+                return (new Controller\SessionController())
+                    ->setSessionService($container->get(Service\Session::class));
             },
-            CongressmanSessionController::class => function (ServiceManager $container) {
-                return (new CongressmanSessionController())
-                    ->setSessionService($container->get(Session::class));
+            Controller\CongressmanSessionController::class => function (ServiceManager $container) {
+                return (new Controller\CongressmanSessionController())
+                    ->setSessionService($container->get(Service\Session::class));
             },
-            PartyController::class => function (ServiceManager $container) {
-                return (new PartyController())
-                    ->setPartyService($container->get(Party::class));
+            Controller\PartyController::class => function (ServiceManager $container) {
+                return (new Controller\PartyController())
+                    ->setPartyService($container->get(Service\Party::class));
             },
-            ConstituencyController::class => function (ServiceManager $container) {
-                return (new ConstituencyController())
-                    ->setConstituencyService($container->get(Constituency::class));
+            Controller\ConstituencyController::class => function (ServiceManager $container) {
+                return (new Controller\ConstituencyController())
+                    ->setConstituencyService($container->get(Service\Constituency::class));
             },
-            PlenaryController::class => function (ServiceManager $container) {
-                return (new PlenaryController())
-                    ->setPlenaryService($container->get(Plenary::class));
+            Controller\PlenaryController::class => function (ServiceManager $container) {
+                return (new Controller\PlenaryController())
+                    ->setPlenaryService($container->get(Service\Plenary::class));
             },
-            PlenaryAgendaController::class => function (ServiceManager $container) {
-                return (new PlenaryAgendaController())
-                    ->setPlenaryAgendaService($container->get(PlenaryAgenda::class))
-                    ->setPlenaryService($container->get(Plenary::class))
-                    ->setIssueService($container->get(Issue::class))
-                    ->setCongressmanService($container->get(Congressman::class))
-                    ->setPartyService($container->get(Party::class));
+            Controller\PlenaryAgendaController::class => function (ServiceManager $container) {
+                return (new Controller\PlenaryAgendaController())
+                    ->setPlenaryAgendaService($container->get(Service\PlenaryAgenda::class))
+                    ->setPlenaryService($container->get(Service\Plenary::class))
+                    ->setIssueService($container->get(Service\Issue::class))
+                    ->setCongressmanService($container->get(Service\Congressman::class))
+                    ->setPartyService($container->get(Service\Party::class));
             },
-            IssueController::class => function (ServiceManager $container) {
-                return (new IssueController())
-                    ->setPartyService($container->get(Party::class))
-                    ->setCongressmanService($container->get(Congressman::class))
-                    ->setAssemblyService($container->get(Assembly::class))
-                    ->setIssueService($container->get(Issue::class))
-                    ->setSpeechService($container->get(Speech::class))
-                    ->setVoteService($container->get(Vote::class))
-                    ->setDocumentService($container->get(Document::class))
-                    ->setSearchIssueService($container->get(SearchIssue::class))
+            Controller\IssueController::class => function (ServiceManager $container) {
+                return (new Controller\IssueController())
+                    ->setPartyService($container->get(Service\Party::class))
+                    ->setCongressmanService($container->get(Service\Congressman::class))
+                    ->setAssemblyService($container->get(Service\Assembly::class))
+                    ->setIssueService($container->get(Service\Issue::class))
+                    ->setSpeechService($container->get(Service\Speech::class))
+                    ->setVoteService($container->get(Service\Vote::class))
+                    ->setDocumentService($container->get(Service\Document::class))
+                    ->setSearchIssueService($container->get(Service\SearchIssue::class))
                     ->setIssueStore($container->get(Store\Issue::class));
             },
-            UndocumentedIssueController::class => function (ServiceManager $container) {
-                return (new UndocumentedIssueController())
-                    ->setPartyService($container->get(Party::class))
-                    ->setCongressmanService($container->get(Congressman::class))
-                    ->setAssemblyService($container->get(Assembly::class))
-                    ->setIssueService($container->get(Issue::class))
-                    ->setSpeechService($container->get(Speech::class))
-                    ->setVoteService($container->get(Vote::class))
-                    ->setDocumentService($container->get(Document::class))
-                    ->setSearchIssueService($container->get(SearchIssue::class));
+            Controller\UndocumentedIssueController::class => function (ServiceManager $container) {
+                return (new Controller\UndocumentedIssueController())
+                    ->setPartyService($container->get(Service\Party::class))
+                    ->setCongressmanService($container->get(Service\Congressman::class))
+                    ->setAssemblyService($container->get(Service\Assembly::class))
+                    ->setIssueService($container->get(Service\Issue::class))
+                    ->setSpeechService($container->get(Service\Speech::class))
+                    ->setVoteService($container->get(Service\Vote::class))
+                    ->setDocumentService($container->get(Service\Document::class))
+                    ->setSearchIssueService($container->get(Service\SearchIssue::class));
             },
-            SpeechController::class => function (ServiceManager $container) {
-                return (new SpeechController())
-                    ->setSpeechService($container->get(Speech::class))
-                    ->setCongressmanService($container->get(Congressman::class))
-                    ->setPartyService($container->get(Party::class))
-                    ->setPlenaryService($container->get(Plenary::class))
-                    ->setSearchSpeechService($container->get(SearchSpeech::class));
+            Controller\SpeechController::class => function (ServiceManager $container) {
+                return (new Controller\SpeechController())
+                    ->setSpeechService($container->get(Service\Speech::class))
+                    ->setCongressmanService($container->get(Service\Congressman::class))
+                    ->setPartyService($container->get(Service\Party::class))
+                    ->setPlenaryService($container->get(Service\Plenary::class))
+                    ->setSearchSpeechService($container->get(Service\SearchSpeech::class));
             },
-            VoteController::class => function (ServiceManager $container) {
-                return (new VoteController())
-                    ->setVoteService($container->get(Vote::class));
+            Controller\VoteController::class => function (ServiceManager $container) {
+                return (new Controller\VoteController())
+                    ->setVoteService($container->get(Service\Vote::class));
             },
-            VoteItemController::class => function (ServiceManager $container) {
-                return (new VoteItemController())
-                    ->setVoteService($container->get(Vote::class))
-                    ->setPartyService($container->get(Party::class))
-                    ->setCongressmanService($container->get(Congressman::class))
-                    ->setVoteItemService($container->get(VoteItem::class));
+            Controller\VoteItemController::class => function (ServiceManager $container) {
+                return (new Controller\VoteItemController())
+                    ->setVoteService($container->get(Service\Vote::class))
+                    ->setPartyService($container->get(Service\Party::class))
+                    ->setCongressmanService($container->get(Service\Congressman::class))
+                    ->setVoteItemService($container->get(Service\VoteItem::class));
             },
-            CongressmanIssueController::class => function (ServiceManager $container) {
-                return (new CongressmanIssueController())
-                    ->setIssueService($container->get(Issue::class));
+            Controller\CongressmanIssueController::class => function (ServiceManager $container) {
+                return (new Controller\CongressmanIssueController())
+                    ->setIssueService($container->get(Service\Issue::class));
             },
-            CongressmanDocumentController::class => function (ServiceManager $container) {
-                return (new CongressmanDocumentController())
-                    ->setCongressmanDocumentService($container->get(CongressmanDocument::class));
+            Controller\CongressmanDocumentController::class => function (ServiceManager $container) {
+                return (new Controller\CongressmanDocumentController())
+                    ->setCongressmanDocumentService($container->get(Service\CongressmanDocument::class));
             },
-            DocumentController::class => function (ServiceManager $container) {
-                return (new DocumentController())
-                    ->setVoteItemService($container->get(VoteItem::class))
-                    ->setCongressmanService($container->get(Congressman::class))
-                    ->setPartyService($container->get(Party::class))
-                    ->setVoteService($container->get(Vote::class))
-                    ->setDocumentService($container->get(Document::class));
+            Controller\DocumentController::class => function (ServiceManager $container) {
+                return (new Controller\DocumentController())
+                    ->setVoteItemService($container->get(Service\VoteItem::class))
+                    ->setCongressmanService($container->get(Service\Congressman::class))
+                    ->setPartyService($container->get(Service\Party::class))
+                    ->setVoteService($container->get(Service\Vote::class))
+                    ->setDocumentService($container->get(Service\Document::class));
             },
-            CommitteeController::class => function (ServiceManager $container) {
-                return (new CommitteeController())
-                    ->setCommitteeService($container->get(Committee::class));
+            Controller\CommitteeController::class => function (ServiceManager $container) {
+                return (new Controller\CommitteeController())
+                    ->setCommitteeService($container->get(Service\Committee::class));
             },
-            CabinetController::class => function (ServiceManager $container) {
-                return (new CabinetController())
-                    ->setPartyService($container->get(Party::class))
-                    ->setCongressmanService($container->get(Congressman::class))
-                    ->setAssemblyService($container->get(Assembly::class))
-                    ->setCabinetService($container->get(Cabinet::class));
+            Controller\CabinetController::class => function (ServiceManager $container) {
+                return (new Controller\CabinetController())
+                    ->setPartyService($container->get(Service\Party::class))
+                    ->setCongressmanService($container->get(Service\Congressman::class))
+                    ->setAssemblyService($container->get(Service\Assembly::class))
+                    ->setCabinetService($container->get(Service\Cabinet::class));
             },
-            PresidentController::class => function (ServiceManager $container) {
-                return (new PresidentController())
-                    ->setCongressmanService($container->get(Congressman::class))
-                    ->setPartyService($container->get(Party::class))
-                    ->setPresidentService($container->get(President::class));
+            Controller\PresidentController::class => function (ServiceManager $container) {
+                return (new Controller\PresidentController())
+                    ->setCongressmanService($container->get(Service\Congressman::class))
+                    ->setPartyService($container->get(Service\Party::class))
+                    ->setPresidentService($container->get(Service\President::class));
             },
-            PresidentAssemblyController::class => function (ServiceManager $container) {
-                return (new PresidentAssemblyController())
-                    ->setPartyService($container->get(Party::class))
-                    ->setCongressmanService($container->get(Congressman::class));
+            Controller\PresidentAssemblyController::class => function (ServiceManager $container) {
+                return (new Controller\PresidentAssemblyController())
+                    ->setPartyService($container->get(Service\Party::class))
+                    ->setCongressmanService($container->get(Service\Congressman::class));
             },
-            SuperCategoryController::class => function (ServiceManager $container) {
-                return (new SuperCategoryController())
-                    ->setSuperCategoryService($container->get(SuperCategory::class));
+            Controller\SuperCategoryController::class => function (ServiceManager $container) {
+                return (new Controller\SuperCategoryController())
+                    ->setSuperCategoryService($container->get(Service\SuperCategory::class));
             },
-            CategoryController::class => function (ServiceManager $container) {
-                return (new CategoryController())
-                    ->setCategoryService($container->get(Category::class));
+            Controller\CategoryController::class => function (ServiceManager $container) {
+                return (new Controller\CategoryController())
+                    ->setCategoryService($container->get(Service\Category::class));
             },
-            IssueCategoryController::class => function (ServiceManager $container) {
-                return (new IssueCategoryController())
-                    ->setCategoryService($container->get(Category::class))
-                    ->setIssueCategoryService($container->get(IssueCategory::class));
+            Controller\IssueCategoryController::class => function (ServiceManager $container) {
+                return (new Controller\IssueCategoryController())
+                    ->setCategoryService($container->get(Service\Category::class))
+                    ->setIssueCategoryService($container->get(Service\IssueCategory::class));
             },
-            CommitteeMeetingController::class => function (ServiceManager $container) {
-                return (new CommitteeMeetingController())
-                    ->setCommitteeMeetingService($container->get(CommitteeMeeting::class));
+            Controller\CommitteeMeetingController::class => function (ServiceManager $container) {
+                return (new Controller\CommitteeMeetingController())
+                    ->setCommitteeMeetingService($container->get(Service\CommitteeMeeting::class));
             },
-            CommitteeMeetingAgendaController::class => function (ServiceManager $container) {
-                return (new CommitteeMeetingAgendaController())
-                    ->setCommitteeMeetingAgendaService($container->get(CommitteeMeetingAgenda::class));
+            Controller\CommitteeMeetingAgendaController::class => function (ServiceManager $container) {
+                return (new Controller\CommitteeMeetingAgendaController())
+                    ->setCommitteeMeetingAgendaService($container->get(Service\CommitteeMeetingAgenda::class));
             },
-            AssemblyCommitteeController::class => function (ServiceManager $container) {
-                return (new AssemblyCommitteeController())
-                    ->setCommitteeService($container->get(Committee::class));
+            Controller\AssemblyCommitteeController::class => function (ServiceManager $container) {
+                return (new Controller\AssemblyCommitteeController())
+                    ->setCommitteeService($container->get(Service\Committee::class));
             },
-            HighlightController::class => function (ServiceManager $container) {
-                return (new HighlightController())
-                    ->setCongressmanService($container->get(Congressman::class))
-                    ->setPartyService($container->get(Party::class))
-                    ->setCabinetService($container->get(Cabinet::class))
-                    ->setIssueService($container->get(Issue::class))
-                    ->setSpeechService($container->get(Speech::class))
-                    ->setAssemblyService($container->get(Assembly::class));
+            Controller\HighlightController::class => function (ServiceManager $container) {
+                return (new Controller\HighlightController())
+                    ->setCongressmanService($container->get(Service\Congressman::class))
+                    ->setPartyService($container->get(Service\Party::class))
+                    ->setCabinetService($container->get(Service\Cabinet::class))
+                    ->setIssueService($container->get(Service\Issue::class))
+                    ->setSpeechService($container->get(Service\Speech::class))
+                    ->setAssemblyService($container->get(Service\Assembly::class));
             },
-            ConsoleSearchIndexerController::class => function (ServiceManager $container) {
-                return (new ConsoleSearchIndexerController())
-                    ->setSpeechService($container->get(Speech::class))
-                    ->setIssueService($container->get(Issue::class))
+            Console\SearchIndexerController::class => function (ServiceManager $container) {
+                return (new Console\SearchIndexerController())
+                    ->setSpeechService($container->get(Service\Speech::class))
+                    ->setIssueService($container->get(Service\Issue::class))
                     ->setElasticSearchClient($container->get(\Elasticsearch\Client::class))
-                    ->setLogger($container->get(LoggerInterface::class));
+                    ->setLogger($container->get(Service\LoggerInterface::class));
             },
-            ConsoleDocumentApiController::class => function (ServiceManager $container) {
-                return (new ConsoleDocumentApiController());
+            Console\DocumentApiController::class => function (ServiceManager $container) {
+                return (new Console\DocumentApiController());
             },
-            ConsoleIssueStatusController::class => function (ServiceManager $container) {
-                return (new ConsoleIssueStatusController())
-                    ->setIssueService($container->get(Issue::class));
+            Console\IssueStatusController::class => function (ServiceManager $container) {
+                return (new Console\IssueStatusController())
+                    ->setIssueService($container->get(Service\Issue::class));
             },
             Aggregate\CongressmanController::class => function (ServiceManager $container) {
                 return (new Aggregate\CongressmanController())
-                    ->setPartyService($container->get(Party::class))
-                    ->setCongressmanService($container->get(Congressman::class))
-                    ->setConstituencyService($container->get(Constituency::class));
+                    ->setPartyService($container->get(Service\Party::class))
+                    ->setCongressmanService($container->get(Service\Congressman::class))
+                    ->setConstituencyService($container->get(Service\Constituency::class));
             },
             Aggregate\DocumentController::class => function (ServiceManager $container) {
                 return (new Aggregate\DocumentController())
-                    ->setDocumentService($container->get(Document::class))
-                    ->setCongressmanDocumentService($container->get(CongressmanDocument::class));
+                    ->setDocumentService($container->get(Service\Document::class))
+                    ->setCongressmanDocumentService($container->get(Service\CongressmanDocument::class));
             },
             Aggregate\IssueController::class => function (ServiceManager $container) {
                 return (new Aggregate\IssueController())
-                    ->setIssueService($container->get(Issue::class));
+                    ->setIssueService($container->get(Service\Issue::class));
             },
             Aggregate\IssueCategoryController::class => function (ServiceManager $container) {
                 return (new Aggregate\IssueCategoryController())
-                    ->setCategoryService($container->get(Category::class))
-                    ->setSuperCategoryService($container->get(SuperCategory::class));
+                    ->setCategoryService($container->get(Service\Category::class))
+                    ->setSuperCategoryService($container->get(Service\SuperCategory::class));
             },
-            InflationController::class => function (ServiceManager $container) {
-                return (new InflationController())
-                    ->setInflationService($container->get(Inflation::class))
-                    ->setCabinetService($container->get(Cabinet::class))
-                    ->setAssemblyService($container->get(Assembly::class));
+            Controller\InflationController::class => function (ServiceManager $container) {
+                return (new Controller\InflationController())
+                    ->setInflationService($container->get(Service\Inflation::class))
+                    ->setCabinetService($container->get(Service\Cabinet::class))
+                    ->setAssemblyService($container->get(Service\Assembly::class));
             },
         ],
     ],
@@ -995,7 +935,7 @@ return [
                     'options' => [
                         'route' => 'index:speech',
                         'defaults' => [
-                            'controller' => ConsoleSearchIndexerController::class,
+                            'controller' => Console\SearchIndexerController::class,
                             'action' => 'speech'
                         ],
                     ],
@@ -1004,7 +944,7 @@ return [
                     'options' => [
                         'route' => 'index:issue',
                         'defaults' => [
-                            'controller' => ConsoleSearchIndexerController::class,
+                            'controller' => Console\SearchIndexerController::class,
                             'action' => 'issue'
                         ],
                     ],
@@ -1013,7 +953,7 @@ return [
                     'options' => [
                         'route' => 'index:status [--assembly=|-a] [--type=|-t]',
                         'defaults' => [
-                            'controller' => ConsoleIssueStatusController::class,
+                            'controller' => Console\IssueStatusController::class,
                             'action' => 'index'
                         ],
                     ],
@@ -1022,7 +962,7 @@ return [
                     'options' => [
                         'route' => 'index:status-list',
                         'defaults' => [
-                            'controller' => ConsoleIssueStatusController::class,
+                            'controller' => Console\IssueStatusController::class,
                             'action' => 'status-list'
                         ],
                     ],
@@ -1031,7 +971,7 @@ return [
                     'options' => [
                         'route' => 'document:api',
                         'defaults' => [
-                            'controller' => ConsoleDocumentApiController::class,
+                            'controller' => Console\DocumentApiController::class,
                             'action' => 'index'
                         ],
                     ],

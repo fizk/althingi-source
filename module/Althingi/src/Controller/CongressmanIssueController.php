@@ -2,7 +2,7 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Lib\ServiceIssueAwareInterface;
+use Althingi\Injector\ServiceIssueAwareInterface;
 use Althingi\Service\Issue;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\CollectionModel;

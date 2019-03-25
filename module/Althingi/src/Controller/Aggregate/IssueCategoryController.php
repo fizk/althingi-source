@@ -2,8 +2,8 @@
 
 namespace Althingi\Controller\Aggregate;
 
-use Althingi\Lib\ServiceCategoryAwareInterface;
-use Althingi\Lib\ServiceSuperCategoryAwareInterface;
+use Althingi\Injector\ServiceCategoryAwareInterface;
+use Althingi\Injector\ServiceSuperCategoryAwareInterface;
 use Althingi\Service\Category;
 use Althingi\Service\SuperCategory;
 use Althingi\Utils\CategoryParam;
@@ -24,6 +24,10 @@ class IssueCategoryController extends AbstractRestfulController implements
     /** @var $issueService \Althingi\Service\SuperCategory */
     private $superCategoryService;
 
+    /**
+     * @return CollectionModel
+     * @output \Althingi\Model\Category[]
+     */
     public function fetchCategoriesAction()
     {
         $assemblyId = $this->params('assembly_id', null);
@@ -32,6 +36,10 @@ class IssueCategoryController extends AbstractRestfulController implements
         return (new CollectionModel($this->categoryService->fetchByAssemblyAndIssue($assemblyId, $issueId)));
     }
 
+    /**
+     * @return CollectionModel
+     * @output \Althingi\Model\SuperCategory[]
+     */
     public function fetchSuperCategoriesAction()
     {
         $assemblyId = $this->params('assembly_id', null);

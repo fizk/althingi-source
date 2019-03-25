@@ -2,8 +2,8 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Form\CongressmanDocument as CongressmanDocumentForm;
-use Althingi\Lib\ServiceProponentAwareInterface;
+use Althingi\Form;
+use Althingi\Injector\ServiceProponentAwareInterface;
 use Althingi\Service\CongressmanDocument;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\EmptyModel;
@@ -28,7 +28,7 @@ class CongressmanDocumentController extends AbstractRestfulController implements
         $documentId = $this->params('document_id');
         $congressmanId = $this->params('congressman_id');
 
-        $form = (new CongressmanDocumentForm())
+        $form = (new Form\CongressmanDocument())
             ->setData(array_merge(
                 $data,
                 [
@@ -65,7 +65,7 @@ class CongressmanDocumentController extends AbstractRestfulController implements
 
         if (($proponent = $this->congressmanDocumentService
                 ->get($assemblyId, $issueId, $documentId, $congressmanId)) != null) {
-            $form = new CongressmanDocumentForm();
+            $form = new Form\CongressmanDocument();
             $form->bind($proponent);
             $form->setData($data);
 

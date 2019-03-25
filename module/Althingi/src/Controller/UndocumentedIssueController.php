@@ -3,22 +3,20 @@
 namespace Althingi\Controller;
 
 use Althingi\Form\Issue as IssueForm;
-use Althingi\Lib\DateAndCountSequence;
-use Althingi\Lib\ServiceSearchIssueAwareInterface;
 use Althingi\Model\CongressmanAndDateRange;
 use Althingi\Model\IssueAndDate as IssueAndDateModel;
-use Althingi\Lib\ServiceAssemblyAwareInterface;
-use Althingi\Lib\ServiceCongressmanAwareInterface;
-use Althingi\Lib\ServiceDocumentAwareInterface;
-use Althingi\Lib\ServiceIssueAwareInterface;
-use Althingi\Lib\ServicePartyAwareInterface;
-use Althingi\Lib\ServiceSpeechAwareInterface;
-use Althingi\Lib\ServiceVoteAwareInterface;
+use Althingi\Injector\ServiceSearchIssueAwareInterface;
+use Althingi\Injector\ServiceAssemblyAwareInterface;
+use Althingi\Injector\ServiceCongressmanAwareInterface;
+use Althingi\Injector\ServiceDocumentAwareInterface;
+use Althingi\Injector\ServiceIssueAwareInterface;
+use Althingi\Injector\ServicePartyAwareInterface;
+use Althingi\Injector\ServiceSpeechAwareInterface;
+use Althingi\Injector\ServiceVoteAwareInterface;
 use Althingi\Model\CongressmanPartyProperties;
 use Althingi\Model\IssueAndDate;
 use Althingi\Model\IssueProperties;
 use Althingi\Model\IssueValue;
-use Althingi\Model\Proponent;
 use Althingi\Service\Assembly;
 use Althingi\Service\Congressman;
 use Althingi\Service\Document;
@@ -27,7 +25,8 @@ use Althingi\Service\Issue;
 use Althingi\Service\SearchIssue;
 use Althingi\Service\Speech;
 use Althingi\Service\Vote;
-use Althingi\Lib\Transformer;
+use Althingi\Utils\DateAndCountSequence;
+use Althingi\Utils\Transformer;
 use Althingi\Utils\CategoryParam;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ErrorModel;
@@ -35,7 +34,6 @@ use Rend\View\Model\EmptyModel;
 use Rend\View\Model\ItemModel;
 use Rend\View\Model\CollectionModel;
 use Rend\Helper\Http\Range;
-use DateTime;
 
 class UndocumentedIssueController extends AbstractRestfulController implements
     ServiceCongressmanAwareInterface,

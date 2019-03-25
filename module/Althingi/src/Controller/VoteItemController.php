@@ -2,13 +2,12 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Form\VoteItem as VoteItemForm;
-use Althingi\Lib\ServiceCongressmanAwareInterface;
-use Althingi\Lib\ServicePartyAwareInterface;
-use Althingi\Lib\ServiceVoteAwareInterface;
-use Althingi\Lib\ServiceVoteItemAwareInterface;
-use Althingi\Model\CongressmanPartyProperties;
-use Althingi\Model\VoteItemAndCongressman;
+use Althingi\Form;
+use Althingi\Model;
+use Althingi\Injector\ServiceCongressmanAwareInterface;
+use Althingi\Injector\ServicePartyAwareInterface;
+use Althingi\Injector\ServiceVoteAwareInterface;
+use Althingi\Injector\ServiceVoteItemAwareInterface;
 use Althingi\Service\Congressman;
 use Althingi\Service\Party;
 use Althingi\Service\Vote;
@@ -45,7 +44,7 @@ class VoteItemController extends AbstractRestfulController implements
     {
         $voteId = $this->params('vote_id');
 
-        $form = new VoteItemForm();
+        $form = new Form\VoteItem();
         $form->setData(array_merge($data, ['vote_id' => $voteId,]));
 
         if ($form->isValid()) {
@@ -96,15 +95,15 @@ class VoteItemController extends AbstractRestfulController implements
         $votes = $this->voteItemService->fetchByVote($vote->getVoteId());
         $date = $vote->getDate();
 
-        $voteItems = array_map(function (\Althingi\Model\VoteItem $voteItem) use ($date) {
+        $voteItems = array_map(function (Model\VoteItem $voteItem) use ($date) {
             $congressman = $this->congressmanService->get($voteItem->getCongressmanId());
             $party = $this->partyService->getByCongressman($voteItem->getCongressmanId(), $date);
 
-            $congressmanAndParty = new CongressmanPartyProperties();
+            $congressmanAndParty = new Model\CongressmanPartyProperties();
             $congressmanAndParty->setCongressman($congressman);
             $congressmanAndParty->setParty($party);
 
-            $voteItemAndCongressman = new VoteItemAndCongressman();
+            $voteItemAndCongressman = new Model\VoteItemAndCongressman();
             $voteItemAndCongressman->setVoteItem($voteItem);
             $voteItemAndCongressman->setCongressman($congressmanAndParty);
 
@@ -129,7 +128,7 @@ class VoteItemController extends AbstractRestfulController implements
         $voteItemId = $this->params('vote_item_id');
 
         if (($voteItem = $this->voteItemService->get($voteItemId)) != null) {
-            $form = new VoteItemForm();
+            $form = new Form\VoteItem();
             $form->bind($voteItem);
             $form->setData($data);
 

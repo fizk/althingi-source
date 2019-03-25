@@ -2,9 +2,9 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Form\Committee as CommitteeForm;
-use Althingi\Lib\ServiceCommitteeAwareInterface;
+use Althingi\Form;
 use Althingi\Service\Committee;
+use Althingi\Injector\ServiceCommitteeAwareInterface;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\CollectionModel;
 use Rend\View\Model\ErrorModel;
@@ -58,7 +58,7 @@ class CommitteeController extends AbstractRestfulController implements
         $assemblyId = $this->params('id');
         $committeeId = $this->params('committee_id');
 
-        $form = new CommitteeForm();
+        $form = new Form\Committee();
         $form->bindValues(array_merge($data, ['assembly_id' => $assemblyId, 'committee_id' => $committeeId]));
 
         if ($form->isValid()) {
@@ -80,7 +80,7 @@ class CommitteeController extends AbstractRestfulController implements
     public function patch($id, $data)
     {
         if (($committee = $this->committeeService->get($id)) != null) {
-            $form = new CommitteeForm();
+            $form = new Form\Committee();
             $form->bind($committee);
             $form->setData($data);
 

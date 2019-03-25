@@ -2,31 +2,23 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Form\Speech as SpeechForm;
-use Althingi\Lib\ServiceCongressmanAwareInterface;
-use Althingi\Lib\ServicePartyAwareInterface;
-use Althingi\Lib\ServicePlenaryAwareInterface;
-use Althingi\Lib\ServiceSearchSpeechAwareInterface;
-use Althingi\Lib\ServiceSpeechAwareInterface;
-use Althingi\Lib\Transformer;
-use Althingi\Model\CongressmanPartyProperties;
-use Althingi\Model\SpeechAndPosition;
-use Althingi\Model\Speech as SpeechModel;
-use Althingi\Model\SpeechCongressmanProperties;
-use Althingi\Service\Congressman;
-use Althingi\Service\Party;
-use Althingi\Service\Plenary;
-use Althingi\Service\SearchSpeech;
-use Althingi\Service\Speech;
+use Althingi\Injector\ServiceCongressmanAwareInterface;
+use Althingi\Injector\ServicePartyAwareInterface;
+use Althingi\Injector\ServicePlenaryAwareInterface;
+use Althingi\Injector\ServiceSearchSpeechAwareInterface;
+use Althingi\Injector\ServiceSpeechAwareInterface;
+use Althingi\Utils\Transformer;
+use Althingi\Model;
+use Althingi\Service;
+use Althingi\Form;
 use Althingi\Utils\CategoryParam;
-use Finite\Exception\Exception;
 use Rend\Controller\AbstractRestfulController;
 use Rend\Helper\Http\RangeValue;
 use Rend\View\Model\ErrorModel;
 use Rend\View\Model\EmptyModel;
 use Rend\View\Model\CollectionModel;
 use Rend\Helper\Http\Range;
-use DateTime;
+use Finite\Exception\Exception;
 
 class SpeechController extends AbstractRestfulController implements
     ServiceSpeechAwareInterface,
@@ -36,7 +28,6 @@ class SpeechController extends AbstractRestfulController implements
     ServicePlenaryAwareInterface
 {
     use Range;
-
     use CategoryParam;
 
     /** @var \Althingi\Service\Speech */
@@ -78,15 +69,15 @@ class SpeechController extends AbstractRestfulController implements
             ? $speeches[count($speeches) - 1]->getPosition()
             : 0 ;
 
-        $speechesProperties = array_map(function (SpeechAndPosition $speech) {
+        $speechesProperties = array_map(function (Model\SpeechAndPosition $speech) {
             $speech->setText(Transformer::speechToMarkdown($speech->getText()));
 
             $congressman = $this->congressmanService->get($speech->getCongressmanId());
-            $congressmanPartyProperties = (new CongressmanPartyProperties())
+            $congressmanPartyProperties = (new Model\CongressmanPartyProperties())
                 ->setCongressman($congressman)
                 ->setParty($this->partyService->getByCongressman($speech->getCongressmanId(), $speech->getFrom()));
 
-            return (new SpeechCongressmanProperties())
+            return (new Model\SpeechCongressmanProperties())
                 ->setCongressman($congressmanPartyProperties)
                 ->setSpeech($speech);
         }, $speeches);
@@ -123,16 +114,16 @@ class SpeechController extends AbstractRestfulController implements
             );
             $count = count($speeches);
             $range = (new RangeValue())->setFrom(0)->setTo($count);
-            $speechesAndProperties = array_map(function (SpeechModel $speech) {
+            $speechesAndProperties = array_map(function (Model\SpeechModel $speech) {
                 $speech->setText(Transformer::speechToMarkdown($speech->getText()));
 
                 $congressman = $this->congressmanService->get($speech->getCongressmanId());
                 $party = $this->partyService->getByCongressman($speech->getCongressmanId(), $speech->getFrom());
-                $congressmanPartyProperties = (new CongressmanPartyProperties())
+                $congressmanPartyProperties = (new Model\CongressmanPartyProperties())
                     ->setCongressman($congressman)
                     ->setParty($party);
 
-                return (new SpeechCongressmanProperties())
+                return (new Model\SpeechCongressmanProperties())
                     ->setCongressman($congressmanPartyProperties)
                     ->setSpeech($speech);
             }, $speeches);
@@ -149,16 +140,16 @@ class SpeechController extends AbstractRestfulController implements
                 1500
             );
 
-            $speechesAndProperties = array_map(function (SpeechAndPosition $speech) {
+            $speechesAndProperties = array_map(function (Model\SpeechAndPosition $speech) {
                 $speech->setText(Transformer::speechToMarkdown($speech->getText()));
 
                 $congressman = $this->congressmanService->get($speech->getCongressmanId());
                 $party = $this->partyService->getByCongressman($speech->getCongressmanId(), $speech->getFrom());
-                $congressmanPartyProperties = (new CongressmanPartyProperties())
+                $congressmanPartyProperties = (new Model\CongressmanPartyProperties())
                     ->setCongressman($congressman)
                     ->setParty($party);
 
-                return (new SpeechCongressmanProperties())
+                return (new Model\SpeechCongressmanProperties())
                     ->setCongressman($congressmanPartyProperties)
                     ->setSpeech($speech);
             }, $speeches);
@@ -183,7 +174,7 @@ class SpeechController extends AbstractRestfulController implements
         $assemblyId = $this->params('id');
         $issueId = $this->params('issue_id');
 
-        $form = new SpeechForm();
+        $form = new Form\Speech();
         $form->setData(array_merge(
             $data,
             ['speech_id' => $id, 'issue_id' => $issueId, 'assembly_id' => $assemblyId]
@@ -206,7 +197,7 @@ class SpeechController extends AbstractRestfulController implements
 
                     /** @var  $speech \Althingi\Model\Speech */
                     $speech = $form->getObject();
-                    $plenary = (new \Althingi\Model\Plenary())
+                    $plenary = (new Model\Plenary())
                         ->setAssemblyId($speech->getAssemblyId())
                         ->setPlenaryId($speech->getPlenaryId())
                         ->setFrom($speech->getFrom())
@@ -242,7 +233,7 @@ class SpeechController extends AbstractRestfulController implements
         $speechId = $this->params('speech_id');
 
         if (($speech = $this->speechService->get($speechId)) != null) {
-            $form = new SpeechForm();
+            $form = new Form\Speech();
             $form->bind($speech);
             $form->setData($data);
 
@@ -288,30 +279,30 @@ class SpeechController extends AbstractRestfulController implements
     }
 
     /**
-     * @param Congressman $congressman
+     * @param \Althingi\Service\Congressman $congressman
      * @return $this
      */
-    public function setCongressmanService(Congressman $congressman)
+    public function setCongressmanService(Service\Congressman $congressman)
     {
         $this->congressmanService = $congressman;
         return $this;
     }
 
     /**
-     * @param Party $party
+     * @param \Althingi\Service\Party $party
      * @return $this
      */
-    public function setPartyService(Party $party)
+    public function setPartyService(Service\Party $party)
     {
         $this->partyService = $party;
         return $this;
     }
 
     /**
-     * @param Speech $speech
+     * @param \Althingi\Service\Speech $speech
      * @return $this
      */
-    public function setSpeechService(Speech $speech)
+    public function setSpeechService(Service\Speech $speech)
     {
         $this->speechService = $speech;
         return $this;
@@ -321,17 +312,17 @@ class SpeechController extends AbstractRestfulController implements
      * @param \Althingi\Service\SearchSpeech $speech
      * @return $this
      */
-    public function setSearchSpeechService(SearchSpeech $speech)
+    public function setSearchSpeechService(Service\SearchSpeech $speech)
     {
         $this->speechSearch = $speech;
         return $this;
     }
 
     /**
-     * @param Plenary $plenary
+     * @param \Althingi\Service\Plenary $plenary
      * @return $this
      */
-    public function setPlenaryService(Plenary $plenary)
+    public function setPlenaryService(Service\Plenary $plenary)
     {
         $this->plenaryService = $plenary;
         return $this;

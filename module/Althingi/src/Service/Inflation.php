@@ -2,10 +2,11 @@
 
 namespace Althingi\Service;
 
-use Althingi\Lib\DatabaseAwareInterface;
-use \Althingi\Model\Inflation as InflationModel;
-use \Althingi\Hydrator\Inflation as InflationHydrator;
+use Althingi\Model;
+use Althingi\Hydrator;
+use Althingi\Injector\DatabaseAwareInterface;
 use PDO;
+use DateTime;
 
 /**
  * Class Inflation
@@ -28,7 +29,7 @@ class Inflation implements DatabaseAwareInterface
      * @param \DateTime|null $to
      * @return \Althingi\Model\Inflation[]
      */
-    public function fetchAll(?\DateTime $from = null, ?\DateTime $to = null)
+    public function fetchAll(?DateTime $from = null, ?DateTime $to = null): array
     {
         if ($from !== null && $to === null) {
             $statement = $this->getDriver()->prepare(
@@ -62,18 +63,18 @@ class Inflation implements DatabaseAwareInterface
         }
 
         return array_map(function ($object) {
-            return (new InflationHydrator)->hydrate($object, new InflationModel());
+            return (new Hydrator\Inflation)->hydrate($object, new Model\Inflation());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    public function get(int $id)
+    public function get(int $id): ? Model\Inflation
     {
         $statement = $this->getDriver()->prepare("select * from `Inflation` where id = :id");
         $statement->execute(['id' => $id]);
         $object = $statement->fetch(PDO::FETCH_ASSOC);
 
-        return $object ? (new InflationHydrator())
-            ->hydrate($object, new InflationModel())
+        return $object ? (new Hydrator\Inflation())
+            ->hydrate($object, new Model\Inflation())
             : null;
     }
 
@@ -81,7 +82,7 @@ class Inflation implements DatabaseAwareInterface
      * @param \Althingi\Model\Inflation $data
      * @return int
      */
-    public function save(InflationModel $data): int
+    public function save(Model\Inflation $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toSaveString('Inflation', $data)
@@ -92,10 +93,10 @@ class Inflation implements DatabaseAwareInterface
     }
 
     /**
-     * @param \Althingi\Model\Inflation $data
+     * @param \Althingi\Model\Inflation | object $data
      * @return int
      */
-    public function update(InflationModel $data): int
+    public function update(Model\Inflation $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toUpdateString('Inflation', $data, "id={$data->getId()}")

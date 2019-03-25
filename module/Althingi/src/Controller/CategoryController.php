@@ -2,8 +2,8 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Form\Category as CategoryForm;
-use Althingi\Lib\ServiceCategoryAwareInterface;
+use Althingi\Form;
+use Althingi\Injector\ServiceCategoryAwareInterface;
 use Althingi\Service\Category;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\CollectionModel;
@@ -30,7 +30,7 @@ class CategoryController extends AbstractRestfulController implements
         $superCategoryId = $this->params('super_category_id');
         $categoryId = $this->params('category_id');
 
-        $form = new CategoryForm();
+        $form = new Form\Category();
         $form->bindValues(array_merge($data, ['super_category_id' => $superCategoryId, 'category_id' => $categoryId]));
         if ($form->isValid()) {
             $affectedRows = $this->categoryService->save($form->getObject());
@@ -50,7 +50,7 @@ class CategoryController extends AbstractRestfulController implements
     public function patch($id, $data)
     {
         if (($category = $this->categoryService->get($id)) != null) {
-            $form = new CategoryForm();
+            $form = new Form\Category();
             $form->bind($category);
             $form->setData($data);
 

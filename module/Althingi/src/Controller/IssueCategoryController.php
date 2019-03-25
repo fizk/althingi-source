@@ -2,9 +2,9 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Form\IssueCategory as IssueCategoryForm;
-use Althingi\Lib\ServiceCategoryAwareInterface;
-use Althingi\Lib\ServiceIssueCategoryAwareInterface;
+use Althingi\Form;
+use Althingi\Injector\ServiceCategoryAwareInterface;
+use Althingi\Injector\ServiceIssueCategoryAwareInterface;
 use Althingi\Service\Category;
 use Althingi\Service\IssueCategory;
 use Rend\Controller\AbstractRestfulController;
@@ -78,7 +78,7 @@ class IssueCategoryController extends AbstractRestfulController implements
         $issueId = $this->params('issue_id');
         $categoryId = $this->params('category_id');
 
-        $form = (new IssueCategoryForm())
+        $form = (new Form\IssueCategory())
             ->setData(array_merge(
                 $data,
                 [
@@ -110,7 +110,7 @@ class IssueCategoryController extends AbstractRestfulController implements
         $categoryId = $this->params('category_id');
 
         if (($issueCategory = $this->issueCategoryService->get($assemblyId, $issueId, $categoryId)) != null) {
-            $form = new IssueCategoryForm();
+            $form = new Form\IssueCategory();
             $form->bind($issueCategory);
             $form->setData($data);
 

@@ -2,12 +2,14 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Lib\ServiceAssemblyAwareInterface;
-use Althingi\Lib\ServiceCabinetAwareInterface;
-use Althingi\Lib\ServiceCongressmanAwareInterface;
-use Althingi\Lib\ServiceIssueAwareInterface;
-use Althingi\Lib\ServiceSpeechAwareInterface;
-use Althingi\Lib\Transformer;
+use Althingi\Injector\ServiceAssemblyAwareInterface;
+use Althingi\Injector\ServiceCabinetAwareInterface;
+use Althingi\Injector\ServiceCongressmanAwareInterface;
+use Althingi\Injector\ServiceIssueAwareInterface;
+use Althingi\Injector\ServiceSpeechAwareInterface;
+use Althingi\Injector\ServicePartyAwareInterface;
+use Althingi\Utils\Transformer;
+use Althingi\Utils\CategoryParam;
 use Althingi\Model\AssemblyProperties;
 use Althingi\Model\CongressmanPartyProperties;
 use Althingi\Model\IssueWithSpeechProperties;
@@ -17,9 +19,7 @@ use Althingi\Service\Cabinet;
 use Althingi\Service\Congressman;
 use Althingi\Service\Issue;
 use Althingi\Service\Party;
-use Althingi\Lib\ServicePartyAwareInterface;
 use Althingi\Service\Speech;
-use Althingi\Utils\CategoryParam;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ItemModel;
 

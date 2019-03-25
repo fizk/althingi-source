@@ -2,21 +2,14 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Lib\ServiceVoteItemAwareInterface;
-use Althingi\Model\Proponent as ProponentModel;
-use Althingi\Model\ProponentPartyProperties as ProponentPartyPropertiesModel;
-use Althingi\Service\Congressman;
-use Althingi\Service\Party;
-use Althingi\Service\Vote;
-use Althingi\Service\VoteItem;
-use Althingi\Model\Document as DocumentModel;
-use Althingi\Model\DocumentProperties as DocumentPropertiesModel;
-use Althingi\Form\Document as DocumentForm;
-use Althingi\Lib\ServiceCongressmanAwareInterface;
-use Althingi\Lib\ServiceDocumentAwareInterface;
-use Althingi\Lib\ServicePartyAwareInterface;
-use Althingi\Lib\ServiceVoteAwareInterface;
-use Althingi\Service\Document;
+use Althingi\Model;
+use Althingi\Service;
+use Althingi\Form;
+use Althingi\Injector\ServiceVoteItemAwareInterface;
+use Althingi\Injector\ServiceCongressmanAwareInterface;
+use Althingi\Injector\ServiceDocumentAwareInterface;
+use Althingi\Injector\ServicePartyAwareInterface;
+use Althingi\Injector\ServiceVoteAwareInterface;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\CollectionModel;
 use Rend\View\Model\EmptyModel;
@@ -72,10 +65,10 @@ class DocumentController extends AbstractRestfulController implements
         $assemblyId = $this->params('id');
         $issueId = $this->params('issue_id');
 
-        $documents = array_map(function (DocumentModel $document) use ($assemblyId, $issueId) {
+        $documents = array_map(function (Model\Document $document) use ($assemblyId, $issueId) {
             $votes = $this->voteService->fetchByDocument($assemblyId, $issueId, $document->getDocumentId());
-            $congressmen = array_map(function (ProponentModel $proponent) use ($document) {
-                return (new ProponentPartyPropertiesModel())
+            $congressmen = array_map(function (Model\Proponent $proponent) use ($document) {
+                return (new Model\ProponentPartyProperties())
                     ->setCongressman($proponent)
                     ->setParty($this->partyService->getByCongressman(
                         $proponent->getCongressmanId(),
@@ -83,7 +76,7 @@ class DocumentController extends AbstractRestfulController implements
                     ));
             }, $this->congressmanService->fetchProponents($assemblyId, $document->getDocumentId()));
 
-            $documentProperties = (new DocumentPropertiesModel())
+            $documentProperties = (new Model\DocumentProperties())
                 ->setDocument($document)
                 ->setVotes($votes)
                 ->setProponents($congressmen);
@@ -109,7 +102,7 @@ class DocumentController extends AbstractRestfulController implements
         $issueId = $this->params('issue_id');
         $documentId = $this->params('document_id');
 
-        $form = new DocumentForm();
+        $form = new Form\Document();
         $form->bindValues(array_merge(
             $data,
             [
@@ -141,7 +134,7 @@ class DocumentController extends AbstractRestfulController implements
         $documentId = $this->params('document_id');
 
         if (($assembly = $this->documentService->get($assemblyId, $issueId, $documentId)) != null) {
-            $form = new DocumentForm();
+            $form = new Form\Document();
             $form->bind($assembly);
             $form->setData($data);
 
@@ -159,50 +152,50 @@ class DocumentController extends AbstractRestfulController implements
     }
 
     /**
-     * @param Document $document
+     * @param \Althingi\Service\Document $document
      * @return $this
      */
-    public function setDocumentService(Document $document)
+    public function setDocumentService(Service\Document $document)
     {
         $this->documentService = $document;
         return $this;
     }
 
     /**
-     * @param Congressman $congressman
+     * @param \Althingi\Service\Congressman $congressman
      * @return $this
      */
-    public function setCongressmanService(Congressman $congressman)
+    public function setCongressmanService(Service\Congressman $congressman)
     {
         $this->congressmanService = $congressman;
         return $this;
     }
 
     /**
-     * @param Party $party
+     * @param \Althingi\Service\Party $party
      * @return $this
      */
-    public function setPartyService(Party $party)
+    public function setPartyService(Service\Party $party)
     {
         $this->partyService = $party;
         return $this;
     }
 
     /**
-     * @param Vote $vote
+     * @param \Althingi\Service\Vote $vote
      * @return $this
      */
-    public function setVoteService(Vote $vote)
+    public function setVoteService(Service\Vote $vote)
     {
         $this->voteService = $vote;
         return $this;
     }
 
     /**
-     * @param VoteItem $voteItem
+     * @param \Althingi\Service\VoteItem $voteItem
      * @return $this
      */
-    public function setVoteItemService(VoteItem $voteItem)
+    public function setVoteItemService(Service\VoteItem $voteItem)
     {
         $this->voteItemService = $voteItem;
         return $this;

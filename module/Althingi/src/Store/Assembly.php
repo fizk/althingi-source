@@ -1,7 +1,7 @@
 <?php
 namespace Althingi\Store;
 
-use Althingi\Lib\StoreAwareInterface;
+use Althingi\Injector\StoreAwareInterface;
 use Althingi\Model;
 use Althingi\Hydrator;
 use MongoDB\Database;

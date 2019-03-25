@@ -1,18 +1,16 @@
 <?php
 namespace Althingi\Service;
 
-use Althingi\Lib\DatabaseAwareInterface;
+use Althingi\Model;
+use Althingi\Hydrator;
+use Althingi\Injector\DatabaseAwareInterface;
+use Althingi\Injector\EventsAwareInterface;
 use Althingi\Presenters\IndexableIssueCategoryPresenter;
-use PDO;
-use Althingi\Model\IssueCategory as IssueCategoryModel;
-use Althingi\Hydrator\IssueCategory as IssueCategoryHydrator;
-use Althingi\Model\IssueCategoryAndTime as IssueCategoryAndTimeModel;
-use Althingi\Hydrator\IssueCategoryAndTime as IssueCategoryAndTimeHydrator;
-use Althingi\Lib\EventsAwareInterface;
 use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
+use PDO;
 
 /**
  * Class Issue
@@ -36,7 +34,7 @@ class IssueCategory implements DatabaseAwareInterface, EventsAwareInterface
      * @param int $categoryId
      * @return \Althingi\Model\IssueCategory|null
      */
-    public function get(int $assemblyId, int $issueId, int $categoryId): ?IssueCategoryModel
+    public function get(int $assemblyId, int $issueId, int $categoryId): ? Model\IssueCategory
     {
         $statement = $this->getDriver()->prepare('
             select * from `Category_has_Issue` C
@@ -50,7 +48,7 @@ class IssueCategory implements DatabaseAwareInterface, EventsAwareInterface
 
         $object = $statement->fetch(PDO::FETCH_ASSOC);
         return $object
-            ? (new IssueCategoryHydrator())->hydrate($object, new IssueCategoryModel())
+            ? (new Hydrator\IssueCategory())->hydrate($object, new Model\IssueCategory())
             : null;
     }
 
@@ -61,7 +59,7 @@ class IssueCategory implements DatabaseAwareInterface, EventsAwareInterface
      * @param \Althingi\Model\IssueCategory $data
      * @return int
      */
-    public function create(IssueCategoryModel $data): int
+    public function create(Model\IssueCategory $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toInsertString('Category_has_Issue', $data)
@@ -80,7 +78,7 @@ class IssueCategory implements DatabaseAwareInterface, EventsAwareInterface
      * @param \Althingi\Model\IssueCategory $data
      * @return int
      */
-    public function save(IssueCategoryModel $data): int
+    public function save(Model\IssueCategory $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toSaveString('Category_has_Issue', $data)
@@ -109,10 +107,10 @@ class IssueCategory implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param \Althingi\Model\IssueCategory $data
+     * @param \Althingi\Model\IssueCategory | object $data
      * @return int
      */
-    public function update(IssueCategoryModel $data): int
+    public function update(Model\IssueCategory $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toUpdateString(
@@ -167,7 +165,7 @@ class IssueCategory implements DatabaseAwareInterface, EventsAwareInterface
         ]);
 
         return array_map(function ($object) {
-            return (new IssueCategoryAndTimeHydrator())->hydrate($object, new IssueCategoryAndTimeModel());
+            return (new Hydrator\IssueCategoryAndTime())->hydrate($object, new Model\IssueCategoryAndTime());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 

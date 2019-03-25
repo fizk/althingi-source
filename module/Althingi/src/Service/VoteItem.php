@@ -2,14 +2,9 @@
 
 namespace Althingi\Service;
 
-use Althingi\Lib\DatabaseAwareInterface;
-use Althingi\Model\VoteItem as VoteItemModel;
-use Althingi\Hydrator\VoteItem as VoteItemHydrator;
-use Althingi\Model\VoteItemAndCount as VoteItemAndCountModel;
-use Althingi\Hydrator\VoteItemAndCount as VoteItemAndCountHydrator;
-use Althingi\Model\VoteItemAndAssemblyIssue as VoteItemAndAssemblyIssueModel;
-use Althingi\Hydrator\VoteItemAndAssemblyIssue as VoteItemAndAssemblyIssueHydrator;
-
+use Althingi\Model;
+use Althingi\Hydrator;
+use Althingi\Injector\DatabaseAwareInterface;
 use PDO;
 
 class VoteItem implements DatabaseAwareInterface
@@ -25,7 +20,7 @@ class VoteItem implements DatabaseAwareInterface
      * @param int $id
      * @return \Althingi\Model\VoteItem|null
      */
-    public function get(int $id): ?VoteItemModel
+    public function get(int $id): ? Model\VoteItem
     {
         $statement = $this->getDriver()->prepare(
             'select * from `VoteItem` where vote_item_id = :vote_item_id'
@@ -34,7 +29,7 @@ class VoteItem implements DatabaseAwareInterface
 
         $object = $statement->fetch(PDO::FETCH_ASSOC);
         return $object
-            ? (new VoteItemHydrator())->hydrate($object, new VoteItemModel())
+            ? (new Hydrator\VoteItem())->hydrate($object, new Model\VoteItem())
             : null;
     }
 
@@ -52,7 +47,7 @@ class VoteItem implements DatabaseAwareInterface
         $statement->execute(['vote_id' => $id]);
 
         return array_map(function ($object) {
-            return (new VoteItemHydrator())->hydrate($object, new VoteItemModel());
+            return (new Hydrator\VoteItem())->hydrate($object, new Model\VoteItem());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -64,7 +59,7 @@ class VoteItem implements DatabaseAwareInterface
      * @param int $congressmanId
      * @return \Althingi\Model\VoteItemAndAssemblyIssue|null
      */
-    public function getByVote(int $voteId, int $congressmanId): ?VoteItemAndAssemblyIssueModel
+    public function getByVote(int $voteId, int $congressmanId): ? Model\VoteItemAndAssemblyIssue
     {
         $statement = $this->getDriver()->prepare(
             'select vi.*, v.assembly_id, v.issue_id from `VoteItem` vi
@@ -75,7 +70,7 @@ class VoteItem implements DatabaseAwareInterface
 
         $object = $statement->fetch(PDO::FETCH_ASSOC);
         return $object
-            ? (new VoteItemAndAssemblyIssueHydrator())->hydrate($object, new VoteItemAndAssemblyIssueModel())
+            ? (new Hydrator\VoteItemAndAssemblyIssue())->hydrate($object, new Model\VoteItemAndAssemblyIssue())
             : null;
     }
 
@@ -100,7 +95,7 @@ class VoteItem implements DatabaseAwareInterface
         $statement->execute(['assembly_id' => $assemblyId, 'congressman_id' => $congressmanId]);
 
         return array_map(function ($object) {
-            return (new VoteItemAndCountHydrator())->hydrate($object, new VoteItemAndCountModel());
+            return (new Hydrator\VoteItemAndCount())->hydrate($object, new Model\VoteItemAndCount());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -112,7 +107,7 @@ class VoteItem implements DatabaseAwareInterface
      * @param \Althingi\Model\VoteItem $data
      * @return int
      */
-    public function create(VoteItemModel $data): int
+    public function create(Model\VoteItem $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toInsertString('VoteItem', $data)
@@ -123,10 +118,10 @@ class VoteItem implements DatabaseAwareInterface
     }
 
     /**
-     * @param VoteItemModel $data
+     * @param \Althingi\Model\VoteItem | object $data
      * @return int
      */
-    public function update(VoteItemModel $data): int
+    public function update(Model\VoteItem $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toUpdateString('VoteItem', $data, "vote_item_id={$data->getVoteItemId()}")
