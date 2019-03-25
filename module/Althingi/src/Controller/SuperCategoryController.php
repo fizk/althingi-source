@@ -2,8 +2,8 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Form\SuperCategory as SuperCategoryForm;
-use Althingi\Lib\ServiceSuperCategoryAwareInterface;
+use Althingi\Form;
+use Althingi\Injector\ServiceSuperCategoryAwareInterface;
 use Althingi\Service\SuperCategory;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ErrorModel;
@@ -26,7 +26,7 @@ class SuperCategoryController extends AbstractRestfulController implements
      */
     public function put($id, $data)
     {
-        $form = new SuperCategoryForm();
+        $form = new Form\SuperCategory();
         $form->bindValues(array_merge($data, ['super_category_id' => $id]));
         if ($form->isValid()) {
             $affectedRows = $this->superCategoryService->save($form->getObject());
@@ -48,7 +48,7 @@ class SuperCategoryController extends AbstractRestfulController implements
     public function patch($id, $data)
     {
         if (($superCategory = $this->superCategoryService->get($id)) != null) {
-            $form = new SuperCategoryForm();
+            $form = new Form\SuperCategory();
             $form->bind($superCategory);
             $form->setData($data);
 

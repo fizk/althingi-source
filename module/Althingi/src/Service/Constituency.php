@@ -2,12 +2,11 @@
 
 namespace Althingi\Service;
 
-use Althingi\Lib\DatabaseAwareInterface;
-use Althingi\Model\ConstituencyDate as ConstituencyDateModel;
-use Althingi\Hydrator\ConstituencyDate as ConstituencyDateHydrator;
-use Althingi\Model\Constituency as ConstituencyModel;
-use Althingi\Hydrator\Constituency as ConstituencyHydrator;
+use Althingi\Model;
+use Althingi\Hydrator;
+use Althingi\Injector\DatabaseAwareInterface;
 use PDO;
+use DateTime;
 
 /**
  * Class Constituency
@@ -26,7 +25,7 @@ class Constituency implements DatabaseAwareInterface
      * @param int $id
      * @return \Althingi\Model\Constituency | null
      */
-    public function get(int $id): ?ConstituencyModel
+    public function get(int $id): ? Model\Constituency
     {
         $statement = $this->getDriver()->prepare(
             'select * from `Constituency` 
@@ -35,7 +34,7 @@ class Constituency implements DatabaseAwareInterface
         $statement->execute(['constituency_id' => $id]);
         $object = $statement->fetch(PDO::FETCH_ASSOC);
         return $object
-            ? (new ConstituencyHydrator())->hydrate($object, new ConstituencyModel())
+            ? (new Hydrator\Constituency())->hydrate($object, new Model\Constituency())
             : null;
     }
 
@@ -44,9 +43,9 @@ class Constituency implements DatabaseAwareInterface
      *
      * @param int $congressmanId
      * @param \DateTime $date
-     * @return ConstituencyDateModel | null
+     * @return \Althingi\Model\ConstituencyDate | null
      */
-    public function getByCongressman(int $congressmanId, \DateTime $date)
+    public function getByCongressman(int $congressmanId, DateTime $date): ? Model\ConstituencyDate
     {
         $statement = $this->getDriver()->prepare('
             select C.*, S.`from` as `date` from
@@ -65,7 +64,7 @@ class Constituency implements DatabaseAwareInterface
 
         $object = $statement->fetch(PDO::FETCH_ASSOC);
         return $object
-            ? (new ConstituencyDateHydrator())->hydrate($object, new ConstituencyDateModel())
+            ? (new Hydrator\ConstituencyDate())->hydrate($object, new Model\ConstituencyDate())
             : null ;
     }
 
@@ -88,7 +87,7 @@ class Constituency implements DatabaseAwareInterface
         $statement->execute(['constituency_id' => $congressmanId]);
 
         return array_map(function ($object) {
-            return (new ConstituencyDateHydrator())->hydrate($object, new ConstituencyDateModel());
+            return (new Hydrator\ConstituencyDate())->hydrate($object, new Model\ConstituencyDate());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -99,7 +98,7 @@ class Constituency implements DatabaseAwareInterface
      * @param \Althingi\Model\Constituency $data
      * @return int
      */
-    public function create(ConstituencyModel $data): int
+    public function create(Model\Constituency $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toInsertString('Constituency', $data)
@@ -113,7 +112,7 @@ class Constituency implements DatabaseAwareInterface
      * @param \Althingi\Model\Constituency $data
      * @return int
      */
-    public function save(ConstituencyModel $data): int
+    public function save(Model\Constituency $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toSaveString('Constituency', $data)
@@ -124,10 +123,10 @@ class Constituency implements DatabaseAwareInterface
     }
 
     /**
-     * @param \Althingi\Model\Constituency $data
+     * @param \Althingi\Model\Constituency | object $data
      * @return int
      */
-    public function update(ConstituencyModel $data): int
+    public function update(Model\Constituency $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toUpdateString('Constituency', $data, "constituency_id={$data->getConstituencyId()}")

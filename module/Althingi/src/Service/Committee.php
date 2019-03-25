@@ -2,9 +2,9 @@
 
 namespace Althingi\Service;
 
-use Althingi\Lib\DatabaseAwareInterface;
-use Althingi\Model\Committee as CommitteeModel;
-use Althingi\Hydrator\Committee as CommitteeHydrator;
+use Althingi\Model;
+use Althingi\Hydrator;
+use Althingi\Injector\DatabaseAwareInterface;
 use PDO;
 
 /**
@@ -22,7 +22,7 @@ class Committee implements DatabaseAwareInterface
      * @param $id
      * @return \Althingi\Model\Committee|null
      */
-    public function get(int $id): ?CommitteeModel
+    public function get(int $id): ? Model\Committee
     {
         $statement = $this->getDriver()->prepare('select * from `Committee` C where C.`committee_id` = :committee_id;');
         $statement->execute(['committee_id' => $id]);
@@ -30,7 +30,7 @@ class Committee implements DatabaseAwareInterface
         $object = $statement->fetch(PDO::FETCH_ASSOC);
 
         return $object
-            ? (new CommitteeHydrator())->hydrate($object, new CommitteeModel())
+            ? (new Hydrator\Committee())->hydrate($object, new Model\Committee())
             : null;
     }
 
@@ -44,7 +44,7 @@ class Committee implements DatabaseAwareInterface
 
         return array_map(function ($object) {
             return $object
-                ? (new CommitteeHydrator())->hydrate($object, new CommitteeModel())
+                ? (new Hydrator\Committee())->hydrate($object, new Model\Committee())
                 : null;
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
@@ -68,7 +68,7 @@ class Committee implements DatabaseAwareInterface
 
         return array_map(function ($object) {
             return $object
-                ? (new CommitteeHydrator())->hydrate($object, new CommitteeModel())
+                ? (new Hydrator\Committee())->hydrate($object, new Model\Committee())
                 : null;
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
@@ -79,7 +79,7 @@ class Committee implements DatabaseAwareInterface
      * @param \Althingi\Model\Committee $data
      * @return int affected rows
      */
-    public function create(CommitteeModel $data): int
+    public function create(Model\Committee $data): int
     {
         $statement = $this->getDriver()->prepare($this->toInsertString('Committee', $data));
         $statement->execute($this->toSqlValues($data));
@@ -91,7 +91,7 @@ class Committee implements DatabaseAwareInterface
      * @param \Althingi\Model\Committee $data
      * @return int affected rows
      */
-    public function save(CommitteeModel $data): int
+    public function save(Model\Committee $data): int
     {
         $statement = $this->getDriver()->prepare($this->toSaveString('Committee', $data));
         $statement->execute($this->toSqlValues($data));
@@ -100,10 +100,10 @@ class Committee implements DatabaseAwareInterface
     }
 
     /**
-     * @param \Althingi\Model\Committee $data
+     * @param \Althingi\Model\Committee | object $data
      * @return int
      */
-    public function update(CommitteeModel $data): int
+    public function update(Model\Committee $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toUpdateString('Committee', $data, "committee_id={$data->getCommitteeId()}")

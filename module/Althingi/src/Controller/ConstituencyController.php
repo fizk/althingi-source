@@ -2,8 +2,8 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Form\Constituency as ConstituencyForm;
-use Althingi\Lib\ServiceConstituencyAwareInterface;
+use Althingi\Form;
+use Althingi\Injector\ServiceConstituencyAwareInterface;
 use Althingi\Service\Constituency;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ErrorModel;
@@ -40,7 +40,7 @@ class ConstituencyController extends AbstractRestfulController implements
      */
     public function put($id, $data)
     {
-        $form = new ConstituencyForm();
+        $form = new Form\Constituency();
         $form->setData(array_merge($data, ['constituency_id' => $id]));
         if ($form->isValid()) {
             $affectedRows = $this->constituencyService->save($form->getObject());
@@ -62,7 +62,7 @@ class ConstituencyController extends AbstractRestfulController implements
     public function patch($id, $data)
     {
         if (($constituency = $this->constituencyService->get($id)) != null) {
-            $form = new ConstituencyForm();
+            $form = new Form\Constituency();
             $form->bind($constituency);
             $form->setData($data);
 

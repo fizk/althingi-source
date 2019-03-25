@@ -2,9 +2,9 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Form\Plenary as PlenaryForm;
-use Althingi\Lib\ServicePlenaryAwareInterface;
+use Althingi\Form;
 use Althingi\Service\Plenary;
+use Althingi\Injector\ServicePlenaryAwareInterface;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ErrorModel;
 use Rend\View\Model\EmptyModel;
@@ -51,7 +51,7 @@ class PlenaryController extends AbstractRestfulController implements
             $assemblyId,
             $range->getFrom(),
             $count
-            //            ($range->getFrom()-$range->getTo())
+            //($range->getFrom()-$range->getTo())
         );
         return (new CollectionModel($plenaries))
             ->setStatus(206)
@@ -66,7 +66,7 @@ class PlenaryController extends AbstractRestfulController implements
      */
     public function put($id, $data)
     {
-        $form = (new PlenaryForm())
+        $form = (new Form\Plenary())
             ->setData(
                 array_merge(
                     $data,
@@ -94,7 +94,7 @@ class PlenaryController extends AbstractRestfulController implements
         $plenaryId = $this->params('plenary_id');
 
         if (($assembly = $this->plenaryService->get($assemblyId, $plenaryId)) != null) {
-            $form = new PlenaryForm();
+            $form = new Form\Plenary();
             $form->bind($assembly);
             $form->setData($data);
 

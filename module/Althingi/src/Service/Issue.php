@@ -2,26 +2,13 @@
 
 namespace Althingi\Service;
 
-use Althingi\Lib\DatabaseAwareInterface;
-use Althingi\Lib\EventsAwareInterface;
-use Althingi\Model\CongressmanIssue as CongressmanIssueModel;
-use Althingi\Hydrator\CongressmanIssue as CongressmanIssueHydrator;
-use Althingi\Model\Issue as IssueModel;
-use Althingi\Hydrator\Issue as IssueHydrator;
-use Althingi\Model\IssueAndDate as IssueAndDateModel;
-use Althingi\Hydrator\IssueAndDate as IssueAndDateHydrator;
-use Althingi\Model\AssemblyStatus as AssemblyStatusModel;
-use Althingi\Hydrator\AssemblyStatus as AssemblyStatusHydrator;
-use Althingi\Model\IssueTypeAndStatus as IssueTypeAndStatusModel;
-use Althingi\Model\IssueTypeStatus as IssueTypeStatusModel;
-use Althingi\Hydrator\IssueTypeStatus as IssueTypeStatusHydrator;
+use Althingi\Model;
+use Althingi\Hydrator;
+use Althingi\Injector\DatabaseAwareInterface;
+use Althingi\Injector\EventsAwareInterface;
 use Althingi\Presenters\IndexableIssuePresenter;
 use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;
-use Althingi\Hydrator\IssueValue as IssueValueHydrator;
-use Althingi\Model\IssueValue as IssueValueModel;
-use Althingi\Model\ValueAndCount as ValueAndCountModel;
-use Althingi\Hydrator\ValueAndCount as ValueAndCountHydrator;
 use InvalidArgumentException;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
@@ -63,7 +50,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
      * @param $category
      * @return null|\Althingi\Model\Issue
      */
-    public function get(int $issue_id, int $assembly_id, $category = 'A'): ?IssueModel
+    public function get(int $issue_id, int $assembly_id, $category = 'A'): ? Model\Issue
     {
         $issueStatement = $this->getDriver()->prepare(
             'select * from `Issue` I 
@@ -80,14 +67,14 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
         $object = $issueStatement->fetch(PDO::FETCH_ASSOC);
 
         return $object
-            ? (new IssueHydrator())->hydrate($object, new IssueModel())
+            ? (new Hydrator\Issue())->hydrate($object, new Model\Issue())
             : null;
     }
 
     /**
      * This is a Generator
      * @param $category
-     * @return \Althingi\Model\Issue[]
+     * @return \Althingi\Model\Issue[] | void
      */
     public function fetchAll(array $category = ['A'])
     {
@@ -99,7 +86,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
         $statement->execute();
 
         while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
-            yield (new IssueHydrator())->hydrate($row, new IssueModel());
+            yield (new Hydrator\Issue())->hydrate($row, new Model\Issue());
         }
 
         $statement->closeCursor();
@@ -118,7 +105,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
      * @param $category
      * @return null|\Althingi\Model\IssueAndDate
      */
-    public function getWithDate(int $issue_id, int $assembly_id, ?string $category = 'A'): ?IssueAndDateModel
+    public function getWithDate(int $issue_id, int $assembly_id, ?string $category = 'A'): ? Model\IssueAndDate
     {
         $issueStatement = $this->getDriver()->prepare(
             'select
@@ -136,7 +123,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
         $object = $issueStatement->fetch(PDO::FETCH_ASSOC);
 
         return $object
-            ? (new IssueAndDateHydrator())->hydrate($object, new IssueAndDateModel())
+            ? (new Hydrator\IssueAndDate())->hydrate($object, new Model\IssueAndDate())
             : null;
     }
 
@@ -214,7 +201,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
 
         $statement->execute(['id' => $assembly_id]);
         return array_map(function ($object) {
-            return (new IssueAndDateHydrator())->hydrate($object, new IssueAndDateModel());
+            return (new Hydrator\IssueAndDate())->hydrate($object, new Model\IssueAndDate());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -271,7 +258,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
 
         $statement->execute(['id' => $id]);
         return array_map(function ($object) {
-            return (new IssueHydrator())->hydrate($object, new IssueModel());
+            return (new Hydrator\Issue())->hydrate($object, new Model\Issue());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -298,7 +285,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
             'congressman_id' => $congressmanId,
         ]);
         return array_map(function ($object) {
-            return (new IssueHydrator())->hydrate($object, new IssueModel());
+            return (new Hydrator\Issue())->hydrate($object, new Model\Issue());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -334,7 +321,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
             'congressman_id' => $congressmanId,
         ]);
         return array_map(function ($object) {
-            return (new CongressmanIssueHydrator())->hydrate($object, new CongressmanIssueModel());
+            return (new Hydrator\CongressmanIssue())->hydrate($object, new Model\CongressmanIssue());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -362,7 +349,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
         ]);
 
         return array_map(function ($object) {
-            return (new AssemblyStatusHydrator())->hydrate($object, new AssemblyStatusModel());
+            return (new Hydrator\AssemblyStatus())->hydrate($object, new Model\AssemblyStatus());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
     /**
@@ -385,7 +372,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
         ]);
 
         return array_map(function ($object) {
-            return (new ValueAndCountHydrator())->hydrate($object, new ValueAndCountModel());
+            return (new Hydrator\ValueAndCount())->hydrate($object, new Model\ValueAndCount());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -407,7 +394,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
         $statement->execute(['assembly_id' => $id]);
 
         return array_map(function ($object) {
-            return (new IssueTypeStatusHydrator())->hydrate($object, new IssueTypeStatusModel());
+            return (new Hydrator\IssueTypeStatus())->hydrate($object, new Model\IssueTypeStatus());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -429,7 +416,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
         $statement->execute(['assembly_id' => $id]);
 
         return array_map(function ($object) {
-            return (new IssueTypeStatusHydrator())->hydrate($object, new IssueTypeStatusModel());
+            return (new Hydrator\IssueTypeStatus())->hydrate($object, new Model\IssueTypeStatus());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -453,7 +440,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
         $statement->execute(['assembly_id' => $id]);
 
         return array_map(function ($object) {
-            return (new IssueTypeStatusHydrator())->hydrate($object, new IssueTypeStatusModel());
+            return (new Hydrator\IssueTypeStatus())->hydrate($object, new Model\IssueTypeStatus());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -524,7 +511,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
         $statement->execute(['assembly' => $assemblyId, 'issue' => $issueId]);
 
         return array_map(function ($object) {
-            return (new \Althingi\Hydrator\Status())->hydrate($object, new \Althingi\Model\Status());
+            return (new Hydrator\Status())->hydrate($object, new Model\Status());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -570,7 +557,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
         $statement->execute(['assembly' => $assemblyId]);
 
         return array_map(function ($object) {
-            return (new IssueValueHydrator())->hydrate($object, new IssueValueModel());
+            return (new Hydrator\IssueValue())->hydrate($object, new Model\IssueValue());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -581,7 +568,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
      * @param \Althingi\Model\Issue $data
      * @return int
      */
-    public function create(IssueModel $data): int
+    public function create(Model\Issue $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toInsertString('Issue', $data)
@@ -602,7 +589,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
      * @param \Althingi\Model\Issue $data
      * @return int
      */
-    public function save(IssueModel $data): int
+    public function save(Model\Issue $data): int
     {
         $statement = $this->getDriver()->prepare($this->toSaveString('Issue', $data));
         $statement->execute($this->toSqlValues($data));
@@ -635,7 +622,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
      * @param \Althingi\Model\Issue $data
      * @return int affected rows
      */
-    public function update(IssueModel $data): int
+    public function update(Model\Issue $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toUpdateString(

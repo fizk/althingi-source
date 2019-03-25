@@ -2,9 +2,9 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Form\Vote as VoteForm;
-use Althingi\Lib\ServiceVoteAwareInterface;
+use Althingi\Form;
 use Althingi\Service\Vote;
+use Althingi\Injector\ServiceVoteAwareInterface;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\CollectionModel;
 use Rend\View\Model\EmptyModel;
@@ -72,7 +72,7 @@ class VoteController extends AbstractRestfulController implements
         $issueId = $this->params('issue_id');
         $voteId = $id;
 
-        $form = new VoteForm();
+        $form = new Form\Vote();
         $form->setData(array_merge($data, [
             'assembly_id' => $assemblyId,
             'issue_id' => $issueId,
@@ -109,7 +109,7 @@ class VoteController extends AbstractRestfulController implements
         $voteId = $id;
 
         if (($vote = $this->voteService->get($id)) != null) {
-            $form = new VoteForm();
+            $form = new Form\Vote();
             $form->bind($vote);
             $form->setData(array_merge($data, [
                 'assembly_id' => $assemblyId,

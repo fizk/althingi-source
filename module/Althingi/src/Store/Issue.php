@@ -1,10 +1,10 @@
 <?php
 namespace Althingi\Store;
 
-use Althingi\Lib\StoreAwareInterface;
+use Althingi\Injector\StoreAwareInterface;
+use Althingi\Utils\Transformer;
 use Althingi\Model;
 use Althingi\Hydrator;
-use Althingi\Lib\Transformer;
 use MongoDB\Database;
 
 class Issue implements StoreAwareInterface

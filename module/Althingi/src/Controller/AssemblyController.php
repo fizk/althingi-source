@@ -8,16 +8,16 @@ use Rend\View\Model\EmptyModel;
 use Rend\View\Model\ItemModel;
 use Rend\View\Model\CollectionModel;
 use Rend\Helper\Http\Range;
-use Althingi\Lib\DateAndCountSequence;
-use Althingi\Lib\ServiceAssemblyAwareInterface;
-use Althingi\Lib\ServiceCabinetAwareInterface;
-use Althingi\Lib\ServiceCategoryAwareInterface;
-use Althingi\Lib\ServiceElectionAwareInterface;
-use Althingi\Lib\ServiceIssueAwareInterface;
-use Althingi\Lib\ServicePartyAwareInterface;
-use Althingi\Lib\ServiceSpeechAwareInterface;
-use Althingi\Lib\ServiceVoteAwareInterface;
-use Althingi\Lib\StoreAssemblyAwareInterface;
+use Althingi\Utils\DateAndCountSequence;
+use Althingi\Injector\ServiceAssemblyAwareInterface;
+use Althingi\Injector\ServiceCabinetAwareInterface;
+use Althingi\Injector\ServiceCategoryAwareInterface;
+use Althingi\Injector\ServiceElectionAwareInterface;
+use Althingi\Injector\ServiceIssueAwareInterface;
+use Althingi\Injector\ServicePartyAwareInterface;
+use Althingi\Injector\ServiceSpeechAwareInterface;
+use Althingi\Injector\ServiceVoteAwareInterface;
+use Althingi\Injector\StoreAssemblyAwareInterface;
 use Althingi\Utils\CategoryParam;
 use Althingi\Form;
 use Althingi\Model;
@@ -36,7 +36,6 @@ class AssemblyController extends AbstractRestfulController implements
     StoreAssemblyAwareInterface
 {
     use Range;
-
     use CategoryParam;
 
     /** @var $assemblyService \Althingi\Service\Assembly */

@@ -2,9 +2,9 @@
 
 namespace Althingi\Service;
 
-use Althingi\Lib\DatabaseAwareInterface;
-use Althingi\Model\PlenaryAgenda as PlenaryAgendaModel;
-use Althingi\Hydrator\PlenaryAgenda as PlenaryAgendaHydrator;
+use Althingi\Model;
+use Althingi\Hydrator;
+use Althingi\Injector\DatabaseAwareInterface;
 use PDO;
 
 /**
@@ -24,9 +24,9 @@ class PlenaryAgenda implements DatabaseAwareInterface
      * @param int $assemblyId
      * @param int $plenaryId
      * @param int $itemId
-     * @return PlenaryAgendaModel|null
+     * @return \Althingi\Model\PlenaryAgenda | null
      */
-    public function get(int $assemblyId, int $plenaryId, int $itemId)
+    public function get(int $assemblyId, int $plenaryId, int $itemId): ? Model\PlenaryAgenda
     {
         $statement = $this->getDriver()->prepare("
           select * from `PlenaryAgenda` 
@@ -42,11 +42,11 @@ class PlenaryAgenda implements DatabaseAwareInterface
         $assembly = $statement->fetch(PDO::FETCH_ASSOC);
 
         return $assembly
-            ? (new PlenaryAgendaHydrator)->hydrate($assembly, new PlenaryAgendaModel())
+            ? (new Hydrator\PlenaryAgenda)->hydrate($assembly, new Model\PlenaryAgenda())
             : null;
     }
 
-    public function fetch(int $assemblyId, int $plenaryId)
+    public function fetch(int $assemblyId, int $plenaryId): ? Model\PlenaryAgenda
     {
         $statement = $this->getDriver()->prepare("
           select * from PlenaryAgenda PA 
@@ -60,7 +60,7 @@ class PlenaryAgenda implements DatabaseAwareInterface
         ]);
 
         return array_map(function ($item) {
-            return (new PlenaryAgendaHydrator)->hydrate($item, new PlenaryAgendaModel());
+            return (new Hydrator\PlenaryAgenda)->hydrate($item, new Model\PlenaryAgenda());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -68,7 +68,7 @@ class PlenaryAgenda implements DatabaseAwareInterface
      * @param \Althingi\Model\PlenaryAgenda $data
      * @return string
      */
-    public function create(PlenaryAgendaModel $data)
+    public function create(Model\PlenaryAgenda $data)
     {
         $statement = $this->getDriver()->prepare(
             $this->toInsertString('PlenaryAgenda', $data)
@@ -82,7 +82,7 @@ class PlenaryAgenda implements DatabaseAwareInterface
      * @param \Althingi\Model\PlenaryAgenda $data
      * @return string
      */
-    public function save(PlenaryAgendaModel $data)
+    public function save(Model\PlenaryAgenda $data)
     {
         $statement = $this->getDriver()->prepare(
             $this->toSaveString('PlenaryAgenda', $data)

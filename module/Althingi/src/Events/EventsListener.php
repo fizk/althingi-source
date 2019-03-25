@@ -1,10 +1,10 @@
 <?php
 namespace Althingi\Events;
 
-use Psr\Log\LoggerInterface;
+use Althingi\Injector\LoggerAwareInterface;
 use Zend\EventManager\ListenerAggregateInterface;
 use Zend\EventManager\EventManagerInterface;
-use Althingi\Lib\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 
 abstract class EventsListener implements
     ListenerAggregateInterface,

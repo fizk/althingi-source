@@ -2,9 +2,9 @@
 
 namespace Althingi\Service;
 
-use Althingi\Lib\DatabaseAwareInterface;
-use Althingi\Model\CommitteeMeeting as CommitteeMeetingModel;
-use Althingi\Hydrator\CommitteeMeeting as CommitteeMeetingHydrator;
+use Althingi\Injector\DatabaseAwareInterface;
+use Althingi\Model;
+use Althingi\Hydrator;
 use PDO;
 
 /**
@@ -22,7 +22,7 @@ class CommitteeMeeting implements DatabaseAwareInterface
      * @param $id
      * @return \Althingi\Model\CommitteeMeeting|null
      */
-    public function get(int $id): ?CommitteeMeetingModel
+    public function get(int $id): ? Model\CommitteeMeeting
     {
         $statement = $this->getDriver()->prepare('
             select * from `CommitteeMeeting` where committee_meeting_id = :committee_meeting_id
@@ -34,7 +34,7 @@ class CommitteeMeeting implements DatabaseAwareInterface
         $object = $statement->fetch(PDO::FETCH_ASSOC);
 
         return $object
-            ? (new CommitteeMeetingHydrator())->hydrate($object, new CommitteeMeetingModel())
+            ? (new Hydrator\CommitteeMeeting())->hydrate($object, new Model\CommitteeMeeting())
             : null;
     }
 
@@ -55,7 +55,7 @@ class CommitteeMeeting implements DatabaseAwareInterface
         ]);
 
         return array_map(function ($object) {
-            return (new CommitteeMeetingHydrator())->hydrate($object, new CommitteeMeetingModel());
+            return (new Hydrator\CommitteeMeeting())->hydrate($object, new Model\CommitteeMeeting());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -65,7 +65,7 @@ class CommitteeMeeting implements DatabaseAwareInterface
      * @param \Althingi\Model\CommitteeMeeting $data
      * @return int affected rows
      */
-    public function create(CommitteeMeetingModel $data): int
+    public function create(Model\CommitteeMeeting $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toInsertString('CommitteeMeeting', $data)
@@ -79,7 +79,7 @@ class CommitteeMeeting implements DatabaseAwareInterface
      * @param \Althingi\Model\CommitteeMeeting $data
      * @return int affected rows
      */
-    public function save(CommitteeMeetingModel $data): int
+    public function save(Model\CommitteeMeeting $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toSaveString('CommitteeMeeting', $data)
@@ -92,10 +92,10 @@ class CommitteeMeeting implements DatabaseAwareInterface
     /**
      * Create one entry.
      *
-     * @param \Althingi\Model\CommitteeMeeting $data
+     * @param \Althingi\Model\CommitteeMeeting | object $data
      * @return int affected rows
      */
-    public function update(CommitteeMeetingModel $data): int
+    public function update(Model\CommitteeMeeting $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toUpdateString('CommitteeMeeting', $data, "committee_meeting_id={$data->getCommitteeMeetingId()}")

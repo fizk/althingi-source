@@ -2,9 +2,9 @@
 
 namespace Althingi\Controller\Aggregate;
 
-use Althingi\Lib\ServiceCongressmanAwareInterface;
-use Althingi\Lib\ServiceConstituencyAwareInterface;
-use Althingi\Lib\ServicePartyAwareInterface;
+use Althingi\Injector\ServiceCongressmanAwareInterface;
+use Althingi\Injector\ServiceConstituencyAwareInterface;
+use Althingi\Injector\ServicePartyAwareInterface;
 use Althingi\Service\Congressman;
 use Althingi\Service\Constituency;
 use Althingi\Service\Party;

@@ -2,7 +2,7 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Lib\ServiceCommitteeAwareInterface;
+use Althingi\Injector\ServiceCommitteeAwareInterface;
 use Althingi\Service\Committee;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ItemModel;

@@ -2,9 +2,9 @@
 
 namespace Althingi\Service;
 
-use Althingi\Lib\DatabaseAwareInterface;
-use Althingi\Model\CommitteeMeetingAgenda as CommitteeMeetingAgendaModel;
-use Althingi\Hydrator\CommitteeMeetingAgenda as CommitteeMeetingAgendaHydrator;
+use Althingi\Injector\DatabaseAwareInterface;
+use Althingi\Model;
+use Althingi\Hydrator;
 use PDO;
 
 /**
@@ -23,7 +23,7 @@ class CommitteeMeetingAgenda implements DatabaseAwareInterface
      * @param $agendaId
      * @return \Althingi\Model\CommitteeMeetingAgenda|null
      */
-    public function get(int $meetingId, int $agendaId): ?CommitteeMeetingAgendaModel
+    public function get(int $meetingId, int $agendaId): ? Model\CommitteeMeetingAgenda
     {
         $statement = $this->getDriver()->prepare('
             select * from `CommitteeMeetingAgenda` C 
@@ -38,7 +38,7 @@ class CommitteeMeetingAgenda implements DatabaseAwareInterface
         $object = $statement->fetch(PDO::FETCH_ASSOC);
 
         return $object
-            ? (new CommitteeMeetingAgendaHydrator())->hydrate($object, new CommitteeMeetingAgendaModel())
+            ? (new Hydrator\CommitteeMeetingAgenda())->hydrate($object, new Model\CommitteeMeetingAgenda())
             : null;
     }
 
@@ -48,7 +48,7 @@ class CommitteeMeetingAgenda implements DatabaseAwareInterface
      * @param \Althingi\Model\CommitteeMeetingAgenda $data
      * @return int affected rows
      */
-    public function create(CommitteeMeetingAgendaModel $data): int
+    public function create(Model\CommitteeMeetingAgenda $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toInsertString('CommitteeMeetingAgenda', $data)
@@ -62,7 +62,7 @@ class CommitteeMeetingAgenda implements DatabaseAwareInterface
      * @param \Althingi\Model\CommitteeMeetingAgenda $data
      * @return int affected rows
      */
-    public function save(CommitteeMeetingAgendaModel $data): int
+    public function save(Model\CommitteeMeetingAgenda $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toSaveString('CommitteeMeetingAgenda', $data)
@@ -75,10 +75,10 @@ class CommitteeMeetingAgenda implements DatabaseAwareInterface
     /**
      * Create one entry.
      *
-     * @param \Althingi\Model\CommitteeMeetingAgenda $data
+     * @param \Althingi\Model\CommitteeMeetingAgenda | object $data
      * @return int affected rows
      */
-    public function update(CommitteeMeetingAgendaModel $data): int
+    public function update(Model\CommitteeMeetingAgenda $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toUpdateString(

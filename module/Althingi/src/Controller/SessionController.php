@@ -2,8 +2,8 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Form\Session as SessionForm;
-use Althingi\Lib\ServiceSessionAwareInterface;
+use Althingi\Form;
+use Althingi\Injector\ServiceSessionAwareInterface;
 use Althingi\Service\Session;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ErrorModel;
@@ -86,7 +86,7 @@ class SessionController extends AbstractRestfulController implements
         $statusCode = 201;
         $sessionId = 0;
 
-        $form = new SessionForm();
+        $form = new Form\Session();
         $form->setData(array_merge($data, ['congressman_id' => $congressmanId]));
 
         if ($form->isValid()) {
@@ -130,7 +130,7 @@ class SessionController extends AbstractRestfulController implements
     public function patch($id, $data)
     {
         if (($session = $this->sessionService->get($id)) != null) {
-            $form = new SessionForm();
+            $form = new Form\Session();
             $form->bind($session);
             $form->setData($data);
 

@@ -2,20 +2,17 @@
 
 namespace Althingi\Service;
 
-use Althingi\Lib\EventsAwareInterface;
-use Althingi\Model\Party as PartyModel;
-use Althingi\Hydrator\Party as PartyHydrator;
-use Althingi\Model\PartyAndElection;
-use Althingi\Model\PartyAndTime as PartyAndTimeModel;
-use Althingi\Hydrator\PartyAndElection as PartyAndElectionHydrator;
-use Althingi\Hydrator\PartyAndTime as PartyAndTimeHydrator;
-use Althingi\Lib\DatabaseAwareInterface;
+use Althingi\Model;
+use Althingi\Hydrator;
+use Althingi\Injector\EventsAwareInterface;
+use Althingi\Injector\DatabaseAwareInterface;
 use Althingi\Presenters\IndexablePartyPresenter;
 use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
 use PDO;
+use DateTime;
 
 /**
  * Class Party
@@ -39,7 +36,7 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
      * @param int $id
      * @return \Althingi\Model\Party|null
      */
-    public function get(int $id): ?PartyModel
+    public function get(int $id): ? Model\Party
     {
         $statement = $this->getDriver()->prepare('
             select * from `Party` where party_id = :party_id
@@ -48,7 +45,7 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
 
         $object = $statement->fetch(PDO::FETCH_ASSOC);
         return $object
-            ? (new PartyHydrator())->hydrate($object, new PartyModel())
+            ? (new Hydrator\Party())->hydrate($object, new Model\Party())
             : null;
     }
 
@@ -57,7 +54,7 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
      * @param \DateTime $date
      * @return \Althingi\Model\Party|null
      */
-    public function getByCongressman(int $congressmanId, \DateTime $date): ?PartyModel
+    public function getByCongressman(int $congressmanId, DateTime $date): ? Model\Party
     {
         $statement = $this->getDriver()->prepare('
             select P.* from
@@ -77,7 +74,7 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
 
         $object = $statement->fetch(PDO::FETCH_ASSOC);
         return $object
-            ? (new PartyHydrator())->hydrate($object, new PartyModel())
+            ? (new Hydrator\Party())->hydrate($object, new Model\Party())
             : null;
     }
 
@@ -114,7 +111,7 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
         ");
         $statement->execute(['assembly_id' => $assemblyId]);
         return array_map(function ($object) {
-            return (new PartyAndTimeHydrator())->hydrate($object, new PartyAndTimeModel());
+            return (new Hydrator\PartyAndTime())->hydrate($object, new Model\PartyAndTime());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -145,7 +142,7 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
         $statement = $this->getDriver()->prepare($query);
         $statement->execute(['assembly_id' => $assemblyId]);
         return array_map(function ($object) {
-            return (new PartyHydrator())->hydrate($object, new PartyModel());
+            return (new Hydrator\Party())->hydrate($object, new Model\Party());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -162,7 +159,7 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
         ');
         $statement->execute(['assembly_id' => $assemblyId]);
         return array_map(function ($object) {
-            return (new PartyAndElectionHydrator())->hydrate($object, new PartyAndElection());
+            return (new Hydrator\PartyAndElection())->hydrate($object, new Model\PartyAndElection());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -181,7 +178,7 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
         );
         $statement->execute(['congressman_id' => $congressmanId]);
         return array_map(function ($object) {
-            return (new PartyHydrator())->hydrate($object, new PartyModel());
+            return (new Hydrator\Party())->hydrate($object, new Model\Party());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -204,7 +201,7 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
         ');
         $statement->execute(['cabinet_id' => $cabinetId]);
         return array_map(function ($object) {
-            return (new PartyHydrator())->hydrate($object, new PartyModel());
+            return (new Hydrator\Party())->hydrate($object, new Model\Party());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -215,7 +212,7 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
      * @param \Althingi\Model\Party $data
      * @return int
      */
-    public function create(PartyModel $data): int
+    public function create(Model\Party $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toInsertString('Party', $data)
@@ -236,7 +233,7 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
      * @param \Althingi\Model\Party $data
      * @return int
      */
-    public function save(PartyModel $data): int
+    public function save(Model\Party $data): int
     {
         $statement = $this->getDriver()->prepare($this->toSaveString('Party', $data));
         $statement->execute($this->toSqlValues($data));
@@ -260,10 +257,10 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param \Althingi\Model\Party $data
+     * @param \Althingi\Model\Party | object $data
      * @return int
      */
-    public function update(PartyModel $data): int
+    public function update(Model\Party $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toUpdateString('Party', $data, "party_id={$data->getPartyId()}")

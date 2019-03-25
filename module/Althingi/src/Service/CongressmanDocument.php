@@ -2,12 +2,10 @@
 
 namespace Althingi\Service;
 
-use Althingi\Lib\DatabaseAwareInterface;
-use Althingi\Lib\EventsAwareInterface;
-use Althingi\Hydrator\CongressmanDocument as CongressmanDocumentHydrator;
-use Althingi\Hydrator\CongressmanValue as CongressmanValueHydrator;
-use Althingi\Model\CongressmanDocument as CongressmanDocumentModel;
-use Althingi\Model\CongressmanValue as CongressmanValueModel;
+use Althingi\Hydrator;
+use Althingi\Model;
+use Althingi\Injector\DatabaseAwareInterface;
+use Althingi\Injector\EventsAwareInterface;
 use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;
 use Althingi\Presenters\IndexableCongressmanDocumentPresenter;
@@ -34,7 +32,7 @@ class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterfac
      * @param int $congressmanId
      * @return \Althingi\Model\CongressmanDocument|null
      */
-    public function get(int $assemblyId, int $issueId, int $documentId, int $congressmanId): ?CongressmanDocumentModel
+    public function get(int $assemblyId, int $issueId, int $documentId, int $congressmanId): ? Model\CongressmanDocument
     {
         $statement = $this->getDriver()->prepare("
             select * from `Document_has_Congressman` D 
@@ -52,11 +50,17 @@ class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterfac
 
         $congressmanDocument = $statement->fetch(PDO::FETCH_ASSOC);
         return $congressmanDocument
-            ? (new CongressmanDocumentHydrator())->hydrate($congressmanDocument, new CongressmanDocumentModel())
+            ? (new Hydrator\CongressmanDocument())->hydrate($congressmanDocument, new Model\CongressmanDocument())
             : null ;
     }
 
-    public function fetchByDocument(int $assemblyId, int $issueId, int $documentId)
+    /**
+     * @param int $assemblyId
+     * @param int $issueId
+     * @param int $documentId
+     * @return \Althingi\Model\CongressmanDocument[]
+     */
+    public function fetchByDocument(int $assemblyId, int $issueId, int $documentId): array
     {
         $statement = $this->getDriver()->prepare("
             select DC.* from Document_has_Congressman DC
@@ -70,7 +74,7 @@ class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterfac
         ]);
 
         return array_map(function ($congressmanDocument) {
-            return (new CongressmanDocumentHydrator())->hydrate($congressmanDocument, new CongressmanDocumentModel());
+            return (new Hydrator\CongressmanDocument())->hydrate($congressmanDocument, new Model\CongressmanDocument());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -80,7 +84,7 @@ class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterfac
      * @param int $documentId
      * @return \Althingi\Model\CongressmanDocument|null
      */
-    public function countProponents(int $assemblyId, int $issueId, int $documentId): ?int
+    public function countProponents(int $assemblyId, int $issueId, int $documentId): ? int
     {
         $statement = $this->getDriver()->prepare("
             select count(*) 
@@ -96,7 +100,7 @@ class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterfac
         return $statement->fetchColumn(0);
     }
 
-    public function fetchProponents($assemblyId, $issueId, $documentId)
+    public function fetchProponents($assemblyId, $issueId, $documentId): ? Model\CongressmanValue
     {
         $statement = $this->getDriver()->prepare("
             select C.*, DC.`order` as `value` from Document_has_Congressman DC
@@ -112,7 +116,7 @@ class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterfac
 
         $congressmanDocument = $statement->fetch(PDO::FETCH_ASSOC);
         return $congressmanDocument
-            ? (new CongressmanValueHydrator())->hydrate($congressmanDocument, new CongressmanValueModel())
+            ? (new Hydrator\CongressmanValue())->hydrate($congressmanDocument, new Model\CongressmanValue())
             : null ;
     }
 
@@ -120,7 +124,7 @@ class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterfac
      * @param \Althingi\Model\CongressmanDocument $data
      * @return int
      */
-    public function create(CongressmanDocumentModel $data): int
+    public function create(Model\CongressmanDocument $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toInsertString('Document_has_Congressman', $data)
@@ -141,7 +145,7 @@ class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterfac
      * @param \Althingi\Model\CongressmanDocument $data
      * @return int
      */
-    public function save(CongressmanDocumentModel $data): int
+    public function save(Model\CongressmanDocument $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toSaveString('Document_has_Congressman', $data)
@@ -171,10 +175,10 @@ class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterfac
     }
 
     /**
-     * @param \Althingi\Model\CongressmanDocument $data
+     * @param \Althingi\Model\CongressmanDocument | object $data
      * @return int
      */
-    public function update(CongressmanDocumentModel $data): int
+    public function update(Model\CongressmanDocument $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toUpdateString(

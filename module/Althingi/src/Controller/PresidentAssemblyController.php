@@ -2,8 +2,8 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Lib\ServiceCongressmanAwareInterface;
-use Althingi\Lib\ServicePartyAwareInterface;
+use Althingi\Injector\ServiceCongressmanAwareInterface;
+use Althingi\Injector\ServicePartyAwareInterface;
 use Althingi\Model\President;
 use Althingi\Model\PresidentPartyProperties;
 use Althingi\Service\Congressman;

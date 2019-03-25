@@ -2,7 +2,7 @@
 namespace Althingi\ElasticSearchActions;
 
 use Althingi\Events\EventsListener;
-use Althingi\Lib\ElasticSearchAwareInterface;
+use Althingi\Injector\ElasticSearchAwareInterface;
 use Elasticsearch\Client;
 use Zend\EventManager\EventManagerInterface;
 use Althingi\Events\AddEvent;

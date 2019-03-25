@@ -1,8 +1,8 @@
 <?php
 namespace Althingi\Utils;
 
-use Althingi\Lib\CacheAwareInterface;
-use Althingi\Lib\LoggerAwareInterface;
+use Althingi\Injector\CacheAwareInterface;
+use Althingi\Injector\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Zend\Cache\Storage\StorageInterface;
 use Zend\EventManager\EventManagerInterface;

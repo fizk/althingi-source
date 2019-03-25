@@ -2,16 +2,16 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Form\Congressman as CongressmanForm;
-use Althingi\Lib\ServiceAssemblyAwareInterface;
-use Althingi\Lib\ServiceCongressmanAwareInterface;
-use Althingi\Lib\ServiceIssueAwareInterface;
-use Althingi\Lib\ServiceIssueCategoryAwareInterface;
-use Althingi\Lib\ServicePartyAwareInterface;
-use Althingi\Lib\ServiceSessionAwareInterface;
-use Althingi\Lib\ServiceSpeechAwareInterface;
-use Althingi\Lib\ServiceVoteAwareInterface;
-use Althingi\Lib\ServiceVoteItemAwareInterface;
+use Althingi\Form;
+use Althingi\Injector\ServiceAssemblyAwareInterface;
+use Althingi\Injector\ServiceCongressmanAwareInterface;
+use Althingi\Injector\ServiceIssueAwareInterface;
+use Althingi\Injector\ServiceIssueCategoryAwareInterface;
+use Althingi\Injector\ServicePartyAwareInterface;
+use Althingi\Injector\ServiceSessionAwareInterface;
+use Althingi\Injector\ServiceSpeechAwareInterface;
+use Althingi\Injector\ServiceVoteAwareInterface;
+use Althingi\Injector\ServiceVoteItemAwareInterface;
 use Althingi\Model\CongressmanAndParties;
 use Althingi\Model\CongressmanAndParty;
 use Althingi\Model\CongressmanPartyProperties;
@@ -44,7 +44,6 @@ class CongressmanController extends AbstractRestfulController implements
     ServiceAssemblyAwareInterface
 {
     use Range;
-
     use CategoryParam;
 
     /** @var \Althingi\Service\Congressman */
@@ -122,7 +121,7 @@ class CongressmanController extends AbstractRestfulController implements
      */
     public function put($id, $data)
     {
-        $form = new CongressmanForm();
+        $form = new Form\Congressman();
         $form->setData(array_merge($data, ['congressman_id' => $id]));
 
         if ($form->isValid()) {
@@ -146,7 +145,7 @@ class CongressmanController extends AbstractRestfulController implements
     public function patch($id, $data)
     {
         if (($congressman = $this->congressmanService->get($id)) != null) {
-            $form = (new CongressmanForm())
+            $form = (new Form\Congressman())
                 ->bind($congressman)
                 ->setData($data);
 

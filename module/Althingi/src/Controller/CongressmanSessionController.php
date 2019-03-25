@@ -2,8 +2,8 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Form\Session as SessionForm;
-use Althingi\Lib\ServiceSessionAwareInterface;
+use Althingi\Form;
+use Althingi\Injector\ServiceSessionAwareInterface;
 use Althingi\Service\Session;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ErrorModel;
@@ -52,7 +52,7 @@ class CongressmanSessionController extends AbstractRestfulController implements
             return $this->notFoundAction();
         }
 
-        $form = (new SessionForm())
+        $form = (new Form\Session())
             ->bind($session)
             ->setData($data);
 
