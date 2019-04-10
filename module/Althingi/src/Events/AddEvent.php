@@ -11,9 +11,9 @@ class AddEvent extends Event implements IndexablePresenterAwareInterface
     /** @var  \Althingi\Presenters\IndexablePresenter */
     private $presenter;
 
-    public function __construct(IndexablePresenter $presenter)
+    public function __construct(IndexablePresenter $presenter, $params = null)
     {
-        parent::__construct('add', $this);
+        parent::__construct('add', $this, $params);
         $this->setPresenter($presenter);
     }
 

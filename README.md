@@ -71,12 +71,20 @@ directory like so:
 $ php index.php [command-name]
 ```
 
-| command-name  | args | description                                                   |
-|---------------|------|---------------------------------------------------------------|
-| index:speech  |      | Creates a record of each Speech in the ElasticSearch cluster  |
-| index:issue   |      | Creates a record of each Issue in the ElasticSearch cluster   |
-| document:api  |      | Prints out all available API endpoints                        |
+| command-name     | args | description                                                                                             |
+|------------------|------------------------------------------------|---------------------------------------------------------------|
+| index:assembly   | --assembly= -a                                 | Calls events for adding/creating assembly (and sub items)     |
+| index:issue      | --assembly= -a, --issue= -i --category= -c     | Calls events for adding/creating issues (and sub items)       |
+| document:api     |                                                | Prints out all available API endpoints                        |
 
+
+### index:assembly | index:issue
+More for development. What this command does is to fetch each requested assembly/issue and then for each of the sub-items like:
+documents, speeches, proponents etc.. calls the event that is usually called when that items is created by normal API POST/PUSH/PATCH
+calls. That is, an `*.add` event is created in the queue (RabbitMQ).
+
+This allows for, in development, to clear everything from the Store (MongoDB) and have everything re-indexed/accumulated from
+scratch.  
 
 ## The bigger picture
 The service is a part of a bigger system that includes:

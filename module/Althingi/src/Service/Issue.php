@@ -127,6 +127,18 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
             : null;
     }
 
+    public function fetchAllByAssembly(int $assembly_id)
+    {
+        $issueStatement = $this->getDriver()->prepare('
+          select * from Issue where assembly_id = :assembly_id
+        ');
+        $issueStatement->execute(['assembly_id' => $assembly_id]);
+
+        return array_map(function ($object) {
+            return (new Hydrator\Issue())->hydrate($object, new Model\Issue());
+        }, $issueStatement->fetchAll(PDO::FETCH_ASSOC));
+    }
+
     /**
      * Get all Issues per Assembly.
      *

@@ -53,6 +53,26 @@ class IssueCategory implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
+     * @param int $assemblyId
+     * @param int $issueId
+     * @return \Althingi\Model\IssueCategory[]
+     */
+    public function fetchByIssue(int $assemblyId, int $issueId): array
+    {
+        $statement = $this->getDriver()->prepare('
+            select * from Category_has_Issue where issue_id = :issue_id and assembly_id = :assembly_id
+        ');
+        $statement->execute([
+            'assembly_id' => $assemblyId,
+            'issue_id' => $issueId,
+        ]);
+
+        return array_map(function ($object) {
+            return (new Hydrator\IssueCategory())->hydrate($object, new Model\IssueCategory());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
+    }
+
+    /**
      * Create new Issue. This method
      * accepts object from corresponding Form.
      *
