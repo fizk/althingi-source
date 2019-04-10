@@ -112,11 +112,13 @@ return [
         },
         Service\Vote::class => function (ServiceManager $sm) {
             return (new Service\Vote())
-                ->setDriver($sm->get(PDO::class));
+                ->setDriver($sm->get(PDO::class))
+                ->setEventManager($sm->get(EventsListener::class));
         },
         Service\VoteItem::class => function (ServiceManager $sm) {
             return (new Service\VoteItem())
-                ->setDriver($sm->get(PDO::class));
+                ->setDriver($sm->get(PDO::class))
+                ->setEventManager($sm->get(EventsListener::class));
         },
         Service\Inflation::class => function (ServiceManager $sm) {
             return (new Service\Inflation())

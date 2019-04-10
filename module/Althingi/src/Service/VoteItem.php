@@ -5,9 +5,15 @@ namespace Althingi\Service;
 use Althingi\Model;
 use Althingi\Hydrator;
 use Althingi\Injector\DatabaseAwareInterface;
+use Althingi\Injector\EventsAwareInterface;
+use Althingi\Events\AddEvent;
+use Althingi\Events\UpdateEvent;
+use Althingi\Presenters\IndexableVoteItemPresenter;
+use Zend\EventManager\EventManager;
+use Zend\EventManager\EventManagerInterface;
 use PDO;
 
-class VoteItem implements DatabaseAwareInterface
+class VoteItem implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
 
@@ -15,6 +21,9 @@ class VoteItem implements DatabaseAwareInterface
      * @var \PDO
      */
     private $pdo;
+
+    /** @var \Zend\EventManager\EventManagerInterface */
+    protected $events;
 
     /**
      * @param int $id
@@ -113,8 +122,43 @@ class VoteItem implements DatabaseAwareInterface
             $this->toInsertString('VoteItem', $data)
         );
         $statement->execute($this->toSqlValues($data));
+        $this->getEventManager()
+            ->trigger(
+                AddEvent::class,
+                new AddEvent(new IndexableVoteItemPresenter($data)),
+                ['rows' => $statement->rowCount()]
+            );
 
         return $this->getDriver()->lastInsertId();
+    }
+
+    public function save(Model\VoteItem $data): int
+    {
+        $statement = $this->getDriver()->prepare(
+            $this->toSaveString('VoteItem', $data)
+        );
+        $statement->execute($this->toSqlValues($data));
+
+        switch ($statement->rowCount()) {
+            case 1:
+                $this->getEventManager()
+                    ->trigger(
+                        AddEvent::class,
+                        new AddEvent(new IndexableVoteItemPresenter($data)),
+                        ['rows' => $statement->rowCount()]
+                    );
+                break;
+            case 0:
+            case 2:
+                $this->getEventManager()
+                    ->trigger(
+                        UpdateEvent::class,
+                        new UpdateEvent(new IndexableVoteItemPresenter($data)),
+                        ['rows' => $statement->rowCount()]
+                    );
+                break;
+        }
+        return $statement->rowCount();
     }
 
     /**
@@ -128,6 +172,12 @@ class VoteItem implements DatabaseAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
+        $this->getEventManager()
+            ->trigger(
+                UpdateEvent::class,
+                new UpdateEvent(new IndexableVoteItemPresenter($data)),
+                ['rows' => $statement->rowCount()]
+            );
         return $statement->rowCount();
     }
 
@@ -147,5 +197,19 @@ class VoteItem implements DatabaseAwareInterface
     public function getDriver()
     {
         return $this->pdo;
+    }
+
+    public function setEventManager(EventManagerInterface $events)
+    {
+        $this->events = $events;
+        return $this;
+    }
+
+    public function getEventManager()
+    {
+        if (null === $this->events) {
+            $this->setEventManager(new EventManager());
+        }
+        return $this->events;
     }
 }

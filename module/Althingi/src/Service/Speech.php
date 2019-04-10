@@ -134,6 +134,26 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
         ];
     }
 
+    public function fetchAllByIssue(int $assemblyId, int $issueId, string $category = 'A')
+    {
+        $statement = $this->getDriver()->prepare("
+            select *, timestampdiff(SECOND, `from`, `to`) as `time`
+            from `Speech`
+            where assembly_id = :assembly_id and issue_id = :issue_id and `category` = :category
+            order by `from`
+        ");
+
+        $statement->execute(['assembly_id' => $assemblyId, 'issue_id' => $issueId, 'category' => $category]);
+        $speeches = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        return array_map(function ($object, $position) {
+            return (new Hydrator\SpeechAndPosition())->hydrate(
+                array_merge($object, ['position' => $position]),
+                new Model\SpeechAndPosition()
+            );
+        }, $speeches, count($speeches) > 0 ? range(0, count($speeches) - 1) : []);
+    }
+
     /**
      * Fetch all speeches by issue.
      *

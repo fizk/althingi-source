@@ -9,7 +9,8 @@ FROM php:7.2.9-apache
 RUN apt-get update \
  && apt-get install -y zip unzip \
  && apt-get install -y git zlib1g-dev vim \
- && apt-get install -y pkg-config \
+# && apt-get install -y pkg-config \
+ && apt-get install -y autoconf g++ make openssl libssl-dev libcurl4-openssl-dev pkg-config libsasl2-dev libpcre3-dev \
  && docker-php-ext-install zip \
  && docker-php-ext-install pdo_mysql \
  && docker-php-ext-install bcmath \
@@ -22,7 +23,7 @@ RUN apt-get update \
   | php -- --install-dir=/usr/local/bin --filename=composer
 
 RUN pecl install -o -f redis-4.3.0 \
-    && pecl install mongodb-1.2.9 \
+    && pecl install mongodb-1.5.3 \
     && rm -rf /tmp/pear \
     && docker-php-ext-enable redis mongodb
 

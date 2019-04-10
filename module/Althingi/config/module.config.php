@@ -9,6 +9,8 @@ use Althingi\Controller;
 use Althingi\Controller\Aggregate;
 use Althingi\Controller\Console;
 use Althingi\Service;
+use Althingi\Events\EventsListener;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
 
 return [
     'router' => [
@@ -870,7 +872,7 @@ return [
                     ->setSpeechService($container->get(Service\Speech::class))
                     ->setIssueService($container->get(Service\Issue::class))
                     ->setElasticSearchClient($container->get(\Elasticsearch\Client::class))
-                    ->setLogger($container->get(Service\LoggerInterface::class));
+                    ->setLogger($container->get(LoggerInterface::class));
             },
             Console\DocumentApiController::class => function (ServiceManager $container) {
                 return (new Console\DocumentApiController());
@@ -878,6 +880,20 @@ return [
             Console\IssueStatusController::class => function (ServiceManager $container) {
                 return (new Console\IssueStatusController())
                     ->setIssueService($container->get(Service\Issue::class));
+            },
+            Console\IndexerIssueController::class => function (ServiceManager $container) {
+                return (new Console\IndexerIssueController())
+                    ->setSpeechService($container->get(Service\Speech::class))
+                    ->setIssueService($container->get(Service\Issue::class))
+                    ->setIssueCategoryService($container->get(Service\IssueCategory::class))
+                    ->setDocumentService($container->get(Service\Document::class))
+                    ->setCongressmanDocumentService($container->get(Service\CongressmanDocument::class))
+                    ->setVoteService($container->get(Service\Vote::class))
+                    ->setAssemblyService($container->get(Service\Assembly::class))
+                    ->setVoteItemService($container->get(Service\VoteItem::class))
+                    ->setLogger($container->get(LoggerInterface::class))
+                    ->setQueue($container->get(AMQPStreamConnection::class))
+                    ;
             },
             Aggregate\CongressmanController::class => function (ServiceManager $container) {
                 return (new Aggregate\CongressmanController())
@@ -940,11 +956,20 @@ return [
                         ],
                     ],
                 ],
+                'assembly' => [
+                    'options' => [
+                        'route' => 'index:assembly [--assembly=|-a]',
+                        'defaults' => [
+                            'controller' => Console\IndexerIssueController::class,
+                            'action' => 'assembly'
+                        ],
+                    ],
+                ],
                 'issue' => [
                     'options' => [
-                        'route' => 'index:issue',
+                        'route' => 'index:issue [--assembly=|-a] [--issue=|-i] [--category=|-c]',
                         'defaults' => [
-                            'controller' => Console\SearchIndexerController::class,
+                            'controller' => Console\IndexerIssueController::class,
                             'action' => 'issue'
                         ],
                     ],
