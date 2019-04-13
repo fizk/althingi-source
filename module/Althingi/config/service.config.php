@@ -244,7 +244,7 @@ return [
                     break;
                 case 'memory':
                     $options = (new Zend\Cache\Storage\Adapter\RedisOptions())
-                        ->setTtl(60 * 60)
+                        ->setTtl(60)
                         ->setServer([
                             'host' => getenv('CACHE_HOST') ?: 'localhost',
                             'port' => getenv('CACHE_PORT') ?: 6379

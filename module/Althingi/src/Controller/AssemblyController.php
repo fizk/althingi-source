@@ -189,7 +189,8 @@ class AssemblyController extends AbstractRestfulController implements
             ->setGovernmentBills(
                 $this->issueService->fetchGovernmentBillStatisticsByAssembly($assembly->getAssemblyId())
             )
-            ->setTypes($this->issueService->fetchCountByCategory($assembly->getAssemblyId()))
+            ->setTypes([])
+//            ->setTypes($this->issueService->fetchCountByCategory($assembly->getAssemblyId()))
             ->setVotes(DateAndCountSequence::buildDateRange(
                 $assembly->getFrom(),
                 $assembly->getTo(),
