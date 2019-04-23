@@ -35,11 +35,12 @@ class Update
 
         if ($params['rows'] > 0 || $this->forced === true) {
             $presenter = $target->getPresenter();
-            $channel = $this->client->channel();
+            $channel = $this->client->channel(1);
 
             $msg = new AMQPMessage(json_encode([
                 'id' => $presenter->getIdentifier(),
                 'body' => $presenter->getData(),
+                'index' => $presenter->getIndex(),
             ]));
 
             $channel->basic_publish($msg, 'service', "{$presenter->getType()}.update");

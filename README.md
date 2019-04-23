@@ -111,25 +111,55 @@ http://www.althingi.is/xml/145
 
 ## ElasticSearch
 ```
-PUT althingi_model_speech
+
+
+GET althingi_model_issue/_search
+
+GET althingi_model_issue/_search
 {
-  "settings": {
+  "explain": false,
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "term": {
+            "assembly_id": {
+              "value": 146
+            }
+          }
+        },
+        {
+          "match": {
+            "name": "sálfræðiþjónusta"
+          }
+        }
+      ]
+    }
+  }
+}
+
+DELETE althingi_model_issue
+
+
+DELETE _template/template_althingi_model_issue
+PUT _template/template_althingi_model_issue?include_type_name=true
+{
+    "settings": {
     "analysis": {
       "analyzer": {
         "text_searcher": {
           "type": "custom",
-          "tokenizer": "standard",
-          "filter": ["lowercase", "asciifolding", "icelandic_stop"],
+          "tokenizer": "max_size_tokenizer",
+          "filter": ["lowercase", "icelandic_stop"],
           "char_filter": ["icelandic", "html_strip"]
         }
       },
-      "normalizer": {
-        "lowercase_normalizer": {
-          "type": "custom",
-          "char_filter": ["icelandic"],
-          "filter": ["lowercase", "asciifolding"]
+      "tokenizer": {
+        "max_size_tokenizer": {
+          "type": "standard",
+          "max_token_length": 5
         }
-      },
+      }, 
       "char_filter": {
         "icelandic": {
           "type": "mapping",
@@ -409,68 +439,6 @@ PUT althingi_model_speech
     }
   },
   "mappings": {
-    "althingi_model_speech": {
-      "properties": {
-        "assembly_id": {
-          "type": "long"
-        },
-        "issue_id": {
-          "type": "long"
-        },
-        "plenary_id": {
-          "type": "long"
-        },
-        "congressman_id": {
-          "type": "long"
-        },
-        "congressman_type": {
-          "type": "keyword"
-        },
-        "to": {
-          "format": "yyyy-MM-dd HH:mm:ss",
-          "type": "date"
-        },
-        "from": {
-          "format": "yyyy-MM-dd HH:mm:ss",
-          "type": "date"
-        },
-        "iteration": {
-          "type": "keyword"
-        },
-        "speech_id": {
-          "type": "keyword"
-        },
-        "type": {
-          "type": "keyword",
-          "normalizer": "lowercase_normalizer"
-        },
-        "text": {
-          "type": "text",
-          "analyzer": "text_searcher"
-        }
-      }
-    }
-  }
-}
-```
-
-
-```
-PUT althingi_model_issue
-{
-  "settings": {
-    "analysis": {
-      "analyzer": {
-        "std_lower_case": {
-          "type": "custom",
-          "tokenizer": "standard",
-          "filter": ["lowercase"],
-          "char_filter":  [ "html_strip" ]
-        }
-      }
-    }
-  }, 
-  "mappings": {
     "althingi_model_issue": {
       "properties": {
         "assembly_id": {
@@ -486,75 +454,35 @@ PUT althingi_model_issue
           "type": "keyword"
         },
         "name": {
-          "fields": {
-            "raw": {
-              "analyzer": "std_lower_case", 
-              "type": "text"
-            }
-          },
+          "analyzer": "text_searcher", 
           "type": "text"
         },
         "sub_name": {
-          "fields": {
-            "raw": {
-              "analyzer": "std_lower_case", 
-              "type": "text"
-            }
-          },
+          "analyzer": "text_searcher", 
           "type": "text"
         },
         "question": {
-          "fields": {
-            "raw": {
-              "analyzer": "std_lower_case", 
-              "type": "text"
-            }
-          },
+          "analyzer": "text_searcher", 
           "type": "text"
         },
         "goal": {
-          "fields": {
-            "raw": {
-              "analyzer": "std_lower_case", 
-              "type": "text"
-            }
-          },
+          "analyzer": "text_searcher", 
           "type": "text"
         },
         "changes_in_law": {
-          "fields": {
-            "raw": {
-              "analyzer": "std_lower_case", 
-              "type": "text"
-            }
-          },
+          "analyzer": "text_searcher", 
           "type": "text"
         },
         "costs_and_revenues": {
-          "fields": {
-            "raw": {
-              "analyzer": "std_lower_case", 
-              "type": "text"
-            }
-          },
+          "analyzer": "text_searcher", 
           "type": "text"
         },
         "deliveries": {
-          "fields": {
-            "raw": {
-              "analyzer": "std_lower_case", 
-              "type": "text"
-            }
-          },
+          "analyzer": "text_searcher", 
           "type": "text"
         },
         "additional_information": {
-          "fields": {
-            "raw": {
-              "analyzer": "std_lower_case", 
-              "type": "text"
-            }
-          },
+          "analyzer": "text_searcher", 
           "type": "text"
         },
         "type": {
@@ -571,8 +499,373 @@ PUT althingi_model_issue
         }
       }
     }
-  }
+  },
+  "index_patterns": "*_model_issue"
 }
+
+DELETE _template/template_althingi_model_speech
+PUT _template/template_althingi_model_speech?include_type_name=true
+{
+    "order" : 0,
+    "index_patterns" : [
+      "*_althingi_model_speech"
+    ],
+    "settings" : {
+      "index" : {
+        "analysis" : {
+          "filter" : {
+            "icelandic_stop" : {
+              "type" : "stop",
+              "stopwords" : [
+                "a",
+                "ad",
+                "adra",
+                "adrar",
+                "adrir",
+                "adur en",
+                "af",
+                "af thvi",
+                "af thvi ad",
+                "alla",
+                "allan",
+                "allar",
+                "allir",
+                "allra",
+                "allrar",
+                "allri",
+                "alls",
+                "allt",
+                "allur",
+                "an",
+                "annad",
+                "annan",
+                "annar",
+                "annarra",
+                "annarrar",
+                "annarri",
+                "annars",
+                "auk",
+                "bada",
+                "badar",
+                "badir",
+                "badum",
+                "baedi",
+                "beggja",
+                "e",
+                "ed",
+                "eda",
+                "ef",
+                "eftir",
+                "eftir ad",
+                "eg",
+                "einhver",
+                "einhverja",
+                "einhverjar",
+                "einhverjir",
+                "einhverju",
+                "einhverjum",
+                "einhvern",
+                "einhverra",
+                "einhverrar",
+                "einhverri",
+                "einhvers",
+                "einn",
+                "eins og",
+                "einskis",
+                "eitt",
+                "eitthvad",
+                "eitthvert",
+                "ek",
+                "ekkert",
+                "ekki",
+                "ellegar",
+                "en",
+                "enda",
+                "enga",
+                "engan",
+                "engar",
+                "engi",
+                "engin",
+                "enginn",
+                "engir",
+                "engra",
+                "engrar",
+                "engri",
+                "engu",
+                "engum",
+                "er",
+                "faeinir",
+                "fra",
+                "fyrir",
+                "hana",
+                "hann",
+                "hans",
+                "hanum",
+                "heldur",
+                "heldur en",
+                "hennar",
+                "henni",
+                "herna",
+                "hinn",
+                "hja",
+                "hon",
+                "honum",
+                "hun",
+                "hvad",
+                "hvada",
+                "hver",
+                "hvergi",
+                "hverja",
+                "hverjar",
+                "hverjir",
+                "hverju",
+                "hverjum",
+                "hvern",
+                "hverra",
+                "hverrar",
+                "hverri",
+                "hvers",
+                "hvert",
+                "hvilíkur",
+                "hvor",
+                "hvora",
+                "hvorar",
+                "hvorir",
+                "hvorn",
+                "hvorra",
+                "hvorrar",
+                "hvorri",
+                "hvors",
+                "hvort",
+                "hvoru",
+                "hvorugur",
+                "hvorum",
+                "i",
+                "id",
+                "innan",
+                "m",
+                "med",
+                "medan",
+                "medfram",
+                "mer",
+                "mig",
+                "milli",
+                "min",
+                "mina",
+                "minar",
+                "minir",
+                "minn",
+                "minna",
+                "minnar",
+                "minni",
+                "mins",
+                "minu",
+                "minum",
+                "mitt",
+                "neinn",
+                "nema",
+                "nokkrir",
+                "nokkur",
+                "odru",
+                "odrum",
+                "og",
+                "okkar",
+                "okkur",
+                "oll",
+                "ollu",
+                "ollum",
+                "onnur",
+                "oss",
+                "sa",
+                "sem",
+                "ser",
+                "serhver",
+                "sig",
+                "sin",
+                "sina",
+                "sinar",
+                "sinir",
+                "sinn",
+                "sinna",
+                "sinnar",
+                "sinni",
+                "sins",
+                "sinu",
+                "sinum",
+                "sitt",
+                "sitthvad",
+                "sjalfur",
+                "sko",
+                "su",
+                "sumur",
+                "tha",
+                "thad",
+                "thaer",
+                "thann",
+                "thar sem",
+                "that",
+                "thau",
+                "thegar",
+                "theim",
+                "their",
+                "theirra",
+                "theirrar",
+                "theirri",
+                "thennan",
+                "ther",
+                "thess",
+                "thessa",
+                "thessar",
+                "thessara",
+                "thessarar",
+                "thessari",
+                "thessi",
+                "thessir",
+                "thessu",
+                "thessum",
+                "thetta",
+                "thid",
+                "thig",
+                "thin",
+                "thina",
+                "thinar",
+                "thinir",
+                "thinn",
+                "thinna",
+                "thinnar",
+                "thinni",
+                "thins",
+                "thinu",
+                "thinum",
+                "thit",
+                "thitt",
+                "tho ad",
+                "thott",
+                "thu",
+                "thvi",
+                "til",
+                "til thess ad",
+                "um",
+                "und",
+                "undir",
+                "ur",
+                "vegna",
+                "ver",
+                "vid",
+                "vor",
+                "ydar",
+                "ydur",
+                "yfir",
+                "ykkar",
+                "ykkur",
+                "ymis"
+              ]
+            }
+          },
+          "char_filter" : {
+            "icelandic" : {
+              "type" : "mapping",
+              "mappings" : [
+                "Á => A",
+                "Ð => D",
+                "É => E",
+                "Í => I",
+                "Ó => O",
+                "Ú => O",
+                "Ý => Y",
+                "Þ => TH",
+                "Æ => AE",
+                "Ö => O",
+                "á => a",
+                "ð => d",
+                "é => e",
+                "í => i",
+                "ó => o",
+                "ú => u",
+                "ý => y",
+                "þ => th",
+                "æ => ae",
+                "ö => o"
+              ]
+            }
+          },
+          "normalizer" : {
+            "lowercase_normalizer" : {
+              "filter" : [
+                "lowercase",
+                "asciifolding"
+              ],
+              "type" : "custom",
+              "char_filter" : [
+                "icelandic"
+              ]
+            }
+          },
+          "analyzer" : {
+            "text_searcher" : {
+              "filter" : [
+                "lowercase",
+                "asciifolding",
+                "icelandic_stop"
+              ],
+              "char_filter" : [
+                "icelandic",
+                "html_strip"
+              ],
+              "type" : "custom",
+              "tokenizer" : "standard"
+            }
+          }
+        }
+      }
+    },
+    "mappings" : {
+      "_doc": {
+      "properties" : {
+        "assembly_id" : {
+          "type" : "long"
+        },
+        "congressman_type" : {
+          "type" : "keyword"
+        },
+        "issue_id" : {
+          "type" : "long"
+        },
+        "congressman_id" : {
+          "type" : "long"
+        },
+        "iteration" : {
+          "type" : "keyword"
+        },
+        "from" : {
+          "format" : "yyyy-MM-dd HH:mm:ss",
+          "type" : "date"
+        },
+        "to" : {
+          "format" : "yyyy-MM-dd HH:mm:ss",
+          "type" : "date"
+        },
+        "text" : {
+          "analyzer" : "text_searcher",
+          "type" : "text"
+        },
+        "speech_id" : {
+          "type" : "keyword"
+        },
+        "type" : {
+          "normalizer" : "lowercase_normalizer",
+          "type" : "keyword"
+        },
+        "plenary_id" : {
+          "type" : "long"
+        }
+      }
+    }
+    },
+    "aliases" : { }
+}
+
+
 ```
 
 
