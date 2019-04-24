@@ -21,20 +21,43 @@ class SearchSpeech implements ElasticSearchAwareInterface
      * @param string $query
      * @param int $assemblyId
      * @param int $issueId
-     * @param string $category
      * @return \Althingi\Model\Speech[]
      */
-    public function fetchByIssue(string $query, int $assemblyId, int $issueId, string $category): array
+    public function fetchByIssue(string $query, int $assemblyId, int $issueId): array
     {
         return $this->search([
             'bool' => [
                 'must' => [
-                    ['match' => ['text' => $query]],
-                    ['match' => ['assembly_id' => $assemblyId]],
-                    ['match' => ['issue_id' => $issueId]],
-                    ['match' => ['category' => $category]],
-                ],
-            ],
+                    [
+                        'bool' => [
+                            'must' => [
+                                [
+                                    'term' => [
+                                        'issue_id' => [
+                                            'value' => $issueId
+                                        ]
+                                    ]
+                                ], [
+                                    'term' => [
+                                        'assembly_id' => [
+                                            'value' => $assemblyId
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ],
+                    [
+                        'query_string' => [
+                            'default_operator' => 'OR',
+                            'fields' => [
+                                'text'
+                            ],
+                            'query' => $query
+                        ]
+                    ]
+                ]
+            ]
         ]);
     }
 
@@ -42,33 +65,36 @@ class SearchSpeech implements ElasticSearchAwareInterface
      * @param string $query
      * @param int $assemblyId
      * @return \Althingi\Model\Speech[]
-     * @todo not used anywhere
      */
     public function fetchByAssembly(string $query, int $assemblyId): array
     {
         return $this->search([
             'bool' => [
                 'must' => [
-                    ['fuzzy' => ['text' => $query]],
-                    ['match' => ['assembly_id' => $assemblyId]],
-                ],
-            ],
-        ]);
-    }
-
-    /**
-     * @param string $query
-     * @return \Althingi\Model\Speech[]
-     * @todo not used anywhere
-     */
-    public function fetch(string $query): array
-    {
-        return $this->search([
-            'bool' => [
-                'must' => [
-                    ['fuzzy' => ['text' => $query]],
-                ],
-            ],
+                    [
+                        'bool' => [
+                            'must' => [
+                                [
+                                    'term' => [
+                                        'assembly_id' => [
+                                            'value' => $assemblyId
+                                        ]
+                                    ]
+                                ],
+                            ]
+                        ]
+                    ],
+                    [
+                        'query_string' => [
+                            'default_operator' => 'OR',
+                            'fields' => [
+                                'text'
+                            ],
+                            'query' => $query
+                        ]
+                    ]
+                ]
+            ]
         ]);
     }
 
@@ -95,7 +121,6 @@ class SearchSpeech implements ElasticSearchAwareInterface
     {
         $results = $this->client->search([
             'index' => IndexableSpeechPresenter::INDEX,
-            'type' => IndexableSpeechPresenter::TYPE,
             'body' => [
                 "from" => 0,
                 "size" => 10,

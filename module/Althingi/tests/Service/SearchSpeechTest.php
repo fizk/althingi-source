@@ -35,45 +35,32 @@ class SearchSpeechTest extends TestCase
         $this->service = null;
     }
 
-    public function testFetch()
+    public function testFetchByIssue()
     {
         $expected = [(new Speech())
             ->setSpeechId('00001-id')
             ->setPlenaryId(1)
             ->setAssemblyId(1)
+            ->setIssueId(1)
             ->setCategory('A')
-            ->setIssueId(1)
             ->setCongressmanId(1)
             ->setText('<mgr>hani [...] krummi [...] hundur [...] svin</mgr>')];
-        $actual = $this->service->fetch('some query');
+        $actual = $this->service->fetchByIssue('some query', 1, 1);
 
         $this->assertEquals($expected, $actual);
     }
 
-    public function fetchByIssue()
+    public function testFetchByAssembly()
     {
         $expected = [(new Speech())
             ->setSpeechId('00001-id')
             ->setPlenaryId(1)
             ->setAssemblyId(1)
             ->setIssueId(1)
+            ->setCategory('A')
             ->setCongressmanId(1)
             ->setText('<mgr>hani [...] krummi [...] hundur [...] svin</mgr>')];
-        $actual = $this->service->fetchByIssue(1, 1, 'some query', 'A');
-
-        $this->assertEquals($expected, $actual);
-    }
-
-    public function fetchByAssembly()
-    {
-        $expected = [(new Speech())
-            ->setSpeechId('00001-id')
-            ->setPlenaryId(1)
-            ->setAssemblyId(1)
-            ->setIssueId(1)
-            ->setCongressmanId(1)
-            ->setText('<mgr>hani [...] krummi [...] hundur [...] svin</mgr>')];
-        $actual = $this->service->fetchByAssembly(1, 'some query');
+        $actual = $this->service->fetchByAssembly('some query', 1);
 
         $this->assertEquals($expected, $actual);
     }

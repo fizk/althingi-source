@@ -5,14 +5,12 @@ namespace AlthingiTest\Service;
 use Althingi\Model\IssueTypeStatus;
 use Althingi\QueueActions\QueueEventsListener;
 use Althingi\Service\Issue;
-use Althingi\ElasticSearchActions\ElasticSearchEventsListener;
 use Althingi\Utils\RabbitMQBlackHoleClient;
 use AlthingiTest\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\Issue as IssueModel;
 use Althingi\Model\IssueAndDate as IssueAndDateModel;
 use Psr\Log\NullLogger;
-use \AlthingiTest\ElasticBlackHoleClient;
 use Zend\EventManager\EventManager;
 
 class IssueTest extends TestCase
@@ -223,10 +221,10 @@ class IssueTest extends TestCase
 
     public function testSave()
     {
-        $serviceEventListener = (new ElasticSearchEventsListener())
-            ->setElasticSearchClient(new ElasticBlackHoleClient())
-            ->setLogger(new NullLogger());
-
+        $serviceEventListener = (new QueueEventsListener())
+            ->setQueue(new RabbitMQBlackHoleClient())
+            ->setLogger(new NullLogger())
+            ->setIsForced(true);
         $eventManager = new EventManager();
         $serviceEventListener->attach($eventManager);
 
@@ -265,10 +263,10 @@ class IssueTest extends TestCase
 
     public function testUpdate()
     {
-        $serviceEventListener = (new ElasticSearchEventsListener())
-            ->setElasticSearchClient(new ElasticBlackHoleClient())
-            ->setLogger(new NullLogger());
-
+        $serviceEventListener = (new QueueEventsListener())
+            ->setQueue(new RabbitMQBlackHoleClient())
+            ->setLogger(new NullLogger())
+            ->setIsForced(true);
         $eventManager = new EventManager();
         $serviceEventListener->attach($eventManager);
 
