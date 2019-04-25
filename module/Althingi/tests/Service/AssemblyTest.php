@@ -239,31 +239,6 @@ class AssemblyTest extends TestCase
         $this->assertTablesEqual($expectedTable, $queryTable);
     }
 
-    public function testDelete()
-    {
-        $assemblyService = new Assembly();
-        $assemblyService->setDriver($this->pdo);
-
-        $assemblyService->delete(1);
-
-        $queryTable = $this->getConnection()->createQueryTable('Assembly', 'SELECT * FROM Assembly');
-
-        $expectedTable = $this->createArrayDataSet([
-            'Assembly' => [
-                ['assembly_id' => 2, 'from' => '2000-01-01', 'to' => null],
-                ['assembly_id' => 3, 'from' => '2000-01-01', 'to' => null],
-                ['assembly_id' => 4, 'from' => '2000-01-01', 'to' => null],
-                ['assembly_id' => 5, 'from' => '2000-01-01', 'to' => null],
-                ['assembly_id' => 6, 'from' => '2000-01-01', 'to' => null],
-                ['assembly_id' => 7, 'from' => '2000-01-01', 'to' => null],
-                ['assembly_id' => 8, 'from' => '2000-01-01', 'to' => null],
-                ['assembly_id' => 9, 'from' => '2000-01-01', 'to' => null],
-            ],
-        ])->getTable('Assembly');
-
-        $this->assertTablesEqual($expectedTable, $queryTable);
-    }
-
     public function testCount()
     {
         $assemblyService = new Assembly();

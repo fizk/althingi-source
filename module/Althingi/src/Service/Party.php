@@ -241,7 +241,11 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
         switch ($statement->rowCount()) {
             case 1:
                 $this->getEventManager()
-                    ->trigger(AddEvent::class, new AddEvent(new IndexablePartyPresenter($data)));
+                    ->trigger(
+                        AddEvent::class,
+                        new AddEvent(new IndexablePartyPresenter($data)),
+                        ['rows' => $statement->rowCount()]
+                    );
                 break;
             case 0:
             case 2:

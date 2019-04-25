@@ -685,7 +685,72 @@ return [
                         ]
                     ],
                 ]
-            ]
+            ],
+            'leit' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route'    => '/leit',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action' => 'index'
+                    ],
+                ],
+                'may_terminate' => true,
+                'child_routes' => [
+                    'loggjafarthing' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route'    => '/loggjafarthing[/:id]',
+                            'constraints' => [
+                                'id' => '[0-9]*'
+                            ],
+                            'defaults' => [
+                                'controller' => Controller\SearchAssemblyController::class,
+                                'action' => 'assembly'
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'thingmal' => [
+                                'type' => Segment::class,
+                                'options' => [
+                                    'route'    => '/thingmal',
+                                    'constraints' => [
+                                        'issue_id' => '[0-9]*'
+                                    ],
+                                    'defaults' => [
+                                        'controller' => Controller\SearchIssueController::class,
+                                        'action' => 'issue'
+                                    ],
+                                ],
+                            ],
+                            'thingmal-raedur' => [
+                                'type' => Segment::class,
+                                'options' => [
+                                    'route'    => '/thingmal/:issue_id/raedur',
+                                    'constraints' => [
+                                        'issue_id' => '[0-9]*'
+                                    ],
+                                    'defaults' => [
+                                        'controller' => Controller\SearchSpeechController::class,
+                                        'action' => 'issue'
+                                    ],
+                                ],
+                            ],
+                            'raedur' => [
+                                'type' => Segment::class,
+                                'options' => [
+                                    'route'    => '/raedur',
+                                    'defaults' => [
+                                        'controller' => Controller\SearchSpeechController::class,
+                                        'action' => 'assembly'
+                                    ],
+                                ],
+                            ],
+                        ]
+                    ],
+                ]
+            ],
         ]
     ],
 
@@ -921,6 +986,18 @@ return [
                     ->setCabinetService($container->get(Service\Cabinet::class))
                     ->setAssemblyService($container->get(Service\Assembly::class));
             },
+            Controller\SearchAssemblyController::class => function (ServiceManager $container) {
+                return (new Controller\SearchAssemblyController())
+                    ->setSearchAssemblyService($container->get(Service\SearchAssembly::class));
+            },
+            Controller\SearchIssueController::class => function (ServiceManager $container) {
+                return (new Controller\SearchIssueController())
+                    ->setSearchIssueService($container->get(Service\SearchIssue::class));
+            },
+            Controller\SearchSpeechController::class => function (ServiceManager $container) {
+                return (new Controller\SearchSpeechController)
+                    ->setSearchSpeechService($container->get(Service\SearchSpeech::class));
+            }
         ],
     ],
 

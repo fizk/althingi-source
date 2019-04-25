@@ -2,10 +2,10 @@
 
 namespace AlthingiTest\Service;
 
+use Althingi\QueueActions\QueueEventsListener;
 use Althingi\Service\Party;
-use Althingi\ElasticSearchActions\ElasticSearchEventsListener;
+use Althingi\Utils\RabbitMQBlackHoleClient;
 use AlthingiTest\DatabaseConnection;
-use AlthingiTest\ElasticBlackHoleClient;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\Party as PartyModel;
 use Althingi\Model\PartyAndTime as PartyAndTimeModel;
@@ -129,9 +129,10 @@ class PartyTest extends TestCase
 
     public function testCreate()
     {
-        $serviceEventListener = (new ElasticSearchEventsListener())
-            ->setElasticSearchClient(new ElasticBlackHoleClient())
-            ->setLogger(new NullLogger());
+        $serviceEventListener = (new QueueEventsListener())
+            ->setQueue(new RabbitMQBlackHoleClient())
+            ->setLogger(new NullLogger())
+            ->setIsForced(true);
         $eventManager = new EventManager();
         $serviceEventListener->attach($eventManager);
 
@@ -160,9 +161,10 @@ class PartyTest extends TestCase
 
     public function testSave()
     {
-        $serviceEventListener = (new ElasticSearchEventsListener())
-            ->setElasticSearchClient(new ElasticBlackHoleClient())
-            ->setLogger(new NullLogger());
+        $serviceEventListener = (new QueueEventsListener())
+            ->setQueue(new RabbitMQBlackHoleClient())
+            ->setLogger(new NullLogger())
+            ->setIsForced(true);
         $eventManager = new EventManager();
         $serviceEventListener->attach($eventManager);
 
@@ -191,9 +193,10 @@ class PartyTest extends TestCase
 
     public function testUpdate()
     {
-        $serviceEventListener = (new ElasticSearchEventsListener())
-            ->setElasticSearchClient(new ElasticBlackHoleClient())
-            ->setLogger(new NullLogger());
+        $serviceEventListener = (new QueueEventsListener())
+            ->setQueue(new RabbitMQBlackHoleClient())
+            ->setLogger(new NullLogger())
+            ->setIsForced(true);
         $eventManager = new EventManager();
         $serviceEventListener->attach($eventManager);
 
