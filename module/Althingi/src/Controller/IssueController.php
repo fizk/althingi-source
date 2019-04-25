@@ -117,10 +117,14 @@ class IssueController extends AbstractRestfulController implements
     public function put($id, $data)
     {
         $assemblyId = $this->params('id');
+        $category = strtoupper($this->params('category', 'a'));
         $issueId = $id;
 
         $form = (new Form\Issue())
-            ->setData(array_merge($data, ['assembly_id' => $assemblyId, 'issue_id' => $issueId]));
+            ->setData(array_merge(
+                $data,
+                ['assembly_id' => $assemblyId, 'issue_id' => $issueId, 'category' => $category]
+            ));
 
         if ($form->isValid()) {
             $affectedRows = $this->issueService->save($form->getObject());

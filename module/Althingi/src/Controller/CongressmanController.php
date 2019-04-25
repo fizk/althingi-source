@@ -222,9 +222,8 @@ class CongressmanController extends AbstractRestfulController implements
         $assemblyId = $this->params('id');
         $order = $this->params()->fromQuery('rod', 'desc');
         $size = $this->params()->fromQuery('fjoldi');
-        $categories = $this->getCategoriesFromQuery();
         $assembly = $this->assemblyService->get($assemblyId);
-        $congressmen = $this->congressmanService->fetchTimeByAssembly($assemblyId, $size, $order, $categories);
+        $congressmen = $this->congressmanService->fetchTimeByAssembly($assemblyId, $size, $order, ['A', 'B']);
 
         $collection = array_map(function (\Althingi\Model\Congressman $congressman) use ($assembly) {
             return (new CongressmanPartyProperties())
@@ -419,12 +418,11 @@ class CongressmanController extends AbstractRestfulController implements
     {
         $assemblyId = $this->params('id');
         $congressmanId = $this->params('congressman_id');
-        $category = $this->getCategoriesFromQuery();
 
         $categories = $this->issueCategoryService->fetchFrequencyByAssemblyAndCongressman(
             $assemblyId,
             $congressmanId,
-            $category
+            ['A', 'B']
         );
         $categoriesCount = count($categories);
 

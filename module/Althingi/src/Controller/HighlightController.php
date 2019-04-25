@@ -84,7 +84,6 @@ class HighlightController extends AbstractRestfulController implements
      */
     public function getActiveIssueAction()
     {
-        $categories = $this->getCategoriesFromQuery();
         $speech = $this->speechService->getLastActive();
 
         $speech->setText(Transformer::speechToMarkdown($speech->getText()));
@@ -98,7 +97,7 @@ class HighlightController extends AbstractRestfulController implements
             ->setCongressman($congressmanPartyProperties)
             ->setSpeech($speech);
 
-        $issue = $this->issueService->getWithDate($speech->getIssueId(), $speech->getAssemblyId(), $categories);
+        $issue = $this->issueService->getWithDate($speech->getIssueId(), $speech->getAssemblyId(), ['A', 'B']);
 
         $issueWithSpeech = (new IssueWithSpeechProperties())->setIssue($issue)->setSpeech($speechCongressmanProperties);
 

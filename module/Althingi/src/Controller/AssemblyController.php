@@ -180,7 +180,6 @@ class AssemblyController extends AbstractRestfulController implements
     public function statisticsAction()
     {
         $assembly = $this->assemblyService->get($this->params('id'));
-        $categories = $this->getCategoriesFromQuery();
 
         $response = (new MOdel\AssemblyStatusProperties())
             ->setBills($this->issueService->fetchNonGovernmentBillStatisticsByAssembly($assembly->getAssemblyId()))
@@ -197,9 +196,9 @@ class AssemblyController extends AbstractRestfulController implements
             ->setSpeeches(DateAndCountSequence::buildDateRange(
                 $assembly->getFrom(),
                 $assembly->getTo(),
-                $this->speechService->fetchFrequencyByAssembly($assembly->getAssemblyId(), $categories)
+                $this->speechService->fetchFrequencyByAssembly($assembly->getAssemblyId(), ['A', 'B'])
             ))
-            ->setPartyTimes($this->partyService->fetchTimeByAssembly($assembly->getAssemblyId(), $categories))
+            ->setPartyTimes($this->partyService->fetchTimeByAssembly($assembly->getAssemblyId(), ['A', 'B']))
             ->setCategories($this->categoryService->fetchByAssembly($assembly->getAssemblyId())) //@todo remove this
             ->setElection($this->electionService->getByAssembly($assembly->getAssemblyId()))
             ->setElectionResults($this->partyService->fetchElectedByAssembly($assembly->getAssemblyId()))
