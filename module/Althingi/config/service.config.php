@@ -4,7 +4,6 @@ use Althingi\Service;
 use Althingi\Store;
 use Zend\ServiceManager\ServiceManager;
 use Psr\Log\LoggerInterface;
-use Althingi\ElasticSearchActions\ElasticSearchEventsListener;
 use Althingi\QueueActions\QueueEventsListener;
 use Althingi\Events\EventsListener;
 use Elasticsearch\Client as ElasticsearchClient;
@@ -101,6 +100,10 @@ return [
             return (new Service\SearchIssue())
                 ->setElasticSearchClient($sm->get(ElasticsearchClient::class));
         },
+        Service\SearchAssembly::class => function (ServiceManager $sm) {
+            return (new Service\SearchAssembly())
+                ->setElasticSearchClient($sm->get(ElasticsearchClient::class));
+        },
         Service\Speech::class => function (ServiceManager $sm) {
             return (new Service\Speech())
                 ->setDriver($sm->get(PDO::class))
@@ -182,11 +185,6 @@ return [
 
         EventsListener::class => function (ServiceManager $sm) {
             $eventManager = (new \Zend\EventManager\EventManager());
-
-//            $elasticSearchEventsListener = (new ElasticSearchEventsListener())
-//                ->setElasticSearchClient($sm->get(ElasticsearchClient::class))
-//                ->setLogger($sm->get(LoggerInterface::class));
-//            $elasticSearchEventsListener->attach($eventManager);
 
             $queueEventsListener = (new QueueEventsListener())
                 ->setLogger($sm->get(LoggerInterface::class))

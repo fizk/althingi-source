@@ -6,6 +6,7 @@ use Althingi\Hydrator;
 use Althingi\Model;
 use Althingi\Injector\ElasticSearchAwareInterface;
 use Althingi\Presenters\IndexableIssuePresenter;
+use Althingi\Presenters\IndexableSpeechPresenter;
 use Elasticsearch\Client;
 
 /**
@@ -20,27 +21,66 @@ class SearchIssue implements ElasticSearchAwareInterface
     /**
      * @param string $query
      * @param int $assemblyId
-     * @return \Althingi\Model\IssueAndDate[]
+     * @return \Althingi\Model\Issue[]
+     */
+    public function fetchAll(string $query, int $assemblyId): array
+    {
+        return $this->search([
+            'bool' => [
+                'must' => [
+                    [
+                        'term' => [
+                            'assembly_id' => [
+                                'value' => $assemblyId
+                            ]
+                        ]
+                    ],
+                    [
+                        'query_string' => [
+                            'default_operator' => 'OR',
+                            'fields' => [
+                                'name',
+                                'sub_name',
+                                'goal'
+                            ],
+                            'query' => $query
+                        ]
+                    ]
+                ]
+            ]
+        ]);
+    }
+
+    /**
+     * @param string $query
+     * @param int $assemblyId
+     * @return \Althingi\Model\Issue[]
      */
     public function fetchByAssembly(string $query, int $assemblyId): array
     {
         return $this->search([
             'bool' => [
-                'should' => [
-                    ['term' => ['name.raw' => ['value' => $query, 'boost' => 1.0],]],
-                    ['term' => ['sub_name.raw' => ['value' => $query, 'boost' => 1.0],]],
-                    ['fuzzy' => ['goal.raw' => $query]],
-                    ['fuzzy' => ['major_changes.raw' => $query]],
-                    ['fuzzy' => ['changes_in_law.raw' => $query]],
-                    ['fuzzy' => ['costs_and_revenues.raw' => $query]],
-                    ['fuzzy' => ['deliveries.raw' => $query]],
-                    ['fuzzy' => ['additional_information.raw' => $query]],
-                ],
-                'minimum_should_match' => 1,
                 'must' => [
-                    ['match' => ['assembly_id' => $assemblyId]],
-                ],
-            ],
+                    [
+                        'term' => [
+                            'assembly_id' => [
+                                'value' => $assemblyId
+                            ]
+                        ]
+                    ],
+                    [
+                        'query_string' => [
+                            'default_operator' => 'OR',
+                            'fields' => [
+                                'name',
+                                'sub_name',
+                                'goal'
+                            ],
+                            'query' => $query
+                        ]
+                    ]
+                ]
+            ]
         ]);
     }
 
@@ -81,8 +121,9 @@ class SearchIssue implements ElasticSearchAwareInterface
     private function search(array $query): array
     {
         $results = $this->client->search([
-            'index' => IndexableIssuePresenter::INDEX,
-            'type' => IndexableIssuePresenter::TYPE,
+            'index' => implode(', ', [
+                IndexableIssuePresenter::INDEX,
+            ]),
             'body' => [
                 "from" => 0,
                 "size" => 10,
@@ -91,12 +132,13 @@ class SearchIssue implements ElasticSearchAwareInterface
                     'pre_tags' => ['<strong>'],
                     'post_tags' => ['</strong>'],
                     'fields' => [
-                        'goal.raw' => new \stdClass(),
-                        'major_changes.raw' => new \stdClass(),
-                        'changes_in_law.raw' => new \stdClass(),
-                        'costs_and_revenues.raw' => new \stdClass(),
-                        'deliveries.raw' => new \stdClass(),
-                        'additional_information.raw' => new \stdClass(),
+                        'name' => new \stdClass(),
+                        'goal' => new \stdClass(),
+                        'major_changes' => new \stdClass(),
+                        'changes_in_law' => new \stdClass(),
+                        'costs_and_revenues' => new \stdClass(),
+                        'deliveries' => new \stdClass(),
+                        'additional_information' => new \stdClass(),
                     ],
                     'require_field_match' => false
                 ],
@@ -104,13 +146,14 @@ class SearchIssue implements ElasticSearchAwareInterface
         ]);
 
         return array_map(function ($object) {
-            $object['_source']['goal'] = $this->stringifyHighlight($object, 'goal.raw');
-            $object['_source']['major_changes'] = $this->stringifyHighlight($object, 'major_changes.raw');
-            $object['_source']['changes_in_law'] = $this->stringifyHighlight($object, 'changes_in_law.raw');
-            $object['_source']['costs_and_revenues'] = $this->stringifyHighlight($object, 'costs_and_revenues.raw');
-            $object['_source']['deliveries'] = $this->stringifyHighlight($object, 'deliveries.raw');
+            $object['_source']['name'] = $this->stringifyHighlight($object, 'name');
+            $object['_source']['goal'] = $this->stringifyHighlight($object, 'goal');
+            $object['_source']['major_changes'] = $this->stringifyHighlight($object, 'major_changes');
+            $object['_source']['changes_in_law'] = $this->stringifyHighlight($object, 'changes_in_law');
+            $object['_source']['costs_and_revenues'] = $this->stringifyHighlight($object, 'costs_and_revenues');
+            $object['_source']['deliveries'] = $this->stringifyHighlight($object, 'deliveries');
             $object['_source']['additional_information'] =
-                $this->stringifyHighlight($object, 'additional_information.raw');
+                $this->stringifyHighlight($object, 'additional_information');
 
             return (new Hydrator\Issue())->hydrate($object['_source'], new Model\Issue());
         }, $results['hits']['hits']);
@@ -119,7 +162,7 @@ class SearchIssue implements ElasticSearchAwareInterface
     private function stringifyHighlight($highlights, $key)
     {
         if (! array_key_exists('highlight', $highlights)) {
-            return '';
+            return $highlights['_source'][$key];
         }
 
         if (array_key_exists($key, $highlights['highlight'])) {
@@ -127,7 +170,7 @@ class SearchIssue implements ElasticSearchAwareInterface
                 return strip_tags($paragraph, '<strong>');
             }, $highlights['highlight'][$key])) . '</mgr>';
         } else {
-            return '';
+            return $highlights['_source'][$key];
         }
     }
 }
