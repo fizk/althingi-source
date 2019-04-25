@@ -71,7 +71,9 @@ class Category implements DatabaseAwareInterface
         $statement = $this->getDriver()->prepare('
             select C.* from `Category_has_Issue` CI
             join `Category` C on (C.`category_id` = CI.`category_id`)
-            where CI.`assembly_id` = :assembly_id and CI.`issue_id` = :issue_id;
+            where CI.`assembly_id` = :assembly_id 
+              and CI.`issue_id` = :issue_id
+              and Ci.category = \'A\';
         ');
         $statement->execute([
             'assembly_id' => $assemblyId,
@@ -93,7 +95,10 @@ class Category implements DatabaseAwareInterface
         $statement = $this->getDriver()->prepare('
             select C.* from `Category_has_Issue` CI
             join `Category` C on (C.`category_id` = CI.`category_id`)
-            where CI.`assembly_id` = :assembly_id and CI.`issue_id` = :issue_id and CI.`category_id` = :category_id;
+            where CI.`assembly_id` = :assembly_id 
+              and CI.`issue_id` = :issue_id 
+              and CI.`category_id` = :category_id
+              and CI.category = \'A\';
         ');
         $statement->execute([
             'assembly_id' => $assemblyId,

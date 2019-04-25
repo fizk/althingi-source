@@ -22,7 +22,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
 
-    const ALLOWED_TYPES = ['a', 'b', 'f', 'l', 'm', 'n', 'q', 's', 'v', 'ft', 'um'];
+    const ALLOWED_TYPES = ['n', 'b', 'l', 'm', 'q', 's', 'v', 'a', 'f', 'ff', 'ft', 'um', 'ud', 'uu'];
     const ALLOWED_ORDER = ['asc', 'desc'];
     const MAX_ROW_COUNT = '18446744073709551615';
 
@@ -459,9 +459,10 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
     /**
      * @param int $assemblyId
      * @param $issueId
+     * @param $category
      * @return \Althingi\Model\Status[]
      */
-    public function fetchProgress(int $assemblyId, $issueId): array
+    public function fetchProgress(int $assemblyId, int $issueId, string $category = 'A'): array
     {
         $statement = $this->getDriver()->prepare('
             select D.`assembly_id`, 
@@ -475,7 +476,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
                     \'document\' as `type`,
                     true as `completed`
                 from `Document` D 
-                where D.`assembly_id` = :assembly and D.`issue_id` = :issue
+                where D.`assembly_id` = :assembly and D.`issue_id` = :issue and `category` = :category
                 union
             select B.`assembly_id`, 
                     B.`issue_id`, 
@@ -496,7 +497,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
                                 CONCAT(S.`iteration`, \'. umræða\') as `type`, 
                                 S.`iteration` 
                         from `Speech` S 
-                        where assembly_id = :assembly and issue_id = :issue
+                        where assembly_id = :assembly and issue_id = :issue and `category` = :category
                         order by S.`from`
                 ) as B
                 group by B.`iteration`
@@ -516,11 +517,11 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
                   CM.committee_meeting_id = CMA.committee_meeting_id and CM.`from` is not null
                 )
                 join `Committee` C on (CM.committee_id = C.committee_id)
-                where CMA.assembly_id = :assembly and CMA.issue_id = :issue
+                where CMA.assembly_id = :assembly and CMA.issue_id = :issue and `category` = :category
             order by `date`;
         ');
 
-        $statement->execute(['assembly' => $assemblyId, 'issue' => $issueId]);
+        $statement->execute(['assembly' => $assemblyId, 'issue' => $issueId, 'category' => $category]);
 
         return array_map(function ($object) {
             return (new Hydrator\Status())->hydrate($object, new Model\Status());

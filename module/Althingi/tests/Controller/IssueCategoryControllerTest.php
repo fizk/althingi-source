@@ -51,8 +51,9 @@ class IssueCategoryControllerTest extends AbstractHttpControllerTestCase
             ->andReturn(new CategoryModel())
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/141/thingmal/131/efnisflokkar/21', 'GET');
-        $this->assertControllerClass('IssueCategoryController');
+        $this->dispatch('/loggjafarthing/141/thingmal/a/131/efnisflokkar/21', 'GET');
+
+        $this->assertControllerName(\Althingi\Controller\IssueCategoryController::class);
         $this->assertActionName('get');
         $this->assertResponseStatusCode(200);
     }
@@ -68,8 +69,9 @@ class IssueCategoryControllerTest extends AbstractHttpControllerTestCase
             ->andReturn(null)
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/141/thingmal/131/efnisflokkar/21', 'GET');
-        $this->assertControllerClass('IssueCategoryController');
+        $this->dispatch('/loggjafarthing/141/thingmal/a/131/efnisflokkar/21', 'GET');
+
+        $this->assertControllerName(\Althingi\Controller\IssueCategoryController::class);
         $this->assertActionName('get');
         $this->assertResponseStatusCode(404);
     }
@@ -85,8 +87,9 @@ class IssueCategoryControllerTest extends AbstractHttpControllerTestCase
             ->andReturn([new CategoryModel()])
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/141/thingmal/131/efnisflokkar', 'GET');
-        $this->assertControllerClass('IssueCategoryController');
+        $this->dispatch('/loggjafarthing/141/thingmal/a/131/efnisflokkar', 'GET');
+
+        $this->assertControllerName(\Althingi\Controller\IssueCategoryController::class);
         $this->assertActionName('getList');
         $this->assertResponseStatusCode(206);
         $this->assertResponseHeaderContains('Content-Range', 'items 0-1/1');
@@ -103,8 +106,9 @@ class IssueCategoryControllerTest extends AbstractHttpControllerTestCase
             ->andReturn(1)
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/141/thingmal/131/efnisflokkar/21', 'PUT');
-        $this->assertControllerClass('IssueCategoryController');
+        $this->dispatch('/loggjafarthing/141/thingmal/a/131/efnisflokkar/21', 'PUT');
+
+        $this->assertControllerName(\Althingi\Controller\IssueCategoryController::class);
         $this->assertActionName('put');
         $this->assertResponseStatusCode(201);
     }
@@ -129,8 +133,9 @@ class IssueCategoryControllerTest extends AbstractHttpControllerTestCase
             ->andReturn(1)
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/141/thingmal/131/efnisflokkar/21', 'PATCH');
-        $this->assertControllerClass('IssueCategoryController');
+        $this->dispatch('/loggjafarthing/141/thingmal/a/131/efnisflokkar/21', 'PATCH');
+
+        $this->assertControllerName(\Althingi\Controller\IssueCategoryController::class);
         $this->assertActionName('patch');
         $this->assertResponseStatusCode(205);
     }
@@ -146,7 +151,7 @@ class IssueCategoryControllerTest extends AbstractHttpControllerTestCase
             ->andReturn(null)
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/141/thingmal/131/efnisflokkar/21', 'PATCH');
+        $this->dispatch('/loggjafarthing/141/thingmal/a/131/efnisflokkar/21', 'PATCH');
         $this->assertControllerClass('IssueCategoryController');
         $this->assertActionName('patch');
         $this->assertResponseStatusCode(404);

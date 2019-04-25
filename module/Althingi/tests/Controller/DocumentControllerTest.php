@@ -64,9 +64,9 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
             ->andReturn((new DocumentModel())->setDate(new \DateTime()))
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/145/thingmal/2/thingskjal/2', 'GET');
+        $this->dispatch('/loggjafarthing/145/thingmal/a/2/thingskjal/2', 'GET');
 
-        $this->assertControllerClass('DocumentController');
+        $this->assertControllerName(\Althingi\Controller\DocumentController::class);
         $this->assertActionName('get');
         $this->assertResponseStatusCode(200);
     }
@@ -83,9 +83,9 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
             ->andReturn(null)
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/145/thingmal/2/thingskjal/2', 'GET');
+        $this->dispatch('/loggjafarthing/145/thingmal/a/2/thingskjal/2', 'GET');
 
-        $this->assertControllerClass('DocumentController');
+        $this->assertControllerName(\Althingi\Controller\DocumentController::class);
         $this->assertActionName('get');
         $this->assertResponseStatusCode(404);
     }
@@ -126,9 +126,9 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
             ->andReturn(new PartyModel())
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/145/thingmal/2/thingskjal', 'GET');
+        $this->dispatch('/loggjafarthing/145/thingmal/a/2/thingskjal', 'GET');
 
-        $this->assertControllerClass('DocumentController');
+        $this->assertControllerName(\Althingi\Controller\DocumentController::class);
         $this->assertActionName('getList');
         $this->assertResponseStatusCode(206);
         $this->assertResponseHeaderContains('Content-Range', 'items 0-2/2');
@@ -146,12 +146,12 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
             ->andReturn(1)
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/145/thingmal/2/thingskjal/2', 'PUT', [
+        $this->dispatch('/loggjafarthing/145/thingmal/a/2/thingskjal/2', 'PUT', [
             'date' => '2000-01-01 00:00',
             'type' => 'my-type'
         ]);
 
-        $this->assertControllerClass('DocumentController');
+        $this->assertControllerName(\Althingi\Controller\DocumentController::class);
         $this->assertActionName('put');
         $this->assertResponseStatusCode(201);
     }
@@ -166,12 +166,12 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
             ->never()
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/145/thingmal/2/thingskjal/2', 'PUT', [
+        $this->dispatch('/loggjafarthing/145/thingmal/a/2/thingskjal/2', 'PUT', [
             'date' => 'invalid-date',
             'type' => 'my-type'
         ]);
 
-        $this->assertControllerClass('DocumentController');
+        $this->assertControllerName(\Althingi\Controller\DocumentController::class);
         $this->assertActionName('put');
         $this->assertResponseStatusCode(400);
     }
@@ -200,12 +200,12 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
             ->andReturn(1)
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/145/thingmal/2/thingskjal/2', 'PATCH', [
+        $this->dispatch('/loggjafarthing/145/thingmal/a/2/thingskjal/2', 'PATCH', [
             'date' => '2000-01-01 00:00',
             'type' => 'my-type'
         ]);
 
-        $this->assertControllerClass('DocumentController');
+        $this->assertControllerName(\Althingi\Controller\DocumentController::class);
         $this->assertActionName('patch');
         $this->assertResponseStatusCode(205);
     }
@@ -232,12 +232,12 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
             ->never()
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/145/thingmal/2/thingskjal/2', 'PATCH', [
+        $this->dispatch('/loggjafarthing/145/thingmal/a/2/thingskjal/2', 'PATCH', [
             'date' => 'invalid-date',
             'type' => 'my-type'
         ]);
 
-        $this->assertControllerClass('DocumentController');
+        $this->assertControllerName(\Althingi\Controller\DocumentController::class);
         $this->assertActionName('patch');
         $this->assertResponseStatusCode(400);
     }
@@ -257,12 +257,12 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
             ->never()
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/145/thingmal/2/thingskjal/2', 'PATCH', [
+        $this->dispatch('/loggjafarthing/145/thingmal/a/2/thingskjal/2', 'PATCH', [
             'date' => '2000-01-01',
             'type' => 'my-type'
         ]);
 
-        $this->assertControllerClass('DocumentController');
+        $this->assertControllerName(\Althingi\Controller\DocumentController::class);
         $this->assertActionName('patch');
         $this->assertResponseStatusCode(404);
     }

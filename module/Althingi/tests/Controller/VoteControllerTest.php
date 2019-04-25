@@ -49,9 +49,9 @@ class VoteControllerTest extends AbstractHttpControllerTestCase
             ->once()
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/1/thingmal/2/atkvaedagreidslur/3', 'GET');
+        $this->dispatch('/loggjafarthing/1/thingmal/a/2/atkvaedagreidslur/3', 'GET');
 
-        $this->assertControllerClass('VoteController');
+        $this->assertControllerName(\Althingi\Controller\VoteController::class);
         $this->assertActionName('get');
         $this->assertResponseStatusCode(200);
     }
@@ -68,9 +68,9 @@ class VoteControllerTest extends AbstractHttpControllerTestCase
             ->once()
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/1/thingmal/2/atkvaedagreidslur/3', 'GET');
+        $this->dispatch('/loggjafarthing/1/thingmal/a/2/atkvaedagreidslur/3', 'GET');
 
-        $this->assertControllerClass('VoteController');
+        $this->assertControllerName(\Althingi\Controller\VoteController::class);
         $this->assertActionName('get');
         $this->assertResponseStatusCode(404);
     }
@@ -88,9 +88,9 @@ class VoteControllerTest extends AbstractHttpControllerTestCase
             ->getMock()
         ;
 
-        $this->dispatch('/loggjafarthing/1/thingmal/2/atkvaedagreidslur', 'GET');
+        $this->dispatch('/loggjafarthing/1/thingmal/a/2/atkvaedagreidslur', 'GET');
 
-        $this->assertControllerClass('VoteController');
+        $this->assertControllerName(\Althingi\Controller\VoteController::class);
         $this->assertActionName('getList');
         $this->assertResponseStatusCode(206);
         $this->assertResponseHeaderContains('Content-Range', 'items 0-1/1');
@@ -108,13 +108,13 @@ class VoteControllerTest extends AbstractHttpControllerTestCase
             ->once()
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/1/thingmal/2/atkvaedagreidslur/3', 'PUT', [
+        $this->dispatch('/loggjafarthing/1/thingmal/a/2/atkvaedagreidslur/3', 'PUT', [
             'date' => '2001-01-01 00:00:00',
             'type' => 'nei',
             'method' => 'nei',
         ]);
 
-        $this->assertControllerClass('VoteController');
+        $this->assertControllerName(\Althingi\Controller\VoteController::class);
         $this->assertActionName('put');
         $this->assertResponseStatusCode(201);
     }
@@ -130,12 +130,12 @@ class VoteControllerTest extends AbstractHttpControllerTestCase
             ->never()
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/1/thingmal/2/atkvaedagreidslur/3', 'PUT', [
+        $this->dispatch('/loggjafarthing/1/thingmal/a/2/atkvaedagreidslur/3', 'PUT', [
             'type' => 'nei',
             'method' => 'nei',
         ]);
 
-        $this->assertControllerClass('VoteController');
+        $this->assertControllerName(\Althingi\Controller\VoteController::class);
         $this->assertActionName('put');
         $this->assertResponseStatusCode(400);
     }
@@ -176,11 +176,11 @@ class VoteControllerTest extends AbstractHttpControllerTestCase
             ->once()
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/1/thingmal/2/atkvaedagreidslur/3', 'PATCH', [
+        $this->dispatch('/loggjafarthing/1/thingmal/a/2/atkvaedagreidslur/3', 'PATCH', [
             'date' => '2001-01-01 01:02:03',
         ]);
 
-        $this->assertControllerClass('VoteController');
+        $this->assertControllerName(\Althingi\Controller\VoteController::class);
         $this->assertActionName('patch');
         $this->assertResponseStatusCode(205);
     }
@@ -190,9 +190,9 @@ class VoteControllerTest extends AbstractHttpControllerTestCase
      */
     public function testOptions()
     {
-        $this->dispatch('/loggjafarthing/1/thingmal/2/atkvaedagreidslur/3', 'OPTIONS');
+        $this->dispatch('/loggjafarthing/1/thingmal/a/2/atkvaedagreidslur/3', 'OPTIONS');
 
-        $this->assertControllerClass('VoteController');
+        $this->assertControllerName(\Althingi\Controller\VoteController::class);
         $this->assertActionName('options');
         $this->assertResponseStatusCode(200);
     }
@@ -202,9 +202,9 @@ class VoteControllerTest extends AbstractHttpControllerTestCase
      */
     public function testOptionsList()
     {
-        $this->dispatch('/loggjafarthing/1/thingmal/2/atkvaedagreidslur', 'OPTIONS');
+        $this->dispatch('/loggjafarthing/1/thingmal/a/2/atkvaedagreidslur', 'OPTIONS');
 
-        $this->assertControllerClass('VoteController');
+        $this->assertControllerName(\Althingi\Controller\VoteController::class);
         $this->assertActionName('optionsList');
         $this->assertResponseStatusCode(200);
     }
