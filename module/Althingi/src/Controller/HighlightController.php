@@ -9,7 +9,6 @@ use Althingi\Injector\ServiceIssueAwareInterface;
 use Althingi\Injector\ServiceSpeechAwareInterface;
 use Althingi\Injector\ServicePartyAwareInterface;
 use Althingi\Utils\Transformer;
-use Althingi\Utils\CategoryParam;
 use Althingi\Model\AssemblyProperties;
 use Althingi\Model\CongressmanPartyProperties;
 use Althingi\Model\IssueWithSpeechProperties;
@@ -31,7 +30,6 @@ class HighlightController extends AbstractRestfulController implements
     ServiceCongressmanAwareInterface,
     ServiceIssueAwareInterface
 {
-    use CategoryParam;
 
     /** @var  \Althingi\Service\Assembly */
     private $assemblyService;

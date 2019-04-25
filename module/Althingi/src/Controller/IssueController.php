@@ -19,7 +19,6 @@ use Althingi\Injector\ServiceIssueAwareInterface;
 use Althingi\Injector\ServicePartyAwareInterface;
 use Althingi\Injector\ServiceSpeechAwareInterface;
 use Althingi\Injector\ServiceVoteAwareInterface;
-use Althingi\Utils\CategoryParam;
 use Althingi\Form;
 use Althingi\Model;
 use Althingi\Service;
@@ -37,7 +36,6 @@ class IssueController extends AbstractRestfulController implements
     StoreIssueAwareInterface
 {
     use Range;
-    use CategoryParam;
 
     /** @var  \Althingi\Service\Issue */
     private $issueService;

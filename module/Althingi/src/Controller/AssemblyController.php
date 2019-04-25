@@ -18,7 +18,6 @@ use Althingi\Injector\ServicePartyAwareInterface;
 use Althingi\Injector\ServiceSpeechAwareInterface;
 use Althingi\Injector\ServiceVoteAwareInterface;
 use Althingi\Injector\StoreAssemblyAwareInterface;
-use Althingi\Utils\CategoryParam;
 use Althingi\Form;
 use Althingi\Model;
 use Althingi\Service;
@@ -36,7 +35,6 @@ class AssemblyController extends AbstractRestfulController implements
     StoreAssemblyAwareInterface
 {
     use Range;
-    use CategoryParam;
 
     /** @var $assemblyService \Althingi\Service\Assembly */
     private $assemblyService;

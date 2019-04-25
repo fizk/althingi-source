@@ -24,7 +24,6 @@ use Althingi\Service\Session;
 use Althingi\Service\Speech;
 use Althingi\Service\Vote;
 use Althingi\Service\VoteItem;
-use Althingi\Utils\CategoryParam;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ErrorModel;
 use Rend\View\Model\EmptyModel;
@@ -44,7 +43,6 @@ class CongressmanController extends AbstractRestfulController implements
     ServiceAssemblyAwareInterface
 {
     use Range;
-    use CategoryParam;
 
     /** @var \Althingi\Service\Congressman */
     private $congressmanService;

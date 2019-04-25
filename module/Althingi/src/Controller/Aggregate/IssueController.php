@@ -4,7 +4,6 @@ namespace Althingi\Controller\Aggregate;
 
 use Althingi\Injector\ServiceIssueAwareInterface;
 use Althingi\Service\Issue;
-use Althingi\Utils\CategoryParam;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\CollectionModel;
 use Rend\Helper\Http\Range;
@@ -15,7 +14,6 @@ class IssueController extends AbstractRestfulController implements
     ServiceIssueAwareInterface
 {
     use Range;
-    use CategoryParam;
 
     /** @var $issueService \Althingi\Service\Issue */
     private $issueService;

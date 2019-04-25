@@ -11,7 +11,6 @@ use Althingi\Utils\Transformer;
 use Althingi\Model;
 use Althingi\Service;
 use Althingi\Form;
-use Althingi\Utils\CategoryParam;
 use Rend\Controller\AbstractRestfulController;
 use Rend\Helper\Http\RangeValue;
 use Rend\View\Model\ErrorModel;
@@ -28,7 +27,6 @@ class SpeechController extends AbstractRestfulController implements
     ServicePlenaryAwareInterface
 {
     use Range;
-    use CategoryParam;
 
     /** @var \Althingi\Service\Speech */
     private $speechService;
