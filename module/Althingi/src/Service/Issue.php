@@ -364,6 +364,26 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
             return (new Hydrator\AssemblyStatus())->hydrate($object, new Model\AssemblyStatus());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
+
+    public function fetchCountByCategory(int $assemblyId)
+    {
+        $statement = $this->getDriver()->prepare('
+            select count(*) as `count`, category, type, type_name, type_subname 
+            from Issue 
+            where assembly_id = :assembly_id
+                group by type
+            order by category, type_name;
+        ');
+
+        $statement->execute([
+            'assembly_id' => $assemblyId,
+        ]);
+
+        return array_map(function ($object) {
+            return (new Hydrator\AssemblyStatus())->hydrate($object, new Model\AssemblyStatus());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
+    }
+
     /**
      * Count status of Government bills.
      *
@@ -441,13 +461,12 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
      */
     public function fetchGovernmentBillStatisticsByAssembly(int $id): array
     {
-        $statement = $this->getDriver()->prepare(
-            'select count(*) AS `count`, I.`status` from `Issue` I
-            where I.`type_subname` = \'stjórnarfrumvarp\' 
-              and I.assembly_id = :assembly_id
-             and I.category = \'A\'
-            group by I.`status`;'
-        );
+        $statement = $this->getDriver()->prepare('
+            select count(*) as `count`, I.status from Document D
+                join Issue I on (I.assembly_id = D.assembly_id and I.issue_id = D.issue_id and I.category = D.category)
+            where D.assembly_id = :assembly_id and D.type = \'stjórnarfrumvarp\'
+            group by I.status;
+        ');
 
         $statement->execute(['assembly_id' => $id]);
 

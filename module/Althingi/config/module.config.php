@@ -251,7 +251,7 @@ return [
                             'route'    => '/thingmal[/:category[/:issue_id]]',
                             'constraints' => [
                                 'issue_id' => '[0-9]+',
-                                'category' => '[ab]',
+                                'category' => '[abAB]',
                             ],
                             'defaults' => [
                                 'controller' => Controller\IssueController::class,
@@ -760,6 +760,7 @@ return [
                     ->setElectionService($container->get(Service\Election::class))
                     ->setIssueService($container->get(Service\Issue::class))
                     ->setPartyService($container->get(Service\Party::class))
+                    ->setCongressmanService($container->get(Service\Congressman::class))
                     ->setSpeechService($container->get(Service\Speech::class))
                     ->setVoteService($container->get(Service\Vote::class))
                     ->setAssemblyStore($container->get(Store\Assembly::class))

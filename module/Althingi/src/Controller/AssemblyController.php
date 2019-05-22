@@ -2,6 +2,8 @@
 
 namespace Althingi\Controller;
 
+use Althingi\Injector\ServiceCongressmanAwareInterface;
+use Althingi\Service\Congressman;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ErrorModel;
 use Rend\View\Model\EmptyModel;
@@ -27,6 +29,7 @@ class AssemblyController extends AbstractRestfulController implements
     ServiceAssemblyAwareInterface,
     ServiceIssueAwareInterface,
     ServicePartyAwareInterface,
+    ServiceCongressmanAwareInterface,
     ServiceVoteAwareInterface,
     ServiceSpeechAwareInterface,
     ServiceCabinetAwareInterface,
@@ -50,6 +53,9 @@ class AssemblyController extends AbstractRestfulController implements
 
     /** @var $issueService \Althingi\Service\Party */
     private $partyService;
+
+    /** @var $issueService \Althingi\Service\Congressman */
+    private $congressmanService;
 
     /** @var $issueService \Althingi\Service\Cabinet */
     private $cabinetService;
@@ -186,8 +192,7 @@ class AssemblyController extends AbstractRestfulController implements
             ->setGovernmentBills(
                 $this->issueService->fetchGovernmentBillStatisticsByAssembly($assembly->getAssemblyId())
             )
-            ->setTypes([])
-//            ->setTypes($this->issueService->fetchCountByCategory($assembly->getAssemblyId()))
+            ->setTypes($this->issueService->fetchCountByCategory($assembly->getAssemblyId()))
             ->setVotes(DateAndCountSequence::buildDateRange(
                 $assembly->getFrom(),
                 $assembly->getTo(),
@@ -197,6 +202,10 @@ class AssemblyController extends AbstractRestfulController implements
                 $assembly->getFrom(),
                 $assembly->getTo(),
                 $this->speechService->fetchFrequencyByAssembly($assembly->getAssemblyId(), ['A', 'B'])
+            ))
+            ->setAverageAge($this->congressmanService->getAverageAgeByAssembly(
+                $assembly->getAssemblyId(),
+                $assembly->getFrom()
             ))
             ->setPartyTimes($this->partyService->fetchTimeByAssembly($assembly->getAssemblyId(), ['A', 'B']))
             ->setCategories($this->categoryService->fetchByAssembly($assembly->getAssemblyId())) //@todo remove this
@@ -347,6 +356,16 @@ class AssemblyController extends AbstractRestfulController implements
     public function setAssemblyStore(Store\Assembly $assembly)
     {
         $this->assemblyStore = $assembly;
+        return $this;
+    }
+
+    /**
+     * @param Congressman $congressman
+     * @return $this
+     */
+    public function setCongressmanService(Congressman $congressman)
+    {
+        $this->congressmanService = $congressman;
         return $this;
     }
 }

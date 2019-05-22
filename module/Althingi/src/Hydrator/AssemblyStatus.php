@@ -20,6 +20,7 @@ class AssemblyStatus implements HydratorInterface
         return $object
             ->setCount($data['count'])
             ->setType($data['type'])
+            ->setCategory(array_key_exists('category', $data) ? $data['category'] : null)
             ->setTypeName($data['type_name'])
             ->setTypeSubname($data['type_subname'])
             ->setStatus(array_key_exists('status', $data) ? $data['status'] : null);

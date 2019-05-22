@@ -458,6 +458,7 @@ class CongressmanController extends AbstractRestfulController implements
             ->setAllow(['GET', 'OPTIONS'])
             ->setOption('Access-Control-Allow-Headers', 'Range');
     }
+
     /**
      * List options for Assembly entry.
      *

@@ -73,7 +73,7 @@ class Category implements DatabaseAwareInterface
             join `Category` C on (C.`category_id` = CI.`category_id`)
             where CI.`assembly_id` = :assembly_id 
               and CI.`issue_id` = :issue_id
-              and Ci.category = \'A\';
+              and CI.category = \'A\';
         ');
         $statement->execute([
             'assembly_id' => $assemblyId,
