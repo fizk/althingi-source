@@ -150,11 +150,13 @@ class CongressmanTest extends TestCase
             (new CongressmanValueModel())
                 ->setCongressmanId(1)
                 ->setName('name1')
-                ->setBirth(new \DateTime('2000-01-01')),
+                ->setBirth(new \DateTime('2000-01-01'))
+                ->setValue(60),
             (new CongressmanValueModel())
                 ->setCongressmanId(2)
                 ->setName('name2')
-                ->setBirth(new \DateTime('2000-01-01')),
+                ->setBirth(new \DateTime('2000-01-01'))
+                ->setValue(0),
         ];
 
         $actualData = $congressmanService->fetchTimeByAssembly(1, null);
@@ -400,7 +402,9 @@ class CongressmanTest extends TestCase
                     'assembly_id' => 1,
                     'issue_id' => 1,
                     'category' => 'A',
-                    'congressman_id' => 1
+                    'congressman_id' => 1,
+                    'from' => '2001-01-01 00:00:00',
+                    'to' => '2001-01-01 00:01:00',
                 ]
             ]
         ]);
