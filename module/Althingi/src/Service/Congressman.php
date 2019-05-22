@@ -12,6 +12,7 @@ use Althingi\Events\UpdateEvent;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
 use PDO;
+use DateTime;
 
 /**
  * Class Congressman
@@ -303,6 +304,23 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
         return array_map(function ($object) {
             return (new Hydrator\Proponent())->hydrate($object, new Model\Proponent());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
+    }
+
+    public function getAverageAgeByAssembly(int $assemblyId, DateTime $date): float
+    {
+        $statement = $this->getDriver()->prepare('
+            select avg(TIMESTAMPDIFF(YEAR, C.birth, :date)) AS age 
+            from Congressman C where congressman_id in (
+                select distinct congressman_id from Session where assembly_id = :assembly_id and type = \'þingmaður\'
+            );
+        ');
+
+        $statement->execute([
+            'assembly_id' => $assemblyId,
+            'date' => $date->format('Y-m-d')
+        ]);
+
+        return $statement->fetchColumn(0);
     }
 
     /**

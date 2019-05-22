@@ -49,12 +49,12 @@ class VoteItemControllerTest extends AbstractHttpControllerTestCase
             ->once()
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/1/thingmal/2/atkvaedagreidslur/3/atkvaedi', 'POST', [
+        $this->dispatch('/loggjafarthing/1/thingmal/a/2/atkvaedagreidslur/3/atkvaedi', 'POST', [
             'congressman_id' => 1,
             'vote' => 'nei'
         ]);
 
-        $this->assertControllerClass('VoteItemController');
+        $this->assertControllerName(\Althingi\Controller\VoteItemController::class);
         $this->assertActionName('post');
         $this->assertResponseStatusCode(201);
     }
@@ -75,12 +75,12 @@ class VoteItemControllerTest extends AbstractHttpControllerTestCase
             ->once()
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/1/thingmal/2/atkvaedagreidslur/3/atkvaedi', 'POST', [
+        $this->dispatch('/loggjafarthing/1/thingmal/a/2/atkvaedagreidslur/3/atkvaedi', 'POST', [
             'congressman_id' => 1,
             'vote' => 'nei'
         ]);
 
-        $this->assertControllerClass('VoteItemController');
+        $this->assertControllerName(\Althingi\Controller\VoteItemController::class);
         $this->assertActionName('post');
         $this->assertResponseStatusCode(409);
     }
@@ -98,12 +98,12 @@ class VoteItemControllerTest extends AbstractHttpControllerTestCase
             ->never()
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/1/thingmal/2/atkvaedagreidslur/3/atkvaedi', 'POST', [
+        $this->dispatch('/loggjafarthing/1/thingmal/a/2/atkvaedagreidslur/3/atkvaedi', 'POST', [
             'congressman_id' => 1,
             'vote' => 'nei'
         ]);
 
-        $this->assertControllerClass('VoteItemController');
+        $this->assertControllerName(\Althingi\Controller\VoteItemController::class);
         $this->assertActionName('post');
         $this->assertResponseStatusCode(500);
     }
@@ -118,9 +118,9 @@ class VoteItemControllerTest extends AbstractHttpControllerTestCase
             ->never()
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/1/thingmal/2/atkvaedagreidslur/3/atkvaedi', 'POST');
+        $this->dispatch('/loggjafarthing/1/thingmal/a/2/atkvaedagreidslur/3/atkvaedi', 'POST');
 
-        $this->assertControllerClass('VoteItemController');
+        $this->assertControllerName(\Althingi\Controller\VoteItemController::class);
         $this->assertActionName('post');
         $this->assertResponseStatusCode(400);
     }
@@ -156,11 +156,11 @@ class VoteItemControllerTest extends AbstractHttpControllerTestCase
         ->once()
         ->getMock();
 
-        $this->dispatch('/loggjafarthing/1/thingmal/2/atkvaedagreidslur/3/atkvaedi/30', 'PATCH', [
+        $this->dispatch('/loggjafarthing/1/thingmal/a/2/atkvaedagreidslur/3/atkvaedi/30', 'PATCH', [
             'vote' => 'no'
         ]);
 
-        $this->assertControllerClass('VoteItemController');
+        $this->assertControllerName(\Althingi\Controller\VoteItemController::class);
         $this->assertActionName('patch');
         $this->assertResponseStatusCode(205);
     }
@@ -184,9 +184,9 @@ class VoteItemControllerTest extends AbstractHttpControllerTestCase
         ->never()
         ->getMock();
 
-        $this->dispatch('/loggjafarthing/1/thingmal/2/atkvaedagreidslur/3/atkvaedi/30', 'PATCH', []);
+        $this->dispatch('/loggjafarthing/1/thingmal/a/2/atkvaedagreidslur/3/atkvaedi/30', 'PATCH', []);
 
-        $this->assertControllerClass('VoteItemController');
+        $this->assertControllerName(\Althingi\Controller\VoteItemController::class);
         $this->assertActionName('patch');
         $this->assertResponseStatusCode(400);
     }
@@ -202,9 +202,9 @@ class VoteItemControllerTest extends AbstractHttpControllerTestCase
             ->once()
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/1/thingmal/2/atkvaedagreidslur/3/atkvaedi/30', 'PATCH');
+        $this->dispatch('/loggjafarthing/1/thingmal/a/2/atkvaedagreidslur/3/atkvaedi/30', 'PATCH');
 
-        $this->assertControllerClass('VoteItemController');
+        $this->assertControllerName(\Althingi\Controller\VoteItemController::class);
         $this->assertActionName('patch');
         $this->assertResponseStatusCode(404);
     }

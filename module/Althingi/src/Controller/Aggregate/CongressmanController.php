@@ -8,7 +8,6 @@ use Althingi\Injector\ServicePartyAwareInterface;
 use Althingi\Service\Congressman;
 use Althingi\Service\Constituency;
 use Althingi\Service\Party;
-use Althingi\Utils\CategoryParam;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ItemModel;
 use Rend\View\Model\CollectionModel;
@@ -21,9 +20,6 @@ class CongressmanController extends AbstractRestfulController implements
     ServiceConstituencyAwareInterface
 {
     use Range;
-
-    use CategoryParam;
-
 
     /** @var $issueService \Althingi\Service\Congressman */
     private $congressmanService;

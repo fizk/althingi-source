@@ -2,6 +2,8 @@
 
 namespace Althingi\Controller;
 
+use Althingi\Injector\ServiceCongressmanAwareInterface;
+use Althingi\Service\Congressman;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ErrorModel;
 use Rend\View\Model\EmptyModel;
@@ -18,7 +20,6 @@ use Althingi\Injector\ServicePartyAwareInterface;
 use Althingi\Injector\ServiceSpeechAwareInterface;
 use Althingi\Injector\ServiceVoteAwareInterface;
 use Althingi\Injector\StoreAssemblyAwareInterface;
-use Althingi\Utils\CategoryParam;
 use Althingi\Form;
 use Althingi\Model;
 use Althingi\Service;
@@ -28,6 +29,7 @@ class AssemblyController extends AbstractRestfulController implements
     ServiceAssemblyAwareInterface,
     ServiceIssueAwareInterface,
     ServicePartyAwareInterface,
+    ServiceCongressmanAwareInterface,
     ServiceVoteAwareInterface,
     ServiceSpeechAwareInterface,
     ServiceCabinetAwareInterface,
@@ -36,7 +38,6 @@ class AssemblyController extends AbstractRestfulController implements
     StoreAssemblyAwareInterface
 {
     use Range;
-    use CategoryParam;
 
     /** @var $assemblyService \Althingi\Service\Assembly */
     private $assemblyService;
@@ -52,6 +53,9 @@ class AssemblyController extends AbstractRestfulController implements
 
     /** @var $issueService \Althingi\Service\Party */
     private $partyService;
+
+    /** @var $issueService \Althingi\Service\Congressman */
+    private $congressmanService;
 
     /** @var $issueService \Althingi\Service\Cabinet */
     private $cabinetService;
@@ -182,15 +186,13 @@ class AssemblyController extends AbstractRestfulController implements
     public function statisticsAction()
     {
         $assembly = $this->assemblyService->get($this->params('id'));
-        $categories = $this->getCategoriesFromQuery();
 
         $response = (new MOdel\AssemblyStatusProperties())
             ->setBills($this->issueService->fetchNonGovernmentBillStatisticsByAssembly($assembly->getAssemblyId()))
             ->setGovernmentBills(
                 $this->issueService->fetchGovernmentBillStatisticsByAssembly($assembly->getAssemblyId())
             )
-            ->setTypes([])
-//            ->setTypes($this->issueService->fetchCountByCategory($assembly->getAssemblyId()))
+            ->setTypes($this->issueService->fetchCountByCategory($assembly->getAssemblyId()))
             ->setVotes(DateAndCountSequence::buildDateRange(
                 $assembly->getFrom(),
                 $assembly->getTo(),
@@ -199,9 +201,13 @@ class AssemblyController extends AbstractRestfulController implements
             ->setSpeeches(DateAndCountSequence::buildDateRange(
                 $assembly->getFrom(),
                 $assembly->getTo(),
-                $this->speechService->fetchFrequencyByAssembly($assembly->getAssemblyId(), $categories)
+                $this->speechService->fetchFrequencyByAssembly($assembly->getAssemblyId(), ['A', 'B'])
             ))
-            ->setPartyTimes($this->partyService->fetchTimeByAssembly($assembly->getAssemblyId(), $categories))
+            ->setAverageAge($this->congressmanService->getAverageAgeByAssembly(
+                $assembly->getAssemblyId(),
+                $assembly->getFrom()
+            ))
+            ->setPartyTimes($this->partyService->fetchTimeByAssembly($assembly->getAssemblyId(), ['A', 'B']))
             ->setCategories($this->categoryService->fetchByAssembly($assembly->getAssemblyId())) //@todo remove this
             ->setElection($this->electionService->getByAssembly($assembly->getAssemblyId()))
             ->setElectionResults($this->partyService->fetchElectedByAssembly($assembly->getAssemblyId()))
@@ -350,6 +356,16 @@ class AssemblyController extends AbstractRestfulController implements
     public function setAssemblyStore(Store\Assembly $assembly)
     {
         $this->assemblyStore = $assembly;
+        return $this;
+    }
+
+    /**
+     * @param Congressman $congressman
+     * @return $this
+     */
+    public function setCongressmanService(Congressman $congressman)
+    {
+        $this->congressmanService = $congressman;
         return $this;
     }
 }

@@ -64,28 +64,93 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
     /**
      * @covers ::get
      */
-    public function testGetSuccess()
+    public function testGetSuccessA()
     {
         $this->getMockService(Issue::class)
             ->shouldReceive('getWithDate')
-            ->andReturn((new IssueAndDateModel())->setCongressmanId(1)->setDate(new \DateTime()))
+            ->andReturn((new IssueAndDateModel())->setCategory('A')->setCongressmanId(1)->setDate(new \DateTime()))
             ->once()
+            ->with(200, 100, 'A')
             ->getMock();
 
         $this->getMockService(Assembly::class)
             ->shouldReceive('get')
             ->andReturn((new AssemblyModel)->setFrom(new \DateTime('2001-02-01')))
-            ->once()
+            ->never()
+            ->with(100)
             ->getMock();
 
         $this->getMockService(Congressman::class)
             ->shouldReceive('fetchProponentsByIssue')
             ->andReturn([(new Proponent())->setCongressmanId(1)])
             ->once()
+            ->with(100, 200)
             ->getMock()
+
             ->shouldReceive('fetchAccumulatedTimeByIssue')
             ->andReturn([(new CongressmanAndDateRange())->setBegin(new \DateTime())->setCongressmanId(1)])
             ->once()
+            ->with(100, 200, 'A')
+            ->getMock();
+
+        $this->getMockService(Party::class)
+            ->shouldReceive('getByCongressman')
+            ->andReturn((new PartyModel()))
+            ->twice()
+            ->getMock();
+
+        $this->getMockService(Vote::class)
+            ->shouldReceive('fetchDateFrequencyByIssue')
+            ->andReturn([])
+            ->once()
+            ->with(100, 200)
+            ->getMock();
+
+        $this->getMockService(Speech::class)
+            ->shouldReceive('fetchFrequencyByIssue')
+            ->andReturn([])
+            ->once()
+            ->with(100, 200, 'A')
+            ->getMock();
+
+
+        $this->dispatch('/loggjafarthing/100/thingmal/a/200', 'GET');
+
+        $this->assertControllerName(\Althingi\Controller\IssueController::class);
+        $this->assertActionName('get');
+        $this->assertResponseStatusCode(200);
+    }
+
+    /**
+     * @covers ::get
+     */
+    public function testGetSuccessB()
+    {
+        $this->getMockService(Issue::class)
+            ->shouldReceive('getWithDate')
+            ->andReturn((new IssueAndDateModel())->setCategory('B')->setCongressmanId(1)->setDate(new \DateTime()))
+            ->once()
+            ->with(200, 100, 'B')
+            ->getMock();
+
+        $this->getMockService(Assembly::class)
+            ->shouldReceive('get')
+            ->andReturn((new AssemblyModel)->setFrom(new \DateTime('2001-02-01')))
+            ->never()
+            ->with(100)
+            ->getMock();
+
+        $this->getMockService(Congressman::class)
+            ->shouldReceive('fetchProponentsByIssue')
+            ->andReturn([(new Proponent())->setCongressmanId(1)])
+            ->never()
+            ->with(100, 200)
+            ->getMock()
+
+            ->shouldReceive('fetchAccumulatedTimeByIssue')
+            ->andReturn([(new CongressmanAndDateRange())->setBegin(new \DateTime())->setCongressmanId(1)])
+            ->once()
+            ->with(100, 200, 'B')
             ->getMock();
 
         $this->getMockService(Party::class)
@@ -97,19 +162,21 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
         $this->getMockService(Vote::class)
             ->shouldReceive('fetchDateFrequencyByIssue')
             ->andReturn([])
-            ->once()
+            ->never()
+            ->with(100, 200)
             ->getMock();
 
         $this->getMockService(Speech::class)
             ->shouldReceive('fetchFrequencyByIssue')
             ->andReturn([])
             ->once()
+            ->with(100, 200, 'B')
             ->getMock();
 
 
-        $this->dispatch('/loggjafarthing/100/thingmal/200', 'GET');
+        $this->dispatch('/loggjafarthing/100/thingmal/b/200', 'GET');
 
-        $this->assertControllerClass('IssueController');
+        $this->assertControllerName(\Althingi\Controller\IssueController::class);
         $this->assertActionName('get');
         $this->assertResponseStatusCode(200);
     }
@@ -149,9 +216,9 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
             ->getMock()
         ;
 
-        $this->dispatch('/loggjafarthing/100/thingmal/raedutimar', 'GET');
+        $this->dispatch('/loggjafarthing/100/thingmal/a/raedutimar', 'GET');
 
-        $this->assertControllerClass('IssueController');
+        $this->assertControllerName(\Althingi\Controller\IssueController::class);
         $this->assertActionName('speech-times');
         $this->assertResponseStatusCode(206);
     }
@@ -196,9 +263,9 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
             ->getMock();
 
 
-        $this->dispatch('/loggjafarthing/100/thingmal/200', 'GET');
+        $this->dispatch('/loggjafarthing/100/thingmal/a/200', 'GET');
 
-        $this->assertControllerClass('IssueController');
+        $this->assertControllerName(\Althingi\Controller\IssueController::class);
         $this->assertActionName('get');
         $this->assertResponseStatusCode(404);
     }
@@ -240,7 +307,8 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
         ;
 
         $this->dispatch('/loggjafarthing/100/thingmal', 'GET');
-        $this->assertControllerClass('IssueController');
+
+        $this->assertControllerName(\Althingi\Controller\IssueController::class);
         $this->assertActionName('getList');
         $this->assertResponseStatusCode(206);
         $this->assertResponseHeaderContains('Range-Unit', 'items');
@@ -255,8 +323,8 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
         $expectedObject = (new IssueModel())
             ->setIssueId(200)
             ->setAssemblyId(100)
+            ->setCategory('A')
             ->setName('n1')
-            ->setCategory('c1')
             ->setType('1')
             ->setTypeName('tn')
             ->setTypeSubname('tsn')
@@ -272,7 +340,7 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
             ->getMock()
         ;
 
-        $this->dispatch('/loggjafarthing/100/thingmal/200', 'PUT', [
+        $this->dispatch('/loggjafarthing/100/thingmal/a/200', 'PUT', [
             'name' => 'n1',
             'category' => 'c1',
             'type' => '1',
@@ -280,7 +348,7 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
             'type_subname' => 'tsn',
         ]);
 
-        $this->assertControllerClass('IssueController');
+        $this->assertControllerName(\Althingi\Controller\IssueController::class);
         $this->assertActionName('put');
         $this->assertResponseStatusCode(201);
     }
@@ -296,12 +364,12 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
             ->getMock()
         ;
 
-        $this->dispatch('/loggjafarthing/100/thingmal/200', 'PUT', [
+        $this->dispatch('/loggjafarthing/100/thingmal/a/200', 'PUT', [
             'type_name' => 'tn',
             'type_subname' => 'tsn',
         ]);
 
-        $this->assertControllerClass('IssueController');
+        $this->assertControllerName(\Althingi\Controller\IssueController::class);
         $this->assertActionName('put');
         $this->assertResponseStatusCode(400);
     }
@@ -337,7 +405,7 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
             ->getMock()
         ;
 
-        $this->dispatch('/loggjafarthing/100/thingmal/200', 'PATCH', [
+        $this->dispatch('/loggjafarthing/100/thingmal/a/200', 'PATCH', [
             'name' => 'n1',
             'category' => 'c1',
             'type' => '1',
@@ -345,7 +413,7 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
             'type_subname' => 'tsn',
         ]);
 
-        $this->assertControllerClass('IssueController');
+        $this->assertControllerName(\Althingi\Controller\IssueController::class);
         $this->assertActionName('patch');
         $this->assertResponseStatusCode(205);
     }
@@ -357,7 +425,7 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
     {
         $this->dispatch('/loggjafarthing/100/thingmal', 'OPTIONS');
 
-        $this->assertControllerClass('IssueController');
+        $this->assertControllerName(\Althingi\Controller\IssueController::class);
         $this->assertActionName('optionslist');
         $this->assertResponseStatusCode(200);
 
@@ -375,9 +443,9 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
      */
     public function testOptions()
     {
-        $this->dispatch('/loggjafarthing/100/thingmal/200', 'OPTIONS');
+        $this->dispatch('/loggjafarthing/100/thingmal/a/200', 'OPTIONS');
 
-        $this->assertControllerClass('IssueController');
+        $this->assertControllerName(\Althingi\Controller\IssueController::class);
         $this->assertActionName('options');
         $this->assertResponseStatusCode(200);
 

@@ -31,6 +31,9 @@ class AssemblyStatusProperties implements ModelInterface
     /** @var  \Althingi\Model\PartyAndElection[] */
     private $election_results;
 
+    /** @var float */
+    private $averageAge = 0;
+
     /**
      * @return IssueTypeStatus[]
      */
@@ -194,6 +197,24 @@ class AssemblyStatusProperties implements ModelInterface
     }
 
     /**
+     * @return float
+     */
+    public function getAverageAge(): float
+    {
+        return $this->averageAge;
+    }
+
+    /**
+     * @param float $averageAge
+     * @return AssemblyStatusProperties
+     */
+    public function setAverageAge(float $averageAge): AssemblyStatusProperties
+    {
+        $this->averageAge = $averageAge;
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function toArray()
@@ -207,7 +228,8 @@ class AssemblyStatusProperties implements ModelInterface
             'party_times' => $this->party_times,
             'categories' => $this->categories,
             'election' => $this->election,
-            'election_results' => $this->election_results
+            'election_results' => $this->election_results,
+            'average_age' => $this->averageAge,
         ];
     }
 

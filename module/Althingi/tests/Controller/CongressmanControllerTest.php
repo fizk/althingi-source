@@ -2,6 +2,7 @@
 
 namespace AlthingiTest\Controller;
 
+use Althingi\Controller\CongressmanController;
 use Althingi\Model\CongressmanAndParty;
 use Althingi\Model\Session as SessionModel;
 use Althingi\Model\Issue as IssueModel;
@@ -95,7 +96,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
 
         $this->dispatch('/thingmenn/1', 'GET');
 
-        $this->assertControllerClass('CongressmanController');
+        $this->assertControllerName(CongressmanController::class);
         $this->assertActionName('get');
         $this->assertResponseStatusCode(200);
     }
@@ -118,7 +119,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
 
         $this->dispatch('/thingmenn/1', 'GET');
 
-        $this->assertControllerClass('CongressmanController');
+        $this->assertControllerName(CongressmanController::class);
         $this->assertActionName('get');
         $this->assertResponseStatusCode(404);
     }
@@ -141,7 +142,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
 
         $this->dispatch('/thingmenn', 'GET');
 
-        $this->assertControllerClass('CongressmanController');
+        $this->assertControllerName(CongressmanController::class);
         $this->assertActionName('getList');
         $this->assertResponseStatusCode(206);
         $this->assertResponseHeaderContains('Content-Range', 'items 0-1/1');
@@ -164,7 +165,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
             'birth' => '1978-04-11'
         ]);
 
-        $this->assertControllerClass('CongressmanController');
+        $this->assertControllerName(CongressmanController::class);
         $this->assertActionName('put');
         $this->assertResponseStatusCode(201);
     }
@@ -184,7 +185,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
             'birth' => 'not a date'
         ]);
 
-        $this->assertControllerClass('CongressmanController');
+        $this->assertControllerName(CongressmanController::class);
         $this->assertActionName('put');
         $this->assertResponseStatusCode(400);
     }
@@ -214,7 +215,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
             'birth' => '1978-04-11'
         ]);
 
-        $this->assertControllerClass('CongressmanController');
+        $this->assertControllerName(CongressmanController::class);
         $this->assertActionName('patch');
         $this->assertResponseStatusCode(205);
     }
@@ -243,7 +244,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
             'birth' => 'invalid date',
         ]);
 
-        $this->assertControllerClass('CongressmanController');
+        $this->assertControllerName(CongressmanController::class);
         $this->assertActionName('patch');
         $this->assertResponseStatusCode(400);
     }
@@ -265,7 +266,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
             'birth' => '1978-04-11',
         ]);
 
-        $this->assertControllerClass('CongressmanController');
+        $this->assertControllerName(CongressmanController::class);
         $this->assertActionName('patch');
         $this->assertResponseStatusCode(404);
     }
@@ -291,7 +292,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
 
         $this->dispatch('/thingmenn/1', 'DELETE');
 
-        $this->assertControllerClass('CongressmanController');
+        $this->assertControllerName(CongressmanController::class);
         $this->assertActionName('delete');
         $this->assertResponseStatusCode(205);
     }
@@ -312,7 +313,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
 
         $this->dispatch('/thingmenn/1', 'DELETE');
 
-        $this->assertControllerClass('CongressmanController');
+        $this->assertControllerName(CongressmanController::class);
         $this->assertActionName('delete');
         $this->assertResponseStatusCode(404);
     }
@@ -379,7 +380,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
 
         $this->dispatch('/loggjafarthing/1/thingmenn');
 
-        $this->assertControllerClass('CongressmanController');
+        $this->assertControllerName(CongressmanController::class);
         $this->assertActionName('assembly');
         $this->assertResponseStatusCode(206);
     }
@@ -400,7 +401,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
 
         $this->dispatch('/loggjafarthing/1/thingmenn/2/thingseta');
 
-        $this->assertControllerClass('CongressmanController');
+        $this->assertControllerName(CongressmanController::class);
         $this->assertActionName('assembly-sessions');
         $this->assertResponseStatusCode(206);
 
@@ -421,7 +422,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
 
         $this->dispatch('/loggjafarthing/1/thingmenn/2/thingmal');
 
-        $this->assertControllerClass('CongressmanController');
+        $this->assertControllerName(CongressmanController::class);
         $this->assertActionName('assembly-issues');
         $this->assertResponseStatusCode(206);
 
@@ -442,11 +443,9 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
 
         $this->dispatch('/loggjafarthing/1/thingmenn/2/atvaedagreidslur');
 
-        $this->assertControllerClass('CongressmanController');
+        $this->assertControllerName(CongressmanController::class);
         $this->assertActionName('assembly-voting');
         $this->assertResponseStatusCode(206);
-
-//        print_r(json_decode($this->getResponse()->getContent()));
     }
 
     /**
@@ -456,18 +455,16 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
     {
         $this->getMockService(IssueCategory::class)
             ->shouldReceive('fetchFrequencyByAssemblyAndCongressman')
-            ->with(1, 2, ['A'])
+            ->with(1, 2, ['A', 'B'])
             ->once()
             ->andReturn([new IssueCategoryAndTimeModel()])
             ->getMock();
 
         $this->dispatch('/loggjafarthing/1/thingmenn/2/malaflokkar');
 
-        $this->assertControllerClass('CongressmanController');
+        $this->assertControllerName(CongressmanController::class);
         $this->assertActionName('assembly-categories');
         $this->assertResponseStatusCode(206);
-
-//        print_r(json_decode($this->getResponse()->getContent()));
     }
 
     /**
@@ -484,11 +481,9 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
 
         $this->dispatch('/loggjafarthing/1/thingmenn/2/atvaedagreidslur-malaflokkar');
 
-        $this->assertControllerClass('CongressmanController');
+        $this->assertControllerName(CongressmanController::class);
         $this->assertActionName('assembly-vote-categories');
         $this->assertResponseStatusCode(206);
-
-//        print_r(json_decode($this->getResponse()->getContent()));
     }
 
     /**
@@ -505,7 +500,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
 
         $this->getMockService(Congressman::class)
             ->shouldReceive('fetchTimeByAssembly')
-            ->with(1, null, 'desc', ['A'])
+            ->with(1, null, 'desc', ['A', 'B'])
             ->once()
             ->andReturn([
                 (new \Althingi\Model\Congressman())->setCongressmanId(1)
@@ -518,7 +513,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
 
         $this->dispatch('/loggjafarthing/1/thingmenn/raedutimar');
 
-        $this->assertControllerClass('CongressmanController');
+        $this->assertControllerName(CongressmanController::class);
         $this->assertActionName('assembly-times');
         $this->assertResponseStatusCode(206);
     }
@@ -550,7 +545,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
 
         $this->dispatch('/loggjafarthing/1/thingmenn/fyrirspurnir');
 
-        $this->assertControllerClass('CongressmanController');
+        $this->assertControllerName(CongressmanController::class);
         $this->assertActionName('assembly-questions');
         $this->assertResponseStatusCode(206);
     }
@@ -582,7 +577,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
 
         $this->dispatch('/loggjafarthing/1/thingmenn/thingsalyktanir');
 
-        $this->assertControllerClass('CongressmanController');
+        $this->assertControllerName(CongressmanController::class);
         $this->assertActionName('assembly-resolutions');
         $this->assertResponseStatusCode(206);
     }
@@ -614,7 +609,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
 
         $this->dispatch('/loggjafarthing/1/thingmenn/lagafrumvorp');
 
-        $this->assertControllerClass('CongressmanController');
+        $this->assertControllerName(CongressmanController::class);
         $this->assertActionName('assembly-bills');
         $this->assertResponseStatusCode(206);
     }
@@ -635,7 +630,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
 
         $this->dispatch('/loggjafarthing/1/thingmenn/2/thingmal-samantekt');
 
-        $this->assertControllerClass('CongressmanController');
+        $this->assertControllerName(CongressmanController::class);
         $this->assertActionName('assembly-issues-summary');
         $this->assertResponseStatusCode(206);
     }

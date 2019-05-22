@@ -347,7 +347,7 @@ class IssueTest extends TestCase
                     'assembly_id' => 1,
                     'date' => '2000-01-01',
                     'url' => '',
-                    'type' => ''
+                    'type' => 'stjórnarfrumvarp'
                 ], [
                     'document_id' => 2,
                     'issue_id' => 1,

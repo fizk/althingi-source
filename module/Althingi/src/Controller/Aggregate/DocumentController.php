@@ -6,7 +6,6 @@ use Althingi\Injector\ServiceDocumentAwareInterface;
 use Althingi\Injector\ServiceProponentAwareInterface;
 use Althingi\Service\CongressmanDocument;
 use Althingi\Service\Document;
-use Althingi\Utils\CategoryParam;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ItemModel;
 use Rend\View\Model\CollectionModel;
@@ -17,7 +16,6 @@ class DocumentController extends AbstractRestfulController implements
     ServiceProponentAwareInterface
 {
     use Range;
-    use CategoryParam;
 
     /** @var $issueService \Althingi\Service\Document */
     private $documentService;

@@ -8,7 +8,7 @@ use Rend\View\Model\EmptyModel;
 use Rend\View\Model\ItemModel;
 use Rend\View\Model\CollectionModel;
 use Rend\Helper\Http\Range;
-use Althingi\Utils\DateAndCountSequence;
+//use Althingi\Utils\DateAndCountSequence;
 use Althingi\Utils\Transformer;
 use Althingi\Injector\ServiceSearchIssueAwareInterface;
 use Althingi\Injector\StoreIssueAwareInterface;
@@ -19,7 +19,6 @@ use Althingi\Injector\ServiceIssueAwareInterface;
 use Althingi\Injector\ServicePartyAwareInterface;
 use Althingi\Injector\ServiceSpeechAwareInterface;
 use Althingi\Injector\ServiceVoteAwareInterface;
-use Althingi\Utils\CategoryParam;
 use Althingi\Form;
 use Althingi\Model;
 use Althingi\Service;
@@ -37,7 +36,6 @@ class IssueController extends AbstractRestfulController implements
     StoreIssueAwareInterface
 {
     use Range;
-    use CategoryParam;
 
     /** @var  \Althingi\Service\Issue */
     private $issueService;
@@ -78,7 +76,7 @@ class IssueController extends AbstractRestfulController implements
     {
         $assemblyId = $this->params('id', 0);
         $issueId = $this->params('issue_id', 0);
-        $category = $this->getCategoryFromQuery();
+        $category = strtoupper($this->params('category', 'a'));
 
         return $this->getFromDatabase($assemblyId, $issueId, $category);
 //        return $this->getFromStore($assemblyId, $issueId, $category);
@@ -89,11 +87,8 @@ class IssueController extends AbstractRestfulController implements
      *
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\IssueProperties[]
-     * @query leit [string]
      * @query type [string]
-     * @query category [string]
      * @query order [string]
-     * @query category
      */
     public function getList()
     {
@@ -101,9 +96,11 @@ class IssueController extends AbstractRestfulController implements
         $typeQuery = $this->params()->fromQuery('type', null);
         $kindQuery = $this->params()->fromQuery('kind', null);
         $orderQuery = $this->params()->fromQuery('order', null);
-        $types = $typeQuery ? str_split($typeQuery) : [];
+        $types = $typeQuery ? explode(',', $typeQuery) : [];
         $kinds = $kindQuery ? explode(',', $kindQuery) : [];
-        $categories = $this->getCategoriesFromQuery();
+        $categories = array_map(function ($category) {
+            return strtoupper($category);
+        }, explode(',', $this->params('category', 'a,b')));
 
         return $this->getListFromDatabase($assemblyId, $types, $kinds, $categories, $orderQuery);
 //        return $this->getListFromStore($assemblyId, $types, $kinds, $categories, $orderQuery);
@@ -120,10 +117,14 @@ class IssueController extends AbstractRestfulController implements
     public function put($id, $data)
     {
         $assemblyId = $this->params('id');
+        $category = strtoupper($this->params('category', 'a'));
         $issueId = $id;
 
         $form = (new Form\Issue())
-            ->setData(array_merge($data, ['assembly_id' => $assemblyId, 'issue_id' => $issueId]));
+            ->setData(array_merge(
+                $data,
+                ['assembly_id' => $assemblyId, 'issue_id' => $issueId, 'category' => $category]
+            ));
 
         if ($form->isValid()) {
             $affectedRows = $this->issueService->save($form->getObject());
@@ -144,7 +145,8 @@ class IssueController extends AbstractRestfulController implements
     public function patch($id, $data)
     {
         $assemblyId = $this->params('id');
-        $issue = $this->issueService->get($id, $assemblyId, 'A');
+        $category = strtoupper($this->params('category', 'a'));
+        $issue = $this->issueService->get($id, $assemblyId, $category);
 
         if (! $issue) {
             return $this->notFoundAction();
@@ -170,8 +172,9 @@ class IssueController extends AbstractRestfulController implements
     {
         $assemblyId = $this->params('id');
         $issueId = $this->params('issue_id');
+        $category = strtoupper($this->params('category', 'a'));
 
-        $collection = $this->issueService->fetchProgress($assemblyId, $issueId);
+        $collection = $this->issueService->fetchProgress($assemblyId, $issueId, $category);
         $collectionCount = count($collection);
 
         return (new CollectionModel($collection))
@@ -184,7 +187,6 @@ class IssueController extends AbstractRestfulController implements
      * @output \Althingi\Model\IssueValue[]
      * @query rod asc|desc
      * @query fjoldi [number]
-     * @query category
      */
     public function speechTimesAction()
     {
@@ -192,12 +194,14 @@ class IssueController extends AbstractRestfulController implements
         $assembly = $this->assemblyService->get($assemblyId);
         $order = $this->params()->fromQuery('rod', null);
         $size = $this->params()->fromQuery('fjoldi', null);
-        $category = $this->getCategoriesFromQuery();
+        $categories = array_map(function ($category) {
+            return strtoupper($category);
+        }, explode(',', $this->params('category', 'a,b')));
         $collection = $this->issueService->fetchByAssemblyAndSpeechTime(
             $assemblyId,
             $size,
             $order,
-            $category ? : ['A']
+            $categories
         );
 
         $issuesAndProperties = array_map(function (Model\IssueValue $issue) use ($assembly) {
@@ -285,10 +289,13 @@ class IssueController extends AbstractRestfulController implements
         $issue->setAdditionalInformation(Transformer::htmlToMarkdown($issue->getAdditionalInformation()));
         $issue->setDeliveries(Transformer::htmlToMarkdown($issue->getDeliveries()));
 
-        $assembly = $this->assemblyService->get($assemblyId);
-//        $proponent = $issue->getCongressmanId() ? $this->congressmanService->get($issue->getCongressmanId()) : null;
-        $proponents = $this->congressmanService->fetchProponentsByIssue($assemblyId, $issueId);
-        $voteDates = $this->voteService->fetchDateFrequencyByIssue($assemblyId, $issueId);
+//        $assembly = $this->assemblyService->get($assemblyId);
+        $proponents = $issue->isA()
+            ? $this->congressmanService->fetchProponentsByIssue($assemblyId, $issueId)
+            : [];//$issue->getCongressmanId() ? [$this->congressmanService->get($issue->getCongressmanId())] : [];
+        $voteDates = $issue->isA()
+            ? $this->voteService->fetchDateFrequencyByIssue($assemblyId, $issueId)
+            : [];
         $speech = $this->speechService->fetchFrequencyByIssue($assemblyId, $issueId, $category);
         $speakers = $this->congressmanService->fetchAccumulatedTimeByIssue($assemblyId, $issueId, $category);
 
@@ -303,8 +310,10 @@ class IssueController extends AbstractRestfulController implements
 
         $issueProperties = (new Model\IssueProperties())
             ->setIssue($issue)
-            ->setVoteRange(DateAndCountSequence::buildDateRange($assembly->getFrom(), $assembly->getTo(), $voteDates))
-            ->setSpeechRange(DateAndCountSequence::buildDateRange($assembly->getFrom(), $assembly->getTo(), $speech))
+//            ->setVoteRange(DateAndCountSequence::buildDateRange($assembly->getFrom(), $assembly->getTo(), $voteDates))
+            ->setVoteRange($voteDates)
+//            ->setSpeechRange(DateAndCountSequence::buildDateRange($assembly->getFrom(), $assembly->getTo(), $speech))
+            ->setSpeechRange($speech)
             ->setSpeakers($speakersWithParties);
 
         $proponentsAndParty = $issue->isA()
@@ -373,31 +382,18 @@ class IssueController extends AbstractRestfulController implements
         array $categories = [],
         string $orderQuery = null
     ) {
-        $query = $this->params()->fromQuery('leit', null);
 
-        if ($query) {
-            $issues = $this->issueSearchService->fetchByAssembly($query, $assemblyId);
-            $count = count($issues);
-            $range = $this->getRange($this->getRequest(), $count);
-
-            $issues = array_map(function (Model\IssueAndDate $issue) {
-                $documents = $this->documentService->fetchByIssue($issue->getAssemblyId(), $issue->getIssueId());
-                $issue->setDate($documents[0]->getDate());
-                return $issue;
-            }, $issues);
-        } else {
-            $count = $this->issueService->countByAssembly($assemblyId, $types, $kinds, $categories);
-            $range = $this->getRange($this->getRequest(), $count);
-            $issues = $this->issueService->fetchByAssembly(
-                $assemblyId,
-                $range->getFrom(),
-                $range->getSize(),
-                $orderQuery,
-                $types,
-                $kinds,
-                $categories ? : ['A']
-            );
-        }
+        $count = $this->issueService->countByAssembly($assemblyId, $types, $kinds, $categories);
+        $range = $this->getRange($this->getRequest(), $count);
+        $issues = $this->issueService->fetchByAssembly(
+            $assemblyId,
+            $range->getFrom(),
+            $range->getSize(),
+            $orderQuery,
+            $types,
+            $kinds,
+            $categories ? : ['A']
+        );
 
         $issuesAndProperties = array_map(function (Model\IssueAndDate $issue) use ($assemblyId) {
             $issue->setGoal(Transformer::htmlToMarkdown($issue->getGoal()));
@@ -410,7 +406,7 @@ class IssueController extends AbstractRestfulController implements
             $issueAndProperty = (new Model\IssueProperties())
                 ->setIssue($issue);
 
-            $proponents = $issue->getCategory() === 'A'
+            $proponents = $issue->isA()
                 ? $this->congressmanService->fetchProponentsByIssue($assemblyId, $issue->getIssueId())
                 : [];
             $proponentsAndParty = array_map(function (Model\Proponent $proponent) use ($issue) {
