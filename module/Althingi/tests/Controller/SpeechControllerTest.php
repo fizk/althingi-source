@@ -66,14 +66,15 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
             ->shouldReceive('get')
             ->andReturn((new \Althingi\Model\Congressman())->setCongressmanId(1))
             ->getMock();
+
         $this->getMockService(Party::class)
             ->shouldReceive('getByCongressman')
             ->andReturn(new \Althingi\Model\Party())
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/1/thingmal/3/raedur/4', 'GET');
+        $this->dispatch('/loggjafarthing/1/thingmal/a/3/raedur/4', 'GET');
 
-        $this->assertControllerClass('SpeechController');
+        $this->assertControllerName(\Althingi\Controller\SpeechController::class);
         $this->assertActionName('get');
         $this->assertResponseStatusCode(206);
     }
@@ -107,7 +108,7 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
             ->andReturn(new \Althingi\Model\Party())
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/1/thingmal/3/raedur/4', 'GET');
+        $this->dispatch('/loggjafarthing/1/thingmal/a/3/raedur/4', 'GET');
         $resp = $this->getResponse();
         /** @var  $contentRange \Zend\Http\Header\ContentRange */
         $contentRange = $this->getResponse()
@@ -133,6 +134,7 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
             ->setTo(new \DateTime('2001-01-01 00:00:00'))
             ->setType('t1')
             ->setText('t2')
+            ->setCategory('A')
             ->setValidated(false);
 
         $this->getMockService(Speech::class)
@@ -144,7 +146,7 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
             ->once()
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/1/thingmal/3/raedur/4', 'PUT', [
+        $this->dispatch('/loggjafarthing/1/thingmal/a/3/raedur/4', 'PUT', [
             'from' => '2001-01-01 00:00:00',
             'to' => '2001-01-01 00:00:00',
             'plenary_id' => 20,
@@ -156,7 +158,7 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
             'validated' => 'false'
         ]);
 
-        $this->assertControllerClass('SpeechController');
+        $this->assertControllerName(\Althingi\Controller\SpeechController::class);
         $this->assertActionName('put');
         $this->assertResponseStatusCode(201);
     }
@@ -171,7 +173,7 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
             ->never()
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/1/thingmal/3/raedur/4', 'PUT', [
+        $this->dispatch('/loggjafarthing/1/thingmal/a/3/raedur/4', 'PUT', [
             'plenary_id' => 20,
             'congressman_id' => 10,
             'congressman_type' => null,
@@ -180,7 +182,7 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
             'text' => 't2'
         ]);
 
-        $this->assertControllerClass('SpeechController');
+        $this->assertControllerName(\Althingi\Controller\SpeechController::class);
         $this->assertActionName('put');
         $this->assertResponseStatusCode(400);
     }
@@ -192,7 +194,7 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
     {
         $this->getMockService(Speech::class)
             ->shouldReceive('fetchByIssue')
-            ->with(144, 3, 'A', 0, null, 1500)
+            ->with(144, 3, 'B', 0, null, 1500)
             ->andReturn([
                 (new SpeechAndPosition())->setCongressmanId(1)->setFrom(new \DateTime()),
             ])
@@ -213,9 +215,9 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
             ->andReturn(new \Althingi\Model\Party())
             ->once();
 
-        $this->dispatch('/loggjafarthing/144/thingmal/3/raedur');
+        $this->dispatch('/loggjafarthing/144/thingmal/b/3/raedur');
 
-        $this->assertControllerClass('SpeechController');
+        $this->assertControllerName(\Althingi\Controller\SpeechController::class);
         $this->assertActionName('getList');
         $this->assertResponseStatusCode(206);
         $this->assertResponseHeaderContains('Content-Range', 'items 0-1/100');
@@ -253,7 +255,7 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
             ->andReturn(new \Althingi\Model\Party())
             ->once();
 
-        $this->dispatch('/loggjafarthing/144/thingmal/3/raedur');
+        $this->dispatch('/loggjafarthing/144/thingmal/a/3/raedur');
 
         /** @var  $contentRange \Zend\Http\Header\ContentRange */
         $contentRange = $this->getResponse()
@@ -299,7 +301,7 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
             ->andReturn(new \Althingi\Model\Party())
             ->times(20);
 
-        $this->dispatch('/loggjafarthing/144/thingmal/3/raedur');
+        $this->dispatch('/loggjafarthing/144/thingmal/a/3/raedur');
 
         /** @var  $contentRange \Zend\Http\Header\ContentRange */
         $contentRange = $this->getResponse()
@@ -345,7 +347,7 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
             ->andReturn(1)
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/144/thingmal/3/raedur/4', 'PATCH', [
+        $this->dispatch('/loggjafarthing/144/thingmal/a/3/raedur/4', 'PATCH', [
             'to' => '2000-01-01 00:01:00',
         ]);
 
@@ -362,7 +364,7 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
             ->andReturn(new \Althingi\Model\Speech())
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/144/thingmal/3/raedur/4', 'PATCH', [
+        $this->dispatch('/loggjafarthing/144/thingmal/a/3/raedur/4', 'PATCH', [
             'from' => 'invalid date',
         ]);
 
@@ -379,7 +381,7 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
             ->andReturn(null)
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/144/thingmal/3/raedur/4', 'PATCH');
+        $this->dispatch('/loggjafarthing/144/thingmal/a/3/raedur/4', 'PATCH');
 
         $this->assertResponseStatusCode(404);
     }
@@ -389,7 +391,7 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
      */
     public function testOptions()
     {
-        $this->dispatch('/loggjafarthing/144/thingmal/3/raedur/4', 'OPTIONS');
+        $this->dispatch('/loggjafarthing/144/thingmal/a/3/raedur/4', 'OPTIONS');
 
         $expectedMethods = ['GET', 'OPTIONS', 'PUT', 'PATCH',];
         $actualMethods = $this->getResponse()
@@ -405,7 +407,7 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
      */
     public function testOptionsList()
     {
-        $this->dispatch('/loggjafarthing/144/thingmal/3/raedur', 'OPTIONS');
+        $this->dispatch('/loggjafarthing/144/thingmal/a/3/raedur', 'OPTIONS');
 
         $expectedMethods = ['GET', 'OPTIONS'];
         $actualMethods = $this->getResponse()

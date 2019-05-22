@@ -6,7 +6,6 @@ use Althingi\Injector\ServiceCategoryAwareInterface;
 use Althingi\Injector\ServiceSuperCategoryAwareInterface;
 use Althingi\Service\Category;
 use Althingi\Service\SuperCategory;
-use Althingi\Utils\CategoryParam;
 use Rend\Controller\AbstractRestfulController;
 use Rend\Helper\Http\Range;
 use Rend\View\Model\CollectionModel;
@@ -16,7 +15,6 @@ class IssueCategoryController extends AbstractRestfulController implements
     ServiceSuperCategoryAwareInterface
 {
     use Range;
-    use CategoryParam;
 
     /** @var $issueService \Althingi\Service\Category */
     private $categoryService;

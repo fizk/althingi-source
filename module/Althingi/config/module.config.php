@@ -245,26 +245,13 @@ return [
                             ],
                         ],
                     ],
-                    'bmal' => [
-                        'type' => Segment::class,
-                        'options' => [
-                            'route'    => '/bmal[/:issue_id]',
-                            'constraints' => [
-                                'issue_id' => '[0-9]+',
-                            ],
-                            'defaults' => [
-                                'controller' => Controller\UndocumentedIssueController::class,
-                                'identifier' => 'issue_id',
-                            ],
-                        ],
-                        'may_terminate' => true,
-                    ],
                     'thingmal' => [
                         'type' => Segment::class,
                         'options' => [
-                            'route'    => '/thingmal[/:issue_id]',
+                            'route'    => '/thingmal[/:category[/:issue_id]]',
                             'constraints' => [
                                 'issue_id' => '[0-9]+',
+                                'category' => '[abAB]',
                             ],
                             'defaults' => [
                                 'controller' => Controller\IssueController::class,
@@ -773,6 +760,7 @@ return [
                     ->setElectionService($container->get(Service\Election::class))
                     ->setIssueService($container->get(Service\Issue::class))
                     ->setPartyService($container->get(Service\Party::class))
+                    ->setCongressmanService($container->get(Service\Congressman::class))
                     ->setSpeechService($container->get(Service\Speech::class))
                     ->setVoteService($container->get(Service\Vote::class))
                     ->setAssemblyStore($container->get(Store\Assembly::class))
@@ -829,17 +817,6 @@ return [
                     ->setDocumentService($container->get(Service\Document::class))
                     ->setSearchIssueService($container->get(Service\SearchIssue::class))
                     ->setIssueStore($container->get(Store\Issue::class));
-            },
-            Controller\UndocumentedIssueController::class => function (ServiceManager $container) {
-                return (new Controller\UndocumentedIssueController())
-                    ->setPartyService($container->get(Service\Party::class))
-                    ->setCongressmanService($container->get(Service\Congressman::class))
-                    ->setAssemblyService($container->get(Service\Assembly::class))
-                    ->setIssueService($container->get(Service\Issue::class))
-                    ->setSpeechService($container->get(Service\Speech::class))
-                    ->setVoteService($container->get(Service\Vote::class))
-                    ->setDocumentService($container->get(Service\Document::class))
-                    ->setSearchIssueService($container->get(Service\SearchIssue::class));
             },
             Controller\SpeechController::class => function (ServiceManager $container) {
                 return (new Controller\SpeechController())

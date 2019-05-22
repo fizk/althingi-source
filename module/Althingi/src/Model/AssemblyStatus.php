@@ -19,6 +19,9 @@ class AssemblyStatus implements ModelInterface
     /** @var string */
     private $status;
 
+    /** @var string */
+    private $category;
+
     /**
      * @return int
      */
@@ -110,6 +113,24 @@ class AssemblyStatus implements ModelInterface
     }
 
     /**
+     * @return string
+     */
+    public function getCategory(): ?string
+    {
+        return $this->category;
+    }
+
+    /**
+     * @param string $category
+     * @return AssemblyStatus
+     */
+    public function setCategory(?string $category): AssemblyStatus
+    {
+        $this->category = $category;
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function toArray()
@@ -120,6 +141,7 @@ class AssemblyStatus implements ModelInterface
             'type_name' => $this->type_name,
             'type_subname' => $this->type_subname,
             'status' => $this->status,
+            'category' => $this->category,
         ];
     }
 

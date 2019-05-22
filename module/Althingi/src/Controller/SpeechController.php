@@ -11,7 +11,6 @@ use Althingi\Utils\Transformer;
 use Althingi\Model;
 use Althingi\Service;
 use Althingi\Form;
-use Althingi\Utils\CategoryParam;
 use Rend\Controller\AbstractRestfulController;
 use Rend\Helper\Http\RangeValue;
 use Rend\View\Model\ErrorModel;
@@ -28,7 +27,6 @@ class SpeechController extends AbstractRestfulController implements
     ServicePlenaryAwareInterface
 {
     use Range;
-    use CategoryParam;
 
     /** @var \Althingi\Service\Speech */
     private $speechService;
@@ -57,8 +55,8 @@ class SpeechController extends AbstractRestfulController implements
     {
         $assemblyId = $this->params('id');
         $issueId = $this->params('issue_id');
+        $category = strtoupper($this->params('category', 'a'));
         $speechId = $id;
-        $category = $this->getCategoryFromQuery();
 
         $count = $this->speechService->countByIssue($assemblyId, $issueId, $category);
         $speeches = $this->speechService->fetch($speechId, $assemblyId, $issueId, 25, $category);
@@ -101,59 +99,34 @@ class SpeechController extends AbstractRestfulController implements
     {
         $assemblyId = $this->params('id');
         $issueId = $this->params('issue_id');
+        $category = strtoupper($this->params('category', 'a'));
         $count = 0;
-        $queryParam = $this->params()->fromQuery('leit', null);
-        $category = $this->getCategoryFromQuery();
 
-        if ($queryParam) {
-            $speeches = $this->speechSearch->fetchByIssue(
-                $queryParam,
-                $assemblyId,
-                $issueId,
-                $category
-            );
-            $count = count($speeches);
-            $range = (new RangeValue())->setFrom(0)->setTo($count);
-            $speechesAndProperties = array_map(function (Model\SpeechModel $speech) {
-                $speech->setText(Transformer::speechToMarkdown($speech->getText()));
+        $count = $this->speechService->countByIssue($assemblyId, $issueId, $category);
+        $range = $this->getRange($this->getRequest(), $count);
 
-                $congressman = $this->congressmanService->get($speech->getCongressmanId());
-                $party = $this->partyService->getByCongressman($speech->getCongressmanId(), $speech->getFrom());
-                $congressmanPartyProperties = (new Model\CongressmanPartyProperties())
-                    ->setCongressman($congressman)
-                    ->setParty($party);
+        $speeches = $this->speechService->fetchByIssue(
+            $assemblyId,
+            $issueId,
+            $category,
+            $range->getFrom(),
+            $range->getSize(),
+            1500
+        );
 
-                return (new Model\SpeechCongressmanProperties())
-                    ->setCongressman($congressmanPartyProperties)
-                    ->setSpeech($speech);
-            }, $speeches);
-        } else {
-            $count = $this->speechService->countByIssue($assemblyId, $issueId, $category);
-            $range = $this->getRange($this->getRequest(), $count);
+        $speechesAndProperties = array_map(function (Model\SpeechAndPosition $speech) {
+            $speech->setText(Transformer::speechToMarkdown($speech->getText()));
 
-            $speeches = $this->speechService->fetchByIssue(
-                $assemblyId,
-                $issueId,
-                $category,
-                $range->getFrom(),
-                $range->getSize(),
-                1500
-            );
+            $congressman = $this->congressmanService->get($speech->getCongressmanId());
+            $party = $this->partyService->getByCongressman($speech->getCongressmanId(), $speech->getFrom());
+            $congressmanPartyProperties = (new Model\CongressmanPartyProperties())
+                ->setCongressman($congressman)
+                ->setParty($party);
 
-            $speechesAndProperties = array_map(function (Model\SpeechAndPosition $speech) {
-                $speech->setText(Transformer::speechToMarkdown($speech->getText()));
-
-                $congressman = $this->congressmanService->get($speech->getCongressmanId());
-                $party = $this->partyService->getByCongressman($speech->getCongressmanId(), $speech->getFrom());
-                $congressmanPartyProperties = (new Model\CongressmanPartyProperties())
-                    ->setCongressman($congressman)
-                    ->setParty($party);
-
-                return (new Model\SpeechCongressmanProperties())
-                    ->setCongressman($congressmanPartyProperties)
-                    ->setSpeech($speech);
-            }, $speeches);
-        }
+            return (new Model\SpeechCongressmanProperties())
+                ->setCongressman($congressmanPartyProperties)
+                ->setSpeech($speech);
+        }, $speeches);
 
         return (new CollectionModel($speechesAndProperties))
             ->setStatus(206)
@@ -173,11 +146,12 @@ class SpeechController extends AbstractRestfulController implements
     {
         $assemblyId = $this->params('id');
         $issueId = $this->params('issue_id');
+        $category = strtoupper($this->params('category', 'a'));
 
         $form = new Form\Speech();
         $form->setData(array_merge(
             $data,
-            ['speech_id' => $id, 'issue_id' => $issueId, 'assembly_id' => $assemblyId]
+            ['speech_id' => $id, 'issue_id' => $issueId, 'assembly_id' => $assemblyId, 'category' => $category]
         ));
 
         if ($form->isValid()) {

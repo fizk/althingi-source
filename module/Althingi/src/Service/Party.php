@@ -57,14 +57,12 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
     public function getByCongressman(int $congressmanId, DateTime $date): ? Model\Party
     {
         $statement = $this->getDriver()->prepare('
-            select P.* from
-            (
-                select * from `Session` S where
+            select P.* from Session S
+                join Party P on S.party_id = P.party_id
+            where congressman_id = :congressman_id and (
                 (:date between S.`from` and S.`to`) or
                 (:date >= S.`from` and S.`to` is null)
-            ) S
-            Join `Party` P on (P.party_id = S.party_id)
-            where S.congressman_id = :congressman_id;
+            );
         ');
 
         $statement->execute([

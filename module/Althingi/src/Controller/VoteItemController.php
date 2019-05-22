@@ -68,7 +68,8 @@ class VoteItemController extends AbstractRestfulController implements
                                     'id' => $voteObject->getAssemblyId(),
                                     'issue_id' => $voteObject->getIssueId(),
                                     'vote_id' => $voteObject->getVoteId(),
-                                    'vote_item_id' => $voteObject->getVoteItemId()
+                                    'vote_item_id' => $voteObject->getVoteItemId(),
+                                    'category' => 'a'
                                 ]
                             )
                         )

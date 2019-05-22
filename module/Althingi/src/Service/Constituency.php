@@ -48,14 +48,12 @@ class Constituency implements DatabaseAwareInterface
     public function getByCongressman(int $congressmanId, DateTime $date): ? Model\ConstituencyDate
     {
         $statement = $this->getDriver()->prepare('
-            select C.*, S.`from` as `date` from
-            (
-                select * from `Session` S where
+            select C.*, S.`from` as `date` from Session S
+                join Constituency C on (S.constituency_id = C.constituency_id)
+            where congressman_id = :congressman_id and (
                 (:date between S.`from` and S.`to`) or
                 (:date >= S.`from` and S.`to` is null)
-            ) S
-            Join `Constituency` C on (C.constituency_id = S.constituency_id)
-            where S.congressman_id = :congressman_id;
+            );
         ');
         $statement->execute([
             'congressman_id' => $congressmanId,

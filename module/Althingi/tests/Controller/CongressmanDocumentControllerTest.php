@@ -48,11 +48,11 @@ class CongressmanDocumentControllerTest extends AbstractHttpControllerTestCase
             ->andReturn(1)
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/145/thingmal/2/thingskjal/637/flutningsmenn/1018', 'PUT', [
+        $this->dispatch('/loggjafarthing/145/thingmal/a/2/thingskjal/637/flutningsmenn/1018', 'PUT', [
             'order' => '1',
         ]);
 
-        $this->assertControllerClass('CongressmanDocumentController');
+        $this->assertControllerName(\Althingi\Controller\CongressmanDocumentController::class);
         $this->assertActionName('put');
         $this->assertResponseStatusCode(201);
     }
@@ -80,11 +80,11 @@ class CongressmanDocumentControllerTest extends AbstractHttpControllerTestCase
             ->andReturn(1)
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/145/thingmal/2/thingskjal/637/flutningsmenn/1018', 'PATCH', [
+        $this->dispatch('/loggjafarthing/145/thingmal/a/2/thingskjal/637/flutningsmenn/1018', 'PATCH', [
             'order' => '1',
         ]);
 
-        $this->assertControllerClass('CongressmanDocumentController');
+        $this->assertControllerName(\Althingi\Controller\CongressmanDocumentController::class);
         $this->assertActionName('patch');
         $this->assertResponseStatusCode(205);
     }

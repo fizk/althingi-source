@@ -38,7 +38,10 @@ class IssueCategory implements DatabaseAwareInterface, EventsAwareInterface
     {
         $statement = $this->getDriver()->prepare('
             select * from `Category_has_Issue` C
-            where C.`assembly_id` = :assembly_id and C.`issue_id` = :issue_id and C.`category_id` = :category_id
+            where C.`assembly_id` = :assembly_id 
+              and C.`issue_id` = :issue_id 
+              and C.`category_id` = :category_id
+              and C.category = \'A\'
         ');
         $statement->execute([
             'assembly_id' => $assemblyId,
