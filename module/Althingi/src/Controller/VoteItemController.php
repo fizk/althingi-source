@@ -3,12 +3,14 @@
 namespace Althingi\Controller;
 
 use Althingi\Form;
+use Althingi\Injector\ServiceConstituencyAwareInterface;
 use Althingi\Model;
 use Althingi\Injector\ServiceCongressmanAwareInterface;
 use Althingi\Injector\ServicePartyAwareInterface;
 use Althingi\Injector\ServiceVoteAwareInterface;
 use Althingi\Injector\ServiceVoteItemAwareInterface;
 use Althingi\Service\Congressman;
+use Althingi\Service\Constituency;
 use Althingi\Service\Party;
 use Althingi\Service\Vote;
 use Althingi\Service\VoteItem;
@@ -21,7 +23,8 @@ class VoteItemController extends AbstractRestfulController implements
     ServiceVoteItemAwareInterface,
     ServiceVoteAwareInterface,
     ServiceCongressmanAwareInterface,
-    ServicePartyAwareInterface
+    ServicePartyAwareInterface,
+    ServiceConstituencyAwareInterface
 {
     /** @var  \Althingi\Service\VoteItem */
     private $voteItemService;
@@ -34,6 +37,9 @@ class VoteItemController extends AbstractRestfulController implements
 
     /** @var  \Althingi\Service\Party */
     private $partyService;
+
+    /** @var  \Althingi\Service\Constituency */
+    private $constituencyService;
 
     /**
      * @param mixed $data
@@ -97,18 +103,21 @@ class VoteItemController extends AbstractRestfulController implements
         $date = $vote->getDate();
 
         $voteItems = array_map(function (Model\VoteItem $voteItem) use ($date) {
-            $congressman = $this->congressmanService->get($voteItem->getCongressmanId());
-            $party = $this->partyService->getByCongressman($voteItem->getCongressmanId(), $date);
 
-            $congressmanAndParty = new Model\CongressmanPartyProperties();
-            $congressmanAndParty->setCongressman($congressman);
-            $congressmanAndParty->setParty($party);
+            $congressmanAndParty = (new Model\CongressmanPartyProperties())
+                ->setCongressman($this->congressmanService->get(
+                    $voteItem->getCongressmanId()
+                ))->setParty($this->partyService->getByCongressman(
+                    $voteItem->getCongressmanId(),
+                    $date
+                ))->setConstituency($this->constituencyService->getByCongressman(
+                    $voteItem->getCongressmanId(),
+                    $date
+                ));
 
-            $voteItemAndCongressman = new Model\VoteItemAndCongressman();
-            $voteItemAndCongressman->setVoteItem($voteItem);
-            $voteItemAndCongressman->setCongressman($congressmanAndParty);
-
-            return $voteItemAndCongressman;
+            return (new Model\VoteItemAndCongressman())
+                ->setVoteItem($voteItem)
+                ->setCongressman($congressmanAndParty);
         }, $votes);
         $voteItemsCount = count($voteItems);
 
@@ -183,6 +192,16 @@ class VoteItemController extends AbstractRestfulController implements
     public function setPartyService(Party $party)
     {
         $this->partyService = $party;
+        return $this;
+    }
+
+    /**
+     * @param Constituency $constituency
+     * @return $this
+     */
+    public function setConstituencyService(Constituency $constituency)
+    {
+        $this->constituencyService = $constituency;
         return $this;
     }
 }

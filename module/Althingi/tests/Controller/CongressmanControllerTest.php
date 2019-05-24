@@ -9,6 +9,7 @@ use Althingi\Model\Issue as IssueModel;
 use Althingi\Model\IssueCategoryAndTime as IssueCategoryAndTimeModel;
 use Althingi\Service\Assembly;
 use Althingi\Service\Congressman;
+use Althingi\Service\Constituency;
 use Althingi\Service\Issue;
 use Althingi\Service\IssueCategory;
 use Althingi\Service\Party;
@@ -64,6 +65,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
             Speech::class,
             IssueCategory::class,
             Assembly::class,
+            Constituency::class
         ]);
     }
 
@@ -362,20 +364,28 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
             ->andReturn((new \Althingi\Model\Assembly())->setAssemblyId(1))
             ->getMock();
 
+        $this->getMockService(Constituency::class)
+            ->shouldReceive('getByAssemblyAndCongressman')
+            ->with(1, 1)
+            ->once()
+            ->andReturn((new \Althingi\Model\ConstituencyDate()))
+            ->getMock();
+
         $this->getMockService(Congressman::class)
             ->shouldReceive('fetchByAssembly')
             ->with(1, null)
             ->once()
             ->andReturn([
-                (new CongressmanAndParty())->setPartyId(100)
+                (new CongressmanAndParty())
+                    ->setCongressmanId(1)
+                    ->setPartyId(100)
             ])
             ->getMock();
 
         $this->getMockService(Party::class)
-            ->shouldReceive('get')
-            ->with(100)
-            ->andReturn(new PartyModel())
-            ->once()
+            ->shouldReceive('fetchByCongressmanAndAssembly')
+            ->with(1, 1)
+            ->andReturn([])
             ->getMock();
 
         $this->dispatch('/loggjafarthing/1/thingmenn');

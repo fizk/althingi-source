@@ -3,6 +3,7 @@
 namespace AlthingiTest\Controller;
 
 use Althingi\Service\Congressman;
+use Althingi\Service\Constituency;
 use Althingi\Service\Document;
 use Althingi\Service\Party;
 use Althingi\Service\Vote;
@@ -42,7 +43,7 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
             VoteItem::class,
             Congressman::class,
             Party::class,
-
+            Constituency::class
         ]);
     }
 
@@ -124,6 +125,11 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
         $this->getMockService(Party::class)
             ->shouldReceive('getByCongressman')
             ->andReturn(new PartyModel())
+            ->getMock();
+
+        $this->getMockService(Constituency::class)
+            ->shouldReceive('getByCongressman')
+            ->andReturn(new \Althingi\Model\ConstituencyDate())
             ->getMock();
 
         $this->dispatch('/loggjafarthing/145/thingmal/a/2/thingskjal', 'GET');

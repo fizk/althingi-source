@@ -2,6 +2,8 @@
 
 namespace Althingi\Controller;
 
+use Althingi\Injector\ServiceConstituencyAwareInterface;
+use Althingi\Service\Constituency;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ErrorModel;
 use Rend\View\Model\EmptyModel;
@@ -33,6 +35,7 @@ class IssueController extends AbstractRestfulController implements
     ServiceAssemblyAwareInterface,
     ServiceSpeechAwareInterface,
     ServiceSearchIssueAwareInterface,
+    ServiceConstituencyAwareInterface,
     StoreIssueAwareInterface
 {
     use Range;
@@ -60,6 +63,9 @@ class IssueController extends AbstractRestfulController implements
 
     /** @var  \Althingi\Service\SearchIssue */
     private $issueSearchService;
+
+    /** @var  \Althingi\Service\Constituency */
+    private $constituencyService;
 
     /** @var  \Althingi\Store\Issue */
     private $issueStore;
@@ -305,6 +311,9 @@ class IssueController extends AbstractRestfulController implements
                 ->setParty($this->partyService->getByCongressman(
                     $congressman->getCongressmanId(),
                     $congressman->getBegin()
+                ))->setConstituency($this->constituencyService->getByCongressman(
+                    $congressman->getCongressmanId(),
+                    $congressman->getBegin()
                 ));
         }, $speakers);
 
@@ -320,9 +329,13 @@ class IssueController extends AbstractRestfulController implements
             ? array_map(function (Model\Proponent $proponent) use ($issue) {
                 return (new Model\CongressmanPartyProperties())
                     ->setCongressman($proponent)
-                    ->setParty(
-                        $this->partyService->getByCongressman($proponent->getCongressmanId(), $issue->getDate())
-                    );
+                    ->setParty($this->partyService->getByCongressman(
+                        $proponent->getCongressmanId(),
+                        $issue->getDate()
+                    ))->setConstituency($this->constituencyService->getByCongressman(
+                        $proponent->getCongressmanId(),
+                        $issue->getDate()
+                    ));
             }, $proponents)
             : [];
         $issueProperties->setProponents($proponentsAndParty);
@@ -414,6 +427,8 @@ class IssueController extends AbstractRestfulController implements
                     ->setCongressman($proponent)
                     ->setParty(
                         $this->partyService->getByCongressman($proponent->getCongressmanId(), $issue->getDate())
+                    )->setConstituency(
+                        $this->constituencyService->getByCongressman($proponent->getCongressmanId(), $issue->getDate())
                     );
             }, $proponents);
             $issueAndProperty->setProponents($proponentsAndParty);
@@ -545,6 +560,16 @@ class IssueController extends AbstractRestfulController implements
     public function setIssueStore(Store\Issue $issue)
     {
         $this->issueStore = $issue;
+        return $this;
+    }
+
+    /**
+     * @param Constituency $constituency
+     * @return $this
+     */
+    public function setConstituencyService(Constituency $constituency)
+    {
+        $this->constituencyService = $constituency;
         return $this;
     }
 }
