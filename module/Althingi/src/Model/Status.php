@@ -34,6 +34,9 @@ class Status implements ModelInterface
     /** @var  string */
     private $type;
 
+    /** @var  int */
+    private $value = 0;
+
     /** @var  bool */
     private $completed = false;
 
@@ -200,6 +203,24 @@ class Status implements ModelInterface
     }
 
     /**
+     * @return int
+     */
+    public function getValue(): ?int
+    {
+        return $this->value;
+    }
+
+    /**
+     * @param int $value
+     * @return Status
+     */
+    public function setValue(?int $value): Status
+    {
+        $this->value = $value;
+        return $this;
+    }
+
+    /**
      * @return boolean
      */
     public function isCompleted(): bool
@@ -230,6 +251,7 @@ class Status implements ModelInterface
             'type' => $this->type,
             'committee_name' => $this->committee_name,
             'completed' => $this->completed,
+            'value' => $this->value,
         ];
     }
 

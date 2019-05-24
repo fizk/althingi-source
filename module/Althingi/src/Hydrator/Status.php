@@ -24,6 +24,7 @@ class Status implements HydratorInterface
             ->setDate($data['date'] ? new DateTime($data['date']) : null)
             ->setTitle($data['title'])
             ->setType($data['type'])
+            ->setValue($data['value'])
             ->setCommitteeName($data['committee_name'])
             ->setCompleted($data['completed']);
     }

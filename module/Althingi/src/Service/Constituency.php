@@ -90,6 +90,45 @@ class Constituency implements DatabaseAwareInterface
     }
 
     /**
+     * Proponents of an issue (l) grouped by constituency and counted.
+     *
+     * @param int $assemblyId
+     * @return \Althingi\Model\ConstituencyValue[]
+     */
+    public function fetchFrequencyByAssembly(int $assemblyId): array
+    {
+        $statement = $this->getDriver()->prepare('
+            select count(*) as `value`, C.* from (
+                select DC.congressman_id, D.date from (
+                    select D.* from Document D
+                        join Issue I on (
+                            D.issue_id = I.issue_id and 
+                            D.assembly_id = I.assembly_id and 
+                            D.category = I.category
+                        )
+                    where D.assembly_id = :assembly_id and I.type = "l"
+                    group by D.issue_id
+                    having min(D.date)
+                ) as D
+                    join Document_has_Congressman DC
+                        on (D.assembly_id = DC.assembly_id and D.issue_id = DC.issue_id)
+            ) as A
+                join Session S
+                    on A.congressman_id = S.congressman_id and (
+                        (A.date between S.`from` and S.`to`) or
+                        (A.date >= S.`from` and S.`to` is null)
+                    )
+                join Constituency C on S.constituency_id = C.constituency_id
+            group by C.constituency_id;
+        ');
+        $statement->execute(['assembly_id' => $assemblyId]);
+
+        return array_map(function ($object) {
+            return (new Hydrator\ConstituencyValue())->hydrate($object, new Model\ConstituencyValue());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
+    }
+
+    /**
      * Create one Constituency. Accepts object from
      * corresponding Form.
      *
