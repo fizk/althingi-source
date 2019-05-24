@@ -35,7 +35,6 @@ class Issue implements HydratorInterface
             ->setAdditionalInformation($data['additional_information']);
     }
 
-
     /**
      * Extract values from an object
      *

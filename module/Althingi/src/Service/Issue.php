@@ -484,63 +484,88 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
     public function fetchProgress(int $assemblyId, int $issueId, string $category = 'A'): array
     {
         $statement = $this->getDriver()->prepare('
-            select D.`assembly_id`, 
-                    D.`issue_id`, 
-                    null as `committee_id`, 
-                    null as `speech_id`, 
-                    D.`document_id`,
-                    null as `committee_name`,
-                    D.`date`, 
-                    D.`type` as `title`,
-                    \'document\' as `type`,
-                    true as `completed`
-                from `Document` D 
-                where D.`assembly_id` = :assembly and D.`issue_id` = :issue and `category` = :category
-                union
-            select B.`assembly_id`, 
-                    B.`issue_id`, 
-                    null as `committee_id`, 
-                    B.`speech_id`, 
-                    null as `document_id`, 
-                    null as `committee_name`,
-                    B.`date`, 
-                    B.`type` as `title`, 
-                    \'speech\' as `type`,
-                    true as `completed`
-                    from (
-                        select S.`assembly_id`, 
-                                S.`issue_id`, 
-                                null as `committee_id`, 
-                                S.speech_id, null, 
-                                S.`from` as `date`, 
-                                CONCAT(S.`iteration`, \'. umræða\') as `type`, 
-                                S.`iteration` 
-                        from `Speech` S 
-                        where assembly_id = :assembly and issue_id = :issue and `category` = :category
-                        order by S.`from`
-                ) as B
-                group by B.`iteration`
-                union
-            select CMA.assembly_id, 
-                    CMA.issue_id, 
-                    C.committee_id, 
-                    null as `speech_id`, 
-                    null as `document_id`, 
-                    C.name as `committee_name`,
-                    CM.`from`, 
-                    \'í nefnd\' as `title`, 
-                    \'committee\' as `type`,
-                    true as `completed`
-                from `CommitteeMeetingAgenda` CMA
-                join `CommitteeMeeting` CM on (
-                  CM.committee_meeting_id = CMA.committee_meeting_id and CM.`from` is not null
-                )
-                join `Committee` C on (CM.committee_id = C.committee_id)
-                where CMA.assembly_id = :assembly and CMA.issue_id = :issue and `category` = :category
-            order by `date`;
+            select count(*) as value,
+                D.`assembly_id`,
+                D.`issue_id`,
+                null as `committee_id`,
+                null as `speech_id`,
+                D.`document_id`,
+                null as `committee_name`,
+                D.`date`,
+                D.`type` as `title`,
+                "document" as `type`,
+                true as `completed`,
+                256 as `importance`
+            from `Document` D
+            where D.`assembly_id` = :assembly_id and D.`issue_id` = :issue_id and `category` = :category
+            group by date_format(D.date, "%Y-%m-%d")
+            having min(D.date)
+            
+            union
+            
+            select sum(TIMESTAMPDIFF(SECOND, S.`from`, S.`to`)) as value,
+                S.`assembly_id`,
+                S.`issue_id`,
+                null as `committee_id`,
+                S.`speech_id`,
+                null as `document_id`,
+                null as `committee_name`,
+                S.`from` as `date`,
+                CONCAT(S.`iteration`, ". umræða") as `title`,
+                "speech" as `type`,
+                true as `completed`,
+                128 as `importance`
+            from Speech S
+            where S.assembly_id = :assembly_id and S.issue_id = :issue_id and S.`category` = :category
+            group by date_format(S.`from`, "%Y-%m-%d")
+            having min(`from`)
+            
+            union
+            
+            select count(*) as value,
+                V.`assembly_id`,
+                V.`issue_id`,
+                null as `committee_id`,
+                null as `speech_id`,
+                `document_id`,
+                null as `committee_name`,
+                `date`,
+                "atvædagreidsla" as `title`,
+                "vote" as `type`,
+                true as `completed`,
+                64 as `importance`
+            from Vote V where assembly_id = :assembly_id and issue_id = :issue_id
+            group by date_format(V.`date`, "%Y-%m-%d")
+            having min(`date`)
+            
+            union
+            
+            select count(*) as value,
+                CMA.assembly_id,
+                CMA.issue_id,
+                C.committee_id,
+                null as `speech_id`,
+                null as `document_id`,
+                C.name as `committee_name`,
+                CM.`from` as `date`,
+                "í nefnd" as `title`,
+                "committee" as `type`,
+                true as `completed`,
+                256 as `importance`
+            from `CommitteeMeetingAgenda` CMA
+            join `CommitteeMeeting` CM on (
+                CM.committee_meeting_id = CMA.committee_meeting_id and CM.`from` is not null
+            )
+            join `Committee` C on (CM.committee_id = C.committee_id)
+            where CMA.assembly_id = :assembly_id and CMA.issue_id = :issue_id
+            group by date_format(CM.`from`, "%Y-%m-%d")
+            having min(CM.`from`)
+            
+            order by `date`, `importance` desc;
+            ;
         ');
 
-        $statement->execute(['assembly' => $assemblyId, 'issue' => $issueId, 'category' => $category]);
+        $statement->execute(['assembly_id' => $assemblyId, 'issue_id' => $issueId, 'category' => $category]);
 
         return array_map(function ($object) {
             return (new Hydrator\Status())->hydrate($object, new Model\Status());
