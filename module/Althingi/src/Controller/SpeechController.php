@@ -3,10 +3,12 @@
 namespace Althingi\Controller;
 
 use Althingi\Injector\ServiceCongressmanAwareInterface;
+use Althingi\Injector\ServiceConstituencyAwareInterface;
 use Althingi\Injector\ServicePartyAwareInterface;
 use Althingi\Injector\ServicePlenaryAwareInterface;
 use Althingi\Injector\ServiceSearchSpeechAwareInterface;
 use Althingi\Injector\ServiceSpeechAwareInterface;
+use Althingi\Service\Constituency;
 use Althingi\Utils\Transformer;
 use Althingi\Model;
 use Althingi\Service;
@@ -24,7 +26,8 @@ class SpeechController extends AbstractRestfulController implements
     ServiceCongressmanAwareInterface,
     ServicePartyAwareInterface,
     ServiceSearchSpeechAwareInterface,
-    ServicePlenaryAwareInterface
+    ServicePlenaryAwareInterface,
+    ServiceConstituencyAwareInterface
 {
     use Range;
 
@@ -42,6 +45,9 @@ class SpeechController extends AbstractRestfulController implements
 
     /** @var \Althingi\Service\Plenary */
     private $plenaryService;
+
+    /** @var \Althingi\Service\Constituency */
+    private $constituencyService;
 
     /**
      * Get Speech item and speeches surrounding it.
@@ -70,10 +76,16 @@ class SpeechController extends AbstractRestfulController implements
         $speechesProperties = array_map(function (Model\SpeechAndPosition $speech) {
             $speech->setText(Transformer::speechToMarkdown($speech->getText()));
 
-            $congressman = $this->congressmanService->get($speech->getCongressmanId());
             $congressmanPartyProperties = (new Model\CongressmanPartyProperties())
-                ->setCongressman($congressman)
-                ->setParty($this->partyService->getByCongressman($speech->getCongressmanId(), $speech->getFrom()));
+                ->setCongressman($this->congressmanService->get(
+                    $speech->getCongressmanId()
+                ))->setParty($this->partyService->getByCongressman(
+                    $speech->getCongressmanId(),
+                    $speech->getFrom()
+                ))->setConstituency($this->constituencyService->getByCongressman(
+                    $speech->getCongressmanId(),
+                    $speech->getFrom()
+                ));
 
             return (new Model\SpeechCongressmanProperties())
                 ->setCongressman($congressmanPartyProperties)
@@ -116,12 +128,16 @@ class SpeechController extends AbstractRestfulController implements
 
         $speechesAndProperties = array_map(function (Model\SpeechAndPosition $speech) {
             $speech->setText(Transformer::speechToMarkdown($speech->getText()));
-
-            $congressman = $this->congressmanService->get($speech->getCongressmanId());
-            $party = $this->partyService->getByCongressman($speech->getCongressmanId(), $speech->getFrom());
             $congressmanPartyProperties = (new Model\CongressmanPartyProperties())
-                ->setCongressman($congressman)
-                ->setParty($party);
+                ->setCongressman($this->congressmanService->get(
+                    $speech->getCongressmanId()
+                ))->setParty($this->partyService->getByCongressman(
+                    $speech->getCongressmanId(),
+                    $speech->getFrom()
+                ))->setConstituency($this->constituencyService->getByCongressman(
+                    $speech->getCongressmanId(),
+                    $speech->getFrom()
+                ));
 
             return (new Model\SpeechCongressmanProperties())
                 ->setCongressman($congressmanPartyProperties)
@@ -299,6 +315,16 @@ class SpeechController extends AbstractRestfulController implements
     public function setPlenaryService(Service\Plenary $plenary)
     {
         $this->plenaryService = $plenary;
+        return $this;
+    }
+
+    /**
+     * @param Constituency $constituency
+     * @return $this
+     */
+    public function setConstituencyService(Constituency $constituency)
+    {
+        $this->constituencyService = $constituency;
         return $this;
     }
 }

@@ -2,8 +2,10 @@
 
 namespace AlthingiTest\Controller;
 
+use Althingi\Model\ConstituencyDate;
 use Althingi\Model\SpeechAndPosition;
 use Althingi\Service\Congressman;
+use Althingi\Service\Constituency;
 use Althingi\Service\Party;
 use Althingi\Service\Speech;
 use AlthingiTest\ServiceHelper;
@@ -34,6 +36,7 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
             Speech::class,
             Congressman::class,
             Party::class,
+            Constituency::class
         ]);
     }
 
@@ -72,6 +75,12 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
             ->andReturn(new \Althingi\Model\Party())
             ->getMock();
 
+        $this->getMockService(Constituency::class)
+            ->shouldReceive('getByCongressman')
+            ->andReturn(new ConstituencyDate())
+            ->once()
+            ->getMock();
+
         $this->dispatch('/loggjafarthing/1/thingmal/a/3/raedur/4', 'GET');
 
         $this->assertControllerName(\Althingi\Controller\SpeechController::class);
@@ -106,6 +115,12 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
         $this->getMockService(Party::class)
             ->shouldReceive('getByCongressman')
             ->andReturn(new \Althingi\Model\Party())
+            ->getMock();
+
+        $this->getMockService(Constituency::class)
+            ->shouldReceive('getByCongressman')
+            ->andReturn(new ConstituencyDate())
+            ->times(25)
             ->getMock();
 
         $this->dispatch('/loggjafarthing/1/thingmal/a/3/raedur/4', 'GET');
@@ -215,6 +230,12 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
             ->andReturn(new \Althingi\Model\Party())
             ->once();
 
+        $this->getMockService(Constituency::class)
+            ->shouldReceive('getByCongressman')
+            ->andReturn(new ConstituencyDate())
+            ->once()
+            ->getMock();
+
         $this->dispatch('/loggjafarthing/144/thingmal/b/3/raedur');
 
         $this->assertControllerName(\Althingi\Controller\SpeechController::class);
@@ -254,6 +275,12 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
             ->shouldReceive('getByCongressman')
             ->andReturn(new \Althingi\Model\Party())
             ->once();
+
+        $this->getMockService(Constituency::class)
+            ->shouldReceive('getByCongressman')
+            ->andReturn(new ConstituencyDate())
+            ->once()
+            ->getMock();
 
         $this->dispatch('/loggjafarthing/144/thingmal/a/3/raedur');
 
@@ -300,6 +327,12 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
             ->shouldReceive('getByCongressman')
             ->andReturn(new \Althingi\Model\Party())
             ->times(20);
+
+        $this->getMockService(Constituency::class)
+            ->shouldReceive('getByCongressman')
+            ->andReturn(new ConstituencyDate())
+            ->times(20)
+            ->getMock();
 
         $this->dispatch('/loggjafarthing/144/thingmal/a/3/raedur');
 
