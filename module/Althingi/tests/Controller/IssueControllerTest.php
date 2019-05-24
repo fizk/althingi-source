@@ -2,9 +2,11 @@
 
 namespace AlthingiTest\Controller;
 
+use Althingi\Model\ConstituencyDate;
 use Althingi\Model\Proponent;
 use Althingi\Service\Assembly;
 use Althingi\Service\Congressman;
+use Althingi\Service\Constituency;
 use Althingi\Service\Document;
 use Althingi\Service\Issue;
 use Althingi\Service\Party;
@@ -52,6 +54,7 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
             Vote::class,
             Assembly::class,
             Speech::class,
+            Constituency::class,
         ]);
     }
 
@@ -113,6 +116,12 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
             ->with(100, 200, 'A')
             ->getMock();
 
+        $this->getMockService(Constituency::class)
+            ->shouldReceive('getByCongressman')
+            ->andReturn(new ConstituencyDate())
+            ->twice()
+            ->getMock();
+
 
         $this->dispatch('/loggjafarthing/100/thingmal/a/200', 'GET');
 
@@ -171,6 +180,12 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
             ->andReturn([])
             ->once()
             ->with(100, 200, 'B')
+            ->getMock();
+
+        $this->getMockService(Constituency::class)
+            ->shouldReceive('getByCongressman')
+            ->andReturn(new ConstituencyDate())
+            ->once()
             ->getMock();
 
 
@@ -305,6 +320,12 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
             ->times(25)
             ->getMock()
         ;
+
+        $this->getMockService(Constituency::class)
+            ->shouldReceive('getByCongressman')
+            ->andReturn(new ConstituencyDate())
+            ->times(25)
+            ->getMock();
 
         $this->dispatch('/loggjafarthing/100/thingmal', 'GET');
 

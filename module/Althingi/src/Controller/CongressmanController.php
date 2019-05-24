@@ -5,6 +5,7 @@ namespace Althingi\Controller;
 use Althingi\Form;
 use Althingi\Injector\ServiceAssemblyAwareInterface;
 use Althingi\Injector\ServiceCongressmanAwareInterface;
+use Althingi\Injector\ServiceConstituencyAwareInterface;
 use Althingi\Injector\ServiceIssueAwareInterface;
 use Althingi\Injector\ServiceIssueCategoryAwareInterface;
 use Althingi\Injector\ServicePartyAwareInterface;
@@ -14,9 +15,11 @@ use Althingi\Injector\ServiceVoteAwareInterface;
 use Althingi\Injector\ServiceVoteItemAwareInterface;
 use Althingi\Model\CongressmanAndParties;
 use Althingi\Model\CongressmanAndParty;
+use Althingi\Model\CongressmanPartiesProperties;
 use Althingi\Model\CongressmanPartyProperties;
 use Althingi\Service\Assembly;
 use Althingi\Service\Congressman;
+use Althingi\Service\Constituency;
 use Althingi\Service\Issue;
 use Althingi\Service\IssueCategory;
 use Althingi\Service\Party;
@@ -40,7 +43,8 @@ class CongressmanController extends AbstractRestfulController implements
     ServiceIssueAwareInterface,
     ServiceSpeechAwareInterface,
     ServiceIssueCategoryAwareInterface,
-    ServiceAssemblyAwareInterface
+    ServiceAssemblyAwareInterface,
+    ServiceConstituencyAwareInterface
 {
     use Range;
 
@@ -70,6 +74,9 @@ class CongressmanController extends AbstractRestfulController implements
 
     /** @var \Althingi\Service\IssueCategory */
     private $issueCategoryService;
+
+    /** @var \Althingi\Service\Constituency */
+    private $constituencyService;
 
     /**
      * Get one congressman.
@@ -196,10 +203,15 @@ class CongressmanController extends AbstractRestfulController implements
 
         $assembly = $this->assemblyService->get($assemblyId);
         $congressmen = array_map(function (CongressmanAndParty $congressman) use ($assembly) {
-            return (new CongressmanPartyProperties())
+            return (new CongressmanPartiesProperties())
                 ->setCongressman($congressman)
-                ->setParty($this->partyService->get($congressman->getPartyId()))
-                ->setAssembly($assembly);
+                ->setConstituency($this->constituencyService->getByAssemblyAndCongressman(
+                    $congressman->getCongressmanId(),
+                    $assembly->getAssemblyId()
+                ))->setParties($this->partyService->fetchByCongressmanAndAssembly(
+                    $congressman->getCongressmanId(),
+                    $assembly->getAssemblyId()
+                ))->setAssembly($assembly);
         }, $this->congressmanService->fetchByAssembly($assemblyId, $typeParam));
         $congressmenCount = count($congressmen);
 
@@ -559,6 +571,16 @@ class CongressmanController extends AbstractRestfulController implements
     public function setAssemblyService(Assembly $assembly)
     {
         $this->assemblyService = $assembly;
+        return $this;
+    }
+
+    /**
+     * @param Constituency $constituency
+     * @return $this
+     */
+    public function setConstituencyService(Constituency $constituency)
+    {
+        $this->constituencyService = $constituency;
         return $this;
     }
 }

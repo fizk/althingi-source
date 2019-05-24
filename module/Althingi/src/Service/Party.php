@@ -114,6 +114,30 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
+     * @param int $congressmanId
+     * @param int $assemblyId
+     * @return \Althingi\Model\Party[]
+     */
+    public function fetchByCongressmanAndAssembly(int $congressmanId, int $assemblyId): array
+    {
+
+        $statement = $this->getDriver()->prepare('
+            select P.* from Session S
+                join Party P on (S.party_id = P.party_id)
+                where congressman_id = :congressman_id and assembly_id = :assembly_id
+                group by S.party_id
+                order by S.`from`;
+        ');
+        $statement->execute([
+            'congressman_id' => $congressmanId,
+            'assembly_id' => $assemblyId,
+        ]);
+        return array_map(function ($object) {
+            return (new Hydrator\Party())->hydrate($object, new Model\Party());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
+    }
+
+    /**
      * @param $assemblyId
      * @param array $exclude
      * @return \Althingi\Model\Party[]

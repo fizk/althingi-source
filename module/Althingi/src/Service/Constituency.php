@@ -67,6 +67,32 @@ class Constituency implements DatabaseAwareInterface
     }
 
     /**
+     * Get Constituency by congressman on a specific assembly.
+     *
+     * @param int $congressmanId
+     * @param int $assemblyId
+     * @return \Althingi\Model\ConstituencyDate | null
+     */
+    public function getByAssemblyAndCongressman(int $congressmanId, int $assemblyId): ? Model\ConstituencyDate
+    {
+        $statement = $this->getDriver()->prepare('
+            select C.*, S.`from` as `date` from Session S
+                join Constituency C on (S.constituency_id = C.constituency_id)
+            where S.assembly_id = :assembly_id and S.congressman_id = :congressman_id order by S.`from` limit 0, 1
+            ;
+        ');
+        $statement->execute([
+            'congressman_id' => $congressmanId,
+            'assembly_id' => $assemblyId,
+        ]);
+
+        $object = $statement->fetch(PDO::FETCH_ASSOC);
+        return $object
+            ? (new Hydrator\ConstituencyDate())->hydrate($object, new Model\ConstituencyDate())
+            : null ;
+    }
+
+    /**
      * Get all Constituencies by congressman, order by first occupied.
      *
      * @param int $congressmanId

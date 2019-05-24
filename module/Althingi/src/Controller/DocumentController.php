@@ -2,6 +2,7 @@
 
 namespace Althingi\Controller;
 
+use Althingi\Injector\ServiceConstituencyAwareInterface;
 use Althingi\Model;
 use Althingi\Service;
 use Althingi\Form;
@@ -10,6 +11,7 @@ use Althingi\Injector\ServiceCongressmanAwareInterface;
 use Althingi\Injector\ServiceDocumentAwareInterface;
 use Althingi\Injector\ServicePartyAwareInterface;
 use Althingi\Injector\ServiceVoteAwareInterface;
+use Althingi\Service\Constituency;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\CollectionModel;
 use Rend\View\Model\EmptyModel;
@@ -21,7 +23,8 @@ class DocumentController extends AbstractRestfulController implements
     ServiceVoteAwareInterface,
     ServiceCongressmanAwareInterface,
     ServicePartyAwareInterface,
-    ServiceVoteItemAwareInterface
+    ServiceVoteItemAwareInterface,
+    ServiceConstituencyAwareInterface
 {
     /** @var  \Althingi\Service\Document */
     private $documentService;
@@ -37,6 +40,9 @@ class DocumentController extends AbstractRestfulController implements
 
     /** @var  \Althingi\Service\Party */
     private $partyService;
+
+    /** @var  \Althingi\Service\Constituency */
+    private $constituencyService;
 
     /**
      * @param mixed $id
@@ -71,6 +77,9 @@ class DocumentController extends AbstractRestfulController implements
                 return (new Model\ProponentPartyProperties())
                     ->setCongressman($proponent)
                     ->setParty($this->partyService->getByCongressman(
+                        $proponent->getCongressmanId(),
+                        $document->getDate()
+                    ))->setConstituency($this->constituencyService->getByCongressman(
                         $proponent->getCongressmanId(),
                         $document->getDate()
                     ));
@@ -198,6 +207,16 @@ class DocumentController extends AbstractRestfulController implements
     public function setVoteItemService(Service\VoteItem $voteItem)
     {
         $this->voteItemService = $voteItem;
+        return $this;
+    }
+
+    /**
+     * @param Constituency $constituency
+     * @return $this
+     */
+    public function setConstituencyService(Constituency $constituency)
+    {
+        $this->constituencyService = $constituency;
         return $this;
     }
 }

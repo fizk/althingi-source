@@ -771,6 +771,7 @@ return [
                     ->setVoteService($container->get(Service\Vote::class))
                     ->setSpeechService($container->get(Service\Speech::class))
                     ->setPartyService($container->get(Service\Party::class))
+                    ->setConstituencyService($container->get(Service\Constituency::class))
                     ->setIssueService($container->get(Service\Issue::class))
                     ->setAssemblyService($container->get(Service\Assembly::class))
                     ->setCongressmanService($container->get(Service\Congressman::class))
@@ -816,6 +817,7 @@ return [
                     ->setVoteService($container->get(Service\Vote::class))
                     ->setDocumentService($container->get(Service\Document::class))
                     ->setSearchIssueService($container->get(Service\SearchIssue::class))
+                    ->setConstituencyService($container->get(Service\Constituency::class))
                     ->setIssueStore($container->get(Store\Issue::class));
             },
             Controller\SpeechController::class => function (ServiceManager $container) {
@@ -824,6 +826,7 @@ return [
                     ->setCongressmanService($container->get(Service\Congressman::class))
                     ->setPartyService($container->get(Service\Party::class))
                     ->setPlenaryService($container->get(Service\Plenary::class))
+                    ->setConstituencyService($container->get(Service\Constituency::class))
                     ->setSearchSpeechService($container->get(Service\SearchSpeech::class));
             },
             Controller\VoteController::class => function (ServiceManager $container) {
@@ -835,6 +838,7 @@ return [
                     ->setVoteService($container->get(Service\Vote::class))
                     ->setPartyService($container->get(Service\Party::class))
                     ->setCongressmanService($container->get(Service\Congressman::class))
+                    ->setConstituencyService($container->get(Service\Constituency::class))
                     ->setVoteItemService($container->get(Service\VoteItem::class));
             },
             Controller\CongressmanIssueController::class => function (ServiceManager $container) {
@@ -851,6 +855,7 @@ return [
                     ->setCongressmanService($container->get(Service\Congressman::class))
                     ->setPartyService($container->get(Service\Party::class))
                     ->setVoteService($container->get(Service\Vote::class))
+                    ->setConstituencyService($container->get(Service\Constituency::class))
                     ->setDocumentService($container->get(Service\Document::class));
             },
             Controller\CommitteeController::class => function (ServiceManager $container) {
