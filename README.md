@@ -60,7 +60,13 @@ $ mysql -u root -p althingi < ./auto/db/schema
 
 
 
-
+LOG_FORMAT=color;
+DB_PORT=4406;
+DB_USER=root;
+QUEUE=none;
+DB_HOST=206.189.162.203;
+LOG_PATH=php://stdout;
+DB_PASSWORD=example
 
 ## CommandLine
  

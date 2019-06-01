@@ -107,6 +107,7 @@ class IndexerIssueController extends AbstractActionController implements
         foreach ($issues as $issue) {
             $this->shouldSleep();
             $this->indexIssue($issue);
+            sleep(30);
         }
     }
 
@@ -140,11 +141,12 @@ class IndexerIssueController extends AbstractActionController implements
                     $this->shouldSleep();
                     $addEvent(new AddEvent(new IndexableVotePresenter($vote), ['rows' => 1]));
 
-                    $voteItems = $this->voteItemService->fetchByVote($vote->getVoteId());
-                    foreach ($voteItems as $voteItem) {
-                        $this->shouldSleep();
-                        $addEvent(new AddEvent(new IndexableVoteItemPresenter($voteItem), ['rows' => 1]));
-                    }
+//                    $voteItems = $this->voteItemService->fetchByVote($vote->getVoteId());
+//                    foreach ($voteItems as $voteItem) {
+//                        $this->shouldSleep();
+//                        sleep(1);
+//                        $addEvent(new AddEvent(new IndexableVoteItemPresenter($voteItem), ['rows' => 1]));
+//                    }
                 }
             }
         }

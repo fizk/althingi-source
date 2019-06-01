@@ -6,9 +6,11 @@ use Althingi\Form;
 use Althingi\Injector\ServiceSuperCategoryAwareInterface;
 use Althingi\Service\SuperCategory;
 use Rend\Controller\AbstractRestfulController;
+use Rend\View\Model\CollectionModel;
 use Rend\View\Model\ErrorModel;
 use Rend\View\Model\EmptyModel;
 use Rend\Helper\Http\Range;
+use Rend\View\Model\ItemModel;
 
 class SuperCategoryController extends AbstractRestfulController implements
     ServiceSuperCategoryAwareInterface
@@ -17,6 +19,18 @@ class SuperCategoryController extends AbstractRestfulController implements
 
     /** @var \Althingi\Service\SuperCategory */
     private $superCategoryService;
+
+    public function get($id)
+    {
+        return (new ItemModel($this->superCategoryService->get($id)));
+    }
+
+    public function getList()
+    {
+        return (new CollectionModel(
+            $this->superCategoryService->fetch()
+        ))->setStatus(206);
+    }
 
     /**
      * @param mixed $id
