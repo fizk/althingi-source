@@ -39,6 +39,18 @@ class SuperCategory implements DatabaseAwareInterface
             : null;
     }
 
+    public function fetch(): ? array
+    {
+        $statement = $this->getDriver()->prepare('
+            select * from `SuperCategory`
+        ');
+        $statement->execute();
+
+        return array_map(function ($object) {
+            return (new Hydrator\SuperCategory())->hydrate($object, new Model\SuperCategory());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
+    }
+
     /**
      * Get all super categories on an issue.
      *

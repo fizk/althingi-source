@@ -52,14 +52,14 @@ class AggregateIssueControllerTest extends AbstractHttpControllerTestCase
     /**
      * @covers ::progressAction
      */
-    public function testGet()
+    public function testProgress()
     {
         $this->getMockService(Issue::class)
             ->shouldReceive('fetchProgress')
             ->once()
             ->getMock();
 
-        $this->dispatch('/samantekt/loggjafarthing/1/thingmal/2/ferill', 'GET');
+        $this->dispatch('/samantekt/loggjafarthing/1/thingmal/a/2/ferill', 'GET');
 
         $this->assertControllerClass('IssueController');
         $this->assertActionName('progress');

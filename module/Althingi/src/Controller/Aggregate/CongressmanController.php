@@ -5,6 +5,8 @@ namespace Althingi\Controller\Aggregate;
 use Althingi\Injector\ServiceCongressmanAwareInterface;
 use Althingi\Injector\ServiceConstituencyAwareInterface;
 use Althingi\Injector\ServicePartyAwareInterface;
+use Althingi\Model\CongressmanAndParty;
+use Althingi\Model\CongressmanPartyProperties;
 use Althingi\Service\Congressman;
 use Althingi\Service\Constituency;
 use Althingi\Service\Party;
@@ -30,10 +32,48 @@ class CongressmanController extends AbstractRestfulController implements
     /** @var $issueService \Althingi\Service\Constituency */
     private $constituencyService;
 
+    /**
+     * Get a single congressman.
+     *
+     * If date is provided, party and constituency are provided as well.
+     *
+     * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\CongressmanPartyProperties | \Althingi\Model\Congressman
+     * @query dags
+     */
     public function getAction()
     {
         $id = $this->params('congressman_id', null);
-        return (new ItemModel($this->congressmanService->get($id)));
+        $date = $this->params()->fromQuery('dags', null);
+        $assemblyId = $this->params()->fromQuery('loggjafarthing', null);
+
+        if ($date) {
+            $congressman = (new CongressmanPartyProperties())
+                ->setCongressman($this->congressmanService->get(
+                    $id
+                ))->setConstituency($this->constituencyService->getByCongressman(
+                    $id,
+                    new DateTime($date)
+                ))->setParty($this->partyService->getByCongressman(
+                    $id,
+                    new DateTime($date)
+                ));
+            return (new ItemModel($congressman));
+        } elseif ($assemblyId) {
+            $congressman = (new CongressmanPartyProperties())
+                ->setCongressman($this->congressmanService->get(
+                    $id
+                ))->setConstituency($this->constituencyService->getByCongressmanAndConstituency(
+                    $id,
+                    $assemblyId
+                ))->setParty($this->partyService->getByCongressmanAndAssembly(
+                    $id,
+                    $assemblyId
+                ));
+            return (new ItemModel($congressman));
+        } else {
+            return (new ItemModel($this->congressmanService->get($id)));
+        }
     }
 
     /**

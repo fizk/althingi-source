@@ -10,6 +10,7 @@ use Rend\View\Model\CollectionModel;
 use Rend\View\Model\ErrorModel;
 use Rend\View\Model\EmptyModel;
 use Rend\Helper\Http\Range;
+use Rend\View\Model\ItemModel;
 
 class CategoryController extends AbstractRestfulController implements
     ServiceCategoryAwareInterface
@@ -18,6 +19,19 @@ class CategoryController extends AbstractRestfulController implements
 
     /** @var \Althingi\Service\Category */
     private $categoryService;
+
+    public function get($id)
+    {
+        return (new ItemModel($this->categoryService->get($id)))->setStatus(200);
+    }
+
+    public function getList()
+    {
+        $id = $this->params('super_category_id');
+        return (new CollectionModel(
+            $this->categoryService->fetch($id)
+        ))->setStatus(206);
+    }
 
     /**
      * @param mixed $id

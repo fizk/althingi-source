@@ -534,6 +534,16 @@ return [
                 ],
                 'may_terminate' => true,
                 'child_routes' => [
+                    'atkvaedi' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route'    => '/atkvaedi/:vote_id',
+                            'defaults' => [
+                                'controller' => Aggregate\VoteController::class,
+                                'action' => 'get'
+                            ],
+                        ],
+                    ],
                     'thingmal-flokkar-stada' => [
                         'type' => Segment::class,
                         'options' => [
@@ -557,13 +567,14 @@ return [
                     'thingmal' => [
                         'type' => Segment::class,
                         'options' => [
-                            'route'    => '/loggjafarthing/:assembly_id/thingmal[/:issue_id]',
+                            'route'    => '/loggjafarthing/:assembly_id/thingmal[/:category/:issue_id]',
                             'constraints' => [
+                                'category' => '[abAB]',
                                 'issue_id' => '[0-9]+',
                             ],
                             'defaults' => [
-                                'controller' => Aggregate\DocumentController::class, //todo
-                                'identifier' => 'document_id'
+                                'controller' => Aggregate\IssueController::class, //todo
+                                'identifier' => 'issue_id'
                             ],
                         ],
                         'may_terminate' => true,
@@ -636,8 +647,6 @@ return [
                             ],
                         ],
                     ],
-
-
                     'thingmenn' => [
                         'type' => Segment::class,
                         'options' => [
@@ -961,6 +970,10 @@ return [
                 return (new Aggregate\IssueCategoryController())
                     ->setCategoryService($container->get(Service\Category::class))
                     ->setSuperCategoryService($container->get(Service\SuperCategory::class));
+            },
+            Aggregate\VoteController::class => function (ServiceManager $container) {
+                return (new Aggregate\VoteController())
+                    ->setVoteService($container->get(Service\Vote::class));
             },
             Controller\InflationController::class => function (ServiceManager $container) {
                 return (new Controller\InflationController())

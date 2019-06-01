@@ -9,6 +9,7 @@ use Rend\View\Model\CollectionModel;
 use Rend\Helper\Http\Range;
 use Althingi\Model\IssueTypeAndStatus;
 use Althingi\Model\IssueTypeStatus;
+use Rend\View\Model\ItemModel;
 
 class IssueController extends AbstractRestfulController implements
     ServiceIssueAwareInterface
@@ -17,6 +18,17 @@ class IssueController extends AbstractRestfulController implements
 
     /** @var $issueService \Althingi\Service\Issue */
     private $issueService;
+
+    public function get($id)
+    {
+        $category = $this->params('category', 'A');
+        $assemblyId = $this->params('assembly_id', 'A');
+        $issueId = $this->params('issue_id', 'A');
+
+        return new ItemModel(
+            $this->issueService->get($issueId, $assemblyId, $category)
+        );
+    }
 
     /**
      * @return CollectionModel

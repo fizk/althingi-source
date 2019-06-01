@@ -40,6 +40,18 @@ class Category implements DatabaseAwareInterface
             : null;
     }
 
+    public function fetch(int $superId): ? array
+    {
+        $statement = $this->getDriver()->prepare('
+            select * from `Category` where super_category_id = :super_category_id
+        ');
+        $statement->execute(['super_category_id' => $superId]);
+
+        return array_map(function ($object) {
+            return (new Hydrator\Category())->hydrate($object, new Model\Category());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
+    }
+
     /**
      * @param $assemblyId
      * @return \Althingi\Model\CategoryAndCount[]
