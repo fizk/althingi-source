@@ -10,7 +10,6 @@ use Rend\Helper\Http\Range;
 use Althingi\Model\IssueTypeAndStatus;
 use Althingi\Model\IssueTypeStatus;
 use Rend\View\Model\ItemModel;
-//use Zend\Mvc\Controller\AbstractActionController;
 
 class IssueController extends AbstractRestfulController implements
     ServiceIssueAwareInterface
