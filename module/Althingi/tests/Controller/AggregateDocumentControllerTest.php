@@ -51,11 +51,12 @@ class AggregateDocumentControllerTest extends AbstractHttpControllerTestCase
             ->once()
             ->getMock();
 
-        $this->dispatch('/samantekt/loggjafarthing/1/thingmal/2/thingskjol/3', 'GET');
+        $this->dispatch('/samantekt/loggjafarthing/1/thingmal/a/2/thingskjol/3', 'GET');
 
         $this->assertControllerName(DocumentController::class);
         $this->assertActionName('get');
         $this->assertResponseStatusCode(200);
+        $this->assertTrue(true);
     }
 
     /**
@@ -68,7 +69,7 @@ class AggregateDocumentControllerTest extends AbstractHttpControllerTestCase
             ->once()
             ->getMock();
 
-        $this->dispatch('/samantekt/loggjafarthing/1/thingmal/2/thingskjol', 'GET');
+        $this->dispatch('/samantekt/loggjafarthing/1/thingmal/a/2/thingskjol', 'GET');
 
         $this->assertControllerName(DocumentController::class);
         $this->assertActionName('getList');
@@ -86,7 +87,7 @@ class AggregateDocumentControllerTest extends AbstractHttpControllerTestCase
             ->once()
             ->getMock();
 
-        $this->dispatch('/samantekt/loggjafarthing/1/thingmal/2/thingskjol/3/thingmenn', 'GET');
+        $this->dispatch('/samantekt/loggjafarthing/1/thingmal/a/2/thingskjol/3/thingmenn', 'GET');
 
         $this->assertControllerName(DocumentController::class);
         $this->assertActionName('proponents');

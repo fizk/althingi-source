@@ -78,11 +78,6 @@ class AssemblyController extends AbstractRestfulController implements
      */
     public function get($id)
     {
-//        if (($assembly = $this->assemblyStore->get($id)) !== null) {
-//            return (new ItemModel($assembly))
-//                ->setStatus(200);
-//        }
-
         if (($assembly = $this->assemblyService->get($id)) != null) {
             $assemblyProperties = (new Model\AssemblyProperties())
                 ->setAssembly($assembly);
