@@ -510,7 +510,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
 
         $this->getMockService(Congressman::class)
             ->shouldReceive('fetchTimeByAssembly')
-            ->with(1, null, 'desc', ['A', 'B'])
+            ->with(1, 5, 'desc', ['A', 'B'])
             ->once()
             ->andReturn([
                 (new \Althingi\Model\Congressman())->setCongressmanId(1)
@@ -542,7 +542,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
 
         $this->getMockService(Congressman::class)
             ->shouldReceive('fetchIssueTypeCountByAssembly')
-            ->with(1, null, ['q', 'm'], 'desc')
+            ->with(1, 5, ['q', 'm'], 'desc')
             ->once()
             ->andReturn([
                 (new \Althingi\Model\Congressman())->setCongressmanId(1)
