@@ -13,6 +13,7 @@ use Althingi\Injector\ServiceSessionAwareInterface;
 use Althingi\Injector\ServiceSpeechAwareInterface;
 use Althingi\Injector\ServiceVoteAwareInterface;
 use Althingi\Injector\ServiceVoteItemAwareInterface;
+use Althingi\Injector\StoreCongressmanAwareInterface;
 use Althingi\Model\CongressmanAndParties;
 use Althingi\Model\CongressmanAndParty;
 use Althingi\Model\CongressmanPartiesProperties;
@@ -44,7 +45,8 @@ class CongressmanController extends AbstractRestfulController implements
     ServiceSpeechAwareInterface,
     ServiceIssueCategoryAwareInterface,
     ServiceAssemblyAwareInterface,
-    ServiceConstituencyAwareInterface
+    ServiceConstituencyAwareInterface,
+    StoreCongressmanAwareInterface
 {
     use Range;
 
@@ -77,6 +79,9 @@ class CongressmanController extends AbstractRestfulController implements
 
     /** @var \Althingi\Service\Constituency */
     private $constituencyService;
+
+    /** @var \Althingi\Store\Congressman */
+    private $congressmanStore;
 
     /**
      * Get one congressman.
@@ -233,23 +238,14 @@ class CongressmanController extends AbstractRestfulController implements
     {
         $assemblyId = $this->params('id');
         $order = $this->params()->fromQuery('rod', 'desc');
-        $size = $this->params()->fromQuery('fjoldi');
-        $assembly = $this->assemblyService->get($assemblyId);
-        $congressmen = $this->congressmanService->fetchTimeByAssembly($assemblyId, $size, $order, ['A', 'B']);
+        $size = $this->params()->fromQuery('fjoldi', 5);
 
-        $collection = array_map(function (\Althingi\Model\Congressman $congressman) use ($assembly) {
-            return (new CongressmanPartyProperties())
-                ->setCongressman($congressman)
-                ->setAssembly($assembly)
-                ->setParty(
-                    $this->partyService->getByCongressman($congressman->getCongressmanId(), $assembly->getFrom())
-                );
-        }, $congressmen);
-        $collectionCount = count($collection);
+//      $collection = $this->fetchAssemblyTimeFromStore($assemblyId, $size, $order === 'desc' ? -1 : 1);
+        $collection = $this->fetchAssemblyTimeFromService($assemblyId, $size, $order);
 
         return (new CollectionModel($collection))
             ->setStatus(206)
-            ->setRange(0, $collectionCount, $collectionCount);
+            ->setRange(0, count($collection), count($collection));
     }
 
     /**
@@ -264,23 +260,14 @@ class CongressmanController extends AbstractRestfulController implements
     {
         $assemblyId = $this->params('id');
         $order = $this->params()->fromQuery('rod', 'desc');
-        $size = $this->params()->fromQuery('fjoldi');
-        $assembly = $this->assemblyService->get($assemblyId);
-        $congressmen = $this->congressmanService->fetchIssueTypeCountByAssembly($assemblyId, $size, ['q', 'm'], $order);
+        $size = $this->params()->fromQuery('fjoldi', 5);
 
-        $collection = array_map(function (\Althingi\Model\Congressman $congressman) use ($assembly) {
-            return (new CongressmanPartyProperties())
-                ->setCongressman($congressman)
-                ->setAssembly($assembly)
-                ->setParty(
-                    $this->partyService->getByCongressman($congressman->getCongressmanId(), $assembly->getFrom())
-                );
-        }, $congressmen);
-        $collectionCount = count($collection);
+//        $collection = $this->fetchAssemblyQuestionsFromStore($assemblyId, $size, $order === 'desc' ? -1 : 1);
+        $collection = $this->fetchAssemblyQuestionsFromService($assemblyId, $size, $order);
 
         return (new CollectionModel($collection))
             ->setStatus(206)
-            ->setRange(0, $collectionCount, $collectionCount);
+            ->setRange(0, count($collection), count($collection));
     }
 
     /**
@@ -582,5 +569,91 @@ class CongressmanController extends AbstractRestfulController implements
     {
         $this->constituencyService = $constituency;
         return $this;
+    }
+
+    /**
+     * @param \Althingi\Store\Congressman $congressman
+     * @return $this;
+     */
+    public function setCongressmanStore(\Althingi\Store\Congressman $congressman)
+    {
+        $this->congressmanStore = $congressman;
+        return $this;
+    }
+
+    /**
+     * Gets top X speakers for an assembly from the Store
+     *
+     * @param int $assemblyId
+     * @param int $size
+     * @param int $order
+     * @return array
+     */
+    private function fetchAssemblyTimeFromStore(int $assemblyId, int $size, int $order): array
+    {
+        return $this->congressmanStore->fetchTimeByAssembly($assemblyId, $size, $order);
+    }
+
+    /**
+     * Gets top X speakers for an assembly from the Service
+     *
+     * @param int $assemblyId
+     * @param int $size
+     * @param null|string $order
+     * @return array
+     * @deprecated
+     * @see CongressmanController::fetchAssemblyTimeFromStore
+     */
+    private function fetchAssemblyTimeFromService(int $assemblyId, int $size, ?string $order): array
+    {
+        $assembly = $this->assemblyService->get($assemblyId);
+        $congressmen = $this->congressmanService->fetchTimeByAssembly($assemblyId, $size, $order, ['A', 'B']);
+
+        return array_map(function (\Althingi\Model\Congressman $congressman) use ($assembly) {
+            return (new CongressmanPartyProperties())
+                ->setCongressman($congressman)
+                ->setAssembly($assembly)
+                ->setParty(
+                    $this->partyService->getByCongressman($congressman->getCongressmanId(), $assembly->getFrom())
+                );
+        }, $congressmen);
+    }
+
+    /**
+     * @param int $assemblyId
+     * @param int $size
+     * @param int $order
+     * @return array
+     */
+    private function fetchAssemblyQuestionsFromStore(int $assemblyId, int $size, int $order): array
+    {
+        return $this->congressmanStore->fetchQuestionByAssembly($assemblyId, $size, $order);
+    }
+
+    /**
+     * @param int $assemblyId
+     * @param int $size
+     * @param int $order
+     * @return array
+     * @deprecated
+     */
+    private function fetchAssemblyQuestionsFromService(int $assemblyId, int $size, string $order): array
+    {
+        $assembly = $this->assemblyService->get($assemblyId);
+        $congressmen = $this->congressmanService->fetchIssueTypeCountByAssembly(
+            $assemblyId,
+            $size,
+            ['q', 'm'],
+            $order
+        );
+
+        return array_map(function (\Althingi\Model\Congressman $congressman) use ($assembly) {
+            return (new CongressmanPartyProperties())
+                ->setCongressman($congressman)
+                ->setAssembly($assembly)
+                ->setParty(
+                    $this->partyService->getByCongressman($congressman->getCongressmanId(), $assembly->getFrom())
+                );
+        }, $congressmen);
     }
 }

@@ -135,6 +135,10 @@ return [
             return (new Store\Issue())
                 ->setStore($sm->get(\MongoDB\Database::class));
         },
+        Store\Congressman::class => function (ServiceManager $sm) {
+            return (new Store\Congressman())
+                ->setStore($sm->get(\MongoDB\Database::class));
+        },
 
         PDO::class => function (ServiceManager $sm) {
             $dbHost = getenv('DB_HOST') ?: 'localhost';
