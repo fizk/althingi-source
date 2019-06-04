@@ -179,23 +179,34 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
             ? "limit 0, {$size}"
             : '';
         $types = count($type) > 0
-            ? "and I.`type` in (" . implode(', ', array_map(function ($i) {
+            ? "where I.`type` in (" . implode(', ', array_map(function ($i) {
                 return "'{$i}'";
             }, $type)) . ")"
             : '';
 
         $statement = $this->getDriver()->prepare("
-            select C.*, count(*) as `value` from `Document_has_Congressman` DC
-                left join `Issue` I on (
-                  I.`issue_id` = DC.`issue_id` and I.`assembly_id` = :assembly_id and I.category = 'A'
+            select count(*) as `value`, A.congressman_id, I.type, C.* from (
+                select DhC.* from Document D
+                    join Document_has_Congressman DhC on (
+                        D.document_id = DhC.document_id and
+                        D.issue_id = DhC.issue_id and
+                        D.assembly_id = DhC.assembly_id and
+                        D.category = DhC.category
+                    )
+                    where D.assembly_id = :assembly_id
+                group by D.issue_id
+                having min(D.date)
+            ) as A
+                join Issue I on (
+                    A.issue_id = I.issue_id and
+                    A.assembly_id = I.assembly_id and
+                    A.category = I.category
                 )
-                join `Congressman` C on (DC.congressman_id = C.congressman_id)
-            where DC.`assembly_id` = :assembly_id 
-                and DC.`order` = 1
+                join Congressman C on (A.congressman_id = C.congressman_id)
                 {$types}
-            group by DC.`congressman_id`
-            order by `value` {$order} {$limit};
+            group by A.congressman_id order by `value` {$order} {$limit}
         ");
+
         $statement->execute([
             'assembly_id' => $assemblyId,
         ]);
