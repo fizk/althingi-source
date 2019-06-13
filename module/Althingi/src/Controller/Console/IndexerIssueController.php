@@ -102,7 +102,7 @@ class IndexerIssueController extends AbstractActionController implements
 
         $addEvent = new Add($this->getQueue(), $this->getLogger());
         $addEvent(new AddEvent(new IndexableAssemblyPresenter($assembly), ['rows' => 1]));
-        usleep(500000);
+        usleep(150000);
 
         $issues = $this->issueService->fetchAllByAssembly($assembly->getAssemblyId());
         foreach ($issues as $issue) {
@@ -114,37 +114,37 @@ class IndexerIssueController extends AbstractActionController implements
     {
         $addEvent = new Add($this->getQueue(), $this->getLogger());
         $addEvent(new AddEvent(new IndexableIssuePresenter($issue), ['rows' => 1]));
-        usleep(500000);
+        usleep(150000);
 
         $categories = $this->issueCategoryService->fetchByIssue($issue->getAssemblyId(), $issue->getIssueId());
         foreach ($categories as $category) {
             $addEvent(new AddEvent(new IndexableIssueCategoryPresenter($category), ['rows' => 1]));
-            usleep(500000);
+            usleep(150000);
         }
 
         if ($issue->isA()) {
             $documents = $this->documentService->fetchByIssue($issue->getAssemblyId(), $issue->getIssueId());
             foreach ($documents as $document) {
                 $addEvent(new AddEvent(new IndexableDocumentPresenter($document), ['rows' => 1]));
-                usleep(500000);
+                usleep(150000);
 
                 $proponents = $this->congressmanDocumentService
                     ->fetchByDocument($issue->getAssemblyId(), $issue->getIssueId(), $document->getDocumentId());
                 foreach ($proponents as $proponent) {
                     $addEvent(new AddEvent(new IndexableCongressmanDocumentPresenter($proponent), ['rows' => 1]));
-                    usleep(500000);
+                    usleep(150000);
                 }
 
                 $votes = $this->voteService
                     ->fetchByDocument($issue->getAssemblyId(), $issue->getIssueId(), $document->getDocumentId());
                 foreach ($votes as $vote) {
                     $addEvent(new AddEvent(new IndexableVotePresenter($vote), ['rows' => 1]));
-                    usleep(500000);
+                    usleep(150000);
 
                     $voteItems = $this->voteItemService->fetchByVote($vote->getVoteId());
                     foreach ($voteItems as $voteItem) {
                         $addEvent(new AddEvent(new IndexableVoteItemPresenter($voteItem), ['rows' => 1]));
-                        usleep(500000);
+                        usleep(150000);
                     }
                 }
             }
@@ -154,7 +154,7 @@ class IndexerIssueController extends AbstractActionController implements
             ->fetchAllByIssue($issue->getAssemblyId(), $issue->getIssueId(), $issue->getCategory());
         foreach ($speeches as $speech) {
             $addEvent(new AddEvent(new IndexableSpeechPresenter($speech), ['rows' => 1]));
-            usleep(500000);
+            usleep(150000);
         }
     }
 
