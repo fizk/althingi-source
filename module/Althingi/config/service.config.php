@@ -139,6 +139,22 @@ return [
             return (new Store\Congressman())
                 ->setStore($sm->get(\MongoDB\Database::class));
         },
+        Store\Vote::class => function (ServiceManager $sm) {
+            return (new Store\Vote())
+                ->setStore($sm->get(\MongoDB\Database::class));
+        },
+        Store\Speech::class => function (ServiceManager $sm) {
+            return (new Store\Speech())
+                ->setStore($sm->get(\MongoDB\Database::class));
+        },
+        Store\Party::class => function (ServiceManager $sm) {
+            return (new Store\Party())
+                ->setStore($sm->get(\MongoDB\Database::class));
+        },
+        Store\Category::class => function (ServiceManager $sm) {
+            return (new Store\Category())
+                ->setStore($sm->get(\MongoDB\Database::class));
+        },
 
         PDO::class => function (ServiceManager $sm) {
             $dbHost = getenv('DB_HOST') ?: 'localhost';
@@ -282,13 +298,17 @@ return [
         },
 
         \MongoDB\Database::class => function (ServiceManager $sm) {
+            $db = getenv('STORAGE_DB') ? : 'althingi';
             $host = getenv('STORAGE_HOST') ? : 'localhost';
             $port = getenv('STORAGE_PORT') ? : 27017;
+            $user = getenv('STORAGE_USER') ? rawurlencode(getenv('STORAGE_USER')) : null;
+            $pwd = getenv('STORAGE_PASSWORD') ? rawurlencode(getenv('STORAGE_PASSWORD')) : null;
 
-            //mongodb://${user}:${pwd}@127.0.0.1:27017"
-
-            return (new \MongoDB\Client("mongodb://{$host}:{$port}"))
-                ->selectDatabase('althingi');
+            return (new \MongoDB\Client(
+                $user && $pwd
+                    ? "mongodb://{$user}:{$pwd}@{$host}:{$port}/{$db}"
+                    : "mongodb://{$host}:{$port}/{$db}"
+            ))->selectDatabase('althingi');
         }
     ],
 ];

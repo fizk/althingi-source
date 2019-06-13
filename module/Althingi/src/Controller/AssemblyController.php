@@ -3,7 +3,17 @@
 namespace Althingi\Controller;
 
 use Althingi\Injector\ServiceCongressmanAwareInterface;
+use Althingi\Injector\StoreCategoryAwareInterface;
+use Althingi\Injector\StoreIssueAwareInterface;
+use Althingi\Injector\StorePartyAwareInterface;
+use Althingi\Injector\StoreSpeechAwareInterface;
+use Althingi\Injector\StoreVoteAwareInterface;
 use Althingi\Service\Congressman;
+use Althingi\Store\Category;
+use Althingi\Store\Issue;
+use Althingi\Store\Party;
+use Althingi\Store\Speech;
+use Althingi\Store\Vote;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ErrorModel;
 use Rend\View\Model\EmptyModel;
@@ -35,7 +45,12 @@ class AssemblyController extends AbstractRestfulController implements
     ServiceCabinetAwareInterface,
     ServiceCategoryAwareInterface,
     ServiceElectionAwareInterface,
-    StoreAssemblyAwareInterface
+    StoreAssemblyAwareInterface,
+    StoreIssueAwareInterface,
+    StoreVoteAwareInterface,
+    StoreSpeechAwareInterface,
+    StorePartyAwareInterface,
+    StoreCategoryAwareInterface
 {
     use Range;
 
@@ -45,29 +60,44 @@ class AssemblyController extends AbstractRestfulController implements
     /** @var $issueService \Althingi\Service\Issue */
     private $issueService;
 
-    /** @var $issueService \Althingi\Service\Vote */
+    /** @var $voteService \Althingi\Service\Vote */
     private $voteService;
 
-    /** @var $issueService \Althingi\Service\Speech */
+    /** @var $speechService \Althingi\Service\Speech */
     private $speechService;
 
-    /** @var $issueService \Althingi\Service\Party */
+    /** @var $partyService \Althingi\Service\Party */
     private $partyService;
 
-    /** @var $issueService \Althingi\Service\Congressman */
+    /** @var $congressmanService \Althingi\Service\Congressman */
     private $congressmanService;
 
-    /** @var $issueService \Althingi\Service\Cabinet */
+    /** @var $cabinetService \Althingi\Service\Cabinet */
     private $cabinetService;
 
-    /** @var $issueService \Althingi\Service\Category */
+    /** @var $categoryService \Althingi\Service\Category */
     private $categoryService;
 
-    /** @var $issueService \Althingi\Service\Election */
+    /** @var $electionService \Althingi\Service\Election */
     private $electionService;
 
-    /** @var $issueService \Althingi\Store\Assembly */
+    /** @var $assemblyStore \Althingi\Store\Assembly */
     private $assemblyStore;
+
+    /** @var $issueStore \Althingi\Store\Issue */
+    private $issueStore;
+
+    /** @var $voteStore \Althingi\Store\Vote */
+    private $voteStore;
+
+    /** @var $speechStore \Althingi\Store\Speech */
+    private $speechStore;
+
+    /** @var $partyStore \Althingi\Store\Party */
+    private $partyStore;
+
+    /** @var $categoryStore \Althingi\Store\Category */
+    private $categoryStore;
 
     /**
      * Get one Assembly.
@@ -181,35 +211,12 @@ class AssemblyController extends AbstractRestfulController implements
     public function statisticsAction()
     {
         $assembly = $this->assemblyService->get($this->params('id'));
-
-        $response = (new MOdel\AssemblyStatusProperties())
-            ->setBills($this->issueService->fetchNonGovernmentBillStatisticsByAssembly($assembly->getAssemblyId()))
-            ->setGovernmentBills(
-                $this->issueService->fetchGovernmentBillStatisticsByAssembly($assembly->getAssemblyId())
-            )
-            ->setTypes($this->issueService->fetchCountByCategory($assembly->getAssemblyId()))
-            ->setVotes(DateAndCountSequence::buildDateRange(
-                $assembly->getFrom(),
-                $assembly->getTo(),
-                $this->voteService->fetchFrequencyByAssembly($assembly->getAssemblyId())
-            ))
-            ->setSpeeches(DateAndCountSequence::buildDateRange(
-                $assembly->getFrom(),
-                $assembly->getTo(),
-                $this->speechService->fetchFrequencyByAssembly($assembly->getAssemblyId(), ['A', 'B'])
-            ))
-            ->setAverageAge($this->congressmanService->getAverageAgeByAssembly(
-                $assembly->getAssemblyId(),
-                $assembly->getFrom()
-            ))
-            ->setPartyTimes($this->partyService->fetchTimeByAssembly($assembly->getAssemblyId(), ['A', 'B']))
-            ->setCategories($this->categoryService->fetchByAssembly($assembly->getAssemblyId())) //@todo remove this
-            ->setElection($this->electionService->getByAssembly($assembly->getAssemblyId()))
-            ->setElectionResults($this->partyService->fetchElectedByAssembly($assembly->getAssemblyId()))
-            ;
+//        $response = $this->fetchStatisticsFromService($assembly);
+        $response = $this->fetchStatisticsFromStore($assembly);
 
         return (new ItemModel($response))
-            ->setStatus(200);
+            ->setStatus(200)
+            ->setOption('X-Source', 'Store');
     }
 
     /**
@@ -362,5 +369,109 @@ class AssemblyController extends AbstractRestfulController implements
     {
         $this->congressmanService = $congressman;
         return $this;
+    }
+
+    /**
+     * @param \Althingi\Store\Issue $issue
+     * @return $this
+     */
+    public function setIssueStore(Issue $issue)
+    {
+        $this->issueStore = $issue;
+        return $this;
+    }
+
+    /**
+     * @param \Althingi\Store\Vote $vote
+     * @return $this;
+     */
+    public function setVoteStore(Vote $vote)
+    {
+        $this->voteStore = $vote;
+        return $this;
+    }
+
+    /**
+     * @param \Althingi\Store\Speech $speech
+     * @return $this;
+     */
+    public function setSpeechStore(Speech $speech)
+    {
+        $this->speechStore = $speech;
+        return $this;
+    }
+
+    /**
+     * @param \Althingi\Store\Party $party
+     * @return $this;
+     */
+    public function setPartyStore(Party $party)
+    {
+        $this->partyStore = $party;
+        return $this;
+    }
+
+    /**
+     * @param \Althingi\Store\Category $category
+     * @return $this;
+     */
+    public function setCategoryStore(Category $category)
+    {
+        $this->categoryStore = $category;
+        return $this;
+    }
+
+    /**
+     * Gets Statistics from Service ie. DB.
+     *
+     * @param Model\Assembly $assembly
+     * @return Model\AssemblyStatusProperties
+     * @deprecated
+     */
+    private function fetchStatisticsFromService(Model\Assembly $assembly)
+    {
+        return (new Model\AssemblyStatusProperties())
+            ->setVotes(DateAndCountSequence::buildDateRange(
+                $assembly->getFrom(),
+                $assembly->getTo(),
+                $this->voteService->fetchFrequencyByAssembly($assembly->getAssemblyId())
+            ))
+            ->setSpeeches(DateAndCountSequence::buildDateRange(
+                $assembly->getFrom(),
+                $assembly->getTo(),
+                $this->speechService->fetchFrequencyByAssembly($assembly->getAssemblyId(), ['A', 'B'])
+            ))
+            ->setAverageAge($this->congressmanService->getAverageAgeByAssembly(
+                $assembly->getAssemblyId(),
+                $assembly->getFrom()
+            ))
+            ->setPartyTimes($this->partyService->fetchTimeByAssembly($assembly->getAssemblyId(), ['A', 'B']))
+            ->setElection($this->electionService->getByAssembly($assembly->getAssemblyId()))
+            ->setElectionResults($this->partyService->fetchElectedByAssembly($assembly->getAssemblyId()))
+        ;
+    }
+
+    /**
+     * Gets Statistics from Service ie. MongoDB.
+     *
+     * @param Model\Assembly $assembly
+     * @return Model\AssemblyStatusProperties
+     * @todo the average-age is still being calculated from the DB.
+     * @todo the Election results are not being fetched at all.
+     */
+    private function fetchStatisticsFromStore(Model\Assembly $assembly)
+    {
+        return (new Model\AssemblyStatusProperties())
+            ->setVotes($this->voteStore->fetchFrequencyByAssembly($assembly->getAssemblyId()))
+            ->setSpeeches($this->speechStore->fetchFrequencyByAssembly($assembly->getAssemblyId()))
+            ->setAverageAge($this->congressmanService->getAverageAgeByAssembly(
+                $assembly->getAssemblyId(),
+                $assembly->getFrom()
+            ))
+            ->setPartyTimes($this->partyStore->fetchTimeByAssembly($assembly->getAssemblyId()))
+
+            ->setElection(null)
+            ->setElectionResults([])
+        ;
     }
 }

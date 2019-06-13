@@ -95,7 +95,7 @@ return [
                                     'route'    => '/thingsalyktanir',
                                     'defaults' => [
                                         'controller' => Controller\CongressmanController::class,
-                                        'action' => 'assembly-resolutions'
+                                        'action' => 'assembly-propositions'
                                     ],
                                 ],
                             ],
@@ -210,6 +210,20 @@ return [
                                 'controller' => Controller\AssemblyController::class,
                                 'action' => 'statistics'
                             ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'thingmal' => [
+                                'type' => Literal::class,
+                                'options' => [
+                                    'route'    => '/thingmal',
+                                    'defaults' => [
+                                        'controller' => Controller\IssueController::class,
+                                        'action' => 'statistics'
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                            ]
                         ],
                     ],
                     'raduneyti' => [
@@ -773,6 +787,11 @@ return [
                     ->setSpeechService($container->get(Service\Speech::class))
                     ->setVoteService($container->get(Service\Vote::class))
                     ->setAssemblyStore($container->get(Store\Assembly::class))
+                    ->setIssueStore($container->get(Store\Issue::class))
+                    ->setVoteStore($container->get(Store\Vote::class))
+                    ->setSpeechStore($container->get(Store\Speech::class))
+                    ->setPartyStore($container->get(Store\Party::class))
+                    ->setCategoryStore($container->get(Store\Category::class))
                     ;
             },
             Controller\CongressmanController::class => function (ServiceManager $container) {
@@ -828,7 +847,10 @@ return [
                     ->setDocumentService($container->get(Service\Document::class))
                     ->setSearchIssueService($container->get(Service\SearchIssue::class))
                     ->setConstituencyService($container->get(Service\Constituency::class))
-                    ->setIssueStore($container->get(Store\Issue::class));
+                    ->setCategoryService($container->get(Service\Category::class))
+                    ->setIssueStore($container->get(Store\Issue::class))
+                    ->setCategoryStore($container->get(Store\Category::class))
+                    ;
             },
             Controller\SpeechController::class => function (ServiceManager $container) {
                 return (new Controller\SpeechController())

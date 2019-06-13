@@ -54,7 +54,7 @@ class DateAndCount implements ModelInterface
     public function toArray()
     {
         return [
-            'date' => $this->date ? $this->date->format('Y-m-d H:i:s') : null,
+            'date' => $this->date ? $this->date->format('c') : null,
             'count' => $this->count
         ];
     }
