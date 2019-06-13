@@ -2,15 +2,17 @@
 
 namespace Althingi\Controller;
 
+use Althingi\Injector\ServiceCategoryAwareInterface;
 use Althingi\Injector\ServiceConstituencyAwareInterface;
+use Althingi\Injector\StoreCategoryAwareInterface;
 use Althingi\Service\Constituency;
+use Althingi\Store\Category;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ErrorModel;
 use Rend\View\Model\EmptyModel;
 use Rend\View\Model\ItemModel;
 use Rend\View\Model\CollectionModel;
 use Rend\Helper\Http\Range;
-//use Althingi\Utils\DateAndCountSequence;
 use Althingi\Utils\Transformer;
 use Althingi\Injector\ServiceSearchIssueAwareInterface;
 use Althingi\Injector\StoreIssueAwareInterface;
@@ -25,6 +27,7 @@ use Althingi\Form;
 use Althingi\Model;
 use Althingi\Service;
 use Althingi\Store;
+use Rend\View\Model\ModelInterface;
 
 class IssueController extends AbstractRestfulController implements
     ServiceCongressmanAwareInterface,
@@ -36,7 +39,9 @@ class IssueController extends AbstractRestfulController implements
     ServiceSpeechAwareInterface,
     ServiceSearchIssueAwareInterface,
     ServiceConstituencyAwareInterface,
-    StoreIssueAwareInterface
+    ServiceCategoryAwareInterface,
+    StoreIssueAwareInterface,
+    StoreCategoryAwareInterface
 {
     use Range;
 
@@ -67,8 +72,14 @@ class IssueController extends AbstractRestfulController implements
     /** @var  \Althingi\Service\Constituency */
     private $constituencyService;
 
+    /** @var  \Althingi\Service\Category */
+    private $categoryService;
+
     /** @var  \Althingi\Store\Issue */
     private $issueStore;
+
+    /** @var  \Althingi\Store\Category */
+    private $categoryStore;
 
     /**
      * Get one issie.
@@ -84,8 +95,15 @@ class IssueController extends AbstractRestfulController implements
         $issueId = $this->params('issue_id', 0);
         $category = strtoupper($this->params('category', 'a'));
 
-        return $this->getFromDatabase($assemblyId, $issueId, $category);
-//        return $this->getFromStore($assemblyId, $issueId, $category);
+//        $issue = $this->getFromDatabase($assemblyId, $issueId, $category);
+        $issue = $this->getFromStore($assemblyId, $issueId, $category);
+
+        if (! $issue) {
+            return $this->notFoundAction();
+        }
+
+        return (new ItemModel($issue))
+            ->setOption('X-Source', 'Store');
     }
 
     /**
@@ -108,8 +126,8 @@ class IssueController extends AbstractRestfulController implements
             return strtoupper($category);
         }, explode(',', $this->params('category', 'a,b')));
 
-        return $this->getListFromDatabase($assemblyId, $types, $kinds, $categories, $orderQuery);
-//        return $this->getListFromStore($assemblyId, $types, $kinds, $categories, $orderQuery);
+//        return $this->getListFromDatabase($assemblyId, $types, $kinds, $categories, $orderQuery);
+        return $this->getListFromStore($assemblyId, $types, $kinds, $categories, $orderQuery);
     }
 
     /**
@@ -197,52 +215,40 @@ class IssueController extends AbstractRestfulController implements
     public function speechTimesAction()
     {
         $assemblyId = $this->params('id', 0);
-        $assembly = $this->assemblyService->get($assemblyId);
-        $order = $this->params()->fromQuery('rod', null);
-        $size = $this->params()->fromQuery('fjoldi', null);
+        $order = $this->params()->fromQuery('rod', 'desc');
+        $size = $this->params()->fromQuery('fjoldi', 5);
         $categories = array_map(function ($category) {
             return strtoupper($category);
         }, explode(',', $this->params('category', 'a,b')));
-        $collection = $this->issueService->fetchByAssemblyAndSpeechTime(
+
+        $collection = $this->fetchSpeechTimesFromStore(
             $assemblyId,
             $size,
-            $order,
+            $order === 'desc' ? -1 : 1,
             $categories
         );
 
-        $issuesAndProperties = array_map(function (Model\IssueValue $issue) use ($assembly) {
-            $issue->setGoal(Transformer::htmlToMarkdown($issue->getGoal()));
-            $issue->setMajorChanges(Transformer::htmlToMarkdown($issue->getMajorChanges()));
-            $issue->setChangesInLaw(Transformer::htmlToMarkdown($issue->getChangesInLaw()));
-            $issue->setCostsAndRevenues(Transformer::htmlToMarkdown($issue->getCostsAndRevenues()));
-            $issue->setAdditionalInformation(Transformer::htmlToMarkdown($issue->getAdditionalInformation()));
-            $issue->setDeliveries(Transformer::htmlToMarkdown($issue->getDeliveries()));
-
-            $issueAndProperty = (new Model\IssueProperties())
-                ->setIssue($issue);
-
-            $proponents = $this->congressmanService->fetchProponentsByIssue(
-                $assembly->getAssemblyId(),
-                $issue->getIssueId()
-            );
-            $proponentsAndParty = $issue->isA()
-                ? array_map(function (Model\Proponent $proponent) use ($issue, $assembly) {
-                    return (new Model\CongressmanPartyProperties())
-                        ->setCongressman($proponent)
-                        ->setParty(
-                            $this->partyService->getByCongressman($proponent->getCongressmanId(), $assembly->getFrom())
-                        );
-                }, $proponents)
-                : [];
-            $issueAndProperty->setProponents($proponentsAndParty);
-
-            return $issueAndProperty;
-        }, $collection);
-        $issuesAndPropertiesCount = count($issuesAndProperties);
-
-        return (new CollectionModel($issuesAndProperties))
+//        $collection = $this->fetchSpeechTimesFromService(
+//            $assemblyId,
+//            $size,
+//            $order,
+//            $categories
+//        );
+        return (new CollectionModel($collection))
+            ->setOption('X-Source', 'Store')
             ->setStatus(206)
-            ->setRange(0, $issuesAndPropertiesCount, $issuesAndPropertiesCount);
+            ->setRange(0, count($collection), count($collection));
+    }
+
+    public function statisticsAction()
+    {
+        $assemblyId = $this->params('id');
+
+        $object = $this->fetchStatisticsFromStore($assemblyId);
+//        $object = $this->fetchStatisticsFromService($assemblyId);
+
+        return (new ItemModel($object))
+            ->setOption('X-Source', 'Store');
     }
 
     /**
@@ -277,7 +283,7 @@ class IssueController extends AbstractRestfulController implements
      * @param int $assemblyId
      * @param int $issueId
      * @param string $category
-     * @return \Rend\View\Model\ModelInterface
+     * @return \Althingi\Model\IssueProperties
      * @deprecated
      */
     private function getFromDatabase(int $assemblyId, int $issueId, string $category = 'A')
@@ -285,7 +291,7 @@ class IssueController extends AbstractRestfulController implements
         $issue = $this->issueService->getWithDate($issueId, $assemblyId, $category);
 
         if (! $issue) {
-            return $this->notFoundAction();
+            return null;
         }
 
         $issue->setGoal(Transformer::htmlToMarkdown($issue->getGoal()));
@@ -340,43 +346,18 @@ class IssueController extends AbstractRestfulController implements
             : [];
         $issueProperties->setProponents($proponentsAndParty);
 
-        return (new ItemModel($issueProperties));
+        return $issueProperties;
     }
 
     /**
      * @param int $assemblyId
      * @param int $issueId
      * @param string $category
-     * @return \Rend\View\Model\ModelInterface
+     * @return \Althingi\Model\IssueProperties
      */
     private function getFromStore(int $assemblyId, int $issueId, string $category = 'A')
     {
-        $issueProperties = $this->issueStore->get($assemblyId, $issueId, $category);
-
-        if (! $issueProperties) {
-            return $this->notFoundAction();
-        }
-
-        $assembly = $this->assemblyService->get($assemblyId);
-        $voteDates = $this->voteService->fetchDateFrequencyByIssue($assemblyId, $issueId);
-        $speech = $this->speechService->fetchFrequencyByIssue($assemblyId, $issueId, $category);
-        $speakers = $this->congressmanService->fetchAccumulatedTimeByIssue($assemblyId, $issueId, $category);
-        $speakersWithParties = array_map(function (Model\CongressmanAndDateRange $congressman) use ($assembly) {
-            return (new Model\CongressmanPartyProperties())
-                ->setCongressman($congressman)
-                ->setParty($this->partyService->getByCongressman(
-                    $congressman->getCongressmanId(),
-                    $congressman->getBegin()
-                ))
-                ->setAssembly($assembly);
-        }, $speakers);
-
-//        $issueProperties
-//            ->setVoteRange(DateAndCountSequence::buildDateRange($assembly->getFrom(), $assembly->getTo(), $voteDates))
-//            ->setSpeechRange(DateAndCountSequence::buildDateRange($assembly->getFrom(), $assembly->getTo(), $speech))
-//            ->setSpeakers($speakersWithParties);
-
-        return (new ItemModel($issueProperties));
+        return $this->issueStore->get($assemblyId, $issueId, $category);
     }
 
     /**
@@ -447,7 +428,7 @@ class IssueController extends AbstractRestfulController implements
      * @param array $kinds
      * @param array $categories
      * @param string|null $orderQuery
-     * @return CollectionModel
+     * @return ModelInterface
      */
     private function getListFromStore(
         int $assemblyId,
@@ -457,15 +438,22 @@ class IssueController extends AbstractRestfulController implements
         string $orderQuery = null
     ) {
 
-        $issues = $this->issueStore->fetchByAssembly($assemblyId, $types, $kinds, $categories);
         $count = $this->issueStore->countByAssembly($assemblyId, $types, $kinds, $categories);
         $range = $this->getRange($this->getRequest(), $count);
+        $issues = $this->issueStore->fetchByAssembly(
+            $assemblyId,
+            $range->getFrom(),
+            $range->getSize(),
+            $types,
+            $kinds,
+            $categories
+        );
 
         return (new CollectionModel($issues))
             ->setStatus(206)
-            ->setRange($range->getFrom(), $range->getFrom() + count($issues), $count);
+            ->setRange($range->getFrom(), $range->getFrom() + count($issues), $count)
+            ->setOption('X-Source', 'Store');
     }
-
 
     /**
      * Set service.
@@ -571,5 +559,131 @@ class IssueController extends AbstractRestfulController implements
     {
         $this->constituencyService = $constituency;
         return $this;
+    }
+
+    /**
+     * @param \Althingi\Store\Category $category
+     * @return $this;
+     */
+    public function setCategoryStore(Category $category)
+    {
+        $this->categoryStore = $category;
+        return $this;
+    }
+
+    /**
+     * @param \Althingi\Service\Category $category
+     * @return $this;
+     */
+    public function setCategoryService(Service\Category $category)
+    {
+        $this->categoryService = $category;
+        return $this;
+    }
+
+    /**
+     * @param int $assemblyId
+     * @return Model\IssuesStatusProperties
+     * @deprecated
+     */
+    private function fetchStatisticsFromService(int $assemblyId): Model\IssuesStatusProperties
+    {
+        $assembly = $this->assemblyService->get($assemblyId);
+        return (new Model\IssuesStatusProperties())
+            ->setBills($this->issueService->fetchNonGovernmentBillStatisticsByAssembly($assembly->getAssemblyId()))
+            ->setGovernmentBills(
+                $this->issueService->fetchGovernmentBillStatisticsByAssembly($assembly->getAssemblyId())
+            )
+            ->setTypes($this->issueService->fetchCountByCategory($assembly->getAssemblyId()))
+            ->setCategories($this->categoryService->fetchByAssembly($assembly->getAssemblyId())) //@todo remove this
+        ;
+    }
+
+    /**
+     * @param int $assemblyId
+     * @return Model\IssuesStatusProperties
+     */
+    private function fetchStatisticsFromStore(int $assemblyId): Model\IssuesStatusProperties
+    {
+        return (new Model\IssuesStatusProperties())
+            ->setBills($this->issueStore->fetchNonGovernmentBillStatisticsByAssembly($assemblyId))
+            ->setGovernmentBills($this->issueStore->fetchGovernmentBillStatisticsByAssembly($assemblyId))
+            ->setProposals($this->issueStore->fetchProposalStatisticsByAssembly($assemblyId))
+            ->setTypes($this->issueStore->fetchCountByCategory($assemblyId))
+            ->setCategories($this->categoryStore->fetchByAssembly($assemblyId))
+            ;
+    }
+
+    /**
+     * @param int $assemblyId
+     * @param int $size
+     * @param string $order
+     * @param array $categories
+     * @return array
+     * @deprecated
+     */
+    private function fetchSpeechTimesFromService(
+        int $assemblyId,
+        int $size,
+        string $order,
+        array $categories = ['A', 'B']
+    ) {
+        $assembly = $this->assemblyService->get($assemblyId);
+        $collection = $this->issueService->fetchByAssemblyAndSpeechTime(
+            $assemblyId,
+            $size,
+            $order,
+            $categories
+        );
+
+        return array_map(function (Model\IssueValue $issue) use ($assembly) {
+            $issue->setGoal(Transformer::htmlToMarkdown($issue->getGoal()));
+            $issue->setMajorChanges(Transformer::htmlToMarkdown($issue->getMajorChanges()));
+            $issue->setChangesInLaw(Transformer::htmlToMarkdown($issue->getChangesInLaw()));
+            $issue->setCostsAndRevenues(Transformer::htmlToMarkdown($issue->getCostsAndRevenues()));
+            $issue->setAdditionalInformation(Transformer::htmlToMarkdown($issue->getAdditionalInformation()));
+            $issue->setDeliveries(Transformer::htmlToMarkdown($issue->getDeliveries()));
+
+            $issueAndProperty = (new Model\IssueProperties())
+                ->setIssue($issue);
+
+            $proponents = $this->congressmanService->fetchProponentsByIssue(
+                $assembly->getAssemblyId(),
+                $issue->getIssueId()
+            );
+            $proponentsAndParty = $issue->isA()
+                ? array_map(function (Model\Proponent $proponent) use ($issue, $assembly) {
+                    return (new Model\CongressmanPartyProperties())
+                        ->setCongressman($proponent)
+                        ->setParty(
+                            $this->partyService->getByCongressman($proponent->getCongressmanId(), $assembly->getFrom())
+                        );
+                }, $proponents)
+                : [];
+            $issueAndProperty->setProponents($proponentsAndParty);
+
+            return $issueAndProperty;
+        }, $collection);
+    }
+
+    /**
+     * @param int $assemblyId
+     * @param int $size
+     * @param int $order
+     * @param array $categories
+     * @return array
+     */
+    private function fetchSpeechTimesFromStore(
+        int $assemblyId,
+        int $size,
+        int $order,
+        array $categories = ['A', 'B']
+    ): array {
+        return $this->issueStore->fetchByAssemblyAndSpeechTime(
+            $assemblyId,
+            $size,
+            $order === 'desc' ? -1 : 1,
+            $categories
+        );
     }
 }

@@ -33,6 +33,13 @@ class IssueProperties implements ModelInterface
     /** @var \Althingi\Model\SuperCategory[] */
     private $superCategory;
 
+
+    /** @var int */
+    private $speech_time = 0;
+
+    /** @var int */
+    private $speech_count = 0;
+
     /**
      * @return Issue
      */
@@ -195,19 +202,56 @@ class IssueProperties implements ModelInterface
         return $this;
     }
 
+
+    /**
+     * @return int
+     */
+    public function getSpeechTime(): ?int
+    {
+        return $this->speech_time;
+    }
+
+    /**
+     * @param int $speech_time
+     * @return IssueProperties
+     */
+    public function setSpeechTime(?int $speech_time): IssueProperties
+    {
+        $this->speech_time = $speech_time;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSpeechCount(): ?int
+    {
+        return $this->speech_count;
+    }
+
+    /**
+     * @param int $speech_count
+     * @return IssueProperties
+     */
+    public function setSpeechCount(?int $speech_count): IssueProperties
+    {
+        $this->speech_count = $speech_count;
+        return $this;
+    }
+
     public function toArray()
     {
         return array_merge(
             $this->issue->toArray(),
             [
-                'date' => $this->date ? $this->date->format('Y-m-d') : null,
+                'speech_time' => $this->speech_time,
+                'speech_count' => $this->speech_count,
+                'date' => $this->date ? $this->date->format('c') : null,
                 'proponents' => $this->proponents,
-                'voteRange' => $this->voteRange,
-                'speechRange' => $this->speechRange,
                 'speakers' => $this->speakers,
-                'governmentIssue' => $this->governmentIssue,
+                'government_issue' => $this->governmentIssue,
                 'categories' => $this->categories,
-                'superCategories' => $this->superCategory,
+                'super_categories' => $this->superCategory,
             ]
         );
     }

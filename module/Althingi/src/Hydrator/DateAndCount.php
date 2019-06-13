@@ -18,7 +18,7 @@ class DateAndCount implements HydratorInterface
     public function hydrate(array $data, $object)
     {
         return $object
-            ->setDate($data['date'] ? new DateTime($data['date']) : null)
+            ->setDate($data['date'] ? $this->formatDate($data['date']) : null)
             ->setCount($data['count']);
     }
 
@@ -31,5 +31,16 @@ class DateAndCount implements HydratorInterface
     public function extract($object)
     {
         return $object->toArray();
+    }
+
+    private function formatDate($date): ?DateTime
+    {
+        if (is_string($date)) {
+            return new DateTime($date);
+        } elseif ($date instanceof DateTime) {
+            return $date;
+        } else {
+            return null;
+        }
     }
 }

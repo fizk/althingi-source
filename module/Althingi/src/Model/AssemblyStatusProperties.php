@@ -4,26 +4,14 @@ namespace Althingi\Model;
 
 class AssemblyStatusProperties implements ModelInterface
 {
-    /** @var  \Althingi\Model\IssueTypeStatus[] */
-    private $bills;
-
-    /** @var  \Althingi\Model\IssueTypeStatus[] */
-    private $government_bills;
-
-    /** @var  \Althingi\Model\AssemblyStatus[] */
-    private $types;
+    /** @var  \Althingi\Model\DateAndCount[] */
+    private $votes = [];
 
     /** @var  \Althingi\Model\DateAndCount[] */
-    private $votes;
-
-    /** @var  \Althingi\Model\DateAndCount[] */
-    private $speeches;
+    private $speeches = [];
 
     /** @var  \Althingi\Model\PartyAndTime[] */
-    private $party_times;
-
-    /** @var  \Althingi\Model\CategoryAndCount[] */
-    private $categories;
+    private $party_times = [];
 
     /** @var  \Althingi\Model\Election */
     private $election;
@@ -33,60 +21,6 @@ class AssemblyStatusProperties implements ModelInterface
 
     /** @var float */
     private $averageAge = 0;
-
-    /**
-     * @return IssueTypeStatus[]
-     */
-    public function getBills(): array
-    {
-        return $this->bills;
-    }
-
-    /**
-     * @param IssueTypeStatus[] $bills
-     * @return AssemblyStatusProperties
-     */
-    public function setBills(array $bills): AssemblyStatusProperties
-    {
-        $this->bills = $bills;
-        return $this;
-    }
-
-    /**
-     * @return IssueTypeStatus[]
-     */
-    public function getGovernmentBills(): array
-    {
-        return $this->government_bills;
-    }
-
-    /**
-     * @param IssueTypeStatus[] $governmentBills
-     * @return AssemblyStatusProperties
-     */
-    public function setGovernmentBills(array $governmentBills): AssemblyStatusProperties
-    {
-        $this->government_bills = $governmentBills;
-        return $this;
-    }
-
-    /**
-     * @return AssemblyStatus[]
-     */
-    public function getTypes(): array
-    {
-        return $this->types;
-    }
-
-    /**
-     * @param AssemblyStatus[] $types
-     * @return AssemblyStatusProperties
-     */
-    public function setTypes(array $types): AssemblyStatusProperties
-    {
-        $this->types = $types;
-        return $this;
-    }
 
     /**
      * @return DateAndCount[]
@@ -139,24 +73,6 @@ class AssemblyStatusProperties implements ModelInterface
     public function setPartyTimes(array $partyTimes): AssemblyStatusProperties
     {
         $this->party_times = $partyTimes;
-        return $this;
-    }
-
-    /**
-     * @return CategoryAndCount[]
-     */
-    public function getCategories(): array
-    {
-        return $this->categories;
-    }
-
-    /**
-     * @param CategoryAndCount[] $categories
-     * @return AssemblyStatusProperties
-     */
-    public function setCategories(array $categories): AssemblyStatusProperties
-    {
-        $this->categories = $categories;
         return $this;
     }
 
@@ -220,13 +136,9 @@ class AssemblyStatusProperties implements ModelInterface
     public function toArray()
     {
         return [
-            'bills' => $this->bills,
-            'government_bills' => $this->government_bills,
-            'types' => $this->types,
             'votes' => $this->votes,
             'speeches' => $this->speeches,
             'party_times' => $this->party_times,
-            'categories' => $this->categories,
             'election' => $this->election,
             'election_results' => $this->election_results,
             'average_age' => $this->averageAge,
