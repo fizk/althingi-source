@@ -21,6 +21,13 @@ use DateTime;
  * @covers \Althingi\Controller\AssemblyController::setCabinetService
  * @covers \Althingi\Controller\AssemblyController::setCategoryService
  * @covers \Althingi\Controller\AssemblyController::setElectionService
+ * @covers \Althingi\Controller\AssemblyController::setCongressmanService
+ * @covers \Althingi\Controller\AssemblyController::setAssemblyStore
+ * @covers \Althingi\Controller\AssemblyController::setIssueStore
+ * @covers \Althingi\Controller\AssemblyController::setVoteStore
+ * @covers \Althingi\Controller\AssemblyController::setSpeechStore
+ * @covers \Althingi\Controller\AssemblyController::setPartyStore
+ * @covers \Althingi\Controller\AssemblyController::setCategoryStore
  */
 class AssemblyControllerTest extends AbstractHttpControllerTestCase
 {

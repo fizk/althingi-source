@@ -2,7 +2,7 @@
 
 namespace Althingi\Controller\Console;
 
-use Althingi\Lib\ServiceIssueAwareInterface;
+use Althingi\Injector\ServiceIssueAwareInterface;
 use Althingi\Service\Issue;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Http\Client;

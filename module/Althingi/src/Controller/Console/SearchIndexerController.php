@@ -2,11 +2,11 @@
 
 namespace Althingi\Controller\Console;
 
-use Althingi\ElasticSearchActions\Add;
-use Althingi\Lib\ElasticSearchClientAwareInterface;
-use Althingi\Lib\LoggerAwareInterface;
-use Althingi\Lib\ServiceIssueAwareInterface;
-use Althingi\Lib\ServiceSpeechAwareInterface;
+use Althingi\QueueActions\Add;
+use Althingi\Injector\ElasticSearchClientAwareInterface;
+use Althingi\Injector\LoggerAwareInterface;
+use Althingi\Injector\ServiceIssueAwareInterface;
+use Althingi\Injector\ServiceSpeechAwareInterface;
 use Althingi\Presenters\IndexableIssuePresenter;
 use Althingi\Presenters\IndexableSpeechPresenter;
 use Althingi\Service\Issue;

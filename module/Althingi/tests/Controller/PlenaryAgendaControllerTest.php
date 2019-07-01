@@ -12,6 +12,10 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\PlenaryAgendaController
  * @covers \Althingi\Controller\PlenaryAgendaController::setPlenaryService
+ * @covers \Althingi\Controller\PlenaryAgendaController::setPlenaryAgendaService
+ * @covers \Althingi\Controller\PlenaryAgendaController::setCongressmanService
+ * @covers \Althingi\Controller\PlenaryAgendaController::setIssueService
+ * @covers \Althingi\Controller\PlenaryAgendaController::setPartyService
  */
 class PlenaryAgendaControllerTest extends AbstractHttpControllerTestCase
 {
