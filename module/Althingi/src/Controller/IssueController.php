@@ -252,6 +252,35 @@ class IssueController extends AbstractRestfulController implements
     }
 
     /**
+     * Get all issues where proponents are in a given party.
+     *
+     * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\IssueProperties[]
+     * @query type [string]
+     */
+    public function fetchPartyAction()
+    {
+        $assemblyId = $this->params('id', 0);
+        $partyId = $this->params('party_id', 0);
+        $typeQuery = $this->params()->fromQuery('type', null);
+        $types = $typeQuery ? explode(',', $typeQuery) : [];
+
+        $count = $this->issueStore->countByParty($assemblyId, $partyId, $types);
+        $range = $this->getRange($this->getRequest(), $count);
+
+        $issues = $this->issueStore->fetchByParty(
+            $assemblyId,
+            $partyId,
+            $types,
+            $range->getFrom(),
+            $range->getSize()
+        );
+
+        return (new CollectionModel($issues))
+            ->setRange($range->getFrom(), $range->getFrom() + count($issues), $count);
+    }
+
+    /**
      * List options for Assembly collection.
      *
      * @return \Rend\View\Model\ModelInterface

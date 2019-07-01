@@ -66,6 +66,11 @@ return [
                 ->setDriver($sm->get(PDO::class))
                 ->setEventManager($sm->get(EventsListener::class));
         },
+        Service\IssueLink::class => function (ServiceManager $sm) {
+            return (new Service\IssueLink())
+                ->setDriver($sm->get(PDO::class))
+                ->setEventManager($sm->get(EventsListener::class));
+        },
         Service\IssueCategory::class => function (ServiceManager $sm) {
             return (new Service\IssueCategory())
                 ->setDriver($sm->get(PDO::class))

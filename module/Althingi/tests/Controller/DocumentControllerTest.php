@@ -24,6 +24,7 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * @covers \Althingi\Controller\DocumentController::setPartyService
  * @covers \Althingi\Controller\DocumentController::setVoteService
  * @covers \Althingi\Controller\DocumentController::setVoteItemService
+ * @covers \Althingi\Controller\DocumentController::setConstituencyService
  */
 class DocumentControllerTest extends AbstractHttpControllerTestCase
 {

@@ -10,6 +10,7 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * Class CongressmanSessionControllerTest
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\CongressmanSessionController
+ * @covers \Althingi\Controller\CongressmanSessionController::setSessionService
  */
 class CongressmanSessionControllerTest extends AbstractHttpControllerTestCase
 {
