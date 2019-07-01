@@ -36,6 +36,8 @@ use Zend\Stdlib\ArrayUtils;
  * @covers \Althingi\Controller\CongressmanController::setIssueCategoryService
  * @covers \Althingi\Controller\CongressmanController::setVoteItemService
  * @covers \Althingi\Controller\CongressmanController::setAssemblyService
+ * @covers \Althingi\Controller\CongressmanController::setConstituencyService
+ * @covers \Althingi\Controller\CongressmanController::setCongressmanStore
  */
 class CongressmanControllerTest extends AbstractHttpControllerTestCase
 {

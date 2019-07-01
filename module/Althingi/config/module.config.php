@@ -58,6 +58,20 @@ return [
                 ],
                 'may_terminate' => true,
                 'child_routes' => [
+                    'thingflokkar' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route'    => '/thingflokkar/:party_id/thingmal',
+                            'constraints' => [
+                                'id' => '[0-9]*'
+                            ],
+                            'defaults' => [
+                                'controller' => Controller\IssueController::class,
+                                'action' => 'fetch-party'
+                            ],
+                        ],
+                        'may_terminate' => true,
+                    ],
                     'thingmenn' => [
                         'type' => Literal::class,
                         'options' => [
@@ -274,6 +288,16 @@ return [
                         ],
                         'may_terminate' => true,
                         'child_routes' => [
+                            'tengd-mal' => [
+                                'type' => Literal::class,
+                                'options' => [
+                                    'route'    => '/tengdmal',
+                                    'defaults' => [
+                                        'controller' => Controller\IssueLinkController::class,
+                                    ],
+                                ],
+                                'may_terminate' => true,
+                            ],
                             'thingmal-raedutimar' => [
                                 'type' => Literal::class,
                                 'options' => [
@@ -851,6 +875,10 @@ return [
                     ->setIssueStore($container->get(Store\Issue::class))
                     ->setCategoryStore($container->get(Store\Category::class))
                     ;
+            },
+            Controller\IssueLinkController::class => function (ServiceManager $container) {
+                return (new Controller\IssueLinkController())
+                    ->setIssueLinkService($container->get(Service\IssueLink::class));
             },
             Controller\SpeechController::class => function (ServiceManager $container) {
                 return (new Controller\SpeechController())

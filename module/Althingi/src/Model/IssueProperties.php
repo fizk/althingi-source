@@ -33,12 +33,14 @@ class IssueProperties implements ModelInterface
     /** @var \Althingi\Model\SuperCategory[] */
     private $superCategory;
 
-
     /** @var int */
     private $speech_time = 0;
 
     /** @var int */
     private $speech_count = 0;
+
+    /** @var \Althingi\Model\Link[] */
+    private $links = [];
 
     /**
      * @return Issue
@@ -239,6 +241,24 @@ class IssueProperties implements ModelInterface
         return $this;
     }
 
+    /**
+     * @return Link[]
+     */
+    public function getLinks(): array
+    {
+        return $this->links;
+    }
+
+    /**
+     * @param Link[] $links
+     * @return IssueProperties
+     */
+    public function setLinks(array $links): IssueProperties
+    {
+        $this->links = $links;
+        return $this;
+    }
+
     public function toArray()
     {
         return array_merge(
@@ -252,6 +272,7 @@ class IssueProperties implements ModelInterface
                 'government_issue' => $this->governmentIssue,
                 'categories' => $this->categories,
                 'super_categories' => $this->superCategory,
+                'issue_links' => $this->links,
             ]
         );
     }

@@ -33,6 +33,11 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * @covers \Althingi\Controller\IssueController::setVoteService
  * @covers \Althingi\Controller\IssueController::setAssemblyService
  * @covers \Althingi\Controller\IssueController::setSpeechService
+ * @covers \Althingi\Controller\IssueController::setSearchIssueService
+ * @covers \Althingi\Controller\IssueController::setIssueStore
+ * @covers \Althingi\Controller\IssueController::setConstituencyService
+ * @covers \Althingi\Controller\IssueController::setCategoryStore
+ * @covers \Althingi\Controller\IssueController::setCategoryService
  */
 class IssueControllerTest extends AbstractHttpControllerTestCase
 {

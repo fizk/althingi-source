@@ -20,13 +20,13 @@ class Issue implements StoreAwareInterface
      */
     public function get(int $assemblyId, int $issueId, string $category = 'A'): ?Model\IssueProperties
     {
-        $document = $this->getStore()->issue->findOne([
+        $issue = $this->getStore()->issue->findOne([
             'issue.assembly_id' => $assemblyId,
             'issue.issue_id' => $issueId,
             'issue.category' => $category,
         ]);
 
-        return $this->hydrateIssue($document);
+        return $this->hydrateIssue($issue);
     }
 
     /**
@@ -54,7 +54,7 @@ class Issue implements StoreAwareInterface
         );
         $size = $size ? : 25;
 
-        $documents = $this->getStore()->issue->aggregate([
+        $issues = $this->getStore()->issue->aggregate([
             ['$match' => $criteria],
             ['$skip' => $offset],
             ['$limit' => $size],
@@ -63,7 +63,7 @@ class Issue implements StoreAwareInterface
 
         return array_map(function ($object) {
             return $this->hydrateIssue($object);
-        }, iterator_to_array($documents));
+        }, iterator_to_array($issues));
     }
 
     /**
@@ -92,6 +92,69 @@ class Issue implements StoreAwareInterface
         ]);
 
         return array_reduce(iterator_to_array($documents), function ($carry, $item) {
+            return $carry + $item->total;
+        }, 0);
+    }
+
+    /**
+     * Fetch all issues where a proponent is in a given party.
+     *
+     * @param int $assemblyId
+     * @param int $partyId
+     * @param array $types
+     * @param int|null $offset
+     * @param int|null $size
+     * @return array
+     */
+    public function fetchByParty(
+        int $assemblyId,
+        int $partyId,
+        array $types = [],
+        ?int $offset = 0,
+        ?int $size = 0
+    ) {
+        $size = $size ? : 25;
+        $criteria = array_merge(
+            ['issue.assembly_id' => $assemblyId],
+            ['proponents.congressman.party.party_id' => $partyId],
+            count($types) ? ['issue.type' => ['$in' => $types]] : []
+        );
+        $issues = $this->getStore()->issue->aggregate([
+            ['$match' => $criteria],
+            ['$skip' => $offset],
+            ['$limit' => $size],
+            ['$sort' => ['issue.issue_id' => 1]],
+        ]);
+
+        return array_map(function ($object) {
+            return $this->hydrateIssue($object);
+        }, iterator_to_array($issues));
+    }
+
+    /**
+     * Count all issues where a proponent is in a given party.
+     *
+     * @param int $assemblyId
+     * @param int $partyId
+     * @param array $types
+     * @return int
+     */
+    public function countByParty(
+        int $assemblyId,
+        int $partyId,
+        array $types = []
+    ): int {
+        $criteria = array_merge(
+            ['issue.assembly_id' => $assemblyId],
+            ['proponents.congressman.party.party_id' => $partyId],
+            count($types) ? ['issue.type' => ['$in' => $types]] : []
+        );
+        $issues = $this->getStore()->issue->aggregate([
+            ['$match' => $criteria],
+            ['$count' => 'total'],
+        ]);
+
+        return array_reduce(iterator_to_array($issues), function ($carry, $item) {
             return $carry + $item->total;
         }, 0);
     }
@@ -281,6 +344,9 @@ class Issue implements StoreAwareInterface
                 return (new Hydrator\SuperCategory())->hydrate((array) $category, new Model\SuperCategory());
             }, (array) $object->super_categories) : [])
             ->setDate((isset($object->date) && $object->date !== null) ? $object->date->toDateTime() : null)
+            ->setLinks(array_map(function ($link) {
+                return (new Hydrator\Link())->hydrate((array) $link, new Model\Link());
+            }, isset($object->link) ? (array) $object->link : []))
             ->setProponents(array_map(function ($proponent) {
                 return (new Model\ProponentPartyProperties())
                     ->setOrder($proponent->order)

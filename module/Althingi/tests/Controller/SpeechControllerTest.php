@@ -19,6 +19,9 @@ use Mockery;
  * @covers \Althingi\Controller\SpeechController::setCongressmanService
  * @covers \Althingi\Controller\SpeechController::setPartyService
  * @covers \Althingi\Controller\SpeechController::setSpeechService
+ * @covers \Althingi\Controller\SpeechController::setSearchSpeechService
+ * @covers \Althingi\Controller\SpeechController::setPlenaryService
+ * @covers \Althingi\Controller\SpeechController::setConstituencyService
  */
 class SpeechControllerTest extends AbstractHttpControllerTestCase
 {
