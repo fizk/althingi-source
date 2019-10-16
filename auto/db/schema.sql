@@ -16,8 +16,11 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 
-CREATE DATABASE IF NOT EXISTS  `althingi`;
-USE `althingi`;
+--
+-- Create database `althingi`
+--
+create database `althingi`;
+use `althingi`;
 
 --
 -- Table structure for table `Assembly`
@@ -402,6 +405,28 @@ CREATE TABLE `Issue` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `IssueLink`
+--
+
+DROP TABLE IF EXISTS `IssueLink`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `IssueLink` (
+  `from_assembly_id` int(11) NOT NULL,
+  `from_issue_id` int(11) NOT NULL,
+  `from_category` char(2) NOT NULL,
+  `to_assembly_id` int(11) NOT NULL,
+  `to_issue_id` int(11) NOT NULL,
+  `to_category` char(2) NOT NULL,
+  `type` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`from_assembly_id`,`from_issue_id`,`from_category`,`to_assembly_id`,`to_issue_id`,`to_category`),
+  KEY `fk_IssueLink_to_IssueLink` (`to_assembly_id`,`to_issue_id`,`to_category`),
+  CONSTRAINT `fk_IssueLink_from_IssueLink` FOREIGN KEY (`from_assembly_id`, `from_issue_id`, `from_category`) REFERENCES `Issue` (`assembly_id`, `issue_id`, `category`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_IssueLink_to_IssueLink` FOREIGN KEY (`to_assembly_id`, `to_issue_id`, `to_category`) REFERENCES `Issue` (`assembly_id`, `issue_id`, `category`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `Party`
 --
 
@@ -524,6 +549,8 @@ CREATE TABLE `Session` (
   KEY `fk_Session_Party1_idx` (`party_id`),
   KEY `fk_Session_Constituency1_idx` (`constituency_id`),
   KEY `fk_Session_Assembly1_idx` (`assembly_id`),
+  KEY `Session_from_idx` (`from`),
+  KEY `Session_to_idx` (`to`),
   CONSTRAINT `fk_Session_Assembly1` FOREIGN KEY (`assembly_id`) REFERENCES `Assembly` (`assembly_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_Session_Congressman` FOREIGN KEY (`congressman_id`) REFERENCES `Congressman` (`congressman_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_Session_Constituency1` FOREIGN KEY (`constituency_id`) REFERENCES `Constituency` (`constituency_id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -635,4 +662,4 @@ CREATE TABLE `VoteItem` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-03  8:23:05
+-- Dump completed on 2019-10-16  0:13:40
