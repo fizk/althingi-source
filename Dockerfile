@@ -8,7 +8,6 @@ FROM php:7.2.9-apache
 
 RUN apt-get update \
  && apt-get install -y zip unzip \
- && apt-get install -y imagemagick \
  && apt-get install -y git zlib1g-dev vim \
 # && apt-get install -y pkg-config \
  && apt-get install -y autoconf g++ make openssl libssl-dev libcurl4-openssl-dev pkg-config libsasl2-dev libpcre3-dev \
