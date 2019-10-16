@@ -46,7 +46,12 @@ class PlenaryAgenda implements DatabaseAwareInterface
             : null;
     }
 
-    public function fetch(int $assemblyId, int $plenaryId): ? Model\PlenaryAgenda
+    /**
+     * @param int $assemblyId
+     * @param int $plenaryId
+     * @return Model\PlenaryAgenda[]
+     */
+    public function fetch(int $assemblyId, int $plenaryId): ? array
     {
         $statement = $this->getDriver()->prepare("
           select * from PlenaryAgenda PA 
