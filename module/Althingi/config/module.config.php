@@ -816,6 +816,7 @@ return [
                     ->setSpeechStore($container->get(Store\Speech::class))
                     ->setPartyStore($container->get(Store\Party::class))
                     ->setCategoryStore($container->get(Store\Category::class))
+                    ->setCongressmanStore($container->get(Store\Congressman::class))
                     ;
             },
             Controller\CongressmanController::class => function (ServiceManager $container) {
@@ -998,6 +999,7 @@ return [
                     ->setVoteService($container->get(Service\Vote::class))
                     ->setAssemblyService($container->get(Service\Assembly::class))
                     ->setVoteItemService($container->get(Service\VoteItem::class))
+                    ->setSessionService($container->get(Service\Session::class))
                     ->setLogger($container->get(LoggerInterface::class))
                     ->setQueue($container->get(AMQPStreamConnection::class))
                     ;
@@ -1085,6 +1087,15 @@ return [
                         'defaults' => [
                             'controller' => Console\IndexerIssueController::class,
                             'action' => 'assembly'
+                        ],
+                    ],
+                ],
+                'session' => [
+                    'options' => [
+                        'route' => 'index:session [--assembly=|-a]',
+                        'defaults' => [
+                            'controller' => Console\IndexerIssueController::class,
+                            'action' => 'session'
                         ],
                     ],
                 ],

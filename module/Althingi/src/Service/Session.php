@@ -4,7 +4,13 @@ namespace Althingi\Service;
 
 use Althingi\Model;
 use Althingi\Hydrator;
+use Althingi\Injector\EventsAwareInterface;
 use Althingi\Injector\DatabaseAwareInterface;
+use Althingi\Events\AddEvent;
+use Althingi\Events\UpdateEvent;
+use Althingi\Presenters\IndexableSessionPresenter;
+use Zend\EventManager\EventManagerInterface;
+use Zend\EventManager\EventManager;
 use PDO;
 use DateTime;
 
@@ -12,7 +18,7 @@ use DateTime;
  * Class Session
  * @package Althingi\Service
  */
-class Session implements DatabaseAwareInterface
+class Session implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
 
@@ -20,6 +26,9 @@ class Session implements DatabaseAwareInterface
      * @var \PDO
      */
     private $pdo;
+
+    /** @var \Zend\EventManager\EventManagerInterface */
+    protected $events;
 
     /**
      * Get one Congressman's Session.
@@ -50,6 +59,25 @@ class Session implements DatabaseAwareInterface
     {
         $statement = $this->getDriver()->prepare("
             select * from `Session` where congressman_id = :id
+            order by `from` desc
+        ");
+        $statement->execute(['id' => $id]);
+
+        return array_map(function ($object) {
+            return (new Hydrator\Session())->hydrate($object, new Model\Session());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
+    }
+
+    /**
+     * Get all sessions associated with a given Assembly
+     *
+     * @param int $id
+     * @return array
+     */
+    public function fetchByAssembly(int $id)
+    {
+        $statement = $this->getDriver()->prepare("
+            select * from `Session` where assembly_id = :id
             order by `from` desc
         ");
         $statement->execute(['id' => $id]);
@@ -114,7 +142,17 @@ class Session implements DatabaseAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
-        return $this->getDriver()->lastInsertId();
+        $id = $this->getDriver()->lastInsertId();
+        $data->setSessionId($id);
+
+        $this->getEventManager()
+            ->trigger(
+                AddEvent::class,
+                new AddEvent(new IndexableSessionPresenter($data)),
+                ['rows' => $statement->rowCount()]
+            );
+
+        return $id;
     }
 
     /**
@@ -130,6 +168,13 @@ class Session implements DatabaseAwareInterface
             $this->toUpdateString('Session', $data, "session_id={$data->getSessionId()}")
         );
         $statement->execute($this->toSqlValues($data));
+
+        $this->getEventManager()
+            ->trigger(
+                UpdateEvent::class,
+                new UpdateEvent(new IndexableSessionPresenter($data)),
+                ['rows' => $statement->rowCount()]
+            );
 
         return $statement->rowCount();
     }
@@ -165,5 +210,19 @@ class Session implements DatabaseAwareInterface
     public function getDriver()
     {
         return $this->pdo;
+    }
+
+    public function setEventManager(EventManagerInterface $events)
+    {
+        $this->events = $events;
+        return $this;
+    }
+
+    public function getEventManager()
+    {
+        if (null === $this->events) {
+            $this->setEventManager(new EventManager());
+        }
+        return $this->events;
     }
 }
