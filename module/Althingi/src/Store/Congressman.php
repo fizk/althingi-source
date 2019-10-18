@@ -4,7 +4,9 @@ namespace Althingi\Store;
 use Althingi\Injector\StoreAwareInterface;
 use Althingi\Model;
 use Althingi\Hydrator;
+use DateTime;
 use MongoDB\Database;
+use MongoDB\BSON\UTCDateTime;
 
 class Congressman implements StoreAwareInterface
 {
@@ -187,6 +189,55 @@ class Congressman implements StoreAwareInterface
                         ->hydrate((array)$congressman['constituency'], new Model\Constituency())
                 );
         }, iterator_to_array($document));
+    }
+
+    /**
+     * Gets average age of all congressmen for a give assembly, regardless of their type
+     *
+     * @todo test and validate
+     * @param int $assemblyId
+     * @param DateTime $date
+     * @return mixed
+     */
+    public function getAverageAgeByAssembly(int $assemblyId, DateTime $date)
+    {
+        /** @var $document \MongoDB\Driver\Cursor */
+        $document = $this->getStore()->congressman->aggregate([
+            [
+                '$match' => [
+                    'assembly.assembly_id' => $assemblyId,
+                ]
+            ],
+            [
+                '$project' => [
+                    'date' => ['$dateFromString' => ['dateString' => '$congressman.birth']],
+                ]
+            ],
+            [
+                '$project' => [
+                    'time' => [
+                        '$subtract' => [new UTCDateTime(strtotime($date->format('c')) * 1000), '$date']
+                    ]
+                ]
+            ],
+            [
+                '$group' => [
+                    '_id' => '',
+                    'average' => ['$avg' => '$time']
+                ]
+            ],
+            [
+                '$project' => [
+                    'time' => [
+                        '$divide' => ['$average', 31536000000]
+                    ]
+                ]
+            ]
+        ]);
+
+        return array_reduce($document->toArray(), function ($carry, $item) {
+            return $carry + $item['time'];
+        }, 0);
     }
 
     public function setStore(Database $database)

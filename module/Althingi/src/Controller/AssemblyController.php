@@ -4,6 +4,7 @@ namespace Althingi\Controller;
 
 use Althingi\Injector\ServiceCongressmanAwareInterface;
 use Althingi\Injector\StoreCategoryAwareInterface;
+use Althingi\Injector\StoreCongressmanAwareInterface;
 use Althingi\Injector\StoreIssueAwareInterface;
 use Althingi\Injector\StorePartyAwareInterface;
 use Althingi\Injector\StoreSpeechAwareInterface;
@@ -50,7 +51,8 @@ class AssemblyController extends AbstractRestfulController implements
     StoreVoteAwareInterface,
     StoreSpeechAwareInterface,
     StorePartyAwareInterface,
-    StoreCategoryAwareInterface
+    StoreCategoryAwareInterface,
+    StoreCongressmanAwareInterface
 {
     use Range;
 
@@ -98,6 +100,9 @@ class AssemblyController extends AbstractRestfulController implements
 
     /** @var $categoryStore \Althingi\Store\Category */
     private $categoryStore;
+
+    /** @var $categoryStore \Althingi\Store\Congressman */
+    private $congressmanStore;
 
     /**
      * Get one Assembly.
@@ -456,7 +461,6 @@ class AssemblyController extends AbstractRestfulController implements
      *
      * @param Model\Assembly $assembly
      * @return Model\AssemblyStatusProperties
-     * @todo the average-age is still being calculated from the DB.
      * @todo the Election results are not being fetched at all.
      */
     private function fetchStatisticsFromStore(Model\Assembly $assembly)
@@ -464,7 +468,7 @@ class AssemblyController extends AbstractRestfulController implements
         return (new Model\AssemblyStatusProperties())
             ->setVotes($this->voteStore->fetchFrequencyByAssembly($assembly->getAssemblyId()))
             ->setSpeeches($this->speechStore->fetchFrequencyByAssembly($assembly->getAssemblyId()))
-            ->setAverageAge($this->congressmanService->getAverageAgeByAssembly(
+            ->setAverageAge($this->congressmanStore->getAverageAgeByAssembly(
                 $assembly->getAssemblyId(),
                 $assembly->getFrom()
             ))
@@ -473,5 +477,15 @@ class AssemblyController extends AbstractRestfulController implements
             ->setElection(null)
             ->setElectionResults([])
         ;
+    }
+
+    /**
+     * @param \Althingi\Store\Congressman $congressman
+     * @return $this
+     */
+    public function setCongressmanStore(Store\Congressman $congressman)
+    {
+        $this->congressmanStore = $congressman;
+        return $this;
     }
 }
