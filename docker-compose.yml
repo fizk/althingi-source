@@ -2,6 +2,63 @@ version: '3'
 
 services:
 
+  ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
+
+  ## Start the API without any dependant services.
+
+  ##  This is great for using the dependant services
+  ##  in the production environment, but running
+  ##  the API Service code locally.
+
+  ##  Set ENV_DB_HOST, ENV_ES_HOST, ENV_STORAGE_HOST
+  ##  to loggjafarthing.einarvalur.co
+  ##  and ENV_SEARCH to elasticsearch
+
+  ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
+  run:
+    container_name: server_run
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:80
+    volumes:
+      - ./auto/:/var/www/auto
+      - ./config/:/var/www/config
+      - ./module/:/var/www/module
+      - ./public/:/var/www/public
+    environment:
+      - LOG_PATH=php://stdout
+      - LOG_FORMAT=line
+
+      - APPLICATION_ENVIRONMENT=development
+
+      - DB_HOST=${ENV_DB_HOST:-host.docker.internal}
+      - DB_PORT=${ENV_DB_PORT:-4406}
+      - DB_NAME=${ENV_DB_NAME:-althingi}
+      - DB_USER=${ENV_DB_USER:-root}
+      - DB_PASSWORD=${ENV_DB_PASSWORD:-example}
+
+      - CACHE_TYPE=none
+
+      - SEARCH=${ENV_SEARCH:-none}
+
+      - ES_HOST=${ENV_ES_HOST:-host.docker.internal}
+      - ES_PROTO=${ENV_ES_PROTO:-http}
+      - ES_PORT=${ENV_ES_PORT:-9200}
+      - ES_USER=${ENV_ES_USER:-elastic}
+      - ES_PASSWORD=${ENV_ES_PASSWORD:-changeme}
+
+      - QUEUE=none
+
+      - STORAGE_HOST=${ENV_STORAGE_HOST:-host.docker.internal}
+      - STORAGE_DB=${ENV_STORAGE_DB:-althingi}
+      - STORAGE_PORT=${ENV_STORAGE_PORT:-27017}
+      - STORAGE_USER=${ENV_STORAGE_USER:-wo}
+      - STORAGE_PASSWORD=${STORAGE_PASSWORD:-long@pass!123}
+
+
+
   # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
   # TEST
   #

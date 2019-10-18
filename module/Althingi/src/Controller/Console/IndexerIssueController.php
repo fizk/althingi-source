@@ -9,6 +9,7 @@ use Althingi\Injector\ServiceDocumentAwareInterface;
 use Althingi\Injector\ServiceIssueAwareInterface;
 use Althingi\Injector\ServiceIssueCategoryAwareInterface;
 use Althingi\Injector\ServiceProponentAwareInterface;
+use Althingi\Injector\ServiceSessionAwareInterface;
 use Althingi\Injector\ServiceSpeechAwareInterface;
 use Althingi\Injector\ServiceVoteAwareInterface;
 use Althingi\Injector\ServiceVoteItemAwareInterface;
@@ -17,6 +18,7 @@ use Althingi\Presenters\IndexableCongressmanDocumentPresenter;
 use Althingi\Presenters\IndexableDocumentPresenter;
 use Althingi\Presenters\IndexableIssueCategoryPresenter;
 use Althingi\Presenters\IndexableIssuePresenter;
+use Althingi\Presenters\IndexableSessionPresenter;
 use Althingi\Presenters\IndexableSpeechPresenter;
 use Althingi\Presenters\IndexableVoteItemPresenter;
 use Althingi\Presenters\IndexableVotePresenter;
@@ -25,6 +27,7 @@ use Althingi\Service\CongressmanDocument;
 use Althingi\Service\Document;
 use Althingi\Service\Issue;
 use Althingi\Service\IssueCategory;
+use Althingi\Service\Session;
 use Althingi\Service\Speech;
 use Althingi\Service\Vote;
 use Althingi\Service\VoteItem;
@@ -45,6 +48,7 @@ class IndexerIssueController extends AbstractActionController implements
     ServiceVoteAwareInterface,
     ServiceAssemblyAwareInterface,
     ServiceVoteItemAwareInterface,
+    ServiceSessionAwareInterface,
     LoggerAwareInterface,
     QueueAwareInterface
 {
@@ -71,6 +75,9 @@ class IndexerIssueController extends AbstractActionController implements
 
     /** @var  \Althingi\Service\Assembly */
     private $assemblyService;
+
+    /** @var  \Althingi\Service\Session */
+    private $sessionService;
 
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
@@ -107,6 +114,19 @@ class IndexerIssueController extends AbstractActionController implements
         $issues = $this->issueService->fetchAllByAssembly($assembly->getAssemblyId());
         foreach ($issues as $issue) {
             $this->indexIssue($issue);
+        }
+    }
+
+    public function sessionAction()
+    {
+        $assemblyId = $this->params('assembly');
+
+        $sessions = $this->sessionService->fetchByAssembly($assemblyId);
+
+        $addEvent = new Add($this->getQueue(), $this->getLogger());
+        foreach ($sessions as $session) {
+            $addEvent(new AddEvent(new IndexableSessionPresenter($session), ['rows' => 1]));
+            usleep(150000);
         }
     }
 
@@ -274,5 +294,15 @@ class IndexerIssueController extends AbstractActionController implements
         if ($this->processedCount % $this->processedSize === 0) {
             usleep($this->sleepTime);
         }
+    }
+
+    /**
+     * @param Session $session
+     * @return $this
+     */
+    public function setSessionService(Session $session)
+    {
+        $this->sessionService = $session;
+        return $this;
     }
 }
