@@ -11,7 +11,12 @@ class Session implements StoreAwareInterface
     /** @var \MongoDB\Database */
     private $database;
 
-    public function fetchByAssemblyAndCongressman($assemblyId, $congressmanId)
+    /**
+     * @param $assemblyId
+     * @param $congressmanId
+     * @return \Althingi\Model\Session[]
+     */
+    public function fetchByAssemblyAndCongressman($assemblyId, $congressmanId): array
     {
         $document = $this->getStore()->congressman->aggregate([
             ['$match' => [
@@ -34,6 +39,10 @@ class Session implements StoreAwareInterface
         }, (array)$doc[0]['sessions']);
     }
 
+    /**
+     * @param int $id
+     * @return Model\AssemblyProperties|null
+     */
     public function get(int $id): ?Model\AssemblyProperties
     {
         $document = $this->getStore()->assembly->findOne([
