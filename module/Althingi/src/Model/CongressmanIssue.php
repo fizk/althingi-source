@@ -25,7 +25,7 @@ class CongressmanIssue implements ModelInterface
     /**
      * @return int
      */
-    public function getOrder(): int
+    public function getOrder(): ?int
     {
         return $this->order;
     }
@@ -34,7 +34,7 @@ class CongressmanIssue implements ModelInterface
      * @param int $order
      * @return CongressmanIssue
      */
-    public function setOrder(int $order): CongressmanIssue
+    public function setOrder(?int $order): CongressmanIssue
     {
         $this->order = $order;
         return $this;
@@ -43,7 +43,7 @@ class CongressmanIssue implements ModelInterface
     /**
      * @return string
      */
-    public function getType(): string
+    public function getType(): ?string
     {
         return $this->type;
     }
@@ -52,7 +52,7 @@ class CongressmanIssue implements ModelInterface
      * @param string $type
      * @return CongressmanIssue
      */
-    public function setType(string $type): CongressmanIssue
+    public function setType(?string $type): CongressmanIssue
     {
         $this->type = $type;
         return $this;
@@ -61,7 +61,7 @@ class CongressmanIssue implements ModelInterface
     /**
      * @return string
      */
-    public function getTypeName(): string
+    public function getTypeName(): ?string
     {
         return $this->type_name;
     }
@@ -70,7 +70,7 @@ class CongressmanIssue implements ModelInterface
      * @param string $type_name
      * @return CongressmanIssue
      */
-    public function setTypeName(string $type_name): CongressmanIssue
+    public function setTypeName(?string $type_name): CongressmanIssue
     {
         $this->type_name = $type_name;
         return $this;
@@ -79,7 +79,7 @@ class CongressmanIssue implements ModelInterface
     /**
      * @return string
      */
-    public function getTypeSubname(): string
+    public function getTypeSubname(): ?string
     {
         return $this->type_subname;
     }
@@ -88,7 +88,7 @@ class CongressmanIssue implements ModelInterface
      * @param string $type_subname
      * @return CongressmanIssue
      */
-    public function setTypeSubname(string $type_subname): CongressmanIssue
+    public function setTypeSubname(?string $type_subname): CongressmanIssue
     {
         $this->type_subname = $type_subname;
         return $this;
@@ -97,7 +97,7 @@ class CongressmanIssue implements ModelInterface
     /**
      * @return string
      */
-    public function getDocumentType(): string
+    public function getDocumentType(): ?string
     {
         return $this->document_type;
     }
@@ -106,7 +106,7 @@ class CongressmanIssue implements ModelInterface
      * @param string $document_type
      * @return CongressmanIssue
      */
-    public function setDocumentType(string $document_type): CongressmanIssue
+    public function setDocumentType(?string $document_type): CongressmanIssue
     {
         $this->document_type = $document_type;
         return $this;
@@ -115,7 +115,7 @@ class CongressmanIssue implements ModelInterface
     /**
      * @return int
      */
-    public function getCount(): int
+    public function getCount(): ?int
     {
         return $this->count;
     }
@@ -124,7 +124,7 @@ class CongressmanIssue implements ModelInterface
      * @param int $count
      * @return CongressmanIssue
      */
-    public function setCount(int $count): CongressmanIssue
+    public function setCount(?int $count): CongressmanIssue
     {
         $this->count = $count;
         return $this;
