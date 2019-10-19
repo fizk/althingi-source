@@ -7,6 +7,7 @@ use DateTime;
 
 class Assembly implements HydratorInterface
 {
+    use HydrateDate;
 
     /**
      * Hydrate $object with the provided $data.
@@ -32,24 +33,5 @@ class Assembly implements HydratorInterface
     public function extract($object)
     {
         return $object->toArray();
-    }
-
-    private function hydrateDate($date)
-    {
-        if (is_null($date)) {
-            return null;
-        }
-
-        if (is_string($date)) {
-            return new DateTime($date);
-        }
-
-        if ($date instanceof DateTime) {
-            return $date;
-        }
-
-        if ($date instanceof \MongoDB\BSON\UTCDateTime) {
-            return $date->toDateTime();
-        }
     }
 }

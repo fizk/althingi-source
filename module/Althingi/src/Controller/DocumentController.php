@@ -3,6 +3,7 @@
 namespace Althingi\Controller;
 
 use Althingi\Injector\ServiceConstituencyAwareInterface;
+use Althingi\Injector\StoreDocumentAwareInterface;
 use Althingi\Model;
 use Althingi\Service;
 use Althingi\Form;
@@ -24,10 +25,14 @@ class DocumentController extends AbstractRestfulController implements
     ServiceCongressmanAwareInterface,
     ServicePartyAwareInterface,
     ServiceVoteItemAwareInterface,
-    ServiceConstituencyAwareInterface
+    ServiceConstituencyAwareInterface,
+    StoreDocumentAwareInterface
 {
     /** @var  \Althingi\Service\Document */
     private $documentService;
+
+    /** @var  \Althingi\Store\Document */
+    private $documentStore;
 
     /** @var  \Althingi\Service\Vote */
     private $voteService;
@@ -71,27 +76,29 @@ class DocumentController extends AbstractRestfulController implements
         $assemblyId = $this->params('id');
         $issueId = $this->params('issue_id');
 
-        $documents = array_map(function (Model\Document $document) use ($assemblyId, $issueId) {
-            $votes = $this->voteService->fetchByDocument($assemblyId, $issueId, $document->getDocumentId());
-            $congressmen = array_map(function (Model\Proponent $proponent) use ($document) {
-                return (new Model\ProponentPartyProperties())
-                    ->setCongressman($proponent)
-                    ->setParty($this->partyService->getByCongressman(
-                        $proponent->getCongressmanId(),
-                        $document->getDate()
-                    ))->setConstituency($this->constituencyService->getByCongressman(
-                        $proponent->getCongressmanId(),
-                        $document->getDate()
-                    ));
-            }, $this->congressmanService->fetchProponents($assemblyId, $document->getDocumentId()));
+        $documents = $this->documentStore->fetchByIssue($assemblyId, $issueId);
 
-            $documentProperties = (new Model\DocumentProperties())
-                ->setDocument($document)
-                ->setVotes($votes)
-                ->setProponents($congressmen);
-
-            return $documentProperties;
-        }, $this->documentService->fetchByIssue($assemblyId, $issueId));
+//        $documents = array_map(function (Model\Document $document) use ($assemblyId, $issueId) {
+//            $votes = $this->voteService->fetchByDocument($assemblyId, $issueId, $document->getDocumentId());
+//            $congressmen = array_map(function (Model\Proponent $proponent) use ($document) {
+//                return (new Model\ProponentPartyProperties())
+//                    ->setCongressman($proponent)
+//                    ->setParty($this->partyService->getByCongressman(
+//                        $proponent->getCongressmanId(),
+//                        $document->getDate()
+//                    ))->setConstituency($this->constituencyService->getByCongressman(
+//                        $proponent->getCongressmanId(),
+//                        $document->getDate()
+//                    ));
+//            }, $this->congressmanService->fetchProponents($assemblyId, $document->getDocumentId()));
+//
+//            $documentProperties = (new Model\DocumentProperties())
+//                ->setDocument($document)
+//                ->setVotes($votes)
+//                ->setProponents($congressmen);
+//
+//            return $documentProperties;
+//        }, $this->documentService->fetchByIssue($assemblyId, $issueId));
         $documentsCount = count($documents);
 
         return (new CollectionModel($documents))
@@ -217,6 +224,16 @@ class DocumentController extends AbstractRestfulController implements
     public function setConstituencyService(Constituency $constituency)
     {
         $this->constituencyService = $constituency;
+        return $this;
+    }
+
+    /**
+     * @param \Althingi\Store\Document $document
+     * @return $this
+     */
+    public function setDocumentStore(\Althingi\Store\Document $document)
+    {
+        $this->documentStore = $document;
         return $this;
     }
 }

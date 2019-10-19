@@ -8,7 +8,9 @@ use Althingi\Injector\ServicePartyAwareInterface;
 use Althingi\Injector\ServicePlenaryAwareInterface;
 use Althingi\Injector\ServiceSearchSpeechAwareInterface;
 use Althingi\Injector\ServiceSpeechAwareInterface;
+use Althingi\Injector\StoreSpeechAwareInterface;
 use Althingi\Service\Constituency;
+use Althingi\Store\Speech;
 use Althingi\Utils\Transformer;
 use Althingi\Model;
 use Althingi\Service;
@@ -27,12 +29,16 @@ class SpeechController extends AbstractRestfulController implements
     ServicePartyAwareInterface,
     ServiceSearchSpeechAwareInterface,
     ServicePlenaryAwareInterface,
-    ServiceConstituencyAwareInterface
+    ServiceConstituencyAwareInterface,
+    StoreSpeechAwareInterface
 {
     use Range;
 
     /** @var \Althingi\Service\Speech */
     private $speechService;
+
+    /** @var \Althingi\Store\Speech */
+    private $speechStore;
 
     /** @var  \Althingi\Service\SearchSpeech */
     private $speechSearch;
@@ -112,12 +118,12 @@ class SpeechController extends AbstractRestfulController implements
         $assemblyId = $this->params('id');
         $issueId = $this->params('issue_id');
         $category = strtoupper($this->params('category', 'a'));
-        $count = 0;
 
-        $count = $this->speechService->countByIssue($assemblyId, $issueId, $category);
+        // Store
+        $count = $this->speechStore->countByIssue($assemblyId, $issueId, $category);
         $range = $this->getRange($this->getRequest(), $count);
 
-        $speeches = $this->speechService->fetchByIssue(
+        $speechesAndProperties = $this->speechStore->fetchByIssue(
             $assemblyId,
             $issueId,
             $category,
@@ -126,27 +132,40 @@ class SpeechController extends AbstractRestfulController implements
             1500
         );
 
-        $speechesAndProperties = array_map(function (Model\SpeechAndPosition $speech) {
-            $speech->setText(Transformer::speechToMarkdown($speech->getText()));
-            $congressmanPartyProperties = (new Model\CongressmanPartyProperties())
-                ->setCongressman($this->congressmanService->get(
-                    $speech->getCongressmanId()
-                ))->setParty($this->partyService->getByCongressman(
-                    $speech->getCongressmanId(),
-                    $speech->getFrom()
-                ))->setConstituency($this->constituencyService->getByCongressman(
-                    $speech->getCongressmanId(),
-                    $speech->getFrom()
-                ));
-
-            return (new Model\SpeechCongressmanProperties())
-                ->setCongressman($congressmanPartyProperties)
-                ->setSpeech($speech);
-        }, $speeches);
+        // DB
+//        $count = $this->speechService->countByIssue($assemblyId, $issueId, $category);
+//        $range = $this->getRange($this->getRequest(), $count);
+//
+//        $speeches = $this->speechService->fetchByIssue(
+//            $assemblyId,
+//            $issueId,
+//            $category,
+//            $range->getFrom(),
+//            $range->getSize(),
+//            1500
+//        );
+//
+//        $speechesAndProperties = array_map(function (Model\SpeechAndPosition $speech) {
+//            $speech->setText(Transformer::speechToMarkdown($speech->getText()));
+//            $congressmanPartyProperties = (new Model\CongressmanPartyProperties())
+//                ->setCongressman($this->congressmanService->get(
+//                    $speech->getCongressmanId()
+//                ))->setParty($this->partyService->getByCongressman(
+//                    $speech->getCongressmanId(),
+//                    $speech->getFrom()
+//                ))->setConstituency($this->constituencyService->getByCongressman(
+//                    $speech->getCongressmanId(),
+//                    $speech->getFrom()
+//                ));
+//
+//            return (new Model\SpeechCongressmanProperties())
+//                ->setCongressman($congressmanPartyProperties)
+//                ->setSpeech($speech);
+//        }, $speeches);
 
         return (new CollectionModel($speechesAndProperties))
             ->setStatus(206)
-            ->setRange($range->getFrom(), (count($speeches) + $range->getFrom()), $count);
+            ->setRange($range->getFrom(), (count($speechesAndProperties) + $range->getFrom()), $count);
     }
 
     /**
@@ -325,6 +344,16 @@ class SpeechController extends AbstractRestfulController implements
     public function setConstituencyService(Constituency $constituency)
     {
         $this->constituencyService = $constituency;
+        return $this;
+    }
+
+    /**
+     * @param \Althingi\Store\Speech $speech
+     * @return $this
+     */
+    public function setSpeechStore(Speech $speech)
+    {
+        $this->speechStore = $speech;
         return $this;
     }
 }

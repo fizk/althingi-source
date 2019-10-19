@@ -6,6 +6,8 @@ use Zend\Hydrator\HydratorInterface;
 
 class Vote implements HydratorInterface
 {
+    use HydrateDate;
+
     /**
      * Hydrate $object with the provided $data.
      *
@@ -21,7 +23,7 @@ class Vote implements HydratorInterface
             ->setCategory($data['category'])
             ->setAssemblyId($data['assembly_id'])
             ->setDocumentId(isset($data['document_id']) ? $data['document_id'] : null)
-            ->setDate($data['date'] ? new \DateTime($data['date']) : null)
+            ->setDate(array_key_exists('date', $data) ? $this->hydrateDate($data['date']) : null)
             ->setType($data['type'])
             ->setOutcome(isset($data['outcome']) ? $data['outcome'] : null)
             ->setMethod($data['method'])
@@ -30,7 +32,6 @@ class Vote implements HydratorInterface
             ->setInaction(isset($data['inaction']) ? $data['inaction'] : null)
             ->setCommitteeTo(isset($data['committee_to']) ? $data['committee_to'] : null);
     }
-
 
     /**
      * Extract values from an object

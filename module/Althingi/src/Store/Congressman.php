@@ -191,6 +191,32 @@ class Congressman implements StoreAwareInterface
         }, iterator_to_array($document));
     }
 
+    public function fetchByAssembly(int $assemblyId, ?string $type = null)
+    {
+        $query = array_merge(
+            ['assembly.assembly_id' => $assemblyId,],
+            $type ? ['sessions' => ['$elemMatch' => ['type' => $type]]] : []
+        );
+
+        $document = $this->getStore()->congressman->find(
+            $query,
+            ['sort' => ['congressman.name' => 1]]
+        );
+
+        return array_map(function ($document) {
+            $congressman = array_merge((array)$document['congressman']);
+            return  (new Model\CongressmanPartyProperties())
+                ->setCongressman(
+                    (new Hydrator\Congressman())->hydrate($congressman, new Model\Congressman())
+                )->setParty(
+                    (new Hydrator\Party())->hydrate((array)$congressman['party'], new Model\Party())
+                )->setConstituency(
+                    (new Hydrator\Constituency())
+                        ->hydrate((array)$congressman['constituency'], new Model\Constituency())
+                );
+        }, $document->toArray());
+    }
+
     /**
      * Gets average age of all congressmen for a give assembly, regardless of their type
      *
