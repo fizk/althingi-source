@@ -164,6 +164,10 @@ return [
             return (new Store\Document())
                 ->setStore($sm->get(\MongoDB\Database::class));
         },
+        Store\Session::class => function (ServiceManager $sm) {
+            return (new Store\Session())
+                ->setStore($sm->get(\MongoDB\Database::class));
+        },
 
         PDO::class => function (ServiceManager $sm) {
             $dbHost = getenv('DB_HOST') ?: 'localhost';

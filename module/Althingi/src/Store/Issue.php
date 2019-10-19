@@ -159,6 +159,29 @@ class Issue implements StoreAwareInterface
         }, 0);
     }
 
+    public function fetchByAssemblyAndCongressman(int $assemblyId, int $congressmanId)
+    {
+        $document = $this->getStore()->congressman->aggregate([
+            ['$match' => [
+                'assembly.assembly_id' => (int)$assemblyId,
+                'congressman.congressman_id' => (int)$congressmanId
+            ]],
+            ['$project' => [
+                'propositions' => 1
+            ]],
+        ]);
+
+        $doc = $document->toArray();
+
+        if (count($doc) != 1) {
+            return [];
+        }
+
+        return array_map(function ($session) {
+            return (new Hydrator\Issue())->hydrate((array)$session, new Model\Issue());
+        }, (array)$doc[0]['propositions']);
+    }
+
     public function fetchGovernmentBillStatisticsByAssembly(int $assemblyId)
     {
         $documents = $this->getStore()->issue->aggregate([
@@ -293,6 +316,82 @@ class Issue implements StoreAwareInterface
         return array_map(function ($object) {
             return $this->hydrateIssue($object);
         }, iterator_to_array($documents));
+    }
+
+    public function fetchFrequencyByAssemblyAndCongressman(int $assemblyId, int $congressmanId)
+    {
+        $document = $this->getStore()->congressman->aggregate([
+            ['$match' => [
+                'assembly.assembly_id' => (int)$assemblyId,
+                'congressman.congressman_id' => (int)$congressmanId
+            ]],
+            ['$project' => [
+                'values' => ['$objectToArray' => '$super_categories_speech_time']
+            ]],
+            ['$project' => [
+                'values' => [
+                    '$map' => [
+                        'input' => '$values',
+                        'as' => 'item',
+                        'in' => [
+                            'super_category_id' => '$$item.v.id',
+                            'time' => '$$item.v.time',
+                            'title' => '$$item.v.title',
+                        ]
+                    ]
+                ]
+            ]],
+        ]);
+
+        $doc = $document->toArray();
+
+        if (count($doc) != 1) {
+            return [];
+        }
+
+        return array_map(function ($session) {
+            return (new Hydrator\IssueSuperCategoryAndTime())
+                ->hydrate((array)$session, new Model\IssueSuperCategoryAndTime());
+        }, (array)$doc[0]['values']);
+    }
+
+    public function fetchByAssemblyAndCongressmanSummary(int $assemblyId, int $congressmanId)
+    {
+        $document = $this->getStore()->congressman->aggregate([
+            ['$match' => [
+                'assembly.assembly_id' => $assemblyId,
+                'congressman.congressman_id' => $congressmanId,
+            ]],
+            ['$project' => [
+                'values' => ['$objectToArray' => '$issues']
+            ]],
+            ['$project' => [
+                'values' => [
+                    '$map' => [
+                        'input' => '$values',
+                        'as' => 'item',
+                        'in' => [
+                            'order' => null,
+                            'type' => '$$item.k',
+                            'count' => '$$item.v',
+                            'typeName' => null,
+                            'typeSubName' => null,
+                            'documentType' => null
+                        ]
+                    ]
+                ]
+            ]]
+        ]);
+
+        $doc = $document->toArray();
+
+        if (count($doc) != 1) {
+            return [];
+        }
+
+        return array_map(function ($object) {
+            return (new Hydrator\CongressmanIssue())->hydrate((array)$object, new Model\CongressmanIssue());
+        }, (array)$doc[0]['values']);
     }
 
     /**

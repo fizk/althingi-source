@@ -831,7 +831,11 @@ return [
                     ->setIssueCategoryService($container->get(Service\IssueCategory::class))
                     ->setVoteItemService($container->get(Service\VoteItem::class))
                     ->setSessionService($container->get(Service\Session::class))
-                    ->setCongressmanStore($container->get(Store\Congressman::class));
+                    ->setCongressmanStore($container->get(Store\Congressman::class))
+                    ->setSessionStore($container->get(Store\Session::class))
+                    ->setVoteStore($container->get(Store\Vote::class))
+                    ->setIssueStore($container->get(Store\Issue::class))
+                    ;
             },
             Controller\SessionController::class => function (ServiceManager $container) {
                 return (new Controller\SessionController())
