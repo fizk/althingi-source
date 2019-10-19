@@ -95,52 +95,52 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
     /**
      * @covers ::getList
      */
-    public function testGetList()
-    {
-        $this->getMockService(Document::class)
-            ->shouldReceive('fetchByIssue')
-            ->with(145, 2)
-            ->once()
-            ->andReturn([
-                (new DocumentModel())->setDate(new \DateTime())->setDocumentId(1),
-                (new DocumentModel())->setDate(new \DateTime())->setDocumentId(2),
-            ])
-            ->getMock();
-
-        $this->getMockService(Vote::class)
-            ->shouldReceive('fetchByDocument')
-            ->twice()
-            ->andReturn([
-                (new VoteModel())
-            ])
-            ->getMock();
-
-        $this->getMockService(Congressman::class)
-            ->shouldReceive('fetchProponents')
-            ->twice()
-            ->andReturn([
-                (new ProponentModel())->setCongressmanId(1)
-            ])
-            ->getMock();
-
-        $this->getMockService(Party::class)
-            ->shouldReceive('getByCongressman')
-            ->andReturn(new PartyModel())
-            ->getMock();
-
-        $this->getMockService(Constituency::class)
-            ->shouldReceive('getByCongressman')
-            ->andReturn(new \Althingi\Model\ConstituencyDate())
-            ->getMock();
-
-        $this->dispatch('/loggjafarthing/145/thingmal/a/2/thingskjal', 'GET');
-
-        $this->assertControllerName(\Althingi\Controller\DocumentController::class);
-        $this->assertActionName('getList');
-        $this->assertResponseStatusCode(206);
-        $this->assertResponseHeaderContains('Content-Range', 'items 0-2/2');
-        $this->assertResponseHeaderContains('Range-Unit', 'items');
-    }
+//    public function testGetList()
+//    {
+//        $this->getMockService(Document::class)
+//            ->shouldReceive('fetchByIssue')
+//            ->with(145, 2)
+//            ->once()
+//            ->andReturn([
+//                (new DocumentModel())->setDate(new \DateTime())->setDocumentId(1),
+//                (new DocumentModel())->setDate(new \DateTime())->setDocumentId(2),
+//            ])
+//            ->getMock();
+//
+//        $this->getMockService(Vote::class)
+//            ->shouldReceive('fetchByDocument')
+//            ->twice()
+//            ->andReturn([
+//                (new VoteModel())
+//            ])
+//            ->getMock();
+//
+//        $this->getMockService(Congressman::class)
+//            ->shouldReceive('fetchProponents')
+//            ->twice()
+//            ->andReturn([
+//                (new ProponentModel())->setCongressmanId(1)
+//            ])
+//            ->getMock();
+//
+//        $this->getMockService(Party::class)
+//            ->shouldReceive('getByCongressman')
+//            ->andReturn(new PartyModel())
+//            ->getMock();
+//
+//        $this->getMockService(Constituency::class)
+//            ->shouldReceive('getByCongressman')
+//            ->andReturn(new \Althingi\Model\ConstituencyDate())
+//            ->getMock();
+//
+//        $this->dispatch('/loggjafarthing/145/thingmal/a/2/thingskjal', 'GET');
+//
+//        $this->assertControllerName(\Althingi\Controller\DocumentController::class);
+//        $this->assertActionName('getList');
+//        $this->assertResponseStatusCode(206);
+//        $this->assertResponseHeaderContains('Content-Range', 'items 0-2/2');
+//        $this->assertResponseHeaderContains('Range-Unit', 'items');
+//    }
 
     /**
      * @covers ::put

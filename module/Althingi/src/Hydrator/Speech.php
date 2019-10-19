@@ -6,6 +6,8 @@ use Zend\Hydrator\HydratorInterface;
 
 class Speech implements HydratorInterface
 {
+    use HydrateDate;
+
     /**
      * Hydrate $object with the provided $data.
      *
@@ -23,8 +25,8 @@ class Speech implements HydratorInterface
             ->setIssueId($data['issue_id'])
             ->setCongressmanId($data['congressman_id'])
             ->setCongressmanType($data['congressman_type'])
-            ->setFrom($data['from'] ? new \DateTime($data['from']) : null)
-            ->setTo($data['to'] ? new \DateTime($data['to']) : null)
+            ->setFrom(array_key_exists('from', $data) ? $this->hydrateDate($data['from']) : null)
+            ->setTo(array_key_exists('to', $data) ? $this->hydrateDate($data['to']) : null)
             ->setText($data['text'])
             ->setType($data['type'])
             ->setIteration($data['iteration'])

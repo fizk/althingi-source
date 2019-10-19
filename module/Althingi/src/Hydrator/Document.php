@@ -7,6 +7,8 @@ use DateTime;
 
 class Document implements HydratorInterface
 {
+    use HydrateDate;
+
     /**
      * Hydrate $object with the provided $data.
      *
@@ -21,11 +23,10 @@ class Document implements HydratorInterface
             ->setIssueId($data['issue_id'])
             ->setCategory($data['category'])
             ->setAssemblyId($data['assembly_id'])
-            ->setDate(new DateTime($data['date']))
+            ->setDate(array_key_exists('date', $data) ? $this->hydrateDate($data['date']) : null)
             ->setUrl($data['url'])
             ->setType($data['type']);
     }
-
 
     /**
      * Extract values from an object

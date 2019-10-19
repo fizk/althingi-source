@@ -4,6 +4,7 @@ namespace Althingi\Controller\Aggregate;
 
 use Althingi\Injector\ServiceDocumentAwareInterface;
 use Althingi\Injector\ServiceProponentAwareInterface;
+use Althingi\Injector\StoreDocumentAwareInterface;
 use Althingi\Service\CongressmanDocument;
 use Althingi\Service\Document;
 use Rend\Controller\AbstractRestfulController;
@@ -19,6 +20,9 @@ class DocumentController extends AbstractRestfulController implements
 
     /** @var $issueService \Althingi\Service\Document */
     private $documentService;
+
+    /** @var $issueService \Althingi\Store\Document */
+    private $documentStore;
 
     /** @var $issueService \Althingi\Service\CongressmanDocument */
     private $congressmanDocumentService;

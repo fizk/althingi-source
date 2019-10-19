@@ -888,7 +888,8 @@ return [
                     ->setPartyService($container->get(Service\Party::class))
                     ->setPlenaryService($container->get(Service\Plenary::class))
                     ->setConstituencyService($container->get(Service\Constituency::class))
-                    ->setSearchSpeechService($container->get(Service\SearchSpeech::class));
+                    ->setSearchSpeechService($container->get(Service\SearchSpeech::class))
+                    ->setSpeechStore($container->get(Store\Speech::class));
             },
             Controller\VoteController::class => function (ServiceManager $container) {
                 return (new Controller\VoteController())
@@ -917,7 +918,8 @@ return [
                     ->setPartyService($container->get(Service\Party::class))
                     ->setVoteService($container->get(Service\Vote::class))
                     ->setConstituencyService($container->get(Service\Constituency::class))
-                    ->setDocumentService($container->get(Service\Document::class));
+                    ->setDocumentService($container->get(Service\Document::class))
+                    ->setDocumentStore($container->get(Store\Document::class));
             },
             Controller\CommitteeController::class => function (ServiceManager $container) {
                 return (new Controller\CommitteeController())

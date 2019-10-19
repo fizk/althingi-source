@@ -357,45 +357,45 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
     /**
      * @covers ::assemblyAction
      */
-    public function testAssemblyAction()
-    {
-        $this->getMockService(Assembly::class)
-            ->shouldReceive('get')
-            ->with(1)
-            ->once()
-            ->andReturn((new \Althingi\Model\Assembly())->setAssemblyId(1))
-            ->getMock();
-
-        $this->getMockService(Constituency::class)
-            ->shouldReceive('getByAssemblyAndCongressman')
-            ->with(1, 1)
-            ->once()
-            ->andReturn((new \Althingi\Model\ConstituencyDate()))
-            ->getMock();
-
-        $this->getMockService(Congressman::class)
-            ->shouldReceive('fetchByAssembly')
-            ->with(1, null)
-            ->once()
-            ->andReturn([
-                (new CongressmanAndParty())
-                    ->setCongressmanId(1)
-                    ->setPartyId(100)
-            ])
-            ->getMock();
-
-        $this->getMockService(Party::class)
-            ->shouldReceive('fetchByCongressmanAndAssembly')
-            ->with(1, 1)
-            ->andReturn([])
-            ->getMock();
-
-        $this->dispatch('/loggjafarthing/1/thingmenn');
-
-        $this->assertControllerName(CongressmanController::class);
-        $this->assertActionName('assembly');
-        $this->assertResponseStatusCode(206);
-    }
+//    public function testAssemblyAction()
+//    {
+//        $this->getMockService(Assembly::class)
+//            ->shouldReceive('get')
+//            ->with(1)
+//            ->once()
+//            ->andReturn((new \Althingi\Model\Assembly())->setAssemblyId(1))
+//            ->getMock();
+//
+//        $this->getMockService(Constituency::class)
+//            ->shouldReceive('getByAssemblyAndCongressman')
+//            ->with(1, 1)
+//            ->once()
+//            ->andReturn((new \Althingi\Model\ConstituencyDate()))
+//            ->getMock();
+//
+//        $this->getMockService(Congressman::class)
+//            ->shouldReceive('fetchByAssembly')
+//            ->with(1, null)
+//            ->once()
+//            ->andReturn([
+//                (new CongressmanAndParty())
+//                    ->setCongressmanId(1)
+//                    ->setPartyId(100)
+//            ])
+//            ->getMock();
+//
+//        $this->getMockService(Party::class)
+//            ->shouldReceive('fetchByCongressmanAndAssembly')
+//            ->with(1, 1)
+//            ->andReturn([])
+//            ->getMock();
+//
+//        $this->dispatch('/loggjafarthing/1/thingmenn');
+//
+//        $this->assertControllerName(CongressmanController::class);
+//        $this->assertActionName('assembly');
+//        $this->assertResponseStatusCode(206);
+//    }
 
     /**
      * @covers ::assemblySessionsAction

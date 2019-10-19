@@ -208,144 +208,144 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
     /**
      * @covers ::getList
      */
-    public function testGetList()
-    {
-        $this->getMockService(Speech::class)
-            ->shouldReceive('fetchByIssue')
-            ->with(144, 3, 'B', 0, null, 1500)
-            ->andReturn([
-                (new SpeechAndPosition())->setCongressmanId(1)->setFrom(new \DateTime()),
-            ])
-            ->once()
-            ->getMock()
-
-            ->shouldReceive('countByIssue')
-            ->andReturn(100)
-            ->getMock();
-
-        $this->getMockService(Congressman::class)
-            ->shouldReceive('get')
-            ->andReturn(new \Althingi\Model\Congressman())
-            ->once();
-
-        $this->getMockService(Party::class)
-            ->shouldReceive('getByCongressman')
-            ->andReturn(new \Althingi\Model\Party())
-            ->once();
-
-        $this->getMockService(Constituency::class)
-            ->shouldReceive('getByCongressman')
-            ->andReturn(new ConstituencyDate())
-            ->once()
-            ->getMock();
-
-        $this->dispatch('/loggjafarthing/144/thingmal/b/3/raedur');
-
-        $this->assertControllerName(\Althingi\Controller\SpeechController::class);
-        $this->assertActionName('getList');
-        $this->assertResponseStatusCode(206);
-        $this->assertResponseHeaderContains('Content-Range', 'items 0-1/100');
-        $this->assertResponseHeaderContains('Range-Unit', 'items');
-    }
-
-    /**
-     * @covers ::getList
-     */
-    public function testGetListRangeHeaders()
-    {
-        $headers = $this->getRequest()->getHeaders();
-        $headers->addHeaderLine('Range', '0-');
-
-        $this->getMockService(Speech::class)
-            ->shouldReceive('fetchByIssue')
-            ->with(144, 3, 'A', 0, null, 1500)
-            ->andReturn([
-                (new SpeechAndPosition())->setCongressmanId(1)->setFrom(new \DateTime()),
-            ])
-            ->once()
-            ->getMock()
-
-            ->shouldReceive('countByIssue')
-            ->andReturn(100)
-            ->getMock();
-
-        $this->getMockService(Congressman::class)
-            ->shouldReceive('get')
-            ->andReturn(new \Althingi\Model\Congressman())
-            ->once();
-
-        $this->getMockService(Party::class)
-            ->shouldReceive('getByCongressman')
-            ->andReturn(new \Althingi\Model\Party())
-            ->once();
-
-        $this->getMockService(Constituency::class)
-            ->shouldReceive('getByCongressman')
-            ->andReturn(new ConstituencyDate())
-            ->once()
-            ->getMock();
-
-        $this->dispatch('/loggjafarthing/144/thingmal/a/3/raedur');
-
-        /** @var  $contentRange \Zend\Http\Header\ContentRange */
-        $contentRange = $this->getResponse()
-            ->getHeaders()
-            ->get('Content-Range')
-        ;
-
-        $this->assertEquals('items 0-1/100', $contentRange->getFieldValue());
-    }
+//    public function testGetList()
+//    {
+//        $this->getMockService(Speech::class)
+//            ->shouldReceive('fetchByIssue')
+//            ->with(144, 3, 'B', 0, null, 1500)
+//            ->andReturn([
+//                (new SpeechAndPosition())->setCongressmanId(1)->setFrom(new \DateTime()),
+//            ])
+//            ->once()
+//            ->getMock()
+//
+//            ->shouldReceive('countByIssue')
+//            ->andReturn(100)
+//            ->getMock();
+//
+//        $this->getMockService(Congressman::class)
+//            ->shouldReceive('get')
+//            ->andReturn(new \Althingi\Model\Congressman())
+//            ->once();
+//
+//        $this->getMockService(Party::class)
+//            ->shouldReceive('getByCongressman')
+//            ->andReturn(new \Althingi\Model\Party())
+//            ->once();
+//
+//        $this->getMockService(Constituency::class)
+//            ->shouldReceive('getByCongressman')
+//            ->andReturn(new ConstituencyDate())
+//            ->once()
+//            ->getMock();
+//
+//        $this->dispatch('/loggjafarthing/144/thingmal/b/3/raedur');
+//
+//        $this->assertControllerName(\Althingi\Controller\SpeechController::class);
+//        $this->assertActionName('getList');
+//        $this->assertResponseStatusCode(206);
+//        $this->assertResponseHeaderContains('Content-Range', 'items 0-1/100');
+//        $this->assertResponseHeaderContains('Range-Unit', 'items');
+//    }
 
     /**
      * @covers ::getList
      */
-    public function testGetListRangeHeadersFixedRange()
-    {
-        $headers = $this->getRequest()->getHeaders();
-        $headers->addHeaderLine('Range', '0-20');
+//    public function testGetListRangeHeaders()
+//    {
+//        $headers = $this->getRequest()->getHeaders();
+//        $headers->addHeaderLine('Range', '0-');
+//
+//        $this->getMockService(Speech::class)
+//            ->shouldReceive('fetchByIssue')
+//            ->with(144, 3, 'A', 0, null, 1500)
+//            ->andReturn([
+//                (new SpeechAndPosition())->setCongressmanId(1)->setFrom(new \DateTime()),
+//            ])
+//            ->once()
+//            ->getMock()
+//
+//            ->shouldReceive('countByIssue')
+//            ->andReturn(100)
+//            ->getMock();
+//
+//        $this->getMockService(Congressman::class)
+//            ->shouldReceive('get')
+//            ->andReturn(new \Althingi\Model\Congressman())
+//            ->once();
+//
+//        $this->getMockService(Party::class)
+//            ->shouldReceive('getByCongressman')
+//            ->andReturn(new \Althingi\Model\Party())
+//            ->once();
+//
+//        $this->getMockService(Constituency::class)
+//            ->shouldReceive('getByCongressman')
+//            ->andReturn(new ConstituencyDate())
+//            ->once()
+//            ->getMock();
+//
+//        $this->dispatch('/loggjafarthing/144/thingmal/a/3/raedur');
+//
+//        /** @var  $contentRange \Zend\Http\Header\ContentRange */
+//        $contentRange = $this->getResponse()
+//            ->getHeaders()
+//            ->get('Content-Range')
+//        ;
+//
+//        $this->assertEquals('items 0-1/100', $contentRange->getFieldValue());
+//    }
 
-        $this->getMockService(Speech::class)
-            ->shouldReceive('fetchByIssue')
-            ->with(144, 3, 'A', 0, 20, 1500)
-            ->andReturn(array_map(function ($i) {
-                return  (new SpeechAndPosition())
-                    ->setCongressmanId(1)
-                    ->setText('<?xml version="1.0" ?><root />')
-                    ->setFrom(new \DateTime('2000-01-01'))
-                    ->setPosition($i);
-            }, range(0, 19)))
-            ->once()
-            ->getMock()
-
-            ->shouldReceive('countByIssue')
-            ->andReturn(100)
-            ->getMock();
-
-        $this->getMockService(Congressman::class)
-            ->shouldReceive('get')
-            ->andReturn(new \Althingi\Model\Congressman())
-            ->times(20);
-
-        $this->getMockService(Party::class)
-            ->shouldReceive('getByCongressman')
-            ->andReturn(new \Althingi\Model\Party())
-            ->times(20);
-
-        $this->getMockService(Constituency::class)
-            ->shouldReceive('getByCongressman')
-            ->andReturn(new ConstituencyDate())
-            ->times(20)
-            ->getMock();
-
-        $this->dispatch('/loggjafarthing/144/thingmal/a/3/raedur');
-
-        /** @var  $contentRange \Zend\Http\Header\ContentRange */
-        $contentRange = $this->getResponse()
-            ->getHeaders()
-            ->get('Content-Range');
-
-        $this->assertEquals('items 0-20/100', $contentRange->getFieldValue());
-    }
+    /**
+     * @covers ::getList
+     */
+//    public function testGetListRangeHeadersFixedRange()
+//    {
+//        $headers = $this->getRequest()->getHeaders();
+//        $headers->addHeaderLine('Range', '0-20');
+//
+//        $this->getMockService(Speech::class)
+//            ->shouldReceive('fetchByIssue')
+//            ->with(144, 3, 'A', 0, 20, 1500)
+//            ->andReturn(array_map(function ($i) {
+//                return  (new SpeechAndPosition())
+//                    ->setCongressmanId(1)
+/*                    ->setText('<?xml version="1.0" ?><root />')*/
+//                    ->setFrom(new \DateTime('2000-01-01'))
+//                    ->setPosition($i);
+//            }, range(0, 19)))
+//            ->once()
+//            ->getMock()
+//
+//            ->shouldReceive('countByIssue')
+//            ->andReturn(100)
+//            ->getMock();
+//
+//        $this->getMockService(Congressman::class)
+//            ->shouldReceive('get')
+//            ->andReturn(new \Althingi\Model\Congressman())
+//            ->times(20);
+//
+//        $this->getMockService(Party::class)
+//            ->shouldReceive('getByCongressman')
+//            ->andReturn(new \Althingi\Model\Party())
+//            ->times(20);
+//
+//        $this->getMockService(Constituency::class)
+//            ->shouldReceive('getByCongressman')
+//            ->andReturn(new ConstituencyDate())
+//            ->times(20)
+//            ->getMock();
+//
+//        $this->dispatch('/loggjafarthing/144/thingmal/a/3/raedur');
+//
+//        /** @var  $contentRange \Zend\Http\Header\ContentRange */
+//        $contentRange = $this->getResponse()
+//            ->getHeaders()
+//            ->get('Content-Range');
+//
+//        $this->assertEquals('items 0-20/100', $contentRange->getFieldValue());
+//    }
 
     /**
      * @covers ::patch
