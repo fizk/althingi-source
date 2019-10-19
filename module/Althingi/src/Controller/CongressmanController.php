@@ -208,19 +208,22 @@ class CongressmanController extends AbstractRestfulController implements
         $typeParam = array_key_exists($typeQuery, $typeArray) ? $typeArray[$typeQuery] : null;
 
         $assembly = $this->assemblyService->get($assemblyId);
-        $congressmen = array_map(function (CongressmanAndParty $congressman) use ($assembly) {
-            return (new CongressmanPartiesProperties())
-                ->setCongressman($congressman)
-                ->setConstituency($this->constituencyService->getByAssemblyAndCongressman(
-                    $congressman->getCongressmanId(),
-                    $assembly->getAssemblyId()
-                ))->setParties($this->partyService->fetchByCongressmanAndAssembly(
-                    $congressman->getCongressmanId(),
-                    $assembly->getAssemblyId()
-                ))->setAssembly($assembly);
-        }, $this->congressmanService->fetchByAssembly($assemblyId, $typeParam));
-        $congressmenCount = count($congressmen);
+        //store
+        $congressmen = $this->congressmanStore->fetchByAssembly($assembly->getAssemblyId(), $typeQuery);
+        //db
+//        $congressmen = array_map(function (CongressmanAndParty $congressman) use ($assembly) {
+//            return (new CongressmanPartiesProperties())
+//                ->setCongressman($congressman)
+//                ->setConstituency($this->constituencyService->getByAssemblyAndCongressman(
+//                    $congressman->getCongressmanId(),
+//                    $assembly->getAssemblyId()
+//                ))->setParties($this->partyService->fetchByCongressmanAndAssembly(
+//                    $congressman->getCongressmanId(),
+//                    $assembly->getAssemblyId()
+//                ))->setAssembly($assembly);
+//        }, $this->congressmanService->fetchByAssembly($assemblyId, $typeParam));
 
+        $congressmenCount = count($congressmen);
         return (new CollectionModel($congressmen))
             ->setStatus(206)
             ->setRange(0, $congressmenCount, $congressmenCount);
