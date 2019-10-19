@@ -59,6 +59,41 @@ class Vote implements StoreAwareInterface
         }, iterator_to_array($documents));
     }
 
+    public function getFrequencyByAssemblyAndCongressman(int $assemblyId, int $congressmanId)
+    {
+        $document = $this->getStore()->congressman->aggregate([
+            ['$match' => [
+                'assembly.assembly_id' => (int)$assemblyId,
+                'congressman.congressman_id' => (int)$congressmanId
+            ]],
+            ['$project' => [
+                'values' => ['$objectToArray' => '$vote_type']
+            ]],
+            ['$project' => [
+                'values' => [
+                    '$map' => [
+                        'input' => '$values',
+                        'as' => 'item',
+                        'in' => [
+                            'vote' => '$$item.k',
+                            'count' => '$$item.v',
+                        ]
+                    ]
+                ]
+            ]],
+        ]);
+
+        $doc = $document->toArray();
+
+        if (count($doc) != 1) {
+            return [];
+        }
+
+        return array_map(function ($session) {
+            return (new Hydrator\VoteTypeAndCount())->hydrate((array)$session, new Model\VoteTypeAndCount());
+        }, (array)$doc[0]['values']);
+    }
+
     /**
      * @param Database $database
      * @return $this

@@ -7,6 +7,8 @@ use DateTime;
 
 class Session implements HydratorInterface
 {
+    use HydrateDate;
+
     /**
      * Hydrate $object with the provided $data.
      *
@@ -22,8 +24,8 @@ class Session implements HydratorInterface
             ->setConstituencyId($data['constituency_id'])
             ->setAssemblyId($data['assembly_id'])
             ->setPartyId(isset($data['party_id']) ? $data['party_id'] : null)
-            ->setFrom(isset($data['from']) && $data['from'] ? new DateTime($data['from']) : null)
-            ->setTo(isset($data['to']) && $data['to'] ? new DateTime($data['to']) : null)
+            ->setFrom(array_key_exists('from', $data) ? $this->hydrateDate($data['from']) : null)
+            ->setTo(array_key_exists('to', $data) ? $this->hydrateDate($data['to']) : null)
             ->setType(isset($data['type']) ? $data['type'] : null)
             ->setAbbr(isset($data['abbr']) ? $data['abbr'] : null);
     }
