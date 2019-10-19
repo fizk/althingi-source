@@ -48,7 +48,7 @@ class Congressman implements StoreAwareInterface
      * @param int $assemblyId
      * @param int $size
      * @param int $order
-     * @return array
+     * @return \Althingi\Model\CongressmanPartyProperties[]
      */
     public function fetchQuestionByAssembly(int $assemblyId, int $size = 5, int $order = -1)
     {
@@ -191,6 +191,11 @@ class Congressman implements StoreAwareInterface
         }, iterator_to_array($document));
     }
 
+    /**
+     * @param int $assemblyId
+     * @param null|string $type
+     * @return \Althingi\Model\CongressmanPartyProperties[]
+     */
     public function fetchByAssembly(int $assemblyId, ?string $type = null)
     {
         $query = array_merge(

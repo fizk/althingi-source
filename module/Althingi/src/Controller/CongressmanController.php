@@ -259,8 +259,10 @@ class CongressmanController extends AbstractRestfulController implements
         $order = $this->params()->fromQuery('rod', 'desc');
         $size = $this->params()->fromQuery('fjoldi', 5);
 
+        //Store
         $collection = $this->fetchAssemblyTimeFromStore($assemblyId, $size, $order === 'desc' ? -1 : 1);
-//        $collection = $this->fetchAssemblyTimeFromService($assemblyId, $size, $order);
+        //DB
+        //$collection = $this->fetchAssemblyTimeFromService($assemblyId, $size, $order);
 
         return (new CollectionModel($collection))
             ->setStatus(206)
@@ -342,8 +344,10 @@ class CongressmanController extends AbstractRestfulController implements
         $assemblyId = $this->params('id');
         $congressmanId = $this->params('congressman_id');
 
+        //Store
         $sessions = $this->sessionStore->fetchByAssemblyAndCongressman($assemblyId, $congressmanId);
-//        $sessions = $this->sessionService->fetchByAssemblyAndCongressman($assemblyId, $congressmanId);
+        //DB
+        //$sessions = $this->sessionService->fetchByAssemblyAndCongressman($assemblyId, $congressmanId);
         $sessionsCount = count($sessions);
 
         return (new CollectionModel($sessions))
@@ -360,8 +364,10 @@ class CongressmanController extends AbstractRestfulController implements
         $assemblyId = $this->params('id');
         $congressmanId = $this->params('congressman_id');
 
+        //Store
         $issues = $this->issueStore->fetchByAssemblyAndCongressman($assemblyId, $congressmanId);
-//        $issues = $this->issueService->fetchByAssemblyAndCongressman($assemblyId, $congressmanId);
+        //DB
+        //$issues = $this->issueService->fetchByAssemblyAndCongressman($assemblyId, $congressmanId);
         $issuesCount = count($issues);
 
         return (new CollectionModel($issues))
@@ -479,116 +485,6 @@ class CongressmanController extends AbstractRestfulController implements
             ->setStatus(200)
             ->setAllow(['GET', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'])
             ->setOption('Access-Control-Allow-Headers', 'Range');
-    }
-
-    /**
-     * @param Congressman $congressman
-     * @return $this
-     */
-    public function setCongressmanService(Congressman $congressman)
-    {
-        $this->congressmanService = $congressman;
-        return $this;
-    }
-
-    /**
-     * @param Party $party
-     * @return $this
-     */
-    public function setPartyService(Party $party)
-    {
-        $this->partyService = $party;
-        return $this;
-    }
-
-    /**
-     * @param Session $session
-     * @return $this
-     */
-    public function setSessionService(Session $session)
-    {
-        $this->sessionService = $session;
-        return $this;
-    }
-
-    /**
-     * @param Vote $vote
-     * @return $this
-     */
-    public function setVoteService(Vote $vote)
-    {
-        $this->voteService = $vote;
-        return $this;
-    }
-
-    /**
-     * @param Issue $issue
-     * @return $this
-     */
-    public function setIssueService(Issue $issue)
-    {
-        $this->issueService = $issue;
-        return $this;
-    }
-
-    /**
-     * @param Speech $speech
-     * @return $this
-     */
-    public function setSpeechService(Speech $speech)
-    {
-        $this->speechService = $speech;
-        return $this;
-    }
-
-    /**
-     * @param IssueCategory $issueCategory
-     * @return $this
-     */
-    public function setIssueCategoryService(IssueCategory $issueCategory)
-    {
-        $this->issueCategoryService = $issueCategory;
-        return $this;
-    }
-
-    /**
-     * @param VoteItem $voteItem
-     * @return $this
-     */
-    public function setVoteItemService(VoteItem $voteItem)
-    {
-        $this->voteItemService = $voteItem;
-        return $this;
-    }
-
-    /**
-     * @param Assembly $assembly
-     * @return $this
-     */
-    public function setAssemblyService(Assembly $assembly)
-    {
-        $this->assemblyService = $assembly;
-        return $this;
-    }
-
-    /**
-     * @param Constituency $constituency
-     * @return $this
-     */
-    public function setConstituencyService(Constituency $constituency)
-    {
-        $this->constituencyService = $constituency;
-        return $this;
-    }
-
-    /**
-     * @param \Althingi\Store\Congressman $congressman
-     * @return $this;
-     */
-    public function setCongressmanStore(\Althingi\Store\Congressman $congressman)
-    {
-        $this->congressmanStore = $congressman;
-        return $this;
     }
 
     /**
@@ -729,6 +625,116 @@ class CongressmanController extends AbstractRestfulController implements
     private function fetchBillsFromStore(int $assemblyId, int $size, string $order): array
     {
         return $this->congressmanStore->fetchBillsByAssembly($assemblyId, $size, $order === 'desc' ? -1 : 1);
+    }
+
+    /**
+     * @param Congressman $congressman
+     * @return $this
+     */
+    public function setCongressmanService(Congressman $congressman)
+    {
+        $this->congressmanService = $congressman;
+        return $this;
+    }
+
+    /**
+     * @param Party $party
+     * @return $this
+     */
+    public function setPartyService(Party $party)
+    {
+        $this->partyService = $party;
+        return $this;
+    }
+
+    /**
+     * @param Session $session
+     * @return $this
+     */
+    public function setSessionService(Session $session)
+    {
+        $this->sessionService = $session;
+        return $this;
+    }
+
+    /**
+     * @param Vote $vote
+     * @return $this
+     */
+    public function setVoteService(Vote $vote)
+    {
+        $this->voteService = $vote;
+        return $this;
+    }
+
+    /**
+     * @param Issue $issue
+     * @return $this
+     */
+    public function setIssueService(Issue $issue)
+    {
+        $this->issueService = $issue;
+        return $this;
+    }
+
+    /**
+     * @param Speech $speech
+     * @return $this
+     */
+    public function setSpeechService(Speech $speech)
+    {
+        $this->speechService = $speech;
+        return $this;
+    }
+
+    /**
+     * @param IssueCategory $issueCategory
+     * @return $this
+     */
+    public function setIssueCategoryService(IssueCategory $issueCategory)
+    {
+        $this->issueCategoryService = $issueCategory;
+        return $this;
+    }
+
+    /**
+     * @param VoteItem $voteItem
+     * @return $this
+     */
+    public function setVoteItemService(VoteItem $voteItem)
+    {
+        $this->voteItemService = $voteItem;
+        return $this;
+    }
+
+    /**
+     * @param Assembly $assembly
+     * @return $this
+     */
+    public function setAssemblyService(Assembly $assembly)
+    {
+        $this->assemblyService = $assembly;
+        return $this;
+    }
+
+    /**
+     * @param Constituency $constituency
+     * @return $this
+     */
+    public function setConstituencyService(Constituency $constituency)
+    {
+        $this->constituencyService = $constituency;
+        return $this;
+    }
+
+    /**
+     * @param \Althingi\Store\Congressman $congressman
+     * @return $this;
+     */
+    public function setCongressmanStore(\Althingi\Store\Congressman $congressman)
+    {
+        $this->congressmanStore = $congressman;
+        return $this;
     }
 
     /**
