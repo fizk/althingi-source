@@ -244,6 +244,24 @@ class CongressmanController extends AbstractRestfulController implements
             ->setRange(0, $congressmenCount, $congressmenCount);
     }
 
+    public function assemblyCongressmanAction()
+    {
+        $assemblyId = $this->params('id');
+        $congressmanId = $this->params('congressman_id');
+        $congressman = $this->congressmanStore->getByAssembly($assemblyId, $congressmanId);
+
+        return (new ItemModel($congressman));
+    }
+
+    public function assemblyCongressmanOtherDocsAction()
+    {
+        $assemblyId = $this->params('id');
+        $congressmanId = $this->params('congressman_id');
+        $valueCounts = $this->congressmanStore->fetchOtherDocumentsByAssembly($assemblyId, $congressmanId);
+
+        return (new CollectionModel($valueCounts));
+    }
+
     /**
      * Gets a list of congressmen and accumulated speech times.
      *
@@ -398,6 +416,7 @@ class CongressmanController extends AbstractRestfulController implements
      * @output \Althingi\Model\VoteTypeAndCount[]
      * @query fra [date]
      * @query til [date]
+     * @throws \Exception
      */
     public function assemblyVotingAction()
     {

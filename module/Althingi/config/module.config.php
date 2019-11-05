@@ -72,6 +72,32 @@ return [
                         ],
                         'may_terminate' => true,
                     ],
+                    'thingmadur' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route'    => '/thingmenn/:congressman_id',
+                            'constraints' => [
+                                'congressman_id' => '[0-9]*'
+                            ],
+                            'defaults' => [
+                                'controller' => Controller\CongressmanController::class,
+                                'action' => 'assembly-congressman'
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'onnur-skjol' => [
+                                'type' => Literal::class,
+                                'options' => [
+                                    'route'    => '/onnur-skjol',
+                                    'defaults' => [
+                                        'controller' => Controller\CongressmanController::class,
+                                        'action' => 'assembly-congressman-other-docs'
+                                    ],
+                                ],
+                            ],
+                        ]
+                    ],
                     'thingmenn' => [
                         'type' => Literal::class,
                         'options' => [
