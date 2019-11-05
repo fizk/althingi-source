@@ -572,6 +572,26 @@ return [
                 ],
                 'may_terminate' => true,
                 'child_routes' => [
+                    'thingflokkar' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route'    => '/thingflokkar[/:party_id]',
+                            'defaults' => [
+                                'controller' => Aggregate\PartyController::class,
+                                'identifier' => 'party_id'
+                            ],
+                        ],
+                    ],
+                    'kjordaemi' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route'    => '/kjordaemi[/:constituency_id]',
+                            'defaults' => [
+                                'controller' => Aggregate\ConstituencyController::class,
+                                'identifier' => 'constituency_id'
+                            ],
+                        ],
+                    ],
                     'atkvaedi' => [
                         'type' => Segment::class,
                         'options' => [
@@ -1033,6 +1053,14 @@ return [
             Aggregate\VoteController::class => function (ServiceManager $container) {
                 return (new Aggregate\VoteController())
                     ->setVoteService($container->get(Service\Vote::class));
+            },
+            Aggregate\PartyController::class => function (ServiceManager $container) {
+                return (new Aggregate\PartyController())
+                    ->setPartyService($container->get(Service\Party::class));
+            },
+            Aggregate\ConstituencyController::class => function (ServiceManager $container) {
+                return (new Aggregate\ConstituencyController())
+                    ->setConstituencyService($container->get(Service\Constituency::class));
             },
             Controller\InflationController::class => function (ServiceManager $container) {
                 return (new Controller\InflationController())

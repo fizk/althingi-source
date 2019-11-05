@@ -27,6 +27,12 @@ class IssueProperties implements ModelInterface
     /** @var bool */
     private $governmentIssue = false;
 
+    /** @var string | null  */
+    private $document_type = null;
+
+    /** @var string | null  */
+    private $document_url = null;
+
     /** @var \Althingi\Model\Category[] */
     private $categories;
 
@@ -169,6 +175,42 @@ class IssueProperties implements ModelInterface
     }
 
     /**
+     * @return string|null
+     */
+    public function getDocumentType(): ?string
+    {
+        return $this->document_type;
+    }
+
+    /**
+     * @param string|null $document_type
+     * @return IssueProperties
+     */
+    public function setDocumentType(?string $document_type): IssueProperties
+    {
+        $this->document_type = $document_type;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getDocumentUrl(): ?string
+    {
+        return $this->document_url;
+    }
+
+    /**
+     * @param string|null $document_url
+     * @return IssueProperties
+     */
+    public function setDocumentUrl(?string $document_url): IssueProperties
+    {
+        $this->document_url = $document_url;
+        return $this;
+    }
+
+    /**
      * @return Category[]
      */
     public function getCategories(): array
@@ -270,6 +312,8 @@ class IssueProperties implements ModelInterface
                 'proponents' => $this->proponents,
                 'speakers' => $this->speakers,
                 'government_issue' => $this->governmentIssue,
+                'document_type' => $this->document_type,
+                'document_url' => $this->document_url,
                 'categories' => $this->categories,
                 'super_categories' => $this->superCategory,
                 'issue_links' => $this->links,
