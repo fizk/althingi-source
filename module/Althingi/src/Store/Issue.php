@@ -358,29 +358,26 @@ class Issue implements StoreAwareInterface
     public function fetchByAssemblyAndCongressmanSummary(int $assemblyId, int $congressmanId)
     {
         $document = $this->getStore()->congressman->aggregate([
-            ['$match' => [
-                'assembly.assembly_id' => $assemblyId,
-                'congressman.congressman_id' => $congressmanId,
-            ]],
-            ['$project' => [
-                'values' => ['$objectToArray' => '$issues']
-            ]],
-            ['$project' => [
-                'values' => [
-                    '$map' => [
-                        'input' => '$values',
-                        'as' => 'item',
-                        'in' => [
-                            'order' => null,
-                            'type' => '$$item.k',
-                            'count' => '$$item.v',
-                            'typeName' => null,
-                            'typeSubName' => null,
-                            'documentType' => null
+            [
+                '$match' => [
+                    'assembly.assembly_id' => $assemblyId,
+                    'congressman.congressman_id' => $congressmanId
+                ]
+            ], [
+                '$project' => [
+                    'issues' => ['$objectToArray' => '$issues']
+                ]
+            ], [
+                '$project' => [
+                    'issues' => [
+                        '$map' => [
+                            'input' => '$issues',
+                            'as' => 'item',
+                            'in' => '$$item.v'
                         ]
                     ]
                 ]
-            ]]
+            ]
         ]);
 
         $doc = $document->toArray();
@@ -390,8 +387,16 @@ class Issue implements StoreAwareInterface
         }
 
         return array_map(function ($object) {
-            return (new Hydrator\CongressmanIssue())->hydrate((array)$object, new Model\CongressmanIssue());
-        }, (array)$doc[0]['values']);
+            $result = (array)$object;
+            return (new Hydrator\CongressmanIssue())->hydrate([
+                'count' => $result['count'],
+                'document_type' => $result['category'],
+                'order' => null,
+                'type' => $result['type'],
+                'type_name' => $result['typeName'],
+                'type_subname' => $result['typeSubName'],
+            ], new Model\CongressmanIssue());
+        }, (array)$doc[0]['issues']);
     }
 
     /**
