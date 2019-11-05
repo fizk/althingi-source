@@ -17,10 +17,11 @@ class PartyController extends AbstractRestfulController implements
     private $partyService;
 
     /**
+     * @param $id
      * @return ItemModel|\Rend\View\Model\ModelInterface
      * @output \Althingi\Model\Party
      */
-    public function get()
+    public function get($id)
     {
         return (new ItemModel(
             $this->partyService->get($this->params('party_id', null))

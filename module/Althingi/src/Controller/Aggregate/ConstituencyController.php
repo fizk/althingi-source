@@ -17,10 +17,11 @@ class ConstituencyController extends AbstractRestfulController implements
     private $constituencyService;
 
     /**
+     * @param $id
      * @return ItemModel|\Rend\View\Model\ModelInterface
      * @output \Althingi\Model\Constituency
      */
-    public function get()
+    public function get($id)
     {
         return (new ItemModel(
             $this->constituencyService->get($this->params('constituency_id', null))
