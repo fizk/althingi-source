@@ -434,7 +434,7 @@ class Issue implements StoreAwareInterface
         $issueProperties = (new Model\IssueProperties())
             ->setSpeechCount($object->speech_count)
             ->setSpeechTime($object->speech_time)
-            ->setDocumentType($object->doument_type)
+            ->setDocumentType($object->document_type)
             ->setDocumentUrl($object->document_url)
             ->setIssue($issue)
             ->setGovernmentIssue(isset($object->government_issue) ? $object->government_issue : false)
