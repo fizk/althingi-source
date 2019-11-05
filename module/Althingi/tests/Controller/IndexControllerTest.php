@@ -28,7 +28,7 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
     {
         $this->dispatch('/', 'GET');
 
-        $this->assertControllerClass('IndexController');
+        $this->assertControllerName(\Althingi\Controller\IndexController::class);
         $this->assertActionName('index');
         $this->assertResponseStatusCode(200);
     }
