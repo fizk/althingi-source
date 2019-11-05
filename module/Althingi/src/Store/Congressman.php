@@ -142,6 +142,44 @@ class Congressman implements StoreAwareInterface
         }, iterator_to_array($document));
     }
 
+    public function fetchOtherDocumentsByAssembly(int $assemblyId, int $congressmanId)
+    {
+        $document = $this->getStore()->congressman->aggregate([
+            [
+                '$match' => [
+                    'assembly.assembly_id' => $assemblyId,
+                    'congressman.congressman_id' => $congressmanId
+                ]
+            ], [
+                '$project' => [
+                    'motions' => ['$objectToArray' => '$motions']
+                ]
+            ], [
+                '$project' => [
+                    'motions' => [
+                        '$map' => [
+                            'input' => '$motions',
+                            'as' => 'item',
+                            'in' => [
+                                'value' => '$$item.k',
+                                'count' => '$$item.v',
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]);
+
+        $values = $document->toArray();
+        if (count($values) == 0) {
+            return [];
+        }
+
+        return array_map(function ($item) {
+            return (new Hydrator\ValueAndCount())->hydrate((array)$item, new Model\ValueAndCount());
+        }, (array)$values[0]['motions']);
+    }
+
     /**
      * Get congressmen order by how often they are on the primary document of a [q, m] Issue.
      * They don't have to be order:1, they just have to be on the document as a proponent.
@@ -208,18 +246,57 @@ class Congressman implements StoreAwareInterface
             ['sort' => ['congressman.name' => 1]]
         );
 
-        return array_map(function ($document) {
+        return array_map(function ($document) use ($assemblyId) {
             $congressman = array_merge((array)$document['congressman']);
+            $parties = array_merge((array)$document['parties']);
             return  (new Model\CongressmanPartyProperties())
                 ->setCongressman(
                     (new Hydrator\Congressman())->hydrate($congressman, new Model\Congressman())
                 )->setParty(
                     (new Hydrator\Party())->hydrate((array)$congressman['party'], new Model\Party())
+                )->setParties(
+                    array_map(function ($party) {
+                        return (new Hydrator\Party())->hydrate((array)$party, new Model\Party());
+                    }, (array)$parties)
                 )->setConstituency(
                     (new Hydrator\Constituency())
                         ->hydrate((array)$congressman['constituency'], new Model\Constituency())
-                );
+                )->setAssembly((new Model\Assembly())->setAssemblyId($assemblyId));
         }, $document->toArray());
+    }
+
+    /**
+     * Get a single Congressman by assembly
+     *
+     * @param int $assemblyId
+     * @param int $congressmanId
+     * @return Model\CongressmanPartyProperties
+     */
+    public function getByAssembly(int $assemblyId, int $congressmanId)
+    {
+        $document = $this->getStore()->congressman->findOne([
+            'assembly.assembly_id' => $assemblyId,
+            'congressman.congressman_id' => $congressmanId,
+        ]);
+
+        $congressman = (array)$document['congressman'];
+        $parties = (array)$document['parties'];
+
+        return  (new Model\CongressmanPartyProperties())
+            ->setCongressman(
+                (new Hydrator\Congressman())->hydrate($congressman, new Model\Congressman())
+            )->setParty(
+                (new Hydrator\Party())->hydrate((array)$congressman['party'], new Model\Party())
+            )->setParties(
+                array_map(function ($party) {
+                    return (new Hydrator\Party())->hydrate((array)$party, new Model\Party());
+                }, (array)$parties)
+            )->setConstituency(
+                (new Hydrator\Constituency())
+                    ->hydrate((array)$congressman['constituency'], new Model\Constituency())
+            )->setAssembly(
+                (new Model\Assembly())->setAssemblyId($assemblyId)
+            );
     }
 
     /**
