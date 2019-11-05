@@ -360,8 +360,8 @@ class Issue implements StoreAwareInterface
         $document = $this->getStore()->congressman->aggregate([
             [
                 '$match' => [
-                    'assembly.assembly_id' => 149,
-                    'congressman.congressman_id' => 557
+                    'assembly.assembly_id' => $assemblyId,
+                    'congressman.congressman_id' => $congressmanId
                 ]
             ], [
                 '$project' => [
