@@ -27,13 +27,24 @@ RUN pecl install -o -f redis-4.3.0 \
     && rm -rf /tmp/pear \
     && docker-php-ext-enable redis mongodb
 
+ARG WITH_XDEBUG=false
+
+RUN if [ $WITH_XDEBUG = "true" ] ; then \
+        pecl install xdebug; \
+        docker-php-ext-enable xdebug; \
+        echo "error_reporting = E_ALL" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
+        echo "display_startup_errors = On" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
+        echo "display_errors = On" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
+        echo "xdebug.remote_enable=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
+    fi ;
+
 COPY ./auto/php/php.ini /usr/local/etc/php/
 
 EXPOSE 80
 
 # with x-debug version
 #RUN pecl install -o -f redis \
-#    && pecl install xdebug-2.6.0 \
+#    && pecl install xdebug-2.8.0 \
 #    && rm -rf /tmp/pear \
 #    && docker-php-ext-enable redis xdebug
 
