@@ -10,11 +10,11 @@
         <listener class="AlthingiTest\DatabaseSetup" file="./module/Althingi/tests/DatabaseSetup.php" />
     </listeners>
 
-    <!--<filter>-->
-        <!--<whitelist processUncoveredFilesFromWhitelist="true">-->
-            <!--<directory suffix=".php">./module/Althingi/src</directory>-->
-        <!--</whitelist>-->
-    <!--</filter>-->
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./module/Althingi/src</directory>
+        </whitelist>
+    </filter>
 
     <!--<logging>-->
         <!--<log type="coverage-html" target="./assets/docs/tests/report" lowUpperBound="35" highLowerBound="70"/>-->

@@ -28,6 +28,7 @@ services:
       - ./module/:/var/www/module
       - ./public/:/var/www/public
     environment:
+
       - LOG_PATH=php://stdout
       - LOG_FORMAT=line
 
@@ -72,9 +73,12 @@ services:
       dockerfile: Dockerfile.test
     depends_on:
       - database
+      - store
     links:
       - database
+      - store
     environment:
+      - WITH_XDEBUG=true
       - APPLICATION_ENVIRONMENT=development
       - DB_HOST=database
       - DB_PORT=3306
@@ -88,6 +92,8 @@ services:
       - LOG_PATH=none
       - QUEUE=none
       - QUEUE_FORCED=false
+      - STORAGE_HOST=store
+      - STORAGE_DB=althingi
     volumes:
       - ./auto/:/usr/src/auto
       - ./config/:/usr/src/config
@@ -104,3 +110,7 @@ services:
       - ./auto/db/:/docker-entrypoint-initdb.d
     environment:
       - MYSQL_ROOT_PASSWORD=example
+
+  store:
+    container_name: althingi_test_store
+    image: mongo:4.2.0-bionic
