@@ -3,7 +3,10 @@
 namespace AlthingiTest\Controller;
 
 use Althingi\Model\VoteItemAndAssemblyIssue;
+use Althingi\Service\Congressman;
 use Althingi\Service\Constituency;
+use Althingi\Service\Party;
+use Althingi\Service\Vote;
 use Althingi\Service\VoteItem;
 use AlthingiTest\ServiceHelper;
 use Mockery;
@@ -33,7 +36,10 @@ class VoteItemControllerTest extends AbstractHttpControllerTestCase
 
         $this->buildServices([
             VoteItem::class,
-            Constituency::class
+            Vote::class,
+            Constituency::class,
+            Congressman::class,
+            Party::class,
         ]);
     }
 

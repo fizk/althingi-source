@@ -5,6 +5,7 @@ namespace AlthingiTest\Controller;
 use Althingi\Service;
 use Althingi\Model;
 use Althingi\Store;
+use Althingi\Controller\AssemblyController;
 use AlthingiTest\ServiceHelper;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use DateTime;
@@ -51,7 +52,14 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
             Service\Cabinet::class,
             Service\Category::class,
             Service\Election::class,
-            Store\Assembly::class
+            Service\Congressman::class,
+            Store\Assembly::class,
+            Store\Issue::class,
+            Store\Vote::class,
+            Store\Speech::class,
+            Store\Party::class,
+            Store\Category::class,
+            Store\Congressman::class
         ]);
     }
 
@@ -67,15 +75,6 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
      */
     public function testGet()
     {
-//        $this->getMockService(Store\Assembly::class)
-//            ->shouldReceive('get')
-//            ->andReturn((new Model\AssemblyProperties())
-//                ->setAssembly((new Model\Assembly())
-//                    ->setAssemblyId(144)
-//                    ->setFrom(new DateTime())))
-//            ->once()
-//            ->getMock();
-
         $this->getMockService(Service\Assembly::class)
             ->shouldReceive('get')
             ->andReturn((new Model\Assembly())
@@ -106,7 +105,7 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
 
         $this->dispatch('/loggjafarthing/144', 'GET');
 
-        $this->assertControllerClass('AssemblyController');
+        $this->assertControllerName(AssemblyController::class);
         $this->assertActionName('get');
         $this->assertResponseStatusCode(200);
     }
@@ -116,12 +115,6 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
      */
     public function testGetNotFound()
     {
-//        $this->getMockService(Store\Assembly::class)
-//            ->shouldReceive('get')
-//            ->andReturn(null)
-//            ->once()
-//            ->getMock();
-
         $this->getMockService(Service\Assembly::class)
             ->shouldReceive('get')
             ->andReturn(null)

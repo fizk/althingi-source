@@ -2,22 +2,11 @@
 
 namespace AlthingiTest\Controller;
 
-use Althingi\Model\ConstituencyDate;
-use Althingi\Model\Proponent;
-use Althingi\Service\Assembly;
-use Althingi\Service\Congressman;
-use Althingi\Service\Constituency;
-use Althingi\Service\Document;
-use Althingi\Service\Issue;
-use Althingi\Service\Party;
-use Althingi\Service\Speech;
-use Althingi\Service\Vote;
-use Althingi\Model\CongressmanAndDateRange;
-use Althingi\Model\Issue as IssueModel;
-use Althingi\Model\Party as PartyModel;
-use Althingi\Model\Assembly as AssemblyModel;
-use Althingi\Model\IssueAndDate as IssueAndDateModel;
-use Althingi\Model\IssueValue as IssueValueModel;
+use Althingi\Service;
+use Althingi\Store;
+use Althingi\Model;
+use Althingi\Controller;
+
 use AlthingiTest\ServiceHelper;
 use Mockery;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
@@ -52,14 +41,11 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
         parent::setUp();
 
         $this->buildServices([
-            Congressman::class,
-            Issue::class,
-            Party::class,
-            Document::class,
-            Vote::class,
-            Assembly::class,
-            Speech::class,
-            Constituency::class,
+            Service\Issue::class,
+            Service\Assembly::class,
+            Service\Category::class,
+            Store\Issue::class,
+            Store\Category::class,
         ]);
     }
 
@@ -73,285 +59,111 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
      * @covers ::get
      * @pending mongodb test framework
      */
-//    public function testGetSuccessA()
-//    {
-//        $this->getMockService(Issue::class)
-//            ->shouldReceive('getWithDate')
-//            ->andReturn((new IssueAndDateModel())->setCategory('A')->setCongressmanId(1)->setDate(new \DateTime()))
-//            ->once()
-//            ->with(200, 100, 'A')
-//            ->getMock();
-//
-//        $this->getMockService(Assembly::class)
-//            ->shouldReceive('get')
-//            ->andReturn((new AssemblyModel)->setFrom(new \DateTime('2001-02-01')))
-//            ->never()
-//            ->with(100)
-//            ->getMock();
-//
-//        $this->getMockService(Congressman::class)
-//            ->shouldReceive('fetchProponentsByIssue')
-//            ->andReturn([(new Proponent())->setCongressmanId(1)])
-//            ->once()
-//            ->with(100, 200)
-//            ->getMock()
-//
-//            ->shouldReceive('fetchAccumulatedTimeByIssue')
-//            ->andReturn([(new CongressmanAndDateRange())->setBegin(new \DateTime())->setCongressmanId(1)])
-//            ->once()
-//            ->with(100, 200, 'A')
-//            ->getMock();
-//
-//        $this->getMockService(Party::class)
-//            ->shouldReceive('getByCongressman')
-//            ->andReturn((new PartyModel()))
-//            ->twice()
-//            ->getMock();
-//
-//        $this->getMockService(Vote::class)
-//            ->shouldReceive('fetchDateFrequencyByIssue')
-//            ->andReturn([])
-//            ->once()
-//            ->with(100, 200)
-//            ->getMock();
-//
-//        $this->getMockService(Speech::class)
-//            ->shouldReceive('fetchFrequencyByIssue')
-//            ->andReturn([])
-//            ->once()
-//            ->with(100, 200, 'A')
-//            ->getMock();
-//
-//        $this->getMockService(Constituency::class)
-//            ->shouldReceive('getByCongressman')
-//            ->andReturn(new ConstituencyDate())
-//            ->twice()
-//            ->getMock();
-//
-//
-//        $this->dispatch('/loggjafarthing/100/thingmal/a/200', 'GET');
-//
-//        $this->assertControllerName(\Althingi\Controller\IssueController::class);
-//        $this->assertActionName('get');
-//        $this->assertResponseStatusCode(200);
-//    }
+    public function testGetSuccessA()
+    {
+        $this->getMockService(Store\Issue::class)
+            ->shouldReceive('get')
+            ->with(100, 200, 'A')
+            ->andReturn((new Model\IssueProperties())->setIssue(new Model\Issue()))
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/100/thingmal/a/200', 'GET');
+
+        $this->assertControllerName(Controller\IssueController::class);
+        $this->assertActionName('get');
+        $this->assertResponseStatusCode(200);
+    }
 
     /**
      * @covers ::get
      * @pending mongodb test framework
      */
-//    public function testGetSuccessB()
-//    {
-//        $this->getMockService(Issue::class)
-//            ->shouldReceive('getWithDate')
-//            ->andReturn((new IssueAndDateModel())->setCategory('B')->setCongressmanId(1)->setDate(new \DateTime()))
-//            ->once()
-//            ->with(200, 100, 'B')
-//            ->getMock();
-//
-//        $this->getMockService(Assembly::class)
-//            ->shouldReceive('get')
-//            ->andReturn((new AssemblyModel)->setFrom(new \DateTime('2001-02-01')))
-//            ->never()
-//            ->with(100)
-//            ->getMock();
-//
-//        $this->getMockService(Congressman::class)
-//            ->shouldReceive('fetchProponentsByIssue')
-//            ->andReturn([(new Proponent())->setCongressmanId(1)])
-//            ->never()
-//            ->with(100, 200)
-//            ->getMock()
-//
-//            ->shouldReceive('fetchAccumulatedTimeByIssue')
-//            ->andReturn([(new CongressmanAndDateRange())->setBegin(new \DateTime())->setCongressmanId(1)])
-//            ->once()
-//            ->with(100, 200, 'B')
-//            ->getMock();
-//
-//        $this->getMockService(Party::class)
-//            ->shouldReceive('getByCongressman')
-//            ->andReturn((new PartyModel()))
-//            ->once()
-//            ->getMock();
-//
-//        $this->getMockService(Vote::class)
-//            ->shouldReceive('fetchDateFrequencyByIssue')
-//            ->andReturn([])
-//            ->never()
-//            ->with(100, 200)
-//            ->getMock();
-//
-//        $this->getMockService(Speech::class)
-//            ->shouldReceive('fetchFrequencyByIssue')
-//            ->andReturn([])
-//            ->once()
-//            ->with(100, 200, 'B')
-//            ->getMock();
-//
-//        $this->getMockService(Constituency::class)
-//            ->shouldReceive('getByCongressman')
-//            ->andReturn(new ConstituencyDate())
-//            ->once()
-//            ->getMock();
-//
-//
-//        $this->dispatch('/loggjafarthing/100/thingmal/b/200', 'GET');
-//
-//        $this->assertControllerName(\Althingi\Controller\IssueController::class);
-//        $this->assertActionName('get');
-//        $this->assertResponseStatusCode(200);
-//    }
+    public function testGetSuccessB()
+    {
+        $this->getMockService(Store\Issue::class)
+            ->shouldReceive('get')
+            ->with(100, 200, 'B')
+            ->andReturn((new Model\IssueProperties())->setIssue(new Model\Issue()))
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/100/thingmal/b/200', 'GET');
+
+        $this->assertControllerName(Controller\IssueController::class);
+        $this->assertActionName('get');
+        $this->assertResponseStatusCode(200);
+    }
 
     /**
      * @covers ::speechTimesAction
      * @pending mongodb test framework
      */
-//    public function testGetSpeechTime()
-//    {
-//        $this->getMockService(Assembly::class)
-//            ->shouldReceive('get')
-//            ->andReturn((new \Althingi\Model\Assembly())->setAssemblyId(1)->setFrom(new \DateTime()))
-//            ->once()
-//            ->getMock()
-//        ;
-//
-//        $this->getMockService(Issue::class)
-//            ->shouldReceive('fetchByAssemblyAndSpeechTime')
-//            ->andReturn(array_map(function ($i) {
-//                return (new IssueValueModel())->setCongressmanId(1)->setCategory('A')->setIssueId($i)->setValue($i);
-//            }, range(0, 24)))
-//            ->once()
-//            ->getMock()
-//        ;
-//
-//        $this->getMockService(Party::class)
-//            ->shouldReceive('getByCongressman')
-//            ->andReturn(null)
-//            ->times(25)
-//            ->getMock()
-//        ;
-//
-//        $this->getMockService(Congressman::class)
-//            ->shouldReceive('fetchProponentsByIssue')
-//            ->andReturn([(new Proponent())->setCongressmanId(1)])
-//            ->times(25)
-//            ->getMock()
-//        ;
-//
-//        $this->dispatch('/loggjafarthing/100/thingmal/a/raedutimar', 'GET');
-//
-//        $this->assertControllerName(\Althingi\Controller\IssueController::class);
-//        $this->assertActionName('speech-times');
-//        $this->assertResponseStatusCode(206);
-//    }
+    public function testGetSpeechTime()
+    {
+        $this->getMockService(Store\Issue::class)
+            ->shouldReceive('fetchByAssemblyAndSpeechTime')
+            ->with(100, 5, 1, ['A'])
+            ->andReturn([])
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/100/thingmal/a/raedutimar', 'GET');
+
+        $this->assertControllerName(Controller\IssueController::class);
+        $this->assertActionName('speech-times');
+        $this->assertResponseStatusCode(206);
+    }
 
     /**
      * @covers ::get
      * @pending mongodb test framework
      */
-//    public function testGetNotFound()
-//    {
-//        $this->getMockService(Issue::class)
-//            ->shouldReceive('getWithDate')
-//            ->andReturn(null)
-//            ->once()
-//            ->getMock();
-//
-//        $this->getMockService(Assembly::class)
-//            ->shouldReceive('get')
-//            ->never()
-//            ->getMock();
-//
-//        $this->getMockService(Congressman::class)
-//            ->shouldReceive('get')
-//            ->never()
-//            ->getMock()
-//            ->shouldReceive('fetchAccumulatedTimeByIssue')
-//            ->never()
-//            ->getMock();
-//
-//        $this->getMockService(Party::class)
-//            ->shouldReceive('getByCongressman')
-//            ->never()
-//            ->getMock();
-//
-//        $this->getMockService(Vote::class)
-//            ->shouldReceive('fetchDateFrequencyByIssue')
-//            ->never()
-//            ->getMock();
-//
-//        $this->getMockService(Speech::class)
-//            ->shouldReceive('fetchFrequencyByIssue')
-//            ->never()
-//            ->getMock();
-//
-//
-//        $this->dispatch('/loggjafarthing/100/thingmal/a/200', 'GET');
-//
-//        $this->assertControllerName(\Althingi\Controller\IssueController::class);
-//        $this->assertActionName('get');
-//        $this->assertResponseStatusCode(404);
-//    }
+    public function testGetNotFound()
+    {
+        $this->getMockService(Store\Issue::class)
+            ->shouldReceive('get')
+            ->with(100, 200, 'A')
+            ->andReturn(null)
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/100/thingmal/a/200', 'GET');
+
+        $this->assertControllerName(Controller\IssueController::class);
+        $this->assertActionName('get');
+        $this->assertResponseStatusCode(404);
+    }
 
     /**
      * @covers ::getList
      * @pending mongodb test framework
      */
-//    public function testGetList()
-//    {
-//        $this->getMockService(Issue::class)
-//            ->shouldReceive('countByAssembly')
-//            ->andReturn(123)
-//            ->once()
-//            ->getMock()
-//            ->shouldReceive('fetchByAssembly')
-//            ->andReturn(array_map(function () {
-//                    return (new IssueAndDateModel())
-//                        ->setDate(new \DateTime())
-//                        ->setCategory('A')
-//                        ->setCongressmanId(1)
-//                        ->setIssueId(1);
-//            }, range(0, 24)))
-//            ->once()
-//            ->getMock()
-//        ;
-//
-//        $this->getMockService(Party::class)
-//            ->shouldReceive('getByCongressman')
-//            ->andReturn(null)
-//            ->times(25)
-//            ->getMock()
-//        ;
-//
-//        $this->getMockService(Congressman::class)
-//            ->shouldReceive('fetchProponentsByIssue')
-//            ->andReturn([(new Proponent())->setCongressmanId(1)])
-//            ->times(25)
-//            ->getMock()
-//        ;
-//
-//        $this->getMockService(Constituency::class)
-//            ->shouldReceive('getByCongressman')
-//            ->andReturn(new ConstituencyDate())
-//            ->times(25)
-//            ->getMock();
-//
-//        $this->dispatch('/loggjafarthing/100/thingmal', 'GET');
-//
-//        $this->assertControllerName(\Althingi\Controller\IssueController::class);
-//        $this->assertActionName('getList');
-//        $this->assertResponseStatusCode(206);
-//        $this->assertResponseHeaderContains('Range-Unit', 'items');
-//        $this->assertResponseHeaderContains('Content-Range', 'items 0-25/123');
-//    }
+    public function testGetList()
+    {
+        $this->getMockService(Store\Issue::class)
+            ->shouldReceive('fetchByAssembly')
+            ->with(100, 0, null, [], [], ['A', 'B'])
+            ->andReturn(array_map(function () {
+                (new Model\IssueProperties())->setIssue(new Model\Issue());
+            }, range(0, 24)))
+            ->getMock()
+
+            ->shouldReceive('countByAssembly')
+            ->andReturn(123)
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/100/thingmal', 'GET');
+
+        $this->assertControllerName(Controller\IssueController::class);
+        $this->assertActionName('getList');
+        $this->assertResponseStatusCode(206);
+        $this->assertResponseHeaderContains('Range-Unit', 'items');
+        $this->assertResponseHeaderContains('Content-Range', 'items 0-25/123');
+    }
 
     /**
      * @covers ::put
      */
     public function testPutSuccess()
     {
-        $expectedObject = (new IssueModel())
+        $expectedObject = (new Model\Issue())
             ->setIssueId(200)
             ->setAssemblyId(100)
             ->setCategory('A')
@@ -361,7 +173,7 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
             ->setTypeSubname('tsn')
         ;
 
-        $this->getMockService(Issue::class)
+        $this->getMockService(Service\Issue::class)
             ->shouldReceive('save')
             ->with(Mockery::on(function ($actualObject) use ($expectedObject) {
                 return $expectedObject == $actualObject;
@@ -379,7 +191,7 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
             'type_subname' => 'tsn',
         ]);
 
-        $this->assertControllerName(\Althingi\Controller\IssueController::class);
+        $this->assertControllerName(Controller\IssueController::class);
         $this->assertActionName('put');
         $this->assertResponseStatusCode(201);
     }
@@ -389,7 +201,7 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
      */
     public function testPutInvalidForm()
     {
-        $this->getMockService(Issue::class)
+        $this->getMockService(Service\Issue::class)
             ->shouldReceive('create')
             ->never()
             ->getMock()
@@ -400,7 +212,7 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
             'type_subname' => 'tsn',
         ]);
 
-        $this->assertControllerName(\Althingi\Controller\IssueController::class);
+        $this->assertControllerName(Controller\IssueController::class);
         $this->assertActionName('put');
         $this->assertResponseStatusCode(400);
     }
@@ -410,7 +222,7 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
      */
     public function testPatch()
     {
-        $expectedObject = (new IssueModel())
+        $expectedObject = (new Model\Issue())
             ->setIssueId(200)
             ->setAssemblyId(100)
             ->setName('n1')
@@ -420,11 +232,11 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
             ->setTypeSubname('tsn')
         ;
 
-        $this->getMockService(Issue::class)
+        $this->getMockService(Service\Issue::class)
             ->shouldReceive('get')
             ->once()
             ->with(200, 100, 'A')
-            ->andReturn((new IssueModel())->setIssueId(200)->setAssemblyId(100)->setCategory('A'))
+            ->andReturn((new Model\Issue())->setIssueId(200)->setAssemblyId(100)->setCategory('A'))
             ->getMock()
 
             ->shouldReceive('update')
@@ -444,7 +256,7 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
             'type_subname' => 'tsn',
         ]);
 
-        $this->assertControllerName(\Althingi\Controller\IssueController::class);
+        $this->assertControllerName(Controller\IssueController::class);
         $this->assertActionName('patch');
         $this->assertResponseStatusCode(205);
     }
@@ -456,7 +268,7 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
     {
         $this->dispatch('/loggjafarthing/100/thingmal', 'OPTIONS');
 
-        $this->assertControllerName(\Althingi\Controller\IssueController::class);
+        $this->assertControllerName(Controller\IssueController::class);
         $this->assertActionName('optionslist');
         $this->assertResponseStatusCode(200);
 
@@ -476,7 +288,7 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
     {
         $this->dispatch('/loggjafarthing/100/thingmal/a/200', 'OPTIONS');
 
-        $this->assertControllerName(\Althingi\Controller\IssueController::class);
+        $this->assertControllerName(Controller\IssueController::class);
         $this->assertActionName('options');
         $this->assertResponseStatusCode(200);
 

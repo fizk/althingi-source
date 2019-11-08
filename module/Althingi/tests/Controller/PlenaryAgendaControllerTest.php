@@ -2,6 +2,9 @@
 
 namespace AlthingiTest\Controller;
 
+use Althingi\Service\Congressman;
+use Althingi\Service\Issue;
+use Althingi\Service\Party;
 use Althingi\Service\Plenary;
 use Althingi\Service\PlenaryAgenda;
 use AlthingiTest\ServiceHelper;
@@ -31,6 +34,10 @@ class PlenaryAgendaControllerTest extends AbstractHttpControllerTestCase
 
         $this->buildServices([
             PlenaryAgenda::class,
+            Plenary::class,
+            Issue::class,
+            Congressman::class,
+            Party::class,
         ]);
     }
 
@@ -66,7 +73,7 @@ class PlenaryAgendaControllerTest extends AbstractHttpControllerTestCase
             'category' => 'B',
         ]);
 
-        $this->assertControllerClass('PlenaryAgendaController');
+        $this->assertControllerName(\Althingi\Controller\PlenaryAgendaController::class);
         $this->assertActionName('put');
         $this->assertResponseStatusCode(201);
     }

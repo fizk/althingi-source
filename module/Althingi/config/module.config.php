@@ -913,15 +913,8 @@ return [
             },
             Controller\IssueController::class => function (ServiceManager $container) {
                 return (new Controller\IssueController())
-                    ->setPartyService($container->get(Service\Party::class))
-                    ->setCongressmanService($container->get(Service\Congressman::class))
                     ->setAssemblyService($container->get(Service\Assembly::class))
                     ->setIssueService($container->get(Service\Issue::class))
-                    ->setSpeechService($container->get(Service\Speech::class))
-                    ->setVoteService($container->get(Service\Vote::class))
-                    ->setDocumentService($container->get(Service\Document::class))
-                    ->setSearchIssueService($container->get(Service\SearchIssue::class))
-                    ->setConstituencyService($container->get(Service\Constituency::class))
                     ->setCategoryService($container->get(Service\Category::class))
                     ->setIssueStore($container->get(Store\Issue::class))
                     ->setCategoryStore($container->get(Store\Category::class))
@@ -938,7 +931,6 @@ return [
                     ->setPartyService($container->get(Service\Party::class))
                     ->setPlenaryService($container->get(Service\Plenary::class))
                     ->setConstituencyService($container->get(Service\Constituency::class))
-                    ->setSearchSpeechService($container->get(Service\SearchSpeech::class))
                     ->setSpeechStore($container->get(Store\Speech::class));
             },
             Controller\VoteController::class => function (ServiceManager $container) {

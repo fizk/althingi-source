@@ -216,8 +216,18 @@ class AssemblyController extends AbstractRestfulController implements
     public function statisticsAction()
     {
         $assembly = $this->assemblyService->get($this->params('id'));
-//        $response = $this->fetchStatisticsFromService($assembly);
-        $response = $this->fetchStatisticsFromStore($assembly);
+        $response = (new Model\AssemblyStatusProperties())
+            ->setVotes($this->voteStore->fetchFrequencyByAssembly($assembly->getAssemblyId()))
+            ->setSpeeches($this->speechStore->fetchFrequencyByAssembly($assembly->getAssemblyId()))
+            ->setAverageAge($this->congressmanStore->getAverageAgeByAssembly(
+                $assembly->getAssemblyId(),
+                $assembly->getFrom()
+            ))
+            ->setPartyTimes($this->partyStore->fetchTimeByAssembly($assembly->getAssemblyId()))
+//            ->setElection($this->electionService->getByAssembly($assembly->getAssemblyId()))
+            ->setElection(null)
+            ->setElectionResults([])
+        ;
 
         return (new ItemModel($response))
             ->setStatus(200)
@@ -424,59 +434,6 @@ class AssemblyController extends AbstractRestfulController implements
     {
         $this->categoryStore = $category;
         return $this;
-    }
-
-    /**
-     * Gets Statistics from Service ie. DB.
-     *
-     * @param Model\Assembly $assembly
-     * @return Model\AssemblyStatusProperties
-     * @deprecated
-     */
-    private function fetchStatisticsFromService(Model\Assembly $assembly)
-    {
-        return (new Model\AssemblyStatusProperties())
-            ->setVotes(DateAndCountSequence::buildDateRange(
-                $assembly->getFrom(),
-                $assembly->getTo(),
-                $this->voteService->fetchFrequencyByAssembly($assembly->getAssemblyId())
-            ))
-            ->setSpeeches(DateAndCountSequence::buildDateRange(
-                $assembly->getFrom(),
-                $assembly->getTo(),
-                $this->speechService->fetchFrequencyByAssembly($assembly->getAssemblyId(), ['A', 'B'])
-            ))
-            ->setAverageAge($this->congressmanService->getAverageAgeByAssembly(
-                $assembly->getAssemblyId(),
-                $assembly->getFrom()
-            ))
-            ->setPartyTimes($this->partyService->fetchTimeByAssembly($assembly->getAssemblyId(), ['A', 'B']))
-            ->setElection($this->electionService->getByAssembly($assembly->getAssemblyId()))
-            ->setElectionResults($this->partyService->fetchElectedByAssembly($assembly->getAssemblyId()))
-        ;
-    }
-
-    /**
-     * Gets Statistics from Service ie. MongoDB.
-     *
-     * @param Model\Assembly $assembly
-     * @return Model\AssemblyStatusProperties
-     * @todo the Election results are not being fetched at all.
-     */
-    private function fetchStatisticsFromStore(Model\Assembly $assembly)
-    {
-        return (new Model\AssemblyStatusProperties())
-            ->setVotes($this->voteStore->fetchFrequencyByAssembly($assembly->getAssemblyId()))
-            ->setSpeeches($this->speechStore->fetchFrequencyByAssembly($assembly->getAssemblyId()))
-            ->setAverageAge($this->congressmanStore->getAverageAgeByAssembly(
-                $assembly->getAssemblyId(),
-                $assembly->getFrom()
-            ))
-            ->setPartyTimes($this->partyStore->fetchTimeByAssembly($assembly->getAssemblyId()))
-
-            ->setElection(null)
-            ->setElectionResults([])
-        ;
     }
 
     /**

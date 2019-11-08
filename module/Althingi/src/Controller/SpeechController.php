@@ -27,7 +27,6 @@ class SpeechController extends AbstractRestfulController implements
     ServiceSpeechAwareInterface,
     ServiceCongressmanAwareInterface,
     ServicePartyAwareInterface,
-    ServiceSearchSpeechAwareInterface,
     ServicePlenaryAwareInterface,
     ServiceConstituencyAwareInterface,
     StoreSpeechAwareInterface
@@ -39,9 +38,6 @@ class SpeechController extends AbstractRestfulController implements
 
     /** @var \Althingi\Store\Speech */
     private $speechStore;
-
-    /** @var  \Althingi\Service\SearchSpeech */
-    private $speechSearch;
 
     /** @var \Althingi\Service\Congressman */
     private $congressmanService;
@@ -314,16 +310,6 @@ class SpeechController extends AbstractRestfulController implements
     public function setSpeechService(Service\Speech $speech)
     {
         $this->speechService = $speech;
-        return $this;
-    }
-
-    /**
-     * @param \Althingi\Service\SearchSpeech $speech
-     * @return $this
-     */
-    public function setSearchSpeechService(Service\SearchSpeech $speech)
-    {
-        $this->speechSearch = $speech;
         return $this;
     }
 

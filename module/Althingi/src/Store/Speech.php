@@ -22,7 +22,7 @@ class Speech implements StoreAwareInterface
      * @param int|null $offset
      * @param int|null $size
      * @param int|null $words
-     * @return array
+     * @return \Althingi\Model\SpeechCongressmanProperties[]
      */
     public function fetchByIssue(
         $assemblyId,

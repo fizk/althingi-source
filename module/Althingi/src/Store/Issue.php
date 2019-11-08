@@ -36,7 +36,7 @@ class Issue implements StoreAwareInterface
      * @param array $types
      * @param array $kinds
      * @param array $categories
-     * @return array
+     * @return Model\IssueProperties[]
      */
     public function fetchByAssembly(
         int $assemblyId,
@@ -47,7 +47,7 @@ class Issue implements StoreAwareInterface
         array $categories = ['A', 'B']
     ): array {
         $criteria = array_merge(
-            ['issue.assembly_id' => $assemblyId],
+            ['assembly.assembly_id' => $assemblyId],
             ['issue.category' => ['$in' => $categories]],
             count($types) ? ['issue.type' => ['$in' => $types]] : [],
             count($kinds) ? ['categories.category_id' => ['$in' => $kinds]] : []
@@ -439,8 +439,8 @@ class Issue implements StoreAwareInterface
         $issueProperties = (new Model\IssueProperties())
             ->setSpeechCount($object->speech_count)
             ->setSpeechTime($object->speech_time)
-            ->setDocumentType($object->document_type)
-            ->setDocumentUrl($object->document_url)
+            ->setDocumentType(property_exists($object, 'document_type') ? $object->document_type : null)
+            ->setDocumentUrl(property_exists($object, 'document_url') ? $object->document_url : null)
             ->setIssue($issue)
             ->setGovernmentIssue(isset($object->government_issue) ? $object->government_issue : false)
             ->setCategories(isset($object->categories) ? array_map(function ($category) {
