@@ -284,7 +284,7 @@ class Congressman implements StoreAwareInterface
      *
      * @param int $assemblyId
      * @param int $congressmanId
-     * @return Model\CongressmanPartyProperties
+     * @return Model\CongressmanPartyProperties | null
      */
     public function getByAssembly(int $assemblyId, int $congressmanId)
     {
@@ -292,6 +292,10 @@ class Congressman implements StoreAwareInterface
             'assembly.assembly_id' => $assemblyId,
             'congressman.congressman_id' => $congressmanId,
         ]);
+
+        if (! $document) {
+            return  null;
+        }
 
         $congressman = (array)$document['congressman'];
         $parties = (array)$document['parties'];
@@ -311,6 +315,22 @@ class Congressman implements StoreAwareInterface
             )->setAssembly(
                 (new Model\Assembly())->setAssemblyId($assemblyId)
             );
+    }
+
+    public function getSpeechTimeByAssembly(int $assemblyId, int $congressmanId)
+    {
+        $document = $this->getStore()->selectCollection('congressman')->findOne([
+            'assembly.assembly_id' => $assemblyId,
+            'congressman.congressman_id' => $congressmanId,
+        ]);
+
+        if ($document) {
+            return (new Model\ValueAndCount())
+                ->setValue('time')
+                ->setCount($document['speech_time']);
+        }
+
+        return null;
     }
 
     /**

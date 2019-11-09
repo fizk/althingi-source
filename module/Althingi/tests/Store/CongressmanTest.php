@@ -13,6 +13,22 @@ class CongressmanTest extends TestCase
 {
     use StorageConnection;
 
+    public function testGetByAssembly()
+    {
+        $store = (new Store\Congressman())->setStore($this->database);
+        $congressman = $store->getByAssembly(1, 1);
+
+        $this->assertInstanceOf(Model\CongressmanPartyProperties::class, $congressman);
+    }
+
+    public function testGetByAssemblyNotFound()
+    {
+        $store = (new Store\Congressman())->setStore($this->database);
+        $congressman = $store->getByAssembly(100, 100);
+
+        $this->assertNull($congressman);
+    }
+
     public function testFetchTimeByAssembly()
     {
         $store = (new Store\Congressman())->setStore($this->database);
@@ -107,6 +123,7 @@ class CongressmanTest extends TestCase
                             "date" => "2018-09-11"
                         ]
                     ],
+                    "parties" => [],
                 ],
                 [
                     "assembly" => [
@@ -136,6 +153,7 @@ class CongressmanTest extends TestCase
                             "date" => "2018-09-11"
                         ]
                     ],
+                    "parties" => [],
                 ],
                 [
                     "assembly" => [
@@ -165,6 +183,7 @@ class CongressmanTest extends TestCase
                             "date" => "2018-09-11"
                         ]
                     ],
+                    "parties" => [],
                 ]
             ]
         ]);

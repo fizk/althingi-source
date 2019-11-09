@@ -96,6 +96,16 @@ return [
                                     ],
                                 ],
                             ],
+                            'speechtime' => [
+                                'type' => Literal::class,
+                                'options' => [
+                                    'route'    => '/raedutimar',
+                                    'defaults' => [
+                                        'controller' => Controller\CongressmanController::class,
+                                        'action' => 'assembly-speech-time'
+                                    ],
+                                ],
+                            ],
                         ]
                     ],
                     'thingmenn' => [
@@ -867,16 +877,10 @@ return [
             },
             Controller\CongressmanController::class => function (ServiceManager $container) {
                 return (new Controller\CongressmanController())
-                    ->setVoteService($container->get(Service\Vote::class))
-                    ->setSpeechService($container->get(Service\Speech::class))
                     ->setPartyService($container->get(Service\Party::class))
-                    ->setConstituencyService($container->get(Service\Constituency::class))
-                    ->setIssueService($container->get(Service\Issue::class))
                     ->setAssemblyService($container->get(Service\Assembly::class))
                     ->setCongressmanService($container->get(Service\Congressman::class))
-                    ->setIssueCategoryService($container->get(Service\IssueCategory::class))
                     ->setVoteItemService($container->get(Service\VoteItem::class))
-                    ->setSessionService($container->get(Service\Session::class))
                     ->setCongressmanStore($container->get(Store\Congressman::class))
                     ->setSessionStore($container->get(Store\Session::class))
                     ->setVoteStore($container->get(Store\Vote::class))
