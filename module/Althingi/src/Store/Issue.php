@@ -20,7 +20,7 @@ class Issue implements StoreAwareInterface
      */
     public function get(int $assemblyId, int $issueId, string $category = 'A'): ?Model\IssueProperties
     {
-        $issue = $this->getStore()->issue->findOne([
+        $issue = $this->getStore()->selectCollection('issue')->findOne([
             'issue.assembly_id' => $assemblyId,
             'issue.issue_id' => $issueId,
             'issue.category' => $category,
@@ -54,7 +54,7 @@ class Issue implements StoreAwareInterface
         );
         $size = $size ? : 25;
 
-        $issues = $this->getStore()->issue->aggregate([
+        $issues = $this->getStore()->selectCollection('issue')->aggregate([
             ['$match' => $criteria],
             ['$skip' => $offset],
             ['$limit' => $size],
@@ -86,7 +86,7 @@ class Issue implements StoreAwareInterface
             count($kinds) ? ['categories.category_id' => ['$in' => $kinds]] : []
         );
 
-        $documents = $this->getStore()->issue->aggregate([
+        $documents = $this->getStore()->selectCollection('issue')->aggregate([
             ['$match' => $criteria],
             ['$count' => 'total']
         ]);
@@ -119,7 +119,7 @@ class Issue implements StoreAwareInterface
             ['proponents.congressman.party.party_id' => $partyId],
             count($types) ? ['issue.type' => ['$in' => $types]] : []
         );
-        $issues = $this->getStore()->issue->aggregate([
+        $issues = $this->getStore()->selectCollection('issue')->aggregate([
             ['$match' => $criteria],
             ['$skip' => $offset],
             ['$limit' => $size],
@@ -149,7 +149,7 @@ class Issue implements StoreAwareInterface
             ['proponents.congressman.party.party_id' => $partyId],
             count($types) ? ['issue.type' => ['$in' => $types]] : []
         );
-        $issues = $this->getStore()->issue->aggregate([
+        $issues = $this->getStore()->selectCollection('issue')->aggregate([
             ['$match' => $criteria],
             ['$count' => 'total'],
         ]);
@@ -159,9 +159,16 @@ class Issue implements StoreAwareInterface
         }, 0);
     }
 
+    /**
+     * Get issues where this congressman has been the 1st proponent of.
+     *
+     * @param int $assemblyId
+     * @param int $congressmanId
+     * @return \Althingi\Model\Issue[]
+     */
     public function fetchByAssemblyAndCongressman(int $assemblyId, int $congressmanId)
     {
-        $document = $this->getStore()->congressman->aggregate([
+        $document = $this->getStore()->selectCollection('congressman')->aggregate([
             ['$match' => [
                 'assembly.assembly_id' => (int)$assemblyId,
                 'congressman.congressman_id' => (int)$congressmanId
@@ -182,9 +189,15 @@ class Issue implements StoreAwareInterface
         }, (array)$doc[0]['propositions']);
     }
 
+    /**
+     * Get all issues that are government issues and group by status and count.
+     *
+     * @param int $assemblyId
+     * @return \Althingi\Model\IssueTypeStatus[]
+     */
     public function fetchGovernmentBillStatisticsByAssembly(int $assemblyId)
     {
-        $documents = $this->getStore()->issue->aggregate([
+        $documents = $this->getStore()->selectCollection('issue')->aggregate([
             [
                 '$match' => [
                     'issue.assembly_id' => $assemblyId,
@@ -210,9 +223,15 @@ class Issue implements StoreAwareInterface
         }, iterator_to_array($documents));
     }
 
+    /**
+     * Select all issues that are 'l', group and count by status.
+     *
+     * @param int $assemblyId
+     * @return \Althingi\Model\IssueTypeStatus[]
+     */
     public function fetchNonGovernmentBillStatisticsByAssembly(int $assemblyId)
     {
-        $documents = $this->getStore()->issue->aggregate([
+        $documents = $this->getStore()->selectCollection('issue')->aggregate([
             [
                 '$match' => [
                     'issue.assembly_id' => $assemblyId,
@@ -238,9 +257,15 @@ class Issue implements StoreAwareInterface
         }, iterator_to_array($documents));
     }
 
+    /**
+     * Select all issues that are 'v, a, f', group and count by status.
+     *
+     * @param int $assemblyId
+     * @return \Althingi\Model\IssueTypeStatus[]
+     */
     public function fetchProposalStatisticsByAssembly(int $assemblyId)
     {
-        $documents = $this->getStore()->issue->aggregate([
+        $documents = $this->getStore()->selectCollection('issue')->aggregate([
             [
                 '$match' => [
                     'issue.assembly_id' => $assemblyId,
@@ -266,9 +291,16 @@ class Issue implements StoreAwareInterface
         }, iterator_to_array($documents));
     }
 
+    /**
+     * Take all issues by assembly, group by category (or type), (a, l, ...) and
+     * count
+     *
+     * @param int $assemblyId
+     * @return \Althingi\Model\AssemblyStatus
+     */
     public function fetchCountByCategory(int $assemblyId)
     {
-        $documents = $this->getStore()->issue->aggregate([
+        $documents = $this->getStore()->selectCollection('issue')->aggregate([
             [
                 '$match' => [
                     'issue.assembly_id' => $assemblyId,
@@ -304,9 +336,19 @@ class Issue implements StoreAwareInterface
         }, iterator_to_array($documents));
     }
 
+    /**
+     * Get a list of all issues in assembly (or a subset, $size) and order
+     * by total speech time.
+     *
+     * @param int $assemblyId
+     * @param int $size
+     * @param int $order
+     * @param array $categories
+     * @return \Althingi\Model\IssueProperties[]
+     */
     public function fetchByAssemblyAndSpeechTime(int $assemblyId, int $size, int $order, array $categories = [])
     {
-        $documents = $this->getStore()->issue->find([
+        $documents = $this->getStore()->selectCollection('issue')->find([
             'issue.assembly_id' => $assemblyId,
         ], [
             'sort' => ['speech_time' => -1],
@@ -318,9 +360,16 @@ class Issue implements StoreAwareInterface
         }, iterator_to_array($documents));
     }
 
+    /**
+     * Gets total speech time per congressman per super-category.
+     *
+     * @param int $assemblyId
+     * @param int $congressmanId
+     * @return \Althingi\Model\IssueSuperCategoryAndTime[]
+     */
     public function fetchFrequencyByAssemblyAndCongressman(int $assemblyId, int $congressmanId)
     {
-        $document = $this->getStore()->congressman->aggregate([
+        $document = $this->getStore()->selectCollection('congressman')->aggregate([
             ['$match' => [
                 'assembly.assembly_id' => (int)$assemblyId,
                 'congressman.congressman_id' => (int)$congressmanId
@@ -355,9 +404,15 @@ class Issue implements StoreAwareInterface
         }, (array)$doc[0]['values']);
     }
 
+    /**
+     * Count all issues and group by type (a, l ...) that a congressman has been part of (1st proponent or 2nd, 3rd...)
+     * @param int $assemblyId
+     * @param int $congressmanId
+     * @return \Althingi\Model\CongressmanIssue[]
+     */
     public function fetchByAssemblyAndCongressmanSummary(int $assemblyId, int $congressmanId)
     {
-        $document = $this->getStore()->congressman->aggregate([
+        $document = $this->getStore()->selectCollection('congressman')->aggregate([
             [
                 '$match' => [
                     'assembly.assembly_id' => $assemblyId,

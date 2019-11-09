@@ -12,12 +12,21 @@ class Category implements StoreAwareInterface
     /** @var \MongoDB\Database */
     private $database;
 
+    /**
+     * Each issue is tagged with one or more categories (so not super-categories).
+     *
+     * This methods will count every instance of category in all issue in an assembly and return
+     * the count alongside the category itself and order from high to low.
+     *
+     * @param int $assemblyId
+     * @return \Althingi\Model\CategoryAndCount[
+     */
     public function fetchByAssembly(int $assemblyId)
     {
-        $documents = $this->getStore()->issue->aggregate([
+        $documents = $this->getStore()->selectCollection('issue')->aggregate([
             [
                 '$match' => [
-                    'issue.assembly_id' => $assemblyId
+                    'assembly.assembly_id' => $assemblyId
                 ],
             ],
             [
