@@ -19,13 +19,19 @@ class Congressman implements StoreAwareInterface
      * @param int $assemblyId
      * @param int $size
      * @param int $order
-     * @return array
+     * @return \Althingi\Model\CongressmanPartyProperties[]
      */
     public function fetchTimeByAssembly(int $assemblyId, int $size = 5, int $order = -1): array
     {
-        $document = $this->getStore()->congressman->find([
-            'assembly.assembly_id' => $assemblyId
-        ], ['limit' => $size, 'sort' => ['speech_time' => $order]]);
+        $document = $this->getStore()->selectCollection('congressman')->find(
+            [
+                'assembly.assembly_id' => $assemblyId
+            ],
+            [
+                'limit' => $size,
+                'sort' => ['speech_time' => $order]
+            ]
+        );
 
         return array_map(function ($document) {
             $congressman = array_merge((array)$document['congressman'], ['value' => $document['speech_time']]);
@@ -52,7 +58,7 @@ class Congressman implements StoreAwareInterface
      */
     public function fetchQuestionByAssembly(int $assemblyId, int $size = 5, int $order = -1)
     {
-        $document = $this->getStore()->congressman->aggregate([
+        $document = $this->getStore()->selectCollection('congressman')->aggregate([
             [
                 '$match' => [
                     'assembly.assembly_id' => $assemblyId,
@@ -98,11 +104,11 @@ class Congressman implements StoreAwareInterface
      * @param int $assemblyId
      * @param int $size
      * @param int $order
-     * @return array
+     * @return \Althingi\Model\CongressmanPartyProperties[]
      */
     public function fetchPropositionsByAssembly(int $assemblyId, int $size = 5, int $order = -1)
     {
-        $document = $this->getStore()->congressman->aggregate([
+        $document = $this->getStore()->selectCollection('congressman')->aggregate([
             [
                 '$match' => [
                     'assembly.assembly_id' => $assemblyId,
@@ -142,9 +148,17 @@ class Congressman implements StoreAwareInterface
         }, iterator_to_array($document));
     }
 
+    /**
+     * Get count and type of documents other than the primary documents (breytingartillogur ...etc)
+     * by a congressmen per assembly.
+     *
+     * @param int $assemblyId
+     * @param int $congressmanId
+     * @return \Althingi\Model\ValueAndCount[]
+     */
     public function fetchOtherDocumentsByAssembly(int $assemblyId, int $congressmanId)
     {
-        $document = $this->getStore()->congressman->aggregate([
+        $document = $this->getStore()->selectCollection('congressman')->aggregate([
             [
                 '$match' => [
                     'assembly.assembly_id' => $assemblyId,
@@ -187,11 +201,11 @@ class Congressman implements StoreAwareInterface
      * @param int $assemblyId
      * @param int $size
      * @param int $order
-     * @return array
+     * @return \Althingi\Model\CongressmanPartyProperties[]
      */
     public function fetchBillsByAssembly(int $assemblyId, int $size = 5, int $order = -1)
     {
-        $document = $this->getStore()->congressman->aggregate([
+        $document = $this->getStore()->selectCollection('congressman')->aggregate([
             [
                 '$match' => [
                     'assembly.assembly_id' => $assemblyId,
@@ -241,7 +255,7 @@ class Congressman implements StoreAwareInterface
             $type ? ['sessions' => ['$elemMatch' => ['type' => $type]]] : []
         );
 
-        $document = $this->getStore()->congressman->find(
+        $document = $this->getStore()->selectCollection('congressman')->find(
             $query,
             ['sort' => ['congressman.name' => 1]]
         );
@@ -274,7 +288,7 @@ class Congressman implements StoreAwareInterface
      */
     public function getByAssembly(int $assemblyId, int $congressmanId)
     {
-        $document = $this->getStore()->congressman->findOne([
+        $document = $this->getStore()->selectCollection('congressman')->findOne([
             'assembly.assembly_id' => $assemblyId,
             'congressman.congressman_id' => $congressmanId,
         ]);
@@ -302,15 +316,14 @@ class Congressman implements StoreAwareInterface
     /**
      * Gets average age of all congressmen for a give assembly, regardless of their type
      *
-     * @todo test and validate
      * @param int $assemblyId
      * @param DateTime $date
-     * @return mixed
+     * @return float
      */
     public function getAverageAgeByAssembly(int $assemblyId, DateTime $date)
     {
         /** @var $document \MongoDB\Driver\Cursor */
-        $document = $this->getStore()->congressman->aggregate([
+        $document = $this->getStore()->selectCollection('congressman')->aggregate([
             [
                 '$match' => [
                     'assembly.assembly_id' => $assemblyId,

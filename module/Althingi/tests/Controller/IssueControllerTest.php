@@ -15,7 +15,6 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * Class IssueControllerTest
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\IssueController
- * @covers \Althingi\Controller\IssueController::setCongressmanService
  * @covers \Althingi\Controller\IssueController::setIssueService
  * @covers \Althingi\Controller\IssueController::setPartyService
  * @covers \Althingi\Controller\IssueController::setDocumentService
