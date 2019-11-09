@@ -470,6 +470,11 @@ class CongressmanController extends AbstractRestfulController implements
             ->setStatus(404);
     }
 
+    /**
+     * Entry option for Congressman entry.
+     *
+     * @return \Rend\View\Model\ModelInterface
+     */
     public function optionsList()
     {
         return (new EmptyModel())
@@ -479,7 +484,7 @@ class CongressmanController extends AbstractRestfulController implements
     }
 
     /**
-     * List options for Assembly entry.
+     * List options for Congressman entry.
      *
      * @return \Rend\View\Model\ModelInterface
      */
