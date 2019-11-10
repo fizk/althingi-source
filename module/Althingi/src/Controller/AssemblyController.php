@@ -207,34 +207,6 @@ class AssemblyController extends AbstractRestfulController implements
     }
 
     /**
-     * Get statistics about assembly.
-     *
-     * @return \Rend\View\Model\ModelInterface
-     * @output \Althingi\Model\AssemblyStatusProperties
-     * @query category
-     */
-    public function statisticsAction()
-    {
-        $assembly = $this->assemblyService->get($this->params('id'));
-        $response = (new Model\AssemblyStatusProperties())
-            ->setVotes($this->voteStore->fetchFrequencyByAssembly($assembly->getAssemblyId()))
-            ->setSpeeches($this->speechStore->fetchFrequencyByAssembly($assembly->getAssemblyId()))
-            ->setAverageAge($this->congressmanStore->getAverageAgeByAssembly(
-                $assembly->getAssemblyId(),
-                $assembly->getFrom()
-            ))
-            ->setPartyTimes($this->partyStore->fetchTimeByAssembly($assembly->getAssemblyId()))
-//            ->setElection($this->electionService->getByAssembly($assembly->getAssemblyId()))
-            ->setElection(null)
-            ->setElectionResults([])
-        ;
-
-        return (new ItemModel($response))
-            ->setStatus(200)
-            ->setOption('X-Source', 'Store');
-    }
-
-    /**
      * Create new Resource Assembly.
      *
      * @param  int $id
@@ -284,6 +256,34 @@ class AssemblyController extends AbstractRestfulController implements
         }
 
         return $this->notFoundAction();
+    }
+
+    /**
+     * Get statistics about assembly.
+     *
+     * @return \Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\AssemblyStatusProperties
+     * @query category
+     */
+    public function statisticsAction()
+    {
+        $assembly = $this->assemblyService->get($this->params('id'));
+        $response = (new Model\AssemblyStatusProperties())
+            ->setVotes($this->voteStore->fetchFrequencyByAssembly($assembly->getAssemblyId()))
+            ->setSpeeches($this->speechStore->fetchFrequencyByAssembly($assembly->getAssemblyId()))
+            ->setAverageAge($this->congressmanStore->getAverageAgeByAssembly(
+                $assembly->getAssemblyId(),
+                $assembly->getFrom()
+            ))
+            ->setPartyTimes($this->partyStore->fetchTimeByAssembly($assembly->getAssemblyId()))
+//            ->setElection($this->electionService->getByAssembly($assembly->getAssemblyId()))
+            ->setElection(null)
+            ->setElectionResults([])
+        ;
+
+        return (new ItemModel($response))
+            ->setStatus(200)
+            ->setOption('X-Source', 'Store');
     }
 
     /**
