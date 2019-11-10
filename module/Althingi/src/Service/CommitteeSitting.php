@@ -8,6 +8,7 @@ use Althingi\Injector\EventsAwareInterface;
 use Althingi\Injector\DatabaseAwareInterface;
 use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;
+use Althingi\Presenters\IndexableCommitteeSittingPresenter;
 use Althingi\Presenters\IndexableSessionPresenter;
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\EventManager;
@@ -66,12 +67,12 @@ class CommitteeSitting implements DatabaseAwareInterface, EventsAwareInterface
         $id = $this->getDriver()->lastInsertId();
         $data->setCommitteeSittingId($id);
 
-//        $this->getEventManager()
-//            ->trigger(
-//                AddEvent::class,
-//                new AddEvent(new IndexableSessionPresenter($data)),
-//                ['rows' => $statement->rowCount()]
-//            );
+        $this->getEventManager()
+            ->trigger(
+                AddEvent::class,
+                new AddEvent(new IndexableCommitteeSittingPresenter($data)),
+                ['rows' => $statement->rowCount()]
+            );
 
         return $id;
     }
@@ -90,16 +91,20 @@ class CommitteeSitting implements DatabaseAwareInterface, EventsAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
-//        $this->getEventManager()
-//            ->trigger(
-//                UpdateEvent::class,
-//                new UpdateEvent(new IndexableSessionPresenter($data)),
-//                ['rows' => $statement->rowCount()]
-//            );
+        $this->getEventManager()
+            ->trigger(
+                UpdateEvent::class,
+                new UpdateEvent(new IndexableCommitteeSittingPresenter($data)),
+                ['rows' => $statement->rowCount()]
+            );
 
         return $statement->rowCount();
     }
 
+    /**
+     * @param int $congressmanId
+     * @return \Althingi\Model\CommitteeSitting[]
+     */
     public function fetchByCongressman(int $congressmanId)
     {
         $statement = $this->getDriver()->prepare(

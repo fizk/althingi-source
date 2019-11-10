@@ -277,7 +277,7 @@ class CommitteeSittingControllerTest extends AbstractHttpControllerTestCase
      */
     public function testGetList()
     {
-        $this->getMockService(Session::class)
+        $this->getMockService(Service\CommitteeSitting::class)
             ->shouldReceive('fetchByCongressman')
             ->andReturn([])
             ->getMock();
