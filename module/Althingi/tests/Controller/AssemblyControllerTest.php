@@ -59,7 +59,8 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
             Store\Speech::class,
             Store\Party::class,
             Store\Category::class,
-            Store\Congressman::class
+            Store\Congressman::class,
+            Store\Assembly::class,
         ]);
     }
 
@@ -75,11 +76,14 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
      */
     public function testGet()
     {
-        $this->getMockService(Service\Assembly::class)
+        $this->getMockService(Store\Assembly::class)
             ->shouldReceive('get')
-            ->andReturn((new Model\Assembly())
-                ->setAssemblyId(144)
-                ->setFrom(new DateTime()))
+            ->andReturn((new Model\AssemblyProperties())
+                ->setAssembly(
+                    (new Model\Assembly())
+                        ->setAssemblyId(144)
+                        ->setFrom(new DateTime())
+                ))
             ->once()
             ->getMock();
 
@@ -115,14 +119,14 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
      */
     public function testGetNotFound()
     {
-        $this->getMockService(Service\Assembly::class)
+        $this->getMockService(Store\Assembly::class)
             ->shouldReceive('get')
             ->andReturn(null)
             ->once()
             ->getMock();
 
         $this->dispatch('/loggjafarthing/144', 'GET');
-        $this->assertControllerClass('AssemblyController');
+        $this->assertControllerName(AssemblyController::class);
         $this->assertActionName('get');
         $this->assertResponseStatusCode(404);
         $this->assertResponseHeaderContains('Access-Control-Allow-Origin', '*');
@@ -133,17 +137,18 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
      */
     public function testGetListAll()
     {
-        $this->getMockService(Service\Assembly::class)
-            ->shouldReceive('count')
-            ->andReturn(3)
-            ->once()
-            ->getMock()
-            ->shouldReceive('fetchAll')
-            ->with(0, null, 'desc')
+        $this->getMockService(Store\Assembly::class)
+            ->shouldReceive('fetch')
             ->andReturn([
-                (new Model\Assembly())->setAssemblyId(144)->setFrom(new DateTime()),
-                (new Model\Assembly())->setAssemblyId(143)->setFrom(new DateTime()),
-                (new Model\Assembly())->setAssemblyId(144)->setFrom(new DateTime()),
+                (new Model\AssemblyProperties())->setAssembly(
+                    (new Model\Assembly())->setAssemblyId(144)->setFrom(new DateTime())
+                ),
+                (new Model\AssemblyProperties())->setAssembly(
+                    (new Model\Assembly())->setAssemblyId(143)->setFrom(new DateTime())
+                ),
+                (new Model\AssemblyProperties())->setAssembly(
+                    (new Model\Assembly())->setAssemblyId(144)->setFrom(new DateTime())
+                ),
             ])
             ->getMock();
 
@@ -168,109 +173,12 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
 
         $this->dispatch('/loggjafarthing', 'GET');
 
-        $this->assertControllerClass('AssemblyController');
+        $this->assertControllerName(AssemblyController::class);
         $this->assertActionName('getList');
         $this->assertResponseStatusCode(206);
         $this->assertResponseHeaderContains('Access-Control-Allow-Origin', '*');
         $this->assertResponseHeaderContains('Access-Control-Expose-Headers', 'Range-Unit, Content-Range');
         $this->assertResponseHeaderContains('Content-Range', 'items 0-3/3');
-        $this->assertResponseHeaderContains('Range-Unit', 'items');
-    }
-
-    /**
-     * @covers ::getList
-     */
-    public function testGetList()
-    {
-        $this->getMockService(Service\Assembly::class)
-            ->shouldReceive('count')
-            ->andReturn(147)
-            ->once()
-            ->getMock()
-            ->shouldReceive('fetchAll')
-            ->with(0, 10, 'desc')
-            ->andReturn(array_map(function () {
-                return (new Model\Assembly())->setAssemblyId(144)->setFrom(new DateTime());
-            }, range(0, 9)))
-            ->getMock();
-
-        $this->getMockService(Service\Cabinet::class)
-            ->shouldReceive('fetchByAssembly')
-            ->andReturn([
-                (new Model\Cabinet())
-                    ->setCabinetId(1)
-                    ->setTitle('title')
-            ])
-            ->times(10)
-            ->getMock();
-
-        $this->getMockService(Service\Party::class)
-            ->shouldReceive('fetchByCabinet')
-            ->andReturn([])
-            ->times(10)
-            ->shouldReceive('fetchByAssembly')
-            ->andReturn([])
-            ->times(10)
-            ->getMock();
-
-        $headers = $this->getRequest()->getHeaders();
-        $headers->addHeaderLine('Range', '0-10');
-        $this->dispatch('/loggjafarthing', 'GET');
-
-        $this->assertControllerClass('AssemblyController');
-        $this->assertActionName('getList');
-        $this->assertResponseStatusCode(206);
-        $this->assertResponseHeaderContains('Access-Control-Allow-Origin', '*');
-        $this->assertResponseHeaderContains('Access-Control-Expose-Headers', 'Range-Unit, Content-Range');
-        $this->assertResponseHeaderContains('Content-Range', 'items 0-10/147');
-        $this->assertResponseHeaderContains('Range-Unit', 'items');
-    }
-    /**
-     * @covers ::getList
-     */
-    public function testGetListSubset()
-    {
-        $this->getMockService(Service\Assembly::class)
-            ->shouldReceive('count')
-            ->andReturn(147)
-            ->once()
-            ->getMock()
-            ->shouldReceive('fetchAll')
-            ->with(10, 10, 'desc')
-            ->andReturn(array_map(function () {
-                return (new Model\Assembly())->setAssemblyId(144)->setFrom(new DateTime());
-            }, range(0, 9)))
-            ->getMock();
-
-        $this->getMockService(Service\Cabinet::class)
-            ->shouldReceive('fetchByAssembly')
-            ->andReturn([
-                (new Model\Cabinet())
-                    ->setCabinetId(1)
-                    ->setTitle('title')
-            ])
-            ->times(10)
-            ->getMock();
-
-        $this->getMockService(Service\Party::class)
-            ->shouldReceive('fetchByCabinet')
-            ->andReturn([])
-            ->times(10)
-            ->shouldReceive('fetchByAssembly')
-            ->andReturn([])
-            ->times(10)
-            ->getMock();
-
-        $headers = $this->getRequest()->getHeaders();
-        $headers->addHeaderLine('Range', '10-20');
-        $this->dispatch('/loggjafarthing', 'GET');
-
-        $this->assertControllerClass('AssemblyController');
-        $this->assertActionName('getList');
-        $this->assertResponseStatusCode(206);
-        $this->assertResponseHeaderContains('Access-Control-Allow-Origin', '*');
-        $this->assertResponseHeaderContains('Access-Control-Expose-Headers', 'Range-Unit, Content-Range');
-        $this->assertResponseHeaderContains('Content-Range', 'items 10-20/147');
         $this->assertResponseHeaderContains('Range-Unit', 'items');
     }
 

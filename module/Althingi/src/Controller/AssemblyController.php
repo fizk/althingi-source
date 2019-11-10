@@ -110,32 +110,32 @@ class AssemblyController extends AbstractRestfulController implements
      * @param int $id
      * @return \Rend\View\Model\ModelInterface|array
      * @output \Althingi\Model\AssemblyProperties
+     * @todo Cabinet and parties are fetch from the DB
      */
     public function get($id)
     {
-        if (($assembly = $this->assemblyService->get($id)) != null) {
-            $assemblyProperties = (new Model\AssemblyProperties())
-                ->setAssembly($assembly);
-            $cabinets = $this->cabinetService->fetchByAssembly($assembly->getAssemblyId());
-            $assemblyProperties->setCabinet(count($cabinets) > 0 ? $cabinets[0] : null);
+        if (($assembly = $this->assemblyStore->get($id)) != null) {
+            $cabinets = $this->cabinetService->fetchByAssembly($assembly->getAssembly()->getAssemblyId());
+            $assembly->setCabinet(count($cabinets) > 0 ? $cabinets[0] : null);
 
             foreach ($cabinets as $cabinet) {
-                $assemblyProperties->setMajority(
+                $assembly->setMajority(
                     $this->partyService->fetchByCabinet($cabinet->getCabinetId())
                 );
-                $assemblyProperties->setMinority(
+                $assembly->setMinority(
                     $this->partyService->fetchByAssembly(
-                        $assembly->getAssemblyId(),
-                        $assemblyProperties->getMajorityPartyIds()
+                        $assembly->getAssembly()->getAssemblyId(),
+                        $assembly->getMajorityPartyIds()
                     )
                 );
             }
 
-            return (new ItemModel($assemblyProperties))
+            return (new ItemModel($assembly))
                 ->setStatus(200);
         }
 
-        return $this->notFoundAction();
+        return (new ErrorModel('Resource Not Found'))
+            ->setStatus(404);
     }
 
     /**
@@ -143,43 +143,33 @@ class AssemblyController extends AbstractRestfulController implements
      *
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\AssemblyProperties[]
-     * @query order asc|desc
+     * @todo Cabinet and parties are fetch from the DB
      */
     public function getList()
     {
-        $order = $this->params()->fromQuery('order', 'desc');
+        $assemblies = $this->assemblyStore->fetch();
 
-        $count = $this->assemblyService->count();
-        $range = $this->getRange($this->getRequest(), $count);
-        $assemblies = $this->assemblyService->fetchAll(
-            $range->getFrom(),
-            $range->getSize(),
-            $order
-        );
-
-        $assemblyCollection = array_map(function (Model\Assembly $assembly) {
-            $assemblyProperties = (new Model\AssemblyProperties())
-                ->setAssembly($assembly);
-            $cabinets = $this->cabinetService->fetchByAssembly($assembly->getAssemblyId());
+        $assembliesProperties = array_map(function (Model\AssemblyProperties $assembly) {
+            $cabinets = $this->cabinetService->fetchByAssembly($assembly->getAssembly()->getAssemblyId());
+            $assembly->setCabinet(count($cabinets) > 0 ? $cabinets[0] : null);
 
             foreach ($cabinets as $cabinet) {
-                $assemblyProperties->setMajority($this->partyService->fetchByCabinet(
-                    $cabinet->getCabinetId()
-                ));
-                $assemblyProperties->setMinority($this->partyService->fetchByAssembly(
-                    $assembly->getAssemblyId(),
-                    array_map(function (Model\Party $party) {
-                        return $party->getPartyId();
-                    }, $assemblyProperties->getMajority())
-                ));
+                $assembly->setMajority(
+                    $this->partyService->fetchByCabinet($cabinet->getCabinetId())
+                );
+                $assembly->setMinority(
+                    $this->partyService->fetchByAssembly(
+                        $assembly->getAssembly()->getAssemblyId(),
+                        $assembly->getMajorityPartyIds()
+                    )
+                );
             }
-
-            return $assemblyProperties;
+            return $assembly;
         }, $assemblies);
 
-        return (new CollectionModel($assemblyCollection))
+        return (new CollectionModel($assembliesProperties))
             ->setStatus(206)
-            ->setRange($range->getFrom(), $range->getFrom() + count($assemblyCollection), $count);
+            ->setRange(0, count($assembliesProperties), count($assembliesProperties));
     }
 
     /**
