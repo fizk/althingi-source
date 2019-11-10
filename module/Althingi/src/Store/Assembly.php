@@ -11,9 +11,13 @@ class Assembly implements StoreAwareInterface
     /** @var \MongoDB\Database */
     private $database;
 
+    /**
+     * @param int $id
+     * @return Model\AssemblyProperties|null
+     */
     public function get(int $id): ?Model\AssemblyProperties
     {
-        $document = $this->getStore()->assembly->findOne([
+        $document = $this->getStore()->selectCollection('assembly')->findOne([
             'assembly.assembly_id' => $id
         ]);
 
@@ -27,6 +31,25 @@ class Assembly implements StoreAwareInterface
             ->setAssembly($assembly);
 
         return $assemblyProperties;
+    }
+
+
+    public function fetch(): array
+    {
+        $document = $this->getStore()->selectCollection('assembly')->find(
+            [],
+            ['sort' => ['assembly.assembly_id' => -1]]
+        );
+
+        if (! $document) {
+            return [];
+        }
+
+        return array_map(function ($assembly) {
+            $assembly = (new Hydrator\Assembly())->hydrate((array) $assembly->assembly, new Model\Assembly());
+            return (new Model\AssemblyProperties())
+                ->setAssembly($assembly);
+        }, $document->toArray());
     }
 
     public function setStore(Database $database)

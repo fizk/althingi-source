@@ -58,6 +58,7 @@ class CabinetController extends AbstractRestfulController implements
      * @output \Althingi\Model\Cabinet[]
      * @query fra
      * @query til
+     * @throws \Exception
      */
     public function getList()
     {
@@ -128,7 +129,7 @@ class CabinetController extends AbstractRestfulController implements
 
     /**
      * @return CollectionModel
-     * $output \Althingi\Model\CabinetProperties[]
+     * @output \Althingi\Model\CabinetProperties[]
      */
     public function assemblyAction()
     {
