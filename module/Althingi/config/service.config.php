@@ -34,6 +34,10 @@ return [
             return (new Service\CommitteeMeetingAgenda())
                 ->setDriver($sm->get(PDO::class));
         },
+        Service\CommitteeSitting::class => function (ServiceManager $sm) {
+            return (new Service\CommitteeSitting())
+                ->setDriver($sm->get(PDO::class));
+        },
         Service\Cabinet::class => function (ServiceManager $sm) {
             return (new Service\Cabinet())
                 ->setDriver($sm->get(PDO::class))
