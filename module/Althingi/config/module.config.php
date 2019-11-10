@@ -1037,6 +1037,13 @@ return [
                 return (new Console\IssueStatusController())
                     ->setIssueService($container->get(Service\Issue::class));
             },
+            Console\IndexerAssemblyController::class => function (ServiceManager $container) {
+                return (new Console\IndexerAssemblyController())
+                    ->setAssemblyService($container->get(Service\Assembly::class))
+                    ->setLogger($container->get(LoggerInterface::class))
+                    ->setQueue($container->get(AMQPStreamConnection::class))
+                    ;
+            },
             Console\IndexerIssueController::class => function (ServiceManager $container) {
                 return (new Console\IndexerIssueController())
                     ->setSpeechService($container->get(Service\Speech::class))
@@ -1134,6 +1141,15 @@ return [
                         'defaults' => [
                             'controller' => Console\SearchIndexerController::class,
                             'action' => 'speech'
+                        ],
+                    ],
+                ],
+                'assemblies' => [
+                    'options' => [
+                        'route' => 'index:assemblies',
+                        'defaults' => [
+                            'controller' => Console\IndexerAssemblyController::class,
+                            'action' => 'assembly'
                         ],
                     ],
                 ],

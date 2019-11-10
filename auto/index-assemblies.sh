@@ -2,4 +2,4 @@
 
 SCRIPT=$( cd "$( dirname "$0" )" && pwd )/../public/index.php
 
-php ${SCRIPT} index:assembly --assembly=$1
+php ${SCRIPT} index:assemblies
