@@ -201,6 +201,33 @@ CREATE TABLE `CommitteeMeetingAgenda` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `CommitteeSitting`
+--
+
+DROP TABLE IF EXISTS `CommitteeSitting`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+create table `CommitteeSitting` (
+    `committee_sitting_id` int(11) NOT NULL AUTO_INCREMENT,
+    `congressman_id` int not null,
+    `committee_id` int not null,
+    `assembly_id` int not null,
+    `order` int,
+    `role` varchar(255),
+    `from` date not null ,
+    `to` date,
+    PRIMARY KEY (`committee_sitting_id`),
+    UNIQUE KEY `uq_Committee_Sitting` (`congressman_id`, `committee_id`, `assembly_id`, `from`),
+    KEY `fk_Committee_has_Congressman_Assembly1_idx` (`assembly_id`),
+    CONSTRAINT `fk_Committee_has_Congressman_Assembly1` FOREIGN KEY (`assembly_id`) REFERENCES `Assembly` (`assembly_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+    KEY `fk_Committee_has_Congressman_Committee1_idx` (`committee_id`),
+    CONSTRAINT `fk_Committee_has_Congressman_Committee1` FOREIGN KEY (`committee_id`) REFERENCES `Committee` (`committee_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+    KEY `fk_Committee_has_Congressman_Congressman1_idx` (`congressman_id`),
+    CONSTRAINT `fk_Committee_has_Congressman_Congressman1` FOREIGN KEY (`congressman_id`) REFERENCES `Congressman` (`congressman_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `Congressman`
 --
 

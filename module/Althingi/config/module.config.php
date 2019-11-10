@@ -513,18 +513,16 @@ return [
                                 'identifier' => 'session_id'
                             ],
                         ],
-                        'may_terminate' => true,
-//                                'child_routes' => [
-//                                    'fundur' => [
-//                                        'type' => 'Zend\Mvc\Router\Http\Segment',
-//                                        'options' => [
-//                                            'route'    => '/:session_id',
-//                                            'defaults' => [
-//                                                'controller' => Controller\CongressmanSessionController::class,
-//                                            ],
-//                                        ],
-//                                    ],
-//                                ]
+                    ],
+                    'nefndaseta' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route'    => '/nefndaseta[/:committee_sitting_id]',
+                            'defaults' => [
+                                'controller' => Controller\CommitteeSittingController::class,
+                                'identifier' => 'committee_sitting_id'
+                            ],
+                        ],
                     ],
                 ],
             ],
@@ -1009,6 +1007,11 @@ return [
             Controller\CommitteeMeetingAgendaController::class => function (ServiceManager $container) {
                 return (new Controller\CommitteeMeetingAgendaController())
                     ->setCommitteeMeetingAgendaService($container->get(Service\CommitteeMeetingAgenda::class));
+            },
+            Controller\CommitteeSittingController::class => function (ServiceManager $container) {
+                return (new Controller\CommitteeSittingController())
+                    ->setCommitteeSitting($container->get(Service\CommitteeSitting::class))
+                    ;
             },
             Controller\AssemblyCommitteeController::class => function (ServiceManager $container) {
                 return (new Controller\AssemblyCommitteeController())
