@@ -586,6 +586,16 @@ return [
                     ],
                 ],
             ],
+            'radherraembaetti' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route'    => '/radherraembaetti[/:id]',
+                    'defaults' => [
+                        'controller' => Controller\MinistryController::class,
+                        'identifier' => 'id'
+                    ],
+                ],
+            ],
             'raduneyti' => [
                 'type' => Segment::class,
                 'options' => [
@@ -871,6 +881,11 @@ return [
                     ->setPartyStore($container->get(Store\Party::class))
                     ->setCategoryStore($container->get(Store\Category::class))
                     ->setCongressmanStore($container->get(Store\Congressman::class))
+                    ;
+            },
+            Controller\MinistryController::class => function (ServiceManager $container) {
+                return (new Controller\MinistryController())
+                    ->setMinistryService($container->get(Service\Ministry::class))
                     ;
             },
             Controller\CongressmanController::class => function (ServiceManager $container) {
