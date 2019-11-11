@@ -267,6 +267,30 @@ CREATE TABLE `Congressman_has_Issue` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `Ministry`
+--
+
+DROP TABLE IF EXISTS `Ministry`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+create table Ministry (
+  `ministry_id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100),
+  `abbr_short` varchar(100),
+  `abbr_long` varchar(100),
+  `first` int(11),
+  `last` int(11),
+  PRIMARY KEY (`ministry_id`),
+  CONSTRAINT `fk_Ministry_First_Assembly1`
+      FOREIGN KEY (`first`)
+          REFERENCES `Assembly` (`assembly_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_Ministry_Last_Assembly1`
+      FOREIGN KEY (`last`)
+          REFERENCES `Assembly` (`assembly_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `Constituency`
 --
 
