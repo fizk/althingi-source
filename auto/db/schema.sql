@@ -291,6 +291,38 @@ create table Ministry (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `MinisterSitting`
+--
+
+DROP TABLE IF EXISTS `MinisterSitting`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+create table `MinisterSitting` (
+   `minister_sitting_id` int(11) NOT NULL AUTO_INCREMENT,
+   `assembly_id` int(11) not null,
+   `ministry_id` int(11) not null,
+   `congressman_id` int(11) not null,
+   `party_id` int(11),
+   `from` date not null,
+   `to` date,
+   PRIMARY KEY (`minister_sitting_id`),
+   UNIQUE KEY `uq_MinisterSitting_Congressman_Assembly_From` (`assembly_id`,`ministry_id`,`congressman_id`, `from`),
+   CONSTRAINT `fk_MinisterSitting_Assembly1`
+       FOREIGN KEY (`assembly_id`)
+           REFERENCES `Assembly` (`assembly_id`) ON DELETE cascade ON UPDATE cascade ,
+   CONSTRAINT `fk_MinisterSitting_Ministry1`
+       FOREIGN KEY (`ministry_id`)
+           REFERENCES `Ministry` (`ministry_id`) ON DELETE cascade ON UPDATE cascade ,
+   CONSTRAINT `fk_MinisterSitting_Congressman1`
+       FOREIGN KEY (`ministry_id`)
+           REFERENCES `Congressman` (`congressman_id`) ON DELETE cascade ON UPDATE cascade ,
+   CONSTRAINT `fk_MinisterSitting_Party1`
+       FOREIGN KEY (`party_id`)
+           REFERENCES `Party` (`party_id`) ON DELETE cascade ON UPDATE cascade
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `Constituency`
 --
 
