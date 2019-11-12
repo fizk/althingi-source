@@ -255,7 +255,7 @@ class MinistryControllerTest extends AbstractHttpControllerTestCase
      */
     public function testOptions()
     {
-        $this->dispatch('/loggjafarthing/144', 'OPTIONS');
+        $this->dispatch('/radherraembaetti/144', 'OPTIONS');
 
         $expectedMethods = ['GET', 'OPTIONS', 'PUT', 'PATCH', 'DELETE'];
         $actualMethods = $this->getResponse()
@@ -271,7 +271,7 @@ class MinistryControllerTest extends AbstractHttpControllerTestCase
      */
     public function testOptionsList()
     {
-        $this->dispatch('/loggjafarthing', 'OPTIONS');
+        $this->dispatch('/radherraembaetti', 'OPTIONS');
 
         $expectedMethods = ['GET', 'OPTIONS'];
         $actualMethods = $this->getResponse()
