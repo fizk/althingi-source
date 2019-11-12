@@ -45,7 +45,7 @@ class MinisterSittingController extends AbstractRestfulController implements
     /**
      * Create a new Congressman session.
      *
-     * @todo CommitteeSitting do not have IDs coming from althingi.is.
+     * @todo MinisterSitting do not have IDs coming from althingi.is.
      *  They are created on this server. To be able to update
      *  these entries, the server has to provide the client with
      *  the URI created on the server. This method will try to
@@ -55,11 +55,11 @@ class MinisterSittingController extends AbstractRestfulController implements
      *  well as issuing a 409 response code. The client can then
      *  try to do a PATCH request with the URI provided.
      *
-     *  If althingi.is will start to provide a CommitteeSittingIDs, then this will
+     *  If althingi.is will start to provide a MinisterSittingIDs, then this will
      *  not be needed as the resource wil be stores via PUSH request.
      *
      *  To facilitate that, create a self::push() method and remove
-     *  \Althingi\Service\CommitteeSitting::getIdentifier()
+     *  \Althingi\Service\MinisterSitting::getIdentifier()
      *
      * @param mixed $data
      * @return \Rend\View\Model\ModelInterface

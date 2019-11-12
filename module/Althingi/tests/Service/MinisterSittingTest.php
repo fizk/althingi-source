@@ -37,9 +37,9 @@ class MinisterSittingTest extends TestCase
         $ministrySitting = (new Model\MinisterSitting())
             ->setAssemblyId(1)
             ->setMinisterSittingId(2)
-            ->setMinistryId(1)
-            ->setCongressmanId(1)
-            ->setPartyId(1)
+            ->setMinistryId(2)
+            ->setCongressmanId(2)
+            ->setPartyId(2)
             ->setFrom(new \DateTime('2001-01-01'));
 
         $expectedTable = $this->createArrayDataSet([
@@ -56,9 +56,9 @@ class MinisterSittingTest extends TestCase
                 [
                     'minister_sitting_id' => 2,
                     'assembly_id' => 1,
-                    'ministry_id' => 1,
-                    'congressman_id' => 1,
-                    'party_id' => 1,
+                    'ministry_id' => 2,
+                    'congressman_id' => 2,
+                    'party_id' => 2,
                     'from' => '2001-01-01',
                     'to' => null,
                 ]
@@ -111,11 +111,11 @@ class MinisterSittingTest extends TestCase
     public function testSaveCreate()
     {
         $ministrySitting = (new Model\MinisterSitting())
-            ->setAssemblyId(1)
+            ->setAssemblyId(2)
             ->setMinisterSittingId(2)
-            ->setMinistryId(1)
-            ->setCongressmanId(1)
-            ->setPartyId(1)
+            ->setMinistryId(2)
+            ->setCongressmanId(2)
+            ->setPartyId(2)
             ->setFrom(new \DateTime('2001-01-01'))
             ->setTo(new \DateTime('2001-01-01'))
         ;
@@ -133,10 +133,10 @@ class MinisterSittingTest extends TestCase
                 ],
                 [
                     'minister_sitting_id' => 2,
-                    'assembly_id' => 1,
-                    'ministry_id' => 1,
-                    'congressman_id' => 1,
-                    'party_id' => 1,
+                    'assembly_id' => 2,
+                    'ministry_id' => 2,
+                    'congressman_id' => 2,
+                    'party_id' => 2,
                     'from' => '2001-01-01',
                     'to' => '2001-01-01',
                 ]
@@ -218,6 +218,8 @@ class MinisterSittingTest extends TestCase
             ],
             'Congressman' => [
                 ['congressman_id' => 1, 'name' => 'name1', 'birth' => '2000-01-01', 'death' => null],
+                ['congressman_id' => 2, 'name' => 'name1', 'birth' => '2000-01-01', 'death' => null],
+                ['congressman_id' => 3, 'name' => 'name1', 'birth' => '2000-01-01', 'death' => null],
             ],
             'Party' => [
                 ['party_id' => 1, 'name' => 'p1', 'abbr_short' => null, 'abbr_long' => null, 'color' => 'ffffff'],

@@ -282,8 +282,8 @@ class CommitteeSittingControllerTest extends AbstractHttpControllerTestCase
             ->andReturn([])
             ->getMock();
 
-        $this->dispatch('/thingmenn/2/thingseta', 'GET');
-        $this->assertControllerClass('SessionController');
+        $this->dispatch('/thingmenn/2/nefndaseta', 'GET');
+        $this->assertControllerName(Controller\CommitteeSittingController::class);
         $this->assertActionName('getList');
         $this->assertResponseStatusCode(206);
         $this->assertResponseHeaderContains('Content-Range', 'items 0-0/0');
