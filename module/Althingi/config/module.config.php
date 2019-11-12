@@ -524,6 +524,19 @@ return [
                             ],
                         ],
                     ],
+                    'radherraseta' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route'    => '/radherraseta[/:ministry_sitting_id]',
+                            'constraints' => [
+                                'ministry_sitting_id' => '[0-9]+',
+                            ],
+                            'defaults' => [
+                                'controller' => Controller\MinisterSittingController::class,
+                                'identifier' => 'ministry_sitting_id'
+                            ],
+                        ],
+                    ],
                 ],
             ],
             'thingflokkar' => [
@@ -886,6 +899,11 @@ return [
             Controller\MinistryController::class => function (ServiceManager $container) {
                 return (new Controller\MinistryController())
                     ->setMinistryService($container->get(Service\Ministry::class))
+                    ;
+            },
+            Controller\MinisterSittingController::class => function (ServiceManager $container) {
+                return (new Controller\MinisterSittingController())
+                    ->setMinisterSittingService($container->get(Service\MinisterSitting::class))
                     ;
             },
             Controller\CongressmanController::class => function (ServiceManager $container) {
