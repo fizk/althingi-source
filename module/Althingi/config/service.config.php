@@ -93,6 +93,14 @@ return [
             return (new Service\Plenary())
                 ->setDriver($sm->get(PDO::class));
         },
+        Service\Ministry::class => function (ServiceManager $sm) {
+            return (new Service\Ministry())
+                ->setDriver($sm->get(PDO::class));
+        },
+        Service\MinisterSitting::class => function (ServiceManager $sm) {
+            return (new Service\MinisterSitting())
+                ->setDriver($sm->get(PDO::class));
+        },
         Service\PlenaryAgenda::class => function (ServiceManager $sm) {
             return (new Service\PlenaryAgenda())
                 ->setDriver($sm->get(PDO::class));
