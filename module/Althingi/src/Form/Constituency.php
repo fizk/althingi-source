@@ -39,7 +39,6 @@ class Constituency extends Form implements InputFilterProviderInterface
         ]);
     }
 
-
     /**
      * Should return an array specification compatible with
      * {@link Zend\InputFilter\Factory::createInputFilter()}.
@@ -54,8 +53,17 @@ class Constituency extends Form implements InputFilterProviderInterface
                 'allow_empty' => false,
             ],
             'name' => [
-                'required' => true,
-                'allow_empty' => false,
+                'required' => false,
+                'allow_empty' => true,
+                'filters' => [
+                    [
+                        'name' => '\Zend\Filter\ToNull',
+                        'options' => ['type' => 'all']
+                    ], [
+                        'name' => '\Althingi\Filter\NullReplaceFilter',
+                        'options' => ['replace' => '-']
+                    ]
+                ],
             ],
             'abbr_short' => [
                 'required' => false,

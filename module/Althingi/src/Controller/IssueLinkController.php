@@ -57,6 +57,21 @@ class IssueLinkController extends AbstractRestfulController implements
             ->setStatus(400);
     }
 
+    /**
+     * Update? A link is never updated, there are no additional info that can be added to a link,
+     * once it has been connected, that it. The Aggregator could try to patch a link, therefor there
+     * is this method that just says OK...
+     *
+     * @param $id
+     * @param $data
+     * @return EmptyModel|\Rend\View\Model\ModelInterface
+     */
+    public function patch($id, $data)
+    {
+        return (new EmptyModel())
+            ->setStatus(205);
+    }
+
 
     /**
      * @return CollectionModel
