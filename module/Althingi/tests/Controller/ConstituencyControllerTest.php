@@ -2,6 +2,7 @@
 
 namespace AlthingiTest\Controller;
 
+use Althingi\Controller\ConstituencyController;
 use \Althingi\Model\Constituency as ConstituencyModel;
 use Althingi\Service\Constituency;
 use AlthingiTest\ServiceHelper;
@@ -52,24 +53,24 @@ class ConstituencyControllerTest extends AbstractHttpControllerTestCase
             'name' => 'name1'
         ]);
         $this->assertResponseStatusCode(201);
-        $this->assertControllerClass('ConstituencyController');
+        $this->assertControllerName(ConstituencyController::class);
         $this->assertActionName('put');
     }
 
     /**
      * @covers ::put
      */
-    public function testPutInvalidForm()
+    public function testPutNoData()
     {
         $this->getMockService(Constituency::class)
-            ->shouldReceive('create')
-            ->never()
+            ->shouldReceive('save')
+            ->once()
             ->andReturn(1)
             ->getMock();
 
         $this->dispatch('/kjordaemi/1', 'PUT');
-        $this->assertResponseStatusCode(400);
-        $this->assertControllerClass('ConstituencyController');
+        $this->assertResponseStatusCode(201);
+        $this->assertControllerName(ConstituencyController::class);
         $this->assertActionName('put');
     }
 
@@ -105,7 +106,7 @@ class ConstituencyControllerTest extends AbstractHttpControllerTestCase
             'name' => 'name1'
         ]);
         $this->assertResponseStatusCode(205);
-        $this->assertControllerClass('ConstituencyController');
+        $this->assertControllerName(ConstituencyController::class);
         $this->assertActionName('patch');
     }
 
@@ -129,7 +130,7 @@ class ConstituencyControllerTest extends AbstractHttpControllerTestCase
             'name' => 'name1'
         ]);
         $this->assertResponseStatusCode(404);
-        $this->assertControllerClass('ConstituencyController');
+        $this->assertControllerName(ConstituencyController::class);
         $this->assertActionName('patch');
     }
 }
