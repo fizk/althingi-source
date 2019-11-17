@@ -1086,16 +1086,6 @@ return [
                     ->setSpeechService($container->get(Service\Speech::class))
                     ->setAssemblyService($container->get(Service\Assembly::class));
             },
-            Console\SearchIndexerController::class => function (ServiceManager $container) {
-                return (new Console\SearchIndexerController())
-                    ->setSpeechService($container->get(Service\Speech::class))
-                    ->setIssueService($container->get(Service\Issue::class))
-                    ->setElasticSearchClient($container->get(\Elasticsearch\Client::class))
-                    ->setLogger($container->get(LoggerInterface::class));
-            },
-            Console\DocumentApiController::class => function (ServiceManager $container) {
-                return (new Console\DocumentApiController());
-            },
             Console\IssueStatusController::class => function (ServiceManager $container) {
                 return (new Console\IssueStatusController())
                     ->setIssueService($container->get(Service\Issue::class));
@@ -1198,15 +1188,6 @@ return [
     'console' => [
         'router' => [
             'routes' => [
-                'speech' => [
-                    'options' => [
-                        'route' => 'index:speech',
-                        'defaults' => [
-                            'controller' => Console\SearchIndexerController::class,
-                            'action' => 'speech'
-                        ],
-                    ],
-                ],
                 'assemblies' => [
                     'options' => [
                         'route' => 'index:assemblies',
@@ -1258,15 +1239,6 @@ return [
                         'defaults' => [
                             'controller' => Console\IssueStatusController::class,
                             'action' => 'status-list'
-                        ],
-                    ],
-                ],
-                'document' => [
-                    'options' => [
-                        'route' => 'document:api',
-                        'defaults' => [
-                            'controller' => Console\DocumentApiController::class,
-                            'action' => 'index'
                         ],
                     ],
                 ],
