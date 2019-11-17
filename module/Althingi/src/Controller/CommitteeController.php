@@ -21,28 +21,30 @@ class CommitteeController extends AbstractRestfulController implements
      * @param mixed $id
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\Committee
+     * @200 Success
+     * @404 Resource not found
      */
     public function get($id)
     {
         $committee = $this->committeeService->get($id);
 
         return $committee
-            ? new ItemModel($committee)
-            : $this->notFoundAction();
+            ? (new ItemModel($committee))->setStatus(200)
+            : (new ErrorModel('Resource Not Found'))->setStatus(404);
     }
 
     /**
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\Committee[]
+     * @206 Success
      */
     public function getList()
     {
         $committees = $this->committeeService->fetchAll();
-        $committeesCount = count($committees);
 
         return (new CollectionModel($committees))
             ->setStatus(206)
-            ->setRange(0, $committeesCount, $committeesCount);
+            ->setRange(0, count($committees), count($committees));
     }
 
     /**
@@ -52,6 +54,9 @@ class CommitteeController extends AbstractRestfulController implements
      * @param  array $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\Committee
+     * @201 Created
+     * @205 Updated
+     * @400 Invalid input
      */
     public function put($id, $data)
     {
@@ -76,6 +81,9 @@ class CommitteeController extends AbstractRestfulController implements
      * @param  array $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\Committee
+     * @205 Updated
+     * @400 Invalid input
+     * @404 Resource not found
      */
     public function patch($id, $data)
     {
@@ -94,13 +102,15 @@ class CommitteeController extends AbstractRestfulController implements
                 ->setStatus(400);
         }
 
-        return $this->notFoundAction();
+        return (new ErrorModel('Resource Not Found'))
+            ->setStatus(404);
     }
 
     /**
      * List options for Assembly collection.
      *
      * @return \Rend\View\Model\ModelInterface
+     * @200 Success
      */
     public function optionsList()
     {
@@ -113,6 +123,7 @@ class CommitteeController extends AbstractRestfulController implements
      * List options for Assembly entry.
      *
      * @return \Rend\View\Model\ModelInterface
+     * @200 Success
      */
     public function options()
     {

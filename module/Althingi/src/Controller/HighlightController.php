@@ -52,6 +52,7 @@ class HighlightController extends AbstractRestfulController implements
     /**
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\AssemblyProperties
+     * @200 Success
      */
     public function getCurrentAssemblyAction()
     {
@@ -81,6 +82,7 @@ class HighlightController extends AbstractRestfulController implements
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\IssueWithSpeechProperties
      * @query category
+     * @200 Success
      */
     public function getActiveIssueAction()
     {
@@ -97,11 +99,15 @@ class HighlightController extends AbstractRestfulController implements
             ->setCongressman($congressmanPartyProperties)
             ->setSpeech($speech);
 
-        $issue = $this->issueService->getWithDate($speech->getIssueId(), $speech->getAssemblyId(), ['A', 'B']);
+        $issue = $this->issueService
+            ->getWithDate($speech->getIssueId(), $speech->getAssemblyId(), ['A', 'B']);
 
-        $issueWithSpeech = (new IssueWithSpeechProperties())->setIssue($issue)->setSpeech($speechCongressmanProperties);
+        $issueWithSpeech = (new IssueWithSpeechProperties())
+            ->setIssue($issue)
+            ->setSpeech($speechCongressmanProperties);
 
-        return (new ItemModel($issueWithSpeech));
+        return (new ItemModel($issueWithSpeech))
+            ->setStatus(200);
     }
 
     /**

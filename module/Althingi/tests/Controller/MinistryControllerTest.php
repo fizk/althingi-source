@@ -12,6 +12,7 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * Class AssemblyControllerTest
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\MinistryController
+ *
  * @covers \Althingi\Controller\MinistryController::setMinistryService
  */
 class MinistryControllerTest extends AbstractHttpControllerTestCase

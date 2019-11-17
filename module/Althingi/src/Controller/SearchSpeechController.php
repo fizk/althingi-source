@@ -19,6 +19,7 @@ class SearchSpeechController extends AbstractActionController implements
      * @return CollectionModel
      * @output \Althingi\Model\Speech[]
      * @query leit
+     * @206 Success
      */
     public function assemblyAction()
     {
@@ -36,6 +37,7 @@ class SearchSpeechController extends AbstractActionController implements
      * @return CollectionModel
      * @output \Althingi\Model\Speech[]
      * @query leit
+     * @206 Success
      */
     public function issueAction()
     {

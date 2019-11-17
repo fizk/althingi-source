@@ -36,6 +36,13 @@ class PlenaryAgendaController extends AbstractRestfulController implements
     /** @var \Althingi\Service\Party */
     private $partyService;
 
+    /**
+     * Get a list
+     *
+     * @return CollectionModel|\Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\PlenaryAgendaProperties
+     * @206 Success
+     */
     public function getList()
     {
         $assemblyId = $this->params('id');
@@ -95,9 +102,20 @@ class PlenaryAgendaController extends AbstractRestfulController implements
             return $returnObject;
         }, $this->plenaryAgendaService->fetch($assemblyId, $plenaryId));
 
-        return new CollectionModel($collection);
+        return (new CollectionModel($collection))
+            ->setStatus(206)
+            ->setRange(0, count($collection), count($collection));
     }
 
+    /**
+     * @param mixed $id
+     * @param mixed $data
+     * @input \Althingi\Form\PlenaryAgenda
+     * @return EmptyModel|ErrorModel|\Rend\View\Model\ModelInterface
+     * @201 Created
+     * @205 Updated
+     * @400 Invalid input
+     */
     public function put($id, $data)
     {
         $assemblyId = $this->params('id');
@@ -120,6 +138,13 @@ class PlenaryAgendaController extends AbstractRestfulController implements
             ->setStatus(400);
     }
 
+    /**
+     * @param $id
+     * @param $data
+     * @input \Althingi\Form\PlenaryAgenda
+     * @return EmptyModel|\Rend\View\Model\ModelInterface
+     * @202 No update
+     */
     public function patch($id, $data)
     {
 //        $assemblyId = $this->params('id');
@@ -145,7 +170,7 @@ class PlenaryAgendaController extends AbstractRestfulController implements
         // Since an agenda doesn't need to be updated, but the Aggregator can call the patch endpoint
         // this method will just return an OK status
         return (new EmptyModel())
-            ->setStatus(205);
+            ->setStatus(202);
     }
 
     /**

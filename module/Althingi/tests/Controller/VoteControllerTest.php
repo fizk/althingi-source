@@ -11,6 +11,7 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * Class VoteControllerTest
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\VoteController
+ *
  * @covers \Althingi\Controller\VoteController::setVoteService
  */
 class VoteControllerTest extends AbstractHttpControllerTestCase

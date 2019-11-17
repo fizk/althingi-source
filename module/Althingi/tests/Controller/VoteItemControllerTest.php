@@ -16,6 +16,7 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * Class VoteItemControllerTest
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\VoteItemController
+ *
  * @covers \Althingi\Controller\VoteItemController::setVoteItemService
  * @covers \Althingi\Controller\VoteItemController::setVoteService
  * @covers \Althingi\Controller\VoteItemController::setCongressmanService

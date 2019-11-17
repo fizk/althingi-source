@@ -45,6 +45,10 @@ class VoteItemController extends AbstractRestfulController implements
      * @param mixed $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\VoteItem
+     * @201 Created
+     * @409 Conflict
+     * @500 Service Error
+     * @400 Invalid input
      */
     public function post($data)
     {
@@ -94,6 +98,7 @@ class VoteItemController extends AbstractRestfulController implements
     /**
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\VoteItemAndCongressman[]
+     * @206 Success
      */
     public function getList()
     {
@@ -103,7 +108,6 @@ class VoteItemController extends AbstractRestfulController implements
         $date = $vote->getDate();
 
         $voteItems = array_map(function (Model\VoteItem $voteItem) use ($date) {
-
             $congressmanAndParty = (new Model\CongressmanPartyProperties())
                 ->setCongressman($this->congressmanService->get(
                     $voteItem->getCongressmanId()
@@ -119,12 +123,10 @@ class VoteItemController extends AbstractRestfulController implements
                 ->setVoteItem($voteItem)
                 ->setCongressman($congressmanAndParty);
         }, $votes);
-        $voteItemsCount = count($voteItems);
-
 
         return (new CollectionModel($voteItems))
             ->setStatus(206)
-            ->setRange(0, $voteItemsCount, $voteItemsCount);
+            ->setRange(0, count($voteItems), count($voteItems));
     }
 
     /**
@@ -132,6 +134,9 @@ class VoteItemController extends AbstractRestfulController implements
      * @param $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\VoteItem
+     * @205 Updated
+     * @400 Invalid input
+     * @404 Resource not found
      */
     public function patch($id, $data)
     {
@@ -152,7 +157,8 @@ class VoteItemController extends AbstractRestfulController implements
                 ->setStatus(400);
         }
 
-        return $this->notFoundAction();
+        return (new ErrorModel('Resource Not Found'))
+            ->setStatus(404);
     }
 
     /**

@@ -22,6 +22,8 @@ class CommitteeMeetingAgendaController extends AbstractRestfulController impleme
      * @param mixed $id
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\CommitteeMeetingAgenda
+     * @200 Success
+     * @404 Resource not found
      */
     public function get($id)
     {
@@ -31,8 +33,8 @@ class CommitteeMeetingAgendaController extends AbstractRestfulController impleme
         $agenda = $this->committeeMeetingAgendaService->get($meetingId, $agendaId);
 
         return $agenda
-            ? (new ItemModel($agenda))
-            : $this->notFoundAction();
+            ? (new ItemModel($agenda))->setStatus(200)
+            : (new ErrorModel('Resource Not Found'))->setStatus(404);
     }
 
 //
@@ -51,6 +53,9 @@ class CommitteeMeetingAgendaController extends AbstractRestfulController impleme
      * @param mixed $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\CommitteeMeetingAgenda
+     * @201 Created
+     * @205 Updated
+     * @400 Invalid input
      */
     public function put($id, $data)
     {
@@ -64,13 +69,15 @@ class CommitteeMeetingAgendaController extends AbstractRestfulController impleme
             'assembly_id' => $assemblyId,
             'committee_meeting_id' => $committeeMeetingId
         ]));
+
         if ($form->isValid()) {
             $affectedRows = $this->committeeMeetingAgendaService->save($form->getObject());
             return (new EmptyModel())
                 ->setStatus($affectedRows === 1 ? 201 : 205);
         }
 
-        return (new ErrorModel($form))->setStatus(400);
+        return (new ErrorModel($form))
+            ->setStatus(400);
     }
 
     /**
@@ -78,6 +85,9 @@ class CommitteeMeetingAgendaController extends AbstractRestfulController impleme
      * @param $data
      * @return \Rend\View\Model\ModelInterface
      * @input Althingi\Form\CommitteeMeetingAgenda
+     * @205 Updated
+     * @400 Invalid input
+     * @404 Resource not found
      */
     public function patch($id, $data)
     {
@@ -100,7 +110,8 @@ class CommitteeMeetingAgendaController extends AbstractRestfulController impleme
                 ->setStatus(400);
         }
 
-        return $this->notFoundAction();
+        return (new ErrorModel('Resource Not Found'))
+            ->setStatus(404);
     }
 
     /**

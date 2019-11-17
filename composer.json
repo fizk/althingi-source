@@ -32,16 +32,11 @@
         "fizk/rend": "5.2.1",
         "league/html-to-markdown": "^4.7",
         "elasticsearch/elasticsearch": "^6.0",
-        "guzzlehttp/ringphp": "^1.1",
         "zeptech/annotations": "^1.1",
-        "yohang/finite": "^1.1",
         "monolog/monolog": "^1.23",
-        "bramus/monolog-colored-line-formatter": "^2.0",
         "php-amqplib/php-amqplib": "^2.8",
         "mongodb/mongodb": "1.5.1",
-        "zendframework/zend-progressbar": "^2.6",
-        "zendframework/zend-session": "^2.8",
-        "zumba/mongounit": "^4.0"
+        "zendframework/zend-progressbar": "^2.6"
     },
   "autoload": {
     "psr-4": {
@@ -73,6 +68,8 @@
         "squizlabs/php_codesniffer": "^3.3",
         "mikey179/vfsStream": "^1.6",
         "phpunit/dbunit": "^4.0",
-        "phpmd/phpmd": "^2.6"
+        "phpmd/phpmd": "^2.6",
+        "zumba/mongounit": "^4.0",
+        "guzzlehttp/ringphp": "^1.1"
     }
 }

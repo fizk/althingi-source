@@ -296,7 +296,7 @@ class Issue implements StoreAwareInterface
      * count
      *
      * @param int $assemblyId
-     * @return \Althingi\Model\AssemblyStatus
+     * @return \Althingi\Model\AssemblyStatus[]
      */
     public function fetchCountByCategory(int $assemblyId)
     {

@@ -12,7 +12,11 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * Class MinisterSittingController
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\MinisterSittingController
+ *
  * @covers \Althingi\Controller\MinisterSittingController::setMinisterSittingService
+ * @covers \Althingi\Controller\MinisterSittingController::setCongressmanService
+ * @covers \Althingi\Controller\MinisterSittingController::setMinistryService
+ * @covers \Althingi\Controller\MinisterSittingController::setPartyService
  */
 class MinisterSittingControllerTest extends AbstractHttpControllerTestCase
 {

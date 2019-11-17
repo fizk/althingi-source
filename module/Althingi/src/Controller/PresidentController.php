@@ -37,6 +37,8 @@ class PresidentController extends AbstractRestfulController implements
      * @param int $id
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\CongressmanPartyProperties
+     * @200 Success
+     * @404 Resource not found
      */
     public function get($id)
     {
@@ -52,7 +54,8 @@ class PresidentController extends AbstractRestfulController implements
             return (new ItemModel($congressmanPartyProperties))->setStatus(200);
         }
 
-        return $this->notFoundAction();
+        return (new ErrorModel('Resource Not Found'))
+            ->setStatus(404);
     }
 
     /**
@@ -60,6 +63,7 @@ class PresidentController extends AbstractRestfulController implements
      *
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\PresidentPartyProperties[]
+     * @206 Success
      */
     public function getList()
     {
@@ -83,6 +87,9 @@ class PresidentController extends AbstractRestfulController implements
      * @param mixed $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\President
+     * @201 Created
+     * @409 Conflict
+     * @400 Invalid input
      */
     public function post($data)
     {
@@ -115,7 +122,8 @@ class PresidentController extends AbstractRestfulController implements
                 ->setStatus($statusCode);
         }
 
-        return (new ErrorModel($form))->setStatus(400);
+        return (new ErrorModel($form))
+            ->setStatus(400);
     }
 
     /**
@@ -123,6 +131,9 @@ class PresidentController extends AbstractRestfulController implements
      * @param $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\President
+     * @205 Updated
+     * @400 Invalid input
+     * @404 Resource not found
      */
     public function patch($id, $data)
     {
@@ -141,7 +152,8 @@ class PresidentController extends AbstractRestfulController implements
                 ->setStatus(400);
         }
 
-        return $this->notFoundAction();
+        return (new ErrorModel('Resource Not Found'))
+            ->setStatus(404);
     }
 
     /**

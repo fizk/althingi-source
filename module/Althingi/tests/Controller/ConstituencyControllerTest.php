@@ -12,6 +12,7 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * Class ConstituencyControllerTest
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\ConstituencyController
+ *
  * @covers \Althingi\Controller\ConstituencyController::setConstituencyService
  */
 class ConstituencyControllerTest extends AbstractHttpControllerTestCase

@@ -19,7 +19,7 @@ class Category implements StoreAwareInterface
      * the count alongside the category itself and order from high to low.
      *
      * @param int $assemblyId
-     * @return \Althingi\Model\CategoryAndCount[
+     * @return \Althingi\Model\CategoryAndCount[]
      */
     public function fetchByAssembly(int $assemblyId)
     {

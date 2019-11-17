@@ -31,6 +31,8 @@ class IssueCategoryController extends AbstractRestfulController implements
      * @param mixed $id
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\Category
+     * @200 Success
+     * @404 Resource not found
      */
     public function get($id)
     {
@@ -42,13 +44,14 @@ class IssueCategoryController extends AbstractRestfulController implements
             ->fetchByAssemblyIssueAndCategory($assemblyId, $issueId, $categoryId);
 
         return $category
-            ? (new ItemModel($category))
-            : $this->notFoundAction() ;
+            ? (new ItemModel($category))->setStatus(200)
+            : (new ErrorModel('Resource Not Found'))->setStatus(404);
     }
 
     /**
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\Category[]
+     * @206 Success
      */
     public function getList()
     {
@@ -57,11 +60,10 @@ class IssueCategoryController extends AbstractRestfulController implements
 
         $categories = $this->categoryService
             ->fetchByAssemblyAndIssue($assemblyId, $issueId);
-        $categoriesCount = count($categories);
 
         return (new CollectionModel($categories))
             ->setStatus(206)
-            ->setRange(0, $categoriesCount, $categoriesCount);
+            ->setRange(0, count($categories), count($categories));
     }
 
     /**
@@ -71,6 +73,9 @@ class IssueCategoryController extends AbstractRestfulController implements
      * @param array $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\IssueCategory
+     * @201 Created
+     * @205 Updated
+     * @400 Invalid input
      */
     public function put($id, $data)
     {
@@ -94,7 +99,8 @@ class IssueCategoryController extends AbstractRestfulController implements
             return (new EmptyModel())->setStatus($affectedRows === 1 ? 201 : 205);
         }
 
-        return (new ErrorModel($form))->setStatus(400);
+        return (new ErrorModel($form))
+            ->setStatus(400);
     }
 
     /**
@@ -102,6 +108,9 @@ class IssueCategoryController extends AbstractRestfulController implements
      * @param $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\IssueCategory
+     * @205 Updated
+     * @400 Invalid input
+     * @404 Resource not found
      */
     public function patch($id, $data)
     {
@@ -124,7 +133,8 @@ class IssueCategoryController extends AbstractRestfulController implements
                 ->setStatus(400);
         }
 
-        return $this->notFoundAction();
+        return (new ErrorModel('Resource Not Found'))
+            ->setStatus(404);
     }
 
     /**

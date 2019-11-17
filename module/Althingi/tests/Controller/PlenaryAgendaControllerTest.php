@@ -14,6 +14,7 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * Class PlenaryControllerTest
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\PlenaryAgendaController
+ *
  * @covers \Althingi\Controller\PlenaryAgendaController::setPlenaryService
  * @covers \Althingi\Controller\PlenaryAgendaController::setPlenaryAgendaService
  * @covers \Althingi\Controller\PlenaryAgendaController::setCongressmanService
@@ -120,6 +121,6 @@ class PlenaryAgendaControllerTest extends AbstractHttpControllerTestCase
 
         $this->assertControllerClass('PlenaryAgendaController');
         $this->assertActionName('patch');
-        $this->assertResponseStatusCode(205);
+        $this->assertResponseStatusCode(202);
     }
 }

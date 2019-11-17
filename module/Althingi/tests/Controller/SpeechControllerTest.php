@@ -14,11 +14,13 @@ use Mockery;
  * Class SpeechControllerTest
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\SpeechController
+ *
  * @covers \Althingi\Controller\SpeechController::setCongressmanService
  * @covers \Althingi\Controller\SpeechController::setPartyService
  * @covers \Althingi\Controller\SpeechController::setSpeechService
  * @covers \Althingi\Controller\SpeechController::setPlenaryService
  * @covers \Althingi\Controller\SpeechController::setConstituencyService
+ * @covers \Althingi\Controller\SpeechController::setSpeechStore
  */
 class SpeechControllerTest extends AbstractHttpControllerTestCase
 {

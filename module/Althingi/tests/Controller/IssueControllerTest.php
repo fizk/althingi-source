@@ -15,17 +15,12 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * Class IssueControllerTest
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\IssueController
+ *
  * @covers \Althingi\Controller\IssueController::setIssueService
- * @covers \Althingi\Controller\IssueController::setPartyService
- * @covers \Althingi\Controller\IssueController::setDocumentService
- * @covers \Althingi\Controller\IssueController::setVoteService
- * @covers \Althingi\Controller\IssueController::setAssemblyService
- * @covers \Althingi\Controller\IssueController::setSpeechService
- * @covers \Althingi\Controller\IssueController::setSearchIssueService
  * @covers \Althingi\Controller\IssueController::setIssueStore
- * @covers \Althingi\Controller\IssueController::setConstituencyService
- * @covers \Althingi\Controller\IssueController::setCategoryStore
+ * @covers \Althingi\Controller\IssueController::setAssemblyService
  * @covers \Althingi\Controller\IssueController::setCategoryService
+ * @covers \Althingi\Controller\IssueController::setCategoryStore
  */
 class IssueControllerTest extends AbstractHttpControllerTestCase
 {
@@ -56,7 +51,6 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
 
     /**
      * @covers ::get
-     * @pending mongodb test framework
      */
     public function testGetSuccessA()
     {
@@ -75,7 +69,6 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
 
     /**
      * @covers ::get
-     * @pending mongodb test framework
      */
     public function testGetSuccessB()
     {
@@ -94,13 +87,12 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
 
     /**
      * @covers ::speechTimesAction
-     * @pending mongodb test framework
      */
     public function testGetSpeechTime()
     {
         $this->getMockService(Store\Issue::class)
             ->shouldReceive('fetchByAssemblyAndSpeechTime')
-            ->with(100, 5, 1, ['A'])
+            ->with(100, 5, -1, ['A'])
             ->andReturn([])
             ->getMock();
 
@@ -113,7 +105,6 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
 
     /**
      * @covers ::get
-     * @pending mongodb test framework
      */
     public function testGetNotFound()
     {
@@ -132,7 +123,6 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
 
     /**
      * @covers ::getList
-     * @pending mongodb test framework
      */
     public function testGetList()
     {

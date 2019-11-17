@@ -10,6 +10,7 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * Class PartyControllerTest
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\PartyController
+ *
  * @covers \Althingi\Controller\PartyController::setPartyService
  */
 class PartyControllerTest extends AbstractHttpControllerTestCase

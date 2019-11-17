@@ -18,6 +18,8 @@ services:
   run:
     container_name: server_run
     build:
+      args:
+        - WITH_XDEBUG=true
       context: .
       dockerfile: Dockerfile
     ports:
@@ -29,8 +31,10 @@ services:
       - ./public/:/var/www/public
     environment:
 
+      - PHP_IDE_CONFIG=PHPSTORM
+      - XDEBUG_CONFIG=remote_host=host.docker.internal remote_port=9001
+
       - LOG_PATH=php://stdout
-      - LOG_FORMAT=line
 
       - APPLICATION_ENVIRONMENT=development
 

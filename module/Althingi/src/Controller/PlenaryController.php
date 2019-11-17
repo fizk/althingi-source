@@ -24,22 +24,25 @@ class PlenaryController extends AbstractRestfulController implements
      * @param mixed $id
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\Plenary
+     * @200 Success
+     * @404 Resource not found
      */
     public function get($id)
     {
         $assemblyId = $this->params('id');
         $plenaryId = $this->params('plenary_id');
 
-        if ($plenary = $this->plenaryService->get($assemblyId, $plenaryId)) {
-            return new ItemModel($plenary);
-        }
+        $plenary = $this->plenaryService->get($assemblyId, $plenaryId);
 
-        return $this->notFoundAction();
+        return $plenary
+            ? (new ItemModel($plenary))->setStatus(200)
+            : (new ErrorModel('Resource Not Found'))->setStatus(404);
     }
 
     /**
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\Plenary[]
+     * @206 Success
      */
     public function getList()
     {
@@ -63,6 +66,9 @@ class PlenaryController extends AbstractRestfulController implements
      * @param mixed $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\Plenary
+     * @201 Created
+     * @205 Updated
+     * @400 Invalid input
      */
     public function put($id, $data)
     {
@@ -87,6 +93,8 @@ class PlenaryController extends AbstractRestfulController implements
      * @param $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\Plenary
+     * @205 Updated
+     * @400 Invalid input
      */
     public function patch($id, $data)
     {

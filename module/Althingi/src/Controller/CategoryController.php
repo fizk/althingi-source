@@ -20,17 +20,33 @@ class CategoryController extends AbstractRestfulController implements
     /** @var \Althingi\Service\Category */
     private $categoryService;
 
+    /**
+     * @param mixed $id
+     * @return ItemModel|\Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\Category
+     * @200 Success
+     * @404 Resource not found
+     */
     public function get($id)
     {
-        return (new ItemModel($this->categoryService->get($id)))->setStatus(200);
+        $category = $this->categoryService->get($id);
+        return $category
+            ? (new ItemModel($category))->setStatus(200)
+            : (new ErrorModel('Resource not found'))->setStatus(404);
     }
 
+    /**
+     * @return CollectionModel|\Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\Category[]
+     * @206 Success
+     */
     public function getList()
     {
         $id = $this->params('super_category_id');
-        return (new CollectionModel(
-            $this->categoryService->fetch($id)
-        ))->setStatus(206);
+        $categories = $this->categoryService->fetch($id);
+        return (new CollectionModel($categories))
+            ->setStatus(206)
+            ->setRange(0, count($categories), count($categories));
     }
 
     /**
@@ -38,6 +54,9 @@ class CategoryController extends AbstractRestfulController implements
      * @param mixed $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\Category
+     * @201 Created
+     * @205 Updated
+     * @400 Invalid input
      */
     public function put($id, $data)
     {
@@ -60,6 +79,9 @@ class CategoryController extends AbstractRestfulController implements
      * @param array $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\Category
+     * @205 Updated
+     * @400 Invalid input
+     * @404 Resource not found
      */
     public function patch($id, $data)
     {
@@ -78,12 +100,14 @@ class CategoryController extends AbstractRestfulController implements
                 ->setStatus(400);
         }
 
-        return $this->notFoundAction();
+        return (new ErrorModel('Resource not found'))
+            ->setStatus(404);
     }
 
     /**
      * @return CollectionModel
      * @output \Althingi\Model\CategoryAndCount[]
+     * @206 Success
      */
     public function assemblySummaryAction()
     {

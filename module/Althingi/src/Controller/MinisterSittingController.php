@@ -4,10 +4,19 @@ namespace Althingi\Controller;
 
 use Althingi\Form;
 use Althingi\Injector\ServiceCommitteeSittingAwareInterface;
+use Althingi\Injector\ServiceCongressmanAwareInterface;
 use Althingi\Injector\ServiceMinisterSittingAwareInterface;
+use Althingi\Injector\ServiceMinistryAwareInterface;
+use Althingi\Injector\ServicePartyAwareInterface;
 use Althingi\Injector\ServiceSessionAwareInterface;
+use Althingi\Model\Assembly;
+use Althingi\Model\CongressmanPartyProperties;
+use Althingi\Model\MinisterSittingProperties;
 use Althingi\Service\CommitteeSitting;
+use Althingi\Service\Congressman;
 use Althingi\Service\MinisterSitting;
+use Althingi\Service\Ministry;
+use Althingi\Service\Party;
 use Althingi\Service\Session;
 use Rend\Controller\AbstractRestfulController;
 use Rend\View\Model\ErrorModel;
@@ -20,10 +29,22 @@ use Rend\View\Model\CollectionModel;
  * @package Althingi\Controller
  */
 class MinisterSittingController extends AbstractRestfulController implements
-    ServiceMinisterSittingAwareInterface
+    ServiceMinisterSittingAwareInterface,
+    ServicePartyAwareInterface,
+    ServiceCongressmanAwareInterface,
+    ServiceMinistryAwareInterface
 {
     /** @var  \Althingi\Service\MinisterSitting */
     private $ministerSittingService;
+
+    /** @var  \Althingi\Service\Party */
+    private $partyService;
+
+    /** @var  \Althingi\Service\Congressman */
+    private $congressmanService;
+
+    /** @var  \Althingi\Service\Ministry */
+    private $ministryService;
 
     /**
      * Get sessions by one Congressman.
@@ -32,14 +53,16 @@ class MinisterSittingController extends AbstractRestfulController implements
      * @param int $id
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\CommitteeSitting
+     * @200 Success
+     * @404 Resource not found
      */
     public function get($id)
     {
-        if (($ministerSitting = $this->ministerSittingService->get($id)) != null) {
-            return new ItemModel($ministerSitting);
-        }
+        $ministerSitting = $this->ministerSittingService->get($id);
 
-        return $this->notFoundAction();
+        return $ministerSitting
+            ? (new ItemModel($ministerSitting))->setStatus(200)
+            : (new ErrorModel('Resource Not Found'))->setStatus(404);
     }
 
     /**
@@ -64,6 +87,9 @@ class MinisterSittingController extends AbstractRestfulController implements
      * @param mixed $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\CommitteeSitting
+     * @201 Created
+     * @409 Conflict
+     * @400 Invalid input
      */
     public function post($data)
     {
@@ -115,6 +141,9 @@ class MinisterSittingController extends AbstractRestfulController implements
      * @param $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\Session
+     * @205 Updated
+     * @400 Invalid input
+     * @404 Resource not found
      */
     public function patch($id, $data)
     {
@@ -133,7 +162,43 @@ class MinisterSittingController extends AbstractRestfulController implements
                 ->setStatus(400);
         }
 
-        return $this->notFoundAction();
+        return (new ErrorModel('Resource Not Found'))
+            ->setStatus(404);
+    }
+
+    /**
+     * @return CollectionModel
+     * @206 Success
+     */
+    public function assemblySessionsAction()
+    {
+        $assemblyId = $this->params('id', 0);
+        $congressmanId = $this->params('congressman_id', 0);
+        $sittings = $this->ministerSittingService->fetchByCongressmanAssembly($assemblyId, $congressmanId);
+
+        $properties = array_map(function (\Althingi\Model\MinisterSitting $item) use ($assemblyId) {
+            $congressman = (new CongressmanPartyProperties())
+                ->setCongressman(
+                    $this->congressmanService->get($item->getCongressmanId())
+                )
+                ->setParty(
+                    $item->getPartyId() ? $this->partyService->get($item->getPartyId()) : null
+                )
+                ->setAssembly(
+                    (new Assembly())->setAssemblyId($assemblyId)
+                );
+            return (new MinisterSittingProperties())
+                ->setCongressman($congressman)
+                ->setMinisterSitting($item)
+                ->setMinistry(
+                    $this->ministryService->get($item->getMinistryId())
+                )
+                ;
+        }, $sittings);
+
+        return (new CollectionModel($properties))
+            ->setStatus(206)
+            ->setRange(0, count($properties), count($properties));
     }
 
     /**
@@ -143,6 +208,36 @@ class MinisterSittingController extends AbstractRestfulController implements
     public function setMinisterSittingService(MinisterSitting $ministerSitting)
     {
         $this->ministerSittingService = $ministerSitting;
+        return $this;
+    }
+
+    /**
+     * @param Congressman $congressman
+     * @return $this;
+     */
+    public function setCongressmanService(Congressman $congressman)
+    {
+        $this->congressmanService = $congressman;
+        return $this;
+    }
+
+    /**
+     * @param \Althingi\Service\Ministry $ministry
+     * @return $this
+     */
+    public function setMinistryService(Ministry $ministry)
+    {
+        $this->ministryService = $ministry;
+        return $this;
+    }
+
+    /**
+     * @param \Althingi\Service\Party $party
+     * @return $this;
+     */
+    public function setPartyService(Party $party)
+    {
+        $this->partyService = $party;
         return $this;
     }
 }

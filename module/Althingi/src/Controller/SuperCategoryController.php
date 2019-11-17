@@ -20,16 +20,32 @@ class SuperCategoryController extends AbstractRestfulController implements
     /** @var \Althingi\Service\SuperCategory */
     private $superCategoryService;
 
+    /**
+     * @param mixed $id
+     * @return ErrorModel|ItemModel|\Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\SuperCategory
+     * @200 Success
+     * @404 Resource not found
+     */
     public function get($id)
     {
-        return (new ItemModel($this->superCategoryService->get($id)));
+        $superCategory = $this->superCategoryService->get($id);
+        return $superCategory
+            ? (new ItemModel($superCategory))->setStatus(200)
+            : (new ErrorModel('Resource Not Found'))->setStatus(404);
     }
 
+    /**
+     * @return CollectionModel|\Rend\View\Model\ModelInterface
+     * @output \Althingi\Model\SuperCategory[]
+     * @206 Success
+     */
     public function getList()
     {
-        return (new CollectionModel(
-            $this->superCategoryService->fetch()
-        ))->setStatus(206);
+        $superCategories = $this->superCategoryService->fetch();
+        return (new CollectionModel($superCategories))
+            ->setRange(0, count($superCategories), count($superCategories))
+            ->setStatus(206);
     }
 
     /**
@@ -37,6 +53,9 @@ class SuperCategoryController extends AbstractRestfulController implements
      * @param mixed $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\SuperCategory
+     * @201 Created
+     * @205 Updated
+     * @400 Invalid input
      */
     public function put($id, $data)
     {
@@ -48,7 +67,8 @@ class SuperCategoryController extends AbstractRestfulController implements
                 ->setStatus($affectedRows === 1 ? 201 : 205);
         }
 
-        return (new ErrorModel($form))->setStatus(400);
+        return (new ErrorModel($form))
+            ->setStatus(400);
     }
 
     /**
@@ -58,6 +78,9 @@ class SuperCategoryController extends AbstractRestfulController implements
      * @param array $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\SuperCategory
+     * @205 Updated
+     * @400 Invalid input
+     * @404 Resource not found
      */
     public function patch($id, $data)
     {
@@ -76,7 +99,8 @@ class SuperCategoryController extends AbstractRestfulController implements
                 ->setStatus(400);
         }
 
-        return $this->notFoundAction();
+        return (new ErrorModel('Resource Not Found'))
+            ->setStatus(404);
     }
 
     /**

@@ -58,6 +58,7 @@ class SpeechController extends AbstractRestfulController implements
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\SpeechCongressmanProperties
      * @query category
+     * @206 Success
      */
     public function get($id)
     {
@@ -108,6 +109,7 @@ class SpeechController extends AbstractRestfulController implements
      * @output \Althingi\Model\SpeechCongressmanProperties
      * @query leit [string]
      * @query category
+     * @206 Success
      */
     public function getList()
     {
@@ -128,37 +130,6 @@ class SpeechController extends AbstractRestfulController implements
             1500
         );
 
-        // DB
-//        $count = $this->speechService->countByIssue($assemblyId, $issueId, $category);
-//        $range = $this->getRange($this->getRequest(), $count);
-//
-//        $speeches = $this->speechService->fetchByIssue(
-//            $assemblyId,
-//            $issueId,
-//            $category,
-//            $range->getFrom(),
-//            $range->getSize(),
-//            1500
-//        );
-//
-//        $speechesAndProperties = array_map(function (Model\SpeechAndPosition $speech) {
-//            $speech->setText(Transformer::speechToMarkdown($speech->getText()));
-//            $congressmanPartyProperties = (new Model\CongressmanPartyProperties())
-//                ->setCongressman($this->congressmanService->get(
-//                    $speech->getCongressmanId()
-//                ))->setParty($this->partyService->getByCongressman(
-//                    $speech->getCongressmanId(),
-//                    $speech->getFrom()
-//                ))->setConstituency($this->constituencyService->getByCongressman(
-//                    $speech->getCongressmanId(),
-//                    $speech->getFrom()
-//                ));
-//
-//            return (new Model\SpeechCongressmanProperties())
-//                ->setCongressman($congressmanPartyProperties)
-//                ->setSpeech($speech);
-//        }, $speeches);
-
         return (new CollectionModel($speechesAndProperties))
             ->setStatus(206)
             ->setRange($range->getFrom(), (count($speechesAndProperties) + $range->getFrom()), $count);
@@ -172,6 +143,9 @@ class SpeechController extends AbstractRestfulController implements
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\Speech
      * @throws \Exception
+     * @201 Created
+     * @205 Updated
+     * @400 Invalid input
      */
     public function put($id, $data)
     {
@@ -222,7 +196,8 @@ class SpeechController extends AbstractRestfulController implements
             }
         }
 
-        return (new ErrorModel($form))->setStatus(400);
+        return (new ErrorModel($form))
+            ->setStatus(400);
     }
 
     /**
@@ -232,6 +207,9 @@ class SpeechController extends AbstractRestfulController implements
      * @param $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\Speech
+     * @205 Updated
+     * @400 Invalid input
+     * @404 Resource not found
      */
     public function patch($id, $data)
     {
@@ -252,13 +230,15 @@ class SpeechController extends AbstractRestfulController implements
                 ->setStatus(400);
         }
 
-        return $this->notFoundAction();
+        return (new ErrorModel('Resource Not Found'))
+            ->setStatus(404);
     }
 
     /**
      * List options for Speech collection.
      *
      * @return \Rend\View\Model\ModelInterface
+     * @200 Success
      */
     public function optionsList()
     {
@@ -273,6 +253,7 @@ class SpeechController extends AbstractRestfulController implements
      * List options for Speech entry.
      *
      * @return \Rend\View\Model\ModelInterface
+     * @200 Success
      */
     public function options()
     {

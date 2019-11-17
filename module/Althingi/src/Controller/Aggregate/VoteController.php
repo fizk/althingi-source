@@ -13,6 +13,7 @@ use Althingi\Service\Constituency;
 use Althingi\Service\Party;
 use Althingi\Service\Vote;
 use Rend\Controller\AbstractRestfulController;
+use Rend\View\Model\ErrorModel;
 use Rend\View\Model\ItemModel;
 use Rend\View\Model\CollectionModel;
 use Rend\Helper\Http\Range;
@@ -33,12 +34,16 @@ class VoteController extends AbstractRestfulController implements
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\CongressmanPartyProperties | \Althingi\Model\Congressman
      * @query dags
+     * @200 Success
+     * @404 Resource not found
      */
     public function getAction()
     {
         $id = $this->params('vote_id', null);
-
-        return (new ItemModel($this->voteService->get($id)));
+        $vote = $this->voteService->get($id);
+        return $vote
+            ? (new ItemModel($vote))->setStatus(200)
+            : (new ErrorModel('Resource not found'))->setStatus(404);
     }
 
     /**

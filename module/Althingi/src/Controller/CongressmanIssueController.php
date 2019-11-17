@@ -20,17 +20,17 @@ class CongressmanIssueController extends AbstractRestfulController implements
     /**
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\Issue[]
+     * @206 Success
      */
     public function getList()
     {
         $congressmanId = $this->params('congressman_id');
 
         $issues = $this->issueService->fetchByCongressman($congressmanId);
-        $issuesCount = count($issues);
 
         return (new CollectionModel($issues))
             ->setStatus(206)
-            ->setRange(0, $issuesCount, $issuesCount);
+            ->setRange(0, count($issues), count($issues));
     }
 
     /**

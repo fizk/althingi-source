@@ -11,6 +11,7 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * Class CategoryControllerTest
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\CategoryController
+ *
  * @covers \Althingi\Controller\CategoryController::setCategoryService
  */
 class CategoryControllerTest extends AbstractHttpControllerTestCase

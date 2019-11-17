@@ -19,12 +19,14 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * Class DocumentControllerTest
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\DocumentController
+ *
  * @covers \Althingi\Controller\DocumentController::setDocumentService
  * @covers \Althingi\Controller\DocumentController::setCongressmanService
  * @covers \Althingi\Controller\DocumentController::setPartyService
  * @covers \Althingi\Controller\DocumentController::setVoteService
  * @covers \Althingi\Controller\DocumentController::setVoteItemService
  * @covers \Althingi\Controller\DocumentController::setConstituencyService
+ * @covers \Althingi\Controller\DocumentController::setDocumentStore
  */
 class DocumentControllerTest extends AbstractHttpControllerTestCase
 {

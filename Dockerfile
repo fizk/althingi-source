@@ -27,7 +27,7 @@ RUN pecl install -o -f redis-4.3.0 \
     && rm -rf /tmp/pear \
     && docker-php-ext-enable redis mongodb
 
-ARG WITH_XDEBUG=false
+ARG WITH_XDEBUG
 
 RUN if [ $WITH_XDEBUG = "true" ] ; then \
         pecl install xdebug; \
@@ -42,13 +42,7 @@ COPY ./auto/php/php.ini /usr/local/etc/php/
 
 EXPOSE 80
 
-# with x-debug version
-#RUN pecl install -o -f redis \
-#    && pecl install xdebug-2.8.0 \
-#    && rm -rf /tmp/pear \
-#    && docker-php-ext-enable redis xdebug
 
-# - - -  Option 1
 WORKDIR /var/www
 
 COPY ./composer.json .
@@ -56,19 +50,8 @@ COPY ./composer.lock .
 COPY ./phpcs.xml .
 COPY ./phpunit.xml.dist .
 
-RUN /usr/local/bin/composer install --prefer-source --no-interaction --no-dev \
+RUN /usr/local/bin/composer install --prefer-source --no-interaction --no-dev --no-suggest \
     && /usr/local/bin/composer dump-autoload -o
-# - - -  end of Option 1
-
-# - - -  Option 2 (https://www.sentinelstand.com/article/composer-install-in-dockerfile-without-breaking-cache)
-# COPY composer.json ./var/www
-# COPY composer.lock ./var/www
-# RUN composer install --no-scripts --no-autoloader
-# COPY . ./var/www
-# RUN composer dump-autoload --optimize && \
-#     composer run-scripts post-install-cmd
-# WORKDIR /var/www
-# - - -  end of Option 2
 
 
 

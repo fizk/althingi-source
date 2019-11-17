@@ -23,14 +23,15 @@ class VoteController extends AbstractRestfulController implements
      * @param int $id
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\Vote
+     * @200 Success
+     * @404 Resource not found
      */
     public function get($id)
     {
-        if (($vote = $this->voteService->get($id)) != null) {
-            return (new ItemModel($vote));
-        }
-
-        return $this->notFoundAction();
+        $vote = $this->voteService->get($id);
+        return $vote
+            ? (new ItemModel($vote))->setStatus(200)
+            : (new ErrorModel('Resource Not Found'))->setStatus(404);
     }
 
     /**
@@ -38,20 +39,17 @@ class VoteController extends AbstractRestfulController implements
      *
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\Vote[]
-     *
-     * @attr int id
-     * @attr int issue_id
+     * @206 Success
      */
     public function getList()
     {
         $assemblyId = $this->params('id');
         $issueId = $this->params('issue_id');
         $issues = $this->voteService->fetchByIssue($assemblyId, $issueId);
-        $issuesCount = count($issues);
 
         return (new CollectionModel($issues))
             ->setStatus(206)
-            ->setRange(0, $issuesCount, $issuesCount);
+            ->setRange(0, count($issues), count($issues));
     }
 
     /**
@@ -61,10 +59,9 @@ class VoteController extends AbstractRestfulController implements
      * @param array $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\Vote
-     *
-     * @attr int id
-     * @attr int issue_id
-     * @attr int vote_id
+     * @201 Created
+     * @205 Updated
+     * @400 Invalid input
      */
     public function put($id, $data)
     {
@@ -97,10 +94,9 @@ class VoteController extends AbstractRestfulController implements
      * @param $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\Vote
-     *
-     * @attr int id
-     * @attr int issue_id
-     * @attr int vote_id
+     * @205 Updated
+     * @400 Invalid input
+     * @404 Resource not found
      */
     public function patch($id, $data)
     {
@@ -127,16 +123,15 @@ class VoteController extends AbstractRestfulController implements
                 ->setStatus(400);
         }
 
-        return $this->notFoundAction();
+        return (new ErrorModel('Resource Not Found'))
+            ->setStatus(404);
     }
 
     /**
      * List options for Vote collection.
      *
      * @return \Rend\View\Model\ModelInterface
-     *
-     * @attr int id
-     * @attr int issue_id
+     * @200 Success
      */
     public function optionsList()
     {
@@ -149,10 +144,7 @@ class VoteController extends AbstractRestfulController implements
      * List options for Vote entry.
      *
      * @return \Rend\View\Model\ModelInterface
-     *
-     * @attr int id
-     * @attr int issue_id
-     * @attr int vote_id
+     * @200 Success
      */
     public function options()
     {

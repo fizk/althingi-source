@@ -29,7 +29,6 @@ This application is configured via environment variables:
 | DB_SETUP            | false                            | true / false                          |
 | SEARCH              | elasticsearch                    | elasticsearch / none                  |
 | LOG_PATH            |                                  | <string>                              | Save logs to disk or php://stdout
-| LOG_FORMAT          | none                             | logstash / json / line / color / none |
 | CACHE_TYPE          | none                             | file / memory / none                  |
 | CACHE_HOST          |                                  | <string>                              |
 | CACHE_PORT          |                                  | <number>                              |

@@ -24,6 +24,18 @@ return [
                         'action' => 'index'
                     ],
                 ],
+                'may_terminate' => true,
+            ],
+            'openapi' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route'    => '/openapi',
+                    'defaults' => [
+                        'controller' => Controller\IndexController::class,
+                        'action' => 'open-api'
+                    ],
+                ],
+                'may_terminate' => true,
             ],
             'thingmal-current' => [
                 'type' => Literal::class,
@@ -86,6 +98,76 @@ return [
                         ],
                         'may_terminate' => true,
                         'child_routes' => [
+                            'thingseta' => [
+                                'type' => Literal::class,
+                                'options' => [
+                                    'route'    => '/thingseta',
+                                    'defaults' => [
+                                        'controller' => Controller\CongressmanController::class,
+                                        'action' => 'assembly-sessions'
+                                    ],
+                                ],
+                            ],
+                            'radherraseta' => [
+                                'type' => Literal::class,
+                                'options' => [
+                                    'route'    => '/radherraseta',
+                                    'defaults' => [
+                                        'controller' => Controller\MinisterSittingController::class,
+                                        'action' => 'assembly-sessions'
+                                    ],
+                                ],
+                            ],
+                            'thingmal' => [
+                                'type' => Literal::class,
+                                'options' => [
+                                    'route'    => '/thingmal',
+                                    'defaults' => [
+                                        'controller' => Controller\CongressmanController::class,
+                                        'action' => 'assembly-issues'
+                                    ],
+                                ],
+                            ],
+                            'thingmal-samantekt' => [
+                                'type' => Literal::class,
+                                'options' => [
+                                    'route'    => '/thingmal-samantekt',
+                                    'defaults' => [
+                                        'controller' => Controller\CongressmanController::class,
+                                        'action' => 'assembly-issues-summary'
+                                    ],
+                                ],
+                            ],
+                            'atvaedagreidslur' => [
+                                'type' => Literal::class,
+                                'options' => [
+                                    'route'    => '/atvaedagreidslur',
+                                    'defaults' => [
+                                        'controller' => Controller\CongressmanController::class,
+                                        'action' => 'assembly-voting'
+                                    ],
+                                ],
+                            ],
+                            'malaflokkar' => [
+                                'type' => Literal::class,
+                                'options' => [
+                                    'route'    => '/malaflokkar',
+                                    'defaults' => [
+                                        'controller' => Controller\CongressmanController::class,
+                                        'action' => 'assembly-categories'
+                                    ],
+                                ],
+                            ],
+                            'atvaedagreidslur-malaflokkar' => [
+                                'type' => Literal::class,
+                                'options' => [
+                                    'route'    => '/atvaedagreidslur-malaflokkar',
+                                    'defaults' => [
+                                        'controller' => Controller\CongressmanController::class,
+                                        'action' => 'assembly-vote-categories'
+                                    ],
+                                ],
+                            ],
                             'onnur-skjol' => [
                                 'type' => Literal::class,
                                 'options' => [
@@ -103,6 +185,17 @@ return [
                                     'defaults' => [
                                         'controller' => Controller\CongressmanController::class,
                                         'action' => 'assembly-speech-time'
+                                    ],
+                                ],
+                            ],
+                            'radherra' => [
+                                'type' => Segment::class,
+                                'options' => [
+                                    'route'    => '/radherra[/:ministry_id]',
+                                    'defaults' => [
+                                        'controller' => Controller\MinisterController::class,
+                                        'identifier' => 'ministry_id',
+                                        'action' => null
                                     ],
                                 ],
                             ],
@@ -159,77 +252,7 @@ return [
                                     ],
                                 ],
                             ],
-//                            'raedutimar' => [
-//                                'type' => 'Zend\Mvc\Router\Http\Segment',
-//                                'options' => [
-//                                    'route'    => '/:congressman_id/raedutimar',
-//                                    'defaults' => [
-//                                        'controller' => Controller\CongressmanController::class,
-//                                        'action' => 'assembly-speech-time'
-//                                    ],
-//                                ],
-//                            ],
-                            'thingseta' => [
-                                'type' => Segment::class,
-                                'options' => [
-                                    'route'    => '/:congressman_id/thingseta',
-                                    'defaults' => [
-                                        'controller' => Controller\CongressmanController::class,
-                                        'action' => 'assembly-sessions'
-                                    ],
-                                ],
-                            ],
-                            'thingmal' => [
-                                'type' => Segment::class,
-                                'options' => [
-                                    'route'    => '/:congressman_id/thingmal',
-                                    'defaults' => [
-                                        'controller' => Controller\CongressmanController::class,
-                                        'action' => 'assembly-issues'
-                                    ],
-                                ],
-                            ],
-                            'thingmal-samantekt' => [
-                                'type' => Segment::class,
-                                'options' => [
-                                    'route'    => '/:congressman_id/thingmal-samantekt',
-                                    'defaults' => [
-                                        'controller' => Controller\CongressmanController::class,
-                                        'action' => 'assembly-issues-summary'
-                                    ],
-                                ],
-                            ],
-                            'atvaedagreidslur' => [
-                                'type' => Segment::class,
-                                'options' => [
-                                    'route'    => '/:congressman_id/atvaedagreidslur',
-                                    'defaults' => [
-                                        'controller' => Controller\CongressmanController::class,
-                                        'action' => 'assembly-voting'
-                                    ],
-                                ],
-                            ],
-                            'malaflokkar' => [
-                                'type' => Segment::class,
-                                'options' => [
-                                    'route'    => '/:congressman_id/malaflokkar',
-                                    'defaults' => [
-                                        'controller' => Controller\CongressmanController::class,
-                                        'action' => 'assembly-categories'
-                                    ],
-                                ],
-                            ],
-                            'atvaedagreidslur-malaflokkar' => [
-                                'type' => Segment::class,
-                                'options' => [
-                                    'route'    => '/:congressman_id/atvaedagreidslur-malaflokkar',
-                                    'defaults' => [
-                                        'controller' => Controller\CongressmanController::class,
-                                        'action' => 'assembly-vote-categories'
-                                    ],
-                                ],
-                            ]
-                        ]
+                        ],
                     ],
                     'verdbolga' => [
                         'type' => Literal::class,
@@ -901,9 +924,17 @@ return [
                     ->setMinistryService($container->get(Service\Ministry::class))
                     ;
             },
+            Controller\MinisterController::class => function (ServiceManager $container) {
+                return (new Controller\MinisterController())
+                    ->setMinistryService($container->get(Service\Ministry::class))
+                    ;
+            },
             Controller\MinisterSittingController::class => function (ServiceManager $container) {
                 return (new Controller\MinisterSittingController())
                     ->setMinisterSittingService($container->get(Service\MinisterSitting::class))
+                    ->setMinistryService($container->get(Service\Ministry::class))
+                    ->setCongressmanService($container->get(Service\Congressman::class))
+                    ->setPartyService($container->get(Service\Party::class))
                     ;
             },
             Controller\CongressmanController::class => function (ServiceManager $container) {
@@ -920,10 +951,6 @@ return [
             },
             Controller\SessionController::class => function (ServiceManager $container) {
                 return (new Controller\SessionController())
-                    ->setSessionService($container->get(Service\Session::class));
-            },
-            Controller\CongressmanSessionController::class => function (ServiceManager $container) {
-                return (new Controller\CongressmanSessionController())
                     ->setSessionService($container->get(Service\Session::class));
             },
             Controller\PartyController::class => function (ServiceManager $container) {

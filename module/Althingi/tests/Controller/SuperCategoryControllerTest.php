@@ -10,6 +10,7 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * Class SuperCategoryControllerTest
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\SuperCategoryController
+ *
  * @covers \Althingi\Controller\SuperCategoryController::setSuperCategoryService
  */
 class SuperCategoryControllerTest extends AbstractHttpControllerTestCase

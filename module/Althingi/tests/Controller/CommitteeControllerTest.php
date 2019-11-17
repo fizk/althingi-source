@@ -12,6 +12,7 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * Class CommitteeControllerTest
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\CommitteeController
+ *
  * @covers \Althingi\Controller\CommitteeController::setCommitteeService
  */
 class CommitteeControllerTest extends AbstractHttpControllerTestCase
