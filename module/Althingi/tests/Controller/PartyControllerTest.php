@@ -2,7 +2,9 @@
 
 namespace AlthingiTest\Controller;
 
-use Althingi\Service\Party;
+use Althingi\Controller\PartyController;
+use Althingi\Service;
+use Althingi\Model;
 use AlthingiTest\ServiceHelper;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
@@ -26,7 +28,7 @@ class PartyControllerTest extends AbstractHttpControllerTestCase
         parent::setUp();
 
         $this->buildServices([
-            Party::class,
+            Service\Party::class,
         ]);
     }
 
@@ -37,18 +39,56 @@ class PartyControllerTest extends AbstractHttpControllerTestCase
     }
 
     /**
+     * @covers ::get
+     */
+    public function testGet()
+    {
+        $this->getMockService(Service\Party::class)
+            ->shouldReceive('get')
+            ->with(100)
+            ->andReturn(new Model\Party())
+            ->once()
+            ->getMock();
+
+        $this->dispatch('/thingflokkar/100');
+
+        $this->assertControllerName(PartyController::class);
+        $this->assertActionName('get');
+        $this->assertResponseStatusCode(200);
+    }
+
+    /**
+     * @covers ::get
+     */
+    public function testGetNotFound()
+    {
+        $this->getMockService(Service\Party::class)
+            ->shouldReceive('get')
+            ->with(100)
+            ->andReturn(null)
+            ->once()
+            ->getMock();
+
+        $this->dispatch('/thingflokkar/100');
+
+        $this->assertControllerName(PartyController::class);
+        $this->assertActionName('get');
+        $this->assertResponseStatusCode(404);
+    }
+
+    /**
      * @covers ::put
      */
     public function testPutSuccess()
     {
-        $expectedData = (new \Althingi\Model\Party())
+        $expectedData = (new Model\Party())
             ->setPartyId(100)
             ->setName('n1')
             ->setAbbrShort('p1')
             ->setAbbrLong('p2')
             ->setColor('blue');
 
-        $this->getMockService(Party::class)
+        $this->getMockService(Service\Party::class)
             ->shouldReceive('save')
             ->with(\Mockery::on(function ($actualData) use ($expectedData) {
                 return $expectedData == $actualData;
@@ -64,7 +104,7 @@ class PartyControllerTest extends AbstractHttpControllerTestCase
             'color' => 'blue'
         ]);
 
-        $this->assertControllerClass('PartyController');
+        $this->assertControllerName(PartyController::class);
         $this->assertActionName('put');
         $this->assertResponseStatusCode(201);
     }
@@ -74,17 +114,17 @@ class PartyControllerTest extends AbstractHttpControllerTestCase
      */
     public function testPatchSuccess()
     {
-        $expectedData = (new \Althingi\Model\Party())
+        $expectedData = (new Model\Party())
             ->setPartyId(100)
             ->setName('n1')
             ->setAbbrShort('p1')
             ->setAbbrLong('p2')
             ->setColor('blue');
 
-        $this->getMockService(Party::class)
+        $this->getMockService(Service\Party::class)
             ->shouldReceive('get')
             ->with(100)
-            ->andReturn((new \Althingi\Model\Party())
+            ->andReturn((new Model\Party())
                 ->setPartyId(100)
                 ->setName('n1')
                 ->setAbbrShort('p1')
@@ -105,7 +145,7 @@ class PartyControllerTest extends AbstractHttpControllerTestCase
             'color' => 'blue'
         ]);
 
-        $this->assertControllerClass('PartyController');
+        $this->assertControllerName(PartyController::class);
         $this->assertActionName('patch');
         $this->assertResponseStatusCode(205);
     }

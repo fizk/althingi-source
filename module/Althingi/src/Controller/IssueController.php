@@ -273,6 +273,7 @@ class IssueController extends AbstractRestfulController implements
         );
 
         return (new CollectionModel($issues))
+            ->setStatus(206)
             ->setRange($range->getFrom(), $range->getFrom() + count($issues), $count);
     }
 

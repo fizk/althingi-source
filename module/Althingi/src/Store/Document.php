@@ -11,6 +11,11 @@ class Document implements StoreAwareInterface
     /** @var \MongoDB\Database */
     private $database;
 
+    /**
+     * @param int $assemblyId
+     * @param int $issueId
+     * @return \Althingi\Model\DocumentProperties[]
+     */
     public function fetchByIssue(int $assemblyId, int $issueId): array
     {
         $documents = $this->getStore()->document->find([

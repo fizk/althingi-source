@@ -3,12 +3,9 @@
 namespace AlthingiTest\Controller;
 
 use Althingi\Service;
-use Althingi\Store;
 use Althingi\Model;
 use Althingi\Controller;
-
 use AlthingiTest\ServiceHelper;
-use Mockery;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
 /**
@@ -31,11 +28,7 @@ class MinisterControllerTest extends AbstractHttpControllerTestCase
         parent::setUp();
 
         $this->buildServices([
-            Service\Issue::class,
-            Service\Assembly::class,
-            Service\Category::class,
-            Store\Issue::class,
-            Store\Category::class,
+            Service\Ministry::class
         ]);
     }
 
@@ -49,11 +42,59 @@ class MinisterControllerTest extends AbstractHttpControllerTestCase
      * @covers ::get
      * @throws \Exception
      */
-    public function testTrue()
+    public function testGet()
     {
+        $this->getMockService(Service\Ministry::class)
+            ->shouldReceive('getByCongressmanAssembly')
+            ->with(149, 1335, 321)
+            ->andReturn(2)
+            ->once()
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/149/thingmenn/1335/radherra/321', 'GET');
+
+        $this->assertControllerName(Controller\MinisterController::class);
+        $this->assertActionName('get');
+        $this->assertResponseStatusCode(200);
+    }
+
+    /**
+     * @covers ::get
+     * @throws \Exception
+     */
+    public function testGetNotFound()
+    {
+        $this->getMockService(Service\Ministry::class)
+            ->shouldReceive('getByCongressmanAssembly')
+            ->with(149, 1335, 321)
+            ->andReturn(null)
+            ->once()
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/149/thingmenn/1335/radherra/321', 'GET');
+
+        $this->assertControllerName(Controller\MinisterController::class);
+        $this->assertActionName('get');
+        $this->assertResponseStatusCode(404);
+    }
+
+    /**
+     * @covers ::getList
+     * @throws \Exception
+     */
+    public function testGetList()
+    {
+        $this->getMockService(Service\Ministry::class)
+            ->shouldReceive('fetchByCongressmanAssembly')
+            ->with(149, 1335)
+            ->andReturn([(new Model\Ministry())])
+            ->once()
+            ->getMock();
+
         $this->dispatch('/loggjafarthing/149/thingmenn/1335/radherra', 'GET');
 
         $this->assertControllerName(Controller\MinisterController::class);
         $this->assertActionName('getList');
+        $this->assertResponseStatusCode(206);
     }
 }

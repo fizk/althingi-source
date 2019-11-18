@@ -3,8 +3,8 @@
 namespace AlthingiTest\Controller;
 
 use Althingi\Controller\ConstituencyController;
-use \Althingi\Model\Constituency as ConstituencyModel;
 use Althingi\Service\Constituency;
+use Althingi\Model;
 use AlthingiTest\ServiceHelper;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
@@ -37,6 +37,42 @@ class ConstituencyControllerTest extends AbstractHttpControllerTestCase
     {
         \Mockery::close();
         return parent::tearDown();
+    }
+
+    /**
+     * @covers ::get
+     */
+    public function testGet()
+    {
+        $this->getMockService(Constituency::class)
+            ->shouldReceive('get')
+            ->with(1)
+            ->andReturn(new Model\Constituency())
+            ->once()
+            ->getMock();
+
+        $this->dispatch('/kjordaemi/1');
+        $this->assertControllerName(ConstituencyController::class);
+        $this->assertActionName('get');
+        $this->assertResponseStatusCode(200);
+    }
+
+    /**
+     * @covers ::get
+     */
+    public function testGetNotFound()
+    {
+        $this->getMockService(Constituency::class)
+            ->shouldReceive('get')
+            ->with(1)
+            ->andReturn(null)
+            ->once()
+            ->getMock();
+
+        $this->dispatch('/kjordaemi/1');
+        $this->assertControllerName(ConstituencyController::class);
+        $this->assertActionName('get');
+        $this->assertResponseStatusCode(404);
     }
 
     /**
@@ -80,7 +116,7 @@ class ConstituencyControllerTest extends AbstractHttpControllerTestCase
      */
     public function testPatchSuccess()
     {
-        $expectedData = (new ConstituencyModel())
+        $expectedData = (new Model\Constituency())
             ->setConstituencyId(101)
             ->setName('name1');
 
@@ -88,7 +124,7 @@ class ConstituencyControllerTest extends AbstractHttpControllerTestCase
             ->shouldReceive('get')
             ->with(101)
             ->andReturn(
-                (new ConstituencyModel())
+                (new Model\Constituency())
                     ->setConstituencyId(101)
                     ->setName('some name')
             )

@@ -102,6 +102,10 @@ class Speech implements StoreAwareInterface
         }, 0);
     }
 
+    /**
+     * @param int $assemblyId
+     * @return \Althingi\Model\DateAndCount[]
+     */
     public function fetchFrequencyByAssembly(int $assemblyId)
     {
         $documents = $this->getStore()->speech->aggregate([

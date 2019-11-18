@@ -168,6 +168,7 @@ class MinisterSittingController extends AbstractRestfulController implements
 
     /**
      * @return CollectionModel
+     * @output \Althingi\MinisterSittingProperties[]
      * @206 Success
      */
     public function assemblySessionsAction()

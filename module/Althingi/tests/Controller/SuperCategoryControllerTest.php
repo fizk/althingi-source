@@ -2,7 +2,9 @@
 
 namespace AlthingiTest\Controller;
 
+use Althingi\Controller\SuperCategoryController;
 use Althingi\Service\SuperCategory;
+use Althingi\Model;
 use AlthingiTest\ServiceHelper;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
@@ -37,6 +39,66 @@ class SuperCategoryControllerTest extends AbstractHttpControllerTestCase
     }
 
     /**
+     * @covers ::get
+     * @throws \Exception
+     */
+    public function testGet()
+    {
+        $this->getMockService(SuperCategory::class)
+            ->shouldReceive('get')
+            ->with(1)
+            ->andReturn((new Model\SuperCategory()))
+            ->once()
+            ->getMock();
+
+        $this->dispatch('/thingmal/efnisflokkar/1');
+
+        $this->assertControllerName(SuperCategoryController::class);
+        $this->assertActionName('get');
+        $this->assertResponseStatusCode(200);
+    }
+
+    /**
+     * @covers ::getList
+     * @throws \Exception
+     */
+    public function testGetList()
+    {
+        $this->getMockService(SuperCategory::class)
+            ->shouldReceive('fetch')
+            ->with()
+            ->andReturn([new Model\SuperCategory()])
+            ->once()
+            ->getMock();
+
+        $this->dispatch('/thingmal/efnisflokkar');
+
+        $this->assertControllerName(SuperCategoryController::class);
+        $this->assertActionName('getList');
+        $this->assertResponseStatusCode(206);
+    }
+
+    /**
+     * @covers ::get
+     * @throws \Exception
+     */
+    public function testGetNotFound()
+    {
+        $this->getMockService(SuperCategory::class)
+            ->shouldReceive('get')
+            ->with(1)
+            ->andReturn(null)
+            ->once()
+            ->getMock();
+
+        $this->dispatch('/thingmal/efnisflokkar/1');
+
+        $this->assertControllerName(SuperCategoryController::class);
+        $this->assertActionName('get');
+        $this->assertResponseStatusCode(404);
+    }
+
+    /**
      * @covers ::put
      */
     public function testPutSuccess()
@@ -58,7 +120,7 @@ class SuperCategoryControllerTest extends AbstractHttpControllerTestCase
             'title' => 'n1',
         ]);
 
-        $this->assertControllerClass('SuperCategoryController');
+        $this->assertControllerName(SuperCategoryController::class);
         $this->assertActionName('put');
         $this->assertResponseStatusCode(201);
     }
@@ -77,7 +139,7 @@ class SuperCategoryControllerTest extends AbstractHttpControllerTestCase
             'title' => 'n1',
         ]);
 
-        $this->assertControllerClass('SuperCategoryController');
+        $this->assertControllerName(SuperCategoryController::class);
         $this->assertActionName('put');
         $this->assertResponseStatusCode(400);
     }
@@ -113,7 +175,7 @@ class SuperCategoryControllerTest extends AbstractHttpControllerTestCase
             'title' => 'n2',
         ]);
 
-        $this->assertControllerClass('SuperCategoryController');
+        $this->assertControllerName(SuperCategoryController::class);
         $this->assertActionName('patch');
         $this->assertResponseStatusCode(205);
     }
@@ -137,7 +199,7 @@ class SuperCategoryControllerTest extends AbstractHttpControllerTestCase
             'title' => 'title1',
         ]);
 
-        $this->assertControllerClass('SuperCategoryController');
+        $this->assertControllerName(SuperCategoryController::class);
         $this->assertActionName('patch');
         $this->assertResponseStatusCode(400);
     }
@@ -161,7 +223,7 @@ class SuperCategoryControllerTest extends AbstractHttpControllerTestCase
             'title' => 'n2',
         ]);
 
-        $this->assertControllerClass('SuperCategoryController');
+        $this->assertControllerName(SuperCategoryController::class);
         $this->assertActionName('patch');
         $this->assertResponseStatusCode(404);
     }

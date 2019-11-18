@@ -47,6 +47,11 @@ class MinisterSitting implements DatabaseAwareInterface, EventsAwareInterface
             : null;
     }
 
+    /**
+     * @param int $assemblyId
+     * @param int $congressmanId
+     * @return \Althingi\Model\MinisterSitting[]
+     */
     public function fetchByCongressmanAssembly(int $assemblyId, int $congressmanId)
     {
         $statement = $this->getDriver()->prepare("

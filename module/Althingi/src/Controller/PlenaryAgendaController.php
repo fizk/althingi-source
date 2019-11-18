@@ -144,31 +144,10 @@ class PlenaryAgendaController extends AbstractRestfulController implements
      * @input \Althingi\Form\PlenaryAgenda
      * @return EmptyModel|\Rend\View\Model\ModelInterface
      * @202 No update
+     * @todo does this make sense
      */
     public function patch($id, $data)
     {
-//        $assemblyId = $this->params('id');
-//        $plenaryId  = $this->params('plenary_id');
-//
-//        if (($plenaryAgenda = $this->plenaryAgendaService->get($assemblyId, $plenaryId, $id)) != null) {
-//            $form = new Form\PlenaryAgenda();
-//            $form->bind($plenaryAgenda);
-//            $form->setData($data);
-//
-//            if ($form->isValid()) {
-//                $this->plenaryAgendaService->update($form->getData()); //@todo ... this doesn't exists
-//                return (new EmptyModel())
-//                    ->setStatus(205);
-//            }
-//
-//            return (new ErrorModel($form))
-//                ->setStatus(400);
-//        }
-//
-//        return $this->notFoundAction();
-
-        // Since an agenda doesn't need to be updated, but the Aggregator can call the patch endpoint
-        // this method will just return an OK status
         return (new EmptyModel())
             ->setStatus(202);
     }

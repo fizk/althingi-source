@@ -85,7 +85,8 @@ class PlenaryController extends AbstractRestfulController implements
             return (new EmptyModel())->setStatus($affectedRows === 1 ? 201 : 205);
         }
 
-        return (new ErrorModel($form))->setStatus(400);
+        return (new ErrorModel($form))
+            ->setStatus(400);
     }
 
     /**

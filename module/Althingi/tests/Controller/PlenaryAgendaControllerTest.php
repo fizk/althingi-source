@@ -2,11 +2,13 @@
 
 namespace AlthingiTest\Controller;
 
+use Althingi\Controller\PlenaryAgendaController;
 use Althingi\Service\Congressman;
 use Althingi\Service\Issue;
 use Althingi\Service\Party;
 use Althingi\Service\Plenary;
 use Althingi\Service\PlenaryAgenda;
+use Althingi\Model;
 use AlthingiTest\ServiceHelper;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
@@ -49,6 +51,43 @@ class PlenaryAgendaControllerTest extends AbstractHttpControllerTestCase
     }
 
     /**
+     * @covers ::getList
+     */
+    public function testGetList()
+    {
+        $this->getMockService(Plenary::class)
+            ->shouldReceive('get')
+            ->with(1, 2)
+            ->andReturn(new Model\Plenary())
+            ->once()
+            ->getMock();
+
+        $this->getMockService(Issue::class)
+            ->shouldReceive('get')
+            ->with(10, 1, 'a')
+            ->andReturn(new Model\Issue())
+            ->once()
+            ->getMock();
+
+        $this->getMockService(PlenaryAgenda::class)
+            ->shouldReceive('fetch')
+            ->with(1, 2)
+            ->andReturn([
+                (new Model\PlenaryAgenda())
+                    ->setIssueId(10)
+                    ->setAssemblyId(1)
+                    ->setCategory('a')
+            ])
+            ->once()
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/1/thingfundir/2/lidir');
+        $this->assertControllerName(PlenaryAgendaController::class);
+        $this->assertActionName('getList');
+        $this->assertResponseStatusCode(206);
+    }
+
+    /**
      * @covers ::put
      */
     public function testPutSuccess()
@@ -84,37 +123,6 @@ class PlenaryAgendaControllerTest extends AbstractHttpControllerTestCase
      */
     public function testPatchSuccess()
     {
-        // Currently, this method does nothing in the Controller,
-        //If it gets implemented in the future, this can be commented back in
-//        $expectedData = (new \Althingi\Model\PlenaryAgenda())
-//            ->setAssemblyId(1)
-//            ->setIssueId(2)
-//            ->setCategory('A')
-//            ->setPlenaryId(3)
-//            ->setItemId(4)
-//            ->setComment('This is the comment')
-//        ;
-//        $this->getMockService(PlenaryAgenda::class)
-//            ->shouldReceive('get')
-//            ->andReturn(
-//                (new \Althingi\Model\PlenaryAgenda())
-//                    ->setAssemblyId(1)
-//                    ->setIssueId(2)
-//                    ->setCategory('A')
-//                    ->setPlenaryId(3)
-//                    ->setItemId(4)
-//            )
-//            ->once()
-//            ->getMock()
-//
-//            ->shouldReceive('update')
-//            ->with(\Mockery::on(function ($actualData) use ($expectedData) {
-//                return $expectedData == $actualData;
-//            }))
-//            ->andReturn(1)
-//            ->once()
-//            ->getMock();
-
         $this->dispatch('/loggjafarthing/1/thingfundir/3/lidir/4', 'PATCH', [
             'comment' => 'This is the comment'
         ]);

@@ -287,7 +287,7 @@ class AssemblyController extends AbstractRestfulController implements
                 ->setStatus(200);
         }
 
-        return (new ErrorModel('Resourcenot found'))
+        return (new ErrorModel('Resource not found'))
             ->setStatus(404);
     }
 

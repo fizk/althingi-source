@@ -115,6 +115,7 @@ class CategoryController extends AbstractRestfulController implements
         $categorySummary = $this->categoryService->fetchByAssembly($assemblyId);
 
         return (new CollectionModel($categorySummary))
+            ->setStatus(206)
             ->setRange(0, count($categorySummary), count($categorySummary));
     }
 

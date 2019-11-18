@@ -104,7 +104,7 @@ class Issue implements StoreAwareInterface
      * @param array $types
      * @param int|null $offset
      * @param int|null $size
-     * @return array
+     * @return \Althingi\Model\IssueProperties[]
      */
     public function fetchByParty(
         int $assemblyId,

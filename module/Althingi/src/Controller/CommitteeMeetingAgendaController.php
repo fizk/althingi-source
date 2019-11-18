@@ -37,17 +37,6 @@ class CommitteeMeetingAgendaController extends AbstractRestfulController impleme
             : (new ErrorModel('Resource Not Found'))->setStatus(404);
     }
 
-//
-//    public function getList()
-//    {
-//        $assemblyId = $this->params('id');
-//        $committeeId = $this->params('committee_id');
-//
-//        $meetings = $this->committeeMeetingService->fetchByAssembly($assemblyId, $committeeId);
-//
-//        return (new CollectionModel($meetings));
-//    }
-
     /**
      * @param mixed $id
      * @param mixed $data

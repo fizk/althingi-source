@@ -350,4 +350,89 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
 
         $this->assertCount(0, array_diff($expectedMethods, $actualMethods));
     }
+
+    /**
+     * @covers ::statisticsAction
+     */
+    public function testStatisticsAction()
+    {
+        $this->getMockService(Service\Assembly::class)
+            ->shouldReceive('get')
+            ->with(123)
+            ->once()
+            ->andReturn((new Model\Assembly())->setFrom(new DateTime('2001-01-01'))->setAssemblyId(123))
+            ->getMock();
+
+        $this->getMockService(Store\Vote::class)
+            ->shouldReceive('fetchFrequencyByAssembly')
+            ->with(123)
+            ->once()
+            ->andReturn([new Model\DateAndCount()])
+            ->getMock();
+
+        $this->getMockService(Store\Speech::class)
+            ->shouldReceive('fetchFrequencyByAssembly')
+            ->with(123)
+            ->once()
+            ->andReturn([new Model\DateAndCount()])
+            ->getMock();
+
+        $this->getMockService(Store\Congressman::class)
+            ->shouldReceive('getAverageAgeByAssembly')
+            ->once()
+            ->andReturn(1.2)
+            ->getMock();
+
+        $this->getMockService(Store\Party::class)
+            ->shouldReceive('fetchTimeByAssembly')
+            ->with(123)
+            ->once()
+            ->andReturn([new Model\PartyAndTime()])
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/123/samantekt');
+
+        $this->assertControllerName(AssemblyController::class);
+        $this->assertActionName('statistics');
+        $this->assertResponseStatusCode(200);
+    }
+
+    /**
+     * @covers ::statisticsAction
+     */
+    public function testStatisticsActionNotFound()
+    {
+        $this->getMockService(Service\Assembly::class)
+            ->shouldReceive('get')
+            ->with(123)
+            ->once()
+            ->andReturn(null)
+            ->getMock();
+
+        $this->getMockService(Store\Vote::class)
+            ->shouldReceive('fetchFrequencyByAssembly')
+            ->never()
+            ->getMock();
+
+        $this->getMockService(Store\Speech::class)
+            ->shouldReceive('fetchFrequencyByAssembly')
+            ->never()
+            ->getMock();
+
+        $this->getMockService(Store\Congressman::class)
+            ->shouldReceive('getAverageAgeByAssembly')
+            ->never()
+            ->getMock();
+
+        $this->getMockService(Store\Party::class)
+            ->shouldReceive('fetchTimeByAssembly')
+            ->never()
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/123/samantekt');
+
+        $this->assertControllerName(AssemblyController::class);
+        $this->assertActionName('statistics');
+        $this->assertResponseStatusCode(404);
+    }
 }

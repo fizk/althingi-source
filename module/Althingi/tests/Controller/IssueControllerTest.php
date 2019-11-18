@@ -289,4 +289,90 @@ class IssueControllerTest extends AbstractHttpControllerTestCase
 
         $this->assertCount(0, array_diff($expectedMethods, $actualMethods));
     }
+
+    /**
+     * @covers ::progressAction
+     */
+    public function testProgressAction()
+    {
+        $this->getMockService(Service\Issue::class)
+            ->shouldReceive('fetchProgress')
+            ->with(100, 200, 'A')
+            ->andReturn([new Model\Status()])
+            ->once()
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/100/thingmal/a/200/ferli', 'GET');
+        $this->assertControllerName(Controller\IssueController::class);
+        $this->assertActionName('progress');
+        $this->assertResponseStatusCode(206);
+    }
+
+    /**
+     * @covers ::statisticsAction
+     */
+    public function testStatisticsAction()
+    {
+        $this->getMockService(Store\Issue::class)
+            ->shouldReceive('fetchNonGovernmentBillStatisticsByAssembly')
+            ->with(100)
+            ->andReturn([new Model\IssueTypeStatus()])
+            ->once()
+            ->getMock()
+
+            ->shouldReceive('fetchGovernmentBillStatisticsByAssembly')
+            ->with(100)
+            ->andReturn([new Model\IssueTypeStatus()])
+            ->once()
+            ->getMock()
+
+            ->shouldReceive('fetchProposalStatisticsByAssembly')
+            ->with(100)
+            ->andReturn([new Model\IssueTypeStatus()])
+            ->once()
+            ->getMock()
+
+            ->shouldReceive('fetchCountByCategory')
+            ->with(100)
+            ->andReturn([new Model\AssemblyStatus()])
+            ->once()
+            ->getMock();
+
+        $this->getMockService(Store\Category::class)
+            ->shouldReceive('fetchByAssembly')
+            ->with(100)
+            ->andReturn([new Model\CategoryAndCount()])
+            ->once()
+            ->getMock();
+
+
+        $this->dispatch('/loggjafarthing/100/samantekt/thingmal', 'GET');
+        $this->assertControllerName(Controller\IssueController::class);
+        $this->assertActionName('statistics');
+        $this->assertResponseStatusCode(200);
+    }
+
+    /**
+     * @covers ::fetchPartyAction
+     */
+    public function testFetchPartyAction()
+    {
+        $this->getMockService(Store\Issue::class)
+            ->shouldReceive('countByParty')
+            ->with(123, 456, [])
+            ->andReturn(2)
+            ->once()
+            ->getMock()
+
+            ->shouldReceive('fetchByParty')
+            ->with(123, 456, [], 0, null)
+            ->andReturn([(new Model\IssueProperties())->setIssue(new Model\Issue())])
+            ->once()
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/123/thingflokkar/456/thingmal', 'GET');
+        $this->assertControllerName(Controller\IssueController::class);
+        $this->assertActionName('fetch-party');
+        $this->assertResponseStatusCode(206);
+    }
 }

@@ -3,6 +3,8 @@
 namespace AlthingiTest\Controller;
 
 use Althingi\Model\VoteItemAndAssemblyIssue;
+use Althingi\Service;
+use Althingi\Model;
 use Althingi\Service\Congressman;
 use Althingi\Service\Constituency;
 use Althingi\Service\Party;
@@ -10,6 +12,7 @@ use Althingi\Service\Vote;
 use Althingi\Service\VoteItem;
 use AlthingiTest\ServiceHelper;
 use Mockery;
+use DateTime;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
 /**
@@ -50,6 +53,56 @@ class VoteItemControllerTest extends AbstractHttpControllerTestCase
         Mockery::close();
         return parent::tearDown();
     }
+
+    /**
+     * @covers ::getList
+     * @throws \Exception
+     */
+    public function testGetList()
+    {
+        $this->getMockService(Service\Vote::class)
+            ->shouldReceive('get')
+            ->with(3)
+            ->andReturn(
+                (new Model\Vote())->setVoteId(3)->setDate(new DateTime('2001-01-01'))
+            )
+            ->once()
+            ->getMock();
+
+        $this->getMockService(Service\VoteItem::class)
+            ->shouldReceive('fetchByVote')
+            ->with(3)
+            ->andReturn([
+                (new Model\VoteItem())->setCongressmanId(101)
+            ])
+            ->once()
+            ->getMock();
+
+        $this->getMockService(Service\Congressman::class)
+            ->shouldReceive('get')
+            ->with(101)
+            ->andReturn(new Model\Congressman())
+            ->once()
+            ->getMock();
+
+        $this->getMockService(Service\Party::class)
+            ->shouldReceive('getByCongressman')
+            ->andReturn(new Model\Party())
+            ->once()
+            ->getMock();
+
+        $this->getMockService(Service\Constituency::class)
+            ->shouldReceive('getByCongressman')
+            ->andReturn(new Model\ConstituencyDate())
+            ->once()
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/1/thingmal/a/2/atkvaedagreidslur/3/atkvaedi');
+        $this->assertControllerName(\Althingi\Controller\VoteItemController::class);
+        $this->assertActionName('getList');
+        $this->assertResponseStatusCode(206);
+    }
+
 
     /**
      * @covers ::post

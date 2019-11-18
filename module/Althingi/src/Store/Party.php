@@ -12,6 +12,10 @@ class Party implements StoreAwareInterface
     /** @var \MongoDB\Database */
     private $database;
 
+    /**
+     * @param int $assemblyId
+     * @return \Althingi\Model\PartyAndTime[]
+     */
     public function fetchTimeByAssembly(int $assemblyId)
     {
         $documents = $this->getStore()->speech->aggregate([

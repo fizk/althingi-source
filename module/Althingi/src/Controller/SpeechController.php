@@ -186,12 +186,15 @@ class SpeechController extends AbstractRestfulController implements
                         $this->plenaryService->save($plenary);
                         $affectedRows = $this->speechService->save($speech);
 
-                        return (new EmptyModel())->setStatus($affectedRows === 1 ? 201 : 205);
-                    } catch (Exception $exception) {
-                        throw $exception;
+                        return (new EmptyModel())
+                            ->setStatus($affectedRows === 1 ? 201 : 205);
+                    } catch (\Throwable $exception) {
+                        return (new ErrorModel($exception))
+                            ->setStatus(500);
                     }
                 } else {
-                    throw $e;
+                    return (new ErrorModel($e))
+                        ->setStatus(500);
                 }
             }
         }

@@ -2,7 +2,9 @@
 
 namespace AlthingiTest\Controller;
 
+use Althingi\Controller\CategoryController;
 use Althingi\Service\Category;
+use Althingi\Model;
 use AlthingiTest\ServiceHelper;
 use Mockery;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
@@ -37,6 +39,60 @@ class CategoryControllerTest extends AbstractHttpControllerTestCase
     }
 
     /**
+     * @covers ::get
+     */
+    public function testGet()
+    {
+        $this->getMockService(Category::class)
+            ->shouldReceive('get')
+            ->with(2)
+            ->andReturn(new Model\Category())
+            ->once()
+            ->getMock();
+
+        $this->dispatch('/thingmal/efnisflokkar/1/undirflokkar/2');
+        $this->assertControllerName(CategoryController::class);
+        $this->assertActionName('get');
+        $this->assertResponseStatusCode(200);
+    }
+
+    /**
+     * @covers ::get
+     */
+    public function testGetNotFound()
+    {
+        $this->getMockService(Category::class)
+            ->shouldReceive('get')
+            ->with(2)
+            ->andReturn(null)
+            ->once()
+            ->getMock();
+
+        $this->dispatch('/thingmal/efnisflokkar/1/undirflokkar/2');
+        $this->assertControllerName(CategoryController::class);
+        $this->assertActionName('get');
+        $this->assertResponseStatusCode(404);
+    }
+
+    /**
+     * @covers ::getList
+     */
+    public function testGetList()
+    {
+        $this->getMockService(Category::class)
+            ->shouldReceive('fetch')
+            ->with(1)
+            ->andReturn([new Model\Category()])
+            ->once()
+            ->getMock();
+
+        $this->dispatch('/thingmal/efnisflokkar/1/undirflokkar');
+        $this->assertControllerName(CategoryController::class);
+        $this->assertActionName('getList');
+        $this->assertResponseStatusCode(206);
+    }
+
+    /**
      * @covers ::put
      */
     public function testPut()
@@ -51,7 +107,7 @@ class CategoryControllerTest extends AbstractHttpControllerTestCase
             'title' => 'title',
         ]);
 
-        $this->assertControllerClass('CategoryController');
+        $this->assertControllerName(CategoryController::class);
         $this->assertActionName('put');
         $this->assertResponseStatusCode(201);
     }
@@ -76,7 +132,7 @@ class CategoryControllerTest extends AbstractHttpControllerTestCase
             'title' => 'title',
         ]);
 
-        $this->assertControllerClass('CategoryController');
+        $this->assertControllerName(CategoryController::class);
         $this->assertActionName('patch');
         $this->assertResponseStatusCode(205);
     }
@@ -100,7 +156,7 @@ class CategoryControllerTest extends AbstractHttpControllerTestCase
             'title' => 'title',
         ]);
 
-        $this->assertControllerClass('CategoryController');
+        $this->assertControllerName(CategoryController::class);
         $this->assertActionName('patch');
         $this->assertResponseStatusCode(404);
     }
@@ -122,7 +178,7 @@ class CategoryControllerTest extends AbstractHttpControllerTestCase
 
         $this->dispatch('/thingmal/efnisflokkar/1/undirflokkar/2', 'PATCH');
 
-        $this->assertControllerClass('CategoryController');
+        $this->assertControllerName(CategoryController::class);
         $this->assertActionName('patch');
         $this->assertResponseStatusCode(400);
     }
@@ -139,8 +195,26 @@ class CategoryControllerTest extends AbstractHttpControllerTestCase
 
         $this->dispatch('/thingmal/efnisflokkar/1/undirflokkar/2', 'PUT');
 
-        $this->assertControllerClass('CategoryController');
+        $this->assertControllerName(CategoryController::class);
         $this->assertActionName('put');
         $this->assertResponseStatusCode(400);
+    }
+
+    /**
+     * @covers ::assemblySummaryAction
+     */
+    public function testAssemblySummaryAction()
+    {
+        $this->getMockService(Category::class)
+            ->shouldReceive('fetchByAssembly')
+            ->with(123)
+            ->andReturn([new Model\CategoryAndCount()])
+            ->once()
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/123/efnisflokkar');
+        $this->assertControllerName(CategoryController::class);
+        $this->assertActionName('assembly-summary');
+        $this->assertResponseStatusCode(206);
     }
 }
