@@ -17,19 +17,18 @@ class SearchAssemblyController extends AbstractActionController implements
      * @return CollectionModel
      * @output \Althingi\Model\Issue[]
      * @query leit
+     * @206 Success
      */
     public function assemblyAction()
     {
         $assemblyId = $this->params('id');
         $query = $this->params()->fromQuery('leit');
         $committees = $this->assemblySearchService->fetchAll($query, $assemblyId);
-        $committeesCount = count($committees);
 
         return (new CollectionModel($committees))
             ->setStatus(206)
-            ->setRange(0, $committeesCount, $committeesCount);
+            ->setRange(0, count($committees), count($committees));
     }
-
 
     /**
      * @param \Althingi\Service\SearchAssembly $assembly

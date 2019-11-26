@@ -20,9 +20,9 @@ class Party implements ModelInterface
     private $color;
 
     /**
-     * @return int
+     * @return int | null
      */
-    public function getPartyId(): int
+    public function getPartyId(): ?int
     {
         return $this->party_id;
     }
@@ -31,7 +31,7 @@ class Party implements ModelInterface
      * @param int $party_id
      * @return Party
      */
-    public function setPartyId(int $party_id): Party
+    public function setPartyId(?int $party_id): Party
     {
         $this->party_id = $party_id;
         return $this;

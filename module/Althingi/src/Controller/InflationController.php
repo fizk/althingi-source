@@ -34,13 +34,15 @@ class InflationController extends AbstractRestfulController implements
      * @param mixed $id
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\Inflation
+     * @200 Success
+     * @404 Resource not found
      */
     public function get($id)
     {
         $inflation = $this->inflationService->get($id);
         return $inflation
-            ? new ItemModel($inflation)
-            : $this->notFoundAction();
+            ? (new ItemModel($inflation))->setStatus(200)
+            : (new ErrorModel('Resource Not Found'))->setStatus(404);
     }
 
     /**
@@ -48,6 +50,8 @@ class InflationController extends AbstractRestfulController implements
      * @output \Althingi\Model\Inflation[]
      * @query fra
      * @query til
+     * @throws \Exception
+     * @206 Success
      */
     public function getList()
     {
@@ -86,6 +90,7 @@ class InflationController extends AbstractRestfulController implements
     /**
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\Inflation[]
+     * @206
      */
     public function fetchAssemblyAction()
     {
@@ -115,6 +120,9 @@ class InflationController extends AbstractRestfulController implements
      * @param  array $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\Committee
+     * @201 Created
+     * @205 Updated
+     * @400 Invalid input
      */
     public function put($id, $data)
     {
@@ -138,6 +146,9 @@ class InflationController extends AbstractRestfulController implements
      * @param  array $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\Committee
+     * @205 Updated
+     * @400 Invalid input
+     * @404 Resource not found
      */
     public function patch($id, $data)
     {
@@ -156,7 +167,8 @@ class InflationController extends AbstractRestfulController implements
                 ->setStatus(400);
         }
 
-        return $this->notFoundAction();
+        return (new ErrorModel('Resource Not Found'))
+            ->setStatus(404);
     }
 
     /**

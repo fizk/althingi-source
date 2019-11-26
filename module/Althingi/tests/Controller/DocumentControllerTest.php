@@ -2,16 +2,10 @@
 
 namespace AlthingiTest\Controller;
 
-use Althingi\Service\Congressman;
-use Althingi\Service\Constituency;
-use Althingi\Service\Document;
-use Althingi\Service\Party;
-use Althingi\Service\Vote;
-use Althingi\Service\VoteItem;
-use Althingi\Model\Document as DocumentModel;
-use Althingi\Model\Vote as VoteModel;
-use Althingi\Model\Proponent as ProponentModel;
-use Althingi\Model\Party as PartyModel;
+use Althingi\Controller\DocumentController;
+use Althingi\Service;
+use Althingi\Store;
+use Althingi\Model;
 use AlthingiTest\ServiceHelper;
 use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
@@ -19,12 +13,14 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * Class DocumentControllerTest
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\DocumentController
+ *
  * @covers \Althingi\Controller\DocumentController::setDocumentService
  * @covers \Althingi\Controller\DocumentController::setCongressmanService
  * @covers \Althingi\Controller\DocumentController::setPartyService
  * @covers \Althingi\Controller\DocumentController::setVoteService
  * @covers \Althingi\Controller\DocumentController::setVoteItemService
  * @covers \Althingi\Controller\DocumentController::setConstituencyService
+ * @covers \Althingi\Controller\DocumentController::setDocumentStore
  */
 class DocumentControllerTest extends AbstractHttpControllerTestCase
 {
@@ -39,12 +35,13 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
         parent::setUp();
 
         $this->buildServices([
-            Document::class,
-            Vote::class,
-            VoteItem::class,
-            Congressman::class,
-            Party::class,
-            Constituency::class
+            Service\Document::class,
+            Service\Vote::class,
+            Service\VoteItem::class,
+            Service\Congressman::class,
+            Service\Party::class,
+            Service\Constituency::class,
+            Store\Document::class
         ]);
     }
 
@@ -59,16 +56,16 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
      */
     public function testGet()
     {
-        $this->getMockService(Document::class)
+        $this->getMockService(Service\Document::class)
             ->shouldReceive('get')
             ->with(145, 2, 2)
             ->once()
-            ->andReturn((new DocumentModel())->setDate(new \DateTime()))
+            ->andReturn((new Model\Document())->setDate(new \DateTime()))
             ->getMock();
 
         $this->dispatch('/loggjafarthing/145/thingmal/a/2/thingskjal/2', 'GET');
 
-        $this->assertControllerName(\Althingi\Controller\DocumentController::class);
+        $this->assertControllerName(DocumentController::class);
         $this->assertActionName('get');
         $this->assertResponseStatusCode(200);
     }
@@ -78,7 +75,7 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
      */
     public function testGetNotFound()
     {
-        $this->getMockService(Document::class)
+        $this->getMockService(Service\Document::class)
             ->shouldReceive('get')
             ->with(145, 2, 2)
             ->once()
@@ -87,7 +84,7 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
 
         $this->dispatch('/loggjafarthing/145/thingmal/a/2/thingskjal/2', 'GET');
 
-        $this->assertControllerName(\Althingi\Controller\DocumentController::class);
+        $this->assertControllerName(DocumentController::class);
         $this->assertActionName('get');
         $this->assertResponseStatusCode(404);
     }
@@ -95,59 +92,33 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
     /**
      * @covers ::getList
      */
-//    public function testGetList()
-//    {
-//        $this->getMockService(Document::class)
-//            ->shouldReceive('fetchByIssue')
-//            ->with(145, 2)
-//            ->once()
-//            ->andReturn([
-//                (new DocumentModel())->setDate(new \DateTime())->setDocumentId(1),
-//                (new DocumentModel())->setDate(new \DateTime())->setDocumentId(2),
-//            ])
-//            ->getMock();
-//
-//        $this->getMockService(Vote::class)
-//            ->shouldReceive('fetchByDocument')
-//            ->twice()
-//            ->andReturn([
-//                (new VoteModel())
-//            ])
-//            ->getMock();
-//
-//        $this->getMockService(Congressman::class)
-//            ->shouldReceive('fetchProponents')
-//            ->twice()
-//            ->andReturn([
-//                (new ProponentModel())->setCongressmanId(1)
-//            ])
-//            ->getMock();
-//
-//        $this->getMockService(Party::class)
-//            ->shouldReceive('getByCongressman')
-//            ->andReturn(new PartyModel())
-//            ->getMock();
-//
-//        $this->getMockService(Constituency::class)
-//            ->shouldReceive('getByCongressman')
-//            ->andReturn(new \Althingi\Model\ConstituencyDate())
-//            ->getMock();
-//
-//        $this->dispatch('/loggjafarthing/145/thingmal/a/2/thingskjal', 'GET');
-//
-//        $this->assertControllerName(\Althingi\Controller\DocumentController::class);
-//        $this->assertActionName('getList');
-//        $this->assertResponseStatusCode(206);
-//        $this->assertResponseHeaderContains('Content-Range', 'items 0-2/2');
-//        $this->assertResponseHeaderContains('Range-Unit', 'items');
-//    }
+    public function testGetList()
+    {
+        $this->getMockService(Store\Document::class)
+            ->shouldReceive('fetchByIssue')
+            ->with(145, 2)
+            ->andReturn([
+                (new Model\DocumentProperties())->setDocument(new Model\Document()),
+                (new Model\DocumentProperties())->setDocument(new Model\Document()),
+            ])
+            ->once()
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/145/thingmal/a/2/thingskjal', 'GET');
+
+        $this->assertControllerName(DocumentController::class);
+        $this->assertActionName('getList');
+        $this->assertResponseStatusCode(206);
+        $this->assertResponseHeaderContains('Content-Range', 'items 0-2/2');
+        $this->assertResponseHeaderContains('Range-Unit', 'items');
+    }
 
     /**
      * @covers ::put
      */
     public function testPut()
     {
-        $this->getMockService(Document::class)
+        $this->getMockService(Service\Document::class)
             ->shouldReceive('save')
             ->once()
             ->andReturn(1)
@@ -158,7 +129,7 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
             'type' => 'my-type'
         ]);
 
-        $this->assertControllerName(\Althingi\Controller\DocumentController::class);
+        $this->assertControllerName(DocumentController::class);
         $this->assertActionName('put');
         $this->assertResponseStatusCode(201);
     }
@@ -168,7 +139,7 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
      */
     public function testPutInvalidArgument()
     {
-        $this->getMockService(Document::class)
+        $this->getMockService(Service\Document::class)
             ->shouldReceive('create')
             ->never()
             ->getMock();
@@ -178,7 +149,7 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
             'type' => 'my-type'
         ]);
 
-        $this->assertControllerName(\Althingi\Controller\DocumentController::class);
+        $this->assertControllerName(DocumentController::class);
         $this->assertActionName('put');
         $this->assertResponseStatusCode(400);
     }
@@ -188,11 +159,11 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
      */
     public function testPatch()
     {
-        $this->getMockService(Document::class)
+        $this->getMockService(Service\Document::class)
             ->shouldReceive('get')
             ->once()
             ->andReturn(
-                (new DocumentModel())
+                (new Model\Document())
                     ->setAssemblyId(145)
                     ->setIssueId(2)
                     ->setDocumentId(2)
@@ -212,7 +183,7 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
             'type' => 'my-type'
         ]);
 
-        $this->assertControllerName(\Althingi\Controller\DocumentController::class);
+        $this->assertControllerName(DocumentController::class);
         $this->assertActionName('patch');
         $this->assertResponseStatusCode(205);
     }
@@ -222,11 +193,11 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
      */
     public function testPatchInvalidArguments()
     {
-        $this->getMockService(Document::class)
+        $this->getMockService(Service\Document::class)
             ->shouldReceive('get')
             ->once()
             ->andReturn(
-                (new DocumentModel())
+                (new Model\Document())
                     ->setAssemblyId(145)
                     ->setIssueId(2)
                     ->setDocumentId(2)
@@ -244,7 +215,7 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
             'type' => 'my-type'
         ]);
 
-        $this->assertControllerName(\Althingi\Controller\DocumentController::class);
+        $this->assertControllerName(DocumentController::class);
         $this->assertActionName('patch');
         $this->assertResponseStatusCode(400);
     }
@@ -254,7 +225,7 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
      */
     public function testPatchResourceNotFound()
     {
-        $this->getMockService(Document::class)
+        $this->getMockService(Service\Document::class)
             ->shouldReceive('get')
             ->once()
             ->andReturn(null)
@@ -269,7 +240,7 @@ class DocumentControllerTest extends AbstractHttpControllerTestCase
             'type' => 'my-type'
         ]);
 
-        $this->assertControllerName(\Althingi\Controller\DocumentController::class);
+        $this->assertControllerName(DocumentController::class);
         $this->assertActionName('patch');
         $this->assertResponseStatusCode(404);
     }

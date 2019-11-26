@@ -253,20 +253,7 @@ return [
             }
 
             $formattedHandlers = array_map(function (\Monolog\Handler\HandlerInterface $handler) {
-                switch (strtolower(getenv('LOG_FORMAT'))) {
-                    case 'logstash':
-                        $handler->setFormatter(new \Monolog\Formatter\LogstashFormatter('althingi-api'));
-                        break;
-                    case 'json':
-                        $handler->setFormatter(new \Monolog\Formatter\JsonFormatter());
-                        break;
-                    case 'line':
-                        $handler->setFormatter(new \Monolog\Formatter\LineFormatter());
-                        break;
-                    case 'color':
-                        $handler->setFormatter(new \Bramus\Monolog\Formatter\ColoredLineFormatter());
-                        break;
-                }
+                $handler->setFormatter(new \Monolog\Formatter\LineFormatter());
                 return $handler;
             }, $handlers);
 

@@ -25,25 +25,33 @@ class IssueCategoryController extends AbstractRestfulController implements
     /**
      * @return CollectionModel
      * @output \Althingi\Model\Category[]
+     * @206 Success
      */
     public function fetchCategoriesAction()
     {
         $assemblyId = $this->params('assembly_id', null);
         $issueId = $this->params('issue_id', null);
 
-        return (new CollectionModel($this->categoryService->fetchByAssemblyAndIssue($assemblyId, $issueId)));
+        $categories = $this->categoryService->fetchByAssemblyAndIssue($assemblyId, $issueId);
+        return (new CollectionModel($categories))
+            ->setStatus(206)
+            ->setRange(0, count($categories), count($categories));
     }
 
     /**
      * @return CollectionModel
      * @output \Althingi\Model\SuperCategory[]
+     * @206 Success
      */
     public function fetchSuperCategoriesAction()
     {
         $assemblyId = $this->params('assembly_id', null);
         $issueId = $this->params('issue_id', null);
 
-        return (new CollectionModel($this->superCategoryService->fetchByIssue($assemblyId, $issueId)));
+        $superCategories = $this->superCategoryService->fetchByIssue($assemblyId, $issueId);
+        return (new CollectionModel($superCategories))
+            ->setStatus(206)
+            ->setRange(0, count($superCategories), count($superCategories));
     }
 
     /**

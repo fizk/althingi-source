@@ -38,6 +38,8 @@ class CabinetController extends AbstractRestfulController implements
      * @param mixed $id
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\CabinetAndAssemblies
+     * @200 Success
+     * @404 Not found
      */
     public function get($id)
     {
@@ -49,8 +51,8 @@ class CabinetController extends AbstractRestfulController implements
             ->setAssemblies($assemblies);
 
         return $cabinet
-            ? new ItemModel($cabinetAndAssembliesModel)
-            : $this->notFoundAction();
+            ? (new ItemModel($cabinetAndAssembliesModel))->setStatus(200)
+            : (new ErrorModel('Resource Not Found'))->setStatus(404);
     }
 
     /**
@@ -59,6 +61,7 @@ class CabinetController extends AbstractRestfulController implements
      * @query fra
      * @query til
      * @throws \Exception
+     * @206 Success
      */
     public function getList()
     {
@@ -83,6 +86,9 @@ class CabinetController extends AbstractRestfulController implements
      * @param  array $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\Committee
+     * @201 Create
+     * @205 Update
+     * @400 Invalid input
      */
     public function put($id, $data)
     {
@@ -106,6 +112,9 @@ class CabinetController extends AbstractRestfulController implements
      * @param  array $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\Committee
+     * @205 Update
+     * @400 Invalid input
+     * @404 Resource not found
      */
     public function patch($id, $data)
     {
@@ -124,12 +133,14 @@ class CabinetController extends AbstractRestfulController implements
                 ->setStatus(400);
         }
 
-        return $this->notFoundAction();
+        return (new ErrorModel('Resource Not Found'))
+            ->setStatus(404);
     }
 
     /**
      * @return CollectionModel
      * @output \Althingi\Model\CabinetProperties[]
+     * @206 Success
      */
     public function assemblyAction()
     {
@@ -141,7 +152,9 @@ class CabinetController extends AbstractRestfulController implements
             $assembly->getTo()
         );
 
-        return new CollectionModel($cabinets);
+        return (new CollectionModel($cabinets))
+            ->setStatus(206)
+            ->setRange(0, count($cabinets), count($cabinets));
     }
 
     /**

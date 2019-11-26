@@ -12,7 +12,11 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * Class MinisterSittingController
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\MinisterSittingController
+ *
  * @covers \Althingi\Controller\MinisterSittingController::setMinisterSittingService
+ * @covers \Althingi\Controller\MinisterSittingController::setCongressmanService
+ * @covers \Althingi\Controller\MinisterSittingController::setMinistryService
+ * @covers \Althingi\Controller\MinisterSittingController::setPartyService
  */
 class MinisterSittingControllerTest extends AbstractHttpControllerTestCase
 {
@@ -28,6 +32,9 @@ class MinisterSittingControllerTest extends AbstractHttpControllerTestCase
 
         $this->buildServices([
             Service\MinisterSitting::class,
+            Service\Ministry::class,
+            Service\Party::class,
+            Service\Congressman::class,
         ]);
     }
 
@@ -85,6 +92,7 @@ class MinisterSittingControllerTest extends AbstractHttpControllerTestCase
             ->shouldReceive('getIdentifier')
             ->andReturn(54321)
             ->once()
+            ->getMock()
         ;
 
         $this->dispatch('/thingmenn/3/radherraseta', 'POST', [
@@ -93,6 +101,39 @@ class MinisterSittingControllerTest extends AbstractHttpControllerTestCase
             'party_id' => '1',
             'from' => '2001-01-01',
         ]);
+
+        $this->assertResponseStatusCode(409);
+        $this->assertResponseHeaderContains('Location', '/thingmenn/3/radherraseta/54321');
+        $this->assertControllerName(Controller\MinisterSittingController::class);
+        $this->assertActionName('post');
+    }
+
+    /**
+     * @covers ::post
+     */
+    public function testCreateEntryAlreadyExistsVei()
+    {
+        $this->getMockService(Service\MinisterSitting::class)
+            ->shouldReceive('create')
+            ->andThrow(new \Exception(null, 23000))
+            ->once()
+            ->getMock()
+
+            ->shouldReceive('getIdentifier')
+            ->andReturn('54321')
+            ->once()
+            ->getMock();
+        ;
+
+        $this->dispatch('/thingmenn/3/radherraseta', 'POST', [
+            'assembly_id' => '1',
+            'ministry_id' => '1',
+            'party_id' => '1',
+            'from' => '2001-01-01',
+        ]);
+
+        /** @var  $response \Zend\Http\PhpEnvironment\Response */
+        $locationValue = $this->getResponse()->getHeaders()->get('Location')->getFieldValue();
 
         $this->assertResponseStatusCode(409);
         $this->assertResponseHeaderContains('Location', '/thingmenn/3/radherraseta/54321');
@@ -121,6 +162,29 @@ class MinisterSittingControllerTest extends AbstractHttpControllerTestCase
         ]);
 
         $this->assertResponseStatusCode(400);
+        $this->assertControllerName(Controller\MinisterSittingController::class);
+        $this->assertActionName('post');
+    }
+
+    /**
+     * @covers ::post
+     */
+    public function testCreateInvalidSteps()
+    {
+        $this->getMockService(Service\MinisterSitting::class)
+            ->shouldReceive('create')
+            ->andReturn(101010)
+            ->getMock();
+
+        $this->dispatch('/thingmenn/76/radherraseta', 'POST', [
+            "assembly_id" => 120,
+            "ministry_id" => 111,
+            "party_id" => 35,
+            "from" => "1995-10-02",
+            "to" => "1996-09-30"
+        ]);
+
+        $this->assertResponseStatusCode(201);
         $this->assertControllerName(Controller\MinisterSittingController::class);
         $this->assertActionName('post');
     }
@@ -262,5 +326,88 @@ class MinisterSittingControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseStatusCode(404);
         $this->assertControllerName(Controller\MinisterSittingController::class);
         $this->assertActionName('get');
+    }
+
+    /**
+     * @covers ::assemblySessionsAction
+     */
+    public function testAssemblySessionsAction()
+    {
+        $this->getMockService(Service\MinisterSitting::class)
+            ->shouldReceive('fetchByCongressmanAssembly')
+            ->with(123, 456)
+            ->andReturn([
+                (new Model\MinisterSitting())
+                    ->setMinistryId(987)
+                    ->setCongressmanId(456)
+                    ->setPartyId(101)
+            ])
+            ->once()
+            ->getMock();
+
+        $this->getMockService(Service\Party::class)
+            ->shouldReceive('get')
+            ->with(101)
+            ->andReturn((new Model\Party()))
+            ->once()
+            ->getMock();
+
+        $this->getMockService(Service\Congressman::class)
+            ->shouldReceive('get')
+            ->with(456)
+            ->andReturn((new Model\Congressman()))
+            ->once()
+            ->getMock();
+
+        $this->getMockService(Service\Ministry::class)
+            ->shouldReceive('get')
+            ->with(987)
+            ->andReturn((new Model\Ministry()))
+            ->once()
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/123/thingmenn/456/radherraseta', 'GET');
+
+        $this->assertControllerName(Controller\MinisterSittingController::class);
+        $this->assertActionName('assembly-sessions');
+        $this->assertResponseStatusCode(206);
+    }
+
+    /**
+     * @covers ::assemblySessionsAction
+     */
+    public function testAssemblySessionsActionWithoutParty()
+    {
+        $this->getMockService(Service\MinisterSitting::class)
+            ->shouldReceive('fetchByCongressmanAssembly')
+            ->with(123, 456)
+            ->andReturn([(new Model\MinisterSitting())->setMinistryId(987)->setCongressmanId(456)])
+            ->once()
+            ->getMock();
+
+        $this->getMockService(Service\Party::class)
+            ->shouldReceive('get')
+            ->never()
+            ->getMock();
+
+        $this->getMockService(Service\Congressman::class)
+            ->shouldReceive('get')
+            ->with(456)
+            ->andReturn((new Model\Congressman()))
+            ->once()
+            ->getMock();
+
+        $this->getMockService(Service\Ministry::class)
+            ->shouldReceive('get')
+            ->with(987)
+            ->andReturn((new Model\Ministry()))
+            ->once()
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/123/thingmenn/456/radherraseta', 'GET');
+
+        $this->assertControllerName(Controller\MinisterSittingController::class);
+        $this->assertActionName('assembly-sessions');
+        $this->assertResponseStatusCode(206);
     }
 }

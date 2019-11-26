@@ -14,6 +14,7 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * Class CabinetControllerTest
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\CabinetController
+ *
  * @covers \Althingi\Controller\CabinetController::setCongressmanService
  * @covers \Althingi\Controller\CabinetController::setPartyService
  * @covers \Althingi\Controller\CabinetController::setCabinetService
@@ -70,7 +71,7 @@ class CabinetControllerTest extends AbstractHttpControllerTestCase
 
         $this->assertControllerClass('CabinetController');
         $this->assertActionName('assembly');
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(206);
     }
 
     /**

@@ -27,6 +27,7 @@ class PresidentAssemblyController extends AbstractRestfulController implements
      *
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\PresidentPartyProperties[]
+     * @206 Success
      */
     public function getList()
     {

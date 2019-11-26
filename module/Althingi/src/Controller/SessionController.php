@@ -29,14 +29,15 @@ class SessionController extends AbstractRestfulController implements
      * @param int $id
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\Session
+     * @200 Success
+     * @404 Success
      */
     public function get($id)
     {
-        if (($session = $this->sessionService->get($id)) != null) {
-            return new ItemModel($session);
-        }
-
-        return $this->notFoundAction();
+        $session = $this->sessionService->get($id);
+        return $session
+            ? (new ItemModel($session))->setStatus(200)
+            : (new ErrorModel('Resource Not Found'))->setStatus(404);
     }
 
     /**
@@ -44,17 +45,17 @@ class SessionController extends AbstractRestfulController implements
      *
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\Session[]
+     * @206 Success
      */
     public function getList()
     {
         $congressmanId = $this->params('congressman_id');
 
         $sessions = $this->sessionService->fetchByCongressman($congressmanId);
-        $sessionsCount = count($sessions);
 
         return (new CollectionModel($sessions))
             ->setStatus(206)
-            ->setRange(0, $sessionsCount, $sessionsCount);
+            ->setRange(0, count($sessions), count($sessions));
     }
 
     /**
@@ -79,6 +80,9 @@ class SessionController extends AbstractRestfulController implements
      * @param mixed $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\Session
+     * @201 Created
+     * @409 Conflict
+     * @400 Invalid input
      */
     public function post($data)
     {
@@ -126,6 +130,9 @@ class SessionController extends AbstractRestfulController implements
      * @param $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\Session
+     * @205 Updated
+     * @400 Invalid input
+     * @404 Resource not found
      */
     public function patch($id, $data)
     {
@@ -144,7 +151,8 @@ class SessionController extends AbstractRestfulController implements
                 ->setStatus(400);
         }
 
-        return $this->notFoundAction();
+        return (new ErrorModel('Resource Not Found'))
+            ->setStatus(404);
     }
 
     /**

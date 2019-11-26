@@ -12,6 +12,10 @@ class Vote implements StoreAwareInterface
     /** @var \MongoDB\Database */
     private $database;
 
+    /**
+     * @param int $assemblyId
+     * @return \Althingi\Model\DateAndCount[]
+     */
     public function fetchFrequencyByAssembly(int $assemblyId)
     {
         $documents = $this->getStore()->vote->aggregate([

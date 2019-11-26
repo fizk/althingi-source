@@ -104,7 +104,7 @@ class Issue implements StoreAwareInterface
      * @param array $types
      * @param int|null $offset
      * @param int|null $size
-     * @return array
+     * @return \Althingi\Model\IssueProperties[]
      */
     public function fetchByParty(
         int $assemblyId,
@@ -296,7 +296,7 @@ class Issue implements StoreAwareInterface
      * count
      *
      * @param int $assemblyId
-     * @return \Althingi\Model\AssemblyStatus
+     * @return \Althingi\Model\AssemblyStatus[]
      */
     public function fetchCountByCategory(int $assemblyId)
     {

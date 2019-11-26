@@ -20,6 +20,7 @@ class IssueLinkController extends AbstractRestfulController implements
      * @param mixed $id
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\Committee
+     * @206 Success
      */
     public function get($id)
     {
@@ -33,6 +34,15 @@ class IssueLinkController extends AbstractRestfulController implements
             ->setRange(0, count($issues), count($issues));
     }
 
+    /**
+     * @param mixed $id
+     * @param mixed $data
+     * @input \Althingi\Form\IssueLink
+     * @return EmptyModel|ErrorModel|\Rend\View\Model\ModelInterface
+     * @201 Created
+     * @205 Updated
+     * @400 Invalid input
+     */
     public function put($id, $data)
     {
         $assemblyId = $this->params('id', 0);
@@ -65,21 +75,24 @@ class IssueLinkController extends AbstractRestfulController implements
      * @param $id
      * @param $data
      * @return EmptyModel|\Rend\View\Model\ModelInterface
+     * @202 No update
      */
     public function patch($id, $data)
     {
         return (new EmptyModel())
-            ->setStatus(205);
+            ->setStatus(202);
     }
-
 
     /**
      * @return CollectionModel
      * @output \Althingi\Model\Committee[]
+     * @206 Success
      */
     public function getList()
     {
-        return new CollectionModel(['collection']);
+        return (new CollectionModel([]))
+            ->setStatus(206)
+            ->setRange(0, 0, 0);
     }
 
     /**

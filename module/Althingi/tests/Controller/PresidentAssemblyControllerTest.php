@@ -12,6 +12,7 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * Class PresidentAssemblyControllerTest
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\PresidentAssemblyController
+ *
  * @covers \Althingi\Controller\PresidentAssemblyController::setPartyService
  * @covers \Althingi\Controller\PresidentAssemblyController::setCongressmanService
  */

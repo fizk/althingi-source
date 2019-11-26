@@ -53,13 +53,62 @@ class Ministry implements DatabaseAwareInterface, EventsAwareInterface
      */
     public function fetchAll(): array
     {
-
         $statement = $this->getDriver()->prepare("select * from `Ministry`");
         $statement->execute();
 
         return array_map(function ($assembly) {
             return (new Hydrator\Ministry)->hydrate($assembly, new Model\Ministry());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
+    }
+
+    /**
+     * @param int $assemblyId
+     * @param int $congressmanId
+     * @return \Althingi\Model\Ministry[]
+     */
+    public function fetchByCongressmanAssembly(int $assemblyId, int $congressmanId)
+    {
+        $statement = $this->getDriver()->prepare(
+            "select DISTINCT M.* from MinisterSitting MS
+                join Ministry M on MS.ministry_id = M.ministry_id
+            where assembly_id = :assembly_id and congressman_id = :congressman_id"
+        );
+        $statement->execute([
+            'assembly_id' => $assemblyId,
+            'congressman_id' => $congressmanId,
+        ]);
+
+        return array_map(function ($assembly) {
+            return (new Hydrator\Ministry)->hydrate($assembly, new Model\Ministry());
+        }, $statement->fetchAll(PDO::FETCH_ASSOC));
+    }
+
+    /**
+     * @param int $assemblyId
+     * @param int $congressmanId
+     * @param int $ministryId
+     * @return \Althingi\Model\Ministry
+     */
+    public function getByCongressmanAssembly(int $assemblyId, int $congressmanId, int $ministryId)
+    {
+        $statement = $this->getDriver()->prepare(
+            "select DISTINCT M.* from MinisterSitting MS
+                join Ministry M on MS.ministry_id = M.ministry_id
+                where MS.assembly_id = :assembly_id 
+                    and MS.congressman_id = :congressman_id 
+                    and MS.ministry_id = :ministry_id"
+        );
+        $statement->execute([
+            'assembly_id' => $assemblyId,
+            'congressman_id' => $congressmanId,
+            'ministry_id' => $ministryId,
+        ]);
+
+        $object = $statement->fetch(PDO::FETCH_ASSOC);
+
+        return $object
+            ? (new Hydrator\Ministry)->hydrate($object, new Model\Ministry())
+            : null;
     }
 
     /**

@@ -15,6 +15,7 @@ use DateTime;
  * Class InflationControllerTest
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\InflationController
+ *
  * @covers \Althingi\Controller\InflationController::setInflationService
  * @covers \Althingi\Controller\InflationController::setCabinetService
  * @covers \Althingi\Controller\InflationController::setAssemblyService

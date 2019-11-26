@@ -13,6 +13,7 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * Class IssueCategoryControllerTest
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\IssueCategoryController
+ *
  * @covers \Althingi\Controller\IssueCategoryController::setIssueCategoryService
  * @covers \Althingi\Controller\IssueCategoryController::setCategoryService
  */
