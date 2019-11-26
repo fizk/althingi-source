@@ -17,15 +17,13 @@ class Module
     {
         register_shutdown_function(function () {
             if ($error = error_get_last()) {
-                $message = explode(PHP_EOL, $error['message']);
-                $errorArray = json_encode($message);
-                $firstMessage = addslashes(array_shift($message));
+                $errorArray = json_encode($error);
                 file_put_contents(
                     getenv('LOG_PATH') ? : 'php://stdout',
-                    "[".date('Y-m-d H:i:s')."] althingi-api.ERROR: ".
-                    "ERROR [500, \"ERROR\", \"{$firstMessage}\", {$errorArray}]" .
-                    " {\"memory_usage\":0,\"memory_peak_usage\":0}". PHP_EOL,
-                    FILE_APPEND
+                    "[".date('Y-m-d H:i:s')."] althingi-api.ERROR: REQUEST ".
+                    "[0,\"ERROR\",\"/error\",\"[{$errorArray}]\",{}] ".
+                    "{\"memory_usage\":0,\"memory_peak_usage\":0}"
+                    .PHP_EOL
                 );
                 exit(1);
             }
