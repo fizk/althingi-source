@@ -18,11 +18,11 @@ class OpenAPI
                 "termsOfService" => "http://swagger.io/terms/",
             ],
             'schemes' => ['http'],
-            'basePath' => '/api',
+            'basePath' => '',
             'tags' => [],
             'paths' => [],
-//            'host' => 'localhost:8080',
-            'host' => 'loggjafarthing.einarvalur.co',
+            'host' => 'loggjafarthing.einarvalur.co/api',
+//            'host' => 'localhost/api',
         ];
     }
 
