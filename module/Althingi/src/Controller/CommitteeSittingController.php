@@ -30,14 +30,15 @@ class CommitteeSittingController extends AbstractRestfulController implements
      * @param int $id
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\CommitteeSitting
+     * @200 Success
+     * @404 Resource not found
      */
     public function get($id)
     {
-        if (($committeeSitting = $this->committeeSittingService->get($id)) != null) {
-            return new ItemModel($committeeSitting);
-        }
-
-        return $this->notFoundAction();
+        $committeeSitting = $this->committeeSittingService->get($id);
+        return $committeeSitting
+            ? (new ItemModel($committeeSitting))->setStatus(200)
+            : (new ErrorModel('Resource Not Found'))->setStatus(404);
     }
 
     /**
@@ -45,6 +46,7 @@ class CommitteeSittingController extends AbstractRestfulController implements
      *
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\CommitteeSitting[]
+     * @206 Success
      */
     public function getList()
     {
@@ -80,6 +82,9 @@ class CommitteeSittingController extends AbstractRestfulController implements
      * @param mixed $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\CommitteeSitting
+     * @201 Created
+     * @409 Conflict
+     * @400 Invalid input
      */
     public function post($data)
     {
@@ -131,6 +136,9 @@ class CommitteeSittingController extends AbstractRestfulController implements
      * @param $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\Session
+     * @205 Updated
+     * @400 Invalid input
+     * @404 Resource not found
      */
     public function patch($id, $data)
     {
@@ -149,7 +157,8 @@ class CommitteeSittingController extends AbstractRestfulController implements
                 ->setStatus(400);
         }
 
-        return $this->notFoundAction();
+        return (new ErrorModel('Resource Not Found'))
+            ->setStatus(404);
     }
 
     /**

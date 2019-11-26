@@ -21,7 +21,6 @@ use Rend\View\Model\EmptyModel;
 use Rend\View\Model\ItemModel;
 use Rend\View\Model\CollectionModel;
 use Rend\Helper\Http\Range;
-use Althingi\Utils\DateAndCountSequence;
 use Althingi\Injector\ServiceAssemblyAwareInterface;
 use Althingi\Injector\ServiceCabinetAwareInterface;
 use Althingi\Injector\ServiceCategoryAwareInterface;
@@ -110,6 +109,8 @@ class AssemblyController extends AbstractRestfulController implements
      * @param int $id
      * @return \Rend\View\Model\ModelInterface|array
      * @output \Althingi\Model\AssemblyProperties
+     * @404 not found
+     * @200 Success
      * @todo Cabinet and parties are fetch from the DB
      */
     public function get($id)
@@ -143,6 +144,7 @@ class AssemblyController extends AbstractRestfulController implements
      *
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\AssemblyProperties[]
+     * @206 Success
      * @todo Cabinet and parties are fetch from the DB
      */
     public function getList()
@@ -176,6 +178,7 @@ class AssemblyController extends AbstractRestfulController implements
      * List options for Assembly collection.
      *
      * @return \Rend\View\Model\ModelInterface
+     * @200 Success
      */
     public function optionsList()
     {
@@ -188,6 +191,7 @@ class AssemblyController extends AbstractRestfulController implements
      * List options for Assembly entry.
      *
      * @return \Rend\View\Model\ModelInterface
+     * @200 Success
      */
     public function options()
     {
@@ -203,6 +207,9 @@ class AssemblyController extends AbstractRestfulController implements
      * @param  array $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\Assembly
+     * @201 Created
+     * @205 Updated
+     * @400 Invalid input
      */
     public function put($id, $data)
     {
@@ -227,6 +234,9 @@ class AssemblyController extends AbstractRestfulController implements
      * @param array $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\Assembly
+     * @205 Updated
+     * @400 Invalid input
+     * @404 Resource not found
      */
     public function patch($id, $data)
     {
@@ -245,7 +255,8 @@ class AssemblyController extends AbstractRestfulController implements
                 ->setStatus(400);
         }
 
-        return $this->notFoundAction();
+        return (new ErrorModel('Resource Not Found'))
+            ->setStatus(404);
     }
 
     /**
@@ -254,26 +265,30 @@ class AssemblyController extends AbstractRestfulController implements
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\AssemblyStatusProperties
      * @query category
+     * @200 Success
+     * @404 Resource not found
      */
     public function statisticsAction()
     {
-        $assembly = $this->assemblyService->get($this->params('id'));
-        $response = (new Model\AssemblyStatusProperties())
-            ->setVotes($this->voteStore->fetchFrequencyByAssembly($assembly->getAssemblyId()))
-            ->setSpeeches($this->speechStore->fetchFrequencyByAssembly($assembly->getAssemblyId()))
-            ->setAverageAge($this->congressmanStore->getAverageAgeByAssembly(
-                $assembly->getAssemblyId(),
-                $assembly->getFrom()
-            ))
-            ->setPartyTimes($this->partyStore->fetchTimeByAssembly($assembly->getAssemblyId()))
+        if (($assembly = $this->assemblyService->get($this->params('id'))) !== null) {
+            $response = (new Model\AssemblyStatusProperties())
+                ->setVotes($this->voteStore->fetchFrequencyByAssembly($assembly->getAssemblyId()))
+                ->setSpeeches($this->speechStore->fetchFrequencyByAssembly($assembly->getAssemblyId()))
+                ->setAverageAge($this->congressmanStore->getAverageAgeByAssembly(
+                    $assembly->getAssemblyId(),
+                    $assembly->getFrom()
+                ))
+                ->setPartyTimes($this->partyStore->fetchTimeByAssembly($assembly->getAssemblyId()))
 //            ->setElection($this->electionService->getByAssembly($assembly->getAssemblyId()))
-            ->setElection(null)
-            ->setElectionResults([])
-        ;
+                ->setElection(null)
+                ->setElectionResults([])
+            ;
+            return (new ItemModel($response))
+                ->setStatus(200);
+        }
 
-        return (new ItemModel($response))
-            ->setStatus(200)
-            ->setOption('X-Source', 'Store');
+        return (new ErrorModel('Resource not found'))
+            ->setStatus(404);
     }
 
     /**

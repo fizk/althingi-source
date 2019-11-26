@@ -16,7 +16,7 @@ class Party implements HydratorInterface
     public function hydrate(array $data, $object)
     {
         return $object
-            ->setPartyId($data['party_id'])
+            ->setPartyId(isset($data['party_id']) ? $data['party_id'] : null)
             ->setName($data['name'])
             ->setAbbrShort($data['abbr_short'])
             ->setAbbrLong($data['abbr_long'])

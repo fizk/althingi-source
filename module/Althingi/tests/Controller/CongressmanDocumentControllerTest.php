@@ -11,6 +11,7 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * Class CongressmanDocumentControllerTest
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\CongressmanDocumentController
+ *
  * @covers \Althingi\Controller\CongressmanDocumentController::setCongressmanDocumentService
  */
 class CongressmanDocumentControllerTest extends AbstractHttpControllerTestCase

@@ -9,211 +9,258 @@ class RouteInspector
 {
     public function run($conf)
     {
-        $tree = $this->processRoute($conf['router']['routes'], [], '');
+        $tree = $this->extractOptions(
+            $this->flattenRoutes($conf['router']['routes'], [], '')
+        );
+//        $tree = $this->flattenRoutes($conf['router']['routes'], [], '');
         ksort($tree);
         return $tree;
     }
 
-    private function processRoute($routes, $deep, $path)
+    /**
+     * Takes a tree-shaped router and flattens it into single row array.
+     * The URI becomes the key and values are that the the route defines.
+     *
+     * @param array $route
+     * @param array $carry
+     * @param string $path
+     * @return array
+     */
+    public function flattenRoutes(array $route, $carry = [], $path = ''): array
     {
-
-        foreach ($routes as $key => $value) {
-            if (key_exists('action', $value['options']['defaults'])) {
-                $result = $this->processAction(
-                    $value['options']['defaults']['controller'],
-                    $value['options']['defaults']['action'],
-                    $path . $value['options']['route']
-                );
-                $deep = array_merge($deep, $result);
-            } else {
-                $result = $this->processRestController(
-                    $value['options']['defaults']['controller'],
-                    $path . $value['options']['route']
-                );
-                $deep = array_merge($deep, $result);
-            }
+        foreach ($route as $key => $value) {
+            $carry = array_merge($carry, [
+                $path . $value['options']['route'] => [
+                    'options' => $value['options'],
+                    'type' => $value['type'],
+                ]
+            ]);
 
             if (key_exists('child_routes', $value)) {
-                $result = $this->processRoute($value['child_routes'], $deep, $path . $value['options']['route']);
-                $deep = array_merge($deep, $result);
+                $carry = array_merge(
+                    $carry,
+                    $this->flattenRoutes(
+                        $value['child_routes'],
+                        $carry,
+                        $path . $value['options']['route']
+                    )
+                );
             }
         }
-
-        return $deep;
+        return $carry;
     }
 
-    private function processAction($controller, $action, $path)
+    public function extractOptions(array $routes): array
     {
-        $action = str_replace(' ', '', ucwords(str_replace('-', ' ', $action)));
-        $reflectionClass = new ReflectionClass($controller);
-        $action = $reflectionClass->getMethod($action . 'Action');
-        $annotations = (new Annotations($action))->asArray();
+        $map = [];
+        foreach ($routes as $path => $value) {
+            if (array_key_exists('action', $value['options']['defaults']) &&
+                ! empty($value['options']['defaults']['action'])
+            ) {
+                $action = str_replace(' ', '', ucwords(str_replace('-', ' ', $value['options']['defaults']['action'])));
+                try {
+                    $reflectionClass = new ReflectionClass($value['options']['defaults']['controller']);
+                    $method = $reflectionClass->getMethod($action . 'Action');
+                    $map = array_merge($map, $this->pAction($method, $path));
+                } catch (\ReflectionException $e) {
+                    print_r($e);
+                }
+            } else {
+                try {
+                    $reflectionClass = new ReflectionClass($value['options']['defaults']['controller']);
+                    $map = array_merge($map, $this->pController($reflectionClass, $path));
+                } catch (\ReflectionException $e) {
+                    print_r($e);
+                }
+            }
+        }
+        return $map;
+    }
+
+    public function extractAction(ReflectionMethod $method, $verb = 'GET')
+    {
+        $annotations = (new Annotations($method))->asArray();
+
+        return [
+            'method' => $method->getName(),
+            'class' => $method->getDeclaringClass()->getName(),
+            'verb' => $verb,
+            'description' => $method->getDocComment(),
+            'position' => [
+                'file' => $method->getFileName(),
+                'start' => $method->getStartLine(),
+                'end' => $method->getEndLine(),
+            ],
+            'status' => $this->statusCodes($annotations),
+            'query' => isset($annotations['query'])
+                ? is_array($annotations['query']) ? $annotations['query'] : [$annotations['query']]
+                : [],
+            'input' => isset($annotations['input']) ? $annotations['input'] : null,
+            'output' => isset($annotations['output']) ? $annotations['output'] : null,
+        ];
+    }
+
+    public function pController(ReflectionClass $controller, string $path): array
+    {
+        $res = [];
+        preg_match_all('/\[\/:[a-z_]*\]/', $path, $res);
+        $pathStrippedLastId = count($res[0]) > 0
+            ? str_replace($res[0][count($res[0]) - 1], '', $path)
+            : $path;
+
         $result = [];
-        if (key_exists('output', $annotations)) {
-            $res = $this->processOutput($path, 'get', $annotations['output'], $controller);
-            foreach ($res as $key => $value) {
-                if (! key_exists($key, $result)) {
-                    $result[$key] = [];
+        $methods = $controller->getMethods(ReflectionMethod::IS_PUBLIC);
+        foreach ($methods as $method) {
+            if ($method->getDeclaringClass()->getName() == $controller->getName()) {
+                switch ($method->getName()) {
+                    case 'get':
+                        if (! array_key_exists($path, $result)) {
+                            $result[$path] = [];
+                        }
+                        $result[$path][] = array_merge(
+                            $this->extractAction($method, 'GET'),
+                            $this->extractParamsFromUri($path)
+                        );
+                        break;
+                    case 'getList':
+                        if (! array_key_exists($pathStrippedLastId, $result)) {
+                            $result[$pathStrippedLastId] = [];
+                        }
+                        $result[$pathStrippedLastId][] = array_merge(
+                            $this->extractAction($method, 'GET'),
+                            $this->extractParamsFromUri($pathStrippedLastId)
+                        );
+                        break;
+                    case 'post':
+                        if (! array_key_exists($path, $result)) {
+                            $result[$path] = [];
+                        }
+                        $result[$path][] = array_merge(
+                            $this->extractAction($method, 'POST'),
+                            $this->extractParamsFromUri($path)
+                        );
+                        break;
+                    case 'postList':
+                        if (! array_key_exists($pathStrippedLastId, $result)) {
+                            $result[$pathStrippedLastId] = [];
+                        }
+                        $result[$pathStrippedLastId][] = array_merge(
+                            $this->extractAction($method, 'POST'),
+                            $this->extractParamsFromUri($pathStrippedLastId)
+                        );
+                        break;
+                    case 'put':
+                        if (! array_key_exists($path, $result)) {
+                            $result[$path] = [];
+                        }
+                        $result[$path][] = array_merge(
+                            $this->extractAction($method, 'PUT'),
+                            $this->extractParamsFromUri($path)
+                        );
+                        break;
+                    case 'putList':
+                        if (! array_key_exists($pathStrippedLastId, $result)) {
+                            $result[$pathStrippedLastId] = [];
+                        }
+                        $result[$pathStrippedLastId][] = array_merge(
+                            $this->extractAction($method, 'PUT'),
+                            $this->extractParamsFromUri($pathStrippedLastId)
+                        );
+                        break;
+                    case 'patch':
+                        if (! array_key_exists($path, $result)) {
+                            $result[$path] = [];
+                        }
+                        $result[$path][] = array_merge(
+                            $this->extractAction($method, 'PATCH'),
+                            $this->extractParamsFromUri($path)
+                        );
+                        break;
+                    case 'patchList':
+                        if (! array_key_exists($pathStrippedLastId, $result)) {
+                            $result[$pathStrippedLastId] = [];
+                        }
+                        $result[$pathStrippedLastId][] = array_merge(
+                            $this->extractAction($method, 'PATCH'),
+                            $this->extractParamsFromUri($pathStrippedLastId)
+                        );
+                        break;
+                    case 'options':
+                        if (! array_key_exists($path, $result)) {
+                            $result[$path] = [];
+                        }
+                        $result[$path][] = array_merge(
+                            $this->extractAction($method, 'OPTIONS'),
+                            $this->extractParamsFromUri($path)
+                        );
+                        break;
+                    case 'optionsList':
+                        if (! array_key_exists($pathStrippedLastId, $result)) {
+                            $result[$pathStrippedLastId] = [];
+                        }
+                        $result[$pathStrippedLastId][] = array_merge(
+                            $this->extractAction($method, 'OPTIONS'),
+                            $this->extractParamsFromUri($pathStrippedLastId)
+                        );
+                        break;
+                    case 'head':
+                        if (! array_key_exists($path, $result)) {
+                            $result[$path] = [];
+                        }
+                        $result[$path][] = array_merge(
+                            $this->extractAction($method, 'HEAD'),
+                            $this->extractParamsFromUri($path)
+                        );
+                        break;
+                    case 'headList':
+                        if (! array_key_exists($pathStrippedLastId, $result)) {
+                            $result[$pathStrippedLastId] = [];
+                        }
+                        $result[$pathStrippedLastId][] = array_merge(
+                            $this->extractAction($method, 'HEAD'),
+                            $this->extractParamsFromUri($pathStrippedLastId)
+                        );
+                        break;
                 }
-                if (isset($annotations['query'])) {
-                    $value['query'] = is_array($annotations['query']) ? $annotations['query'] : [$annotations['query']];
-                }
-                $result[$key][] = $value;
             }
         }
         return $result;
     }
 
-    private function processRestController($controller, $path)
+    public function pAction(ReflectionMethod $method, string $path): array
     {
-        $reflectionClass = new ReflectionClass($controller);
-        $reflectionMethods = $reflectionClass->getMethods(ReflectionMethod::IS_PUBLIC);
-
-
-        $result = [];
-
-        foreach ($reflectionMethods as $item) {
-            if ($item->getDeclaringClass()->getName() == $controller) {
-                $annotations = (new Annotations($item))->asArray();
-
-                if (key_exists('output', $annotations)) {
-                    $res = $this->processOutput($path, $item->getName(), $annotations['output'], $controller);
-                    foreach ($res as $key => $value) {
-                        if (! key_exists($key, $result)) {
-                            $result[$key] = [];
-                        }
-                        $result[$key][] = $value;
-                    }
-                }
-
-                if (key_exists('input', $annotations)) {
-                    $res = $this->processInput($path, $item->getName(), $annotations['input'], $controller);
-                    foreach ($res as $key => $value) {
-                        if (! key_exists($key, $result)) {
-                            $result[$key] = [];
-                        }
-                        $result[$key][] = $value;
-                    }
-                }
-            }
-        }
-
-        return $result;
+        return [
+            $path => [
+                    array_merge(
+                        $this->extractAction($method),
+                        $this->extractParamsFromUri($path)
+                    )
+                ]
+            ,
+        ];
     }
 
-    private function processOutput($path, $action, $output, $controller)
-    {
-        switch ($action) {
-            case 'getList':
-                $res = [];
-                preg_match_all('/\[\/:[a-z_]*\]/', $path, $res);
-                $noLast = str_replace($res[0][count($res[0]) - 1], '', $path);
-                $key = str_replace(['[', ']'], ['', ''], $noLast);
 
-                return [
-                    $key => [
-                        'verb' => 'GET',
-                        'props' => $output,
-                        'controller' => $controller,
-                        'action' => $action,
-                    ]
-                ];
-                break;
-            default:
-                $key = str_replace(['[', ']'], ['', ''], $path);
-                return [
-                    $key => [
-                        'verb' => 'GET',
-                        'props' => $output,
-                        'controller' => $controller,
-                        'action' => $action,
-                    ]
-                ];
-                break;
+    public function extractParamsFromUri($uri)
+    {
+        $match = [];
+        preg_match_all('/:[a-z_]*/', $uri, $match);
+
+        if (empty($match[0])) {
+            return ['params' => []];
         }
+
+        $result = array_map(function ($item) {
+            return str_replace(':', '', $item);
+        }, $match[0]);
+
+        return ['params' => $result];
     }
 
-    private function processInput($path, $action, $input, $controller)
+    private function statusCodes($annotation)
     {
-        switch ($action) {
-            case 'put':
-                $key = str_replace(['[', ']'], ['', ''], $path);
-                return [
-                    $key => [
-                        'verb' => 'PUT',
-                        'props' => $input,
-                        'controller' => $controller,
-                        'action' => $action,
-                    ]
-                ];
-                break;
-            case 'putList':
-                $res = [];
-                preg_match_all('/\[\/:[a-z_]*\]/', $path, $res);
-                $noLast = str_replace($res[0][count($res[0]) - 1], '', $path);
-                $key = str_replace(['[', ']'], ['', ''], $noLast);
-
-                return [
-                    $key => [
-                        'verb' => 'PUT',
-                        'props' => $input,
-                        'controller' => $controller,
-                        'action' => $action,
-                    ]
-                ];
-                break;
-            case 'patch':
-                $key = str_replace(['[', ']'], ['', ''], $path);
-                return [
-                    $key => [
-                        'verb' => 'PATCH',
-                        'props' => $input,
-                        'controller' => $controller,
-                        'action' => $action,
-                    ]
-                ];
-                break;
-            case 'patchList':
-                $res = [];
-                preg_match_all('/\[\/:[a-z_]*\]/', $path, $res);
-                $noLast = str_replace($res[0][count($res[0]) - 1], '', $path);
-                $key = str_replace(['[', ']'], ['', ''], $noLast);
-
-                return [
-                    $key => [
-                        'verb' => 'PATCH',
-                        'props' => $input,
-                        'controller' => $controller,
-                        'action' => $action,
-                    ]
-                ];
-                break;
-            case 'post':
-                $key = str_replace(['[', ']'], ['', ''], $path);
-                return [
-                    $key => [
-                        'verb' => 'POST',
-                        'props' => $input,
-                        'controller' => $controller,
-                        'action' => $action,
-                    ]
-                ];
-                break;
-            case 'postList':
-                $res = [];
-                preg_match_all('/\[\/:[a-z_]*\]/', $path, $res);
-                $noLast = str_replace($res[0][count($res[0]) - 1], '', $path);
-                $key = str_replace(['[', ']'], ['', ''], $noLast);
-
-                return [
-                    $key => [
-                        'verb' => 'POST',
-                        'props' => $input,
-                        'controller' => $controller,
-                        'action' => $action,
-                    ]
-                ];
-                break;
-        }
+        return array_filter($annotation, function ($key) {
+            return is_numeric($key);
+        }, ARRAY_FILTER_USE_KEY);
     }
 }

@@ -40,6 +40,8 @@ class CongressmanController extends AbstractRestfulController implements
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\CongressmanPartyProperties | \Althingi\Model\Congressman
      * @query dags
+     * @throws \Exception
+     * @200 Success
      */
     public function getAction()
     {
@@ -70,9 +72,9 @@ class CongressmanController extends AbstractRestfulController implements
                     $id,
                     $assemblyId
                 ));
-            return (new ItemModel($congressman));
+            return (new ItemModel($congressman))->setStatus(200);
         } else {
-            return (new ItemModel($this->congressmanService->get($id)));
+            return (new ItemModel($this->congressmanService->get($id)))->setStatus(200);
         }
     }
 
@@ -83,15 +85,20 @@ class CongressmanController extends AbstractRestfulController implements
      * @return \Rend\View\Model\ModelInterface|array
      * @output \Althingi\Model\Party | \Althingi\Model\Party[]
      * @query date string | null
+     * @throws \Exception
+     * @200 Success
+     * @206 Success
      */
     public function partyAction()
     {
         $id = $this->params('congressman_id', null);
         $date = $this->params()->fromQuery('dags', null);
         if ($date) {
-            return (new ItemModel($this->partyService->getByCongressman($id, new DateTime($date))));
+            return (new ItemModel($this->partyService->getByCongressman($id, new DateTime($date))))
+                ->setStatus(200);
         } else {
-            return (new CollectionModel($this->partyService->fetchByCongressman($id)));
+            return (new CollectionModel($this->partyService->fetchByCongressman($id)))
+                ->setStatus(206);
         }
     }
 
@@ -102,6 +109,9 @@ class CongressmanController extends AbstractRestfulController implements
      * @return \Rend\View\Model\ModelInterface|array
      * @output \Althingi\Model\ConstituencyDate | \Althingi\Model\ConstituencyDate[]
      * @query date string | null
+     * @throws \Exception
+     * @200 Success
+     * @206 Success
      */
     public function constituencyAction()
     {

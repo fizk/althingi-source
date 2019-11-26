@@ -14,6 +14,7 @@ use Zend\Stdlib\ArrayUtils;
  * Class CongressmanControllerTest
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\CongressmanController
+ *
  * @covers \Althingi\Controller\CongressmanController::setCongressmanService
  * @covers \Althingi\Controller\CongressmanController::setPartyService
  * @covers \Althingi\Controller\CongressmanController::setVoteItemService
@@ -457,8 +458,6 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
         $this->assertControllerName(CongressmanController::class);
         $this->assertActionName('assembly-issues');
         $this->assertResponseStatusCode(206);
-
-//        print_r(json_decode($this->getResponse()->getContent()));
     }
 
     /**

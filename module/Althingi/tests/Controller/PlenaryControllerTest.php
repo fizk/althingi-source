@@ -10,6 +10,7 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * Class PlenaryControllerTest
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\PlenaryController
+ *
  * @covers \Althingi\Controller\PlenaryController::setPlenaryService
  */
 class PlenaryControllerTest extends AbstractHttpControllerTestCase

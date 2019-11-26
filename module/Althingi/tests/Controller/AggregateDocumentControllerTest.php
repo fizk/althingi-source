@@ -12,6 +12,7 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * Class AssemblyControllerTest
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\Aggregate\DocumentController
+ *
  * @covers \Althingi\Controller\Aggregate\DocumentController::setDocumentService
  * @covers \Althingi\Controller\Aggregate\DocumentController::setCongressmanDocumentService
  */
@@ -47,6 +48,7 @@ class AggregateDocumentControllerTest extends AbstractHttpControllerTestCase
     {
         $this->getMockService(Document::class)
             ->shouldReceive('get')
+            ->andReturn(new \Althingi\Model\Document())
             ->once()
             ->getMock();
 
@@ -72,7 +74,7 @@ class AggregateDocumentControllerTest extends AbstractHttpControllerTestCase
 
         $this->assertControllerName(DocumentController::class);
         $this->assertActionName('getList');
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(206);
     }
 
     /**
@@ -90,6 +92,6 @@ class AggregateDocumentControllerTest extends AbstractHttpControllerTestCase
 
         $this->assertControllerName(DocumentController::class);
         $this->assertActionName('proponents');
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(206);
     }
 }

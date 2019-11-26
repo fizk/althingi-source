@@ -307,18 +307,10 @@ create table `MinisterSitting` (
    `to` date,
    PRIMARY KEY (`minister_sitting_id`),
    UNIQUE KEY `uq_MinisterSitting_Congressman_Assembly_From` (`assembly_id`,`ministry_id`,`congressman_id`, `from`),
-   CONSTRAINT `fk_MinisterSitting_Assembly1`
-       FOREIGN KEY (`assembly_id`)
-           REFERENCES `Assembly` (`assembly_id`) ON DELETE cascade ON UPDATE cascade ,
-   CONSTRAINT `fk_MinisterSitting_Ministry1`
-       FOREIGN KEY (`ministry_id`)
-           REFERENCES `Ministry` (`ministry_id`) ON DELETE cascade ON UPDATE cascade ,
-   CONSTRAINT `fk_MinisterSitting_Congressman1`
-       FOREIGN KEY (`ministry_id`)
-           REFERENCES `Congressman` (`congressman_id`) ON DELETE cascade ON UPDATE cascade ,
-   CONSTRAINT `fk_MinisterSitting_Party1`
-       FOREIGN KEY (`party_id`)
-           REFERENCES `Party` (`party_id`) ON DELETE cascade ON UPDATE cascade
+   CONSTRAINT `fk_MinisterSitting_Assembly1` FOREIGN KEY (`assembly_id`) REFERENCES `Assembly` (`assembly_id`) ON DELETE cascade ON UPDATE cascade ,
+   CONSTRAINT `fk_MinisterSitting_Ministry1` FOREIGN KEY (`ministry_id`) REFERENCES `Ministry` (`ministry_id`) ON DELETE cascade ON UPDATE cascade ,
+   CONSTRAINT `fk_MinisterSitting_Congressman1` FOREIGN KEY (`congressman_id`) REFERENCES `Congressman` (`congressman_id`) ON DELETE cascade ON UPDATE cascade ,
+   CONSTRAINT `fk_MinisterSitting_Party1` FOREIGN KEY (`party_id`) REFERENCES `Party` (`party_id`) ON DELETE cascade ON UPDATE cascade
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

@@ -10,6 +10,7 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * Class CommitteeMeetingAgendaControllerTest
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\CommitteeMeetingAgendaController
+ *
  * @covers \Althingi\Controller\CommitteeMeetingAgendaController::setCommitteeMeetingAgendaService
  */
 class CommitteeMeetingAgendaControllerTest extends AbstractHttpControllerTestCase

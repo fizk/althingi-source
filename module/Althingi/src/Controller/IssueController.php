@@ -60,6 +60,8 @@ class IssueController extends AbstractRestfulController implements
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\IssueProperties
      * @query category
+     * @200 Success
+     * @404 Resource not found
      */
     public function get($id)
     {
@@ -68,13 +70,9 @@ class IssueController extends AbstractRestfulController implements
         $category = strtoupper($this->params('category', 'a'));
 
         $issue = $this->issueStore->get($assemblyId, $issueId, $category);
-
-        if (! $issue) {
-            return $this->notFoundAction();
-        }
-
-        return (new ItemModel($issue))
-            ->setOption('X-Source', 'Store');
+        return $issue
+            ? (new ItemModel($issue))->setStatus(200)
+            : (new ErrorModel('Resource Not Found'))->setStatus(404);
     }
 
     /**
@@ -84,6 +82,7 @@ class IssueController extends AbstractRestfulController implements
      * @output \Althingi\Model\IssueProperties[]
      * @query type [string]
      * @query order [string]
+     * @206 Success
      */
     public function getList()
     {
@@ -110,8 +109,7 @@ class IssueController extends AbstractRestfulController implements
 
         return (new CollectionModel($issues))
             ->setStatus(206)
-            ->setRange($range->getFrom(), $range->getFrom() + count($issues), $count)
-            ->setOption('X-Source', 'Store');
+            ->setRange($range->getFrom(), $range->getFrom() + count($issues), $count);
     }
 
     /**
@@ -121,6 +119,9 @@ class IssueController extends AbstractRestfulController implements
      * @param array $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\Issue
+     * @201 Created
+     * @205 Updated
+     * @400 Invalid input
      */
     public function put($id, $data)
     {
@@ -139,7 +140,8 @@ class IssueController extends AbstractRestfulController implements
             return (new EmptyModel())->setStatus($affectedRows === 1 ? 201 : 205);
         }
 
-        return (new ErrorModel($form))->setStatus(400);
+        return (new ErrorModel($form))
+            ->setStatus(400);
     }
 
     /**
@@ -149,6 +151,9 @@ class IssueController extends AbstractRestfulController implements
      * @param array $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\Issue
+     * @205 Updated
+     * @400 Invalid input
+     * @404 Resource not found
      */
     public function patch($id, $data)
     {
@@ -157,7 +162,7 @@ class IssueController extends AbstractRestfulController implements
         $issue = $this->issueService->get($id, $assemblyId, $category);
 
         if (! $issue) {
-            return $this->notFoundAction();
+            return (new ErrorModel('Resource Not Found'))->setStatus(404);
         }
 
         $form = new Form\Issue();
@@ -169,12 +174,14 @@ class IssueController extends AbstractRestfulController implements
             return (new EmptyModel())->setStatus(205);
         }
 
-        return (new ErrorModel($form))->setStatus(400);
+        return (new ErrorModel($form))
+            ->setStatus(400);
     }
 
     /**
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\Status[]
+     * @206 Success
      */
     public function progressAction()
     {
@@ -183,11 +190,10 @@ class IssueController extends AbstractRestfulController implements
         $category = strtoupper($this->params('category', 'a'));
 
         $collection = $this->issueService->fetchProgress($assemblyId, $issueId, $category);
-        $collectionCount = count($collection);
 
         return (new CollectionModel($collection))
             ->setStatus(206)
-            ->setRange(0, $collectionCount, $collectionCount);
+            ->setRange(0, count($collection), count($collection));
     }
 
     /**
@@ -195,6 +201,7 @@ class IssueController extends AbstractRestfulController implements
      * @output \Althingi\Model\IssueValue[]
      * @query rod asc|desc
      * @query fjoldi [number]
+     * @206 Success
      */
     public function speechTimesAction()
     {
@@ -205,7 +212,8 @@ class IssueController extends AbstractRestfulController implements
             return strtoupper($category);
         }, explode(',', $this->params('category', 'a,b')));
 
-        $collection = $this->fetchSpeechTimesFromStore(
+
+        $collection = $this->issueStore->fetchByAssemblyAndSpeechTime(
             $assemblyId,
             $size,
             $order === 'desc' ? -1 : 1,
@@ -213,20 +221,29 @@ class IssueController extends AbstractRestfulController implements
         );
 
         return (new CollectionModel($collection))
-            ->setOption('X-Source', 'Store')
             ->setStatus(206)
             ->setRange(0, count($collection), count($collection));
     }
 
+    /**
+     * @return ModelInterface
+     * @output \Althingi\Model\IssuesStatusProperties
+     * @200 Success
+     */
     public function statisticsAction()
     {
         $assemblyId = $this->params('id');
 
-        $object = $this->fetchStatisticsFromStore($assemblyId);
-//        $object = $this->fetchStatisticsFromService($assemblyId);
+        $object = (new Model\IssuesStatusProperties())
+            ->setBills($this->issueStore->fetchNonGovernmentBillStatisticsByAssembly($assemblyId))
+            ->setGovernmentBills($this->issueStore->fetchGovernmentBillStatisticsByAssembly($assemblyId))
+            ->setProposals($this->issueStore->fetchProposalStatisticsByAssembly($assemblyId))
+            ->setTypes($this->issueStore->fetchCountByCategory($assemblyId))
+            ->setCategories($this->categoryStore->fetchByAssembly($assemblyId))
+        ;
 
         return (new ItemModel($object))
-            ->setOption('X-Source', 'Store');
+            ->setStatus(200);
     }
 
     /**
@@ -235,6 +252,7 @@ class IssueController extends AbstractRestfulController implements
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\IssueProperties[]
      * @query type [string]
+     * @206 Success
      */
     public function fetchPartyAction()
     {
@@ -255,6 +273,7 @@ class IssueController extends AbstractRestfulController implements
         );
 
         return (new CollectionModel($issues))
+            ->setStatus(206)
             ->setRange($range->getFrom(), $range->getFrom() + count($issues), $count);
     }
 
@@ -262,6 +281,7 @@ class IssueController extends AbstractRestfulController implements
      * List options for Assembly collection.
      *
      * @return \Rend\View\Model\ModelInterface
+     * @200 Success
      */
     public function optionsList()
     {
@@ -276,6 +296,7 @@ class IssueController extends AbstractRestfulController implements
      * List options for Assembly entry.
      *
      * @return \Rend\View\Model\ModelInterface
+     * @200 Success
      */
     public function options()
     {
@@ -284,50 +305,6 @@ class IssueController extends AbstractRestfulController implements
             ->setAllow(['GET', 'OPTIONS', 'PUT', 'PATCH'])
             ->setOption('Access-Control-Allow-Origin', '*')
             ->setOption('Access-Control-Allow-Headers', 'Range');
-    }
-
-    /**
-     * @param int $assemblyId
-     * @param int $issueId
-     * @param string $category
-     * @return \Althingi\Model\IssueProperties
-     */
-    private function getFromStore(int $assemblyId, int $issueId, string $category = 'A')
-    {
-        return $this->issueStore->get($assemblyId, $issueId, $category);
-    }
-
-    /**
-     * @param int $assemblyId
-     * @param array $types
-     * @param array $kinds
-     * @param array $categories
-     * @param string|null $orderQuery
-     * @return ModelInterface
-     */
-    private function getListFromStore(
-        int $assemblyId,
-        array $types = [],
-        array $kinds = [],
-        array $categories = [],
-        string $orderQuery = null
-    ) {
-
-        $count = $this->issueStore->countByAssembly($assemblyId, $types, $kinds, $categories);
-        $range = $this->getRange($this->getRequest(), $count);
-        $issues = $this->issueStore->fetchByAssembly(
-            $assemblyId,
-            $range->getFrom(),
-            $range->getSize(),
-            $types,
-            $kinds,
-            $categories
-        );
-
-        return (new CollectionModel($issues))
-            ->setStatus(206)
-            ->setRange($range->getFrom(), $range->getFrom() + count($issues), $count)
-            ->setOption('X-Source', 'Store');
     }
 
     /**
@@ -380,59 +357,5 @@ class IssueController extends AbstractRestfulController implements
     {
         $this->categoryService = $category;
         return $this;
-    }
-
-    /**
-     * @param int $assemblyId
-     * @return Model\IssuesStatusProperties
-     * @deprecated
-     */
-    private function fetchStatisticsFromService(int $assemblyId): Model\IssuesStatusProperties
-    {
-        $assembly = $this->assemblyService->get($assemblyId);
-        return (new Model\IssuesStatusProperties())
-            ->setBills($this->issueService->fetchNonGovernmentBillStatisticsByAssembly($assembly->getAssemblyId()))
-            ->setGovernmentBills(
-                $this->issueService->fetchGovernmentBillStatisticsByAssembly($assembly->getAssemblyId())
-            )
-            ->setTypes($this->issueService->fetchCountByCategory($assembly->getAssemblyId()))
-            ->setCategories($this->categoryService->fetchByAssembly($assembly->getAssemblyId())) //@todo remove this
-        ;
-    }
-
-    /**
-     * @param int $assemblyId
-     * @return Model\IssuesStatusProperties
-     */
-    private function fetchStatisticsFromStore(int $assemblyId): Model\IssuesStatusProperties
-    {
-        return (new Model\IssuesStatusProperties())
-            ->setBills($this->issueStore->fetchNonGovernmentBillStatisticsByAssembly($assemblyId))
-            ->setGovernmentBills($this->issueStore->fetchGovernmentBillStatisticsByAssembly($assemblyId))
-            ->setProposals($this->issueStore->fetchProposalStatisticsByAssembly($assemblyId))
-            ->setTypes($this->issueStore->fetchCountByCategory($assemblyId))
-            ->setCategories($this->categoryStore->fetchByAssembly($assemblyId))
-            ;
-    }
-
-    /**
-     * @param int $assemblyId
-     * @param int $size
-     * @param int $order
-     * @param array $categories
-     * @return array
-     */
-    private function fetchSpeechTimesFromStore(
-        int $assemblyId,
-        int $size,
-        int $order,
-        array $categories = ['A', 'B']
-    ): array {
-        return $this->issueStore->fetchByAssemblyAndSpeechTime(
-            $assemblyId,
-            $size,
-            $order === 'desc' ? -1 : 1,
-            $categories
-        );
     }
 }

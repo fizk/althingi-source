@@ -26,6 +26,8 @@ class MinistryController extends AbstractRestfulController implements
      * @param int $id
      * @return \Rend\View\Model\ModelInterface|array
      * @output \Althingi\Model\Ministry
+     * @200 Success
+     * @404 Resource not found
      */
     public function get($id)
     {
@@ -40,6 +42,7 @@ class MinistryController extends AbstractRestfulController implements
      *
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\Ministry[]
+     * @206 Success
      */
     public function getList()
     {
@@ -54,6 +57,7 @@ class MinistryController extends AbstractRestfulController implements
      * List options for Ministry collection.
      *
      * @return \Rend\View\Model\ModelInterface
+     * @200 Success
      */
     public function optionsList()
     {
@@ -66,6 +70,7 @@ class MinistryController extends AbstractRestfulController implements
      * List options for Ministry entry.
      *
      * @return \Rend\View\Model\ModelInterface
+     * @200 Success
      */
     public function options()
     {
@@ -81,6 +86,9 @@ class MinistryController extends AbstractRestfulController implements
      * @param  array $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\Ministry
+     * @201 Created
+     * @205 Updated
+     * @400 Invalid input
      */
     public function put($id, $data)
     {
@@ -105,6 +113,8 @@ class MinistryController extends AbstractRestfulController implements
      * @param array $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\Ministry
+     * @205 Update
+     * @400 Invalid input
      */
     public function patch($id, $data)
     {

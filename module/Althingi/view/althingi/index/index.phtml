@@ -1,68 +1,12 @@
-<?php $routes = (new \Althingi\Utils\RouteInspector())->run(require __DIR__ . '/../../../config/module.config.php'); ?>
-<style>
-    body {
-        font-family: Helvetica, sans-serif;
-    }
-</style>
-<main style="max-width: 1024px; margin: auto">
-<h2>TOC</h2>
-<ul>
-    <?php foreach ($routes as $key => $value): ?>
-    <li>
-        <a href="#<?=$key;?>"><?=$key;?></a>
-    </li>
-    <?php endforeach ?>
-</ul>
-
-<h2>Description</h2>
-<ul>
-    <?php foreach ($routes as $key => $value): ?>
-    <li>
-        <a style="text-decoration: none" href="#<?=$key;?>" id="<?=$key;?>"><?=$key;?></a>
-        <ul style="list-style: none">
-        <?php foreach ($value as $k): ?>
-            <li>
-                <dl>
-                    <dt>
-                    <?php switch ($k['verb']): case 'GET':?>
-                            <strong style="border-left: 10px solid #75c576; padding-left: 10px"><?=$k['verb']?></strong>
-                        <?php break; ?>
-                        <?php case 'POST': ?>
-                            <strong style="border-left: 10px solid #b5b7b2; padding-left: 10px"><?=$k['verb']?></strong>
-                        <?php break; ?>
-                        <?php case 'PATCH': ?>
-                            <strong style="border-left: 10px solid #ff9800; padding-left: 10px"><?=$k['verb']?></strong>
-                        <?php break; ?>
-                        <?php case 'PUT': ?>
-                            <strong style="border-left: 10px solid #45a9f8; padding-left: 10px"><?=$k['verb']?></strong>
-                        <?php break; ?>
-                    <?php endswitch; ?>
-
-                    </dt>
-                    <dd>
-                        <a style="text-decoration: none" href="https://github.com/fizk/Loggjafarthing/tree/master/module/Althingi/src/<?= str_replace(['Althingi', '\\', '[', ']'], ['', '/', '', ''], $k['props']) ?>.php">
-                        <?=$k['props']?>
-                        </a>
-                    </dd>
-                    <dd>
-                        <a style="text-decoration: none" href="https://github.com/fizk/Loggjafarthing/tree/master/module/Althingi/src/<?= str_replace(['Althingi', '\\'], ['', '/'], $k['controller']) ?>.php">
-                        <?=$k['controller']?>
-                        </a>:<?=$k['action']?>
-                    </dd>
-                    <?php if(isset($k['query'])): ?>
-                    <dd>
-                       <ul>
-                           <?php foreach ($k['query'] as $query): ?>
-                           <li><?= $query?></li>
-                           <?php endforeach; ?>
-                       </ul>
-                    </dd>
-                    <?php endif; ?>
-                </dl>
-            </li>
-        <?php endforeach; ?>
-        </ul>
-    </li>
-    <?php endforeach ?>
-</ul>
-</main>
+<div id="swagger-ui"></div>
+<script>
+    const ui = SwaggerUIBundle({
+        url: "/api/openapi",
+        dom_id: '#swagger-ui',
+        presets: [
+            SwaggerUIBundle.presets.apis,
+            SwaggerUIBundle.SwaggerUIStandalonePreset
+        ],
+        // layout: "StandaloneLayout"
+    })
+</script>

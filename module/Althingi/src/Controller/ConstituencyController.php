@@ -23,13 +23,15 @@ class ConstituencyController extends AbstractRestfulController implements
      * @param mixed $id
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\Constituency
+     * @200 Success
+     * @404 Resource not found
      */
     public function get($id)
     {
         $constituency = $this->constituencyService->get($id);
         return $constituency
-            ? new ItemModel($constituency)
-            : $this->notFoundAction();
+            ? (new ItemModel($constituency))->setStatus(200)
+            : (new ErrorModel('Resource Not Found'))->setStatus(404);
     }
 
     /**
@@ -37,6 +39,9 @@ class ConstituencyController extends AbstractRestfulController implements
      * @param mixed $data
      * @return \Rend\View\Model\ModelInterface
      * @input Althingi\Form\Constituency
+     * @201 Created
+     * @205 Updated
+     * @400 Invalid input
      */
     public function put($id, $data)
     {
@@ -48,7 +53,8 @@ class ConstituencyController extends AbstractRestfulController implements
                 ->setStatus($affectedRows === 1 ? 201 : 205);
         }
 
-        return (new ErrorModel($form))->setStatus(400);
+        return (new ErrorModel($form))
+            ->setStatus(400);
     }
 
     /**
@@ -58,6 +64,9 @@ class ConstituencyController extends AbstractRestfulController implements
      * @param array $data
      * @return \Rend\View\Model\ModelInterface
      * @input Althingi\Form\Constituency
+     * @205 Updated
+     * @400 Invalid input
+     * @404 Resource not found
      */
     public function patch($id, $data)
     {
@@ -76,7 +85,8 @@ class ConstituencyController extends AbstractRestfulController implements
                 ->setStatus(400);
         }
 
-        return $this->notFoundAction();
+        return (new ErrorModel('Resource Not Found'))
+            ->setStatus(404);
     }
 
     /**

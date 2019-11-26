@@ -82,6 +82,8 @@ class CongressmanController extends AbstractRestfulController implements
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\CongressmanAndParties
      * @todo this should use the store.
+     * @200 Success
+     * 404 Resource not found
      */
     public function get($id)
     {
@@ -103,6 +105,7 @@ class CongressmanController extends AbstractRestfulController implements
      *
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\CongressmanAndParties[]
+     * @206 Success
      */
     public function getList()
     {
@@ -122,6 +125,9 @@ class CongressmanController extends AbstractRestfulController implements
      * @param array $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\Congressman
+     * @201 Created
+     * @205 Updated
+     * @400 Invalid input
      */
     public function put($id, $data)
     {
@@ -145,6 +151,9 @@ class CongressmanController extends AbstractRestfulController implements
      * @param $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\Congressman
+     * @205 Updated
+     * @400 Invalid input
+     * @404 Resource not found
      */
     public function patch($id, $data)
     {
@@ -163,12 +172,15 @@ class CongressmanController extends AbstractRestfulController implements
                 ->setStatus(400);
         }
 
-        return $this->notFoundAction();
+        return (new ErrorModel('Resource Not Found'))
+            ->setStatus(404);
     }
 
     /**
      * @param mixed $id
      * @return \Rend\View\Model\ModelInterface
+     * @205 Deleted
+     * @404 Resource not found
      */
     public function delete($id)
     {
@@ -180,7 +192,8 @@ class CongressmanController extends AbstractRestfulController implements
                 ->setOption('Access-Control-Allow-Origin', '*');
         }
 
-        return $this->notFoundAction();
+        return (new ErrorModel('Resource Not Found'))
+            ->setStatus(404);
     }
 
     /**
@@ -190,6 +203,7 @@ class CongressmanController extends AbstractRestfulController implements
      * @output \Althingi\Model\CongressmanPartyProperties[]
      * @query tegund thingmadur|varamadur
      * @todo assemblyService should be store
+     * @206 Success
      */
     public function assemblyAction()
     {
@@ -216,6 +230,8 @@ class CongressmanController extends AbstractRestfulController implements
      *
      * @output \Althingi\Model\CongressmanPartyProperties
      * @return ItemModel
+     * @200 Success
+     * @404 Resource not found
      */
     public function assemblyCongressmanAction()
     {
@@ -237,6 +253,7 @@ class CongressmanController extends AbstractRestfulController implements
      *
      * @output \Althingi\Althingi\Model\ValueAndCount[]
      * @return CollectionModel
+     * @206 Success
      */
     public function assemblyCongressmanOtherDocsAction()
     {
@@ -257,6 +274,7 @@ class CongressmanController extends AbstractRestfulController implements
      * @query rod asc|desc
      * @query fjoldi [number]
      * @query category
+     * @206 Success
      */
     public function assemblyTimesAction()
     {
@@ -278,6 +296,7 @@ class CongressmanController extends AbstractRestfulController implements
      * @output \Althingi\Model\CongressmanPartyProperties[]
      * @query rod asc|desc
      * @query fjoldi [number]
+     * @206 Success
      */
     public function assemblyQuestionsAction()
     {
@@ -285,7 +304,11 @@ class CongressmanController extends AbstractRestfulController implements
         $order = $this->params()->fromQuery('rod', 'desc');
         $size = $this->params()->fromQuery('fjoldi', 5);
 
-        $collection = $this->congressmanStore->fetchQuestionByAssembly($assemblyId, $size, $order === 'desc' ? -1 : 1);
+        $collection = $this->congressmanStore->fetchQuestionByAssembly(
+            $assemblyId,
+            $size,
+            $order === 'desc' ? -1 : 1
+        );
 
         return (new CollectionModel($collection))
             ->setStatus(206)
@@ -299,6 +322,7 @@ class CongressmanController extends AbstractRestfulController implements
      * @output \Althingi\Model\CongressmanPartyProperties[]
      * @query rod asc|desc
      * @query fjoldi [number]
+     * @206 Success
      */
     public function assemblyPropositionsAction()
     {
@@ -320,6 +344,7 @@ class CongressmanController extends AbstractRestfulController implements
      * @output \Althingi\Model\CongressmanPartyProperties[]
      * @query rod asc|desc
      * @query fjoldi [number]
+     * @206 Success
      */
     public function assemblyBillsAction()
     {
@@ -327,7 +352,11 @@ class CongressmanController extends AbstractRestfulController implements
         $order = $this->params()->fromQuery('rod', 'desc');
         $size = $this->params()->fromQuery('fjoldi', 5);
 
-        $congressman = $this->congressmanStore->fetchBillsByAssembly($assemblyId, $size, $order === 'desc' ? -1 : 1);
+        $congressman = $this->congressmanStore->fetchBillsByAssembly(
+            $assemblyId,
+            $size,
+            $order === 'desc' ? -1 : 1
+        );
 
         return (new CollectionModel($congressman))
             ->setStatus(206)
@@ -339,6 +368,7 @@ class CongressmanController extends AbstractRestfulController implements
      *
      * @return CollectionModel
      * @output \Althingi\Model\Session[]
+     * @206 Success
      */
     public function assemblySessionsAction()
     {
@@ -346,16 +376,16 @@ class CongressmanController extends AbstractRestfulController implements
         $congressmanId = $this->params('congressman_id');
 
         $sessions = $this->sessionStore->fetchByAssemblyAndCongressman($assemblyId, $congressmanId);
-        $sessionsCount = count($sessions);
 
         return (new CollectionModel($sessions))
             ->setStatus(206)
-            ->setRange(0, $sessionsCount, $sessionsCount);
+            ->setRange(0, count($sessions), count($sessions));
     }
 
     /**
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\Issue[]
+     * @206 Success
      */
     public function assemblyIssuesAction()
     {
@@ -363,16 +393,16 @@ class CongressmanController extends AbstractRestfulController implements
         $congressmanId = $this->params('congressman_id');
 
         $issues = $this->issueStore->fetchByAssemblyAndCongressman($assemblyId, $congressmanId);
-        $issuesCount = count($issues);
 
         return (new CollectionModel($issues))
             ->setStatus(206)
-            ->setRange(0, $issuesCount, $issuesCount);
+            ->setRange(0, count($issues), count($issues));
     }
 
     /**
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\Issue[]
+     * @206 Success
      */
     public function assemblyIssuesSummaryAction()
     {
@@ -380,11 +410,10 @@ class CongressmanController extends AbstractRestfulController implements
         $congressmanId = $this->params('congressman_id');
 
         $issues = $this->issueStore->fetchByAssemblyAndCongressmanSummary($assemblyId, $congressmanId);
-        $issuesCount = count($issues);
 
         return (new CollectionModel($issues))
             ->setStatus(206)
-            ->setRange(0, $issuesCount, $issuesCount);
+            ->setRange(0, count($issues), count($issues));
     }
 
     /**
@@ -393,6 +422,7 @@ class CongressmanController extends AbstractRestfulController implements
      * @query fra [date]
      * @query til [date]
      * @throws \Exception
+     * @206 Success
      */
     public function assemblyVotingAction()
     {
@@ -405,17 +435,17 @@ class CongressmanController extends AbstractRestfulController implements
         $congressmanId = (int) $this->params('congressman_id');
 
         $voting = $this->voteStore->getFrequencyByAssemblyAndCongressman($assemblyId, $congressmanId);
-        $votingCount = count($voting);
 
         return (new CollectionModel($voting))
             ->setStatus(206)
-            ->setRange(0, $votingCount, $votingCount);
+            ->setRange(0, count($voting), count($voting));
     }
 
     /**
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\IssueCategoryAndTime[]
      * @query category
+     * @206 Success
      */
     public function assemblyCategoriesAction()
     {
@@ -423,17 +453,17 @@ class CongressmanController extends AbstractRestfulController implements
         $congressmanId = $this->params('congressman_id');
 
         $categories = $this->issueStore->fetchFrequencyByAssemblyAndCongressman($assemblyId, $congressmanId);
-        $categoriesCount = count($categories);
 
         return (new CollectionModel($categories))
             ->setStatus(206)
-            ->setRange(0, $categoriesCount, $categoriesCount);
+            ->setRange(0, count($categories), count($categories));
     }
 
     /**
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\VoteItem[]
      * @todo voteItemService should use store.
+     * @206 Success
      */
     public function assemblyVoteCategoriesAction()
     {
@@ -444,11 +474,10 @@ class CongressmanController extends AbstractRestfulController implements
             $assemblyId,
             $congressmanId
         );
-        $voteCategoriesCount = count($voteCategories);
 
         return (new CollectionModel($voteCategories))
             ->setStatus(206)
-            ->setRange(0, $voteCategoriesCount, $voteCategoriesCount);
+            ->setRange(0, count($voteCategories), count($voteCategories));
     }
 
     /**
@@ -456,24 +485,25 @@ class CongressmanController extends AbstractRestfulController implements
      *
      * @return ItemModel
      * @output \Althingi\Model\ValueAndCount
+     * @200 Success
+     * @404 Resource not found
      */
     public function assemblySpeechTimeAction()
     {
         $assemblyId = $this->params('id');
         $congressmanId = $this->params('congressman_id');
 
-        if (($time = $this->congressmanStore->getSpeechTimeByAssembly($assemblyId, $congressmanId)) !== null) {
-            return (new ItemModel($time));
-        }
-
-        return (new ErrorModel('Resource Not Found'))
-            ->setStatus(404);
+        $time = $this->congressmanStore->getSpeechTimeByAssembly($assemblyId, $congressmanId);
+        return $time
+            ? (new ItemModel($time))->setStatus(200)
+            : (new ErrorModel('Resource Not Found'))->setStatus(404);
     }
 
     /**
      * Entry option for Congressman entry.
      *
      * @return \Rend\View\Model\ModelInterface
+     * @200 Success
      */
     public function optionsList()
     {
@@ -487,6 +517,7 @@ class CongressmanController extends AbstractRestfulController implements
      * List options for Congressman entry.
      *
      * @return \Rend\View\Model\ModelInterface
+     * @200 Success
      */
     public function options()
     {

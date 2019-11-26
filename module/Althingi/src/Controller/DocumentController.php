@@ -53,6 +53,8 @@ class DocumentController extends AbstractRestfulController implements
      * @param mixed $id
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\Document
+     * @200 Success
+     * @404 Resource not found
      */
     public function get($id)
     {
@@ -60,16 +62,17 @@ class DocumentController extends AbstractRestfulController implements
         $issueId = $this->params('issue_id');
         $documentId = $this->params('document_id');
 
-        if (($document = $this->documentService->get($assemblyId, $issueId, $documentId)) != null) {
-            return (new ItemModel($document));
-        } else {
-            return $this->notFoundAction();
-        }
+        $document = $this->documentService->get($assemblyId, $issueId, $documentId);
+
+        return $document
+            ? (new ItemModel($document))->setStatus(200)
+            : (new ErrorModel('Resource Not Found'))->setStatus(404);
     }
 
     /**
      * @return \Rend\View\Model\ModelInterface
      * @output \Althingi\Model\DocumentProperties
+     * @206 Success
      */
     public function getList()
     {
@@ -78,32 +81,9 @@ class DocumentController extends AbstractRestfulController implements
 
         $documents = $this->documentStore->fetchByIssue($assemblyId, $issueId);
 
-//        $documents = array_map(function (Model\Document $document) use ($assemblyId, $issueId) {
-//            $votes = $this->voteService->fetchByDocument($assemblyId, $issueId, $document->getDocumentId());
-//            $congressmen = array_map(function (Model\Proponent $proponent) use ($document) {
-//                return (new Model\ProponentPartyProperties())
-//                    ->setCongressman($proponent)
-//                    ->setParty($this->partyService->getByCongressman(
-//                        $proponent->getCongressmanId(),
-//                        $document->getDate()
-//                    ))->setConstituency($this->constituencyService->getByCongressman(
-//                        $proponent->getCongressmanId(),
-//                        $document->getDate()
-//                    ));
-//            }, $this->congressmanService->fetchProponents($assemblyId, $document->getDocumentId()));
-//
-//            $documentProperties = (new Model\DocumentProperties())
-//                ->setDocument($document)
-//                ->setVotes($votes)
-//                ->setProponents($congressmen);
-//
-//            return $documentProperties;
-//        }, $this->documentService->fetchByIssue($assemblyId, $issueId));
-        $documentsCount = count($documents);
-
         return (new CollectionModel($documents))
             ->setStatus(206)
-            ->setRange(0, $documentsCount, $documentsCount);
+            ->setRange(0, count($documents), count($documents));
     }
 
     /**
@@ -111,6 +91,9 @@ class DocumentController extends AbstractRestfulController implements
      * @param mixed $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\Document
+     * @201 Created
+     * @205 Updated
+     * @400 Invalid input
      */
     public function put($id, $data)
     {
@@ -134,7 +117,8 @@ class DocumentController extends AbstractRestfulController implements
             return (new EmptyModel())->setStatus($affectedRows === 1 ? 201 : 205);
         }
 
-        return (new ErrorModel($form))->setStatus(400);
+        return (new ErrorModel($form))
+            ->setStatus(400);
     }
 
     /**
@@ -142,6 +126,9 @@ class DocumentController extends AbstractRestfulController implements
      * @param $data
      * @return \Rend\View\Model\ModelInterface
      * @input \Althingi\Form\Document
+     * @205 Updated
+     * @400 Invalid input
+     * @404 Resource not found
      */
     public function patch($id, $data)
     {
@@ -164,7 +151,8 @@ class DocumentController extends AbstractRestfulController implements
                 ->setStatus(400);
         }
 
-        return $this->notFoundAction();
+        return (new ErrorModel('Resource Not Found'))
+            ->setStatus(404);
     }
 
     /**

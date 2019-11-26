@@ -24,6 +24,7 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * Class AssemblyControllerTest
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\Aggregate\CongressmanController
+ *
  * @covers \Althingi\Controller\Aggregate\CongressmanController::setPartyService
  * @covers \Althingi\Controller\Aggregate\CongressmanController::setCongressmanService
  * @covers \Althingi\Controller\Aggregate\CongressmanController::setConstituencyService
@@ -86,7 +87,7 @@ class AggregateCongressmanControllerTest extends AbstractHttpControllerTestCase
 
         $this->assertControllerClass('CongressmanController');
         $this->assertActionName('party');
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(206);
     }
 
     /**

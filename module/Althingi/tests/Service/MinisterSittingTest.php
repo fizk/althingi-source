@@ -208,6 +208,28 @@ class MinisterSittingTest extends TestCase
         $this->assertEquals(1, $actualData);
     }
 
+    public function testGetIdentifierNotFound()
+    {
+        $ministerSittingService = new MinisterSitting();
+        $ministerSittingService->setDriver($this->pdo);
+
+        $expectedData = (new Model\MinisterSitting())
+            ->setAssemblyId(100)
+            ->setMinistryId(1)
+            ->setCongressmanId(1)
+            ->setPartyId(1)
+            ->setFrom(new \DateTime('2001-01-01'));
+
+        $actualData = $ministerSittingService->getIdentifier(
+            $expectedData->getAssemblyId(),
+            $expectedData->getMinistryId(),
+            $expectedData->getCongressmanId(),
+            $expectedData->getFrom()
+        );
+
+        $this->assertEquals(false, $actualData);
+    }
+
     protected function getDataSet()
     {
         return $this->createArrayDataSet([

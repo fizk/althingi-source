@@ -14,11 +14,13 @@ use Mockery;
  * Class SpeechControllerTest
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\SpeechController
+ *
  * @covers \Althingi\Controller\SpeechController::setCongressmanService
  * @covers \Althingi\Controller\SpeechController::setPartyService
  * @covers \Althingi\Controller\SpeechController::setSpeechService
  * @covers \Althingi\Controller\SpeechController::setPlenaryService
  * @covers \Althingi\Controller\SpeechController::setConstituencyService
+ * @covers \Althingi\Controller\SpeechController::setSpeechStore
  */
 class SpeechControllerTest extends AbstractHttpControllerTestCase
 {
@@ -205,6 +207,72 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
     }
 
     /**
+     * @covers ::put
+     */
+    public function testPutDuplicate()
+    {
+        $this->getMockService(Service\Speech::class)
+            ->shouldReceive('save')
+            ->andThrow(new \PDOException('fk_Speach_Plenary1', 23000))
+            ->twice()
+            ->getMock();
+
+        $this->getMockService(Service\Plenary::class)
+            ->shouldReceive('save')
+            ->once()
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/1/thingmal/a/3/raedur/4', 'PUT', [
+            'from' => '2001-01-01 00:00:00',
+            'to' => '2001-01-01 00:00:00',
+            'plenary_id' => 20,
+            'congressman_id' => 10,
+            'congressman_type' => null,
+            'iteration' => '*',
+            'type' => 't1',
+            'text' => 't2',
+            'validated' => 'false'
+        ]);
+
+        $this->assertControllerName(Controller\SpeechController::class);
+        $this->assertActionName('put');
+        $this->assertResponseStatusCode(500);
+    }
+
+    /**
+     * @covers ::put
+     */
+    public function testPutSomeError()
+    {
+        $this->getMockService(Service\Speech::class)
+            ->shouldReceive('save')
+            ->andThrow(new \PDOException('', 0))
+            ->once()
+            ->getMock();
+
+        $this->getMockService(Service\Plenary::class)
+            ->shouldReceive('save')
+            ->never()
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/1/thingmal/a/3/raedur/4', 'PUT', [
+            'from' => '2001-01-01 00:00:00',
+            'to' => '2001-01-01 00:00:00',
+            'plenary_id' => 20,
+            'congressman_id' => 10,
+            'congressman_type' => null,
+            'iteration' => '*',
+            'type' => 't1',
+            'text' => 't2',
+            'validated' => 'false'
+        ]);
+
+        $this->assertControllerName(Controller\SpeechController::class);
+        $this->assertActionName('put');
+        $this->assertResponseStatusCode(500);
+    }
+
+    /**
      * @covers ::getList
      */
     public function testGetList()
@@ -232,91 +300,6 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
         $this->assertResponseHeaderContains('Content-Range', 'items 0-1/100');
         $this->assertResponseHeaderContains('Range-Unit', 'items');
     }
-
-    /**
-     * @covers ::getList
-     */
-//    public function testGetListRangeHeaders()
-//    {
-//        $headers = $this->getRequest()->getHeaders();
-//        $headers->addHeaderLine('Range', '0-');
-//
-//        $this->getMockService(Store\Speech::class)
-//            ->shouldReceive('fetchByIssue')
-//            ->with(144, 3, 'B', 0, null, 1500)
-//            ->once()
-//            ->andReturn([
-//                (new Model\SpeechCongressmanProperties())
-//                    ->setSpeech(new Model\Speech())
-//                    ->setCongressman((new Model\CongressmanPartyProperties())
-//                        ->setCongressman(new Model\Congressman()))
-//            ])
-//            ->getMock()
-//            ->shouldReceive('countByIssue')
-//            ->andReturn(100)
-//            ->getMock();
-//
-//        $this->dispatch('/loggjafarthing/144/thingmal/a/3/raedur');
-//
-//        /** @var  $contentRange \Zend\Http\Header\ContentRange */
-//        $contentRange = $this->getResponse()
-//            ->getHeaders()
-//            ->get('Content-Range')
-//        ;
-//
-//        $this->assertEquals('items 0-1/100', $contentRange->getFieldValue());
-//    }
-
-    /**
-     * @covers ::getList
-     */
-//    public function testGetListRangeHeadersFixedRange()
-//    {
-//        $headers = $this->getRequest()->getHeaders();
-//        $headers->addHeaderLine('Range', '0-20');
-//
-//        $this->getMockService(Speech::class)
-//            ->shouldReceive('fetchByIssue')
-//            ->with(144, 3, 'A', 0, 20, 1500)
-//            ->andReturn(array_map(function ($i) {
-//                return  (new SpeechAndPosition())
-//                    ->setCongressmanId(1)
-/*                    ->setText('<?xml version="1.0" ?><root />')*/
-//                    ->setFrom(new \DateTime('2000-01-01'))
-//                    ->setPosition($i);
-//            }, range(0, 19)))
-//            ->once()
-//            ->getMock()
-//
-//            ->shouldReceive('countByIssue')
-//            ->andReturn(100)
-//            ->getMock();
-//
-//        $this->getMockService(Congressman::class)
-//            ->shouldReceive('get')
-//            ->andReturn(new \Althingi\Model\Congressman())
-//            ->times(20);
-//
-//        $this->getMockService(Party::class)
-//            ->shouldReceive('getByCongressman')
-//            ->andReturn(new \Althingi\Model\Party())
-//            ->times(20);
-//
-//        $this->getMockService(Constituency::class)
-//            ->shouldReceive('getByCongressman')
-//            ->andReturn(new ConstituencyDate())
-//            ->times(20)
-//            ->getMock();
-//
-//        $this->dispatch('/loggjafarthing/144/thingmal/a/3/raedur');
-//
-//        /** @var  $contentRange \Zend\Http\Header\ContentRange */
-//        $contentRange = $this->getResponse()
-//            ->getHeaders()
-//            ->get('Content-Range');
-//
-//        $this->assertEquals('items 0-20/100', $contentRange->getFieldValue());
-//    }
 
     /**
      * @covers ::patch

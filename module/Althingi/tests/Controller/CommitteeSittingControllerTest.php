@@ -13,6 +13,7 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * Class SessionControllerTest
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\CommitteeSittingController
+ *
  * @covers \Althingi\Controller\CommitteeSittingController::setCommitteeSitting
  */
 class CommitteeSittingControllerTest extends AbstractHttpControllerTestCase

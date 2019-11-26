@@ -39,7 +39,10 @@ class SuperCategory implements DatabaseAwareInterface
             : null;
     }
 
-    public function fetch(): ? array
+    /**
+     * @return \Althingi\Model\SuperCategory[]
+     */
+    public function fetch(): array
     {
         $statement = $this->getDriver()->prepare('
             select * from `SuperCategory`

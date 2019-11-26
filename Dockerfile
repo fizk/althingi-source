@@ -4,13 +4,14 @@
 #
 # #####################################################
 
-FROM php:7.2.9-apache
+FROM php:7.3.11-apache-buster
 
 RUN apt-get update \
- && apt-get install -y zip unzip \
- && apt-get install -y git zlib1g-dev vim \
-# && apt-get install -y pkg-config \
+ && apt-get install -y zip unzip libzip-dev \
+ && apt-get install -y git vim \
  && apt-get install -y autoconf g++ make openssl libssl-dev libcurl4-openssl-dev pkg-config libsasl2-dev libpcre3-dev \
+ && echo "alias ll=\"ls -alh\"" >> /root/.bashrc \
+ && . /root/.bashrc \
  && docker-php-ext-install zip \
  && docker-php-ext-install pdo_mysql \
  && docker-php-ext-install bcmath \
@@ -27,7 +28,8 @@ RUN pecl install -o -f redis-4.3.0 \
     && rm -rf /tmp/pear \
     && docker-php-ext-enable redis mongodb
 
-ARG WITH_XDEBUG=false
+ARG WITH_XDEBUG
+ARG WITH_DEV
 
 RUN if [ $WITH_XDEBUG = "true" ] ; then \
         pecl install xdebug; \
@@ -42,13 +44,6 @@ COPY ./auto/php/php.ini /usr/local/etc/php/
 
 EXPOSE 80
 
-# with x-debug version
-#RUN pecl install -o -f redis \
-#    && pecl install xdebug-2.8.0 \
-#    && rm -rf /tmp/pear \
-#    && docker-php-ext-enable redis xdebug
-
-# - - -  Option 1
 WORKDIR /var/www
 
 COPY ./composer.json .
@@ -56,19 +51,17 @@ COPY ./composer.lock .
 COPY ./phpcs.xml .
 COPY ./phpunit.xml.dist .
 
-RUN /usr/local/bin/composer install --prefer-source --no-interaction --no-dev \
-    && /usr/local/bin/composer dump-autoload -o
-# - - -  end of Option 1
+RUN mkdir -p /var/www/data/cache
 
-# - - -  Option 2 (https://www.sentinelstand.com/article/composer-install-in-dockerfile-without-breaking-cache)
-# COPY composer.json ./var/www
-# COPY composer.lock ./var/www
-# RUN composer install --no-scripts --no-autoloader
-# COPY . ./var/www
-# RUN composer dump-autoload --optimize && \
-#     composer run-scripts post-install-cmd
-# WORKDIR /var/www
-# - - -  end of Option 2
+RUN if [ $WITH_DEV = "true" ] ; then \
+        /usr/local/bin/composer install --prefer-source --no-interaction --no-suggest \
+            && /usr/local/bin/composer dump-autoload -o; \
+    fi ;
+
+RUN if [ $WITH_DEV != "true" ] ; then \
+        /usr/local/bin/composer install --prefer-source --no-interaction --no-dev --no-suggest \
+            && /usr/local/bin/composer dump-autoload -o; \
+    fi ;
 
 
 

@@ -8,6 +8,7 @@ use Althingi\Injector\StoreDocumentAwareInterface;
 use Althingi\Service\CongressmanDocument;
 use Althingi\Service\Document;
 use Rend\Controller\AbstractRestfulController;
+use Rend\View\Model\ErrorModel;
 use Rend\View\Model\ItemModel;
 use Rend\View\Model\CollectionModel;
 use Rend\Helper\Http\Range;
@@ -31,6 +32,8 @@ class DocumentController extends AbstractRestfulController implements
      * @param mixed $id
      * @return ItemModel|\Rend\View\Model\ModelInterface
      * @output \Althingi\Model\Document
+     * @200 Success
+     * @404 Resource not found
      */
     public function get($id)
     {
@@ -38,24 +41,33 @@ class DocumentController extends AbstractRestfulController implements
         $issueId = $this->params('issue_id', null);
         $documentId = $this->params('document_id', null);
 
-        return (new ItemModel($this->documentService->get($assemblyId, $issueId, $documentId)));
+        $document = $this->documentService->get($assemblyId, $issueId, $documentId);
+        return $document
+            ? (new ItemModel($document))->setStatus(200)
+            : (new ErrorModel('Resource not found'))->setStatus(404);
     }
 
     /**
      * @return CollectionModel|\Rend\View\Model\ModelInterface
      * @output \Althingi\Model\Document[]
+     * @206 Success
      */
     public function getList()
     {
         $assemblyId = $this->params('assembly_id', null);
         $issueId = $this->params('issue_id', null);
 
-        return (new CollectionModel($this->documentService->fetchByIssue($assemblyId, $issueId)));
+        $documents = $this->documentService->fetchByIssue($assemblyId, $issueId);
+
+        return (new CollectionModel($documents))
+            ->setRange(0, count($documents), count($documents))
+            ->setStatus(206);
     }
 
     /**
      * @return ItemModel
      * @output \Althingi\Model\CongressmanDocument[]
+     * @206 Success
      */
     public function proponentsAction()
     {
@@ -63,22 +75,31 @@ class DocumentController extends AbstractRestfulController implements
         $issueId = $this->params('issue_id', null);
         $documentId = $this->params('document_id', null);
 
-        return (new ItemModel($this->congressmanDocumentService->fetchByDocument(
+        $proponents = $this->congressmanDocumentService->fetchByDocument(
             $assemblyId,
             $issueId,
             $documentId
-        )));
+        );
+
+        return (new CollectionModel($proponents))
+            ->setStatus(206)
+            ->setRange(0, count($proponents), count($proponents));
     }
 
     /**
      * @return CollectionModel
      * @output \Althingi\Model\ValueAndCount[]
+     * @206 Success
      */
     public function documentTypesAction()
     {
         $assemblyId = $this->params('assembly_id', null);
         $issueId = $this->params('issue_id', null);
-        return (new CollectionModel($this->documentService->countTypeByIssue($assemblyId, $issueId)));
+        $types = $this->documentService->countTypeByIssue($assemblyId, $issueId);
+
+        return (new CollectionModel($types))
+            ->setRange(0, count($types), count($types))
+            ->setStatus(206);
     }
 
     /**

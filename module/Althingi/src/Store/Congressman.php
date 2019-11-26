@@ -262,19 +262,23 @@ class Congressman implements StoreAwareInterface
 
         return array_map(function ($document) use ($assemblyId) {
             $congressman = array_merge((array)$document['congressman']);
-            $parties = array_merge((array)$document['parties']);
+            $parties = isset($document['parties']) ? array_merge((array)$document['parties']) : [];
             return  (new Model\CongressmanPartyProperties())
                 ->setCongressman(
                     (new Hydrator\Congressman())->hydrate($congressman, new Model\Congressman())
                 )->setParty(
-                    (new Hydrator\Party())->hydrate((array)$congressman['party'], new Model\Party())
+                    isset($congressman['party'])
+                        ? (new Hydrator\Party())->hydrate((array)$congressman['party'], new Model\Party())
+                        : null
                 )->setParties(
                     array_map(function ($party) {
                         return (new Hydrator\Party())->hydrate((array)$party, new Model\Party());
                     }, (array)$parties)
                 )->setConstituency(
-                    (new Hydrator\Constituency())
-                        ->hydrate((array)$congressman['constituency'], new Model\Constituency())
+                    isset($congressman['constituency'])
+                        ? (new Hydrator\Constituency())
+                            ->hydrate((array)$congressman['constituency'], new Model\Constituency())
+                        : null
                 )->setAssembly((new Model\Assembly())->setAssemblyId($assemblyId));
         }, $document->toArray());
     }

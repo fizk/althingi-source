@@ -11,6 +11,7 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * Class CommitteeMeetingControllerTest
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\CommitteeMeetingController
+ *
  * @covers \Althingi\Controller\CommitteeMeetingController::setCommitteeMeetingService
  */
 class CommitteeMeetingControllerTest extends AbstractHttpControllerTestCase
@@ -187,8 +188,6 @@ class CommitteeMeetingControllerTest extends AbstractHttpControllerTestCase
         $this->assertControllerClass('CommitteeMeetingController');
         $this->assertActionName('get');
         $this->assertResponseStatusCode(200);
-
-//        print_r(json_decode($this->getResponse()->getContent()));
     }
 
     /**
@@ -207,7 +206,5 @@ class CommitteeMeetingControllerTest extends AbstractHttpControllerTestCase
         $this->assertControllerClass('CommitteeMeetingController');
         $this->assertActionName('get');
         $this->assertResponseStatusCode(404);
-
-//        print_r(json_decode($this->getResponse()->getContent()));
     }
 }

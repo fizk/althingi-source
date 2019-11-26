@@ -22,6 +22,7 @@ use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
  * Class AssemblyControllerTest
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\Aggregate\IssueController
+ *
  * @covers \Althingi\Controller\Aggregate\IssueController::setIssueService
 
  */
@@ -63,7 +64,7 @@ class AggregateIssueControllerTest extends AbstractHttpControllerTestCase
 
         $this->assertControllerClass('IssueController');
         $this->assertActionName('progress');
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(206);
     }
 
     /**
@@ -80,7 +81,7 @@ class AggregateIssueControllerTest extends AbstractHttpControllerTestCase
 
         $this->assertControllerClass('IssueController');
         $this->assertActionName('count-type-status');
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(206);
     }
 
     /**
@@ -97,6 +98,6 @@ class AggregateIssueControllerTest extends AbstractHttpControllerTestCase
 
         $this->assertControllerClass('IssueController');
         $this->assertActionName('count-government');
-        $this->assertResponseStatusCode(200);
+        $this->assertResponseStatusCode(206);
     }
 }
