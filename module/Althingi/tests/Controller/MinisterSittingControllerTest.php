@@ -120,7 +120,7 @@ class MinisterSittingControllerTest extends AbstractHttpControllerTestCase
             ->getMock()
 
             ->shouldReceive('getIdentifier')
-            ->andReturn(false)
+            ->andReturn('54321')
             ->once()
             ->getMock();
         ;
@@ -133,7 +133,7 @@ class MinisterSittingControllerTest extends AbstractHttpControllerTestCase
         ]);
 
         /** @var  $response \Zend\Http\PhpEnvironment\Response */
-        $locationValue = $this->getResponse()->get('Location')->getFieldValue();
+        $locationValue = $this->getResponse()->getHeaders()->get('Location')->getFieldValue();
 
         $this->assertResponseStatusCode(409);
         $this->assertResponseHeaderContains('Location', '/thingmenn/3/radherraseta/54321');
