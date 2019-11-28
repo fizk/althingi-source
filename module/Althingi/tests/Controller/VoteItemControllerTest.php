@@ -130,9 +130,12 @@ class VoteItemControllerTest extends AbstractHttpControllerTestCase
      */
     public function testPostUpdate()
     {
+        $exception = new \PDOException();
+        $exception->errorInfo = ['', 1062, ''];
+
         $this->getMockService(VoteItem::class)
             ->shouldReceive('create')
-            ->andThrow(new \PDOException('', 23000))
+            ->andThrow($exception)
             ->once()
             ->getMock()
             ->shouldReceive('getByVote')
@@ -155,9 +158,12 @@ class VoteItemControllerTest extends AbstractHttpControllerTestCase
      */
     public function testPostDifferentError()
     {
+        $exception = new \PDOException();
+        $exception->errorInfo = ['', 1234, ''];
+
         $this->getMockService(VoteItem::class)
             ->shouldReceive('create')
-            ->andThrow(new \PDOException('', 101))
+            ->andThrow($exception)
             ->once()
             ->getMock()
             ->shouldReceive('getByVote')

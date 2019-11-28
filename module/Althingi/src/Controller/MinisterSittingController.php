@@ -107,9 +107,8 @@ class MinisterSittingController extends AbstractRestfulController implements
             try {
                 $ministerSittingId = $this->ministerSittingService->create($ministerSitting);
                 $statusCode = 201;
-            } catch (\Exception $e) {
-                // Error: 1022 SQLSTATE: 23000 (ER_DUP_KEY)
-                if ($e->getCode() == 23000) {
+            } catch (\PDOException $e) {
+                if ($e->errorInfo[1] == 1062) {
                     $ministerSittingId = $this->ministerSittingService->getIdentifier(
                         $ministerSitting->getAssemblyId(),
                         $ministerSitting->getMinistryId(),
@@ -117,6 +116,9 @@ class MinisterSittingController extends AbstractRestfulController implements
                         $ministerSitting->getFrom()
                     );
                     $statusCode = 409;
+                } else {
+                    return (new ErrorModel($e))
+                        ->setStatus(500);
                 }
             }
 

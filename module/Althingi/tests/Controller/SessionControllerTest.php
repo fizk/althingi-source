@@ -79,9 +79,12 @@ class SessionControllerTest extends AbstractHttpControllerTestCase
      */
     public function testCreateEntryAlreadyExists()
     {
+        $exception = new \PDOException();
+        $exception->errorInfo = ['', 1062, ''];
+
         $this->getMockService(Session::class)
             ->shouldReceive('create')
-            ->andThrow(new \Exception(null, 23000))
+            ->andThrow($exception)
             ->once()
             ->getMock()
 

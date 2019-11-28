@@ -7,7 +7,16 @@ class OpenAPI
 {
     private $object;
 
-    public function __construct()
+    /** @var string */
+    private $host;
+
+    /** @var string[]  */
+    private $schema = ['http'];
+
+    /** @var string */
+    private $definition;
+
+    public function transform($any)
     {
         $this->object = [
             'swagger' => "2.0",
@@ -21,18 +30,68 @@ class OpenAPI
             'basePath' => '',
             'tags' => [],
             'paths' => [],
-            'host' => 'loggjafarthing.einarvalur.co/api',
-//            'host' => 'localhost/api',
+            'host' => $this->getHost(),
         ];
-    }
 
-    public function transform($any)
-    {
         foreach ($any as $key => $value) {
             $this->addPath($this->openApiPath($key), $value);
         }
         ksort($this->object);
         return $this->object;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHost(): string
+    {
+        return $this->host;
+    }
+
+    /**
+     * @param string $host
+     * @return OpenAPI
+     */
+    public function setHost(string $host): OpenAPI
+    {
+        $this->host = $host;
+        return $this;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getSchema(): array
+    {
+        return $this->schema;
+    }
+
+    /**
+     * @param string[] $schema
+     * @return OpenAPI
+     */
+    public function setSchema(array $schema): OpenAPI
+    {
+        $this->schema = $schema;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDefinition(): string
+    {
+        return $this->definition;
+    }
+
+    /**
+     * @param string $definition
+     * @return OpenAPI
+     */
+    public function setDefinition(string $definition): OpenAPI
+    {
+        $this->definition = $definition;
+        return $this;
     }
 
     private function addPath(string $path, array $verbs)

@@ -177,7 +177,7 @@ class RequestCacheHandlerTest extends TestCase
                 return true;
             }
 
-            public function getItem($key, & $success = null, & $casToken = null)
+            public function getItem($key, &$success = null, &$casToken = null)
             {
                 return serialize(new \Rend\View\Model\EmptyModel());
             }
@@ -193,7 +193,7 @@ class RequestCacheHandlerTest extends TestCase
                 return false;
             }
 
-            public function getItem($key, & $success = null, & $casToken = null)
+            public function getItem($key, &$success = null, &$casToken = null)
             {
                 return null;
             }

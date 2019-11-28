@@ -119,6 +119,23 @@ class VoteItemTest extends TestCase
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
+    public function testCreateAlreadyExist()
+    {
+        $voteItem = (new VoteItemModel())
+            ->setVoteId(1)
+            ->setCongressmanId(1)
+            ->setVoteItemId(5)
+            ->setVote('ja');
+
+        $voteItemService = new VoteItem();
+        $voteItemService->setDriver($this->pdo);
+        try {
+            $voteItemService->create($voteItem);
+        } catch (\PDOException $e) {
+            $this->assertEquals(1062, $e->errorInfo[1]);
+        }
+    }
+
     public function testUpdate()
     {
         $voteItem = (new VoteItemModel())

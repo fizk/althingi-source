@@ -102,9 +102,8 @@ class CommitteeSittingController extends AbstractRestfulController implements
             try {
                 $committeeSittingId = $this->committeeSittingService->create($committeeSitting);
                 $statusCode = 201;
-            } catch (\Exception $e) {
-                // Error: 1022 SQLSTATE: 23000 (ER_DUP_KEY)
-                if ($e->getCode() == 23000) {
+            } catch (\PDOException $e) {
+                if ($e->errorInfo[1] === 1062) {
                     $committeeSittingId = $this->committeeSittingService->getIdentifier(
                         $committeeSitting->getCongressmanId(),
                         $committeeSitting->getCommitteeId(),
@@ -112,6 +111,9 @@ class CommitteeSittingController extends AbstractRestfulController implements
                         $committeeSitting->getFrom()
                     );
                     $statusCode = 409;
+                } else {
+                    return (new ErrorModel($e))
+                        ->setStatus(500);
                 }
             }
 
