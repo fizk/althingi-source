@@ -1,7 +1,7 @@
 <div id="swagger-ui"></div>
 <script>
     const ui = SwaggerUIBundle({
-        url: "/api/openapi",
+        url: "<?=$this->definition ?>",
         dom_id: '#swagger-ui',
         presets: [
             SwaggerUIBundle.presets.apis,

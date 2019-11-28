@@ -100,15 +100,18 @@ class SessionController extends AbstractRestfulController implements
             try {
                 $sessionId = $this->sessionService->create($sessionObject);
                 $statusCode = 201;
-            } catch (\Exception $e) {
+            } catch (\PDOException $e) {
                 // Error: 1022 SQLSTATE: 23000 (ER_DUP_KEY)
-                if ($e->getCode() == 23000) {
+                if ($e->errorInfo[1] === 1062) {
                     $sessionId = $this->sessionService->getIdentifier(
                         $sessionObject->getCongressmanId(),
                         $sessionObject->getFrom(),
                         $sessionObject->getType()
                     );
                     $statusCode = 409;
+                } else {
+                    return (new ErrorModel($e))
+                        ->setStatus(500);
                 }
             }
 

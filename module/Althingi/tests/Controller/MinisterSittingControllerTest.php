@@ -83,9 +83,12 @@ class MinisterSittingControllerTest extends AbstractHttpControllerTestCase
      */
     public function testCreateEntryAlreadyExists()
     {
+        $exception = new \PDOException();
+        $exception->errorInfo = ['', 1062, ''];
+
         $this->getMockService(Service\MinisterSitting::class)
             ->shouldReceive('create')
-            ->andThrow(new \Exception(null, 23000))
+            ->andThrow($exception)
             ->once()
             ->getMock()
 
@@ -113,9 +116,11 @@ class MinisterSittingControllerTest extends AbstractHttpControllerTestCase
      */
     public function testCreateEntryAlreadyExistsVei()
     {
+        $exception = new \PDOException();
+        $exception->errorInfo = ['', 1062, ''];
         $this->getMockService(Service\MinisterSitting::class)
             ->shouldReceive('create')
-            ->andThrow(new \Exception(null, 23000))
+            ->andThrow($exception)
             ->once()
             ->getMock()
 
@@ -131,9 +136,6 @@ class MinisterSittingControllerTest extends AbstractHttpControllerTestCase
             'party_id' => '1',
             'from' => '2001-01-01',
         ]);
-
-        /** @var  $response \Zend\Http\PhpEnvironment\Response */
-        $locationValue = $this->getResponse()->getHeaders()->get('Location')->getFieldValue();
 
         $this->assertResponseStatusCode(409);
         $this->assertResponseHeaderContains('Location', '/thingmenn/3/radherraseta/54321');
