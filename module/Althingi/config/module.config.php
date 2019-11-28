@@ -896,8 +896,9 @@ return [
 
     'controllers' => [
         'factories' => [
-            Controller\IndexController::class => function () {
-                return (new Controller\IndexController());
+            Controller\IndexController::class => function (ServiceManager $container) {
+                return (new Controller\IndexController())
+                    ->setOpenApi($container->get(\Althingi\Utils\OpenAPI::class));
             },
             Controller\AssemblyController::class => function (ServiceManager $container) {
                 return (new Controller\AssemblyController())

@@ -211,9 +211,12 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
      */
     public function testPutDuplicate()
     {
+        $exception = new \PDOException();
+        $exception->errorInfo = ['', 1452, ''];
+
         $this->getMockService(Service\Speech::class)
             ->shouldReceive('save')
-            ->andThrow(new \PDOException('fk_Speach_Plenary1', 23000))
+            ->andThrow($exception)
             ->twice()
             ->getMock();
 
@@ -244,9 +247,12 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
      */
     public function testPutSomeError()
     {
+        $exception = new \PDOException();
+        $exception->errorInfo = ['', 0, ''];
+
         $this->getMockService(Service\Speech::class)
             ->shouldReceive('save')
-            ->andThrow(new \PDOException('', 0))
+            ->andThrow($exception)
             ->once()
             ->getMock();
 

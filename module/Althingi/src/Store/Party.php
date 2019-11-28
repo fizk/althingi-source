@@ -18,10 +18,11 @@ class Party implements StoreAwareInterface
      */
     public function fetchTimeByAssembly(int $assemblyId)
     {
-        $documents = $this->getStore()->speech->aggregate([
+        $documents = $this->getStore()->selectCollection('speech')->aggregate([
             [
                 '$match' => [
-                    'issue.assembly_id' => $assemblyId
+                    'issue.assembly_id' => $assemblyId,
+                    'congressman.party' => ['$ne' => null]
                 ],
             ],
             [

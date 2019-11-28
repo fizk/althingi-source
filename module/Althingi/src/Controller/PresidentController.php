@@ -104,8 +104,8 @@ class PresidentController extends AbstractRestfulController implements
 
             try {
                 $presidentId = $this->presidentService->create($newPresident);
-            } catch (\Exception $e) {
-                if ($e->getCode() == 23000) {
+            } catch (\PDOException $e) {
+                if ($e->errorInfo[1] == 1062) {
                     $existingPresident = $this->presidentService->getByUnique(
                         $newPresident->getAssemblyId(),
                         $newPresident->getCongressmanId(),
@@ -114,6 +114,9 @@ class PresidentController extends AbstractRestfulController implements
                     );
                     $presidentId = $existingPresident->getPresidentId();
                     $statusCode = 409;
+                } else {
+                    return (new ErrorModel($e))
+                        ->setStatus(500);
                 }
             }
 

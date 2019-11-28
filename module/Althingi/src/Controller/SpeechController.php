@@ -172,8 +172,7 @@ class SpeechController extends AbstractRestfulController implements
                  *  http://www.althingi.is/altext/xml/thingmalalisti/thingmal/?lthing=20&malnr=1 but the plenary list
                  *  it self is empty http://www.althingi.is/altext/xml/thingfundir/?lthing=20
                  */
-                if ($e->getCode() == 23000 && strpos($e->getMessage(), 'fk_Speach_Plenary1') !== false) {
-
+                if ($e->errorInfo[1] === 1452) {
                     /** @var  $speech \Althingi\Model\Speech */
                     $speech = $form->getObject();
                     $plenary = (new Model\Plenary())

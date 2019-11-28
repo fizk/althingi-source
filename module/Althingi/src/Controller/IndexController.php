@@ -9,18 +9,29 @@ use Zend\View\Model\ViewModel;
 
 class IndexController extends AbstractActionController
 {
+    /** @var \Althingi\Utils\OpenAPI */
+    private $openApi;
+
     public function indexAction()
     {
-        return new ViewModel();
+        return new ViewModel([
+            'definition' => $this->openApi->getDefinition()
+        ]);
     }
 
     public function openApiAction()
     {
-        $routes = (new OpenAPI())->transform(
+        $routes = $this->openApi->transform(
             (new \Althingi\Utils\RouteInspector())
                 ->run(require __DIR__ . '/../../config/module.config.php')
         );
 
         return (new ItemModel($routes));
+    }
+
+    public function setOpenApi(OpenAPI $openAPI)
+    {
+        $this->openApi = $openAPI;
+        return $this;
     }
 }

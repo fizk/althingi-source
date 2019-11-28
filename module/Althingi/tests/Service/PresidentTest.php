@@ -126,6 +126,23 @@ class PresidentTest extends TestCase
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
+    public function testCreateAlreadyExist()
+    {
+        $president = (new President())
+            ->setCongressmanId(1)
+            ->setAssemblyId(1)
+            ->setTitle('t')
+            ->setFrom(new \DateTime('2000-01-01'));
+
+        $presidentService = new PresidentService();
+        $presidentService->setDriver($this->pdo);
+        try {
+            $presidentService->create($president);
+        } catch (\PDOException $e) {
+            $this->assertEquals(1062, $e->errorInfo[1]);
+        }
+    }
+
     public function testUpdate()
     {
         $president = (new President())
