@@ -270,6 +270,33 @@ class SpeechTest extends TestCase
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
+    public function testSavePlenaryDoesntExist()
+    {
+        $serviceEventListener = (new QueueEventsListener())
+            ->setQueue(new RabbitMQBlackHoleClient())
+            ->setLogger(new NullLogger())
+            ->setIsForced(true);
+        $eventManager = new EventManager();
+        $serviceEventListener->attach($eventManager);
+
+        $speech = (new SpeechModel())
+            ->setSpeechId('id--20001')
+            ->setPlenaryId(10000)
+            ->setCategory('A')
+            ->setAssemblyId(3)
+            ->setIssueId(1)
+            ->setCongressmanId(1);
+
+        $speechService = new Speech();
+        $speechService->setDriver($this->pdo);
+        $speechService->setEventManager($eventManager);
+        try {
+            $speechService->save($speech);
+        } catch (\PDOException $e) {
+            $this->assertEquals(1452, $e->errorInfo[1]);
+        }
+    }
+
     public function testUpdate()
     {
         $serviceEventListener = (new QueueEventsListener())
