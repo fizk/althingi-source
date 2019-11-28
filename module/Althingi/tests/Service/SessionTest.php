@@ -227,6 +227,25 @@ class SessionTest extends TestCase
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
+    public function testCreateAlreadyExist()
+    {
+        $session = (new SessionModel())
+            ->setCongressmanId(1)
+            ->setConstituencyId(1)
+            ->setAssemblyId(1)
+            ->setFrom(new \DateTime('2000-01-01'))
+            ->setType('þingmaður')
+            ->setPartyId(1);
+
+        $assemblyService = new Session();
+        $assemblyService->setDriver($this->pdo);
+        try {
+            $assemblyService->create($session);
+        } catch (\PDOException $e) {
+            $this->assertEquals(1062, $e->errorInfo[1]);
+        }
+    }
+
     public function testUpdate()
     {
         $session = (new SessionModel())

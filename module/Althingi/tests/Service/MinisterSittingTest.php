@@ -73,6 +73,25 @@ class MinisterSittingTest extends TestCase
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
+    public function testCreateAlreadyExist()
+    {
+        $ministrySitting = (new Model\MinisterSitting())
+            ->setAssemblyId(1)
+            ->setMinisterSittingId(2)
+            ->setMinistryId(1)
+            ->setCongressmanId(1)
+            ->setPartyId(2)
+            ->setFrom(new \DateTime('2001-01-01'));
+
+        $ministrySittingService = new MinisterSitting();
+        $ministrySittingService->setDriver($this->pdo);
+        try {
+            $ministrySittingService->create($ministrySitting);
+        } catch (\PDOException $e) {
+            $this->assertEquals(1062, $e->errorInfo[1]);
+        }
+    }
+
     public function testSaveUpdate()
     {
         $ministrySitting = (new Model\MinisterSitting())
