@@ -30,8 +30,7 @@ class OpenAPI
             'basePath' => '',
             'tags' => [],
             'paths' => [],
-            'host' => $this->getHost(),//'loggjafarthing.einarvalur.co/api',
-//            'host' => 'localhost/api',
+            'host' => $this->getHost(),
         ];
 
         foreach ($any as $key => $value) {
