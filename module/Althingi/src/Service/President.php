@@ -2,17 +2,23 @@
 
 namespace Althingi\Service;
 
+use Althingi\Events\AddEvent;
+use Althingi\Events\UpdateEvent;
+use Althingi\Injector\EventsAwareInterface;
 use Althingi\Model;
 use Althingi\Hydrator;
 use Althingi\Injector\DatabaseAwareInterface;
+use Althingi\Presenters\IndexablePresidentPresenter;
 use PDO;
 use DateTime;
+use Zend\EventManager\EventManager;
+use Zend\EventManager\EventManagerInterface;
 
 /**
  * Class President
  * @package Althingi\Service
  */
-class President implements DatabaseAwareInterface
+class President implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
 
@@ -20,6 +26,9 @@ class President implements DatabaseAwareInterface
      * @var \PDO
      */
     private $pdo;
+
+    /** @var \Zend\EventManager\EventManagerInterface */
+    protected $events;
 
     public function get(int $id): ? Model\President
     {
@@ -102,7 +111,16 @@ class President implements DatabaseAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
-        return $this->getDriver()->lastInsertId();
+        $id = $this->getDriver()->lastInsertId();
+        $data->setPresidentId($id);
+        $this->getEventManager()
+            ->trigger(
+                AddEvent::class,
+                new AddEvent(new IndexablePresidentPresenter($data)),
+                ['rows' => $statement->rowCount()]
+            );
+
+        return $id;
     }
 
     /**
@@ -115,6 +133,13 @@ class President implements DatabaseAwareInterface
             $this->toUpdateString('President', $data, "president_id={$data->getPresidentId()}")
         );
         $statement->execute($this->toSqlValues($data));
+
+        $this->getEventManager()
+            ->trigger(
+                UpdateEvent::class,
+                new UpdateEvent(new IndexablePresidentPresenter($data)),
+                ['rows' => $statement->rowCount()]
+            );
 
         return $statement->rowCount();
     }
@@ -135,5 +160,20 @@ class President implements DatabaseAwareInterface
     public function getDriver()
     {
         return $this->pdo;
+    }
+
+
+    public function setEventManager(EventManagerInterface $events)
+    {
+        $this->events = $events;
+        return $this;
+    }
+
+    public function getEventManager()
+    {
+        if (null === $this->events) {
+            $this->setEventManager(new EventManager());
+        }
+        return $this->events;
     }
 }

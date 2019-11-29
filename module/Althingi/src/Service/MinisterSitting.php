@@ -9,6 +9,7 @@ use Althingi\Hydrator;
 use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;
 use Althingi\Presenters\IndexableAssemblyPresenter;
+use Althingi\Presenters\IndexableMinisterSittingPresenter;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
 use PDO;
@@ -83,14 +84,16 @@ class MinisterSitting implements DatabaseAwareInterface, EventsAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
-//        $this->getEventManager()
-//            ->trigger(
-//                AddEvent::class,
-//                new AddEvent(new IndexableAssemblyPresenter($data)),
-//                ['rows' => $statement->rowCount()]
-//            );
+        $id = $this->getDriver()->lastInsertId();
+        $data->setMinisterSittingId($id);
+        $this->getEventManager()
+            ->trigger(
+                AddEvent::class,
+                new AddEvent(new IndexableMinisterSittingPresenter($data)),
+                ['rows' => $statement->rowCount()]
+            );
 
-        return $this->getDriver()->lastInsertId();
+        return $id;
     }
 
     /**
@@ -106,25 +109,25 @@ class MinisterSitting implements DatabaseAwareInterface, EventsAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
-//        switch ($statement->rowCount()) {
-//            case 1:
-//                $this->getEventManager()
-//                    ->trigger(
-//                        AddEvent::class,
-//                        new AddEvent(new IndexableAssemblyPresenter($data)),
-//                        ['rows' => $statement->rowCount()]
-//                    );
-//                break;
-//            case 0:
-//            case 2:
-//                $this->getEventManager()
-//                    ->trigger(
-//                        UpdateEvent::class,
-//                        new UpdateEvent(new IndexableAssemblyPresenter($data)),
-//                        ['rows' => $statement->rowCount()]
-//                    );
-//                break;
-//        }
+        switch ($statement->rowCount()) {
+            case 1:
+                $this->getEventManager()
+                    ->trigger(
+                        AddEvent::class,
+                        new AddEvent(new IndexableMinisterSittingPresenter($data)),
+                        ['rows' => $statement->rowCount()]
+                    );
+                break;
+            case 0:
+            case 2:
+                $this->getEventManager()
+                    ->trigger(
+                        UpdateEvent::class,
+                        new UpdateEvent(new IndexableMinisterSittingPresenter($data)),
+                        ['rows' => $statement->rowCount()]
+                    );
+                break;
+        }
         return $statement->rowCount();
     }
 
@@ -141,12 +144,12 @@ class MinisterSitting implements DatabaseAwareInterface, EventsAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
-//        $this->getEventManager()
-//            ->trigger(
-//                UpdateEvent::class,
-//                new UpdateEvent(new IndexableAssemblyPresenter($data)),
-//                ['rows' => $statement->rowCount()]
-//            );
+        $this->getEventManager()
+            ->trigger(
+                UpdateEvent::class,
+                new UpdateEvent(new IndexableMinisterSittingPresenter($data)),
+                ['rows' => $statement->rowCount()]
+            );
 
         return $statement->rowCount();
     }
