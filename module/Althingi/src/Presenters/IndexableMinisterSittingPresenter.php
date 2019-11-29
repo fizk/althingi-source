@@ -1,24 +1,26 @@
 <?php
 namespace Althingi\Presenters;
 
-use Althingi\Model\Cabinet;
+use Althingi\Model\Assembly;
+use Althingi\Model\MinisterSitting;
 use Althingi\Model\ModelInterface;
+use Althingi\Model\President;
 use Zend\Hydrator\HydratorInterface;
 
-class IndexableCabinetPresenter implements IndexablePresenter
+class IndexableMinisterSittingPresenter implements IndexablePresenter
 {
-    const INDEX = 'althingi_model_cabinet';
-    const TYPE = 'cabinet';
+    const INDEX = 'althingi_model_minister-sitting';
+    const TYPE = 'minister-sitting';
 
     /** @var  \Zend\Hydrator\HydratorInterface; */
     private $hydrator;
 
-    /** @var  \Althingi\Model\Cabinet */
+    /** @var  \Althingi\Model\MinisterSitting */
     private $model;
 
-    public function __construct(Cabinet $model)
+    public function __construct(MinisterSitting $model)
     {
-        $this->setHydrator(new \Althingi\Hydrator\Cabinet());
+        $this->setHydrator(new \Althingi\Hydrator\MinisterSitting());
         $this->setModel($model);
     }
 
@@ -46,7 +48,7 @@ class IndexableCabinetPresenter implements IndexablePresenter
 
     public function getIdentifier(): string
     {
-        return "{$this->model->getCabinetId()}";
+        return (string) $this->model->setMinisterSittingId();
     }
 
     public function getType(): string

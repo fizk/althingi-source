@@ -9,6 +9,7 @@ use Althingi\Hydrator;
 use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;
 use Althingi\Presenters\IndexableAssemblyPresenter;
+use Althingi\Presenters\IndexableMinistryPresenter;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerInterface;
 use PDO;
@@ -137,12 +138,12 @@ class Ministry implements DatabaseAwareInterface, EventsAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
-//        $this->getEventManager()
-//            ->trigger(
-//                AddEvent::class,
-//                new AddEvent(new IndexableAssemblyPresenter($data)),
-//                ['rows' => $statement->rowCount()]
-//            );
+        $this->getEventManager()
+            ->trigger(
+                AddEvent::class,
+                new AddEvent(new IndexableMinistryPresenter($data)),
+                ['rows' => $statement->rowCount()]
+            );
 
         return $this->getDriver()->lastInsertId();
     }
@@ -160,25 +161,25 @@ class Ministry implements DatabaseAwareInterface, EventsAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
-//        switch ($statement->rowCount()) {
-//            case 1:
-//                $this->getEventManager()
-//                    ->trigger(
-//                        AddEvent::class,
-//                        new AddEvent(new IndexableAssemblyPresenter($data)),
-//                        ['rows' => $statement->rowCount()]
-//                    );
-//                break;
-//            case 0:
-//            case 2:
-//                $this->getEventManager()
-//                    ->trigger(
-//                        UpdateEvent::class,
-//                        new UpdateEvent(new IndexableAssemblyPresenter($data)),
-//                        ['rows' => $statement->rowCount()]
-//                    );
-//                break;
-//        }
+        switch ($statement->rowCount()) {
+            case 1:
+                $this->getEventManager()
+                    ->trigger(
+                        AddEvent::class,
+                        new AddEvent(new IndexableMinistryPresenter($data)),
+                        ['rows' => $statement->rowCount()]
+                    );
+                break;
+            case 0:
+            case 2:
+                $this->getEventManager()
+                    ->trigger(
+                        UpdateEvent::class,
+                        new UpdateEvent(new IndexableMinistryPresenter($data)),
+                        ['rows' => $statement->rowCount()]
+                    );
+                break;
+        }
         return $statement->rowCount();
     }
 
@@ -195,12 +196,12 @@ class Ministry implements DatabaseAwareInterface, EventsAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
-//        $this->getEventManager()
-//            ->trigger(
-//                UpdateEvent::class,
-//                new UpdateEvent(new IndexableAssemblyPresenter($data)),
-//                ['rows' => $statement->rowCount()]
-//            );
+        $this->getEventManager()
+            ->trigger(
+                UpdateEvent::class,
+                new UpdateEvent(new IndexableMinistryPresenter($data)),
+                ['rows' => $statement->rowCount()]
+            );
 
         return $statement->rowCount();
     }

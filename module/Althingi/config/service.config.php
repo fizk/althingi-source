@@ -15,7 +15,8 @@ return [
     'factories' => [
         Service\Assembly::class => function (ServiceManager $sm) {
             return (new Service\Assembly())
-                ->setDriver($sm->get(PDO::class));
+                ->setDriver($sm->get(PDO::class))
+                ->setEventManager($sm->get(EventsListener::class));
         },
         Service\Congressman::class => function (ServiceManager $sm) {
             return (new Service\Congressman())
@@ -36,7 +37,8 @@ return [
         },
         Service\CommitteeSitting::class => function (ServiceManager $sm) {
             return (new Service\CommitteeSitting())
-                ->setDriver($sm->get(PDO::class));
+                ->setDriver($sm->get(PDO::class))
+                ->setEventManager($sm->get(EventsListener::class));
         },
         Service\Cabinet::class => function (ServiceManager $sm) {
             return (new Service\Cabinet())
@@ -87,7 +89,8 @@ return [
         },
         Service\President::class => function (ServiceManager $sm) {
             return (new Service\President())
-                ->setDriver($sm->get(PDO::class));
+                ->setDriver($sm->get(PDO::class))
+                ->setEventManager($sm->get(EventsListener::class));
         },
         Service\Plenary::class => function (ServiceManager $sm) {
             return (new Service\Plenary())
@@ -95,11 +98,13 @@ return [
         },
         Service\Ministry::class => function (ServiceManager $sm) {
             return (new Service\Ministry())
-                ->setDriver($sm->get(PDO::class));
+                ->setDriver($sm->get(PDO::class))
+                ->setEventManager($sm->get(EventsListener::class));
         },
         Service\MinisterSitting::class => function (ServiceManager $sm) {
             return (new Service\MinisterSitting())
-                ->setDriver($sm->get(PDO::class));
+                ->setDriver($sm->get(PDO::class))
+                ->setEventManager($sm->get(EventsListener::class));
         },
         Service\PlenaryAgenda::class => function (ServiceManager $sm) {
             return (new Service\PlenaryAgenda())
@@ -107,7 +112,8 @@ return [
         },
         Service\Session::class => function (ServiceManager $sm) {
             return (new Service\Session())
-                ->setDriver($sm->get(PDO::class));
+                ->setDriver($sm->get(PDO::class))
+                ->setEventManager($sm->get(EventsListener::class));
         },
         Service\SearchSpeech::class => function (ServiceManager $sm) {
             return (new Service\SearchSpeech())
