@@ -818,6 +818,16 @@ return [
                             ],
                         ]
                     ],
+                    'radherraembaetti' => [
+                        'type' => Segment::class,
+                        'options' => [
+                            'route'    => '/raduneyti[/:ministry_id]',
+                            'defaults' => [
+                                'controller' => Aggregate\MinistryController::class,
+                                'identifier' => 'ministry_id'
+                            ],
+                        ],
+                    ]
                 ]
             ],
             'leit' => [
@@ -1109,8 +1119,10 @@ return [
                     ->setAssemblyService($container->get(Service\Assembly::class))
                     ->setVoteItemService($container->get(Service\VoteItem::class))
                     ->setSessionService($container->get(Service\Session::class))
+                    ->setMinisterSittingService($container->get(Service\MinisterSitting::class))
                     ->setLogger($container->get(LoggerInterface::class))
                     ->setQueue($container->get(AMQPStreamConnection::class))
+                    ->setStallTime($container->get(\Althingi\Injector\StallingAwareInterface::class))
                     ;
             },
             Aggregate\CongressmanController::class => function (ServiceManager $container) {
@@ -1144,6 +1156,10 @@ return [
             Aggregate\ConstituencyController::class => function (ServiceManager $container) {
                 return (new Aggregate\ConstituencyController())
                     ->setConstituencyService($container->get(Service\Constituency::class));
+            },
+            Aggregate\MinistryController::class => function (ServiceManager $container) {
+                return (new Aggregate\MinistryController())
+                    ->setMinistryService($container->get(Service\Ministry::class));
             },
             Controller\InflationController::class => function (ServiceManager $container) {
                 return (new Controller\InflationController())
@@ -1213,6 +1229,15 @@ return [
                         'defaults' => [
                             'controller' => Console\IndexerIssueController::class,
                             'action' => 'session'
+                        ],
+                    ],
+                ],
+                'ministry-sitting' => [
+                    'options' => [
+                        'route' => 'index:ministry-sitting [--assembly=|-a]',
+                        'defaults' => [
+                            'controller' => Console\IndexerIssueController::class,
+                            'action' => 'ministry-sitting'
                         ],
                     ],
                 ],

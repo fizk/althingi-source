@@ -48,7 +48,7 @@ class IndexableMinisterSittingPresenter implements IndexablePresenter
 
     public function getIdentifier(): string
     {
-        return (string) $this->model->setMinisterSittingId();
+        return (string) $this->model->getMinisterSittingId();
     }
 
     public function getType(): string

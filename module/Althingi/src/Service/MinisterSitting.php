@@ -50,6 +50,23 @@ class MinisterSitting implements DatabaseAwareInterface, EventsAwareInterface
 
     /**
      * @param int $assemblyId
+     * @return \Althingi\Model\MinisterSitting[]
+     */
+    public function fetchByAssembly(int $assemblyId): array
+    {
+        $statement = $this->getDriver()->prepare("
+            select * from MinisterSitting where assembly_id = :assembly_id;
+        ");
+        $statement->execute(['assembly_id' => $assemblyId,]);
+        $sittings = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        return array_map(function ($object) {
+            return (new Hydrator\MinisterSitting())->hydrate($object, new Model\MinisterSitting());
+        }, $sittings);
+    }
+
+    /**
+     * @param int $assemblyId
      * @param int $congressmanId
      * @return \Althingi\Model\MinisterSitting[]
      */
@@ -69,7 +86,6 @@ class MinisterSitting implements DatabaseAwareInterface, EventsAwareInterface
             return (new Hydrator\MinisterSitting())->hydrate($object, new Model\MinisterSitting());
         }, $sittings);
     }
-
 
     /**
      * Create one entry.
