@@ -64,8 +64,11 @@ services:
       - STORAGE_PORT=${ENV_STORAGE_PORT:-27017}
       - STORAGE_USER=${ENV_STORAGE_USER:-wo}
       - STORAGE_PASSWORD=${ENV_STORAGE_PASSWORD:-long@pass!123}
+
       - DOCUMENT_SERVER=${ENV_DOCUMENT_SERVER:-localhost:8080}
       - DOCUMENT_DEFINITION=${ENV_DOCUMENT_DEFINITION:-/openapi}
+
+      - INDEXER_STALL_TIME=${ENV_INDEXER_STALL_TIME:-150000}
 
 
   # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

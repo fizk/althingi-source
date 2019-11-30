@@ -76,6 +76,9 @@ The API is configures with environment variables
 | STORAGE_PORT        | 27017                            | <number>                              | MongoDB port
 | STORAGE_USER        |                                  | <string>                              | MongoDB user
 | STORAGE_PASSWORD    |                                  | <string>                              | MongoDB password
+| DOCUMENT_SERVER     |                                  | <string>                              | 
+| DOCUMENT_DEFINITION |                                  | <string>                              | 
+| INDEXER_STALL_TIME  | 150000                           | <int>                                 | How long the indexer sleeps between actions
 
 ## Development
 This repo comes with a **Dockerfile**. It is based off of a Apache/PHP image and will install all needed PHP extensions and

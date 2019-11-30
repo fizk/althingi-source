@@ -332,8 +332,12 @@ return [
         Althingi\Utils\OpenAPI::class => function (ServiceManager $sm) {
             return (new Althingi\Utils\OpenAPI())
                 ->setHost(getenv('DOCUMENT_SERVER') ?: 'loggjafarthing.einarvalur.co/api')
-                ->setDefinition(getenv('DOCUMENT_DEFINITION') ?: '/api/openapi') ///api/openapi
+                ->setDefinition(getenv('DOCUMENT_DEFINITION') ?: '/api/openapi')
                 ->setSchema(['http']);
-        }
+        },
+
+        Althingi\Injector\StallingAwareInterface::class => function () {
+            return getenv('INDEXER_STALL_TIME') ?: 50000;
+        },
     ],
 ];
