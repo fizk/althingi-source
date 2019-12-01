@@ -330,10 +330,29 @@ class Congressman implements StoreAwareInterface
      */
     public function fetchByAssembly(int $assemblyId, ?string $type = null)
     {
-        $query = array_merge(
-            ['assembly.assembly_id' => $assemblyId,],
-            $type ? ['sessions' => ['$elemMatch' => ['type' => $type]]] : []
-        );
+        $query = [];
+        switch ($type) {
+            case 'þingmaður':
+                $query = [
+                    'assembly.assembly_id' => $assemblyId,
+                    '$or' => [
+                        ['sessions' => ['$elemMatch' => ['type' => 'þingmaður']]],
+                        ['sessions' => ['$exists' => false]]
+                    ]
+                ];
+                break;
+            case 'varamaður':
+                $query = [
+                    'assembly.assembly_id' => $assemblyId,
+                    'sessions' => ['$elemMatch' => ['type' => 'varamaður']]
+                ];
+                break;
+            default:
+                $query = [
+                    'assembly.assembly_id' => $assemblyId,
+                ];
+                break;
+        }
 
         $document = $this->getStore()->selectCollection('congressman')->find(
             $query,
