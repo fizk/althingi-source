@@ -31,12 +31,15 @@ class RequestCacheHandler implements ListenerAggregateInterface, CacheAwareInter
 
             try {
                 $storageKey = $this->storageKey($event->getRequest());
-                if ($event->getRequest()->getMethod() === HttpRequest::METHOD_GET && $cache->hasItem($storageKey)) {
+                if ($event->getRequest()->getMethod() === HttpRequest::METHOD_GET &&
+                    $cache->hasItem($storageKey) &&
+                    $cache->getItem($storageKey) !== null
+                ) {
                     $event->getApplication()->getEventManager()->clearListeners(MvcEvent::EVENT_DISPATCH);
                     $event->getResponse()->getHeaders()->addHeaderLine("X-Cache: HIT");
                     $event->setViewModel(unserialize($cache->getItem($storageKey)));
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 $event->getResponse()->getHeaders()->addHeaderLine("X-Cache: HIT");
                 $this->getLogger()->error('CACHE', [0, "GET", $e->getMessage(), $event->getRequest()->getUri()]);
                 return;
