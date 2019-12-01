@@ -16,6 +16,12 @@ class CongressmanPartyProperties implements ModelInterface
     /** @var \Althingi\Model\Constituency */
     private $constituency = null;
 
+    /** @var \Althingi\Model\Ministry[]  */
+    private $ministries = [];
+
+    /** @var \Althingi\Model\MinisterSitting[]  */
+    private $ministrySittings = [];
+
     /** @var  \Althingi\Model\Assembly */
     private $assembly;
 
@@ -110,6 +116,42 @@ class CongressmanPartyProperties implements ModelInterface
     }
 
     /**
+     * @return Ministry[]
+     */
+    public function getMinistries(): array
+    {
+        return $this->ministries;
+    }
+
+    /**
+     * @param Ministry[] $ministries
+     * @return CongressmanPartyProperties
+     */
+    public function setMinistries(array $ministries): CongressmanPartyProperties
+    {
+        $this->ministries = $ministries;
+        return $this;
+    }
+
+    /**
+     * @return MinisterSitting[]
+     */
+    public function getMinistrySittings(): array
+    {
+        return $this->ministrySittings;
+    }
+
+    /**
+     * @param MinisterSitting[] $ministrySittings
+     * @return CongressmanPartyProperties
+     */
+    public function setMinistrySittings(array $ministrySittings): CongressmanPartyProperties
+    {
+        $this->ministrySittings = $ministrySittings;
+        return $this;
+    }
+
+    /**
      * @return array
      */
     public function toArray()
@@ -118,7 +160,9 @@ class CongressmanPartyProperties implements ModelInterface
             'party' => $this->party,
             'parties' => $this->parties,
             'assembly' => $this->assembly,
-            'constituency' => $this->constituency
+            'constituency' => $this->constituency,
+            'ministries' => $this->ministries,
+            'ministrySittings' => $this->ministrySittings
         ]);
     }
 

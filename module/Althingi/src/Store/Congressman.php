@@ -33,17 +33,36 @@ class Congressman implements StoreAwareInterface
             ]
         );
 
-        return array_map(function ($document) {
+        return array_map(function ($document) use ($assemblyId) {
             $congressman = array_merge((array)$document['congressman'], ['value' => $document['speech_time']]);
+            $parties = isset($document['parties']) ? array_merge((array)$document['parties']) : [];
+            $ministries = isset($document['ministries']) ? (array)$document['ministries'] : [];
+            $ministrySittings = isset($document['ministrySittings']) ? (array)$document['ministrySittings'] : [];
             return  (new Model\CongressmanPartyProperties())
                 ->setCongressman(
                     (new Hydrator\CongressmanValue())->hydrate($congressman, new Model\CongressmanValue())
+                )->setMinistries(
+                    array_map(function ($ministry) {
+                        /** @var $ministry \MongoDB\Model\BSONDocument */
+                        return (new Hydrator\Ministry())->hydrate($ministry->getArrayCopy(), new Model\Ministry());
+                    }, $ministries)
+                )->setMinistrySittings(
+                    array_map(function ($ministrySitting) {
+                        /** @var $ministrySitting \MongoDB\Model\BSONDocument */
+                        return (new Hydrator\MinisterSitting())
+                            ->hydrate($ministrySitting->getArrayCopy(), new Model\MinisterSitting());
+                    }, $ministrySittings)
+                )->setParties(
+                    array_map(function ($party) {
+                        /** @var $party \MongoDB\Model\BSONDocument */
+                        return (new Hydrator\Party())->hydrate($party->getArrayCopy(), new Model\Party());
+                    }, (array)$parties)
                 )->setParty(
                     (new Hydrator\Party())->hydrate((array)$congressman['party'], new Model\Party())
                 )->setConstituency(
                     (new Hydrator\Constituency())
                         ->hydrate((array)$congressman['constituency'], new Model\Constituency())
-                );
+                )->setAssembly((new Model\Assembly())->setAssemblyId($assemblyId));
         }, $document->toArray());
     }
 
@@ -83,18 +102,37 @@ class Congressman implements StoreAwareInterface
             ]
         ]);
 
-        return array_map(function ($document) {
+        return array_map(function ($document) use ($assemblyId) {
             $congressman = array_merge((array)$document['congressman'], ['value' => $document['value']]);
+            $parties = isset($document['parties']) ? array_merge((array)$document['parties']) : [];
+            $ministries = isset($document['ministries']) ? (array)$document['ministries'] : [];
+            $ministrySittings = isset($document['ministrySittings']) ? (array)$document['ministrySittings'] : [];
             return  (new Model\CongressmanPartyProperties())
                 ->setCongressman(
                     (new Hydrator\CongressmanValue())->hydrate($congressman, new Model\CongressmanValue())
+                )->setMinistries(
+                    array_map(function ($ministry) {
+                        /** @var $ministry \MongoDB\Model\BSONDocument */
+                        return (new Hydrator\Ministry())->hydrate($ministry->getArrayCopy(), new Model\Ministry());
+                    }, $ministries)
+                )->setMinistrySittings(
+                    array_map(function ($ministrySitting) {
+                        /** @var $ministrySitting \MongoDB\Model\BSONDocument */
+                        return (new Hydrator\MinisterSitting())
+                            ->hydrate($ministrySitting->getArrayCopy(), new Model\MinisterSitting());
+                    }, $ministrySittings)
+                )->setParties(
+                    array_map(function ($party) {
+                        /** @var $party \MongoDB\Model\BSONDocument */
+                        return (new Hydrator\Party())->hydrate($party->getArrayCopy(), new Model\Party());
+                    }, (array)$parties)
                 )->setParty(
                     (new Hydrator\Party())->hydrate((array)$congressman['party'], new Model\Party())
                 )->setConstituency(
                     (new Hydrator\Constituency())
                         ->hydrate((array)$congressman['constituency'], new Model\Constituency())
-                );
-        }, iterator_to_array($document));
+                )->setAssembly((new Model\Assembly())->setAssemblyId($assemblyId));
+        }, $document->toArray());
     }
 
     /**
@@ -134,18 +172,37 @@ class Congressman implements StoreAwareInterface
             ]
         ]);
 
-        return array_map(function ($document) {
+        return array_map(function ($document) use ($assemblyId) {
             $congressman = array_merge((array)$document['congressman'], ['value' => $document['value']]);
+            $parties = isset($document['parties']) ? array_merge((array)$document['parties']) : [];
+            $ministries = isset($document['ministries']) ? (array)$document['ministries'] : [];
+            $ministrySittings = isset($document['ministrySittings']) ? (array)$document['ministrySittings'] : [];
             return  (new Model\CongressmanPartyProperties())
                 ->setCongressman(
                     (new Hydrator\CongressmanValue())->hydrate($congressman, new Model\CongressmanValue())
+                )->setMinistries(
+                    array_map(function ($ministry) {
+                        /** @var $ministry \MongoDB\Model\BSONDocument */
+                        return (new Hydrator\Ministry())->hydrate($ministry->getArrayCopy(), new Model\Ministry());
+                    }, $ministries)
+                )->setMinistrySittings(
+                    array_map(function ($ministrySitting) {
+                        /** @var $ministrySitting \MongoDB\Model\BSONDocument */
+                        return (new Hydrator\MinisterSitting())
+                            ->hydrate($ministrySitting->getArrayCopy(), new Model\MinisterSitting());
+                    }, $ministrySittings)
+                )->setParties(
+                    array_map(function ($party) {
+                        /** @var $party \MongoDB\Model\BSONDocument */
+                        return (new Hydrator\Party())->hydrate($party->getArrayCopy(), new Model\Party());
+                    }, (array)$parties)
                 )->setParty(
                     (new Hydrator\Party())->hydrate((array)$congressman['party'], new Model\Party())
                 )->setConstituency(
                     (new Hydrator\Constituency())
                         ->hydrate((array)$congressman['constituency'], new Model\Constituency())
-                );
-        }, iterator_to_array($document));
+                )->setAssembly((new Model\Assembly())->setAssemblyId($assemblyId));
+        }, $document->toArray());
     }
 
     /**
@@ -229,18 +286,41 @@ class Congressman implements StoreAwareInterface
             ]
         ]);
 
-        return array_map(function ($document) {
+        return array_map(function ($document) use ($assemblyId) {
             $congressman = array_merge((array)$document['congressman'], ['value' => $document['value']]);
+            $parties = isset($document['parties']) ? array_merge((array)$document['parties']) : [];
+            $ministries = isset($document['ministries']) ? (array)$document['ministries'] : [];
+            $ministrySittings = isset($document['ministrySittings']) ? (array)$document['ministrySittings'] : [];
             return  (new Model\CongressmanPartyProperties())
                 ->setCongressman(
-                    (new Hydrator\CongressmanValue())->hydrate($congressman, new Model\CongressmanValue())
+                    (new Hydrator\Congressman())->hydrate($congressman, new Model\Congressman())
                 )->setParty(
-                    (new Hydrator\Party())->hydrate((array)$congressman['party'], new Model\Party())
+                    isset($congressman['party'])
+                        ? (new Hydrator\Party())->hydrate($congressman['party']->getArrayCopy(), new Model\Party())
+                        : null
+                )->setParties(
+                    array_map(function ($party) {
+                        /** @var $party \MongoDB\Model\BSONDocument */
+                        return (new Hydrator\Party())->hydrate($party->getArrayCopy(), new Model\Party());
+                    }, (array)$parties)
+                )->setMinistries(
+                    array_map(function ($ministry) {
+                        /** @var $ministry \MongoDB\Model\BSONDocument */
+                        return (new Hydrator\Ministry())->hydrate($ministry->getArrayCopy(), new Model\Ministry());
+                    }, $ministries)
+                )->setMinistrySittings(
+                    array_map(function ($ministrySitting) {
+                        /** @var $ministrySitting \MongoDB\Model\BSONDocument */
+                        return (new Hydrator\MinisterSitting())
+                            ->hydrate($ministrySitting->getArrayCopy(), new Model\MinisterSitting());
+                    }, $ministrySittings)
                 )->setConstituency(
-                    (new Hydrator\Constituency())
-                        ->hydrate((array)$congressman['constituency'], new Model\Constituency())
-                );
-        }, iterator_to_array($document));
+                    isset($congressman['constituency'])
+                        ? (new Hydrator\Constituency())
+                        ->hydrate($congressman['constituency']->getArrayCopy(), new Model\Constituency())
+                        : null
+                )->setAssembly((new Model\Assembly())->setAssemblyId($assemblyId));
+        }, $document->toArray());
     }
 
     /**
@@ -250,10 +330,29 @@ class Congressman implements StoreAwareInterface
      */
     public function fetchByAssembly(int $assemblyId, ?string $type = null)
     {
-        $query = array_merge(
-            ['assembly.assembly_id' => $assemblyId,],
-            $type ? ['sessions' => ['$elemMatch' => ['type' => $type]]] : []
-        );
+        $query = [];
+        switch ($type) {
+            case 'þingmaður':
+                $query = [
+                    'assembly.assembly_id' => $assemblyId,
+                    '$or' => [
+                        ['sessions' => ['$elemMatch' => ['type' => 'þingmaður']]],
+                        ['sessions' => ['$exists' => false]]
+                    ]
+                ];
+                break;
+            case 'varamaður':
+                $query = [
+                    'assembly.assembly_id' => $assemblyId,
+                    'sessions' => ['$elemMatch' => ['type' => 'varamaður']]
+                ];
+                break;
+            default:
+                $query = [
+                    'assembly.assembly_id' => $assemblyId,
+                ];
+                break;
+        }
 
         $document = $this->getStore()->selectCollection('congressman')->find(
             $query,
@@ -263,21 +362,35 @@ class Congressman implements StoreAwareInterface
         return array_map(function ($document) use ($assemblyId) {
             $congressman = array_merge((array)$document['congressman']);
             $parties = isset($document['parties']) ? array_merge((array)$document['parties']) : [];
+            $ministries = isset($document['ministries']) ? (array)$document['ministries'] : [];
+            $ministrySittings = isset($document['ministrySittings']) ? (array)$document['ministrySittings'] : [];
             return  (new Model\CongressmanPartyProperties())
                 ->setCongressman(
                     (new Hydrator\Congressman())->hydrate($congressman, new Model\Congressman())
                 )->setParty(
                     isset($congressman['party'])
-                        ? (new Hydrator\Party())->hydrate((array)$congressman['party'], new Model\Party())
+                        ? (new Hydrator\Party())->hydrate($congressman['party']->getArrayCopy(), new Model\Party())
                         : null
                 )->setParties(
                     array_map(function ($party) {
-                        return (new Hydrator\Party())->hydrate((array)$party, new Model\Party());
+                        /** @var $party \MongoDB\Model\BSONDocument */
+                        return (new Hydrator\Party())->hydrate($party->getArrayCopy(), new Model\Party());
                     }, (array)$parties)
+                )->setMinistries(
+                    array_map(function ($ministry) {
+                        /** @var $ministry \MongoDB\Model\BSONDocument */
+                        return (new Hydrator\Ministry())->hydrate($ministry->getArrayCopy(), new Model\Ministry());
+                    }, $ministries)
+                )->setMinistrySittings(
+                    array_map(function ($ministrySitting) {
+                        /** @var $ministrySitting \MongoDB\Model\BSONDocument */
+                        return (new Hydrator\MinisterSitting())
+                            ->hydrate($ministrySitting->getArrayCopy(), new Model\MinisterSitting());
+                    }, $ministrySittings)
                 )->setConstituency(
                     isset($congressman['constituency'])
                         ? (new Hydrator\Constituency())
-                            ->hydrate((array)$congressman['constituency'], new Model\Constituency())
+                            ->hydrate($congressman['constituency']->getArrayCopy(), new Model\Constituency())
                         : null
                 )->setAssembly((new Model\Assembly())->setAssemblyId($assemblyId));
         }, $document->toArray());
@@ -303,6 +416,8 @@ class Congressman implements StoreAwareInterface
 
         $congressman = (array)$document['congressman'];
         $parties = (array)$document['parties'];
+        $ministries = isset($document['ministries']) ? (array)$document['ministries'] : [];
+        $ministrySittings = isset($document['ministrySittings']) ? (array)$document['ministrySittings'] : [];
 
         return  (new Model\CongressmanPartyProperties())
             ->setCongressman(
@@ -313,6 +428,17 @@ class Congressman implements StoreAwareInterface
                 array_map(function ($party) {
                     return (new Hydrator\Party())->hydrate((array)$party, new Model\Party());
                 }, (array)$parties)
+            )->setMinistries(
+                array_map(function ($ministry) {
+                    /** @var $ministry \MongoDB\Model\BSONDocument */
+                    return (new Hydrator\Ministry())->hydrate($ministry->getArrayCopy(), new Model\Ministry());
+                }, $ministries)
+            )->setMinistrySittings(
+                array_map(function ($ministrySitting) {
+                    /** @var $ministrySitting \MongoDB\Model\BSONDocument */
+                    return (new Hydrator\MinisterSitting())
+                        ->hydrate($ministrySitting->getArrayCopy(), new Model\MinisterSitting());
+                }, $ministrySittings)
             )->setConstituency(
                 (new Hydrator\Constituency())
                     ->hydrate((array)$congressman['constituency'], new Model\Constituency())
