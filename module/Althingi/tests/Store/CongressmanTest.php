@@ -58,7 +58,8 @@ class CongressmanTest extends TestCase
                         ->setValue(20)
                 )
                 ->setParty($party)
-                ->setConstituency($constituency),
+                ->setConstituency($constituency)
+                ->setAssembly((new Model\Assembly())->setAssemblyId(1)),
             (new Model\CongressmanPartyProperties())
                 ->setCongressman(
                     (new Model\CongressmanValue())
@@ -69,7 +70,8 @@ class CongressmanTest extends TestCase
                         ->setValue(10)
                 )
                 ->setParty($party)
-                ->setConstituency($constituency),
+                ->setConstituency($constituency)
+                ->setAssembly((new Model\Assembly())->setAssemblyId(1)),
         ];
 
         $this->assertEquals($expected, $categories);
