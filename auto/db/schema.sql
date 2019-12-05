@@ -377,6 +377,36 @@ CREATE TABLE `Document_has_Congressman` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `Document_has_Committee`
+--
+
+DROP TABLE IF EXISTS `Document_has_Committee`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+create table Document_has_Committee (
+    `document_committee_id` int(11) NOT NULL AUTO_INCREMENT,
+    `document_id` int(11) not null,
+    `assembly_id` int(11) not null,
+    `issue_id` int(11) not null,
+    `category` char(2) not null,
+    `committee_id` int(11) not null,
+    `part` varchar(100),
+    `name` varchar(100),
+    PRIMARY KEY (`document_committee_id`),
+    UNIQUE KEY `unique_Document_has_Committee` (`document_id`, `assembly_id`, `issue_id`, `category`, `committee_id`, `part`),
+    CONSTRAINT `fk_Document_has_Committee_Issue1`
+        FOREIGN KEY (`issue_id`, `assembly_id`, `category`)
+            REFERENCES `Issue` (`issue_id`, `assembly_id`, `category`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_Document_has_Committee_Committee1`
+        FOREIGN KEY (`committee_id`)
+            REFERENCES `Committee` (`committee_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_Document_has_Committee_Document1`
+        FOREIGN KEY (`document_id`)
+            REFERENCES `Document` (`document_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `Election`
 --
 

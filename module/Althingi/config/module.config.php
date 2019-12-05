@@ -378,7 +378,6 @@ return [
                                     ],
                                 ],
                             ],
-
                             'ferli' => [
                                 'type' => Literal::class,
                                 'options' => [
@@ -418,6 +417,16 @@ return [
                                             'defaults' => [
                                                 'controller' => Controller\CongressmanDocumentController::class,
                                                 'identifier' => 'congressman_id'
+                                            ],
+                                        ],
+                                    ],
+                                    'nefndir' => [
+                                        'type' => Segment::class,
+                                        'options' => [
+                                            'route'    => '/nefndir[/:document_committee_id]',
+                                            'defaults' => [
+                                                'controller' => Controller\CommitteeDocumentController::class,
+                                                'identifier' => 'document_committee_id'
                                             ],
                                         ],
                                     ],
@@ -1039,6 +1048,10 @@ return [
             Controller\CommitteeController::class => function (ServiceManager $container) {
                 return (new Controller\CommitteeController())
                     ->setCommitteeService($container->get(Service\Committee::class));
+            },
+            Controller\CommitteeDocumentController::class => function (ServiceManager $container) {
+                return (new Controller\CommitteeDocumentController)
+                    ->setCommitteeDocument($container->get(Service\CommitteeDocument::class));
             },
             Controller\CabinetController::class => function (ServiceManager $container) {
                 return (new Controller\CabinetController())
