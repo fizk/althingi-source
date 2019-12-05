@@ -40,6 +40,11 @@ return [
                 ->setDriver($sm->get(PDO::class))
                 ->setEventManager($sm->get(EventsListener::class));
         },
+        Service\CommitteeDocument::class => function (ServiceManager $sm) {
+            return (new Service\CommitteeDocument())
+                ->setDriver($sm->get(PDO::class))
+                ->setEventManager($sm->get(EventsListener::class));
+        },
         Service\Cabinet::class => function (ServiceManager $sm) {
             return (new Service\Cabinet())
                 ->setDriver($sm->get(PDO::class))
