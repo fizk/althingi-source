@@ -2,7 +2,7 @@
 
 namespace Althingi\Hydrator;
 
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class CommitteeDocument implements HydratorInterface
 {
@@ -35,7 +35,7 @@ class CommitteeDocument implements HydratorInterface
      * @param  \Althingi\Model\CommitteeDocument $object
      * @return array
      */
-    public function extract($object)
+    public function extract($object): array
     {
         return $object->toArray();
     }

@@ -3,7 +3,7 @@
 namespace Althingi\Hydrator;
 
 use DateTime;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class ConstituencyValue implements HydratorInterface
 {
@@ -32,7 +32,7 @@ class ConstituencyValue implements HydratorInterface
      * @param  \Althingi\Model\ConstituencyValue $object
      * @return array
      */
-    public function extract($object)
+    public function extract($object): array
     {
         return $object->toArray();
     }

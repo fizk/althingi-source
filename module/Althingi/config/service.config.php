@@ -2,13 +2,13 @@
 
 use Althingi\Service;
 use Althingi\Store;
-use Zend\ServiceManager\ServiceManager;
+use Laminas\ServiceManager\ServiceManager;
 use Psr\Log\LoggerInterface;
 use Althingi\QueueActions\QueueEventsListener;
 use Althingi\Events\EventsListener;
 use Elasticsearch\Client as ElasticsearchClient;
 use Elasticsearch\ClientBuilder as ElasticsearchClientBuilder;
-use Zend\Cache\Storage\StorageInterface;
+use Laminas\Cache\Storage\StorageInterface;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 
 return [
@@ -240,7 +240,7 @@ return [
         },
 
         EventsListener::class => function (ServiceManager $sm) {
-            $eventManager = (new \Zend\EventManager\EventManager());
+            $eventManager = (new \Laminas\EventManager\EventManager());
 
             $queueEventsListener = (new QueueEventsListener())
                 ->setLogger($sm->get(LoggerInterface::class))
@@ -252,6 +252,10 @@ return [
         },
 
         LoggerInterface::class => function (ServiceManager $sm) {
+            // return (new \Monolog\Logger('aggregator'))
+            //     ->pushHandler((new \Monolog\Handler\StreamHandler('php://stdout', \Monolog\Logger::DEBUG))
+            //     ->setFormatter(new \Monolog\Formatter\LineFormatter("[%datetime%] %level_name% %message%\n")));
+
             $handlers = [];
             $logger = (new \Monolog\Logger('althingi-api'))
                 ->pushProcessor(new \Monolog\Processor\MemoryPeakUsageProcessor(true, false))
@@ -278,22 +282,22 @@ return [
         StorageInterface::class => function (ServiceManager $sm) {
             switch (strtolower(getenv('CACHE_TYPE'))) {
                 case 'file':
-                    return (new Zend\Cache\Storage\Adapter\Filesystem())
+                    return (new Laminas\Cache\Storage\Adapter\Filesystem())
                         ->setOptions(
-                            (new \Zend\Cache\Storage\Adapter\FilesystemOptions())->setCacheDir('./data/cache')
+                            (new \Laminas\Cache\Storage\Adapter\FilesystemOptions())->setCacheDir('./data/cache')
                         );
                     break;
                 case 'memory':
-                    $options = (new Zend\Cache\Storage\Adapter\RedisOptions())
+                    $options = (new Laminas\Cache\Storage\Adapter\RedisOptions())
                         ->setTtl(60)
                         ->setServer([
                             'host' => getenv('CACHE_HOST') ?: 'localhost',
                             'port' => getenv('CACHE_PORT') ?: 6379
                         ]);
-                    return new Zend\Cache\Storage\Adapter\Redis($options);
+                    return new Laminas\Cache\Storage\Adapter\Redis($options);
                     break;
                 default:
-                    return new \Zend\Cache\Storage\Adapter\BlackHole();
+                    return new \Laminas\Cache\Storage\Adapter\BlackHole();
                     break;
             }
         },

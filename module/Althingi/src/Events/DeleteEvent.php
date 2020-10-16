@@ -4,7 +4,7 @@ namespace Althingi\Events;
 
 use Althingi\Presenters\IndexablePresenter;
 use Althingi\Presenters\IndexablePresenterAwareInterface;
-use Zend\EventManager\Event;
+use Laminas\EventManager\Event;
 
 class DeleteEvent extends Event implements IndexablePresenterAwareInterface
 {

@@ -19,13 +19,9 @@ trait DatabaseConnection
      */
     protected function getConnection()
     {
-        $dbNameProd = getenv('DB_NAME') ?: 'althingi';
-        $dbNameDev = getenv('DB_NAME_TEST') ?: 'althingi_test';
-        $environment = $GLOBALS['APPLICATION_ENVIRONMENT'] === 'production' ? : 'development';
+        $dbName = getenv('DB_NAME') ?: 'althingi';
         $dbHost = getenv('DB_HOST') ?: 'localhost';
         $dbPort = getenv('DB_PORT') ?: 3306;
-        $dbName = $environment === 'production' ? $dbNameProd : $dbNameDev;
-
 
         self::$connection = $this->pdo = self::$connection ? : new PDO(
             "mysql:host={$dbHost};port={$dbPort};dbname={$dbName}",

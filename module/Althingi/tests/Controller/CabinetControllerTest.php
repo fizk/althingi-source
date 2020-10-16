@@ -8,7 +8,7 @@ use Althingi\Service\Congressman;
 use Althingi\Service\Party;
 use AlthingiTest\ServiceHelper;
 use DateTime;
-use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+use Laminas\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
 /**
  * Class CabinetControllerTest
@@ -24,7 +24,7 @@ class CabinetControllerTest extends AbstractHttpControllerTestCase
 {
     use ServiceHelper;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->setApplicationConfig(
             include __DIR__ .'/../../../../config/application.config.php'
@@ -38,11 +38,11 @@ class CabinetControllerTest extends AbstractHttpControllerTestCase
         ]);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         \Mockery::close();
         $this->destroyServices();
-        return parent::tearDown();
+        parent::tearDown();
     }
 
     /**

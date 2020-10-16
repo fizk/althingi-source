@@ -8,10 +8,7 @@ use Althingi\Model;
 use Althingi\Hydrator;
 use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;
-use Althingi\Presenters\IndexableAssemblyPresenter;
 use Althingi\Presenters\IndexableMinistryPresenter;
-use Zend\EventManager\EventManager;
-use Zend\EventManager\EventManagerInterface;
 use PDO;
 
 /**
@@ -21,14 +18,7 @@ use PDO;
 class Ministry implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
-
-    /**
-     * @var \PDO
-     */
-    private $pdo;
-
-    /** @var \Zend\EventManager\EventManagerInterface */
-    protected $events;
+    use EventService;
 
     /**
      * Get one Assembly.
@@ -95,8 +85,8 @@ class Ministry implements DatabaseAwareInterface, EventsAwareInterface
         $statement = $this->getDriver()->prepare(
             "select DISTINCT M.* from MinisterSitting MS
                 join Ministry M on MS.ministry_id = M.ministry_id
-                where MS.assembly_id = :assembly_id 
-                    and MS.congressman_id = :congressman_id 
+                where MS.assembly_id = :assembly_id
+                    and MS.congressman_id = :congressman_id
                     and MS.ministry_id = :ministry_id"
         );
         $statement->execute([
@@ -219,37 +209,5 @@ class Ministry implements DatabaseAwareInterface, EventsAwareInterface
         $statement->execute(['ministry_id' => $id]);
 
         return $statement->rowCount();
-    }
-
-    /**
-     * @param \PDO $pdo
-     * @return $this
-     */
-    public function setDriver(PDO $pdo)
-    {
-        $this->pdo = $pdo;
-        return $this;
-    }
-
-    /**
-     * @return \PDO
-     */
-    public function getDriver()
-    {
-        return $this->pdo;
-    }
-
-    public function setEventManager(EventManagerInterface $events)
-    {
-        $this->events = $events;
-        return $this;
-    }
-
-    public function getEventManager()
-    {
-        if (null === $this->events) {
-            $this->setEventManager(new EventManager());
-        }
-        return $this->events;
     }
 }

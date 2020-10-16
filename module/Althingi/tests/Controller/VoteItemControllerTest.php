@@ -13,7 +13,7 @@ use Althingi\Service\VoteItem;
 use AlthingiTest\ServiceHelper;
 use Mockery;
 use DateTime;
-use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+use Laminas\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
 /**
  * Class VoteItemControllerTest
@@ -30,7 +30,7 @@ class VoteItemControllerTest extends AbstractHttpControllerTestCase
 {
     use ServiceHelper;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->setApplicationConfig(
             include __DIR__ .'/../../../../config/application.config.php'
@@ -47,11 +47,11 @@ class VoteItemControllerTest extends AbstractHttpControllerTestCase
         ]);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->destroyServices();
         Mockery::close();
-        return parent::tearDown();
+        parent::tearDown();
     }
 
     /**

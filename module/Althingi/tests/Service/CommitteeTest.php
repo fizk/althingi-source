@@ -43,7 +43,7 @@ class CommitteeTest extends TestCase
         $service = new Committee();
         $service->setDriver($this->pdo);
 
-        $this->assertInternalType('array', $service->fetchAll());
+        $this->assertIsArray($service->fetchAll());
         $this->assertCount(3, $service->fetchAll());
     }
 

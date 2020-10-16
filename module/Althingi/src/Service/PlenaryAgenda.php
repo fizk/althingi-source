@@ -16,11 +16,6 @@ class PlenaryAgenda implements DatabaseAwareInterface
     use DatabaseService;
 
     /**
-     * @var \PDO
-     */
-    private $pdo;
-
-    /**
      * @param int $assemblyId
      * @param int $plenaryId
      * @param int $itemId
@@ -29,7 +24,7 @@ class PlenaryAgenda implements DatabaseAwareInterface
     public function get(int $assemblyId, int $plenaryId, int $itemId): ? Model\PlenaryAgenda
     {
         $statement = $this->getDriver()->prepare("
-          select * from `PlenaryAgenda` 
+          select * from `PlenaryAgenda`
             where `assembly_id` = :assembly_id
             and `plenary_id` = :plenary_id
             and `item_id` = :item_id;
@@ -54,9 +49,9 @@ class PlenaryAgenda implements DatabaseAwareInterface
     public function fetch(int $assemblyId, int $plenaryId): ? array
     {
         $statement = $this->getDriver()->prepare("
-          select * from PlenaryAgenda PA 
-            where PA.`assembly_id` = :assembly_id 
-            and PA.`plenary_id` = :plenary_id 
+          select * from PlenaryAgenda PA
+            where PA.`assembly_id` = :assembly_id
+            and PA.`plenary_id` = :plenary_id
             order by PA.`item_id`;
         ");
         $statement->execute([
@@ -95,23 +90,5 @@ class PlenaryAgenda implements DatabaseAwareInterface
         $statement->execute($this->toSqlValues($data));
 
         return $statement->rowCount();
-    }
-
-    /**
-     * @param \PDO $pdo
-     * @return $this
-     */
-    public function setDriver(PDO $pdo)
-    {
-        $this->pdo = $pdo;
-        return $this;
-    }
-
-    /**
-     * @return \PDO
-     */
-    public function getDriver()
-    {
-        return $this->pdo;
     }
 }

@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 use Althingi\Model\Party as PartyModel;
 use Althingi\Model\PartyAndTime as PartyAndTimeModel;
 use Psr\Log\NullLogger;
-use Zend\EventManager\EventManager;
+use Laminas\EventManager\EventManager;
 
 class PartyTest extends TestCase
 {

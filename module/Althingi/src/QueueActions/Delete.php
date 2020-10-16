@@ -25,9 +25,9 @@ class Delete
     }
 
     /**
-     * @param \Zend\EventManager\Event $event
+     * @param \Laminas\EventManager\Event $event
      */
-    public function __invoke(\Zend\EventManager\Event $event)
+    public function __invoke(\Laminas\EventManager\Event $event)
     {
         /** @var  $target \Althingi\Events\UpdateEvent */
         $target = $event->getTarget();

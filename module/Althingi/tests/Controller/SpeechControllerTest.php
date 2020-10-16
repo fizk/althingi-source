@@ -7,7 +7,7 @@ use Althingi\Store;
 use Althingi\Service;
 use Althingi\Controller;
 use AlthingiTest\ServiceHelper;
-use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+use Laminas\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use Mockery;
 
 /**
@@ -26,7 +26,7 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
 {
     use ServiceHelper;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->setApplicationConfig(
             include __DIR__ .'/../../../../config/application.config.php'
@@ -44,10 +44,10 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
         ]);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         \Mockery::close();
-        return parent::tearDown();
+        parent::tearDown();
     }
 
     /**
@@ -129,7 +129,7 @@ class SpeechControllerTest extends AbstractHttpControllerTestCase
 
         $this->dispatch('/loggjafarthing/1/thingmal/a/3/raedur/4', 'GET');
         $resp = $this->getResponse();
-        /** @var  $contentRange \Zend\Http\Header\ContentRange */
+        /** @var  $contentRange \Laminas\Http\Header\ContentRange */
         $contentRange = $this->getResponse()
             ->getHeaders()
             ->get('Content-Range');

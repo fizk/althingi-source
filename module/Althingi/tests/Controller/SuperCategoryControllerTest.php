@@ -6,7 +6,7 @@ use Althingi\Controller\SuperCategoryController;
 use Althingi\Service\SuperCategory;
 use Althingi\Model;
 use AlthingiTest\ServiceHelper;
-use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+use Laminas\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
 /**
  * Class SuperCategoryControllerTest
@@ -19,7 +19,7 @@ class SuperCategoryControllerTest extends AbstractHttpControllerTestCase
 {
     use ServiceHelper;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->setApplicationConfig(
             include __DIR__ .'/../../../../config/application.config.php'
@@ -32,10 +32,10 @@ class SuperCategoryControllerTest extends AbstractHttpControllerTestCase
         ]);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         \Mockery::close();
-        return parent::tearDown();
+        parent::tearDown();
     }
 
     /**

@@ -4,7 +4,7 @@ namespace AlthingiTest\Utils;
 
 use Althingi\Utils\RouteInspector;
 use PHPUnit\Framework\TestCase;
-use Zend\Router\Http\Segment;
+use Laminas\Router\Http\Segment;
 
 class RouteInspectorTest extends TestCase
 {

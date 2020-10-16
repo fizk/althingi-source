@@ -16,11 +16,6 @@ class Election implements DatabaseAwareInterface
     use DatabaseService;
 
     /**
-     * @var \PDO
-     */
-    private $pdo;
-
-    /**
      * Get one Election.
      *
      * @param int $id
@@ -48,7 +43,7 @@ class Election implements DatabaseAwareInterface
     public function getByAssembly(int $assemblyId): ? Model\Election
     {
         $statement = $this->getDriver()->prepare("
-            select E.* from `Election` E 
+            select E.* from `Election` E
             join `Election_has_Assembly` EA on (E.`election_id` = EA.`election_id`)
             where EA.`assembly_id` = :assembly_id;
         ");
@@ -58,23 +53,5 @@ class Election implements DatabaseAwareInterface
         return $object
             ? (new Hydrator\Election())->hydrate($object, new Model\Election())
             : null;
-    }
-
-    /**
-     * @param \PDO $pdo
-     * @return $this
-     */
-    public function setDriver(PDO $pdo)
-    {
-        $this->pdo = $pdo;
-        return $this;
-    }
-
-    /**
-     * @return \PDO
-     */
-    public function getDriver()
-    {
-        return $this->pdo;
     }
 }

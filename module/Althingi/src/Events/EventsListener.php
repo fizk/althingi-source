@@ -2,8 +2,8 @@
 namespace Althingi\Events;
 
 use Althingi\Injector\LoggerAwareInterface;
-use Zend\EventManager\ListenerAggregateInterface;
-use Zend\EventManager\EventManagerInterface;
+use Laminas\EventManager\ListenerAggregateInterface;
+use Laminas\EventManager\EventManagerInterface;
 use Psr\Log\LoggerInterface;
 
 abstract class EventsListener implements

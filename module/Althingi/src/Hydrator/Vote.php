@@ -2,7 +2,7 @@
 
 namespace Althingi\Hydrator;
 
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class Vote implements HydratorInterface
 {
@@ -39,7 +39,7 @@ class Vote implements HydratorInterface
      * @param  \Althingi\Model\Vote $object
      * @return array
      */
-    public function extract($object)
+    public function extract($object): array
     {
         return $object->toArray();
     }

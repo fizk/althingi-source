@@ -1,9 +1,9 @@
 <?php
 namespace Althingi;
 
-use Zend\Router\Http\Literal;
-use Zend\Router\Http\Segment;
-use Zend\ServiceManager\ServiceManager;
+use Laminas\Router\Http\Literal;
+use Laminas\Router\Http\Segment;
+use Laminas\ServiceManager\ServiceManager;
 use Psr\Log\LoggerInterface;
 use Althingi\Controller;
 use Althingi\Controller\Aggregate;
@@ -1215,73 +1215,73 @@ return [
         ],
     ],
 
-    'console' => [
-        'router' => [
-            'routes' => [
-                'assemblies' => [
-                    'options' => [
-                        'route' => 'index:assemblies',
-                        'defaults' => [
-                            'controller' => Console\IndexerAssemblyController::class,
-                            'action' => 'assembly'
-                        ],
-                    ],
-                ],
-                'assembly' => [
-                    'options' => [
-                        'route' => 'index:assembly [--assembly=|-a]',
-                        'defaults' => [
-                            'controller' => Console\IndexerIssueController::class,
-                            'action' => 'assembly'
-                        ],
-                    ],
-                ],
-                'session' => [
-                    'options' => [
-                        'route' => 'index:session [--assembly=|-a]',
-                        'defaults' => [
-                            'controller' => Console\IndexerIssueController::class,
-                            'action' => 'session'
-                        ],
-                    ],
-                ],
-                'ministry-sitting' => [
-                    'options' => [
-                        'route' => 'index:ministry-sitting [--assembly=|-a]',
-                        'defaults' => [
-                            'controller' => Console\IndexerIssueController::class,
-                            'action' => 'ministry-sitting'
-                        ],
-                    ],
-                ],
-                'issue' => [
-                    'options' => [
-                        'route' => 'index:issue [--assembly=|-a] [--issue=|-i] [--category=|-c]',
-                        'defaults' => [
-                            'controller' => Console\IndexerIssueController::class,
-                            'action' => 'issue'
-                        ],
-                    ],
-                ],
-                'status' => [
-                    'options' => [
-                        'route' => 'index:status [--assembly=|-a] [--type=|-t]',
-                        'defaults' => [
-                            'controller' => Console\IssueStatusController::class,
-                            'action' => 'index'
-                        ],
-                    ],
-                ],
-                'status-list' => [
-                    'options' => [
-                        'route' => 'index:status-list',
-                        'defaults' => [
-                            'controller' => Console\IssueStatusController::class,
-                            'action' => 'status-list'
-                        ],
-                    ],
-                ],
-            ],
-        ],
-    ],
+    // 'console' => [
+    //     'router' => [
+    //         'routes' => [
+    //             'assemblies' => [
+    //                 'options' => [
+    //                     'route' => 'index:assemblies',
+    //                     'defaults' => [
+    //                         'controller' => Console\IndexerAssemblyController::class,
+    //                         'action' => 'assembly'
+    //                     ],
+    //                 ],
+    //             ],
+    //             'assembly' => [
+    //                 'options' => [
+    //                     'route' => 'index:assembly [--assembly=|-a]',
+    //                     'defaults' => [
+    //                         'controller' => Console\IndexerIssueController::class,
+    //                         'action' => 'assembly'
+    //                     ],
+    //                 ],
+    //             ],
+    //             'session' => [
+    //                 'options' => [
+    //                     'route' => 'index:session [--assembly=|-a]',
+    //                     'defaults' => [
+    //                         'controller' => Console\IndexerIssueController::class,
+    //                         'action' => 'session'
+    //                     ],
+    //                 ],
+    //             ],
+    //             'ministry-sitting' => [
+    //                 'options' => [
+    //                     'route' => 'index:ministry-sitting [--assembly=|-a]',
+    //                     'defaults' => [
+    //                         'controller' => Console\IndexerIssueController::class,
+    //                         'action' => 'ministry-sitting'
+    //                     ],
+    //                 ],
+    //             ],
+    //             'issue' => [
+    //                 'options' => [
+    //                     'route' => 'index:issue [--assembly=|-a] [--issue=|-i] [--category=|-c]',
+    //                     'defaults' => [
+    //                         'controller' => Console\IndexerIssueController::class,
+    //                         'action' => 'issue'
+    //                     ],
+    //                 ],
+    //             ],
+    //             'status' => [
+    //                 'options' => [
+    //                     'route' => 'index:status [--assembly=|-a] [--type=|-t]',
+    //                     'defaults' => [
+    //                         'controller' => Console\IssueStatusController::class,
+    //                         'action' => 'index'
+    //                     ],
+    //                 ],
+    //             ],
+    //             'status-list' => [
+    //                 'options' => [
+    //                     'route' => 'index:status-list',
+    //                     'defaults' => [
+    //                         'controller' => Console\IssueStatusController::class,
+    //                         'action' => 'status-list'
+    //                     ],
+    //                 ],
+    //             ],
+    //         ],
+    //     ],
+    // ],
 ];

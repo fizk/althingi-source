@@ -1,28 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit colors="true" bootstrap="./module/Althingi/tests/bootstrap.php">
+
+<phpunit bootstrap = "./module/Althingi/tests/bootstrap.php"
+    backupGlobals               = "false"
+    backupStaticAttributes      = "false"
+    colors                      = "true"
+    convertErrorsToExceptions   = "true"
+    convertNoticesToExceptions  = "true"
+    convertWarningsToExceptions = "true"
+    processIsolation            = "false"
+    stopOnFailure               = "false">
+
     <testsuites>
-        <testsuite name="ZendSkeletonApplication Test Suite">
-            <directory>./module/Althingi/tests/.</directory>
+        <testsuite name="Project Test Suite">
+            <directory>./module/Althingi/tests</directory>
         </testsuite>
     </testsuites>
 
-    <listeners>
-        <listener class="AlthingiTest\DatabaseSetup" file="./module/Althingi/tests/DatabaseSetup.php" />
-    </listeners>
-
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">./module/Althingi/src</directory>
-        </whitelist>
-    </filter>
-
-    <!--<logging>-->
-        <!--<log type="coverage-html" target="./assets/docs/tests/report" lowUpperBound="35" highLowerBound="70"/>-->
-    <!--</logging>-->
-
-    <php>
-        <var name="APPLICATION_ENVIRONMENT" value="development" />
-        <var name="MYSQL.BIN" value="/usr/local/mysql/bin/mysql" />
-        <var name="MYSQLDUMP.BIN" value="/usr/local/mysql/bin/mysqldump" />
-    </php>
 </phpunit>

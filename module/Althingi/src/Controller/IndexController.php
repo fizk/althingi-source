@@ -4,8 +4,8 @@ namespace Althingi\Controller;
 
 use Althingi\Utils\OpenAPI;
 use Rend\View\Model\ItemModel;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\View\Model\ViewModel;
 
 class IndexController extends AbstractActionController
 {

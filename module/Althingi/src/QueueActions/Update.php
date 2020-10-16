@@ -25,9 +25,9 @@ class Update
     }
 
     /**
-     * @param \Zend\EventManager\Event $event
+     * @param \Laminas\EventManager\Event $event
      */
-    public function __invoke(\Zend\EventManager\Event $event): void
+    public function __invoke(\Laminas\EventManager\Event $event): void
     {
         /** @var  $target \Althingi\Events\UpdateEvent */
         $target = $event->getTarget();

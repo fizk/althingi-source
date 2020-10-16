@@ -2,7 +2,7 @@
 
 namespace Althingi\Hydrator;
 
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class IssueTypeStatus implements HydratorInterface
 {
@@ -27,7 +27,7 @@ class IssueTypeStatus implements HydratorInterface
      * @param  \Althingi\Model\IssueTypeStatus $object
      * @return array
      */
-    public function extract($object)
+    public function extract($object): array
     {
         unset($object->time);
 

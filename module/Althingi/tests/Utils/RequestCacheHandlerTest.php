@@ -3,13 +3,13 @@ namespace AlthingiTest\Utils;
 
 use Althingi\Utils\RequestCacheHandler;
 use PHPUnit\Framework\TestCase;
-use Zend\Cache\Storage\Adapter\BlackHole;
-use Zend\Http\Headers;
-use Zend\Http\PhpEnvironment\Request;
-use Zend\Http\PhpEnvironment\Response;
-use Zend\Mvc\ApplicationInterface;
-use Zend\Mvc\MvcEvent;
-use Zend\Http\Request as HttpRequest;
+use Laminas\Cache\Storage\Adapter\BlackHole;
+use Laminas\Http\Headers;
+use Laminas\Http\PhpEnvironment\Request;
+use Laminas\Http\PhpEnvironment\Response;
+use Laminas\Mvc\ApplicationInterface;
+use Laminas\Mvc\MvcEvent;
+use Laminas\Http\Request as HttpRequest;
 
 class RequestCacheHandlerTest extends TestCase
 {
@@ -24,7 +24,7 @@ class RequestCacheHandlerTest extends TestCase
         $response = new Response();
         $response->setHeaders(new Headers());
 
-        $eventManager = new \Zend\EventManager\EventManager();
+        $eventManager = new \Laminas\EventManager\EventManager();
         $application = $this->getEmptyApplication();
         $application->setRequest($request)
             ->setResponse($response)
@@ -54,7 +54,7 @@ class RequestCacheHandlerTest extends TestCase
         $response = new Response();
         $response->setHeaders(new Headers());
 
-        $eventManager = new \Zend\EventManager\EventManager();
+        $eventManager = new \Laminas\EventManager\EventManager();
         $application = $this->getEmptyApplication();
         $application->setRequest($request)
             ->setResponse($response)
@@ -85,7 +85,7 @@ class RequestCacheHandlerTest extends TestCase
         $response = new Response();
         $response->setHeaders(new Headers());
 
-        $eventManager = new \Zend\EventManager\EventManager();
+        $eventManager = new \Laminas\EventManager\EventManager();
         $application = $this->getEmptyApplication();
         $application->setRequest($request)
             ->setResponse($response)
@@ -117,7 +117,7 @@ class RequestCacheHandlerTest extends TestCase
         $response = new Response();
         $response->setHeaders(new Headers());
 
-        $eventManager = new \Zend\EventManager\EventManager();
+        $eventManager = new \Laminas\EventManager\EventManager();
         $application = $this->getEmptyApplication();
         $application->setRequest($request)
             ->setResponse($response)
@@ -149,7 +149,7 @@ class RequestCacheHandlerTest extends TestCase
         $response->setStatusCode(500);
         $response->setHeaders(new Headers());
 
-        $eventManager = new \Zend\EventManager\EventManager();
+        $eventManager = new \Laminas\EventManager\EventManager();
         $application = $this->getEmptyApplication();
         $application->setRequest($request)
             ->setResponse($response)

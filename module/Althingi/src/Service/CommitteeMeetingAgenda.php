@@ -15,9 +15,6 @@ class CommitteeMeetingAgenda implements DatabaseAwareInterface
 {
     use DatabaseService;
 
-    /** @var  \PDO */
-    private $pdo;
-
     /**
      * @param $meetingId
      * @param $agendaId
@@ -26,8 +23,8 @@ class CommitteeMeetingAgenda implements DatabaseAwareInterface
     public function get(int $meetingId, int $agendaId): ? Model\CommitteeMeetingAgenda
     {
         $statement = $this->getDriver()->prepare('
-            select * from `CommitteeMeetingAgenda` C 
-            where C.`committee_meeting_id` = :committee_meeting_id 
+            select * from `CommitteeMeetingAgenda` C
+            where C.`committee_meeting_id` = :committee_meeting_id
               and C.`committee_meeting_agenda_id` = :committee_meeting_agenda_id;
         ');
         $statement->execute([
@@ -91,23 +88,5 @@ class CommitteeMeetingAgenda implements DatabaseAwareInterface
         $statement->execute($this->toSqlValues($data));
 
         return $statement->rowCount();
-    }
-
-    /**
-     * @param \PDO $pdo
-     * @return $this
-     */
-    public function setDriver(PDO $pdo)
-    {
-        $this->pdo = $pdo;
-        return $this;
-    }
-
-    /**
-     * @return \PDO
-     */
-    public function getDriver()
-    {
-        return $this->pdo;
     }
 }

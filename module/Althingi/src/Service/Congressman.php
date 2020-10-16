@@ -9,8 +9,6 @@ use Althingi\Injector\EventsAwareInterface;
 use Althingi\Presenters\IndexableCongressmanPresenter;
 use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;
-use Zend\EventManager\EventManager;
-use Zend\EventManager\EventManagerInterface;
 use PDO;
 use DateTime;
 
@@ -25,14 +23,7 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
     const CONGRESSMAN_TYPE_WITH_SUBSTITUTE = 'with-substitute';
 
     use DatabaseService;
-
-    /**
-     * @var \PDO
-     */
-    private $pdo;
-
-    /** @var  \Zend\EventManager\EventManager */
-    private $events;
+    use EventService;
 
     /**
      * Get one Congressman.
@@ -142,7 +133,7 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
             "select C.*,
                 (
                     select (sum(time_to_sec(timediff(`to`, `from`)))) as `count`
-                    from `Speech` S 
+                    from `Speech` S
                     where S.`assembly_id` = :assembly_id and S.`congressman_id` = C.congressman_id {$categories}
                     group by `congressman_id`
                 ) as `value`
@@ -295,11 +286,11 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
         $statement = $this->getDriver()->prepare('
             select C.*, DC.`minister`, DC.`order` from `Document_has_Congressman` DC
                 join `Congressman` C on (C.`congressman_id` = DC.`congressman_id`)
-            where DC.`issue_id` = :issue_id 
-                and DC.`assembly_id` = :assembly_id 
+            where DC.`issue_id` = :issue_id
+                and DC.`assembly_id` = :assembly_id
                 and DC.`document_id` = (
                     select D.`document_id` from `Document` D
-                    where D.`assembly_id` = :assembly_id 
+                    where D.`assembly_id` = :assembly_id
                         and D.`issue_id` = :issue_id
                         and D.`category` = \'A\'
                     order by `date` asc limit 0, 1
@@ -320,7 +311,7 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
     public function getAverageAgeByAssembly(int $assemblyId, DateTime $date): float
     {
         $statement = $this->getDriver()->prepare('
-            select avg(TIMESTAMPDIFF(YEAR, C.birth, :date)) AS age 
+            select avg(TIMESTAMPDIFF(YEAR, C.birth, :date)) AS age
             from Congressman C where congressman_id in (
                 select distinct congressman_id from Session where assembly_id = :assembly_id and type = \'þingmaður\'
             );
@@ -474,50 +465,5 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
         ");
         $statement->execute();
         return (int) $statement->fetchColumn(0);
-    }
-
-    /**
-     * @param \PDO $pdo
-     * @return $this;
-     */
-    public function setDriver(PDO $pdo)
-    {
-        $this->pdo = $pdo;
-        return $this;
-    }
-
-    /**
-     * @return \PDO
-     */
-    public function getDriver()
-    {
-        return $this->pdo;
-    }
-
-    /**
-     * Inject an EventManager instance
-     *
-     * @param  EventManagerInterface $events
-     * @return $this
-     */
-    public function setEventManager(EventManagerInterface $events)
-    {
-        $this->events = $events;
-        return $this;
-    }
-
-    /**
-     * Retrieve the event manager
-     *
-     * Lazy-loads an EventManager instance if none registered.
-     *
-     * @return EventManagerInterface
-     */
-    public function getEventManager()
-    {
-        if (null === $this->events) {
-            $this->setEventManager(new EventManager());
-        }
-        return $this->events;
     }
 }

@@ -10,8 +10,6 @@ use Althingi\Presenters\IndexableIssuePresenter;
 use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;
 use InvalidArgumentException;
-use Zend\EventManager\EventManager;
-use Zend\EventManager\EventManagerInterface;
 use PDO;
 
 /**
@@ -21,6 +19,7 @@ use PDO;
 class Issue implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
+    use EventService;
 
     const ALLOWED_TYPES = ['n', 'b', 'l', 'm', 'q', 's', 'v', 'a', 'f', 'ff', 'ft', 'um', 'ud', 'uu'];
     const ALLOWED_ORDER = ['asc', 'desc'];
@@ -32,12 +31,6 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
     const STATUS_COMMITTEE_ONE  = 'Í nefnd eftir 1. umræðu';
     const STATUS_APPROVED       = 'Samþykkt sem lög frá Alþingi';
     const STATUS_TO_GOVERNMENT  = 'Vísað til ríkisstjórnar';
-
-    /** @var \PDO */
-    private $pdo;
-
-    /** @var \Zend\EventManager\EventManagerInterface */
-    protected $events;
 
     /**
      * Get one Issue along with some metadata.
@@ -53,8 +46,8 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
     public function get(int $issue_id, int $assembly_id, $category = 'A'): ? Model\Issue
     {
         $issueStatement = $this->getDriver()->prepare(
-            'select * from `Issue` I 
-              where I.assembly_id = :assembly_id 
+            'select * from `Issue` I
+              where I.assembly_id = :assembly_id
               and I.issue_id = :issue_id
               and I.category = :category'
         );
@@ -113,8 +106,8 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
                         where assembly_id = I.assembly_id and issue_id = I.issue_id and I.category = "A"
                         order by date asc limit 0, 1)
                     as `date`
-             from `Issue` I 
-              where I.assembly_id = :assembly_id 
+             from `Issue` I
+              where I.assembly_id = :assembly_id
                 and I.issue_id = :issue_id
                 and I.category = :category'
         );
@@ -173,12 +166,12 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
                 select I.*,
                     (
                         select D.`date` from `Document` D
-                        where `assembly_id` = I.`assembly_id` 
-                        and `issue_id` = I.issue_id 
+                        where `assembly_id` = I.`assembly_id`
+                        and `issue_id` = I.issue_id
                         and D.`category` = I.`category`
                         order by `date` asc limit 0, 1
                     ) as `date`
-                from `Issue` I 
+                from `Issue` I
                 where I.`assembly_id` = :id
                    {$typeFilterString}
                    {$categoryString}
@@ -190,15 +183,15 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
                 select I.*, CI.`category_id`,
                 (
                     select D.`date` from `Document` D
-                    where `assembly_id` = I.`assembly_id` 
-                    and `issue_id` = I.issue_id 
+                    where `assembly_id` = I.`assembly_id`
+                    and `issue_id` = I.issue_id
                     and D.`category` = I.category
                     order by `date` asc limit 0, 1
                 ) as `date`
-                
+
                 from `Issue` I
                 left outer join `Category_has_Issue` CI on (
-                    CI.`issue_id` = I.`issue_id` 
+                    CI.`issue_id` = I.`issue_id`
                     and CI.`assembly_id` = I.assembly_id
                     and (CI.`category` = I.category or CI.`category` is null)
                 )
@@ -235,7 +228,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
 
         if (empty($categoryFilterString)) {
             $statement = $this->getDriver()->prepare("
-                select count(*) from `Issue` I 
+                select count(*) from `Issue` I
                 where `assembly_id` = :id {$typeFilterString} {$categoryString}
             ");
         } else {
@@ -262,7 +255,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
     public function fetchByCongressman(int $id): array
     {
         $statement = $this->getDriver()->prepare("
-            select * from `Issue` I 
+            select * from `Issue` I
               where I.`congressman_id` = :id
               and I.category = 'A'
             order by I.`assembly_id` desc, I.`issue_id` asc;
@@ -286,8 +279,8 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
         $statement = $this->getDriver()->prepare("
             select I.* from `Document_has_Congressman` D
                 join `Issue` I on (I.`issue_id` = D.`issue_id` and I.assembly_id = D.assembly_id and I.category = 'A')
-                where D.assembly_id = :assembly_id 
-                  and D.congressman_id = :congressman_id 
+                where D.assembly_id = :assembly_id
+                  and D.congressman_id = :congressman_id
                   and D.`order` = 1
                 order by I.`type`;
         ");
@@ -309,20 +302,20 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
     public function fetchByAssemblyAndCongressmanSummary(int $assemblyId, int $congressmanId): array
     {
         $statement = $this->getDriver()->prepare("
-            select count(*) as `count`, 
+            select count(*) as `count`,
               DC.`order`, I.`type`, I.`type_name`, I.`type_subname`, D.`type` as `document_type`
                 from `Document` D
                 join `Issue` I on (
-                    D.issue_id = I.issue_id 
+                    D.issue_id = I.issue_id
                     and D.assembly_id = I.assembly_id
                     and I.category = 'A'
                 )
                 join `Document_has_Congressman` DC on (
-                    D.document_id = DC.document_id 
-                    and D.assembly_id = DC.assembly_id 
+                    D.document_id = DC.document_id
+                    and D.assembly_id = DC.assembly_id
                     and I.category = 'A'
                 )
-            where D.assembly_id = :assembly_id 
+            where D.assembly_id = :assembly_id
               and DC.congressman_id = :congressman_id
             group by DC.`order`, I.`type`, D.`type`
             order by DC.`order`, I.`type`;
@@ -368,8 +361,8 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
     public function fetchCountByCategory(int $assemblyId)
     {
         $statement = $this->getDriver()->prepare('
-            select count(*) as `count`, category, type, type_name, type_subname 
-            from Issue 
+            select count(*) as `count`, category, type, type_name, type_subname
+            from Issue
             where assembly_id = :assembly_id
                 group by type
             order by category, type_name;
@@ -438,9 +431,9 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
     {
         $statement = $this->getDriver()->prepare(
             'select count(*) as `count`, I.`status` from `Issue` I
-            where `type` = \'l\' 
-              and assembly_id = :assembly_id 
-              and `type_subname` != \'stjórnarfrumvarp\' 
+            where `type` = \'l\'
+              and assembly_id = :assembly_id
+              and `type_subname` != \'stjórnarfrumvarp\'
               and I.category = \'A\'
             group by `status`;'
         );
@@ -500,9 +493,9 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
             where D.`assembly_id` = :assembly_id and D.`issue_id` = :issue_id and `category` = :category
             group by date_format(D.date, "%Y-%m-%d")
             having min(D.date)
-            
+
             union
-            
+
             select sum(TIMESTAMPDIFF(SECOND, S.`from`, S.`to`)) as value,
                 S.`assembly_id`,
                 S.`issue_id`,
@@ -519,9 +512,9 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
             where S.assembly_id = :assembly_id and S.issue_id = :issue_id and S.`category` = :category
             group by date_format(S.`from`, "%Y-%m-%d")
             having min(`from`)
-            
+
             union
-            
+
             select count(*) as value,
                 V.`assembly_id`,
                 V.`issue_id`,
@@ -537,9 +530,9 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
             from Vote V where assembly_id = :assembly_id and issue_id = :issue_id
             group by date_format(V.`date`, "%Y-%m-%d")
             having min(`date`)
-            
+
             union
-            
+
             select count(*) as value,
                 CMA.assembly_id,
                 CMA.issue_id,
@@ -560,7 +553,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
             where CMA.assembly_id = :assembly_id and CMA.issue_id = :issue_id
             group by date_format(CM.`from`, "%Y-%m-%d")
             having min(CM.`from`)
-            
+
             order by `date`, `importance` desc;
             ;
         ');
@@ -591,12 +584,12 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
             ? "limit 0, {$size}"
             : '';
         $statement = $this->getDriver()->prepare("
-            select 
+            select
                 (sum(time_to_sec(timediff(`to`, `from`)))) as `value`,
                 I.*
             from `Speech` S
                 join `Issue` I on (
-                    I.`issue_id` = S.`issue_id` 
+                    I.`issue_id` = S.`issue_id`
                     and I.`assembly_id` = S.`assembly_id`
                     and I.`category` = S.`category`
                 )
@@ -700,24 +693,6 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param \PDO $pdo
-     * @return $this
-     */
-    public function setDriver(PDO $pdo)
-    {
-        $this->pdo = $pdo;
-        return $this;
-    }
-
-    /**
-     * @return \PDO
-     */
-    public function getDriver()
-    {
-        return $this->pdo;
-    }
-
-    /**
      * @param array $type
      * @return string
      */
@@ -773,19 +748,5 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
         }, $filteredCategories);
 
         return " {$prefix} I.`category` in (" . implode(',', $quotedCategories) . ')';
-    }
-
-    public function setEventManager(EventManagerInterface $events)
-    {
-        $this->events = $events;
-        return $this;
-    }
-
-    public function getEventManager()
-    {
-        if (null === $this->events) {
-            $this->setEventManager(new EventManager());
-        }
-        return $this->events;
     }
 }

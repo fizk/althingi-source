@@ -4,14 +4,14 @@ namespace Althingi\Presenters;
 use Althingi\Model\Issue;
 use Althingi\Model\IssueLink;
 use Althingi\Model\ModelInterface;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class IndexableIssueLinkPresenter implements IndexablePresenter
 {
     const INDEX = 'althingi_model_issue-link';
     const TYPE = 'issue-link';
 
-    /** @var  \Zend\Hydrator\HydratorInterface; */
+    /** @var  \Laminas\Hydrator\HydratorInterface; */
     private $hydrator;
 
     /** @var  \Althingi\Model\IssueLink */

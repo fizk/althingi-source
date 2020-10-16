@@ -5,7 +5,7 @@ namespace AlthingiTest\Controller;
 use Althingi\Service\CommitteeMeeting;
 use Althingi\Model\CommitteeMeeting as CommitteeMeetingModel;
 use AlthingiTest\ServiceHelper;
-use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+use Laminas\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
 /**
  * Class CommitteeMeetingControllerTest
@@ -18,7 +18,7 @@ class CommitteeMeetingControllerTest extends AbstractHttpControllerTestCase
 {
     use ServiceHelper;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->setApplicationConfig(
             include __DIR__ .'/../../../../config/application.config.php'
@@ -31,10 +31,10 @@ class CommitteeMeetingControllerTest extends AbstractHttpControllerTestCase
         ]);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         \Mockery::close();
-        return parent::tearDown();
+        parent::tearDown();
     }
 
     /**

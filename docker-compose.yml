@@ -21,19 +21,19 @@ services:
     container_name: server_run
     build:
       args:
-        - WITH_XDEBUG=true
-        - WITH_DEV=true
+        - ENV=development
       context: .
       dockerfile: Dockerfile
     ports:
       - 8080:80
     volumes:
-      - ./auto/:/var/www/auto
       - ./config/:/var/www/config
       - ./module/:/var/www/module
       - ./public/:/var/www/public
+      - ./composer.json:/var/www/composer.json
+      - ./composer.lock:/var/www/composer.lock
+      - ./vendor/:/var/www/vendor
     environment:
-
       - PHP_IDE_CONFIG=PHPSTORM
       - XDEBUG_CONFIG=remote_host=host.docker.internal remote_port=9001
 
@@ -41,8 +41,10 @@ services:
 
       - APPLICATION_ENVIRONMENT=development
 
-      - DB_HOST=${ENV_DB_HOST:-host.docker.internal}
-      - DB_PORT=${ENV_DB_PORT:-4406}
+      # - DB_HOST=${ENV_DB_HOST:-host.docker.internal}
+      - DB_HOST=database
+      # - DB_PORT=${ENV_DB_PORT:-4406}
+      - DB_PORT=3306
       - DB_NAME=${ENV_DB_NAME:-althingi}
       - DB_USER=${ENV_DB_USER:-root}
       - DB_PASSWORD=${ENV_DB_PASSWORD:-example}
@@ -59,7 +61,8 @@ services:
 
       - QUEUE=none
 
-      - STORAGE_HOST=${ENV_STORAGE_HOST:-host.docker.internal}
+    #   - STORAGE_HOST=${ENV_STORAGE_HOST:-host.docker.internal}
+      - STORAGE_HOST=store
       - STORAGE_DB=${ENV_STORAGE_DB:-althingi}
       - STORAGE_PORT=${ENV_STORAGE_PORT:-27017}
       - STORAGE_USER=${ENV_STORAGE_USER:-wo}
@@ -69,57 +72,64 @@ services:
       - DOCUMENT_DEFINITION=${ENV_DOCUMENT_DEFINITION:-/openapi}
 
       - INDEXER_STALL_TIME=${ENV_INDEXER_STALL_TIME:-150000}
-
-
-  # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-  # TEST
-  #
-  # Run PHPUnit in a container
-  # mostly used for the CI, but can bes used for local development as well
-  # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-  test:
-    container_name: althingi_test_container
-    build:
-      args:
-        - WITH_XDEBUG=false
-        - WITH_DEV=true
-      context: .
-      dockerfile: Dockerfile
     depends_on:
       - database
       - store
-    links:
-      - database
-      - store
-    environment:
-      - LOG_PATH=none
 
+  test:
+    container_name: server_test
+    build:
+      args:
+        - ENV=development
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./config/:/var/www/config
+      - ./module/:/var/www/module
+      - ./public/:/var/www/public
+      - ./phpcs.xml:/var/www/phpcs.xml
+      - ./phpunit.xml.dist:/var/www/phpunit.xml
+      - ./auto/wait-for.sh:/var/www/wait-for.sh
+    environment:
       - APPLICATION_ENVIRONMENT=development
 
-      - DB_HOST=database
+      - PHP_IDE_CONFIG=PHPSTORM
+      - XDEBUG_CONFIG=remote_host=host.docker.internal remote_port=9001
+
+      - LOG_PATH=none
+
+      - DB_HOST=database_test
       - DB_PORT=3306
       - DB_NAME=althingi
-      - DB_NAME_TEST=althingi
       - DB_USER=root
       - DB_PASSWORD=example
-      - DB_SETUP=false
 
       - CACHE_TYPE=none
 
       - SEARCH=none
 
+      - ES_HOST=${ENV_ES_HOST:-host.docker.internal}
+      - ES_PROTO=${ENV_ES_PROTO:-http}
+      - ES_PORT=${ENV_ES_PORT:-9200}
+      - ES_USER=${ENV_ES_USER:-elastic}
+      - ES_PASSWORD=${ENV_ES_PASSWORD:-changeme}
+
       - QUEUE=none
 
-      - STORAGE_HOST=store
+      - STORAGE_HOST=store-test
       - STORAGE_DB=althingi
       - STORAGE_PORT=27017
-    volumes:
-      - ./auto/:/var/www/auto
-      - ./config/:/var/www/config
-      - ./module/:/var/www/module
-      - ./public/:/var/www/public
-    command: bash -c "./auto/wait-for.sh database:3306 -t 80 -- echo \"MySQL up\" &&  ./vendor/bin/phpunit && ./vendor/bin/phpcs"
+      - STORAGE_USER=wo
+      - STORAGE_PASSWORD=long@pass!123
 
+      - DOCUMENT_SERVER=${ENV_DOCUMENT_SERVER:-localhost:8080}
+      - DOCUMENT_DEFINITION=${ENV_DOCUMENT_DEFINITION:-/openapi}
+
+      - INDEXER_STALL_TIME=${ENV_INDEXER_STALL_TIME:-150000}
+    depends_on:
+      - database_test
+      - store-test
+    command: bash -c "./wait-for.sh database:3306 -t 80 -- echo \"MySQL up\" &&  ./vendor/bin/phpunit && ./vendor/bin/phpcs --standard=./phpcs.xml ./module/Althingi/src"
 
   # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
   # MySQL
@@ -138,6 +148,15 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=example
 
+  database_test:
+    container_name: althingi_test_database_test
+    image: mysql:5.6.41
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    volumes:
+      - ./auto/db/:/docker-entrypoint-initdb.d
+    environment:
+      - MYSQL_ROOT_PASSWORD=example
 
   # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
   # MongoDB
@@ -147,4 +166,8 @@ services:
   # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
   store:
     container_name: althingi_test_store
+    image: mongo:4.2.0-bionic
+
+  store-test:
+    container_name: althingi_test_store_test
     image: mongo:4.2.0-bionic

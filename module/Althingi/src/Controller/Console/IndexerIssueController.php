@@ -39,7 +39,7 @@ use Althingi\QueueActions\Add;
 use Althingi\Events\AddEvent;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use Psr\Log\LoggerInterface;
-use Zend\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\Controller\AbstractActionController;
 
 class IndexerIssueController extends AbstractActionController implements
     ServiceSpeechAwareInterface,

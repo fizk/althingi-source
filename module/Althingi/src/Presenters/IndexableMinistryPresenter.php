@@ -3,14 +3,14 @@ namespace Althingi\Presenters;
 
 use Althingi\Model\Ministry;
 use Althingi\Model\ModelInterface;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class IndexableMinistryPresenter implements IndexablePresenter
 {
     const INDEX = 'althingi_model_ministry';
     const TYPE = 'ministry';
 
-    /** @var  \Zend\Hydrator\HydratorInterface; */
+    /** @var  \Laminas\Hydrator\HydratorInterface; */
     private $hydrator;
 
     /** @var  \Althingi\Model\Ministry */

@@ -7,7 +7,7 @@ use Althingi\Model;
 use Althingi\Store;
 use Althingi\Controller\AssemblyController;
 use AlthingiTest\ServiceHelper;
-use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+use Laminas\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use DateTime;
 
 /**
@@ -36,7 +36,7 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
 {
     use ServiceHelper;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->setApplicationConfig(
             include __DIR__ .'/../../../../config/application.config.php'
@@ -66,11 +66,11 @@ class AssemblyControllerTest extends AbstractHttpControllerTestCase
         ]);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->destroyServices();
         \Mockery::close();
-        return parent::tearDown();
+        parent::tearDown();
     }
 
     /**

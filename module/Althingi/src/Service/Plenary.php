@@ -16,11 +16,6 @@ class Plenary implements DatabaseAwareInterface
     use DatabaseService;
 
     /**
-     * @var \PDO
-     */
-    private $pdo;
-
-    /**
      * @param int $assemblyId
      * @param int $plenaryId
      * @return \Althingi\Model\Plenary|null
@@ -127,23 +122,5 @@ class Plenary implements DatabaseAwareInterface
         $statement->execute($this->toSqlValues($data));
 
         return $statement->rowCount();
-    }
-
-    /**
-     * @param \PDO $pdo
-     * @return $this
-     */
-    public function setDriver(PDO $pdo)
-    {
-        $this->pdo = $pdo;
-        return $this;
-    }
-
-    /**
-     * @return \PDO
-     */
-    public function getDriver()
-    {
-        return $this->pdo;
     }
 }

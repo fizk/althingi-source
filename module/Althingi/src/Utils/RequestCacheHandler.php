@@ -4,17 +4,17 @@ namespace Althingi\Utils;
 use Althingi\Injector\CacheAwareInterface;
 use Althingi\Injector\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
-use Zend\Cache\Storage\StorageInterface;
-use Zend\EventManager\EventManagerInterface;
-use Zend\EventManager\ListenerAggregateInterface;
-use Zend\Http\Request as HttpRequest;
-use Zend\Http\PhpEnvironment\Request as PhpRequest;
-use Zend\Mvc\MvcEvent;
+use Laminas\Cache\Storage\StorageInterface;
+use Laminas\EventManager\EventManagerInterface;
+use Laminas\EventManager\ListenerAggregateInterface;
+use Laminas\Http\Request as HttpRequest;
+use Laminas\Http\PhpEnvironment\Request as PhpRequest;
+use Laminas\Mvc\MvcEvent;
 
 class RequestCacheHandler implements ListenerAggregateInterface, CacheAwareInterface, LoggerAwareInterface
 {
     /**
-     * @var \Zend\Cache\Storage\StorageInterface
+     * @var \Laminas\Cache\Storage\StorageInterface
      */
     private $storage;
 
@@ -25,7 +25,7 @@ class RequestCacheHandler implements ListenerAggregateInterface, CacheAwareInter
     {
         $cache = $this->storage;
         $events->attach(MvcEvent::EVENT_ROUTE, function (MvcEvent $event) use ($cache) {
-            if ($event->getRequest() instanceof \Zend\Console\Request) {
+            if ($event->getRequest() instanceof \Laminas\Console\Request) {
                 return;
             }
 
@@ -46,7 +46,7 @@ class RequestCacheHandler implements ListenerAggregateInterface, CacheAwareInter
             }
         }, $priority);
         $events->attach(MvcEvent::EVENT_FINISH, function (MvcEvent $event) use ($cache) {
-            if ($event->getRequest() instanceof \Zend\Console\Request) {
+            if ($event->getRequest() instanceof \ZLaminasend\Console\Request) {
                 return;
             }
 
@@ -72,7 +72,7 @@ class RequestCacheHandler implements ListenerAggregateInterface, CacheAwareInter
     }
 
     /**
-     * @param \Zend\Cache\Storage\StorageInterface $storage
+     * @param \Laminas\Cache\Storage\StorageInterface $storage
      * @return $this
      */
     public function setStorage(StorageInterface $storage)
@@ -82,7 +82,7 @@ class RequestCacheHandler implements ListenerAggregateInterface, CacheAwareInter
     }
 
     /**
-     * @return \Zend\Cache\Storage\StorageInterface
+     * @return \Laminas\Cache\Storage\StorageInterface
      */
     public function getStorage()
     {

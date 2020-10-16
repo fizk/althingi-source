@@ -5,9 +5,9 @@ namespace Althingi;
 use Althingi\Utils\RequestCacheHandler;
 use Althingi\Utils\RequestErrorHandler;
 use Psr\Log\LoggerInterface;
-use Zend\Mvc\MvcEvent;
+use Laminas\Mvc\MvcEvent;
 use Rend\Event\ShutdownErrorHandler;
-use Zend\Cache\Storage\StorageInterface;
+use Laminas\Cache\Storage\StorageInterface;
 
 class Module
 {
@@ -47,7 +47,7 @@ class Module
             ->attach($eventManager, 2);
 
         $eventManager->attach(MvcEvent::EVENT_FINISH, function (MvcEvent $event) use ($loggerInterface) {
-            if ($event->getResponse() instanceof \Zend\Console\Response) {
+            if ($event->getResponse() instanceof \Laminas\Console\Response) {
                 return;
             }
             if ($event->getResponse()->getStatusCode() >= 400) {

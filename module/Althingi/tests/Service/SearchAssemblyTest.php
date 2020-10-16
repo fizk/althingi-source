@@ -13,7 +13,7 @@ class SearchAssemblyTest extends TestCase
     /** @var  \Althingi\Service\SearchAssembly */
     private $service;
 
-    public function setUp()
+    public function setUp(): void
     {
         $handler = new MockHandler([
             'status' => 200,
@@ -31,7 +31,7 @@ class SearchAssemblyTest extends TestCase
         $this->service->setElasticSearchClient($client);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->service = null;
     }

@@ -7,8 +7,8 @@ use AlthingiTest\ServiceHelper;
 use Althingi\Service;
 use Althingi\Store;
 use Althingi\Model;
-use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
-use Zend\Stdlib\ArrayUtils;
+use Laminas\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+use Laminas\Stdlib\ArrayUtils;
 
 /**
  * Class CongressmanControllerTest
@@ -28,7 +28,7 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
 {
     use ServiceHelper;
 
-    public function setUp()
+    public function setUp(): void
     {
         $configOverrides = [];
         $this->setApplicationConfig(ArrayUtils::merge(
@@ -51,10 +51,10 @@ class CongressmanControllerTest extends AbstractHttpControllerTestCase
         ]);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         \Mockery::close();
-        return parent::tearDown();
+        parent::tearDown();
     }
 
     /**

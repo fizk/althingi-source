@@ -9,21 +9,12 @@ use Althingi\Injector\EventsAwareInterface;
 use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;
 use Althingi\Presenters\IndexableVoteItemPresenter;
-use Zend\EventManager\EventManager;
-use Zend\EventManager\EventManagerInterface;
 use PDO;
 
 class VoteItem implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
-
-    /**
-     * @var \PDO
-     */
-    private $pdo;
-
-    /** @var \Zend\EventManager\EventManagerInterface */
-    protected $events;
+    use EventService;
 
     /**
      * @param int $id
@@ -91,8 +82,8 @@ class VoteItem implements DatabaseAwareInterface, EventsAwareInterface
     public function fetchVoteByAssemblyAndCongressmanAndCategory(int $assemblyId, int $congressmanId): array
     {
         $statement = $this->getDriver()->prepare('
-        select CI.`category_id`, C.`title`, VI.vote_item_id, V.vote_id, 
-              VI.`congressman_id`, V.`assembly_id`, VI.`vote`, count(VI.`vote`) as `count` 
+        select CI.`category_id`, C.`title`, VI.vote_item_id, V.vote_id,
+              VI.`congressman_id`, V.`assembly_id`, VI.`vote`, count(VI.`vote`) as `count`
         from `Vote` V
             join `VoteItem` VI on (VI.`vote_id` = V.`vote_id`)
             join `Category_has_Issue` CI on (CI.`assembly_id` = V.`assembly_id` and V.`issue_id` = CI.`issue_id`)
@@ -179,37 +170,5 @@ class VoteItem implements DatabaseAwareInterface, EventsAwareInterface
                 ['rows' => $statement->rowCount()]
             );
         return $statement->rowCount();
-    }
-
-    /**
-     * @param \PDO $pdo
-     * @return $this
-     */
-    public function setDriver(PDO $pdo)
-    {
-        $this->pdo = $pdo;
-        return $this;
-    }
-
-    /**
-     * @return \PDO
-     */
-    public function getDriver()
-    {
-        return $this->pdo;
-    }
-
-    public function setEventManager(EventManagerInterface $events)
-    {
-        $this->events = $events;
-        return $this;
-    }
-
-    public function getEventManager()
-    {
-        if (null === $this->events) {
-            $this->setEventManager(new EventManager());
-        }
-        return $this->events;
     }
 }
