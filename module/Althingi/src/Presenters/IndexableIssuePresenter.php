@@ -3,14 +3,14 @@ namespace Althingi\Presenters;
 
 use Althingi\Model\Issue;
 use Althingi\Model\ModelInterface;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class IndexableIssuePresenter implements IndexablePresenter
 {
     const INDEX = 'althingi_model_issue';
     const TYPE = 'issue';
 
-    /** @var  \Zend\Hydrator\HydratorInterface; */
+    /** @var  \Laminas\Hydrator\HydratorInterface; */
     private $hydrator;
 
     /** @var  \Althingi\Model\Issue */

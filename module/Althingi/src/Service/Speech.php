@@ -9,8 +9,6 @@ use Althingi\Injector\EventsAwareInterface;
 use Althingi\Presenters\IndexableSpeechPresenter;
 use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;
-use Zend\EventManager\EventManager;
-use Zend\EventManager\EventManagerInterface;
 use PDO;
 
 /**
@@ -20,16 +18,9 @@ use PDO;
 class Speech implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
+    use EventService;
 
     const MAX_ROW_COUNT = '18446744073709551615';
-
-    /**
-     * @var \PDO
-     */
-    private $pdo;
-
-    /** @var  \Zend\EventManager\EventManager */
-    private $events;
 
     /**
      * Get one speech item.
@@ -93,8 +84,8 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
     {
         $speechTypeStatement = $this->getDriver()->prepare('
             select `type`, sum(`diff`) as `total` from (
-                select S.`type`, S.`congressman_type`, TIMESTAMPDIFF(SECOND, S.`from`, S.`to`) as `diff` 
-                from `Speech` S 
+                select S.`type`, S.`congressman_type`, TIMESTAMPDIFF(SECOND, S.`from`, S.`to`) as `diff`
+                from `Speech` S
                 where S.`assembly_id` = :assembly_id and S.`congressman_id` = :congressman_id
             ) as D
             group by `type`
@@ -107,8 +98,8 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
 
         $congressmanTypeStatement = $this->getDriver()->prepare('
             select `congressman_type`, sum(`diff`) as `total` from (
-                select S.`type`, S.`congressman_type`, TIMESTAMPDIFF(SECOND, S.`from`, S.`to`) as `diff` 
-                from `Speech` S 
+                select S.`type`, S.`congressman_type`, TIMESTAMPDIFF(SECOND, S.`from`, S.`to`) as `diff`
+                from `Speech` S
                 where S.`assembly_id` = :assembly_id and S.`congressman_id` = :congressman_id
             ) as D
             group by `congressman_type`
@@ -231,7 +222,7 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
         $pointer = 0;
         $hasResult = false;
         $statement = $this->getDriver()->prepare(
-            'select * from `Speech` s 
+            'select * from `Speech` s
             where s.`assembly_id` = :assembly_id and s.`issue_id` = :issue_id and s.category = :category
             order by s.`from`'
         );
@@ -252,7 +243,7 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
         $rangeBegin = ($pointer - ($pointer % $size));
 
         $statement = $this->getDriver()->prepare(
-            'select * from `Speech` s 
+            'select * from `Speech` s
             where s.`assembly_id` = :assembly_id and s.`issue_id` = :issue_id
             order by s.`from`
             limit ' . $rangeBegin . ', ' . $size
@@ -317,7 +308,7 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
     public function fetchFrequencyByIssue(int $assemblyId, int $issueId, ?string $category = 'A'): array
     {
         $statement = $this->getDriver()->prepare('
-            select date_format(`from`, "%Y-%m-%d 00:00:00") as `date`, 
+            select date_format(`from`, "%Y-%m-%d 00:00:00") as `date`,
             (sum(time_to_sec(timediff(`to`, `from`)))) as `count`
             from `Speech`
             where assembly_id = :assembly_id and issue_id = :issue_id and category = :category
@@ -388,9 +379,9 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
 
         $statement = $this->getDriver()->prepare("
             select sum(`diff`) from (
-                select *, time_to_sec(timediff(S.`to`, S.`from`)) as `diff` 
-                from `Speech` S 
-                where S.`assembly_id` = :assembly_id 
+                select *, time_to_sec(timediff(S.`to`, S.`from`)) as `diff`
+                from `Speech` S
+                where S.`assembly_id` = :assembly_id
                   and S.`congressman_id` = :congressman_id
                   {$categories}
             ) as D;
@@ -481,37 +472,5 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
             );
 
         return $statement->rowCount();
-    }
-
-    /**
-     * @param \PDO $pdo
-     * @return $this
-     */
-    public function setDriver(PDO $pdo)
-    {
-        $this->pdo = $pdo;
-        return $this;
-    }
-
-    /**
-     * @return \PDO
-     */
-    public function getDriver()
-    {
-        return $this->pdo;
-    }
-
-    public function setEventManager(EventManagerInterface $events)
-    {
-        $this->events = $events;
-        return $this;
-    }
-
-    public function getEventManager()
-    {
-        if (null === $this->events) {
-            $this->setEventManager(new EventManager());
-        }
-        return $this->events;
     }
 }

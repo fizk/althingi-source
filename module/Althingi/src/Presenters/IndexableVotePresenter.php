@@ -3,14 +3,14 @@ namespace Althingi\Presenters;
 
 use Althingi\Model\ModelInterface;
 use Althingi\Model\Vote;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class IndexableVotePresenter implements IndexablePresenter
 {
     const INDEX = 'althingi_model_vote';
     const TYPE = 'vote';
 
-    /** @var  \Zend\Hydrator\HydratorInterface; */
+    /** @var  \ZeLaminasnd\Hydrator\HydratorInterface; */
     private $hydrator;
 
     /** @var  \Althingi\Model\Vote */

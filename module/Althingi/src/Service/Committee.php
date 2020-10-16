@@ -15,9 +15,6 @@ class Committee implements DatabaseAwareInterface
 {
     use DatabaseService;
 
-    /** @var  \PDO */
-    private $pdo;
-
     /**
      * @param $id
      * @return \Althingi\Model\Committee|null
@@ -57,7 +54,7 @@ class Committee implements DatabaseAwareInterface
     {
         $statement = $this->getDriver()->prepare('
             select * from `Committee` C
-              where C.`first_assembly_id` <= :assembly_id 
+              where C.`first_assembly_id` <= :assembly_id
               and (C.`last_assembly_id` >= :assembly_id or C.`last_assembly_id` is null)
               order by C.`name`;
         ');
@@ -111,23 +108,5 @@ class Committee implements DatabaseAwareInterface
         $statement->execute($this->toSqlValues($data));
 
         return $statement->rowCount();
-    }
-
-    /**
-     * @param \PDO $pdo
-     * @return $this
-     */
-    public function setDriver(PDO $pdo)
-    {
-        $this->pdo = $pdo;
-        return $this;
-    }
-
-    /**
-     * @return \PDO
-     */
-    public function getDriver()
-    {
-        return $this->pdo;
     }
 }

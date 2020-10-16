@@ -5,14 +5,14 @@ use Althingi\Model\Assembly;
 use Althingi\Model\MinisterSitting;
 use Althingi\Model\ModelInterface;
 use Althingi\Model\President;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class IndexableMinisterSittingPresenter implements IndexablePresenter
 {
     const INDEX = 'althingi_model_minister-sitting';
     const TYPE = 'minister-sitting';
 
-    /** @var  \Zend\Hydrator\HydratorInterface; */
+    /** @var  \Laminas\Hydrator\HydratorInterface; */
     private $hydrator;
 
     /** @var  \Althingi\Model\MinisterSitting */

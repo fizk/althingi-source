@@ -2,7 +2,7 @@
 
 namespace Althingi\Hydrator;
 
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class Constituency implements HydratorInterface
 {
@@ -30,7 +30,7 @@ class Constituency implements HydratorInterface
      * @param  \Althingi\Model\Constituency $object
      * @return array
      */
-    public function extract($object)
+    public function extract($object): array
     {
         return $object->toArray();
     }

@@ -4,14 +4,14 @@ namespace Althingi\Presenters;
 use Althingi\Model\ModelInterface;
 use Althingi\Model\Session;
 use Althingi\Model\Speech;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class IndexableSessionPresenter implements IndexablePresenter
 {
     const INDEX = 'althingi_model_session';
     const TYPE = 'session';
 
-    /** @var  \Zend\Hydrator\HydratorInterface; */
+    /** @var  \Laminas\Hydrator\HydratorInterface; */
     private $hydrator;
 
     /** @var  \Althingi\Model\Session */

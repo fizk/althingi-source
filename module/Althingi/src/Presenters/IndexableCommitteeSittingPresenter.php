@@ -3,14 +3,14 @@ namespace Althingi\Presenters;
 
 use Althingi\Model;
 use Althingi\Hydrator;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class IndexableCommitteeSittingPresenter implements IndexablePresenter
 {
     const INDEX = 'althingi_model_committee-sitting';
     const TYPE = 'committee-sitting';
 
-    /** @var  \Zend\Hydrator\HydratorInterface; */
+    /** @var  \Laminas\Hydrator\HydratorInterface; */
     private $hydrator;
 
     /** @var  \Althingi\Model\CommitteeSitting */

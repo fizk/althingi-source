@@ -8,8 +8,6 @@ use Althingi\Injector\EventsAwareInterface;
 use Althingi\Presenters\IndexableIssueCategoryPresenter;
 use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;
-use Zend\EventManager\EventManager;
-use Zend\EventManager\EventManagerInterface;
 use PDO;
 
 /**
@@ -19,14 +17,7 @@ use PDO;
 class IssueCategory implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
-
-    /**
-     * @var \PDO
-     */
-    private $pdo;
-
-    /** @var \Zend\EventManager\EventManagerInterface */
-    protected $events;
+    use EventService;
 
     /**
      * @param int $assemblyId
@@ -38,8 +29,8 @@ class IssueCategory implements DatabaseAwareInterface, EventsAwareInterface
     {
         $statement = $this->getDriver()->prepare('
             select * from `Category_has_Issue` C
-            where C.`assembly_id` = :assembly_id 
-              and C.`issue_id` = :issue_id 
+            where C.`assembly_id` = :assembly_id
+              and C.`issue_id` = :issue_id
               and C.`category_id` = :category_id
               and C.category = \'A\'
         ');
@@ -190,37 +181,5 @@ class IssueCategory implements DatabaseAwareInterface, EventsAwareInterface
         return array_map(function ($object) {
             return (new Hydrator\IssueCategoryAndTime())->hydrate($object, new Model\IssueCategoryAndTime());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
-    }
-
-    /**
-     * @param \PDO $pdo
-     * @return $this;
-     */
-    public function setDriver(PDO $pdo)
-    {
-        $this->pdo = $pdo;
-        return $this;
-    }
-
-    /**
-     * @return \PDO
-     */
-    public function getDriver()
-    {
-        return $this->pdo;
-    }
-
-    public function setEventManager(EventManagerInterface $events)
-    {
-        $this->events = $events;
-        return $this;
-    }
-
-    public function getEventManager()
-    {
-        if (null === $this->events) {
-            $this->setEventManager(new EventManager());
-        }
-        return $this->events;
     }
 }

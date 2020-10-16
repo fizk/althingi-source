@@ -9,9 +9,6 @@ use Althingi\Injector\DatabaseAwareInterface;
 use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;
 use Althingi\Presenters\IndexableCommitteeSittingPresenter;
-use Althingi\Presenters\IndexableSessionPresenter;
-use Zend\EventManager\EventManagerInterface;
-use Zend\EventManager\EventManager;
 use PDO;
 use DateTime;
 
@@ -22,14 +19,7 @@ use DateTime;
 class CommitteeSitting implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
-
-    /**
-     * @var \PDO
-     */
-    private $pdo;
-
-    /** @var \Zend\EventManager\EventManagerInterface */
-    protected $events;
+    use EventService;
 
     /**
      * Get one Congressman's Session.
@@ -129,9 +119,9 @@ class CommitteeSitting implements DatabaseAwareInterface, EventsAwareInterface
     {
         $statement = $this->getDriver()->prepare('
             select `committee_sitting_id` from `CommitteeSitting`
-            where `congressman_id` = :congressman_id and 
-                `committee_id` = :committee_id and 
-                `assembly_id` = :assembly_id and 
+            where `congressman_id` = :congressman_id and
+                `committee_id` = :committee_id and
+                `assembly_id` = :assembly_id and
                 `from` = :from;
         ');
         $statement->execute([
@@ -141,37 +131,5 @@ class CommitteeSitting implements DatabaseAwareInterface, EventsAwareInterface
             'from' => $from->format('Y-m-d'),
         ]);
         return $statement->fetchColumn(0);
-    }
-
-    /**
-     * @param \PDO $pdo
-     * @return $this
-     */
-    public function setDriver(PDO $pdo)
-    {
-        $this->pdo = $pdo;
-        return $this;
-    }
-
-    /**
-     * @return \PDO
-     */
-    public function getDriver()
-    {
-        return $this->pdo;
-    }
-
-    public function setEventManager(EventManagerInterface $events)
-    {
-        $this->events = $events;
-        return $this;
-    }
-
-    public function getEventManager()
-    {
-        if (null === $this->events) {
-            $this->setEventManager(new EventManager());
-        }
-        return $this->events;
     }
 }

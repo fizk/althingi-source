@@ -17,18 +17,13 @@ class Constituency implements DatabaseAwareInterface
     use DatabaseService;
 
     /**
-     * @var \PDO
-     */
-    private $pdo;
-
-    /**
      * @param int $id
      * @return \Althingi\Model\Constituency | null
      */
     public function get(int $id): ? Model\Constituency
     {
         $statement = $this->getDriver()->prepare(
-            'select * from `Constituency` 
+            'select * from `Constituency`
             where constituency_id = :constituency_id'
         );
         $statement->execute(['constituency_id' => $id]);
@@ -155,8 +150,8 @@ class Constituency implements DatabaseAwareInterface
                 select DC.congressman_id, D.date from (
                     select D.* from Document D
                         join Issue I on (
-                            D.issue_id = I.issue_id and 
-                            D.assembly_id = I.assembly_id and 
+                            D.issue_id = I.issue_id and
+                            D.assembly_id = I.assembly_id and
                             D.category = I.category
                         )
                     where D.assembly_id = :assembly_id and I.type = "l"
@@ -224,23 +219,5 @@ class Constituency implements DatabaseAwareInterface
         $statement->execute($this->toSqlValues($data));
 
         return $statement->rowCount();
-    }
-
-    /**
-     * @param \PDO $pdo
-     * @return $this
-     */
-    public function setDriver(PDO $pdo)
-    {
-        $this->pdo = $pdo;
-        return $this;
-    }
-
-    /**
-     * @return \PDO
-     */
-    public function getDriver()
-    {
-        return $this->pdo;
     }
 }

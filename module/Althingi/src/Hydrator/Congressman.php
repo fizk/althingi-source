@@ -2,7 +2,7 @@
 
 namespace Althingi\Hydrator;
 
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 use DateTime;
 
 class Congressman implements HydratorInterface
@@ -32,7 +32,7 @@ class Congressman implements HydratorInterface
      * @param  \Althingi\Model\Congressman $object
      * @return array
      */
-    public function extract($object)
+    public function extract($object): array
     {
         return $object->toArray();
     }

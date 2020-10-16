@@ -4,14 +4,14 @@ namespace Althingi\Presenters;
 use Althingi\Model\Assembly;
 use Althingi\Model\ModelInterface;
 use Althingi\Model\President;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class IndexablePresidentPresenter implements IndexablePresenter
 {
     const INDEX = 'althingi_model_president';
     const TYPE = 'president';
 
-    /** @var  \Zend\Hydrator\HydratorInterface; */
+    /** @var  \Laminas\Hydrator\HydratorInterface; */
     private $hydrator;
 
     /** @var  \Althingi\Model\President */

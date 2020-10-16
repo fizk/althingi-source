@@ -7,7 +7,7 @@ use Althingi\Injector\ServiceSearchSpeechAwareInterface;
 use Althingi\Service\SearchSpeech;
 use Rend\View\Model\CollectionModel;
 use Althingi\Service;
-use Zend\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\Controller\AbstractActionController;
 
 class SearchSpeechController extends AbstractActionController implements
     ServiceSearchSpeechAwareInterface

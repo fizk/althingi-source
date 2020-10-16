@@ -191,7 +191,7 @@ class RabbitMQChannelBlackHoleClient extends AMQPChannel
     {
     }
 
-    public function confirm_select_ok($reader) // phpcs:ignore
+    public function confirm_select_ok() // phpcs:ignore
     {
     }
 

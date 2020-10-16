@@ -5,7 +5,7 @@ namespace Althingi\Controller;
 use Althingi\Injector\ServiceSearchIssueAwareInterface;
 use Rend\View\Model\CollectionModel;
 use Althingi\Service;
-use Zend\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\Controller\AbstractActionController;
 
 class SearchIssueController extends AbstractActionController implements
     ServiceSearchIssueAwareInterface

@@ -2,18 +2,18 @@
 
 namespace Althingi\Injector;
 
-use Zend\Cache\Storage\StorageInterface;
+use Laminas\Cache\Storage\StorageInterface;
 
 interface CacheAwareInterface
 {
     /**
-     * @param \Zend\Cache\Storage\StorageInterface $storage
+     * @param \Laminas\Cache\Storage\StorageInterface $storage
      * @return mixed
      */
     public function setStorage(StorageInterface $storage);
 
     /**
-     * @return \Zend\Cache\Storage\StorageInterface
+     * @return \Laminas\Cache\Storage\StorageInterface
      */
     public function getStorage();
 }

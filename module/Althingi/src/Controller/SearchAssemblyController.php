@@ -5,7 +5,7 @@ namespace Althingi\Controller;
 use Althingi\Injector\ServiceSearchAssemblyAwareInterface;
 use Rend\View\Model\CollectionModel;
 use Althingi\Service;
-use Zend\Mvc\Controller\AbstractActionController;
+use Laminas\Mvc\Controller\AbstractActionController;
 
 class SearchAssemblyController extends AbstractActionController implements
     ServiceSearchAssemblyAwareInterface

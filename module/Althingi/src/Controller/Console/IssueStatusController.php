@@ -4,11 +4,11 @@ namespace Althingi\Controller\Console;
 
 use Althingi\Injector\ServiceIssueAwareInterface;
 use Althingi\Service\Issue;
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Http\Client;
-use Zend\Dom\Query;
-use Zend\ProgressBar\ProgressBar;
-use Zend\ProgressBar\Adapter\Console as ConsoleAdapter;
+use Laminas\Mvc\Controller\AbstractActionController;
+use Laminas\Http\Client;
+use Laminas\Dom\Query;
+use Laminas\ProgressBar\ProgressBar;
+use Laminas\ProgressBar\Adapter\Console as ConsoleAdapter;
 
 class IssueStatusController extends AbstractActionController implements
     ServiceIssueAwareInterface
@@ -75,7 +75,7 @@ class IssueStatusController extends AbstractActionController implements
             );
             try {
                 $client->send();
-            } catch (\Zend\Http\Client\Adapter\Exception\TimeoutException $e) {
+            } catch (\Laminas\Http\Client\Adapter\Exception\TimeoutException $e) {
                 sleep(10);
                 $client->send();
             }

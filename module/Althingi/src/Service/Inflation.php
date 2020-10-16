@@ -17,14 +17,6 @@ class Inflation implements DatabaseAwareInterface
     use DatabaseService;
 
     /**
-     * @var \PDO
-     */
-    private $pdo;
-
-    /** @var  \Zend\EventManager\EventManager */
-    private $events;
-
-    /**
      * @param \DateTime|null $from
      * @param \DateTime|null $to
      * @return \Althingi\Model\Inflation[]
@@ -34,13 +26,13 @@ class Inflation implements DatabaseAwareInterface
         if ($from !== null && $to === null) {
             $statement = $this->getDriver()->prepare(
                 "select * from `Inflation`
-                where `date` >= :from 
+                where `date` >= :from
                 order by `date`"
             );
             $statement->execute(['from' => $from->format('Y-m-d')]);
         } elseif ($from !== null && $to !== null) {
             $statement = $this->getDriver()->prepare(
-                "select * from `Inflation` 
+                "select * from `Inflation`
                 where `date` between :from and :to
                 order by `date`"
             );
@@ -50,7 +42,7 @@ class Inflation implements DatabaseAwareInterface
             ]);
         } elseif ($from === null && $to !== null) {
             $statement = $this->getDriver()->prepare(
-                "select * from `Inflation` 
+                "select * from `Inflation`
                 where `date` <= :to
                 order by `date`"
             );
@@ -104,23 +96,5 @@ class Inflation implements DatabaseAwareInterface
         $statement->execute($this->toSqlValues($data));
 
         return $statement->rowCount();
-    }
-
-    /**
-     * @param \PDO $pdo
-     * @return $this
-     */
-    public function setDriver(PDO $pdo)
-    {
-        $this->pdo = $pdo;
-        return $this;
-    }
-
-    /**
-     * @return \PDO
-     */
-    public function getDriver()
-    {
-        return $this->pdo;
     }
 }

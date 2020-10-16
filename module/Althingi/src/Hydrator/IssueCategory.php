@@ -2,7 +2,7 @@
 
 namespace Althingi\Hydrator;
 
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class IssueCategory implements HydratorInterface
 {
@@ -29,7 +29,7 @@ class IssueCategory implements HydratorInterface
      * @param  \Althingi\Model\IssueCategory $object
      * @return array
      */
-    public function extract($object)
+    public function extract($object): array
     {
         return $object->toArray();
     }

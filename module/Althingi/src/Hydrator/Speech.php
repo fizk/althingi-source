@@ -2,7 +2,7 @@
 
 namespace Althingi\Hydrator;
 
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class Speech implements HydratorInterface
 {
@@ -40,7 +40,7 @@ class Speech implements HydratorInterface
      * @param  \Althingi\Model\Speech $object
      * @return array
      */
-    public function extract($object)
+    public function extract($object): array
     {
         return $object->toArray();
     }

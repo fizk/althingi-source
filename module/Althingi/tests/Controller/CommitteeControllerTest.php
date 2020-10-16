@@ -6,7 +6,7 @@ use Althingi\Service\Committee;
 use Althingi\Model\Committee as CommitteeModel;
 use AlthingiTest\ServiceHelper;
 use Mockery;
-use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+use Laminas\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
 /**
  * Class CommitteeControllerTest
@@ -19,7 +19,7 @@ class CommitteeControllerTest extends AbstractHttpControllerTestCase
 {
     use ServiceHelper;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->setApplicationConfig(
             include __DIR__ .'/../../../../config/application.config.php'
@@ -32,11 +32,11 @@ class CommitteeControllerTest extends AbstractHttpControllerTestCase
         ]);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->destroyServices();
         Mockery::close();
-        return parent::tearDown();
+        parent::tearDown();
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace AlthingiTest;
 
 use \Elasticsearch\Client as ElasticsearchClient;
+use Elasticsearch\Namespaces\IndicesNamespace;
 
 class ElasticBlackHoleClient extends ElasticsearchClient
 {
@@ -16,22 +17,22 @@ class ElasticBlackHoleClient extends ElasticsearchClient
         return [];
     }
 
-    public function ping($params = [])
+    public function ping(array $params = []): bool
     {
         return false;
     }
 
-    public function get($params)
+    public function get(array $params = [])
     {
         return [];
     }
 
-    public function getSource($params)
+    public function getSource(array $params = [])
     {
         return [];
     }
 
-    public function delete($params)
+    public function delete(array $params = [])
     {
         return [];
     }
@@ -71,7 +72,7 @@ class ElasticBlackHoleClient extends ElasticsearchClient
         return [];
     }
 
-    public function exists($params)
+    public function exists(array $params = []): bool
     {
         return false;
     }
@@ -91,7 +92,7 @@ class ElasticBlackHoleClient extends ElasticsearchClient
         return [];
     }
 
-    public function create($params)
+    public function create(array $params = [])
     {
         return [];
     }
@@ -101,12 +102,12 @@ class ElasticBlackHoleClient extends ElasticsearchClient
         return [];
     }
 
-    public function index($params)
+    public function index(array $params = [])
     {
         return [];
     }
 
-    public function reindex($params)
+    public function reindex(array $params = [])
     {
         return [];
     }
@@ -116,7 +117,7 @@ class ElasticBlackHoleClient extends ElasticsearchClient
         return [];
     }
 
-    public function explain($params)
+    public function explain(array $params = [])
     {
         return [];
     }
@@ -150,27 +151,27 @@ class ElasticBlackHoleClient extends ElasticsearchClient
         return [];
     }
 
-    public function update($params)
+    public function update(array $params = [])
     {
         return [];
     }
 
-    public function updateByQuery($params = [])
+    public function updateByQuery(array $params = [])
     {
         return [];
     }
 
-    public function getScript($params)
+    public function getScript(array $params = [])
     {
         return [];
     }
 
-    public function deleteScript($params)
+    public function deleteScript(array $params = [])
     {
         return [];
     }
 
-    public function putScript($params)
+    public function putScript(array $params = [])
     {
         return [];
     }
@@ -205,7 +206,7 @@ class ElasticBlackHoleClient extends ElasticsearchClient
         return [];
     }
 
-    public function indices()
+    public function indices(): IndicesNamespace
     {
         return null;
     }

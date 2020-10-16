@@ -16,7 +16,7 @@ return [
     'Zend\Filter',
     'Zend\Hydrator',
     'Zend\InputFilter',
-    'Zend\Mvc\Console',
+    // 'Zend\Mvc\Console',
     'Zend\Form',
     'Zend\Validator',
     'Althingi',

@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 use Althingi\Model\Issue as IssueModel;
 use Althingi\Model\IssueAndDate as IssueAndDateModel;
 use Psr\Log\NullLogger;
-use Zend\EventManager\EventManager;
+use Laminas\EventManager\EventManager;
 
 class IssueTest extends TestCase
 {
@@ -211,8 +211,8 @@ class IssueTest extends TestCase
         ])->getTable('Issue');
         $queryTable = $this->getConnection()->createQueryTable(
             'Issue',
-            'SELECT `issue_id`, `assembly_id`, `congressman_id`, `type`, `status`, `type_subname` 
-                FROM Issue 
+            'SELECT `issue_id`, `assembly_id`, `congressman_id`, `type`, `status`, `type_subname`
+                FROM Issue
                 WHERE issue_id = 4 AND assembly_id = 1'
         );
 
@@ -253,7 +253,7 @@ class IssueTest extends TestCase
         ])->getTable('Issue');
         $queryTable = $this->getConnection()->createQueryTable(
             'Issue',
-            'SELECT `issue_id`, `assembly_id`, `congressman_id`, `type`, `status`, `type_subname` 
+            'SELECT `issue_id`, `assembly_id`, `congressman_id`, `type`, `status`, `type_subname`
               FROM Issue
               WHERE issue_id = 4 AND assembly_id = 1'
         );
@@ -296,7 +296,7 @@ class IssueTest extends TestCase
         ])->getTable('Issue');
         $queryTable = $this->getConnection()->createQueryTable(
             'Issue',
-            'SELECT `issue_id`, `assembly_id`, `congressman_id`, `type`, `status`, `type_subname`, `category` 
+            'SELECT `issue_id`, `assembly_id`, `congressman_id`, `type`, `status`, `type_subname`, `category`
               FROM Issue
               WHERE issue_id = 3 AND assembly_id = 1'
         );

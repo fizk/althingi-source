@@ -6,7 +6,6 @@ use Althingi\Hydrator;
 use Althingi\Model;
 use Althingi\Injector\ElasticSearchAwareInterface;
 use Althingi\Presenters\IndexableIssuePresenter;
-use Althingi\Presenters\IndexableSpeechPresenter;
 use Elasticsearch\Client;
 
 /**

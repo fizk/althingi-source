@@ -16,11 +16,6 @@ class Category implements DatabaseAwareInterface
     use DatabaseService;
 
     /**
-     * @var \PDO
-     */
-    private $pdo;
-
-    /**
      * Get one party.
      *
      * @param int $id
@@ -83,7 +78,7 @@ class Category implements DatabaseAwareInterface
         $statement = $this->getDriver()->prepare('
             select C.* from `Category_has_Issue` CI
             join `Category` C on (C.`category_id` = CI.`category_id`)
-            where CI.`assembly_id` = :assembly_id 
+            where CI.`assembly_id` = :assembly_id
               and CI.`issue_id` = :issue_id
               and CI.category = \'A\';
         ');
@@ -107,8 +102,8 @@ class Category implements DatabaseAwareInterface
         $statement = $this->getDriver()->prepare('
             select C.* from `Category_has_Issue` CI
             join `Category` C on (C.`category_id` = CI.`category_id`)
-            where CI.`assembly_id` = :assembly_id 
-              and CI.`issue_id` = :issue_id 
+            where CI.`assembly_id` = :assembly_id
+              and CI.`issue_id` = :issue_id
               and CI.`category_id` = :category_id
               and CI.category = \'A\';
         ');
@@ -164,23 +159,5 @@ class Category implements DatabaseAwareInterface
         $statement->execute($this->toSqlValues($data));
 
         return $statement->rowCount();
-    }
-
-    /**
-     * @param \PDO $pdo
-     * @return $this
-     */
-    public function setDriver(PDO $pdo)
-    {
-        $this->pdo = $pdo;
-        return $this;
-    }
-
-    /**
-     * @return \PDO
-     */
-    public function getDriver()
-    {
-        return $this->pdo;
     }
 }
