@@ -2,7 +2,7 @@
 
 namespace Althingi\Hydrator;
 
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class CategoryAndCount implements HydratorInterface
 {
@@ -28,7 +28,7 @@ class CategoryAndCount implements HydratorInterface
      * @param  \Althingi\Model\CategoryAndCount $object
      * @return array
      */
-    public function extract($object)
+    public function extract($object): array
     {
         return $object->toArray();
     }

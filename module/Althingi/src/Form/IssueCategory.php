@@ -2,7 +2,7 @@
 
 namespace Althingi\Form;
 
-use Zend\InputFilter\InputFilterProviderInterface;
+use Laminas\InputFilter\InputFilterProviderInterface;
 
 class IssueCategory extends Form implements InputFilterProviderInterface
 {
@@ -15,28 +15,28 @@ class IssueCategory extends Form implements InputFilterProviderInterface
 
         $this->add([
             'name' => 'issue_id',
-            'type' => 'Zend\Form\Element\Number',
+            'type' => 'Laminas\Form\Element\Number',
         ]);
 
         $this->add([
             'name' => 'category',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
         ]);
 
         $this->add([
             'name' => 'assembly_id',
-            'type' => 'Zend\Form\Element\Number',
+            'type' => 'Laminas\Form\Element\Number',
         ]);
         $this->add([
             'name' => 'category_id',
-            'type' => 'Zend\Form\Element\Number',
+            'type' => 'Laminas\Form\Element\Number',
         ]);
     }
 
 
     /**
      * Should return an array specification compatible with
-     * {@link Zend\InputFilter\Factory::createInputFilter()}.
+     * {@link Laminas\InputFilter\Factory::createInputFilter()}.
      *
      * @return array
      */

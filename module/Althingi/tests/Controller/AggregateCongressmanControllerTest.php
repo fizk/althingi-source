@@ -18,7 +18,7 @@ use Althingi\Service\Cabinet;
 use Althingi\Service\Category;
 use Althingi\Service\Election;
 use AlthingiTest\ServiceHelper;
-use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+use Laminas\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
 /**
  * Class AssemblyControllerTest
@@ -34,7 +34,7 @@ class AggregateCongressmanControllerTest extends AbstractHttpControllerTestCase
 {
     use ServiceHelper;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->setApplicationConfig(
             include __DIR__ .'/../../../../config/application.config.php'
@@ -49,11 +49,11 @@ class AggregateCongressmanControllerTest extends AbstractHttpControllerTestCase
         ]);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->destroyServices();
         \Mockery::close();
-        return parent::tearDown();
+        parent::tearDown();
     }
 
     /**

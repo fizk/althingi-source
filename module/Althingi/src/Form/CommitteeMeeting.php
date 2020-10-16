@@ -2,8 +2,8 @@
 
 namespace Althingi\Form;
 
-use Zend\Hydrator\HydratorInterface;
-use Zend\InputFilter\InputFilterProviderInterface;
+use Laminas\Hydrator\HydratorInterface;
+use Laminas\InputFilter\InputFilterProviderInterface;
 
 class CommitteeMeeting extends Form implements InputFilterProviderInterface
 {
@@ -17,22 +17,22 @@ class CommitteeMeeting extends Form implements InputFilterProviderInterface
 
         $this->add([
             'name' => 'committee_meeting_id',
-            'type' => 'Zend\Form\Element\Number',
+            'type' => 'Laminas\Form\Element\Number',
         ]);
 
         $this->add([
             'name' => 'assembly_id',
-            'type' => 'Zend\Form\Element\Number',
+            'type' => 'Laminas\Form\Element\Number',
         ]);
 
         $this->add([
             'name' => 'committee_id',
-            'type' => 'Zend\Form\Element\Number',
+            'type' => 'Laminas\Form\Element\Number',
         ]);
 
         $this->add([
             'name' => 'from',
-            'type' => 'Zend\Form\Element\DateTime',
+            'type' => 'Laminas\Form\Element\DateTime',
             'options' => [
                 'format' => 'Y-m-d H:i:s'
             ],
@@ -43,7 +43,7 @@ class CommitteeMeeting extends Form implements InputFilterProviderInterface
 
         $this->add([
             'name' => 'to',
-            'type' => 'Zend\Form\Element\DateTime',
+            'type' => 'Laminas\Form\Element\DateTime',
             'options' => [
                 'format' => 'Y-m-d H:i:s'
             ],
@@ -54,14 +54,14 @@ class CommitteeMeeting extends Form implements InputFilterProviderInterface
 
         $this->add([
             'name' => 'description',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
         ]);
     }
 
 
     /**
      * Should return an array specification compatible with
-     * {@link Zend\InputFilter\Factory::createInputFilter()}.
+     * {@link Laminas\InputFilter\Factory::createInputFilter()}.
      *
      * @return array
      */
@@ -73,7 +73,7 @@ class CommitteeMeeting extends Form implements InputFilterProviderInterface
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Zend\Filter\ToNull',
+                        'name' => '\Laminas\Filter\ToNull',
                         'options' => ['type' => 'all']
                     ]
                 ],
@@ -91,7 +91,7 @@ class CommitteeMeeting extends Form implements InputFilterProviderInterface
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Zend\Filter\ToNull',
+                        'name' => '\Laminas\Filter\ToNull',
                         'options' => ['type' => 'all']
                     ]
                 ],
@@ -101,7 +101,7 @@ class CommitteeMeeting extends Form implements InputFilterProviderInterface
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Zend\Filter\ToNull',
+                        'name' => '\Laminas\Filter\ToNull',
                         'options' => ['type' => 'all']
                     ]
                 ],
@@ -111,7 +111,7 @@ class CommitteeMeeting extends Form implements InputFilterProviderInterface
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Zend\Filter\ToNull',
+                        'name' => '\Laminas\Filter\ToNull',
                         'options' => ['type' => 'all']
                     ]
                 ],

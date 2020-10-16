@@ -2,7 +2,7 @@
 
 namespace Althingi\Hydrator;
 
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class MinisterSitting implements HydratorInterface
 {
@@ -34,7 +34,7 @@ class MinisterSitting implements HydratorInterface
      * @param  \Althingi\Model\MinisterSitting $object
      * @return array
      */
-    public function extract($object)
+    public function extract($object): array
     {
         return $object->toArray();
     }

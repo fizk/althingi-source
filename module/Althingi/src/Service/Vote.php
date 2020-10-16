@@ -9,22 +9,13 @@ use Althingi\Injector\EventsAwareInterface;
 use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;
 use Althingi\Presenters\IndexableVotePresenter;
-use Zend\EventManager\EventManager;
-use Zend\EventManager\EventManagerInterface;
 use PDO;
 use DateTime;
 
 class Vote implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
-
-    /**
-     * @var \PDO
-     */
-    private $pdo;
-
-    /** @var \Zend\EventManager\EventManagerInterface */
-    protected $events;
+    use EventService;
 
     /**
      * @param int $id
@@ -160,10 +151,10 @@ class Vote implements DatabaseAwareInterface, EventsAwareInterface
         if ($from) {
             $to = $to ? $to : new DateTime();
             $statement = $this->getDriver()->prepare('
-                select count(*) as `count`, VI.`vote` from `Vote` V 
+                select count(*) as `count`, VI.`vote` from `Vote` V
                 join `VoteItem` VI on (V.`vote_id` = VI.`vote_id`)
-                where V.`assembly_id` = :assembly_id 
-                  and VI.`congressman_id` = :congressman_id  
+                where V.`assembly_id` = :assembly_id
+                  and VI.`congressman_id` = :congressman_id
                   and (V.`date` between :from and :to)
                 group by VI.`vote`;
             ');
@@ -175,7 +166,7 @@ class Vote implements DatabaseAwareInterface, EventsAwareInterface
             ]);
         } else {
             $statement = $this->getDriver()->prepare('
-                select count(*) as `count`, VI.`vote` from `Vote` V 
+                select count(*) as `count`, VI.`vote` from `Vote` V
                 join `VoteItem` VI on (V.`vote_id` = VI.`vote_id`)
                 where V.`assembly_id` = :assembly_id and VI.`congressman_id` = :congressman_id
                 group by VI.`vote`;
@@ -277,37 +268,5 @@ class Vote implements DatabaseAwareInterface, EventsAwareInterface
                 ['rows' => $statement->rowCount()]
             );
         return $statement->rowCount();
-    }
-
-    /**
-     * @param \PDO $pdo
-     * @return $this
-     */
-    public function setDriver(PDO $pdo)
-    {
-        $this->pdo = $pdo;
-        return $this;
-    }
-
-    /**
-     * @return \PDO
-     */
-    public function getDriver()
-    {
-        return $this->pdo;
-    }
-
-    public function setEventManager(EventManagerInterface $events)
-    {
-        $this->events = $events;
-        return $this;
-    }
-
-    public function getEventManager()
-    {
-        if (null === $this->events) {
-            $this->setEventManager(new EventManager());
-        }
-        return $this->events;
     }
 }

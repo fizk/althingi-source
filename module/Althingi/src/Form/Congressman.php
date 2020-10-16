@@ -2,7 +2,7 @@
 
 namespace Althingi\Form;
 
-use Zend\InputFilter\InputFilterProviderInterface;
+use Laminas\InputFilter\InputFilterProviderInterface;
 use DateTime;
 
 class Congressman extends Form implements InputFilterProviderInterface
@@ -16,22 +16,22 @@ class Congressman extends Form implements InputFilterProviderInterface
 
         $this->add([
             'name' => 'congressman_id',
-            'type' => 'Zend\Form\Element\Number',
+            'type' => 'Laminas\Form\Element\Number',
         ]);
 
         $this->add([
             'name' => 'name',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
         ]);
 
         $this->add([
             'name' => 'abbreviation',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
         ]);
 
         $this->add([
             'name' => 'birth',
-            'type' => 'Zend\Form\Element\Date',
+            'type' => 'Laminas\Form\Element\Date',
             'options' => [
                 'format' => 'Y-m-d'
             ],
@@ -42,7 +42,7 @@ class Congressman extends Form implements InputFilterProviderInterface
 
         $this->add([
             'name' => 'death',
-            'type' => 'Zend\Form\Element\Date',
+            'type' => 'Laminas\Form\Element\Date',
             'options' => [
                 'format' => 'Y-m-d'
             ],
@@ -55,7 +55,7 @@ class Congressman extends Form implements InputFilterProviderInterface
 
     /**
      * Should return an array specification compatible with
-     * {@link Zend\InputFilter\Factory::createInputFilter()}.
+     * {@link Laminas\InputFilter\Factory::createInputFilter()}.
      *
      * @return array
      */
@@ -79,7 +79,7 @@ class Congressman extends Form implements InputFilterProviderInterface
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Zend\Filter\ToNull',
+                        'name' => '\Laminas\Filter\ToNull',
                         'options' => ['type' => 'all']
                     ]
                 ],
@@ -89,7 +89,7 @@ class Congressman extends Form implements InputFilterProviderInterface
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Zend\Filter\ToNull',
+                        'name' => '\Laminas\Filter\ToNull',
                         'options' => ['type' => 'all']
                     ]
                 ],

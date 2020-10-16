@@ -8,10 +8,7 @@ use Althingi\Model;
 use Althingi\Hydrator;
 use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;
-use Althingi\Presenters\IndexableAssemblyPresenter;
 use Althingi\Presenters\IndexableMinisterSittingPresenter;
-use Zend\EventManager\EventManager;
-use Zend\EventManager\EventManagerInterface;
 use PDO;
 use DateTime;
 
@@ -22,14 +19,7 @@ use DateTime;
 class MinisterSitting implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
-
-    /**
-     * @var \PDO
-     */
-    private $pdo;
-
-    /** @var \Zend\EventManager\EventManagerInterface */
-    protected $events;
+    use EventService;
 
     /**
      * Get one MinisterSitting.
@@ -73,8 +63,8 @@ class MinisterSitting implements DatabaseAwareInterface, EventsAwareInterface
     public function fetchByCongressmanAssembly(int $assemblyId, int $congressmanId)
     {
         $statement = $this->getDriver()->prepare("
-            select * from `MinisterSitting` 
-                where assembly_id = :assembly_id and congressman_id = :congressman_id 
+            select * from `MinisterSitting`
+                where assembly_id = :assembly_id and congressman_id = :congressman_id
         ");
         $statement->execute([
             'assembly_id' => $assemblyId,
@@ -198,9 +188,9 @@ class MinisterSitting implements DatabaseAwareInterface, EventsAwareInterface
     {
         $statement = $this->getDriver()->prepare('
             select `minister_sitting_id` from `MinisterSitting`
-            where `congressman_id` = :congressman_id and 
-                `ministry_id` = :ministry_id and 
-                `assembly_id` = :assembly_id and 
+            where `congressman_id` = :congressman_id and
+                `ministry_id` = :ministry_id and
+                `assembly_id` = :assembly_id and
                 `from` = :from;
         ');
         $statement->execute([
@@ -210,37 +200,5 @@ class MinisterSitting implements DatabaseAwareInterface, EventsAwareInterface
             'from' => $from->format('Y-m-d'),
         ]);
         return $statement->fetchColumn(0);
-    }
-
-    /**
-     * @param \PDO $pdo
-     * @return $this
-     */
-    public function setDriver(PDO $pdo)
-    {
-        $this->pdo = $pdo;
-        return $this;
-    }
-
-    /**
-     * @return \PDO
-     */
-    public function getDriver()
-    {
-        return $this->pdo;
-    }
-
-    public function setEventManager(EventManagerInterface $events)
-    {
-        $this->events = $events;
-        return $this;
-    }
-
-    public function getEventManager()
-    {
-        if (null === $this->events) {
-            $this->setEventManager(new EventManager());
-        }
-        return $this->events;
     }
 }

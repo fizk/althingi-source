@@ -3,7 +3,7 @@
 namespace Althingi\Presenters;
 
 use Althingi\Model\ModelInterface;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 interface IndexablePresenter
 {

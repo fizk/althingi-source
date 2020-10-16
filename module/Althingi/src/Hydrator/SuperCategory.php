@@ -2,7 +2,7 @@
 
 namespace Althingi\Hydrator;
 
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class SuperCategory implements HydratorInterface
 {
@@ -27,7 +27,7 @@ class SuperCategory implements HydratorInterface
      * @param  \Althingi\Model\SuperCategory $object
      * @return array
      */
-    public function extract($object)
+    public function extract($object): array
     {
         return $object->toArray();
     }

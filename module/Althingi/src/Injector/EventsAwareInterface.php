@@ -2,7 +2,7 @@
 
 namespace Althingi\Injector;
 
-use Zend\EventManager\EventManagerInterface;
+use Laminas\EventManager\EventManagerInterface;
 
 interface EventsAwareInterface
 {

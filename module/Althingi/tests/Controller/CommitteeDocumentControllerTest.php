@@ -7,7 +7,7 @@ use Althingi\Model;
 use Althingi\Controller;
 use Althingi\Service\Session;
 use AlthingiTest\ServiceHelper;
-use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+use Laminas\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
 /**
  * Class SessionControllerTest
@@ -20,7 +20,7 @@ class CommitteeDocumentControllerTest extends AbstractHttpControllerTestCase
 {
     use ServiceHelper;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->setApplicationConfig(
             include __DIR__ .'/../../../../config/application.config.php'
@@ -33,10 +33,10 @@ class CommitteeDocumentControllerTest extends AbstractHttpControllerTestCase
         ]);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         \Mockery::close();
-        return parent::tearDown();
+        parent::tearDown();
     }
 
     /**

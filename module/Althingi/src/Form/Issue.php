@@ -2,7 +2,7 @@
 
 namespace Althingi\Form;
 
-use Zend\InputFilter\InputFilterProviderInterface;
+use Laminas\InputFilter\InputFilterProviderInterface;
 
 class Issue extends Form implements InputFilterProviderInterface
 {
@@ -15,87 +15,87 @@ class Issue extends Form implements InputFilterProviderInterface
 
         $this->add([
             'name' => 'issue_id',
-            'type' => 'Zend\Form\Element\Number',
+            'type' => 'Laminas\Form\Element\Number',
         ]);
 
         $this->add([
             'name' => 'assembly_id',
-            'type' => 'Zend\Form\Element\Number',
+            'type' => 'Laminas\Form\Element\Number',
         ]);
         $this->add([
             'name' => 'congressman_id',
-            'type' => 'Zend\Form\Element\Number',
+            'type' => 'Laminas\Form\Element\Number',
         ]);
 
         $this->add([
             'name' => 'name',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
         ]);
         $this->add([
             'name' => 'sub_name',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
         ]);
 
         $this->add([
             'name' => 'category',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
         ]);
 
         $this->add([
             'name' => 'type',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
         ]);
 
         $this->add([
             'name' => 'type_name',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
         ]);
 
         $this->add([
             'name' => 'type_subname',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
         ]);
 
         $this->add([
             'name' => 'status',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
         ]);
 
         $this->add([
             'name' => 'question',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
         ]);
 
         $this->add([
             'name' => 'goal',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
         ]);
         $this->add([
             'name' => 'major_changes',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
         ]);
         $this->add([
             'name' => 'changes_in_law',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
         ]);
         $this->add([
             'name' => 'costs_and_revenues',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
         ]);
         $this->add([
             'name' => 'deliveries',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
         ]);
         $this->add([
             'name' => 'additional_information',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
         ]);
     }
 
 
     /**
      * Should return an array specification compatible with
-     * {@link Zend\InputFilter\Factory::createInputFilter()}.
+     * {@link Laminas\InputFilter\Factory::createInputFilter()}.
      *
      * @return array
      */
@@ -115,7 +115,7 @@ class Issue extends Form implements InputFilterProviderInterface
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Zend\Filter\ToNull',
+                        'name' => '\Laminas\Filter\ToNull',
                         'options' => ['type' => 'all']
                     ]
                 ],
@@ -129,7 +129,7 @@ class Issue extends Form implements InputFilterProviderInterface
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Zend\Filter\ToNull',
+                        'name' => '\Laminas\Filter\ToNull',
                         'options' => ['type' => 'all']
                     ]
                 ],
@@ -151,7 +151,7 @@ class Issue extends Form implements InputFilterProviderInterface
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Zend\Filter\ToNull',
+                        'name' => '\Laminas\Filter\ToNull',
                         'options' => ['type' => 'all']
                     ], [
                         'name' => '\Althingi\Filter\ItemStatusFilter'
@@ -163,7 +163,7 @@ class Issue extends Form implements InputFilterProviderInterface
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Zend\Filter\ToNull',
+                        'name' => '\Laminas\Filter\ToNull',
                         'options' => ['type' => 'all']
                     ], [
                         'name' => '\Althingi\Filter\ItemStatusFilter'
@@ -175,7 +175,7 @@ class Issue extends Form implements InputFilterProviderInterface
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Zend\Filter\ToNull',
+                        'name' => '\Laminas\Filter\ToNull',
                         'options' => ['type' => 'all']
                     ]
                 ],
@@ -186,7 +186,7 @@ class Issue extends Form implements InputFilterProviderInterface
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Zend\Filter\ToNull',
+                        'name' => '\Laminas\Filter\ToNull',
                         'options' => ['type' => 'all']
                     ]
                 ],
@@ -196,7 +196,7 @@ class Issue extends Form implements InputFilterProviderInterface
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Zend\Filter\ToNull',
+                        'name' => '\Laminas\Filter\ToNull',
                         'options' => ['type' => 'all']
                     ]
                 ],
@@ -206,7 +206,7 @@ class Issue extends Form implements InputFilterProviderInterface
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Zend\Filter\ToNull',
+                        'name' => '\Laminas\Filter\ToNull',
                         'options' => ['type' => 'all']
                     ]
                 ],
@@ -216,7 +216,7 @@ class Issue extends Form implements InputFilterProviderInterface
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Zend\Filter\ToNull',
+                        'name' => '\Laminas\Filter\ToNull',
                         'options' => ['type' => 'all']
                     ]
                 ],
@@ -226,7 +226,7 @@ class Issue extends Form implements InputFilterProviderInterface
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Zend\Filter\ToNull',
+                        'name' => '\Laminas\Filter\ToNull',
                         'options' => ['type' => 'all']
                     ]
                 ],
@@ -236,7 +236,7 @@ class Issue extends Form implements InputFilterProviderInterface
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Zend\Filter\ToNull',
+                        'name' => '\Laminas\Filter\ToNull',
                         'options' => ['type' => 'all']
                     ]
                 ],

@@ -3,14 +3,14 @@ namespace Althingi\Presenters;
 
 use Althingi\Model\ModelInterface;
 use Althingi\Model\Speech;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class IndexableSpeechPresenter implements IndexablePresenter
 {
     const INDEX = 'althingi_model_speech';
     const TYPE = 'speech';
 
-    /** @var  \Zend\Hydrator\HydratorInterface; */
+    /** @var  \Laminas\Hydrator\HydratorInterface; */
     private $hydrator;
 
     /** @var  \Althingi\Model\Speech */

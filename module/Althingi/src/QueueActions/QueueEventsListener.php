@@ -4,7 +4,7 @@ namespace Althingi\QueueActions;
 use Althingi\Events\EventsListener;
 
 use Althingi\Injector\QueueAwareInterface;
-use Zend\EventManager\EventManagerInterface;
+use Laminas\EventManager\EventManagerInterface;
 use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;
 use Althingi\Events\DeleteEvent;

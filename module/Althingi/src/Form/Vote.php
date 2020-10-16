@@ -2,7 +2,7 @@
 
 namespace Althingi\Form;
 
-use Zend\InputFilter\InputFilterProviderInterface;
+use Laminas\InputFilter\InputFilterProviderInterface;
 
 class Vote extends Form implements InputFilterProviderInterface
 {
@@ -15,32 +15,32 @@ class Vote extends Form implements InputFilterProviderInterface
 
         $this->add([
             'name' => 'vote_id',
-            'type' => 'Zend\Form\Element\Number',
+            'type' => 'Laminas\Form\Element\Number',
         ]);
 
         $this->add([
             'name' => 'assembly_id',
-            'type' => 'Zend\Form\Element\Number',
+            'type' => 'Laminas\Form\Element\Number',
         ]);
 
         $this->add([
             'name' => 'document_id',
-            'type' => 'Zend\Form\Element\Number',
+            'type' => 'Laminas\Form\Element\Number',
         ]);
 
         $this->add([
             'name' => 'issue_id',
-            'type' => 'Zend\Form\Element\Number',
+            'type' => 'Laminas\Form\Element\Number',
         ]);
 
         $this->add([
             'name' => 'category',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
         ]);
 
         $this->add([
             'name' => 'date',
-            'type' => 'Zend\Form\Element\DateTime',
+            'type' => 'Laminas\Form\Element\DateTime',
             'options' => [
                 'format' => 'Y-m-d H:i:s',
 
@@ -52,43 +52,43 @@ class Vote extends Form implements InputFilterProviderInterface
 
         $this->add([
             'name' => 'type',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
         ]);
 
         $this->add([
             'name' => 'outcome',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
         ]);
 
         $this->add([
             'name' => 'method',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
         ]);
 
         $this->add([
             'name' => 'yes',
-            'type' => 'Zend\Form\Element\Number',
+            'type' => 'Laminas\Form\Element\Number',
         ]);
 
         $this->add([
             'name' => 'no',
-            'type' => 'Zend\Form\Element\Number',
+            'type' => 'Laminas\Form\Element\Number',
         ]);
 
         $this->add([
             'name' => 'inaction',
-            'type' => 'Zend\Form\Element\Number',
+            'type' => 'Laminas\Form\Element\Number',
         ]);
         $this->add([
             'name' => 'committee_to',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
         ]);
     }
 
 
     /**
      * Should return an array specification compatible with
-     * {@link Zend\InputFilter\Factory::createInputFilter()}.
+     * {@link Laminas\InputFilter\Factory::createInputFilter()}.
      *
      * @return array
      */
@@ -112,7 +112,7 @@ class Vote extends Form implements InputFilterProviderInterface
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Zend\Filter\ToNull',
+                        'name' => '\Laminas\Filter\ToNull',
                         'options' => ['type' => 'all']
                     ]
                 ],
@@ -134,7 +134,7 @@ class Vote extends Form implements InputFilterProviderInterface
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Zend\Filter\ToNull',
+                        'name' => '\Laminas\Filter\ToNull',
                         'options' => ['type' => 'all']
                     ]
                 ],
@@ -148,7 +148,7 @@ class Vote extends Form implements InputFilterProviderInterface
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Zend\Filter\ToInt',
+                        'name' => '\Laminas\Filter\ToInt',
                     ]
                 ],
             ],
@@ -157,7 +157,7 @@ class Vote extends Form implements InputFilterProviderInterface
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Zend\Filter\ToInt',
+                        'name' => '\Laminas\Filter\ToInt',
                     ]
                 ],
             ],
@@ -166,7 +166,7 @@ class Vote extends Form implements InputFilterProviderInterface
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Zend\Filter\ToInt',
+                        'name' => '\Laminas\Filter\ToInt',
                     ]
                 ],
             ],
@@ -175,7 +175,7 @@ class Vote extends Form implements InputFilterProviderInterface
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Zend\Filter\ToNull',
+                        'name' => '\Laminas\Filter\ToNull',
                         'options' => ['type' => 'all']
                     ]
                 ],

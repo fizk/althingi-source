@@ -9,8 +9,6 @@ use Althingi\Hydrator;
 use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;
 use Althingi\Presenters\IndexableIssueLinkPresenter;
-use Zend\EventManager\EventManager;
-use Zend\EventManager\EventManagerInterface;
 use PDO;
 
 /**
@@ -20,15 +18,7 @@ use PDO;
 class IssueLink implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
-
-    /**
-     * @var \PDO
-     */
-    private $pdo;
-
-    /** @var \Zend\EventManager\EventManagerInterface */
-    protected $events;
-
+    use EventService;
 
     /**
      * @param int $assemblyId
@@ -42,12 +32,12 @@ class IssueLink implements DatabaseAwareInterface, EventsAwareInterface
             ->prepare("
                 select I.* from IssueLink IL
                     join Issue I on (
-                          IL.to_assembly_id = I.assembly_id 
-                          and IL.to_issue_id = I.issue_id 
+                          IL.to_assembly_id = I.assembly_id
+                          and IL.to_issue_id = I.issue_id
                           and IL.to_category = I.category
                       )
-                where IL.from_assembly_id = :assembly_id 
-                  and IL.from_issue_id = :issue_id 
+                where IL.from_assembly_id = :assembly_id
+                  and IL.from_issue_id = :issue_id
                   and IL.from_category = :category;
             ");
         $statement->execute(['assembly_id' => $assemblyId, 'issue_id' => $issueId, 'category' => $category]);
@@ -145,37 +135,5 @@ class IssueLink implements DatabaseAwareInterface, EventsAwareInterface
             );
 
         return $statement->rowCount();
-    }
-
-    /**
-     * @param \PDO $pdo
-     * @return $this
-     */
-    public function setDriver(PDO $pdo)
-    {
-        $this->pdo = $pdo;
-        return $this;
-    }
-
-    /**
-     * @return \PDO
-     */
-    public function getDriver()
-    {
-        return $this->pdo;
-    }
-
-    public function setEventManager(EventManagerInterface $events)
-    {
-        $this->events = $events;
-        return $this;
-    }
-
-    public function getEventManager()
-    {
-        if (null === $this->events) {
-            $this->setEventManager(new EventManager());
-        }
-        return $this->events;
     }
 }

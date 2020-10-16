@@ -9,8 +9,6 @@ use Althingi\Hydrator;
 use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;
 use Althingi\Presenters\IndexableAssemblyPresenter;
-use Zend\EventManager\EventManager;
-use Zend\EventManager\EventManagerInterface;
 use PDO;
 
 /**
@@ -20,17 +18,10 @@ use PDO;
 class Assembly implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
+    use EventService;
 
     const ALLOWED_TYPES = ['a', 'b', 'l', 'm', 'q', 's'];
     const MAX_ROW_COUNT = '18446744073709551615';
-
-    /**
-     * @var \PDO
-     */
-    private $pdo;
-
-    /** @var \Zend\EventManager\EventManagerInterface */
-    protected $events;
 
     /**
      * Get one Assembly.
@@ -49,6 +40,11 @@ class Assembly implements DatabaseAwareInterface, EventsAwareInterface
             : null;
     }
 
+    /**
+     * Get current assembly.
+     *
+     * @return null|\Althingi\Model\Assembly
+     */
     public function getCurrent(): ? Model\Assembly
     {
         $statement = $this->getDriver()->prepare("select * from `Assembly` order by `assembly_id` desc limit 0, 1");
@@ -86,8 +82,8 @@ class Assembly implements DatabaseAwareInterface, EventsAwareInterface
     {
         $statement = $this->getDriver()->prepare("
             select * from (
-                select 
-                    A.*, 
+                select
+                    A.*,
                     C.cabinet_id
                 from Assembly A
                 join Cabinet C on (
@@ -103,6 +99,7 @@ class Assembly implements DatabaseAwareInterface, EventsAwareInterface
             return (new Hydrator\Assembly)->hydrate($assembly, new Model\Assembly());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
+
     /**
      * @return string[]
      */
@@ -146,6 +143,7 @@ class Assembly implements DatabaseAwareInterface, EventsAwareInterface
 
         return $this->getDriver()->lastInsertId();
     }
+
     /**
      * Save one entry.
      *
@@ -217,37 +215,5 @@ class Assembly implements DatabaseAwareInterface, EventsAwareInterface
         $statement->execute(['assembly_id' => $id]);
 
         return $statement->rowCount();
-    }
-
-    /**
-     * @param \PDO $pdo
-     * @return $this
-     */
-    public function setDriver(PDO $pdo)
-    {
-        $this->pdo = $pdo;
-        return $this;
-    }
-
-    /**
-     * @return \PDO
-     */
-    public function getDriver()
-    {
-        return $this->pdo;
-    }
-
-    public function setEventManager(EventManagerInterface $events)
-    {
-        $this->events = $events;
-        return $this;
-    }
-
-    public function getEventManager()
-    {
-        if (null === $this->events) {
-            $this->setEventManager(new EventManager());
-        }
-        return $this->events;
     }
 }

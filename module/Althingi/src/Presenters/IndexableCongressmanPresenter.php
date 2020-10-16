@@ -3,14 +3,14 @@ namespace Althingi\Presenters;
 
 use Althingi\Model\Congressman;
 use Althingi\Model\ModelInterface;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class IndexableCongressmanPresenter implements IndexablePresenter
 {
     const INDEX = 'althingi_model_congressman';
     const TYPE = 'congressman';
 
-    /** @var  \Zend\Hydrator\HydratorInterface; */
+    /** @var  \Laminas\Hydrator\HydratorInterface; */
     private $hydrator;
 
     /** @var  \Althingi\Model\Congressman */

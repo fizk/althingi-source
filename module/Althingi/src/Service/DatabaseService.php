@@ -4,9 +4,30 @@ namespace Althingi\Service;
 
 use Althingi\Model\ModelInterface;
 use DateTime;
+use PDO;
 
 trait DatabaseService
 {
+    private PDO $pdo;
+
+    /**
+     * @param \PDO $pdo
+     * @return $this
+     */
+    public function setDriver(PDO $pdo)
+    {
+        $this->pdo = $pdo;
+        return $this;
+    }
+
+    /**
+     * @return \PDO
+     */
+    public function getDriver()
+    {
+        return $this->pdo;
+    }
+
     /**
      * This is a simple utility function that creates
      * a SQL INSERT string bases on the name of the table

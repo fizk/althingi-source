@@ -9,8 +9,6 @@ use Althingi\Injector\DatabaseAwareInterface;
 use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;
 use Althingi\Presenters\IndexableSessionPresenter;
-use Zend\EventManager\EventManagerInterface;
-use Zend\EventManager\EventManager;
 use PDO;
 use DateTime;
 
@@ -21,14 +19,7 @@ use DateTime;
 class Session implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
-
-    /**
-     * @var \PDO
-     */
-    private $pdo;
-
-    /** @var \Zend\EventManager\EventManagerInterface */
-    protected $events;
+    use EventService;
 
     /**
      * Get one Congressman's Session.
@@ -95,7 +86,7 @@ class Session implements DatabaseAwareInterface, EventsAwareInterface
     public function fetchByAssemblyAndCongressman(int $assemblyId, int $congressmanId): array
     {
         $statement = $this->getDriver()->prepare("
-            select * from `Session` S where S.`congressman_id` = :congressman_id and S.`assembly_id` = :assembly_id 
+            select * from `Session` S where S.`congressman_id` = :congressman_id and S.`assembly_id` = :assembly_id
             order by `from` desc
         ");
 
@@ -192,37 +183,5 @@ class Session implements DatabaseAwareInterface, EventsAwareInterface
         ");
         $statement->execute(['id' => $id]);
         return $statement->rowCount();
-    }
-
-    /**
-     * @param \PDO $pdo
-     * @return $this
-     */
-    public function setDriver(PDO $pdo)
-    {
-        $this->pdo = $pdo;
-        return $this;
-    }
-
-    /**
-     * @return \PDO
-     */
-    public function getDriver()
-    {
-        return $this->pdo;
-    }
-
-    public function setEventManager(EventManagerInterface $events)
-    {
-        $this->events = $events;
-        return $this;
-    }
-
-    public function getEventManager()
-    {
-        if (null === $this->events) {
-            $this->setEventManager(new EventManager());
-        }
-        return $this->events;
     }
 }

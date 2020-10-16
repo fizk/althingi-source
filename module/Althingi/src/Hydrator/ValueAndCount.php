@@ -2,7 +2,7 @@
 
 namespace Althingi\Hydrator;
 
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 use DateTime;
 
 class ValueAndCount implements HydratorInterface
@@ -28,7 +28,7 @@ class ValueAndCount implements HydratorInterface
      * @param  \Althingi\Model\ValueAndCount $object
      * @return array
      */
-    public function extract($object)
+    public function extract($object): array
     {
         return $object->toArray();
     }

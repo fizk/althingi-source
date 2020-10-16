@@ -2,7 +2,7 @@
 
 namespace Althingi\Hydrator;
 
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 use DateTime;
 
 class CommitteeSitting implements HydratorInterface
@@ -36,7 +36,7 @@ class CommitteeSitting implements HydratorInterface
      * @param  \Althingi\Model\CommitteeSitting $object
      * @return array
      */
-    public function extract($object)
+    public function extract($object): array
     {
         return $object->toArray();
     }

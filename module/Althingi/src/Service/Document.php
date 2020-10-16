@@ -9,21 +9,12 @@ use Althingi\Injector\DatabaseAwareInterface;
 use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;
 use Althingi\Presenters\IndexableDocumentPresenter;
-use Zend\EventManager\EventManager;
-use Zend\EventManager\EventManagerInterface;
 use PDO;
 
 class Document implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
-
-    /**
-     * @var \PDO
-     */
-    private $pdo;
-
-    /** @var \Zend\EventManager\EventManagerInterface */
-    protected $events;
+    use EventService;
 
     /**
      * @param int $assemblyId
@@ -34,7 +25,7 @@ class Document implements DatabaseAwareInterface, EventsAwareInterface
     public function get(int $assemblyId, int $issueId, int $documentId): ? Model\Document
     {
         $statement = $this->getDriver()->prepare("
-            select * from `Document` D 
+            select * from `Document` D
             where D.`assembly_id` = :assembly_id and D.`issue_id` = :issue_id and D.`document_id` = :document_id
         ");
         $statement->execute([
@@ -173,37 +164,5 @@ class Document implements DatabaseAwareInterface, EventsAwareInterface
         return array_map(function ($object) {
             return (new Hydrator\Document())->hydrate($object, new Model\Document());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
-    }
-
-    /**
-     * @param \PDO $pdo
-     * @return $this
-     */
-    public function setDriver(PDO $pdo)
-    {
-        $this->pdo = $pdo;
-        return $this;
-    }
-
-    /**
-     * @return \PDO
-     */
-    public function getDriver()
-    {
-        return $this->pdo;
-    }
-
-    public function setEventManager(EventManagerInterface $events)
-    {
-        $this->events = $events;
-        return $this;
-    }
-
-    public function getEventManager()
-    {
-        if (null === $this->events) {
-            $this->setEventManager(new EventManager());
-        }
-        return $this->events;
     }
 }

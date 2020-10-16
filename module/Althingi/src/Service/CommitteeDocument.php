@@ -6,14 +6,7 @@ use Althingi\Model;
 use Althingi\Hydrator;
 use Althingi\Injector\EventsAwareInterface;
 use Althingi\Injector\DatabaseAwareInterface;
-use Althingi\Events\AddEvent;
-use Althingi\Events\UpdateEvent;
-use Althingi\Presenters\IndexableCommitteeSittingPresenter;
-use Althingi\Presenters\IndexableSessionPresenter;
-use Zend\EventManager\EventManagerInterface;
-use Zend\EventManager\EventManager;
 use PDO;
-use DateTime;
 
 /**
  * Class CommitteeSitting
@@ -22,14 +15,7 @@ use DateTime;
 class CommitteeDocument implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
-
-    /**
-     * @var \PDO
-     */
-    private $pdo;
-
-    /** @var \Zend\EventManager\EventManagerInterface */
-    protected $events;
+    use EventService;
 
     /**
      * Get one Committee Document
@@ -40,8 +26,8 @@ class CommitteeDocument implements DatabaseAwareInterface, EventsAwareInterface
     public function get(int $id): ? Model\CommitteeDocument
     {
         $statement = $this->getDriver()->prepare("
-            select * from `Document_has_Committee` 
-            where document_committee_id = :document_committee_id        
+            select * from `Document_has_Committee`
+            where document_committee_id = :document_committee_id
         ");
         $statement->execute(['document_committee_id' => $id]);
         $object = $statement->fetch(PDO::FETCH_ASSOC);
@@ -60,11 +46,11 @@ class CommitteeDocument implements DatabaseAwareInterface, EventsAwareInterface
     public function fetchByDocument(int $assemblyId, $issueId, $documentId): array
     {
         $statement = $this->getDriver()->prepare("
-            select * from `Document_has_Committee` 
-            where assembly_id = :assembly_id and 
-                issue_id = :issue_id and 
-                category = 'A' and 
-                document_id = :document_id         
+            select * from `Document_has_Committee`
+            where assembly_id = :assembly_id and
+                issue_id = :issue_id and
+                category = 'A' and
+                document_id = :document_id
         ");
         $statement->execute([
             'assembly_id' => $assemblyId,
@@ -169,37 +155,5 @@ class CommitteeDocument implements DatabaseAwareInterface, EventsAwareInterface
             'part' => $part,
         ]);
         return $statement->fetchColumn(0);
-    }
-
-    /**
-     * @param \PDO $pdo
-     * @return $this
-     */
-    public function setDriver(PDO $pdo)
-    {
-        $this->pdo = $pdo;
-        return $this;
-    }
-
-    /**
-     * @return \PDO
-     */
-    public function getDriver()
-    {
-        return $this->pdo;
-    }
-
-    public function setEventManager(EventManagerInterface $events)
-    {
-        $this->events = $events;
-        return $this;
-    }
-
-    public function getEventManager()
-    {
-        if (null === $this->events) {
-            $this->setEventManager(new EventManager());
-        }
-        return $this->events;
     }
 }

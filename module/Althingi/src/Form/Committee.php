@@ -2,7 +2,7 @@
 
 namespace Althingi\Form;
 
-use Zend\InputFilter\InputFilterProviderInterface;
+use Laminas\InputFilter\InputFilterProviderInterface;
 
 class Committee extends Form implements InputFilterProviderInterface
 {
@@ -15,39 +15,39 @@ class Committee extends Form implements InputFilterProviderInterface
 
         $this->add([
             'name' => 'committee_id',
-            'type' => 'Zend\Form\Element\Number',
+            'type' => 'Laminas\Form\Element\Number',
         ]);
 
         $this->add([
             'name' => 'first_assembly_id',
-            'type' => 'Zend\Form\Element\Number',
+            'type' => 'Laminas\Form\Element\Number',
         ]);
 
         $this->add([
             'name' => 'last_assembly_id',
-            'type' => 'Zend\Form\Element\Number',
+            'type' => 'Laminas\Form\Element\Number',
         ]);
 
         $this->add([
             'name' => 'name',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
         ]);
 
         $this->add([
             'name' => 'abbr_short',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
         ]);
 
         $this->add([
             'name' => 'abbr_long',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
         ]);
     }
 
 
     /**
      * Should return an array specification compatible with
-     * {@link Zend\InputFilter\Factory::createInputFilter()}.
+     * {@link Laminas\InputFilter\Factory::createInputFilter()}.
      *
      * @return array
      */
@@ -67,7 +67,7 @@ class Committee extends Form implements InputFilterProviderInterface
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Zend\Filter\ToNull',
+                        'name' => '\Laminas\Filter\ToNull',
                         'options' => ['type' => 'all']
                     ]
                 ],
@@ -81,7 +81,7 @@ class Committee extends Form implements InputFilterProviderInterface
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Zend\Filter\ToNull',
+                        'name' => '\Laminas\Filter\ToNull',
                         'options' => ['type' => 'all']
                     ]
                 ],
@@ -91,7 +91,7 @@ class Committee extends Form implements InputFilterProviderInterface
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Zend\Filter\ToNull',
+                        'name' => '\Laminas\Filter\ToNull',
                         'options' => ['type' => 'all']
                     ]
                 ],

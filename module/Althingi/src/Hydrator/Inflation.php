@@ -2,7 +2,7 @@
 
 namespace Althingi\Hydrator;
 
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 use DateTime;
 
 class Inflation implements HydratorInterface
@@ -29,7 +29,7 @@ class Inflation implements HydratorInterface
      * @param  \Althingi\Model\Inflation $object
      * @return array
      */
-    public function extract($object)
+    public function extract($object): array
     {
         return $object->toArray();
     }

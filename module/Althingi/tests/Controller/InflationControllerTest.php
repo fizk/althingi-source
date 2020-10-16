@@ -8,7 +8,7 @@ use AlthingiTest\ServiceHelper;
 use Mockery;
 use Althingi\Service\Inflation;
 use Althingi\Model\Inflation as InflationModel;
-use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+use Laminas\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use DateTime;
 
 /**
@@ -24,7 +24,7 @@ class InflationControllerTest extends AbstractHttpControllerTestCase
 {
     use ServiceHelper;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->setApplicationConfig(
             include __DIR__ .'/../../../../config/application.config.php'
@@ -39,11 +39,11 @@ class InflationControllerTest extends AbstractHttpControllerTestCase
         ]);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->destroyServices();
         Mockery::close();
-        return parent::tearDown();
+        parent::tearDown();
     }
 
     /**

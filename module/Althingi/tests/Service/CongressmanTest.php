@@ -12,7 +12,7 @@ use Althingi\Model\President;
 use Althingi\Model\Proponent;
 use Althingi\Model\Congressman as CongressmanModel;
 use Althingi\Model\CongressmanValue as CongressmanValueModel;
-use Zend\EventManager\EventManager;
+use Laminas\EventManager\EventManager;
 
 class CongressmanTest extends TestCase
 {

@@ -11,8 +11,6 @@ use Althingi\Injector\DatabaseAwareInterface;
 use Althingi\Presenters\IndexablePresidentPresenter;
 use PDO;
 use DateTime;
-use Zend\EventManager\EventManager;
-use Zend\EventManager\EventManagerInterface;
 
 /**
  * Class President
@@ -21,20 +19,13 @@ use Zend\EventManager\EventManagerInterface;
 class President implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
-
-    /**
-     * @var \PDO
-     */
-    private $pdo;
-
-    /** @var \Zend\EventManager\EventManagerInterface */
-    protected $events;
+    use EventService;
 
     public function get(int $id): ? Model\President
     {
         $statement = $this->getDriver()->prepare(
-            "select * 
-                from `President` P 
+            "select *
+                from `President` P
                 where P.`president_id` = :president_id;"
         );
         $statement->execute(['president_id' => $id]);
@@ -52,8 +43,8 @@ class President implements DatabaseAwareInterface, EventsAwareInterface
     public function getWithCongressman(int $id): ? Model\PresidentCongressman
     {
         $statement = $this->getDriver()->prepare(
-            "select P.`president_id`, P.`assembly_id`, P.`from`, P.`to`, P.`title`, P.`abbr`, C.* 
-                from `President` P 
+            "select P.`president_id`, P.`assembly_id`, P.`from`, P.`to`, P.`title`, P.`abbr`, C.*
+                from `President` P
                 join `Congressman` C on (P.`congressman_id` = C.`congressman_id`)
                 where P.`president_id` = :president_id;"
         );
@@ -79,12 +70,12 @@ class President implements DatabaseAwareInterface, EventsAwareInterface
         string $title
     ): ? Model\PresidentCongressman {
         $statement = $this->getDriver()->prepare("
-            select P.`president_id`, P.`assembly_id`, P.`from`, P.`to`, P.`title`, P.`abbr`, C.* 
-            from `President` P 
+            select P.`president_id`, P.`assembly_id`, P.`from`, P.`to`, P.`title`, P.`abbr`, C.*
+            from `President` P
             join `Congressman` C on (P.`congressman_id` = C.`congressman_id`)
-            where P.`assembly_id` = :assembly_id 
-              and P.`congressman_id` = :congressman_id 
-              and P.`title` = :title 
+            where P.`assembly_id` = :assembly_id
+              and P.`congressman_id` = :congressman_id
+              and P.`title` = :title
               and P.`from` = :from;
         ");
         $statement->execute([
@@ -142,38 +133,5 @@ class President implements DatabaseAwareInterface, EventsAwareInterface
             );
 
         return $statement->rowCount();
-    }
-
-    /**
-     * @param \PDO $pdo
-     * @return $this
-     */
-    public function setDriver(PDO $pdo)
-    {
-        $this->pdo = $pdo;
-        return $this;
-    }
-
-    /**
-     * @return \PDO
-     */
-    public function getDriver()
-    {
-        return $this->pdo;
-    }
-
-
-    public function setEventManager(EventManagerInterface $events)
-    {
-        $this->events = $events;
-        return $this;
-    }
-
-    public function getEventManager()
-    {
-        if (null === $this->events) {
-            $this->setEventManager(new EventManager());
-        }
-        return $this->events;
     }
 }

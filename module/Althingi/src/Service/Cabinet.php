@@ -9,8 +9,6 @@ use Althingi\Model;
 use Althingi\Hydrator;
 use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;
-use Zend\EventManager\EventManager;
-use Zend\EventManager\EventManagerInterface;
 use PDO;
 use DateTime;
 
@@ -21,25 +19,23 @@ use DateTime;
 class Cabinet implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
+    use EventService;
 
-    /** @var  \PDO */
-    private $pdo;
-
-    /** @var \Zend\EventManager\EventManagerInterface */
-    protected $events;
-
-    public function fetchAll(?DateTime $from = null, ?DateTime $to = null)
+    /**
+     * @return \Althingi\Model\Cabinet[]
+     */
+    public function fetchAll(?DateTime $from = null, ?DateTime $to = null): array
     {
         if ($from !== null && $to === null) {
             $statement = $this->getDriver()->prepare(
                 "select * from `Cabinet`
-                where `from` <= :from 
+                where `from` <= :from
                 order by `from`"
             );
             $statement->execute(['from' => $from->format('Y-m-d')]);
         } elseif ($from !== null && $to !== null) {
             $statement = $this->getDriver()->prepare(
-                "select * from `Cabinet` 
+                "select * from `Cabinet`
                 where `from` <= :from and `to` >= :to
                 order by `from`"
             );
@@ -49,7 +45,7 @@ class Cabinet implements DatabaseAwareInterface, EventsAwareInterface
             ]);
         } elseif ($from === null && $to !== null) {
             $statement = $this->getDriver()->prepare(
-                "select * from `Cabinet` 
+                "select * from `Cabinet`
                 where `to` >= :to
                 order by `from`"
             );
@@ -131,9 +127,9 @@ class Cabinet implements DatabaseAwareInterface, EventsAwareInterface
     {
         $statement = $this->getDriver()->prepare("
             select * from (
-                select 
-                    A.`assembly_id`, 
-                    C.`cabinet_id`, 
+                select
+                    A.`assembly_id`,
+                    C.`cabinet_id`,
                     C.`title`,
                     C.`description`,
                     C.`from`,
@@ -154,37 +150,5 @@ class Cabinet implements DatabaseAwareInterface, EventsAwareInterface
         return array_map(function ($object) {
             return (new Hydrator\Cabinet())->hydrate($object, new Model\Cabinet());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
-    }
-
-    /**
-     * @param \PDO $pdo
-     * @return $this
-     */
-    public function setDriver(PDO $pdo)
-    {
-        $this->pdo = $pdo;
-        return $this;
-    }
-
-    /**
-     * @return \PDO
-     */
-    public function getDriver()
-    {
-        return $this->pdo;
-    }
-
-    public function setEventManager(EventManagerInterface $events)
-    {
-        $this->events = $events;
-        return $this;
-    }
-
-    public function getEventManager()
-    {
-        if (null === $this->events) {
-            $this->setEventManager(new EventManager());
-        }
-        return $this->events;
     }
 }

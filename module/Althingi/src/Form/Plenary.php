@@ -2,7 +2,7 @@
 
 namespace Althingi\Form;
 
-use Zend\InputFilter\InputFilterProviderInterface;
+use Laminas\InputFilter\InputFilterProviderInterface;
 
 class Plenary extends Form implements InputFilterProviderInterface
 {
@@ -15,22 +15,22 @@ class Plenary extends Form implements InputFilterProviderInterface
 
         $this->add([
             'name' => 'plenary_id',
-            'type' => 'Zend\Form\Element\Number',
+            'type' => 'Laminas\Form\Element\Number',
         ]);
 
         $this->add([
             'name' => 'assembly_id',
-            'type' => 'Zend\Form\Element\Number',
+            'type' => 'Laminas\Form\Element\Number',
         ]);
 
         $this->add([
             'name' => 'name',
-            'type' => 'Zend\Form\Element\Text',
+            'type' => 'Laminas\Form\Element\Text',
         ]);
 
         $this->add([
             'name' => 'from',
-            'type' => 'Zend\Form\Element\DateTime',
+            'type' => 'Laminas\Form\Element\DateTime',
             'options' => [
                 'format' => 'Y-m-d H:i'
             ],
@@ -41,7 +41,7 @@ class Plenary extends Form implements InputFilterProviderInterface
 
         $this->add([
             'name' => 'to',
-            'type' => 'Zend\Form\Element\DateTime',
+            'type' => 'Laminas\Form\Element\DateTime',
             'options' => [
                 'format' => 'Y-m-d H:i'
             ],
@@ -54,7 +54,7 @@ class Plenary extends Form implements InputFilterProviderInterface
 
     /**
      * Should return an array specification compatible with
-     * {@link Zend\InputFilter\Factory::createInputFilter()}.
+     * {@link Laminas\InputFilter\Factory::createInputFilter()}.
      *
      * @return array
      */

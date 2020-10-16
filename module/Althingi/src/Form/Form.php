@@ -2,9 +2,9 @@
 
 namespace Althingi\Form;
 
-use Zend\Form\Form as ZendForm;
+use Laminas\Form\Form as LaminasForm;
 
-class Form extends ZendForm
+class Form extends LaminasForm
 {
     public function isValid()
     {

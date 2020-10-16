@@ -6,7 +6,7 @@ use Althingi\Controller\PartyController;
 use Althingi\Service;
 use Althingi\Model;
 use AlthingiTest\ServiceHelper;
-use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+use Laminas\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
 /**
  * Class PartyControllerTest
@@ -19,7 +19,7 @@ class PartyControllerTest extends AbstractHttpControllerTestCase
 {
     use ServiceHelper;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->setApplicationConfig(
             include __DIR__ .'/../../../../config/application.config.php'
@@ -32,10 +32,10 @@ class PartyControllerTest extends AbstractHttpControllerTestCase
         ]);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         \Mockery::close();
-        return parent::tearDown();
+        parent::tearDown();
     }
 
     /**

@@ -2,7 +2,7 @@
 
 namespace Althingi\Hydrator;
 
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class PartyAndElection implements HydratorInterface
 {
@@ -34,7 +34,7 @@ class PartyAndElection implements HydratorInterface
      * @param  \Althingi\Model\PartyAndElection $object
      * @return array
      */
-    public function extract($object)
+    public function extract($object): array
     {
         return $object->toArray();
     }

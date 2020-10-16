@@ -9,8 +9,6 @@ use Althingi\Injector\DatabaseAwareInterface;
 use Althingi\Presenters\IndexablePartyPresenter;
 use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;
-use Zend\EventManager\EventManager;
-use Zend\EventManager\EventManagerInterface;
 use PDO;
 use DateTime;
 
@@ -21,14 +19,7 @@ use DateTime;
 class Party implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
-
-    /**
-     * @var \PDO
-     */
-    private $pdo;
-
-    /** @var  \Zend\EventManager\EventManager */
-    private $events;
+    use EventService;
 
     /**
      * Get one party.
@@ -117,17 +108,17 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
 
         $statement = $this->getDriver()->prepare("
             select sum(T.`time_sum`) as `total_time`, P.* from (
-                select 
-                    SP.`congressman_id`, 
+                select
+                    SP.`congressman_id`,
                     TIME_TO_SEC(timediff(SP.`to`, SP.`from`)) as `time_sum`,
                     SE.party_id
-                from `Speech` SP 
+                from `Speech` SP
                 join `Session` SE ON (
-                  SE.`congressman_id` = SP.`congressman_id` 
+                  SE.`congressman_id` = SP.`congressman_id`
                   and ((SP.`from` between SE.`from` and SE.`to`) or (SP.`from` >= SE.`from` and SE.`to` is null))
                 )
                 where SP.`assembly_id` = :assembly_id {$categories}
-            
+
             ) as T
             join `Party` P on (P.`party_id` = T.`party_id`)
             group by T.`party_id`
@@ -238,14 +229,14 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
     {
         $statement = $this->getDriver()->prepare('
             select P.* from `Cabinet_has_Congressman` CC
-            join `Session` SE ON 
+            join `Session` SE ON
               (
-                SE.`congressman_id` = CC.`congressman_id` and ((CC.`from` between SE.`from` and SE.`to`) or 
+                SE.`congressman_id` = CC.`congressman_id` and ((CC.`from` between SE.`from` and SE.`to`) or
                 (CC.`from` >= SE.`from` and SE.`to` is null))
               )
             join `Party` P on (SE.`party_id` = P.`party_id`)
             where cabinet_id = :cabinet_id
-            group by SE.`party_id`;    
+            group by SE.`party_id`;
         ');
         $statement->execute(['cabinet_id' => $cabinetId]);
         return array_map(function ($object) {
@@ -327,37 +318,5 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
             );
 
         return $statement->rowCount();
-    }
-
-    /**
-     * @param \PDO $pdo
-     * @return $this
-     */
-    public function setDriver(PDO $pdo)
-    {
-        $this->pdo = $pdo;
-        return $this;
-    }
-
-    /**
-     * @return \PDO
-     */
-    public function getDriver()
-    {
-        return $this->pdo;
-    }
-
-    public function setEventManager(EventManagerInterface $events)
-    {
-        $this->events = $events;
-        return $this;
-    }
-
-    public function getEventManager()
-    {
-        if (null === $this->events) {
-            $this->setEventManager(new EventManager());
-        }
-        return $this->events;
     }
 }

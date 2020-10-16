@@ -3,14 +3,14 @@ namespace Althingi\Presenters;
 
 use Althingi\Model\Assembly;
 use Althingi\Model\ModelInterface;
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class IndexableAssemblyPresenter implements IndexablePresenter
 {
     const INDEX = 'althingi_model_assembly';
     const TYPE = 'assembly';
 
-    /** @var  \Zend\Hydrator\HydratorInterface; */
+    /** @var  \Laminas\Hydrator\HydratorInterface; */
     private $hydrator;
 
     /** @var  \Althingi\Model\Assembly */

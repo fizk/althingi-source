@@ -2,8 +2,8 @@
 
 namespace Althingi\Filter;
 
-use Zend\Filter\Exception;
-use Zend\Filter\FilterInterface;
+use Laminas\Filter\Exception;
+use Laminas\Filter\FilterInterface;
 
 class NullReplaceFilter implements FilterInterface
 {

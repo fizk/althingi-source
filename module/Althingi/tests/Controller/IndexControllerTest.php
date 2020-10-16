@@ -2,8 +2,8 @@
 
 namespace AlthingiTest\Controller;
 
-use Zend\Cache\Storage\StorageInterface;
-use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+use Laminas\Cache\Storage\StorageInterface;
+use Laminas\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
 /**
  * Class AssemblyCommitteeControllerTest
@@ -14,7 +14,7 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
 {
     protected $traceError = false;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->setApplicationConfig(
             include __DIR__ .'/../../../../config/application.config.php'

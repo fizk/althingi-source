@@ -11,7 +11,7 @@ use Althingi\Model\Speech as SpeechModel;
 use Althingi\Model\SpeechAndPosition as SpeechAndPositionModel;
 use Althingi\Model\DateAndCount as DateAndCountModel;
 use Psr\Log\NullLogger;
-use Zend\EventManager\EventManager;
+use Laminas\EventManager\EventManager;
 
 class SpeechTest extends TestCase
 {

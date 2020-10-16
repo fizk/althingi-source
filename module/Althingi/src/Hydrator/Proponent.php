@@ -2,7 +2,7 @@
 
 namespace Althingi\Hydrator;
 
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 use DateTime;
 
 class Proponent implements HydratorInterface
@@ -31,7 +31,7 @@ class Proponent implements HydratorInterface
      * @param  \Althingi\Model\Proponent $object
      * @return array
      */
-    public function extract($object)
+    public function extract($object): array
     {
         return $object->toArray();
     }

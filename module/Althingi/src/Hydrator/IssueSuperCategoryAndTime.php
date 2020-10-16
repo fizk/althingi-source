@@ -2,7 +2,7 @@
 
 namespace Althingi\Hydrator;
 
-use Zend\Hydrator\HydratorInterface;
+use Laminas\Hydrator\HydratorInterface;
 
 class IssueSuperCategoryAndTime implements HydratorInterface
 {
@@ -28,7 +28,7 @@ class IssueSuperCategoryAndTime implements HydratorInterface
      * @param  \Althingi\Model\IssueSuperCategoryAndTime $object
      * @return array
      */
-    public function extract($object)
+    public function extract($object): array
     {
         return $object->toArray();
     }
