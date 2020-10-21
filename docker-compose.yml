@@ -2,23 +2,8 @@ version: '3'
 
 services:
 
-  # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-  # RUN
-  #
-  # Start the API without any dependant services.
-  #
-  #  This is great for using the dependant services
-  #  in the production environment, but running
-  #  the API Service code locally.
-  #
-  #  Set environment in the host operating system:
-  #   ENV_DB_HOST, ENV_ES_HOST, ENV_STORAGE_HOST
-  #  to loggjafarthing.einarvalur.co
-  #  and ENV_SEARCH to elasticsearch
-  #
-  ## = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
   run:
-    container_name: server_run
+    container_name: althingi-source
     build:
       args:
         - ENV=development
@@ -77,7 +62,7 @@ services:
       - store
 
   test:
-    container_name: server_test
+    container_name: althingi-source-test
     build:
       args:
         - ENV=development
@@ -98,7 +83,7 @@ services:
 
       - LOG_PATH=none
 
-      - DB_HOST=database_test
+      - DB_HOST=database-test
       - DB_PORT=3306
       - DB_NAME=althingi
       - DB_USER=root
@@ -127,43 +112,26 @@ services:
 
       - INDEXER_STALL_TIME=${ENV_INDEXER_STALL_TIME:-150000}
     depends_on:
-      - database_test
+      - database-test
       - store-test
     command: bash -c "./wait-for.sh database:3306 -t 80 -- echo \"MySQL up\" &&  ./vendor/bin/phpunit && ./vendor/bin/phpcs --standard=./phpcs.xml ./module/Althingi/src"
 
-  # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-  # MySQL
-  #
-  # Database container that will create an instance of the database
-  # that uses the schema from ./auto/schema.sql. It will not persist
-  # the database, once it goes down, so does the data.
-  # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
   database:
-    container_name: althingi_test_database
-    image: mysql:5.6.41
+    container_name: althingi-source-db
+    image: einarvalur/althingi-source-db:25ee965
     command: --default-authentication-plugin=mysql_native_password
     restart: always
-    volumes:
-      - ./auto/db/:/docker-entrypoint-initdb.d
     environment:
       - MYSQL_ROOT_PASSWORD=example
 
-  database_test:
-    container_name: althingi_test_database_test
-    image: mysql:5.6.41
-    command: --default-authentication-plugin=mysql_native_password
-    restart: always
-    volumes:
-      - ./auto/db/:/docker-entrypoint-initdb.d
-    environment:
-      - MYSQL_ROOT_PASSWORD=example
+  database-test:
+      container_name: althingi-source-db-test
+      image: einarvalur/althingi-source-db:25ee965
+      command: --default-authentication-plugin=mysql_native_password
+      restart: always
+      environment:
+          - MYSQL_ROOT_PASSWORD=example
 
-  # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
-  # MongoDB
-  #
-  # Un-configured instance of MongoDB (no indexes) that does not
-  # persist its data, once the service goes down, so does the data.
-  # = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
   store:
     container_name: althingi_test_store
     image: mongo:4.2.0-bionic

@@ -5,7 +5,7 @@ This API can accept and provide data.
 
 This is a classic REST API that defined **POST/PUT/PATCH** endpoints for creating data. The system uses a relation database
 to store the data. In addition, whenever an entry is created, an event is sent to a queue (RabbitMQ) with the created
-payload as well as an a action (create/update/delete). Another system called the 
+payload as well as an a action (create/update/delete). Another system called the
 [AlthingiAccumulator](https://github.com/fizk/AlthingiAccumulator) is listening. When it receives a message, It will store
 an enhanced version of that payload in MongoDB. The **GET** endpoints in this system are then reading from MongoDB, not the
 database.
@@ -23,7 +23,7 @@ Once a MP has made a speech, that speech will for ever have been made by that MP
 This is just one example of many where it makes more sense to calculate upfront. The other alternative is to construct complicated
 `JOIN` statement in a relation database.
 
-This betters dramatically the performance of the system.  
+This betters dramatically the performance of the system.
 
 Every request made to the API is also cached (Redis) for a short period of time. This is to further speed up the system
 and reduce load.
@@ -43,7 +43,7 @@ This API depends on a few systems
 * **Offline processing** Messages are sent to RabbitMQ for accumulation and offline processing. Results are stored in MongoDB
 
 ## Configuration:
-The API is configures with environment variables 
+The API is configures with environment variables
 
 | name                | default                          | Options                               | description                   |
 |---------------------|----------------------------------|---------------------------------------|-------------------------------|
@@ -76,8 +76,8 @@ The API is configures with environment variables
 | STORAGE_PORT        | 27017                            | <number>                              | MongoDB port
 | STORAGE_USER        |                                  | <string>                              | MongoDB user
 | STORAGE_PASSWORD    |                                  | <string>                              | MongoDB password
-| DOCUMENT_SERVER     |                                  | <string>                              | 
-| DOCUMENT_DEFINITION |                                  | <string>                              | 
+| DOCUMENT_SERVER     |                                  | <string>                              |
+| DOCUMENT_DEFINITION |                                  | <string>                              |
 | INDEXER_STALL_TIME  | 150000                           | <int>                                 | How long the indexer sleeps between actions
 
 ## Development
@@ -87,7 +87,7 @@ as well as all dependencies via [composer](https://getcomposer.org/). It can be 
 
 | arg         | values       | description |
 | ----------- | ------------ | ----------- |
-| WITH_XDEBUG | true / false | Will install Xdebug. Set `XDEBUG_CONFIG=remote_host=host.docker.internal remote_port=9001` at runtime to connect | 
+| WITH_XDEBUG | true / false | Will install Xdebug. Set `XDEBUG_CONFIG=remote_host=host.docker.internal remote_port=9001` at runtime to connect |
 | WITH_DEV    | true / false | If composer's dev dependencies should be installed |
 
 This repo also comes with **docker-compose** file that has some pre-configured environments.
@@ -117,17 +117,17 @@ can be configured at run-time
 | ENV_STORAGE_DB        | althingi              |
 | ENV_STORAGE_PORT      | 27017                 |
 | ENV_STORAGE_USER      | wo                    |
-| ENV_STORAGE_PASSWORD  | long@pass!123         | 
+| ENV_STORAGE_PASSWORD  | long@pass!123         |
 
 If `host.docker.internal` is replaced with `loggjafarthing.einarvalur.co`, all the dependent system will be queried from
 the production env.
 
 #### test
 The Docker Compose file also has a `$ docker-compose run test` service. When run, it will spin up a MySQL and a MongoDB instance
-and run test against them before exiting. It is not configurable as it is designed to run in CI environment but can be 
+and run test against them before exiting. It is not configurable as it is designed to run in CI environment but can be
 run on a local system as well.
 
-This will spin up two additional containers, one for the database and the other for the store 
+This will spin up two additional containers, one for the database and the other for the store
 (althingi_test_store and althingi_test_database). They will not be removes once the test has finished running.
 
 #### Other services.
@@ -138,7 +138,7 @@ just the schema. Once the service goes down, so does the data. This is mostly fo
 database structure.
 
 This is not done for MongoDB as document-store don't require schemas in the same way as relation database. This does mean that
-test can be run against MongoDB, but MongoDB indexes can not be tested. 
+test can be run against MongoDB, but MongoDB indexes can not be tested.
 
 ## Debugging.
 As stated previously, the `$ docker-compose up run` will install Xdebug and configure the _remote host_ to be the
@@ -150,11 +150,11 @@ It sets the `PHP_IDE_CONFIG=PHPSTORM` for browser-based debugging. This should b
 The system can be run without Docker, but that requires a lot of manual configuration. Have a look at the Dockerfile for complete
 list of PHP extensions required.
 
-Then run `$ composer i` to install dependencies. 
+Then run `$ composer i` to install dependencies.
 
 
 ## CommandLine
- 
+
 This systems comes with a few command-line commands that you can run from the project's `public`
 directory like so:
 
@@ -197,16 +197,16 @@ completed for this to work.
 Interpreter:
 A Docker image needs to be available that gets spun up each time the IDE want to run some PHP code. Create this container by calling
 ```bash
-$ docker build -t dev_api --build-arg WITH_XDEBUG=true --build-arg WITH_DEV=true .
+$ docker build -t althingi-source-runtime --build-arg ENV=development .
 ```
 
 Dependencies:
 You also need running containers for MySQL and MongoDB
 ```bash
-$ docker run --name dev_api_database -v $(pwd)/auto/db/:/docker-entrypoint-initdb.d -e MYSQL_ROOT_PASSWORD=example -d mysql:5.6.41
+$ docker run --name dev_api_database -e MYSQL_ROOT_PASSWORD=example -d einarvalur/althingi-source-db
 $ docker run --name dev_api_store -d mongo:4.2.0-bionic
 ```
-just make sure you run the containers from the project directory so they end up in the same network.
+just make sure you run the containers from the project directory, so they end up in the same network.
 
 Now it's time to link this all together
 
@@ -215,13 +215,16 @@ under CLI Interpreter, click the ... where you are taken to a prompt to create a
 hand site and select From Docker, Vagrant Remote... Select Docker from the radio buttons and find the **dev_api:latest** docker image
 from the dropdown where it says Image name.
 
-Now you should have an PHP interpreter. 
+Now you should have an PHP interpreter.
 
 From the original Preferences > Languages & Frameworks > PHP dialog, click the folder icon next to _Docker container_, here you can
 configure the docker container.
 
 The volume binding should be
-* /opt/project	| <your host path to>/Loggjafarthing
+* /var/www/config	| <your host path to>/config
+* /var/www/module	| <your host path to>/module
+* /var/www/public	| <your host path to>/public
+* /var/www/phpunit.xml	| <your host path to>/phpunit.xml.dist
 
 Links should be
 * dev_api_store	    | store
@@ -233,10 +236,8 @@ The env variables should be
 * DB_HOST                 | dev_api_database
 * DB_PORT                 | 3306
 * DB_NAME                 | althingi
-* DB_NAME_TEST            | althingi
 * DB_USER                 | root
 * DB_PASSWORD             | example
-* DB_SETUP                | false
 * CACHE_TYPE              | none
 * SEARCH                  | none
 * LOG_PATH                | none
@@ -245,6 +246,7 @@ The env variables should be
 * STORAGE_HOST            | dev_api_store
 * STORAGE_DB              | althingi
 
-Lastly under Preferences > Languages & Frameworks > PHP > Test frameworks, make sure that the **dev_api:latest** images is selected
+Lastly under Preferences > Languages & Frameworks > PHP > Test frameworks, make sure that the **althingi-source-runtime:latest** images
+has been selected
 and that _Use Composer autoloader_ is also selected, the path should be `/opt/project/vendor/autoload.php` and the default
 configuration file is `/opt/project/phpunit.xml.dist`
