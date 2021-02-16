@@ -1,40 +1,65 @@
 <?php
 
-use Laminas\Mvc\Application;
-use Laminas\Stdlib\ArrayUtils;
-
-/**
- * This makes our life easier when dealing with paths. Everything is relative
- * to the application root now.
- */
 chdir(dirname(__DIR__));
-
-// Decline static file requests back to the PHP built-in webserver
-if (php_sapi_name() === 'cli-server') {
-    $path = realpath(__DIR__ . parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
-    if (__FILE__ !== $path && is_file($path)) {
-        return false;
-    }
-    unset($path);
-}
-
-// Composer autoloading
 include __DIR__ . '/../vendor/autoload.php';
 
-if (! class_exists(Application::class)) {
-    throw new RuntimeException(
-        "Unable to load application.\n"
-        . "- Type `composer install` if you are developing locally.\n"
-        . "- Type `vagrant ssh -c 'composer install'` if you are using Vagrant.\n"
-        . "- Type `docker-compose run zf composer install` if you are using Docker.\n"
-    );
+use Laminas\Diactoros\Response\JsonResponse;
+use Laminas\ServiceManager\ServiceManager;
+use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
+use Althingi\Router\RouteInterface;
+use Laminas\Diactoros\ServerRequestFactory;
+
+$path = isset($argv[1]) ? $argv[1] : '/';
+
+mb_parse_str(read_resource(fopen("php://input", "r")), $bodyQuery);
+$request = ServerRequestFactory::fromGlobals(
+    $_SERVER,
+    $_GET,
+    $bodyQuery, //$_POST
+    $_COOKIE,
+    $_FILES
+);
+
+$manager = new ServiceManager(require_once './config/service.php');
+$router = $manager->get(RouteInterface::class);
+
+$emitter = new SapiEmitter();
+$routeMatch = $router->match($request);
+$request = $request->withAttribute('matched_route_name', $routeMatch->getMatchedRouteName());
+$controller = $manager->get($routeMatch->getParam('controller'));
+
+try {
+    foreach($routeMatch->getParams() as $key => $value) {
+        $request = $request->withAttribute($key, $value);
+    }
+    $emitter->emit($controller->handle($request));
+} catch (Throwable $error) {
+    $emitter->emit(new JsonResponse([
+        'PROVIDER',
+        $request->getMethod(),
+        $request->getUri()->__toString(),
+        500,
+        0,
+        $error->getMessage(),
+        "{$error->getFile()}:{$error->getLine()} ",
+        $error->getTrace(),
+    ], 500));
 }
 
-// Retrieve configuration
-$appConfig = require __DIR__ . '/../config/application.config.php';
-if (file_exists(__DIR__ . '/../config/development.config.php')) {
-    $appConfig = ArrayUtils::merge($appConfig, require __DIR__ . '/../config/development.config.php');
+
+function exception_error_handler($severity, $message, $file, $line)
+{
+    if (!(error_reporting() & $severity)) {
+        return;
+    }
+    throw new ErrorException($message, 0, $severity, $file, $line);
 }
 
-// Run the application!
-Application::init($appConfig)->run();
+function read_resource(/*resource*/$resource): string
+{
+    $result = '';
+    while ($data = fread($resource, 1024)) $result .= $data;
+    fclose($resource);
+
+    return $result;
+}

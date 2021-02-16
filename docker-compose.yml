@@ -13,18 +13,17 @@ services:
       - 8080:80
     volumes:
       - ./config/:/var/www/config
-      - ./module/:/var/www/module
+      - ./src/:/var/www/src
+      - ./tests/:/var/www/tests
       - ./public/:/var/www/public
       - ./composer.json:/var/www/composer.json
       - ./composer.lock:/var/www/composer.lock
       - ./vendor/:/var/www/vendor
+      - ./phpunit.xml.dist/:/var/www/phpunit.xml
     environment:
-      - PHP_IDE_CONFIG=PHPSTORM
-      - XDEBUG_CONFIG=remote_host=host.docker.internal remote_port=9001
-
       - LOG_PATH=php://stdout
 
-      - APPLICATION_ENVIRONMENT=development
+      - ENVIRONMENT=development
 
       # - DB_HOST=${ENV_DB_HOST:-host.docker.internal}
       - DB_HOST=database
@@ -36,22 +35,7 @@ services:
 
       - CACHE_TYPE=none
 
-      - SEARCH=${ENV_SEARCH:-none}
-
-      - ES_HOST=${ENV_ES_HOST:-host.docker.internal}
-      - ES_PROTO=${ENV_ES_PROTO:-http}
-      - ES_PORT=${ENV_ES_PORT:-9200}
-      - ES_USER=${ENV_ES_USER:-elastic}
-      - ES_PASSWORD=${ENV_ES_PASSWORD:-changeme}
-
       - QUEUE=none
-
-    #   - STORAGE_HOST=${ENV_STORAGE_HOST:-host.docker.internal}
-      - STORAGE_HOST=store
-      - STORAGE_DB=${ENV_STORAGE_DB:-althingi}
-      - STORAGE_PORT=${ENV_STORAGE_PORT:-27017}
-      - STORAGE_USER=${ENV_STORAGE_USER:-wo}
-      - STORAGE_PASSWORD=${ENV_STORAGE_PASSWORD:-long@pass!123}
 
       - DOCUMENT_SERVER=${ENV_DOCUMENT_SERVER:-localhost:8080}
       - DOCUMENT_DEFINITION=${ENV_DOCUMENT_DEFINITION:-/openapi}
@@ -59,7 +43,6 @@ services:
       - INDEXER_STALL_TIME=${ENV_INDEXER_STALL_TIME:-150000}
     depends_on:
       - database
-      - store
 
   test:
     container_name: althingi-source-test
@@ -68,18 +51,21 @@ services:
         - ENV=development
       context: .
       dockerfile: Dockerfile
+    ports:
+      - 9003:9003
     volumes:
+      - ./composer.json/:/var/www/composer.json
+      - ./composer.lock/:/var/www/composer.lock
       - ./config/:/var/www/config
-      - ./module/:/var/www/module
+      - ./vendor/:/var/www/vendor
+      - ./src/:/var/www/src
       - ./public/:/var/www/public
+      - ./tests/:/var/www/tests
       - ./phpcs.xml:/var/www/phpcs.xml
       - ./phpunit.xml.dist:/var/www/phpunit.xml
       - ./auto/wait-for.sh:/var/www/wait-for.sh
     environment:
-      - APPLICATION_ENVIRONMENT=development
-
-      - PHP_IDE_CONFIG=PHPSTORM
-      - XDEBUG_CONFIG=remote_host=host.docker.internal remote_port=9001
+      - ENVIRONMENT=development
 
       - LOG_PATH=none
 
@@ -91,21 +77,7 @@ services:
 
       - CACHE_TYPE=none
 
-      - SEARCH=none
-
-      - ES_HOST=${ENV_ES_HOST:-host.docker.internal}
-      - ES_PROTO=${ENV_ES_PROTO:-http}
-      - ES_PORT=${ENV_ES_PORT:-9200}
-      - ES_USER=${ENV_ES_USER:-elastic}
-      - ES_PASSWORD=${ENV_ES_PASSWORD:-changeme}
-
       - QUEUE=none
-
-      - STORAGE_HOST=store-test
-      - STORAGE_DB=althingi
-      - STORAGE_PORT=27017
-      - STORAGE_USER=wo
-      - STORAGE_PASSWORD=long@pass!123
 
       - DOCUMENT_SERVER=${ENV_DOCUMENT_SERVER:-localhost:8080}
       - DOCUMENT_DEFINITION=${ENV_DOCUMENT_DEFINITION:-/openapi}
@@ -113,7 +85,6 @@ services:
       - INDEXER_STALL_TIME=${ENV_INDEXER_STALL_TIME:-150000}
     depends_on:
       - database-test
-      - store-test
     command: bash -c "./wait-for.sh database:3306 -t 80 -- echo \"MySQL up\" &&  ./vendor/bin/phpunit && ./vendor/bin/phpcs --standard=./phpcs.xml ./module/Althingi/src"
 
   database:
@@ -131,11 +102,3 @@ services:
       restart: always
       environment:
           - MYSQL_ROOT_PASSWORD=example
-
-  store:
-    container_name: althingi_test_store
-    image: mongo:4.2.0-bionic
-
-  store-test:
-    container_name: althingi_test_store_test
-    image: mongo:4.2.0-bionic
