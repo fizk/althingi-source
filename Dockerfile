@@ -26,9 +26,8 @@ RUN apt-get update; \
         libsasl2-dev  \
         libpcre3-dev; \
     pecl install -o -f redis-4.3.0; \
-    pecl install mongodb-1.8.1; \
     rm -rf /tmp/pear; \
-    docker-php-ext-enable redis mongodb; \
+    docker-php-ext-enable redis; \
     docker-php-ext-install zip; \
     docker-php-ext-install pdo_mysql; \
     docker-php-ext-install bcmath; \
@@ -62,25 +61,30 @@ RUN if [ "$ENV" != "production" ] ; then \
     echo "error_reporting = E_ALL" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
     echo "display_startup_errors = On" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
     echo "display_errors = On" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
-    echo "xdebug.remote_enable=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
+    echo "xdebug.mode = debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
+    echo "xdebug.start_with_request=yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
+    echo "xdebug.client_host=host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
+    echo "xdebug.client_port=9003" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
+    echo "xdebug.idekey=myKey" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
+    echo "xdebug.remote_handler=dbgp" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
     fi ;
 
 WORKDIR /var/www
-RUN mkdir -p ./data/cache
 
 COPY ./composer.json ./composer.json
 COPY ./composer.lock ./composer.lock
 
 RUN if [ "$ENV" != "production" ] ; then \
-    composer install --prefer-source --no-interaction --no-suggest \
+    composer config -g github-oauth.github.com 6123ac2cdc66febecc9dd6227a6819b01c0a5e66 && \
+    composer install --prefer-source --no-interaction \
     && composer dump-autoload; \
     fi ;
 
 RUN if [ "$ENV" = "production" ] ; then \
-    composer install --prefer-source --no-interaction --no-dev --no-suggest -o \
+    composer install --prefer-source --no-interaction --no-dev -o \
     && composer dump-autoload -o; \
     fi ;
 
 COPY ./public ./public
-COPY ./module ./module
+COPY ./src ./src
 COPY ./config ./config

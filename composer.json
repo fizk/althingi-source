@@ -1,19 +1,11 @@
 {
-  "name": "fizk/loggjafarthing",
+  "name": "fizk/althingi-source",
   "description": "API for the Loggjafarthing system",
   "type": "project",
   "license": "BSD-3-Clause",
-  "keywords": [
-    "framework",
-    "mvc",
-    "zf"
-  ],
-  "homepage": "https://github.com/fizk/Loggjafarthing",
+  "keywords": [],
+  "homepage": "https://github.com/fizk/althingi-source",
   "repositories": [
-    {
-      "type": "vcs",
-      "url": "https://github.com/fizk/Rend"
-    },
     {
       "type": "vcs",
       "url": "https://github.com/fizk/dbunit"
@@ -26,35 +18,30 @@
     "ext-pdo": "*",
     "ext-json": "*",
     "ext-dom": "*",
-    "ext-mongodb": "*",
-    "elasticsearch/elasticsearch": "^7.9",
-    "fizk/rend": "6.0.0",
-    "laminas/laminas-mvc": "^3.1",
     "laminas/laminas-cache": "^2.9",
     "laminas/laminas-form": "^2.15",
     "league/html-to-markdown": "^4.10",
-    "mongodb/mongodb": "^1.7",
     "monolog/monolog": "^2.1",
     "php-amqplib/php-amqplib": "^2.12",
-    "zeptech/annotations": "^1.1"
+    "zeptech/annotations": "^1.1",
+    "laminas/laminas-diactoros": "^2.4",
+    "laminas/laminas-httphandlerrunner": "^1.2"
 
   },
   "require-dev": {
     "phpunit/phpunit": "^9.4",
     "mockery/mockery": "^1.4",
     "squizlabs/php_codesniffer": "^3.5",
-    "fizk/dbunit": "^5.0",
-    "laminas/laminas-test": "^3.4",
-    "zumba/mongounit": "^4.0"
+    "fizk/dbunit": "^5.0"
   },
   "autoload": {
     "psr-4": {
-      "Althingi\\": "module/Althingi/src/"
+      "Althingi\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "AlthingiTest\\": "module/Althingi/tests/"
+      "AlthingiTest\\": "tests/"
     }
   }
 }

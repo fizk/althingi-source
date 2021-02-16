@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<phpunit bootstrap = "./module/Althingi/tests/bootstrap.php"
+<phpunit bootstrap = "./tests/bootstrap.php"
     backupGlobals               = "false"
     backupStaticAttributes      = "false"
     colors                      = "true"
@@ -12,7 +12,7 @@
 
     <testsuites>
         <testsuite name="Project Test Suite">
-            <directory>./module/Althingi/tests</directory>
+		<directory>./tests/Controller</directory>
         </testsuite>
     </testsuites>
 
