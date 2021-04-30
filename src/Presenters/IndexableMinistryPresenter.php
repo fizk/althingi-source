@@ -10,11 +10,8 @@ class IndexableMinistryPresenter implements IndexablePresenter
     const INDEX = 'althingi_model_ministry';
     const TYPE = 'ministry';
 
-    /** @var  \Laminas\Hydrator\HydratorInterface; */
-    private $hydrator;
-
-    /** @var  \Althingi\Model\Ministry */
-    private $model;
+    private HydratorInterface $hydrator;
+    private Ministry $model;
 
     public function __construct(Ministry $model)
     {

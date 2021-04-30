@@ -64,7 +64,7 @@ class Assembly implements DatabaseAwareInterface, EventsAwareInterface
      * @param string $order
      * @return \Althingi\Model\Assembly[]
      */
-    public function fetchAll(int $offset = 0, int $size = null, string $order = 'desc'): array
+    public function fetchAll(int $offset = 0, int $size = null, string $order = 'asc'): array
     {
         $order = in_array($order, ['asc', 'desc']) ? $order : 'desc';
         $size = $size ? : self::MAX_ROW_COUNT;

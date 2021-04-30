@@ -87,7 +87,6 @@ class VoteItemController implements
                             'category' => 'a'
                         ], ['name' => 'loggjafarthing/thingmal/atkvaedagreidslur/atkvaedagreidsla'])
                     ]);
-
                 } else {
                     return new ErrorExceptionResponse($e);
                 }

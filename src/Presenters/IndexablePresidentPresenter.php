@@ -11,11 +11,8 @@ class IndexablePresidentPresenter implements IndexablePresenter
     const INDEX = 'althingi_model_president';
     const TYPE = 'president';
 
-    /** @var  \Laminas\Hydrator\HydratorInterface; */
-    private $hydrator;
-
-    /** @var  \Althingi\Model\President */
-    private $model;
+    private HydratorInterface $hydrator;
+    private President $model;
 
     public function __construct(President $model)
     {

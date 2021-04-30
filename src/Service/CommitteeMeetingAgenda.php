@@ -51,7 +51,7 @@ class CommitteeMeetingAgenda implements DatabaseAwareInterface
 
         $result = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-        return array_map(function($object) {
+        return array_map(function ($object) {
             return (new Hydrator\CommitteeMeetingAgenda())->hydrate($object, new Model\CommitteeMeetingAgenda());
         }, $result);
     }

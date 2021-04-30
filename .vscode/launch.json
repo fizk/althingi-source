@@ -15,7 +15,8 @@
                 "/var/www/src": "${workspaceFolder}/src",
                 "/var/www/test": "${workspaceFolder}/test",
                 "/var/www/public": "${workspaceFolder}/public",
-                "/var/www/vendor": "${workspaceFolder}/vendor"
+                "/var/www/vendor": "${workspaceFolder}/vendor",
+                "/var/www/bin": "${workspaceFolder}/bin",
             }
         },
         {

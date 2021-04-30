@@ -143,8 +143,11 @@ class TreeRouteStack extends SimpleRouteStack
         return null;
     }
 
-    public function match(RequestInterface $request, /*int*/$pathOffset = null, array $options = []): ?RouteMatch/* : RouteMatch|null*/
-    {
+    public function match(
+        RequestInterface $request, /*int*/
+        $pathOffset = null,
+        array $options = []
+    ): ?RouteMatch/* : RouteMatch|null*/ {
 
 
         // if ($this->baseUrl === null && method_exists($request, 'getBaseUrl')) {

@@ -10,11 +10,8 @@ class IndexableIssuePresenter implements IndexablePresenter
     const INDEX = 'althingi_model_issue';
     const TYPE = 'issue';
 
-    /** @var  \Laminas\Hydrator\HydratorInterface; */
-    private $hydrator;
-
-    /** @var  \Althingi\Model\Issue */
-    private $model;
+    private HydratorInterface $hydrator;
+    private Issue $model;
 
     public function __construct(Issue $model)
     {

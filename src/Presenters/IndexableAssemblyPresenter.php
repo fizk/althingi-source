@@ -10,11 +10,8 @@ class IndexableAssemblyPresenter implements IndexablePresenter
     const INDEX = 'althingi_model_assembly';
     const TYPE = 'assembly';
 
-    /** @var  \Laminas\Hydrator\HydratorInterface; */
-    private $hydrator;
-
-    /** @var  \Althingi\Model\Assembly */
-    private $model;
+    private HydratorInterface $hydrator;
+    private Assembly $model;
 
     public function __construct(Assembly $model)
     {

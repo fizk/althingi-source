@@ -1,8 +1,9 @@
 <?php
 namespace Althingi\Presenters;
 
-use Althingi\Model;
+use Althingi\Model\CommitteeSitting;
 use Althingi\Hydrator;
+use Althingi\Model\ModelInterface;
 use Laminas\Hydrator\HydratorInterface;
 
 class IndexableCommitteeSittingPresenter implements IndexablePresenter
@@ -10,13 +11,12 @@ class IndexableCommitteeSittingPresenter implements IndexablePresenter
     const INDEX = 'althingi_model_committee-sitting';
     const TYPE = 'committee-sitting';
 
-    /** @var  \Laminas\Hydrator\HydratorInterface; */
-    private $hydrator;
+    private HydratorInterface $hydrator;
 
     /** @var  \Althingi\Model\CommitteeSitting */
-    private $model;
+    private CommitteeSitting $model;
 
-    public function __construct(Model\CommitteeSitting $model)
+    public function __construct(CommitteeSitting $model)
     {
         $this->setHydrator(new Hydrator\CommitteeSitting());
         $this->setModel($model);
@@ -33,13 +33,13 @@ class IndexableCommitteeSittingPresenter implements IndexablePresenter
         return $this->hydrator;
     }
 
-    public function setModel(Model\ModelInterface $model): IndexablePresenter
+    public function setModel(ModelInterface $model): IndexablePresenter
     {
         $this->model = $model;
         return $this;
     }
 
-    public function getModel(): Model\ModelInterface
+    public function getModel(): CommitteeSitting
     {
         return $this->model;
     }

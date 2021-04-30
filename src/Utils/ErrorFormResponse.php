@@ -19,6 +19,5 @@ class ErrorFormResponse extends JsonResponse
                 'message' => array_values($value),
             ];
         }, $form->getMessages(), array_keys($form->getMessages()));
-
     }
 }

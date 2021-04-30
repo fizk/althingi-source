@@ -63,7 +63,10 @@ class CommitteeController implements
         $committeeId = $request->getAttribute('committee_id');
 
         $form = new Form\Committee();
-        $form->bindValues(array_merge($request->getParsedBody(), ['assembly_id' => $assemblyId, 'committee_id' => $committeeId]));
+        $form->bindValues(array_merge($request->getParsedBody(), [
+            'assembly_id' => $assemblyId,
+            'committee_id' => $committeeId
+        ]));
 
         if ($form->isValid()) {
             $affectedRows = $this->committeeService->save($form->getObject());

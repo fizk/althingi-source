@@ -58,7 +58,9 @@ class SuperCategoryController implements
     public function put(ServerRequest $request): ResponseInterface
     {
         $form = new Form\SuperCategory();
-        $form->bindValues(array_merge($request->getParsedBody(), ['super_category_id' => $request->getAttribute('super_category_id')]));
+        $form->bindValues(array_merge($request->getParsedBody(), [
+            'super_category_id' => $request->getAttribute('super_category_id')
+        ]));
         if ($form->isValid()) {
             $affectedRows = $this->superCategoryService->save($form->getObject());
             return new EmptyResponse($affectedRows === 1 ? 201 : 205);

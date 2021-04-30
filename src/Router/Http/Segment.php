@@ -184,8 +184,13 @@ class Segment implements RouteInterface
         return $regex;
     }
 
-    protected function buildPath(array $parts, array $mergedParams, bool $isOptional, bool $hasChild, array $options): string
-    {
+    protected function buildPath(
+        array $parts,
+        array $mergedParams,
+        bool $isOptional,
+        bool $hasChild,
+        array $options
+    ): string {
         $path      = '';
         $skip      = true;
         $skippable = false;
@@ -237,8 +242,11 @@ class Segment implements RouteInterface
         return $path;
     }
 
-    public function match(RequestInterface $request, /*string|null*/$pathOffset = null, array $options = [])/*: RouteMatch|null*/
-    {
+    public function match(
+        RequestInterface $request, /*string|null*/
+        $pathOffset = null,
+        array $options = []
+    )/*: RouteMatch|null*/ {
 
         $uri  = $request->getUri();
         $path = $uri->getPath();

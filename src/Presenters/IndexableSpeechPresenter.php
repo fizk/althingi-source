@@ -10,11 +10,8 @@ class IndexableSpeechPresenter implements IndexablePresenter
     const INDEX = 'althingi_model_speech';
     const TYPE = 'speech';
 
-    /** @var  \Laminas\Hydrator\HydratorInterface; */
-    private $hydrator;
-
-    /** @var  \Althingi\Model\Speech */
-    private $model;
+    private HydratorInterface $hydrator;
+    private Speech $model;
 
     public function __construct(Speech $model)
     {

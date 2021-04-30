@@ -12,11 +12,8 @@ class IndexableMinisterSittingPresenter implements IndexablePresenter
     const INDEX = 'althingi_model_minister-sitting';
     const TYPE = 'minister-sitting';
 
-    /** @var  \Laminas\Hydrator\HydratorInterface; */
-    private $hydrator;
-
-    /** @var  \Althingi\Model\MinisterSitting */
-    private $model;
+    private HydratorInterface $hydrator;
+    private MinisterSitting $model;
 
     public function __construct(MinisterSitting $model)
     {

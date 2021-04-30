@@ -440,5 +440,15 @@ return [
                 ],
             ],
         ],
+        'console' => [
+            'type' => Segment::class,
+            'options' => [
+                'route'    => '/console:assembly',
+                'defaults' => [
+                    'controller' => Controller\IndexerAssemblyController::class,
+                    'identifier' => 'id'
+                ],
+            ],
+        ],
     ]
 ];

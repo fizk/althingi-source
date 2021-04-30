@@ -10,11 +10,8 @@ class IndexableIssueCategoryPresenter implements IndexablePresenter
     const INDEX = 'althingi_model_issue-category';
     const TYPE = 'issue-category';
 
-    /** @var  \Laminas\Hydrator\HydratorInterface; */
-    private $hydrator;
-
-    /** @var  \Althingi\Model\IssueCategory */
-    private $model;
+    private HydratorInterface $hydrator;
+    private IssueCategory $model;
 
     public function __construct(IssueCategory $model)
     {

@@ -10,11 +10,8 @@ class IndexableCongressmanDocumentPresenter implements IndexablePresenter
     const INDEX = 'althingi_model_congressman-document';
     const TYPE = 'congressman-document';
 
-    /** @var  \Laminas\Hydrator\HydratorInterface; */
-    private $hydrator;
-
-    /** @var  \Althingi\Model\CongressmanDocument */
-    private $model;
+    private HydratorInterface $hydrator;
+    private CongressmanDocument $model;
 
     public function __construct(CongressmanDocument $model)
     {

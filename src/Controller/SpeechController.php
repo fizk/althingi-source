@@ -141,7 +141,12 @@ class SpeechController implements
         $form = new Form\Speech();
         $form->setData(array_merge(
             $request->getParsedBody(),
-            ['speech_id' => $request->getAttribute('speech_id'), 'issue_id' => $issueId, 'assembly_id' => $assemblyId, 'category' => $category]
+            [
+                'speech_id' => $request->getAttribute('speech_id'),
+                'issue_id' => $issueId,
+                'assembly_id' => $assemblyId,
+                'category' => $category
+            ]
         ));
 
         if ($form->isValid()) {

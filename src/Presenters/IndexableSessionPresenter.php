@@ -11,11 +11,8 @@ class IndexableSessionPresenter implements IndexablePresenter
     const INDEX = 'althingi_model_session';
     const TYPE = 'session';
 
-    /** @var  \Laminas\Hydrator\HydratorInterface; */
-    private $hydrator;
-
-    /** @var  \Althingi\Model\Session */
-    private $model;
+    private HydratorInterface $hydrator;
+    private Session $model;
 
     public function __construct(Session $model)
     {

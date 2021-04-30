@@ -70,7 +70,10 @@ class PlenaryController implements
             ->setData(
                 array_merge(
                     $request->getParsedBody(),
-                    ['assembly_id' => $request->getAttribute('id'), 'plenary_id' => $request->getAttribute('plenary_id')]
+                    [
+                        'assembly_id' => $request->getAttribute('id'),
+                        'plenary_id' => $request->getAttribute('plenary_id')
+                    ]
                 )
             );
 

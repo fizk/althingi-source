@@ -11,11 +11,8 @@ class IndexableIssueLinkPresenter implements IndexablePresenter
     const INDEX = 'althingi_model_issue-link';
     const TYPE = 'issue-link';
 
-    /** @var  \Laminas\Hydrator\HydratorInterface; */
-    private $hydrator;
-
-    /** @var  \Althingi\Model\IssueLink */
-    private $model;
+    private HydratorInterface $hydrator;
+    private IssueLink $model;
 
     public function __construct(IssueLink $model)
     {

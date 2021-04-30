@@ -10,11 +10,8 @@ class IndexableCabinetPresenter implements IndexablePresenter
     const INDEX = 'althingi_model_cabinet';
     const TYPE = 'cabinet';
 
-    /** @var  \Laminas\Hydrator\HydratorInterface; */
-    private $hydrator;
-
-    /** @var  \Althingi\Model\Cabinet */
-    private $model;
+    private HydratorInterface $hydrator;
+    private Cabinet $model;
 
     public function __construct(Cabinet $model)
     {

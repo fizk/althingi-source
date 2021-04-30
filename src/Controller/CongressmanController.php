@@ -64,7 +64,9 @@ class CongressmanController implements
     public function put(ServerRequest $request): ResponseInterface
     {
         $form = new Form\Congressman();
-        $form->setData(array_merge($request->getParsedBody(), ['congressman_id' => $request->getAttribute('congressman_id')]));
+        $form->setData(array_merge($request->getParsedBody(), [
+            'congressman_id' => $request->getAttribute('congressman_id')
+        ]));
 
         if ($form->isValid()) {
             $affectedRows = $this->congressmanService->save($form->getObject());

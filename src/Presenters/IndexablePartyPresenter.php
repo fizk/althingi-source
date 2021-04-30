@@ -10,11 +10,8 @@ class IndexablePartyPresenter implements IndexablePresenter
     const INDEX = 'althingi_model_party';
     const TYPE = 'party';
 
-    /** @var  \Laminas\Hydrator\HydratorInterface; */
-    private $hydrator;
-
-    /** @var  \Althingi\Model\Party */
-    private $model;
+    private HydratorInterface $hydrator;
+    private Party $model;
 
     public function __construct(Party $model)
     {

@@ -1,0 +1,587 @@
+{
+    "bindings": [
+        {
+            "arguments": {},
+            "destination": "aggregate",
+            "destination_type": "exchange",
+            "routing_key": "",
+            "source": "service",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "search",
+            "destination_type": "exchange",
+            "routing_key": "",
+            "source": "service",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "dlq.aggregate.queue",
+            "destination_type": "queue",
+            "routing_key": "",
+            "source": "dlq.aggregate.exchange",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "a.issue.add",
+            "destination_type": "queue",
+            "routing_key": "issue.add",
+            "source": "aggregate",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "s.issue.add",
+            "destination_type": "queue",
+            "routing_key": "issue.add",
+            "source": "search",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "a.issue.update",
+            "destination_type": "queue",
+            "routing_key": "issue.update",
+            "source": "aggregate",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "s.issue.update",
+            "destination_type": "queue",
+            "routing_key": "issue.update",
+            "source": "search",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "a.issue-category.add",
+            "destination_type": "queue",
+            "routing_key": "issue-category.add",
+            "source": "aggregate",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "a.document.add",
+            "destination_type": "queue",
+            "routing_key": "document.add",
+            "source": "aggregate",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "a.issue.government-flag",
+            "destination_type": "queue",
+            "routing_key": "document.add",
+            "source": "aggregate",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "a.issue.primary-document",
+            "destination_type": "queue",
+            "routing_key": "document.add",
+            "source": "aggregate",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "a.congressman-document.add",
+            "destination_type": "queue",
+            "routing_key": "congressman-document.add",
+            "source": "aggregate",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "a.congressman.increment-assembly-issue-count",
+            "destination_type": "queue",
+            "routing_key": "congressman-document.add",
+            "source": "aggregate",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "a.congressman.add-proposition",
+            "destination_type": "queue",
+            "routing_key": "congressman-document.add",
+            "source": "aggregate",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "a.issue.add-proponent",
+            "destination_type": "queue",
+            "routing_key": "congressman-document.add",
+            "source": "aggregate",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "a.congressman.increment-super-category-count",
+            "destination_type": "queue",
+            "routing_key": "congressman-document.add",
+            "source": "aggregate",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "a.vote.add",
+            "destination_type": "queue",
+            "routing_key": "vote.add",
+            "source": "aggregate",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "a.document.add-vote",
+            "destination_type": "queue",
+            "routing_key": "vote.add",
+            "source": "aggregate",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "a.vote-item.add",
+            "destination_type": "queue",
+            "routing_key": "vote-item.add",
+            "source": "aggregate",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "a.congressman.increment-vote-type-count",
+            "destination_type": "queue",
+            "routing_key": "vote-item.add",
+            "source": "aggregate",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "a.speech.add",
+            "destination_type": "queue",
+            "routing_key": "speech.add",
+            "source": "aggregate",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "s.speech.add",
+            "destination_type": "queue",
+            "routing_key": "speech.add",
+            "source": "search",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "a.issue.add-speech",
+            "destination_type": "queue",
+            "routing_key": "speech.add",
+            "source": "aggregate",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "a.issue.increment-issue-speaker-time",
+            "destination_type": "queue",
+            "routing_key": "speech.add",
+            "source": "aggregate",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "a.congressman.increment-assembly-speech-time",
+            "destination_type": "queue",
+            "routing_key": "speech.add",
+            "source": "aggregate",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "a.congressman.increment-super-category-speech-time",
+            "destination_type": "queue",
+            "routing_key": "speech.add",
+            "source": "aggregate",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "a.speech.update",
+            "destination_type": "queue",
+            "routing_key": "speech.update",
+            "source": "aggregate",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "s.speech.update",
+            "destination_type": "queue",
+            "routing_key": "speech.update",
+            "source": "search",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "a.issue-link.add",
+            "destination_type": "queue",
+            "routing_key": "issue-link.add",
+            "source": "aggregate",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "a.session.add",
+            "destination_type": "queue",
+            "routing_key": "session.add",
+            "source": "aggregate",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "a.session.update",
+            "destination_type": "queue",
+            "routing_key": "session.update",
+            "source": "aggregate",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "a.assembly.add",
+            "destination_type": "queue",
+            "routing_key": "assembly.add",
+            "source": "aggregate",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "a.assembly.update",
+            "destination_type": "queue",
+            "routing_key": "assembly.update",
+            "source": "aggregate",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "a.minister-sitting.add",
+            "destination_type": "queue",
+            "routing_key": "minister-sitting.add",
+            "source": "aggregate",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "destination": "a.minister-sitting.update",
+            "destination_type": "queue",
+            "routing_key": "minister-sitting.update",
+            "source": "aggregate",
+            "vhost": "/"
+        },
+    ],
+    "exchanges": [
+        {
+            "arguments": {},
+            "auto_delete": false,
+            "durable": true,
+            "internal": false,
+            "name": "service",
+            "type": "fanout",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "auto_delete": false,
+            "durable": true,
+            "internal": false,
+            "name": "aggregate",
+            "type": "topic",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "auto_delete": false,
+            "durable": true,
+            "internal": false,
+            "name": "search",
+            "type": "topic",
+            "vhost": "/"
+        },
+        {
+            "arguments": {},
+            "auto_delete": false,
+            "durable": true,
+            "internal": true,
+            "name": "dlq.aggregate.exchange",
+            "type": "fanout",
+            "vhost": "/"
+        }
+    ],
+    "global_parameters": [
+        {
+            "name": "cluster_name",
+            "value": "rabbit1@rabbit1"
+        }
+    ],
+    "parameters": [],
+    "permissions": [
+        {
+            "configure": ".*",
+            "read": ".*",
+            "user": "admin",
+            "vhost": "/",
+            "write": ".*"
+        }
+    ],
+    "policies": [],
+    "queues": [
+        {
+            "arguments": {"x-dead-letter-exchange": "dlq.aggregate.exchange"},
+            "auto_delete": false,
+            "durable": true,
+            "name": "dlq.aggregate.queue",
+            "vhost": "/"
+        },
+        {
+            "arguments": {"x-dead-letter-exchange": "dlq.aggregate.exchange"},
+            "auto_delete": false,
+            "durable": true,
+            "name": "a.congressman-document.add",
+            "vhost": "/"
+        },
+        {
+            "arguments": {"x-dead-letter-exchange": "dlq.aggregate.exchange"},
+            "auto_delete": false,
+            "durable": true,
+            "name": "a.congressman.increment-assembly-issue-count",
+            "vhost": "/"
+        },
+        {
+            "arguments": {"x-dead-letter-exchange": "dlq.aggregate.exchange"},
+            "auto_delete": false,
+            "durable": true,
+            "name": "a.congressman.add-proposition",
+            "vhost": "/"
+        },
+        {
+            "arguments": {"x-dead-letter-exchange": "dlq.aggregate.exchange"},
+            "auto_delete": false,
+            "durable": true,
+            "name": "a.congressman.increment-super-category-count",
+            "vhost": "/"
+        },
+        {
+            "arguments": {"x-dead-letter-exchange": "dlq.aggregate.exchange"},
+            "auto_delete": false,
+            "durable": true,
+            "name": "a.congressman.increment-vote-type-count",
+            "vhost": "/"
+        },
+        {
+            "arguments": {"x-dead-letter-exchange": "dlq.aggregate.exchange"},
+            "auto_delete": false,
+            "durable": true,
+            "name": "a.congressman.increment-assembly-speech-time",
+            "vhost": "/"
+        },
+        {
+            "arguments": {"x-dead-letter-exchange": "dlq.aggregate.exchange"},
+            "auto_delete": false,
+            "durable": true,
+            "name": "a.congressman.increment-super-category-speech-time",
+            "vhost": "/"
+        },
+        {
+            "arguments": {"x-dead-letter-exchange": "dlq.aggregate.exchange"},
+            "auto_delete": false,
+            "durable": true,
+            "name": "a.document.add",
+            "vhost": "/"
+        },
+        {
+            "arguments": {"x-dead-letter-exchange": "dlq.aggregate.exchange"},
+            "auto_delete": false,
+            "durable": true,
+            "name": "a.document.add-vote",
+            "vhost": "/"
+        },
+        {
+            "arguments": {"x-dead-letter-exchange": "dlq.aggregate.exchange"},
+            "auto_delete": false,
+            "durable": true,
+            "name": "a.issue.add",
+            "vhost": "/"
+        },
+        {
+            "arguments": {"x-dead-letter-exchange": "dlq.aggregate.exchange"},
+            "auto_delete": false,
+            "durable": true,
+            "name": "s.issue.add",
+            "vhost": "/"
+        },
+        {
+            "arguments": {"x-dead-letter-exchange": "dlq.aggregate.exchange"},
+            "auto_delete": false,
+            "durable": true,
+            "name": "a.issue.update",
+            "vhost": "/"
+        },
+        {
+            "arguments": {"x-dead-letter-exchange": "dlq.aggregate.exchange"},
+            "auto_delete": false,
+            "durable": true,
+            "name": "s.issue.update",
+            "vhost": "/"
+        },
+        {
+            "arguments": {"x-dead-letter-exchange": "dlq.aggregate.exchange"},
+            "auto_delete": false,
+            "durable": true,
+            "name": "a.issue-category.add",
+            "vhost": "/"
+        },
+        {
+            "arguments": {"x-dead-letter-exchange": "dlq.aggregate.exchange"},
+            "auto_delete": false,
+            "durable": true,
+            "name": "a.issue.government-flag",
+            "vhost": "/"
+        },
+        {
+            "arguments": {"x-dead-letter-exchange": "dlq.aggregate.exchange"},
+            "auto_delete": false,
+            "durable": true,
+            "name": "a.issue.primary-document",
+            "vhost": "/"
+        },
+        {
+            "arguments": {"x-dead-letter-exchange": "dlq.aggregate.exchange"},
+            "auto_delete": false,
+            "durable": true,
+            "name": "a.issue.add-speech",
+            "vhost": "/"
+        },
+        {
+            "arguments": {"x-dead-letter-exchange": "dlq.aggregate.exchange"},
+            "auto_delete": false,
+            "durable": true,
+            "name": "a.issue.increment-issue-speaker-time",
+            "vhost": "/"
+        },
+        {
+            "arguments": {"x-dead-letter-exchange": "dlq.aggregate.exchange"},
+            "auto_delete": false,
+            "durable": true,
+            "name": "a.issue.add-proponent",
+            "vhost": "/"
+        },
+        {
+            "arguments": {"x-dead-letter-exchange": "dlq.aggregate.exchange"},
+            "auto_delete": false,
+            "durable": true,
+            "name": "a.issue-link.add",
+            "vhost": "/"
+        },
+        {
+            "arguments": {"x-dead-letter-exchange": "dlq.aggregate.exchange"},
+            "auto_delete": false,
+            "durable": true,
+            "name": "a.vote.add",
+            "vhost": "/"
+        },
+        {
+            "arguments": {"x-dead-letter-exchange": "dlq.aggregate.exchange"},
+            "auto_delete": false,
+            "durable": true,
+            "name": "a.vote-item.add",
+            "vhost": "/"
+        },
+        {
+            "arguments": {"x-dead-letter-exchange": "dlq.aggregate.exchange"},
+            "auto_delete": false,
+            "durable": true,
+            "name": "a.speech.add",
+            "vhost": "/"
+        },
+        {
+            "arguments": {"x-dead-letter-exchange": "dlq.aggregate.exchange"},
+            "auto_delete": false,
+            "durable": true,
+            "name": "s.speech.add",
+            "vhost": "/"
+        },
+        {
+            "arguments": {"x-dead-letter-exchange": "dlq.aggregate.exchange"},
+            "auto_delete": false,
+            "durable": true,
+            "name": "a.session.add",
+            "vhost": "/"
+        },
+        {
+            "arguments": {"x-dead-letter-exchange": "dlq.aggregate.exchange"},
+            "auto_delete": false,
+            "durable": true,
+            "name": "a.session.update",
+            "vhost": "/"
+        },
+        {
+            "arguments": {"x-dead-letter-exchange": "dlq.aggregate.exchange"},
+            "auto_delete": false,
+            "durable": true,
+            "name": "a.speech.update",
+            "vhost": "/"
+        },
+        {
+            "arguments": {"x-dead-letter-exchange": "dlq.aggregate.exchange"},
+            "auto_delete": false,
+            "durable": true,
+            "name": "s.speech.update",
+            "vhost": "/"
+        },
+        {
+            "arguments": {"x-dead-letter-exchange": "dlq.aggregate.exchange"},
+            "auto_delete": false,
+            "durable": true,
+            "name": "a.assembly.add",
+            "vhost": "/"
+        },
+        {
+            "arguments": {"x-dead-letter-exchange": "dlq.aggregate.exchange"},
+            "auto_delete": false,
+            "durable": true,
+            "name": "a.assembly.update",
+            "vhost": "/"
+        },
+        {
+            "arguments": {"x-dead-letter-exchange": "dlq.aggregate.exchange"},
+            "auto_delete": false,
+            "durable": true,
+            "name": "a.minister-sitting.add",
+            "vhost": "/"
+        },
+        {
+            "arguments": {"x-dead-letter-exchange": "dlq.aggregate.exchange"},
+            "auto_delete": false,
+            "durable": true,
+            "name": "a.minister-sitting.update",
+            "vhost": "/"
+        }
+    ],
+    "rabbit_version": "3.7.13-rc.2",
+    "topic_permissions": [],
+    "users": [
+        {
+            "hashing_algorithm": "rabbit_password_hashing_sha256",
+            "name": "admin",
+            "password_hash": "B6rjYKOcfGs15G6ge5V97BabvCvzQ9TCeeMPZVB3TkaSjN3g",
+            "tags": "administrator"
+        }
+    ],
+    "vhosts": [
+        {
+            "name": "/"
+        }
+    ]
+}

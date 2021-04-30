@@ -10,11 +10,8 @@ class IndexableVoteItemPresenter implements IndexablePresenter
     const INDEX = 'althingi_model_vote-item';
     const TYPE = 'vote-item';
 
-    /** @var  \Laminas\Hydrator\HydratorInterface; */
-    private $hydrator;
-
-    /** @var  \Althingi\Model\VoteItem */
-    private $model;
+    private HydratorInterface $hydrator;
+    private VoteItem $model;
 
     public function __construct(VoteItem $model)
     {
