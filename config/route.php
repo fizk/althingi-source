@@ -440,6 +440,7 @@ return [
                 ],
             ],
         ],
+<<<<<<< HEAD
         'console' => [
             'type' => Segment::class,
             'options' => [
@@ -450,5 +451,7 @@ return [
                 ],
             ],
         ],
+=======
+>>>>>>> 2d4211e08601541c1302717f150f4fbe620c9180
     ]
 ];

@@ -11,13 +11,19 @@ services:
       dockerfile: Dockerfile
     ports:
       - 8080:80
+<<<<<<< HEAD
       - 9003:9003
+=======
+>>>>>>> 2d4211e08601541c1302717f150f4fbe620c9180
     volumes:
       - ./config/:/var/www/config
       - ./src/:/var/www/src
       - ./tests/:/var/www/tests
       - ./public/:/var/www/public
+<<<<<<< HEAD
       - ./bin/:/var/www/bin
+=======
+>>>>>>> 2d4211e08601541c1302717f150f4fbe620c9180
       - ./composer.json:/var/www/composer.json
       - ./composer.lock:/var/www/composer.lock
       - ./vendor/:/var/www/vendor
@@ -27,7 +33,13 @@ services:
 
       - ENVIRONMENT=development
 
+<<<<<<< HEAD
       - DB_HOST=database
+=======
+      # - DB_HOST=${ENV_DB_HOST:-host.docker.internal}
+      - DB_HOST=database
+      # - DB_PORT=${ENV_DB_PORT:-4406}
+>>>>>>> 2d4211e08601541c1302717f150f4fbe620c9180
       - DB_PORT=3306
       - DB_NAME=${ENV_DB_NAME:-althingi}
       - DB_USER=${ENV_DB_USER:-root}
@@ -35,7 +47,11 @@ services:
 
       - CACHE_TYPE=none
 
+<<<<<<< HEAD
       - BROKER=none
+=======
+      - QUEUE=none
+>>>>>>> 2d4211e08601541c1302717f150f4fbe620c9180
 
       - DOCUMENT_SERVER=${ENV_DOCUMENT_SERVER:-localhost:8080}
       - DOCUMENT_DEFINITION=${ENV_DOCUMENT_DEFINITION:-/openapi}
@@ -61,7 +77,10 @@ services:
       - ./src/:/var/www/src
       - ./public/:/var/www/public
       - ./tests/:/var/www/tests
+<<<<<<< HEAD
       - ./bin/:/var/www/bin
+=======
+>>>>>>> 2d4211e08601541c1302717f150f4fbe620c9180
       - ./phpcs.xml:/var/www/phpcs.xml
       - ./phpunit.xml.dist:/var/www/phpunit.xml
       - ./auto/wait-for.sh:/var/www/wait-for.sh
@@ -78,7 +97,11 @@ services:
 
       - CACHE_TYPE=none
 
+<<<<<<< HEAD
       - BROKER=none
+=======
+      - QUEUE=none
+>>>>>>> 2d4211e08601541c1302717f150f4fbe620c9180
 
       - DOCUMENT_SERVER=${ENV_DOCUMENT_SERVER:-localhost:8080}
       - DOCUMENT_DEFINITION=${ENV_DOCUMENT_DEFINITION:-/openapi}
@@ -86,7 +109,11 @@ services:
       - INDEXER_STALL_TIME=${ENV_INDEXER_STALL_TIME:-150000}
     depends_on:
       - database-test
+<<<<<<< HEAD
     command: bash -c "./wait-for.sh database:3306 -t 80 -- echo \"MySQL up\" &&  ./vendor/bin/phpunit && ./vendor/bin/phpcs --standard=./phpcs.xml ./src"
+=======
+    command: bash -c "./wait-for.sh database:3306 -t 80 -- echo \"MySQL up\" &&  ./vendor/bin/phpunit && ./vendor/bin/phpcs --standard=./phpcs.xml ./module/Althingi/src"
+>>>>>>> 2d4211e08601541c1302717f150f4fbe620c9180
 
   database:
     container_name: althingi-source-db
@@ -95,8 +122,11 @@ services:
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=example
+<<<<<<< HEAD
     volumes:
       - ./assets/:/home/
+=======
+>>>>>>> 2d4211e08601541c1302717f150f4fbe620c9180
 
   database-test:
       container_name: althingi-source-db-test
