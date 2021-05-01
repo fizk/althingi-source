@@ -50,7 +50,6 @@ RUN echo "<VirtualHost *:80>\n \
     RewriteRule . /index.php [L]\n \
     </VirtualHost>\n" > /etc/apache2/sites-available/000-default.conf
 
-<<<<<<< HEAD
 # Apache Kafka
 # apt install librdkafka-dev maybe?
 ENV LIBRDKAFKA_VERSION 1.6.0
@@ -66,8 +65,6 @@ RUN git clone --depth 1 --branch v$LIBRDKAFKA_VERSION https://github.com/edenhil
     docker-php-ext-enable rdkafka; \
     rm -rf /librdkafka;
 
-=======
->>>>>>> 2d4211e08601541c1302717f150f4fbe620c9180
 RUN a2enmod rewrite && service apache2 restart;
 
 RUN curl -sS https://getcomposer.org/installer \

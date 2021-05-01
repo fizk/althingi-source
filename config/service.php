@@ -2,23 +2,16 @@
 
 use Althingi\Service;
 use Althingi\Controller;
-<<<<<<< HEAD
-=======
-use Althingi\Controller\Aggregate;
->>>>>>> 2d4211e08601541c1302717f150f4fbe620c9180
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Althingi\QueueActions\QueueEventsListener;
 use Althingi\Events\EventsListener;
 use Althingi\Router\Http\TreeRouteStack;
 use Althingi\Router\RouteInterface;
-<<<<<<< HEAD
 use Althingi\Utils\BlackHoleMessageBroker;
 use Althingi\Utils\KafkaMessageBroker;
 use Althingi\Utils\MessageBrokerInterface;
 use Althingi\Utils\AmqpMessageBroker;
-=======
->>>>>>> 2d4211e08601541c1302717f150f4fbe620c9180
 use Laminas\Cache\Storage\StorageInterface;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 
@@ -183,7 +176,6 @@ return [
                 ->setCabinetService($container->get(Service\Cabinet::class))
                 ->setAssemblyService($container->get(Service\Assembly::class));
         },
-<<<<<<< HEAD
 
 
         Controller\IndexerAssemblyController::class => function (ContainerInterface $container) {
@@ -193,8 +185,6 @@ return [
             ;
         },
 
-=======
->>>>>>> 2d4211e08601541c1302717f150f4fbe620c9180
         Service\Assembly::class => function (ContainerInterface $sm) {
             return (new Service\Assembly())
                 ->setDriver($sm->get(PDO::class))
@@ -314,22 +304,14 @@ return [
         Service\Vote::class => function (ContainerInterface $sm) {
             return (new Service\Vote())
                 ->setDriver($sm->get(PDO::class))
-<<<<<<< HEAD
                 ->setEventManager($sm->get(EventsListener::class))
                 ;
-=======
-                ->setEventManager($sm->get(EventsListener::class));
->>>>>>> 2d4211e08601541c1302717f150f4fbe620c9180
         },
         Service\VoteItem::class => function (ContainerInterface $sm) {
             return (new Service\VoteItem())
                 ->setDriver($sm->get(PDO::class))
-<<<<<<< HEAD
                 ->setEventManager($sm->get(EventsListener::class))
                 ;
-=======
-                ->setEventManager($sm->get(EventsListener::class));
->>>>>>> 2d4211e08601541c1302717f150f4fbe620c9180
         },
         Service\Inflation::class => function (ContainerInterface $sm) {
             return (new Service\Inflation())
@@ -362,11 +344,7 @@ return [
 
             $queueEventsListener = (new QueueEventsListener())
                 ->setLogger($sm->get(LoggerInterface::class))
-<<<<<<< HEAD
                 ->setMessageBroker($sm->get(MessageBrokerInterface::class))
-=======
-                ->setQueue($sm->get(AMQPStreamConnection::class))
->>>>>>> 2d4211e08601541c1302717f150f4fbe620c9180
                 ->setIsForced(strtolower(getenv('QUEUE_FORCED')) === 'true');
             $queueEventsListener->attach($eventManager);
 
@@ -424,7 +402,6 @@ return [
             }
         },
 
-<<<<<<< HEAD
         MessageBrokerInterface::class => function (ContainerInterface $container) {
             switch(strtolower(getenv('BROKER'))) {
                 case 'kafka':
@@ -439,31 +416,10 @@ return [
                     return (new BlackHoleMessageBroker())
                         ->setLogger($container->get(LoggerInterface::class))
                         ;
-=======
-        AMQPStreamConnection::class => function (ContainerInterface $sm) {
-            $queueAdapter = getenv('QUEUE');
-            switch (strtolower($queueAdapter)) {
-                case 'rabbitmq':
-                    return AMQPStreamConnection::create_connection(
-                        [
-                            [
-                                'host' => getenv('QUEUE_HOST') ?: 'localhost',
-                                'port' => getenv('QUEUE_PORT') ?: 5672,
-                                'user' => getenv('QUEUE_USER') ?: 'guest',
-                                'password' => getenv('QUEUE_PASSWORD') ?: 'guest',
-                                'vhost' => getenv('QUEUE_VHOST') ?: '/'
-                            ]
-                        ]
-                    );
-                    break;
-                default:
-                    return new \Althingi\Utils\RabbitMQBlackHoleClient();
->>>>>>> 2d4211e08601541c1302717f150f4fbe620c9180
                     break;
             }
         },
 
-<<<<<<< HEAD
         AMQPStreamConnection::class => function (ContainerInterface $sm) {
             return AMQPStreamConnection::create_connection(
                 [
@@ -478,8 +434,6 @@ return [
             );
         },
 
-=======
->>>>>>> 2d4211e08601541c1302717f150f4fbe620c9180
         Althingi\Utils\OpenAPI::class => function (ContainerInterface $sm) {
             return (new Althingi\Utils\OpenAPI())
                 ->setHost(getenv('DOCUMENT_SERVER') ?: 'loggjafarthing.einarvalur.co/api')

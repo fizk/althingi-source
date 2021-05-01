@@ -8,7 +8,6 @@ use Laminas\ServiceManager\ServiceManager;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use Althingi\Router\RouteInterface;
 use Laminas\Diactoros\ServerRequestFactory;
-<<<<<<< HEAD
 use Laminas\Diactoros\Uri;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
@@ -176,13 +175,10 @@ class ConsoleRequest implements ServerRequestInterface
         return $this;
     }
 }
-=======
->>>>>>> 2d4211e08601541c1302717f150f4fbe620c9180
 
 $path = isset($argv[1]) ? $argv[1] : '/';
 
 mb_parse_str(read_resource(fopen("php://input", "r")), $bodyQuery);
-<<<<<<< HEAD
 
 $request = php_sapi_name() === 'cli'
     ? new ConsoleRequest(new Uri('/'.$path))
@@ -193,15 +189,6 @@ $request = php_sapi_name() === 'cli'
         $_COOKIE,
         $_FILES
     );
-=======
-$request = ServerRequestFactory::fromGlobals(
-    $_SERVER,
-    $_GET,
-    $bodyQuery, //$_POST
-    $_COOKIE,
-    $_FILES
-);
->>>>>>> 2d4211e08601541c1302717f150f4fbe620c9180
 
 $manager = new ServiceManager(require_once './config/service.php');
 $router = $manager->get(RouteInterface::class);
