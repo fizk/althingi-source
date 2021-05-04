@@ -13,6 +13,7 @@ use Althingi\Utils\KafkaMessageBroker;
 use Althingi\Utils\MessageBrokerInterface;
 use Althingi\Utils\AmqpMessageBroker;
 use Laminas\Cache\Storage\StorageInterface;
+use Laminas\Cache\Storage;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 
 return [
@@ -382,22 +383,22 @@ return [
         StorageInterface::class => function (ContainerInterface $sm) {
             switch (strtolower(getenv('CACHE_TYPE'))) {
                 case 'file':
-                    return (new Laminas\Cache\Storage\Adapter\Filesystem())
+                    return (new Storage\Adapter\Filesystem())
                         ->setOptions(
-                            (new \Laminas\Cache\Storage\Adapter\FilesystemOptions())->setCacheDir('./data/cache')
+                            (new Storage\Adapter\FilesystemOptions())->setCacheDir('./data/cache')
                         );
                     break;
                 case 'memory':
-                    $options = (new Laminas\Cache\Storage\Adapter\RedisOptions())
+                    $options = (new Storage\Adapter\RedisOptions())
                         ->setTtl(60)
                         ->setServer([
                             'host' => getenv('CACHE_HOST') ?: 'localhost',
                             'port' => getenv('CACHE_PORT') ?: 6379
                         ]);
-                    return new Laminas\Cache\Storage\Adapter\Redis($options);
+                    return new Storage\Adapter\Redis($options);
                     break;
                 default:
-                    return new \Laminas\Cache\Storage\Adapter\BlackHole();
+                    return new Storage\Adapter\BlackHole();
                     break;
             }
         },
