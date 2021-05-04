@@ -3,7 +3,7 @@
 #   Apache PHP setup
 #
 # #####################################################
-FROM php:7.4.9-apache
+FROM php:8.0.5-apache-buster
 
 ARG ENV
 
@@ -89,16 +89,16 @@ WORKDIR /var/www
 COPY ./composer.json ./composer.json
 COPY ./composer.lock ./composer.lock
 
-RUN if [ "$ENV" != "production" ] ; then \
-    composer config -g github-oauth.github.com 6123ac2cdc66febecc9dd6227a6819b01c0a5e66 && \
-    composer install --prefer-source --no-interaction \
-    && composer dump-autoload; \
-    fi ;
+# RUN if [ "$ENV" != "production" ] ; then \
+#     composer config -g github-oauth.github.com 6123ac2cdc66febecc9dd6227a6819b01c0a5e66 && \
+#     composer install --prefer-source --no-interaction \
+#     && composer dump-autoload; \
+#     fi ;
 
-RUN if [ "$ENV" = "production" ] ; then \
-    composer install --prefer-source --no-interaction --no-dev -o \
-    && composer dump-autoload -o; \
-    fi ;
+# RUN if [ "$ENV" = "production" ] ; then \
+#     composer install --prefer-source --no-interaction --no-dev -o \
+#     && composer dump-autoload -o; \
+#     fi ;
 
 COPY ./public ./public
 COPY ./src ./src

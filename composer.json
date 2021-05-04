@@ -9,30 +9,41 @@
     {
       "type": "vcs",
       "url": "https://github.com/fizk/dbunit"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/fizk/laminas-cache"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/fizk/laminas-cache-storage-adapter-redis"
     }
   ],
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "php": "^7.4",
+    "php": ">=8",
     "ext-pdo": "*",
     "ext-json": "*",
     "ext-dom": "*",
-    "laminas/laminas-cache": "^2.9",
-    "laminas/laminas-form": "^2.15",
-    "league/html-to-markdown": "^4.10",
-    "monolog/monolog": "^2.1",
-    "php-amqplib/php-amqplib": "^2.12",
+    "fizk/laminas-cache": "3.0.5",
+    "fizk/laminas-cache-storage-adapter-redis": "^2.0.1",
+    "laminas/laminas-cache-storage-adapter-blackhole": "^1.0",
+    "laminas/laminas-cache-storage-adapter-filesystem": "^1.0",
+    "laminas/laminas-form": "^2.17",
+    "league/html-to-markdown": "^5.0",
+    "monolog/monolog": "^2.2",
+    "php-amqplib/php-amqplib": "^3.0",
     "zeptech/annotations": "^1.1",
-    "laminas/laminas-diactoros": "^2.4",
-    "laminas/laminas-httphandlerrunner": "^1.2"
+    "laminas/laminas-diactoros": "^2.5",
+    "laminas/laminas-httphandlerrunner": "^1.4"
 
   },
   "require-dev": {
-    "phpunit/phpunit": "^9.4",
+    "phpunit/phpunit": "^9.5",
     "mockery/mockery": "^1.4",
-    "squizlabs/php_codesniffer": "^3.5",
-    "fizk/dbunit": "^5.0"
+    "squizlabs/php_codesniffer": "^3.6",
+    "fizk/dbunit": "^5.1"
   },
   "autoload": {
     "psr-4": {
