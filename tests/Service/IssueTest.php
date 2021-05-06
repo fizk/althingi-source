@@ -3,22 +3,18 @@
 namespace AlthingiTest\Service;
 
 use Althingi\Model\IssueTypeStatus;
-use Althingi\QueueActions\QueueEventsListener;
 use Althingi\Service\Issue;
-use Althingi\Utils\RabbitMQBlackHoleClient;
 use AlthingiTest\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\Issue as IssueModel;
 use Althingi\Model\IssueAndDate as IssueAndDateModel;
-use Psr\Log\NullLogger;
-use Laminas\EventManager\EventManager;
+use PDO;
 
 class IssueTest extends TestCase
 {
     use DatabaseConnection;
 
-    /** @var  \PDO */
-    private $pdo;
+    private PDO $pdo;
 
     public function testGet()
     {
@@ -180,13 +176,6 @@ class IssueTest extends TestCase
 
     public function testCreate()
     {
-        $serviceEventListener = (new QueueEventsListener())
-                ->setQueue(new RabbitMQBlackHoleClient())
-                ->setLogger(new NullLogger())
-                ->setIsForced(true);
-        $eventManager = new EventManager();
-        $serviceEventListener->attach($eventManager);
-
         $issue = (new IssueModel())
             ->setAssemblyId(1)
             ->setIssueId(4)
@@ -194,7 +183,6 @@ class IssueTest extends TestCase
 
         $issueService = new Issue();
         $issueService->setDriver($this->pdo);
-        $issueService->setEventManager($eventManager);
         $issueService->create($issue);
 
         $expectedTable = $this->createArrayDataSet([
@@ -221,13 +209,6 @@ class IssueTest extends TestCase
 
     public function testSave()
     {
-        $serviceEventListener = (new QueueEventsListener())
-            ->setQueue(new RabbitMQBlackHoleClient())
-            ->setLogger(new NullLogger())
-            ->setIsForced(true);
-        $eventManager = new EventManager();
-        $serviceEventListener->attach($eventManager);
-
         $issue = (new IssueModel())
             ->setAssemblyId(1)
             ->setIssueId(4)
@@ -236,7 +217,6 @@ class IssueTest extends TestCase
 
         $issueService = new Issue();
         $issueService->setDriver($this->pdo);
-        $issueService->setEventManager($eventManager);
         $issueService->save($issue);
 
         $expectedTable = $this->createArrayDataSet([
@@ -263,13 +243,6 @@ class IssueTest extends TestCase
 
     public function testUpdate()
     {
-        $serviceEventListener = (new QueueEventsListener())
-            ->setQueue(new RabbitMQBlackHoleClient())
-            ->setLogger(new NullLogger())
-            ->setIsForced(true);
-        $eventManager = new EventManager();
-        $serviceEventListener->attach($eventManager);
-
         $issue = (new IssueModel())
             ->setAssemblyId(1)
             ->setIssueId(3)
@@ -278,7 +251,6 @@ class IssueTest extends TestCase
 
         $issueService = new Issue();
         $issueService->setDriver($this->pdo);
-        $issueService->setEventManager($eventManager);
         $issueService->update($issue);
 
         $expectedTable = $this->createArrayDataSet([

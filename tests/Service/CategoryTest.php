@@ -7,13 +7,13 @@ use AlthingiTest\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\Category as CategoryModel;
 use Althingi\Model\CategoryAndCount as CategoryAndCountModel;
+use PDO;
 
 class CategoryTest extends TestCase
 {
     use DatabaseConnection;
 
-    /** @var  \PDO */
-    private $pdo;
+    private PDO $pdo;
 
     public function testGet()
     {

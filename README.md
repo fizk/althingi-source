@@ -128,3 +128,41 @@ Lastly under Preferences > Languages & Frameworks > PHP > Test frameworks, make 
 has been selected
 and that _Use Composer autoloader_ is also selected, the path should be `/opt/project/vendor/autoload.php` and the default
 configuration file is `/opt/project/phpunit.xml.dist`
+
+
+
+```
+
+root
+├── Assembly
+│   ├── Plenary
+│   │   ├── PlenaryAgenda
+│   │   └──
+│   └── Issue
+│       ├── Speech
+│       ├── Vote
+│       │   └── VoteItem
+│       ├── Document
+│       └── CongressmanDocument
+├── Cabinet
+├── Category
+├── Super
+├── Committee
+│   ├── CommitteeMeeting
+│   ├── CommitteeMeetingAgenda
+│   ├── CommitteeSitting
+│   └── CommitteeDocument
+├── Congressman
+│   ├── MinisterSitting
+│   └── Session
+├── Constituency
+├── Election
+├── Inflation
+├── IssueCategory
+├── Ministry
+├── Party
+├── President
+└── (IssueLink)
+
+
+```

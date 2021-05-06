@@ -81,13 +81,6 @@ class CommitteeDocument implements DatabaseAwareInterface, EventsAwareInterface
         $id = $this->getDriver()->lastInsertId();
         $data->setDocumentCommitteeId($id);
 
-//        $this->getEventManager()
-//            ->trigger(
-//                AddEvent::class,
-//                new AddEvent(new IndexableCommitteeSittingPresenter($data)),
-//                ['rows' => $statement->rowCount()]
-//            );
-
         return $id;
     }
 
@@ -108,13 +101,6 @@ class CommitteeDocument implements DatabaseAwareInterface, EventsAwareInterface
             )
         );
         $statement->execute($this->toSqlValues($data));
-
-//        $this->getEventManager()
-//            ->trigger(
-//                UpdateEvent::class,
-//                new UpdateEvent(new IndexableCommitteeSittingPresenter($data)),
-//                ['rows' => $statement->rowCount()]
-//            );
 
         return $statement->rowCount();
     }

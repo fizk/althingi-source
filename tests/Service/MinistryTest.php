@@ -6,13 +6,13 @@ use Althingi\Service\Ministry;
 use AlthingiTest\DatabaseConnection;
 use Althingi\Model;
 use PHPUnit\Framework\TestCase;
+use PDO;
 
 class MinistryTest extends TestCase
 {
     use DatabaseConnection;
 
-    /** @var  \PDO */
-    private $pdo;
+    private PDO $pdo;
 
     public function testGet()
     {

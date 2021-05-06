@@ -2,23 +2,19 @@
 
 namespace AlthingiTest\Service;
 
-use Althingi\QueueActions\QueueEventsListener;
 use Althingi\Service\Speech;
-use Althingi\Utils\RabbitMQBlackHoleClient;
 use AlthingiTest\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\Speech as SpeechModel;
 use Althingi\Model\SpeechAndPosition as SpeechAndPositionModel;
 use Althingi\Model\DateAndCount as DateAndCountModel;
-use Psr\Log\NullLogger;
-use Laminas\EventManager\EventManager;
+use PDO;
 
 class SpeechTest extends TestCase
 {
     use DatabaseConnection;
 
-    /** @var  \PDO */
-    private $pdo;
+    private PDO $pdo;
 
     public function testGetSpeech()
     {
@@ -176,13 +172,6 @@ class SpeechTest extends TestCase
 
     public function testCreate()
     {
-        $serviceEventListener = (new QueueEventsListener())
-            ->setQueue(new RabbitMQBlackHoleClient())
-            ->setLogger(new NullLogger())
-            ->setIsForced(true);
-        $eventManager = new EventManager();
-        $serviceEventListener->attach($eventManager);
-
         $speech = (new SpeechModel())
             ->setSpeechId('id--20001')
             ->setPlenaryId(1)
@@ -216,7 +205,6 @@ class SpeechTest extends TestCase
 
         $speechService = new Speech();
         $speechService->setDriver($this->pdo);
-        $speechService->setEventManager($eventManager);
         $speechService->create($speech);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
@@ -224,13 +212,6 @@ class SpeechTest extends TestCase
 
     public function testSave()
     {
-        $serviceEventListener = (new QueueEventsListener())
-            ->setQueue(new RabbitMQBlackHoleClient())
-            ->setLogger(new NullLogger())
-            ->setIsForced(true);
-        $eventManager = new EventManager();
-        $serviceEventListener->attach($eventManager);
-
         $speech = (new SpeechModel())
             ->setSpeechId('id--20001')
             ->setPlenaryId(1)
@@ -264,7 +245,6 @@ class SpeechTest extends TestCase
 
         $speechService = new Speech();
         $speechService->setDriver($this->pdo);
-        $speechService->setEventManager($eventManager);
         $speechService->save($speech);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
@@ -272,13 +252,6 @@ class SpeechTest extends TestCase
 
     public function testSavePlenaryDoesntExist()
     {
-        $serviceEventListener = (new QueueEventsListener())
-            ->setQueue(new RabbitMQBlackHoleClient())
-            ->setLogger(new NullLogger())
-            ->setIsForced(true);
-        $eventManager = new EventManager();
-        $serviceEventListener->attach($eventManager);
-
         $speech = (new SpeechModel())
             ->setSpeechId('id--20001')
             ->setPlenaryId(10000)
@@ -289,7 +262,6 @@ class SpeechTest extends TestCase
 
         $speechService = new Speech();
         $speechService->setDriver($this->pdo);
-        $speechService->setEventManager($eventManager);
         try {
             $speechService->save($speech);
         } catch (\PDOException $e) {
@@ -299,13 +271,6 @@ class SpeechTest extends TestCase
 
     public function testUpdate()
     {
-        $serviceEventListener = (new QueueEventsListener())
-            ->setQueue(new RabbitMQBlackHoleClient())
-            ->setLogger(new NullLogger())
-            ->setIsForced(true);
-        $eventManager = new EventManager();
-        $serviceEventListener->attach($eventManager);
-
         $speech = (new SpeechModel())
             ->setSpeechId('id--00001')
             ->setPlenaryId(1)
@@ -339,7 +304,6 @@ class SpeechTest extends TestCase
 
         $speechService = new Speech();
         $speechService->setDriver($this->pdo);
-        $speechService->setEventManager($eventManager);
         $speechService->update($speech);
 
         $this->assertTablesEqual($expectedTable, $actualTable);

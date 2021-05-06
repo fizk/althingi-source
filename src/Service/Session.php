@@ -136,12 +136,9 @@ class Session implements DatabaseAwareInterface, EventsAwareInterface
         $id = $this->getDriver()->lastInsertId();
         $data->setSessionId($id);
 
-        $this->getEventManager()
-            ->trigger(
-                AddEvent::class,
-                new AddEvent(new IndexableSessionPresenter($data)),
-                ['rows' => $statement->rowCount()]
-            );
+        $this->getEventDispatcher()->dispatch(
+            new AddEvent(new IndexableSessionPresenter($data), ['rows' => $statement->rowCount()]),
+        );
 
         return $id;
     }
@@ -160,12 +157,9 @@ class Session implements DatabaseAwareInterface, EventsAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
-        $this->getEventManager()
-            ->trigger(
-                UpdateEvent::class,
-                new UpdateEvent(new IndexableSessionPresenter($data)),
-                ['rows' => $statement->rowCount()]
-            );
+        $this->getEventDispatcher()->dispatch(
+            new UpdateEvent(new IndexableSessionPresenter($data), ['rows' => $statement->rowCount()]),
+        );
 
         return $statement->rowCount();
     }

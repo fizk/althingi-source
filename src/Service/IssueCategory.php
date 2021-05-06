@@ -79,12 +79,11 @@ class IssueCategory implements DatabaseAwareInterface, EventsAwareInterface
             $this->toInsertString('Category_has_Issue', $data)
         );
         $statement->execute($this->toSqlValues($data));
-        $this->getEventManager()
-            ->trigger(
-                AddEvent::class,
-                new AddEvent(new IndexableIssueCategoryPresenter($data)),
-                ['rows' => $statement->rowCount()]
-            );
+
+        $this->getEventDispatcher()->dispatch(
+            new AddEvent(new IndexableIssueCategoryPresenter($data), ['rows' => $statement->rowCount()]),
+        );
+
         return $this->getDriver()->lastInsertId();
     }
 
@@ -100,21 +99,15 @@ class IssueCategory implements DatabaseAwareInterface, EventsAwareInterface
         $statement->execute($this->toSqlValues($data));
         switch ($statement->rowCount()) {
             case 1:
-                $this->getEventManager()
-                    ->trigger(
-                        AddEvent::class,
-                        new AddEvent(new IndexableIssueCategoryPresenter($data)),
-                        ['rows' => $statement->rowCount()]
-                    );
+                $this->getEventDispatcher()->dispatch(
+                    new AddEvent(new IndexableIssueCategoryPresenter($data), ['rows' => $statement->rowCount()]),
+                );
                 break;
             case 0:
             case 2:
-                $this->getEventManager()
-                    ->trigger(
-                        UpdateEvent::class,
-                        new UpdateEvent(new IndexableIssueCategoryPresenter($data)),
-                        ['rows' => $statement->rowCount()]
-                    );
+                $this->getEventDispatcher()->dispatch(
+                    new UpdateEvent(new IndexableIssueCategoryPresenter($data), ['rows' => $statement->rowCount()]),
+                );
                 break;
         }
         return $statement->rowCount();
@@ -136,12 +129,11 @@ class IssueCategory implements DatabaseAwareInterface, EventsAwareInterface
             )
         );
         $statement->execute($this->toSqlValues($data));
-        $this->getEventManager()
-            ->trigger(
-                UpdateEvent::class,
-                new UpdateEvent(new IndexableIssueCategoryPresenter($data)),
-                ['rows' => $statement->rowCount()]
-            );
+
+        $this->getEventDispatcher()->dispatch(
+            new UpdateEvent(new IndexableIssueCategoryPresenter($data), ['rows' => $statement->rowCount()]),
+        );
+
         return $statement->rowCount();
     }
 

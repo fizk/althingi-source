@@ -6,13 +6,12 @@ use Althingi\Model\CongressmanDocument as CongressmanDocumentModel;
 use Althingi\Service\CongressmanDocument;
 use AlthingiTest\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
-
+use PDO;
 class CongressmanDocumentTest extends TestCase
 {
     use DatabaseConnection;
 
-    /** @var  \PDO */
-    private $pdo;
+    private PDO $pdo;
 
     public function testGet()
     {

@@ -118,12 +118,10 @@ class President implements DatabaseAwareInterface, EventsAwareInterface
 
         $id = $this->getDriver()->lastInsertId();
         $data->setPresidentId($id);
-        $this->getEventManager()
-            ->trigger(
-                AddEvent::class,
-                new AddEvent(new IndexablePresidentPresenter($data)),
-                ['rows' => $statement->rowCount()]
-            );
+
+        $this->getEventDispatcher()->dispatch(
+            new AddEvent(new IndexablePresidentPresenter($data), ['rows' => $statement->rowCount()]),
+        );
 
         return $id;
     }
@@ -139,12 +137,9 @@ class President implements DatabaseAwareInterface, EventsAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
-        $this->getEventManager()
-            ->trigger(
-                UpdateEvent::class,
-                new UpdateEvent(new IndexablePresidentPresenter($data)),
-                ['rows' => $statement->rowCount()]
-            );
+        $this->getEventDispatcher()->dispatch(
+            new UpdateEvent(new IndexablePresidentPresenter($data), ['rows' => $statement->rowCount()]),
+        );
 
         return $statement->rowCount();
     }

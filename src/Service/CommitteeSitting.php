@@ -57,12 +57,9 @@ class CommitteeSitting implements DatabaseAwareInterface, EventsAwareInterface
         $id = $this->getDriver()->lastInsertId();
         $data->setCommitteeSittingId($id);
 
-        $this->getEventManager()
-            ->trigger(
-                AddEvent::class,
-                new AddEvent(new IndexableCommitteeSittingPresenter($data)),
-                ['rows' => $statement->rowCount()]
-            );
+        $this->getEventDispatcher()->dispatch(
+            new AddEvent(new IndexableCommitteeSittingPresenter($data), ['rows' => $statement->rowCount()]),
+        );
 
         return $id;
     }
@@ -81,12 +78,9 @@ class CommitteeSitting implements DatabaseAwareInterface, EventsAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
-        $this->getEventManager()
-            ->trigger(
-                UpdateEvent::class,
-                new UpdateEvent(new IndexableCommitteeSittingPresenter($data)),
-                ['rows' => $statement->rowCount()]
-            );
+        $this->getEventDispatcher()->dispatch(
+            new UpdateEvent(new IndexableCommitteeSittingPresenter($data), ['rows' => $statement->rowCount()]),
+        );
 
         return $statement->rowCount();
     }

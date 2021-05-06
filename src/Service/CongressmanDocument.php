@@ -122,12 +122,9 @@ class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterfac
         );
         $statement->execute($this->toSqlValues($data));
 
-        $this->getEventManager()
-            ->trigger(
-                AddEvent::class,
-                new AddEvent(new IndexableCongressmanDocumentPresenter($data)),
-                ['rows' => $statement->rowCount()]
-            );
+        $this->getEventDispatcher()->dispatch(
+            new AddEvent(new IndexableCongressmanDocumentPresenter($data), ['rows' => $statement->rowCount()]),
+        );
 
         return $this->getDriver()->lastInsertId();
     }
@@ -145,21 +142,21 @@ class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterfac
 
         switch ($statement->rowCount()) {
             case 1:
-                $this->getEventManager()
-                    ->trigger(
-                        AddEvent::class,
-                        new AddEvent(new IndexableCongressmanDocumentPresenter($data)),
+                $this->getEventDispatcher()->dispatch(
+                    new AddEvent(
+                        new IndexableCongressmanDocumentPresenter($data),
                         ['rows' => $statement->rowCount()]
-                    );
+                    ),
+                );
                 break;
             case 0:
             case 2:
-                $this->getEventManager()
-                    ->trigger(
-                        UpdateEvent::class,
-                        new UpdateEvent(new IndexableCongressmanDocumentPresenter($data)),
+                $this->getEventDispatcher()->dispatch(
+                    new UpdateEvent(
+                        new IndexableCongressmanDocumentPresenter($data),
                         ['rows' => $statement->rowCount()]
-                    );
+                    ),
+                );
                 break;
         }
         return $statement->rowCount();
@@ -183,12 +180,12 @@ class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterfac
         );
         $statement->execute($this->toSqlValues($data));
 
-        $this->getEventManager()
-            ->trigger(
-                UpdateEvent::class,
-                new UpdateEvent(new IndexableCongressmanDocumentPresenter($data)),
+        $this->getEventDispatcher()->dispatch(
+            new UpdateEvent(
+                new IndexableCongressmanDocumentPresenter($data),
                 ['rows' => $statement->rowCount()]
-            );
+            ),
+        );
 
         return $statement->rowCount();
     }

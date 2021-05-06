@@ -6,13 +6,16 @@ use AlthingiTest\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
 use Althingi\Service;
 use Althingi\Model;
+use Althingi\Events\{UpdateEvent, AddEvent};
+use Psr\EventDispatcher\EventDispatcherInterface;
+use Mockery;
+use PDO;
 
 class CommitteeSittingTest extends TestCase
 {
     use DatabaseConnection;
 
-    /** @var  \PDO */
-    private $pdo;
+    private PDO $pdo;
 
     public function testGet()
     {
@@ -71,6 +74,14 @@ class CommitteeSittingTest extends TestCase
 
     public function testCreate()
     {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function ($args) {
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
         $sitting = (new Model\CommitteeSitting())
             ->setAssemblyId(4)
             ->setCongressmanId(2)
@@ -110,7 +121,8 @@ class CommitteeSittingTest extends TestCase
         );
 
         $committeeSitting = new Service\CommitteeSitting();
-        $committeeSitting->setDriver($this->pdo);
+        $committeeSitting->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher);
         $committeeSitting->create($sitting);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
@@ -118,6 +130,14 @@ class CommitteeSittingTest extends TestCase
 
     public function testUpdate()
     {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function ($args) {
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
         $sitting = (new Model\CommitteeSitting())
             ->setCommitteeSittingId(1)
             ->setAssemblyId(4)
@@ -148,7 +168,8 @@ class CommitteeSittingTest extends TestCase
         );
 
         $committeeSitting = new Service\CommitteeSitting();
-        $committeeSitting->setDriver($this->pdo);
+        $committeeSitting->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher);
         $committeeSitting->update($sitting);
 
         $this->assertTablesEqual($expectedTable, $actualTable);

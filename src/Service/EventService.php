@@ -2,24 +2,27 @@
 
 namespace Althingi\Service;
 
-use Laminas\EventManager\EventManager;
-use Laminas\EventManager\EventManagerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 trait EventService
 {
-    protected ?EventManagerInterface $events = null;
+    private ?EventDispatcherInterface $eventDispatcher = null;
 
-    public function setEventManager(EventManagerInterface $events)
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher): self
     {
-        $this->events = $events;
+        $this->eventDispatcher = $eventDispatcher;
         return $this;
     }
 
-    public function getEventManager()
+    public function getEventDispatcher(): EventDispatcherInterface
     {
-        if (null === $this->events) {
-            $this->setEventManager(new EventManager());
-        }
-        return $this->events;
+        return $this->eventDispatcher
+            ? $this->eventDispatcher
+            : new class implements EventDispatcherInterface
+            {
+                public function dispatch(object $event)
+                {
+                }
+            };
     }
 }

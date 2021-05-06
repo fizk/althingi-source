@@ -2,22 +2,18 @@
 
 namespace AlthingiTest\Service;
 
-use Althingi\QueueActions\QueueEventsListener;
 use Althingi\Service\Party;
-use Althingi\Utils\RabbitMQBlackHoleClient;
 use AlthingiTest\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\Party as PartyModel;
 use Althingi\Model\PartyAndTime as PartyAndTimeModel;
-use Psr\Log\NullLogger;
-use Laminas\EventManager\EventManager;
+use PDO;
 
 class PartyTest extends TestCase
 {
     use DatabaseConnection;
 
-    /** @var  \PDO */
-    private $pdo;
+    private PDO $pdo;
 
     public function testGet()
     {
@@ -129,13 +125,6 @@ class PartyTest extends TestCase
 
     public function testCreate()
     {
-        $serviceEventListener = (new QueueEventsListener())
-            ->setQueue(new RabbitMQBlackHoleClient())
-            ->setLogger(new NullLogger())
-            ->setIsForced(true);
-        $eventManager = new EventManager();
-        $serviceEventListener->attach($eventManager);
-
         $party = (new PartyModel())
             ->setPartyId(4)
             ->setName('p4')
@@ -153,7 +142,6 @@ class PartyTest extends TestCase
 
         $partyService = new Party();
         $partyService->setDriver($this->pdo);
-        $partyService->setEventManager($eventManager);
         $partyService->create($party);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
@@ -161,13 +149,6 @@ class PartyTest extends TestCase
 
     public function testSave()
     {
-        $serviceEventListener = (new QueueEventsListener())
-            ->setQueue(new RabbitMQBlackHoleClient())
-            ->setLogger(new NullLogger())
-            ->setIsForced(true);
-        $eventManager = new EventManager();
-        $serviceEventListener->attach($eventManager);
-
         $party = (new PartyModel())
             ->setName('p4')
             ->setPartyId(4)
@@ -185,7 +166,6 @@ class PartyTest extends TestCase
 
         $partyService = new Party();
         $partyService->setDriver($this->pdo);
-        $partyService->setEventManager($eventManager);
         $partyService->save($party);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
@@ -193,13 +173,6 @@ class PartyTest extends TestCase
 
     public function testUpdate()
     {
-        $serviceEventListener = (new QueueEventsListener())
-            ->setQueue(new RabbitMQBlackHoleClient())
-            ->setLogger(new NullLogger())
-            ->setIsForced(true);
-        $eventManager = new EventManager();
-        $serviceEventListener->attach($eventManager);
-
         $party = (new PartyModel())
             ->setPartyId(1)
             ->setName('p1')
@@ -216,7 +189,6 @@ class PartyTest extends TestCase
 
         $partyService = new Party();
         $partyService->setDriver($this->pdo);
-        $partyService->setEventManager($eventManager);
         $partyService->update($party);
 
         $this->assertTablesEqual($expectedTable, $actualTable);

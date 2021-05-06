@@ -6,13 +6,13 @@ use Althingi\Service\Constituency;
 use AlthingiTest\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\Constituency as ConstituencyModel;
+use PDO;
 
 class ConstituencyTest extends TestCase
 {
     use DatabaseConnection;
 
-    /** @var  \PDO */
-    private $pdo;
+    private PDO $pdo;
 
     public function testGet()
     {
