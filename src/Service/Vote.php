@@ -4,11 +4,9 @@ namespace Althingi\Service;
 
 use Althingi\Model;
 use Althingi\Hydrator;
-use Althingi\Injector\DatabaseAwareInterface;
-use Althingi\Injector\EventsAwareInterface;
-use Althingi\Events\AddEvent;
-use Althingi\Events\UpdateEvent;
+use Althingi\Events\{UpdateEvent, AddEvent};
 use Althingi\Presenters\IndexableVotePresenter;
+use Althingi\Injector\{EventsAwareInterface, DatabaseAwareInterface};
 use PDO;
 use DateTime;
 
@@ -17,10 +15,6 @@ class Vote implements DatabaseAwareInterface, EventsAwareInterface
     use DatabaseService;
     use EventService;
 
-    /**
-     * @param int $id
-     * @return \Althingi\Model\Vote | null
-     */
     public function get(int $id): ? Model\Vote
     {
         $statement = $this->getDriver()->prepare('
@@ -35,8 +29,6 @@ class Vote implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param int $assemblyId
-     * @param int $issueId
      * @return \Althingi\Model\Vote[]
      */
     public function fetchByIssue(int $assemblyId, int $issueId): array
@@ -70,8 +62,6 @@ class Vote implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param int $assemblyId
-     * @param int $issueId
      * @return \Althingi\Model\DateAndCount[]
      */
     public function fetchDateFrequencyByIssue(int $assemblyId, int $issueId): array
@@ -92,7 +82,6 @@ class Vote implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param int $assemblyId
      * @return \Althingi\Model\DateAndCount[]
      */
     public function fetchFrequencyByAssembly(int $assemblyId): array
@@ -111,9 +100,6 @@ class Vote implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param int $assemblyId
-     * @param int $issueId
-     * @param int $documentId
      * @return \Althingi\Model\Vote[]
      */
     public function fetchByDocument(int $assemblyId, int $issueId, int $documentId): array
@@ -134,11 +120,6 @@ class Vote implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @todo wtf??
-     * @param $assemblyId
-     * @param $congressmanId
-     * @param \DateTime|null $from
-     * @param \DateTime|null $to
      * @return \Althingi\Model\VoteTypeAndCount[]
      */
     public function getFrequencyByAssemblyAndCongressman(
@@ -208,12 +189,9 @@ class Vote implements DatabaseAwareInterface, EventsAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
-        $this->getEventManager()
-            ->trigger(
-                AddEvent::class,
-                new AddEvent(new IndexableVotePresenter($data)),
-                ['rows' => $statement->rowCount()]
-            );
+        $this->getEventDispatcher()->dispatch(
+            new AddEvent(new IndexableVotePresenter($data), ['rows' => $statement->rowCount()]),
+        );
 
         return $this->getDriver()->lastInsertId();
     }
@@ -231,21 +209,15 @@ class Vote implements DatabaseAwareInterface, EventsAwareInterface
 
         switch ($statement->rowCount()) {
             case 1:
-                $this->getEventManager()
-                    ->trigger(
-                        AddEvent::class,
-                        new AddEvent(new IndexableVotePresenter($data)),
-                        ['rows' => $statement->rowCount()]
-                    );
+                $this->getEventDispatcher()->dispatch(
+                    new AddEvent(new IndexableVotePresenter($data), ['rows' => $statement->rowCount()]),
+                );
                 break;
             case 0:
             case 2:
-                $this->getEventManager()
-                    ->trigger(
-                        UpdateEvent::class,
-                        new UpdateEvent(new IndexableVotePresenter($data)),
-                        ['rows' => $statement->rowCount()]
-                    );
+                $this->getEventDispatcher()->dispatch(
+                    new UpdateEvent(new IndexableVotePresenter($data), ['rows' => $statement->rowCount()]),
+                );
                 break;
         }
         return $statement->rowCount();
@@ -261,12 +233,11 @@ class Vote implements DatabaseAwareInterface, EventsAwareInterface
             $this->toUpdateString('Vote', $data, "vote_id={$data->getVoteId()}")
         );
         $statement->execute($this->toSqlValues($data));
-        $this->getEventManager()
-            ->trigger(
-                UpdateEvent::class,
-                new UpdateEvent(new IndexableVotePresenter($data)),
-                ['rows' => $statement->rowCount()]
-            );
+
+        $this->getEventDispatcher()->dispatch(
+            new UpdateEvent(new IndexableVotePresenter($data), ['rows' => $statement->rowCount()]),
+        );
+
         return $statement->rowCount();
     }
 }

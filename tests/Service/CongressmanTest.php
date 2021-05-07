@@ -12,14 +12,16 @@ use Althingi\Model\President;
 use Althingi\Model\Proponent;
 use Althingi\Model\Congressman as CongressmanModel;
 use Althingi\Model\CongressmanValue as CongressmanValueModel;
-use Laminas\EventManager\EventManager;
+use PDO;
+use Mockery;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use Althingi\Events\{UpdateEvent, AddEvent};
 
 class CongressmanTest extends TestCase
 {
     use DatabaseConnection;
 
-    /** @var  \PDO */
-    private $pdo;
+    private PDO $pdo;
 
     public function testGet()
     {
@@ -166,6 +168,14 @@ class CongressmanTest extends TestCase
 
     public function testCreate()
     {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function ($args) {
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
         $congressman = (new CongressmanModel())
             ->setName('name5')
             ->setBirth(new \DateTime('2000-01-01'));
@@ -187,8 +197,8 @@ class CongressmanTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('Congressman', 'SELECT * FROM Congressman');
 
         $congressmanService = new Congressman();
-        $congressmanService->setDriver($this->pdo);
-        $congressmanService->setEventManager(new EventManager());
+        $congressmanService->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher);
         $congressmanService->create($congressman);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
@@ -196,6 +206,14 @@ class CongressmanTest extends TestCase
 
     public function testSave()
     {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function ($args) {
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
         $congressman = (new CongressmanModel())
             ->setName('name5')
             ->setBirth(new \DateTime('2000-01-01'));
@@ -217,8 +235,8 @@ class CongressmanTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('Congressman', 'SELECT * FROM Congressman');
 
         $congressmanService = new Congressman();
-        $congressmanService->setDriver($this->pdo);
-        $congressmanService->setEventManager(new EventManager());
+        $congressmanService->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher);
         $congressmanService->save($congressman);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
@@ -226,6 +244,14 @@ class CongressmanTest extends TestCase
 
     public function testUpdate()
     {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function ($args) {
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
         $congressman = (new CongressmanModel())
             ->setCongressmanId(1)
             ->setName('hundur')
@@ -246,8 +272,8 @@ class CongressmanTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('Congressman', 'SELECT * FROM Congressman');
 
         $congressmanService = new Congressman();
-        $congressmanService->setDriver($this->pdo);
-        $congressmanService->setEventManager(new EventManager());
+        $congressmanService->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher);
         $congressmanService->update($congressman);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
@@ -255,6 +281,14 @@ class CongressmanTest extends TestCase
 
     public function testDelete()
     {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->never()
+            // ->withArgs(function ($args) {
+            //     return $args instanceof UpdateEvent;
+            // })
+            ->getMock();
+
         $expectedTable = $this->createArrayDataSet([
             'Congressman' => [
                 ['congressman_id' => 2, 'name' => 'name2',
@@ -268,7 +302,8 @@ class CongressmanTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('Congressman', 'SELECT * FROM Congressman');
 
         $congressmanService = new Congressman();
-        $congressmanService->setDriver($this->pdo);
+        $congressmanService->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher);
         $congressmanService->delete(1);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
@@ -408,5 +443,10 @@ class CongressmanTest extends TestCase
                 ]
             ]
         ]);
+    }
+
+    public function tearDown(): void
+    {
+        Mockery::close();
     }
 }

@@ -7,13 +7,13 @@ use Althingi\Model\VoteItemAndAssemblyIssue as VoteItemAndAssemblyIssueModel;
 use Althingi\Service\VoteItem;
 use AlthingiTest\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
+use PDO;
 
 class VoteItemTest extends TestCase
 {
     use DatabaseConnection;
 
-    /** @var  \PDO */
-    private $pdo;
+    private PDO $pdo;
 
     public function testGet()
     {

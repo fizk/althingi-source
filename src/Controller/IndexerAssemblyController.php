@@ -7,26 +7,23 @@ use Althingi\Utils\ConsoleResponse;
 use Althingi\Injector\ServiceAssemblyAwareInterface;
 use Althingi\Presenters\IndexableAssemblyPresenter;
 use Althingi\Service\Assembly;
-use Laminas\EventManager\EventManager;
-use Laminas\EventManager\EventManagerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Althingi\Injector\EventsAwareInterface;
 
+use Althingi\Service\EventService;
+
 class IndexerAssemblyController implements ServiceAssemblyAwareInterface, EventsAwareInterface
 {
+    use EventService;
     private Assembly $assemblyService;
-    protected ?EventManagerInterface $events = null;
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         foreach ($this->assemblyService->fetchAll() as $model) {
-            $this->getEventManager()
-                ->trigger(
-                    AddEvent::class,
-                    new AddEvent(new IndexableAssemblyPresenter($model)),
-                    ['rows' => 1]
-                );
+            $this->getEventDispatcher()->dispatch(
+                new AddEvent(new IndexableAssemblyPresenter($model), ['rows' => 1]),
+            );
         }
 
         return (new ConsoleResponse(__CLASS__));
@@ -36,19 +33,5 @@ class IndexerAssemblyController implements ServiceAssemblyAwareInterface, Events
     {
         $this->assemblyService = $assembly;
         return $this;
-    }
-
-    public function setEventManager(EventManagerInterface $events)
-    {
-        $this->events = $events;
-        return $this;
-    }
-
-    public function getEventManager()
-    {
-        if (null === $this->events) {
-            $this->setEventManager(new EventManager());
-        }
-        return $this->events;
     }
 }

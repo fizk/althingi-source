@@ -2,29 +2,20 @@
 
 namespace Althingi\Service;
 
-use Althingi\Injector\DatabaseAwareInterface;
-use Althingi\Injector\EventsAwareInterface;
 use Althingi\Model;
 use Althingi\Hydrator;
-use Althingi\Events\AddEvent;
-use Althingi\Events\UpdateEvent;
+use Althingi\Events\{UpdateEvent, AddEvent};
 use Althingi\Presenters\IndexableIssueLinkPresenter;
+use Althingi\Injector\{EventsAwareInterface, DatabaseAwareInterface};
 use PDO;
 
-/**
- * Class Assembly
- * @package Althingi\Service
- */
 class IssueLink implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
     use EventService;
 
     /**
-     * @param int $assemblyId
-     * @param int $issueId
-     * @param string $category
-     * @return array
+     * @return \Althingi\Model\Issue
      */
     public function fetchAll(int $assemblyId, int $issueId, string $category = 'A'): array
     {
@@ -47,12 +38,6 @@ class IssueLink implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    /**
-     * Create one entry.
-     *
-     * @param \Althingi\Model\IssueLink $data
-     * @return int affected rows
-     */
     public function create(Model\IssueLink $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -60,22 +45,13 @@ class IssueLink implements DatabaseAwareInterface, EventsAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
-        $this->getEventManager()
-            ->trigger(
-                AddEvent::class,
-                new AddEvent(new IndexableIssueLinkPresenter($data)),
-                ['rows' => $statement->rowCount()]
-            );
+        $this->getEventDispatcher()->dispatch(
+            new AddEvent(new IndexableIssueLinkPresenter($data), ['rows' => $statement->rowCount()]),
+        );
 
         return $this->getDriver()->lastInsertId();
     }
 
-    /**
-     * Save one entry.
-     *
-     * @param \Althingi\Model\IssueLink $data
-     * @return int affected rows
-     */
     public function save(Model\IssueLink $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -85,32 +61,20 @@ class IssueLink implements DatabaseAwareInterface, EventsAwareInterface
 
         switch ($statement->rowCount()) {
             case 1:
-                $this->getEventManager()
-                    ->trigger(
-                        AddEvent::class,
-                        new AddEvent(new IndexableIssueLinkPresenter($data)),
-                        ['rows' => $statement->rowCount()]
-                    );
+                $this->getEventDispatcher()->dispatch(
+                    new AddEvent(new IndexableIssueLinkPresenter($data), ['rows' => $statement->rowCount()]),
+                );
                 break;
             case 0:
             case 2:
-                $this->getEventManager()
-                    ->trigger(
-                        UpdateEvent::class,
-                        new UpdateEvent(new IndexableIssueLinkPresenter($data)),
-                        ['rows' => $statement->rowCount()]
-                    );
+                $this->getEventDispatcher()->dispatch(
+                    new UpdateEvent(new IndexableIssueLinkPresenter($data), ['rows' => $statement->rowCount()]),
+                );
                 break;
         }
         return $statement->rowCount();
     }
 
-    /**
-     * Update one entry.
-     *
-     * @param \Althingi\Model\IssueLink|object $data
-     * @return int affected rows
-     */
     public function update(Model\IssueLink $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -127,12 +91,9 @@ class IssueLink implements DatabaseAwareInterface, EventsAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
-        $this->getEventManager()
-            ->trigger(
-                UpdateEvent::class,
-                new UpdateEvent(new IndexableIssueLinkPresenter($data)),
-                ['rows' => $statement->rowCount()]
-            );
+        $this->getEventDispatcher()->dispatch(
+            new UpdateEvent(new IndexableIssueLinkPresenter($data), ['rows' => $statement->rowCount()]),
+        );
 
         return $statement->rowCount();
     }

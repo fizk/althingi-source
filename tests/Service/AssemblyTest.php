@@ -5,15 +5,18 @@ namespace AlthingiTest\Service;
 use AlthingiTest\DatabaseConnection;
 use Althingi\Service\Assembly;
 use Althingi\Service\President;
-use PHPUnit\Framework\TestCase;
 use Althingi\Model\Assembly as AssemblyModel;
+use Althingi\Events\{UpdateEvent, AddEvent};
+use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use Mockery;
+use PDO;
 
 class AssemblyTest extends TestCase
 {
     use DatabaseConnection;
 
-    /** @var  \PDO */
-    private $pdo;
+    private PDO $pdo;
 
     public function testGet()
     {
@@ -124,6 +127,14 @@ class AssemblyTest extends TestCase
 
     public function testCreate()
     {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function($args) {
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
         $assembly = (new AssemblyModel())
             ->setAssemblyId(10)
             ->setFrom(new \DateTime('2000-01-01'));
@@ -145,7 +156,8 @@ class AssemblyTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('Assembly', 'SELECT * FROM Assembly');
 
         $assemblyService = new Assembly();
-        $assemblyService->setDriver($this->pdo);
+        $assemblyService->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher);
         $assemblyService->create($assembly);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
@@ -153,6 +165,14 @@ class AssemblyTest extends TestCase
 
     public function testSaveUpdate()
     {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function ($args) {
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
         $assembly = (new AssemblyModel())
             ->setAssemblyId(1)
             ->setFrom(new \DateTime('2000-01-01'));
@@ -173,7 +193,8 @@ class AssemblyTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('Assembly', 'SELECT * FROM Assembly');
 
         $assemblyService = new Assembly();
-        $assemblyService->setDriver($this->pdo);
+        $assemblyService->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher);
         $affectedRows = $assemblyService->save($assembly);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
@@ -182,6 +203,14 @@ class AssemblyTest extends TestCase
 
     public function testSaveCreate()
     {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function ($args) {
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
         $assembly = (new AssemblyModel())
             ->setAssemblyId(10)
             ->setFrom(new \DateTime('2000-01-01'));
@@ -203,7 +232,8 @@ class AssemblyTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('Assembly', 'SELECT * FROM Assembly');
 
         $assemblyService = new Assembly();
-        $assemblyService->setDriver($this->pdo);
+        $assemblyService->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher);
         $affectedRows = $assemblyService->save($assembly);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
@@ -212,13 +242,22 @@ class AssemblyTest extends TestCase
 
     public function testUpdate()
     {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function ($args) {
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
         $assembly = (new AssemblyModel())
             ->setAssemblyId(1)
             ->setFrom(new \DateTime('2000-01-01'))
             ->setTo(new \DateTime('2000-02-01'));
 
         $assemblyService = new Assembly();
-        $assemblyService->setDriver($this->pdo);
+        $assemblyService->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher);
         $assemblyService->update($assembly);
 
         $expectedTable = $this->createArrayDataSet([
@@ -262,5 +301,10 @@ class AssemblyTest extends TestCase
                 ['assembly_id' => 9, 'from' => '2000-01-01', 'to' => null],
             ],
         ]);
+    }
+
+    public function tearDown(): void
+    {
+        Mockery::close();
     }
 }

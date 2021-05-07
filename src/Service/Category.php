@@ -2,25 +2,15 @@
 
 namespace Althingi\Service;
 
-use Althingi\Hydrator;
 use Althingi\Model;
+use Althingi\Hydrator;
 use Althingi\Injector\DatabaseAwareInterface;
 use PDO;
 
-/**
- * Class Party
- * @package Althingi\Service
- */
 class Category implements DatabaseAwareInterface
 {
     use DatabaseService;
 
-    /**
-     * Get one party.
-     *
-     * @param int $id
-     * @return \Althingi\Model\Category
-     */
     public function get(int $id): ? Model\Category
     {
         $statement = $this->getDriver()->prepare('
@@ -48,7 +38,6 @@ class Category implements DatabaseAwareInterface
     }
 
     /**
-     * @param $assemblyId
      * @return \Althingi\Model\CategoryAndCount[]
      */
     public function fetchByAssembly(int $assemblyId): array
@@ -69,8 +58,6 @@ class Category implements DatabaseAwareInterface
     }
 
     /**
-     * @param int $assemblyId
-     * @param int $issueId
      * @return \Althingi\Model\Category[]
      */
     public function fetchByAssemblyAndIssue(int $assemblyId, int $issueId): array
@@ -91,12 +78,6 @@ class Category implements DatabaseAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    /**
-     * @param int $assemblyId
-     * @param int $issueId
-     * @param int $categoryId
-     * @return \Althingi\Model\Category|null
-     */
     public function fetchByAssemblyIssueAndCategory(int $assemblyId, int $issueId, int $categoryId): ? Model\Category
     {
         $statement = $this->getDriver()->prepare('
@@ -119,10 +100,6 @@ class Category implements DatabaseAwareInterface
             : null;
     }
 
-    /**
-     * @param \Althingi\Model\Category $data
-     * @return int
-     */
     public function create(Model\Category $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -133,10 +110,6 @@ class Category implements DatabaseAwareInterface
         return $this->getDriver()->lastInsertId();
     }
 
-    /**
-     * @param \Althingi\Model\Category $data
-     * @return int
-     */
     public function save(Model\Category $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -147,10 +120,6 @@ class Category implements DatabaseAwareInterface
         return $statement->rowCount();
     }
 
-    /**
-     * @param \Althingi\Model\Category | object $data
-     * @return int
-     */
     public function update(Model\Category $data): int
     {
         $statement = $this->getDriver()->prepare(

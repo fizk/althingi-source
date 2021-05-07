@@ -4,11 +4,9 @@ namespace Althingi\Service;
 
 use Althingi\Model;
 use Althingi\Hydrator;
-use Althingi\Injector\DatabaseAwareInterface;
-use Althingi\Injector\EventsAwareInterface;
-use Althingi\Events\AddEvent;
-use Althingi\Events\UpdateEvent;
+use Althingi\Events\{UpdateEvent, AddEvent};
 use Althingi\Presenters\IndexableVoteItemPresenter;
+use Althingi\Injector\{EventsAwareInterface, DatabaseAwareInterface};
 use PDO;
 
 class VoteItem implements DatabaseAwareInterface, EventsAwareInterface
@@ -16,10 +14,6 @@ class VoteItem implements DatabaseAwareInterface, EventsAwareInterface
     use DatabaseService;
     use EventService;
 
-    /**
-     * @param int $id
-     * @return \Althingi\Model\VoteItem|null
-     */
     public function get(int $id): ? Model\VoteItem
     {
         $statement = $this->getDriver()->prepare(
@@ -34,9 +28,6 @@ class VoteItem implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * Get all vote-items by vote-id
-     *
-     * @param int $id
      * @return \Althingi\Model\VoteItem[]
      */
     public function fetchByVote(int $id): array
@@ -54,10 +45,6 @@ class VoteItem implements DatabaseAwareInterface, EventsAwareInterface
     /**
      * If you don't have the vote-item's unique ID, you can get an individual
      * vote-item by the vote-id and congressman-id, since that is unique.
-     *
-     * @param int $voteId
-     * @param int $congressmanId
-     * @return \Althingi\Model\VoteItemAndAssemblyIssue|null
      */
     public function getByVote(int $voteId, int $congressmanId): ? Model\VoteItemAndAssemblyIssue
     {
@@ -75,8 +62,6 @@ class VoteItem implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param int $assemblyId
-     * @param int $congressmanId
      * @return \Althingi\Model\VoteItem[]
      */
     public function fetchVoteByAssemblyAndCongressmanAndCategory(int $assemblyId, int $congressmanId): array
@@ -100,12 +85,8 @@ class VoteItem implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * Create a vote-item.
-     *
      * @todo should return the auto_increment value but currently
      *  the table doesn't have a auto_increment value.
-     * @param \Althingi\Model\VoteItem $data
-     * @return int
      */
     public function create(Model\VoteItem $data): int
     {
@@ -113,12 +94,10 @@ class VoteItem implements DatabaseAwareInterface, EventsAwareInterface
             $this->toInsertString('VoteItem', $data)
         );
         $statement->execute($this->toSqlValues($data));
-        $this->getEventManager()
-            ->trigger(
-                AddEvent::class,
-                new AddEvent(new IndexableVoteItemPresenter($data)),
-                ['rows' => $statement->rowCount()]
-            );
+
+        $this->getEventDispatcher()->dispatch(
+            new AddEvent(new IndexableVoteItemPresenter($data), ['rows' => $statement->rowCount()]),
+        );
 
         return $this->getDriver()->lastInsertId();
     }
@@ -132,30 +111,20 @@ class VoteItem implements DatabaseAwareInterface, EventsAwareInterface
 
         switch ($statement->rowCount()) {
             case 1:
-                $this->getEventManager()
-                    ->trigger(
-                        AddEvent::class,
-                        new AddEvent(new IndexableVoteItemPresenter($data)),
-                        ['rows' => $statement->rowCount()]
-                    );
+                $this->getEventDispatcher()->dispatch(
+                    new AddEvent(new IndexableVoteItemPresenter($data), ['rows' => $statement->rowCount()]),
+                );
                 break;
             case 0:
             case 2:
-                $this->getEventManager()
-                    ->trigger(
-                        UpdateEvent::class,
-                        new UpdateEvent(new IndexableVoteItemPresenter($data)),
-                        ['rows' => $statement->rowCount()]
-                    );
+                $this->getEventDispatcher()->dispatch(
+                    new UpdateEvent(new IndexableVoteItemPresenter($data), ['rows' => $statement->rowCount()]),
+                );
                 break;
         }
         return $statement->rowCount();
     }
 
-    /**
-     * @param \Althingi\Model\VoteItem | object $data
-     * @return int
-     */
     public function update(Model\VoteItem $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -163,12 +132,10 @@ class VoteItem implements DatabaseAwareInterface, EventsAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
-        $this->getEventManager()
-            ->trigger(
-                UpdateEvent::class,
-                new UpdateEvent(new IndexableVoteItemPresenter($data)),
-                ['rows' => $statement->rowCount()]
-            );
+        $this->getEventDispatcher()->dispatch(
+            new UpdateEvent(new IndexableVoteItemPresenter($data), ['rows' => $statement->rowCount()]),
+        );
+
         return $statement->rowCount();
     }
 }

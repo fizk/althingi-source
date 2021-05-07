@@ -6,13 +6,13 @@ use Althingi\Service\Plenary;
 use AlthingiTest\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\Plenary as PlenaryModel;
+use PDO;
 
 class PlenaryTest extends TestCase
 {
     use DatabaseConnection;
 
-    /** @var  \PDO */
-    private $pdo;
+    private PDO $pdo;
 
     public function testGet()
     {

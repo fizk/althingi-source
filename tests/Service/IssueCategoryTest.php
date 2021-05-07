@@ -7,13 +7,13 @@ use Althingi\Model\IssueCategoryAndTime;
 use Althingi\Service\IssueCategory;
 use AlthingiTest\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
+use PDO;
 
 class IssueCategoryTest extends TestCase
 {
     use DatabaseConnection;
 
-    /** @var  \PDO */
-    private $pdo;
+    private PDO $pdo;
 
     public function testGetIssueCategory()
     {

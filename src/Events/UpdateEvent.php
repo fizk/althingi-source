@@ -4,34 +4,61 @@ namespace Althingi\Events;
 
 use Althingi\Presenters\IndexablePresenter;
 use Althingi\Presenters\IndexablePresenterAwareInterface;
-use Laminas\EventManager\Event;
 
-class UpdateEvent extends Event implements IndexablePresenterAwareInterface
+class UpdateEvent implements EventInterface, IndexablePresenterAwareInterface
 {
-    /** @var  \Althingi\Presenters\IndexablePresenter */
-    private $presenter;
+    private IndexablePresenter $presenter;
+    private string $name;
+    private array $params;
 
-    public function __construct(IndexablePresenter $presenter)
+    public function __construct(IndexablePresenter $presenter, $params = [])
     {
-        parent::__construct('update', $this);
+        $this->setName('update');
+        $this->setParams($params);
         $this->setPresenter($presenter);
     }
 
-    /**
-     * @return IndexablePresenter
-     */
     public function getPresenter(): IndexablePresenter
     {
         return $this->presenter;
     }
 
-    /**
-     * @param IndexablePresenter $presenter
-     * @return IndexablePresenterAwareInterface
-     */
     public function setPresenter(IndexablePresenter $presenter): IndexablePresenterAwareInterface
     {
         $this->presenter = $presenter;
         return $this;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    public function getParams(): array
+    {
+        return $this->params;
+    }
+
+    public function setParams(array $params): self
+    {
+        $this->params = $params;
+        return $this;
+    }
+
+    public function __toString()
+    {
+        return implode(' ', [
+            'UpdateEvent',
+            $this->presenter->getIndex(),
+            $this->presenter->getIdentifier(),
+            $this->presenter->getType(),
+            get_class($this->presenter->getModel()),
+        ]);
     }
 }

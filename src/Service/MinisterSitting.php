@@ -2,31 +2,19 @@
 
 namespace Althingi\Service;
 
-use Althingi\Injector\DatabaseAwareInterface;
-use Althingi\Injector\EventsAwareInterface;
 use Althingi\Model;
 use Althingi\Hydrator;
-use Althingi\Events\AddEvent;
-use Althingi\Events\UpdateEvent;
+use Althingi\Events\{UpdateEvent, AddEvent};
 use Althingi\Presenters\IndexableMinisterSittingPresenter;
+use Althingi\Injector\{EventsAwareInterface, DatabaseAwareInterface};
 use PDO;
 use DateTime;
 
-/**
- * Class Assembly
- * @package Althingi\Service
- */
 class MinisterSitting implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
     use EventService;
 
-    /**
-     * Get one MinisterSitting.
-     *
-     * @param $id
-     * @return null|\Althingi\Model\MinisterSitting
-     */
     public function get(int $id): ? Model\MinisterSitting
     {
         $statement = $this->getDriver()->prepare("select * from `MinisterSitting` where minister_sitting_id = :id");
@@ -39,7 +27,6 @@ class MinisterSitting implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param int $assemblyId
      * @return \Althingi\Model\MinisterSitting[]
      */
     public function fetchByAssembly(int $assemblyId): array
@@ -56,8 +43,6 @@ class MinisterSitting implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param int $assemblyId
-     * @param int $congressmanId
      * @return \Althingi\Model\MinisterSitting[]
      */
     public function fetchByCongressmanAssembly(int $assemblyId, int $congressmanId)
@@ -77,12 +62,6 @@ class MinisterSitting implements DatabaseAwareInterface, EventsAwareInterface
         }, $sittings);
     }
 
-    /**
-     * Create one entry.
-     *
-     * @param \Althingi\Model\MinisterSitting $data
-     * @return int affected rows
-     */
     public function create(Model\MinisterSitting $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -92,22 +71,14 @@ class MinisterSitting implements DatabaseAwareInterface, EventsAwareInterface
 
         $id = $this->getDriver()->lastInsertId();
         $data->setMinisterSittingId($id);
-        $this->getEventManager()
-            ->trigger(
-                AddEvent::class,
-                new AddEvent(new IndexableMinisterSittingPresenter($data)),
-                ['rows' => $statement->rowCount()]
-            );
+
+        $this->getEventDispatcher()->dispatch(
+            new AddEvent(new IndexableMinisterSittingPresenter($data), ['rows' => $statement->rowCount()]),
+        );
 
         return $id;
     }
 
-    /**
-     * Save one entry.
-     *
-     * @param \Althingi\Model\MinisterSitting $data
-     * @return int affected rows
-     */
     public function save(Model\MinisterSitting $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -117,32 +88,20 @@ class MinisterSitting implements DatabaseAwareInterface, EventsAwareInterface
 
         switch ($statement->rowCount()) {
             case 1:
-                $this->getEventManager()
-                    ->trigger(
-                        AddEvent::class,
-                        new AddEvent(new IndexableMinisterSittingPresenter($data)),
-                        ['rows' => $statement->rowCount()]
-                    );
+                $this->getEventDispatcher()->dispatch(
+                    new AddEvent(new IndexableMinisterSittingPresenter($data), ['rows' => $statement->rowCount()]),
+                );
                 break;
             case 0:
             case 2:
-                $this->getEventManager()
-                    ->trigger(
-                        UpdateEvent::class,
-                        new UpdateEvent(new IndexableMinisterSittingPresenter($data)),
-                        ['rows' => $statement->rowCount()]
-                    );
+                $this->getEventDispatcher()->dispatch(
+                    new UpdateEvent(new IndexableMinisterSittingPresenter($data), ['rows' => $statement->rowCount()]),
+                );
                 break;
         }
         return $statement->rowCount();
     }
 
-    /**
-     * Update one entry.
-     *
-     * @param \Althingi\Model\MinisterSitting|object $data
-     * @return int affected rows
-     */
     public function update(Model\MinisterSitting $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -150,23 +109,13 @@ class MinisterSitting implements DatabaseAwareInterface, EventsAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
-        $this->getEventManager()
-            ->trigger(
-                UpdateEvent::class,
-                new UpdateEvent(new IndexableMinisterSittingPresenter($data)),
-                ['rows' => $statement->rowCount()]
-            );
+        $this->getEventDispatcher()->dispatch(
+            new UpdateEvent(new IndexableMinisterSittingPresenter($data), ['rows' => $statement->rowCount()]),
+        );
 
         return $statement->rowCount();
     }
 
-    /**
-     * Delete one Assembly.
-     * Should return 1, for one assembly deleted.
-     *
-     * @param int $id
-     * @return int
-     */
     public function delete(int $id): int
     {
         $statement = $this->getDriver()->prepare(
@@ -178,10 +127,6 @@ class MinisterSitting implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param int $assemblyId
-     * @param int $ministryId
-     * @param $congressmanId
-     * @param DateTime $from
      * @return mixed
      */
     public function getIdentifier(int $assemblyId, int $ministryId, $congressmanId, DateTime $from)

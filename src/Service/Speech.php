@@ -4,17 +4,11 @@ namespace Althingi\Service;
 
 use Althingi\Hydrator;
 use Althingi\Model;
-use Althingi\Injector\DatabaseAwareInterface;
-use Althingi\Injector\EventsAwareInterface;
+use Althingi\Events\{UpdateEvent, AddEvent};
 use Althingi\Presenters\IndexableSpeechPresenter;
-use Althingi\Events\AddEvent;
-use Althingi\Events\UpdateEvent;
+use Althingi\Injector\{EventsAwareInterface, DatabaseAwareInterface};
 use PDO;
 
-/**
- * Class Speech
- * @package Althingi\Service
- */
 class Speech implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
@@ -22,12 +16,6 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
 
     const MAX_ROW_COUNT = '18446744073709551615';
 
-    /**
-     * Get one speech item.
-     *
-     * @param string $id
-     * @return \Althingi\Model\Speech
-     */
     public function get(string $id): ? Model\Speech
     {
         $statement = $this->getDriver()->prepare(
@@ -41,9 +29,6 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
             : null ;
     }
 
-    /**
-     * @return \Althingi\Model\Speech | null
-     */
     public function getLastActive(): ? Model\Speech
     {
         $statement = $this->getDriver()->prepare(
@@ -76,9 +61,6 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
      *  -------------------------------------
      *  fjármála- og efnahagsráðherra   58084
      *
-     * @param $assemblyId
-     * @param $congressmanId
-     * @return object
      */
     public function getFrequencyByAssemblyAndCongressman(int $assemblyId, int $congressmanId): \stdClass
     {
@@ -146,14 +128,6 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * Fetch all speeches by issue.
-     *
-     * @param int $assemblyId
-     * @param int $issueId
-     * @param int $offset
-     * @param int $size
-     * @param int $words
-     * @param string $category
      * @return \Althingi\Model\SpeechAndPosition[]
      */
     public function fetchByIssue(
@@ -210,11 +184,6 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
      * This method will return entries from 75 to 100. As 75 is the closest number dividable by 25 (that
      * will contain 78 if 25 is added to it). Further more 100 is the distance from 75 in a chunk size of 25.
      *
-     * @param string $id
-     * @param int $assemblyId
-     * @param int $issueId
-     * @param int $size
-     * @param string $category
      * @return \Althingi\Model\SpeechAndPosition[]
      */
     public function fetch(string $id, int $assemblyId, int $issueId, ?int $size = 25, ?string $category = 'A'): array
@@ -278,14 +247,6 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
         return;
     }
 
-    /**
-     * Count all speeches by issue.
-     *
-     * @param int $assemblyId
-     * @param int $issueId
-     * @param string $category
-     * @return int
-     */
     public function countByIssue(int $assemblyId, int $issueId, ?string $category = 'A'): int
     {
         $statement = $this->getDriver()->prepare("
@@ -300,9 +261,6 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
      * Will sum up speech time per issue and return the frequency
      * on a month bases.
      *
-     * @param $assemblyId
-     * @param $issueId
-     * @param $category
      * @return \Althingi\Model\DateAndCount[]
      */
     public function fetchFrequencyByIssue(int $assemblyId, int $issueId, ?string $category = 'A'): array
@@ -334,8 +292,6 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
      *
      * Return date and time in seconds.
      *
-     * @param int $assemblyId
-     * @param array $category
      * @return \Althingi\Model\DateAndCount[]
      */
     public function fetchFrequencyByAssembly(int $assemblyId, ?array $category = ['A']): array
@@ -360,12 +316,6 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    /**
-     * @param int $assemblyId
-     * @param int $congressmanId
-     * @param array $category
-     * @return int
-     */
     public function countTotalTimeByAssemblyAndCongressman(
         int $assemblyId,
         int $congressmanId,
@@ -393,13 +343,6 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
         return (int) $statement->fetchColumn(0);
     }
 
-    /**
-     * Create one Speech. Accepts object from
-     * corresponding Form.
-     *
-     * @param \Althingi\Model\Speech $data
-     * @return string
-     */
     public function create(Model\Speech $data): string
     {
         $data->setWordCount(str_word_count($data->getText()));
@@ -408,20 +351,13 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
-        $this->getEventManager()
-            ->trigger(
-                AddEvent::class,
-                new AddEvent(new IndexableSpeechPresenter($data)),
-                ['rows' => $statement->rowCount()]
-            );
+        $this->getEventDispatcher()->dispatch(
+            new AddEvent(new IndexableSpeechPresenter($data), ['rows' => $statement->rowCount()]),
+        );
 
         return $this->getDriver()->lastInsertId();
     }
 
-    /**
-     * @param \Althingi\Model\Speech $data
-     * @return int
-     */
     public function save(Model\Speech $data): int
     {
         $data->setWordCount(str_word_count($data->getText()));
@@ -430,32 +366,20 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
 
         switch ($statement->rowCount()) {
             case 1:
-                $this->getEventManager()
-                    ->trigger(
-                        AddEvent::class,
-                        new AddEvent(new IndexableSpeechPresenter($data)),
-                        ['rows' => $statement->rowCount()]
-                    );
+                $this->getEventDispatcher()->dispatch(
+                    new AddEvent(new IndexableSpeechPresenter($data), ['rows' => $statement->rowCount()]),
+                );
                 break;
             case 0:
             case 2:
-                $this->getEventManager()
-                    ->trigger(
-                        UpdateEvent::class,
-                        new UpdateEvent(new IndexableSpeechPresenter($data)),
-                        ['rows' => $statement->rowCount()]
-                    );
+                $this->getEventDispatcher()->dispatch(
+                    new UpdateEvent(new IndexableSpeechPresenter($data), ['rows' => $statement->rowCount()]),
+                );
                 break;
         }
         return $statement->rowCount();
     }
 
-    /**
-     * Update one entry.
-     *
-     * @param \Althingi\Model\Speech | object $data
-     * @return int
-     */
     public function update(Model\Speech $data): int
     {
         $data->setWordCount(str_word_count($data->getText()));
@@ -464,12 +388,9 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
-        $this->getEventManager()
-            ->trigger(
-                UpdateEvent::class,
-                new UpdateEvent(new IndexableSpeechPresenter($data)),
-                ['rows' => $statement->rowCount()]
-            );
+        $this->getEventDispatcher()->dispatch(
+            new UpdateEvent(new IndexableSpeechPresenter($data), ['rows' => $statement->rowCount()]),
+        );
 
         return $statement->rowCount();
     }

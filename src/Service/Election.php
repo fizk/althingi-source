@@ -7,20 +7,10 @@ use Althingi\Hydrator;
 use Althingi\Injector\DatabaseAwareInterface;
 use PDO;
 
-/**
- * Class Assembly
- * @package Althingi\Service
- */
 class Election implements DatabaseAwareInterface
 {
     use DatabaseService;
 
-    /**
-     * Get one Election.
-     *
-     * @param int $id
-     * @return null|\Althingi\Model\Election
-     */
     public function get(int $id): ? Model\Election
     {
         $statement = $this->getDriver()->prepare("
@@ -34,12 +24,6 @@ class Election implements DatabaseAwareInterface
             : null;
     }
 
-    /**
-     * Get one Election by Assembly.
-     *
-     * @param int $assemblyId
-     * @return null|\Althingi\Model\Election
-     */
     public function getByAssembly(int $assemblyId): ? Model\Election
     {
         $statement = $this->getDriver()->prepare("

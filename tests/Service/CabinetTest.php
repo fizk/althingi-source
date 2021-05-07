@@ -6,13 +6,13 @@ use Althingi\Service\Cabinet;
 use AlthingiTest\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\Cabinet as CabinetModel;
+use PDO;
 
 class CabinetTest extends TestCase
 {
     use DatabaseConnection;
 
-    /** @var  \PDO */
-    private $pdo;
+    private PDO $pdo;
 
     public function additionProvider()
     {

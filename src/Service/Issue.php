@@ -4,11 +4,9 @@ namespace Althingi\Service;
 
 use Althingi\Model;
 use Althingi\Hydrator;
-use Althingi\Injector\DatabaseAwareInterface;
-use Althingi\Injector\EventsAwareInterface;
+use Althingi\Events\{UpdateEvent, AddEvent};
 use Althingi\Presenters\IndexableIssuePresenter;
-use Althingi\Events\AddEvent;
-use Althingi\Events\UpdateEvent;
+use Althingi\Injector\{EventsAwareInterface, DatabaseAwareInterface};
 use InvalidArgumentException;
 use PDO;
 
@@ -32,17 +30,6 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
     const STATUS_APPROVED       = 'Samþykkt sem lög frá Alþingi';
     const STATUS_TO_GOVERNMENT  = 'Vísað til ríkisstjórnar';
 
-    /**
-     * Get one Issue along with some metadata.
-     *
-     * Issue is a combined key, so you need assembly and issue
-     * number.
-     *
-     * @param $issue_id
-     * @param $assembly_id
-     * @param $category
-     * @return null|\Althingi\Model\Issue
-     */
     public function get(int $issue_id, int $assembly_id, $category = 'A'): ? Model\Issue
     {
         $issueStatement = $this->getDriver()->prepare(
@@ -66,7 +53,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
 
     /**
      * This is a Generator
-     * @param $category
+     *
      * @return \Althingi\Model\Issue[] | void
      */
     public function fetchAll(array $category = ['A'])
@@ -89,14 +76,6 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
 
     /**
      * Get one Issue along with some metadata.
-     *
-     * Issue is a combined key, so you need assembly and issue
-     * number.
-     *
-     * @param $issue_id
-     * @param $assembly_id
-     * @param $category
-     * @return null|\Althingi\Model\IssueAndDate
      */
     public function getWithDate(int $issue_id, int $assembly_id, $category = 'A'): ? Model\IssueAndDate
     {
@@ -133,17 +112,6 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * Get all Issues per Assembly.
-     *
-     * Result set is always restricted by size.
-     *
-     * @param int $assembly_id
-     * @param int $offset
-     * @param int $size
-     * @param string $order
-     * @param array $type
-     * @param array $categoryType
-     * @param array $category
      * @return \Althingi\Model\IssueAndDate[]
      */
     public function fetchByAssembly(
@@ -210,16 +178,6 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-
-    /**
-     * Count all Issues per Assembly.
-     *
-     * @param int $id Assembly ID
-     * @param array $type
-     * @param array $categoryTypes
-     * @param array $category
-     * @return int count
-     */
     public function countByAssembly(int $id, array $type = [], array $categoryTypes = [], ?array $category = ['A']): int
     {
         $typeFilterString = $this->typeFilterString($type);
@@ -246,10 +204,6 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * Fetch all issues that a given congressman has
-     * been the fourman of.
-     *
-     * @param $id
      * @return \Althingi\Model\Issue[]
      */
     public function fetchByCongressman(int $id): array
@@ -270,8 +224,6 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
     /**
      * This will only return A-issue.
      *
-     * @param int $assemblyId
-     * @param int $congressmanId
      * @return \Althingi\Model\Issue[]
      */
     public function fetchByAssemblyAndCongressman(int $assemblyId, int $congressmanId): array
@@ -295,8 +247,6 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param int $assemblyId
-     * @param int $congressmanId
      * @return \Althingi\Model\CongressmanIssue[]
      */
     public function fetchByAssemblyAndCongressmanSummary(int $assemblyId, int $congressmanId): array
@@ -335,8 +285,6 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
      *
      * Group and count `type` and `status` by assembly.
      *
-     * @param int $assemblyId
-     * @param string $category
      * @return \Althingi\Model\AssemblyStatus[]
      */
     public function fetchCountByCategoryAndStatus(int $assemblyId, string $category = 'A'): array
@@ -380,7 +328,6 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
     /**
      * Count status of Government bills.
      *
-     * @param int $assemblyId
      * @return \Althingi\Model\AssemblyStatus[]
      */
     public function fetchCountByGovernment(int $assemblyId): array
@@ -404,7 +351,6 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
     /**
      * Group and count `status` by assembly where type is `l`.
      *
-     * @param $id
      * @return \Althingi\Model\IssueTypeStatus[]
      */
     public function fetchBillStatisticsByAssembly(int $id): array
@@ -424,7 +370,6 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param $id
      * @return \Althingi\Model\IssueTypeStatus[]
      */
     public function fetchNonGovernmentBillStatisticsByAssembly(int $id): array
@@ -449,7 +394,6 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
      * Group and count `status` where `type_subname` is
      * `stjórnarfrumvarp`.
      *
-     * @param $id
      * @return \Althingi\Model\IssueTypeStatus[]
      */
     public function fetchGovernmentBillStatisticsByAssembly(int $id): array
@@ -469,9 +413,6 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param int $assemblyId
-     * @param $issueId
-     * @param $category
      * @return \Althingi\Model\Status[]
      */
     public function fetchProgress(int $assemblyId, int $issueId, string $category = 'A'): array
@@ -568,10 +509,6 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
     /**
      * Get all issues from an assembly plus accumulated speech times.
      *
-     * @param int $assemblyId
-     * @param int|null $size
-     * @param null|string $order
-     * @param array $categories
      * @return \Althingi\Model\IssueValue[]
      */
     public function fetchByAssemblyAndSpeechTime(
@@ -611,13 +548,6 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    /**
-     * Create new Issue. This method
-     * accepts object from corresponding Form.
-     *
-     * @param \Althingi\Model\Issue $data
-     * @return int
-     */
     public function create(Model\Issue $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -625,20 +555,13 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
-        $this->getEventManager()
-            ->trigger(
-                AddEvent::class,
-                new AddEvent(new IndexableIssuePresenter($data)),
-                ['rows' => $statement->rowCount()]
-            );
+        $this->getEventDispatcher()->dispatch(
+            new AddEvent(new IndexableIssuePresenter($data), ['rows' => $statement->rowCount()]),
+        );
 
         return $this->getDriver()->lastInsertId();
     }
 
-    /**
-     * @param \Althingi\Model\Issue $data
-     * @return int
-     */
     public function save(Model\Issue $data): int
     {
         $statement = $this->getDriver()->prepare($this->toSaveString('Issue', $data));
@@ -646,32 +569,20 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
 
         switch ($statement->rowCount()) {
             case 1:
-                $this->getEventManager()
-                    ->trigger(
-                        AddEvent::class,
-                        new AddEvent(new IndexableIssuePresenter($data)),
-                        ['rows' => $statement->rowCount()]
-                    );
+                $this->getEventDispatcher()->dispatch(
+                    new AddEvent(new IndexableIssuePresenter($data), ['rows' => $statement->rowCount()]),
+                );
                 break;
             case 0:
             case 2:
-                $this->getEventManager()
-                    ->trigger(
-                        UpdateEvent::class,
-                        new UpdateEvent(new IndexableIssuePresenter($data)),
-                        ['rows' => $statement->rowCount()]
-                    );
+                $this->getEventDispatcher()->dispatch(
+                    new UpdateEvent(new IndexableIssuePresenter($data), ['rows' => $statement->rowCount()]),
+                );
                 break;
         }
         return $statement->rowCount();
     }
 
-    /**
-     * Update one Issue.
-     *
-     * @param \Althingi\Model\Issue $data
-     * @return int affected rows
-     */
     public function update(Model\Issue $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -682,20 +593,14 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
             )
         );
         $statement->execute($this->toSqlValues($data));
-        $this->getEventManager()
-            ->trigger(
-                UpdateEvent::class,
-                new UpdateEvent(new IndexableIssuePresenter($data)),
-                ['rows' => $statement->rowCount()]
-            );
+
+        $this->getEventDispatcher()->dispatch(
+            new UpdateEvent(new IndexableIssuePresenter($data), ['rows' => $statement->rowCount()]),
+        );
 
         return $statement->rowCount();
     }
 
-    /**
-     * @param array $type
-     * @return string
-     */
     private function typeFilterString(array $type = []): string
     {
         if (empty($type)) {

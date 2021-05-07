@@ -6,13 +6,13 @@ use Althingi\Model\SuperCategory as SuperCategoryModel;
 use Althingi\Service\SuperCategory;
 use AlthingiTest\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
+use PDO;
 
 class SuperCategoryTest extends TestCase
 {
     use DatabaseConnection;
 
-    /** @var  \PDO */
-    private $pdo;
+    private PDO $pdo;
 
     public function testGet()
     {

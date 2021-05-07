@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ebb736942e94ee509baf10cfe946983f",
+    "content-hash": "00d45eeb8e39a1c161f15216137dc449",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -590,12 +590,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-form.git",
-                "reference": "90eeb9f3960be594eda3b867183eb51b541dfc4d"
+                "reference": "5701e885b86d5f4cdf4473e11e7bf0c146355396"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-form/zipball/90eeb9f3960be594eda3b867183eb51b541dfc4d",
-                "reference": "90eeb9f3960be594eda3b867183eb51b541dfc4d",
+                "url": "https://api.github.com/repos/laminas/laminas-form/zipball/5701e885b86d5f4cdf4473e11e7bf0c146355396",
+                "reference": "5701e885b86d5f4cdf4473e11e7bf0c146355396",
                 "shasum": ""
             },
             "require": {
@@ -676,7 +676,7 @@
                     "type": "community_bridge"
                 }
             ],
-            "time": "2021-04-07T06:36:47+00:00"
+            "time": "2021-05-04T12:37:46+00:00"
         },
         {
             "name": "laminas/laminas-httphandlerrunner",
@@ -1501,6 +1501,90 @@
             "time": "2020-10-15T08:29:30+00:00"
         },
         {
+            "name": "phly/phly-event-dispatcher",
+            "version": "dev-php8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dantleech/phly-event-dispatcher.git",
+                "reference": "110bc9d32e8155690600709e4112da8f6e8ee1b0"
+            },
+            "require": {
+                "php": "^7.2 || ^8.0",
+                "psr/container": "^1.0",
+                "psr/event-dispatcher": "^1.0"
+            },
+            "conflict": {
+                "phpspec/prophecy": "<1.7.5"
+            },
+            "provide": {
+                "psr/event-dispatcher-implementation": "^1.0"
+            },
+            "require-dev": {
+                "fig/event-dispatcher-util": "^1.0",
+                "phpunit/phpunit": "^8.1.1",
+                "zendframework/zend-coding-standard": "~1.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev",
+                    "dev-develop": "1.1.x-dev"
+                },
+                "zf": {
+                    "config-provider": "Phly\\EventDispatcher\\ConfigProvider"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/functions/lazy_listener.php"
+                ],
+                "psr-4": {
+                    "Phly\\EventDispatcher\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "files": [
+                    "test/TestAsset/listener_function.php"
+                ],
+                "psr-4": {
+                    "PhlyTest\\EventDispatcher\\": "test/"
+                }
+            },
+            "scripts": {
+                "check": [
+                    "@cs-check",
+                    "@test"
+                ],
+                "cs-check": [
+                    "phpcs"
+                ],
+                "cs-fix": [
+                    "phpcbf"
+                ],
+                "test": [
+                    "phpunit --colors=always"
+                ],
+                "test-coverage": [
+                    "phpunit --colors=always --coverage-clover clover.xml"
+                ]
+            },
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "Experimental event dispatcher for PSR-14",
+            "keywords": [
+                "components",
+                "event-dispatcher",
+                "psr-14"
+            ],
+            "support": {
+                "issues": "https://github.com/phly/phly-event-dispatcher/issues",
+                "source": "https://github.com/phly/phly-event-dispatcher",
+                "rss": "https://github.com/phly/phly-event-dispatcher/releases.atom"
+            },
+            "time": "2020-12-27T13:06:56+00:00"
+        },
+        {
             "name": "php-amqplib/php-amqplib",
             "version": "v3.0.0",
             "source": {
@@ -1788,6 +1872,56 @@
                 "source": "https://github.com/php-fig/container/tree/1.1.1"
             },
             "time": "2021-03-05T17:36:06+00:00"
+        },
+        {
+            "name": "psr/event-dispatcher",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/event-dispatcher.git",
+                "reference": "dbefd12671e8a14ec7f180cab83036ed26714bb0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/event-dispatcher/zipball/dbefd12671e8a14ec7f180cab83036ed26714bb0",
+                "reference": "dbefd12671e8a14ec7f180cab83036ed26714bb0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\EventDispatcher\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Standard interfaces for event handling.",
+            "keywords": [
+                "events",
+                "psr",
+                "psr-14"
+            ],
+            "support": {
+                "issues": "https://github.com/php-fig/event-dispatcher/issues",
+                "source": "https://github.com/php-fig/event-dispatcher/tree/1.0.0"
+            },
+            "time": "2019-01-08T18:20:26+00:00"
         },
         {
             "name": "psr/http-factory",
@@ -4500,7 +4634,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "phly/phly-event-dispatcher": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

@@ -6,13 +6,13 @@ use Althingi\Service\Session;
 use AlthingiTest\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\Session as SessionModel;
+use PDO;
 
 class SessionTest extends TestCase
 {
     use DatabaseConnection;
 
-    /** @var  \PDO */
-    private $pdo;
+    private PDO $pdo;
 
     public function testGet()
     {

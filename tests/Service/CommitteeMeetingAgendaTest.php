@@ -6,13 +6,13 @@ use Althingi\Service\CommitteeMeetingAgenda;
 use AlthingiTest\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\CommitteeMeetingAgenda as CommitteeMeetingAgendaModel;
+use PDO;
 
 class CommitteeMeetingAgendaTest extends TestCase
 {
     use DatabaseConnection;
 
-    /** @var  \PDO */
-    private $pdo;
+    private PDO $pdo;
 
     public function testGet()
     {

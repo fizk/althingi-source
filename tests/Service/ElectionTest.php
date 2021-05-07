@@ -6,13 +6,13 @@ use Althingi\Service\Election;
 use AlthingiTest\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\Election as ElectionModel;
+use PDO;
 
 class ElectionTest extends TestCase
 {
     use DatabaseConnection;
 
-    /** @var  \PDO */
-    private $pdo;
+    private PDO $pdo;
 
     public function testGet()
     {

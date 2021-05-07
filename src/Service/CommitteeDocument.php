@@ -4,25 +4,14 @@ namespace Althingi\Service;
 
 use Althingi\Model;
 use Althingi\Hydrator;
-use Althingi\Injector\EventsAwareInterface;
-use Althingi\Injector\DatabaseAwareInterface;
+use Althingi\Injector\{DatabaseAwareInterface, EventsAwareInterface};
 use PDO;
 
-/**
- * Class CommitteeSitting
- * @package Althingi\Service
- */
 class CommitteeDocument implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
     use EventService;
 
-    /**
-     * Get one Committee Document
-     *
-     * @param int $id
-     * @return null|\Althingi\Model\CommitteeDocument
-     */
     public function get(int $id): ? Model\CommitteeDocument
     {
         $statement = $this->getDriver()->prepare("
@@ -38,9 +27,6 @@ class CommitteeDocument implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param int $assemblyId
-     * @param $issueId
-     * @param $documentId
      * @return Model\CommitteeDocument[]
      */
     public function fetchByDocument(int $assemblyId, $issueId, $documentId): array
@@ -64,13 +50,6 @@ class CommitteeDocument implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    /**
-     * Create one entry. Accepts object from
-     * corresponding Form.
-     *
-     * @param \Althingi\Model\CommitteeDocument $data
-     * @return int affected rows
-     */
     public function create(Model\CommitteeDocument $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -81,23 +60,9 @@ class CommitteeDocument implements DatabaseAwareInterface, EventsAwareInterface
         $id = $this->getDriver()->lastInsertId();
         $data->setDocumentCommitteeId($id);
 
-//        $this->getEventManager()
-//            ->trigger(
-//                AddEvent::class,
-//                new AddEvent(new IndexableCommitteeSittingPresenter($data)),
-//                ['rows' => $statement->rowCount()]
-//            );
-
         return $id;
     }
 
-    /**
-     * Update one Congressman's Session. Accepts object from
-     * corresponding Form.
-     *
-     * @param \Althingi\Model\CommitteeDocument | object $data
-     * @return int
-     */
     public function update(Model\CommitteeDocument $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -109,25 +74,9 @@ class CommitteeDocument implements DatabaseAwareInterface, EventsAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
-//        $this->getEventManager()
-//            ->trigger(
-//                UpdateEvent::class,
-//                new UpdateEvent(new IndexableCommitteeSittingPresenter($data)),
-//                ['rows' => $statement->rowCount()]
-//            );
-
         return $statement->rowCount();
     }
 
-    /**
-     * @param int $documentId
-     * @param int $assemblyId
-     * @param int $issueId
-     * @param string $category
-     * @param int $committeeId
-     * @param string $part
-     * @return int
-     */
     public function getIdentifier(
         int $documentId,
         int $assemblyId,

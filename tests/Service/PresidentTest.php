@@ -8,13 +8,13 @@ use Althingi\Model\PresidentCongressman as PresidentCongressmanModel;
 use Althingi\Service\President as PresidentService;
 use AlthingiTest\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
+use PDO;
 
 class PresidentTest extends TestCase
 {
     use DatabaseConnection;
 
-    /** @var  \PDO */
-    private $pdo;
+    private PDO $pdo;
 
     public function testGet()
     {

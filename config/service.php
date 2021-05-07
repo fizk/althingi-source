@@ -4,8 +4,8 @@ use Althingi\Service;
 use Althingi\Controller;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
-use Althingi\QueueActions\QueueEventsListener;
-use Althingi\Events\EventsListener;
+use Althingi\Events\RequestFailureEvent;
+use Althingi\Events\RequestSuccessEvent;
 use Althingi\Router\Http\TreeRouteStack;
 use Althingi\Router\RouteInterface;
 use Althingi\Utils\BlackHoleMessageBroker;
@@ -15,6 +15,17 @@ use Althingi\Utils\AmqpMessageBroker;
 use Laminas\Cache\Storage\StorageInterface;
 use Laminas\Cache\Storage;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use Phly\EventDispatcher\EventDispatcher;
+use Phly\EventDispatcher\ListenerProvider\AttachableListenerProvider;
+
+use Althingi\Events\AddEvent;
+use Althingi\Events\UpdateEvent;
+use Althingi\Events\DeleteEvent;
+
+use Althingi\QueueActions\Add;
+use Althingi\QueueActions\Update;
+use Althingi\QueueActions\Delete;
 
 return [
     'factories' => [
@@ -182,19 +193,21 @@ return [
         Controller\IndexerAssemblyController::class => function (ContainerInterface $container) {
             return (new Controller\IndexerAssemblyController())
                 ->setAssemblyService($container->get(Service\Assembly::class))
-                ->setEventManager($container->get(EventsListener::class))
-            ;
+                ->setEventDispatcher($container->get(EventDispatcherInterface::class))
+                ;
         },
 
         Service\Assembly::class => function (ContainerInterface $sm) {
             return (new Service\Assembly())
                 ->setDriver($sm->get(PDO::class))
-                ->setEventManager($sm->get(EventsListener::class));
+                ->setEventDispatcher($sm->get(EventDispatcherInterface::class))
+                ;
         },
         Service\Congressman::class => function (ContainerInterface $sm) {
             return (new Service\Congressman())
                 ->setDriver($sm->get(PDO::class))
-                ->setEventManager($sm->get(EventsListener::class));
+                ->setEventDispatcher($sm->get(EventDispatcherInterface::class))
+                ;
         },
         Service\Committee::class => function (ContainerInterface $sm) {
             return (new Service\Committee())
@@ -211,17 +224,20 @@ return [
         Service\CommitteeSitting::class => function (ContainerInterface $sm) {
             return (new Service\CommitteeSitting())
                 ->setDriver($sm->get(PDO::class))
-                ->setEventManager($sm->get(EventsListener::class));
+                ->setEventDispatcher($sm->get(EventDispatcherInterface::class))
+                ;
         },
         Service\CommitteeDocument::class => function (ContainerInterface $sm) {
             return (new Service\CommitteeDocument())
                 ->setDriver($sm->get(PDO::class))
-                ->setEventManager($sm->get(EventsListener::class));
+                ->setEventDispatcher($sm->get(EventDispatcherInterface::class))
+                ;
         },
         Service\Cabinet::class => function (ContainerInterface $sm) {
             return (new Service\Cabinet())
                 ->setDriver($sm->get(PDO::class))
-                ->setEventManager($sm->get(EventsListener::class));
+                ->setEventDispatcher($sm->get(EventDispatcherInterface::class))
+                ;
         },
         Service\Constituency::class => function (ContainerInterface $sm) {
             return (new Service\Constituency())
@@ -234,12 +250,14 @@ return [
         Service\CongressmanDocument::class => function (ContainerInterface $sm) {
             return (new Service\CongressmanDocument())
                 ->setDriver($sm->get(PDO::class))
-                ->setEventManager($sm->get(EventsListener::class));
+                ->setEventDispatcher($sm->get(EventDispatcherInterface::class))
+                ;
         },
         Service\Document::class => function (ContainerInterface $sm) {
             return (new Service\Document())
                 ->setDriver($sm->get(PDO::class))
-                ->setEventManager($sm->get(EventsListener::class));
+                ->setEventDispatcher($sm->get(EventDispatcherInterface::class))
+                ;
         },
         Service\Election::class => function (ContainerInterface $sm) {
             return (new Service\Election())
@@ -248,27 +266,32 @@ return [
         Service\Issue::class => function (ContainerInterface $sm) {
             return (new Service\Issue())
                 ->setDriver($sm->get(PDO::class))
-                ->setEventManager($sm->get(EventsListener::class));
+                ->setEventDispatcher($sm->get(EventDispatcherInterface::class))
+                ;
         },
         Service\IssueLink::class => function (ContainerInterface $sm) {
             return (new Service\IssueLink())
                 ->setDriver($sm->get(PDO::class))
-                ->setEventManager($sm->get(EventsListener::class));
+                ->setEventDispatcher($sm->get(EventDispatcherInterface::class))
+                ;
         },
         Service\IssueCategory::class => function (ContainerInterface $sm) {
             return (new Service\IssueCategory())
                 ->setDriver($sm->get(PDO::class))
-                ->setEventManager($sm->get(EventsListener::class));
+                ->setEventDispatcher($sm->get(EventDispatcherInterface::class))
+                ;
         },
         Service\Party::class => function (ContainerInterface $sm) {
             return (new Service\Party())
                 ->setDriver($sm->get(PDO::class))
-                ->setEventManager($sm->get(EventsListener::class));
+                ->setEventDispatcher($sm->get(EventDispatcherInterface::class))
+                ;
         },
         Service\President::class => function (ContainerInterface $sm) {
             return (new Service\President())
                 ->setDriver($sm->get(PDO::class))
-                ->setEventManager($sm->get(EventsListener::class));
+                ->setEventDispatcher($sm->get(EventDispatcherInterface::class))
+                ;
         },
         Service\Plenary::class => function (ContainerInterface $sm) {
             return (new Service\Plenary())
@@ -277,12 +300,14 @@ return [
         Service\Ministry::class => function (ContainerInterface $sm) {
             return (new Service\Ministry())
                 ->setDriver($sm->get(PDO::class))
-                ->setEventManager($sm->get(EventsListener::class));
+                ->setEventDispatcher($sm->get(EventDispatcherInterface::class))
+                ;
         },
         Service\MinisterSitting::class => function (ContainerInterface $sm) {
             return (new Service\MinisterSitting())
                 ->setDriver($sm->get(PDO::class))
-                ->setEventManager($sm->get(EventsListener::class));
+                ->setEventDispatcher($sm->get(EventDispatcherInterface::class))
+                ;
         },
         Service\PlenaryAgenda::class => function (ContainerInterface $sm) {
             return (new Service\PlenaryAgenda())
@@ -291,12 +316,14 @@ return [
         Service\Session::class => function (ContainerInterface $sm) {
             return (new Service\Session())
                 ->setDriver($sm->get(PDO::class))
-                ->setEventManager($sm->get(EventsListener::class));
+                ->setEventDispatcher($sm->get(EventDispatcherInterface::class))
+                ;
         },
         Service\Speech::class => function (ContainerInterface $sm) {
             return (new Service\Speech())
                 ->setDriver($sm->get(PDO::class))
-                ->setEventManager($sm->get(EventsListener::class));
+                ->setEventDispatcher($sm->get(EventDispatcherInterface::class))
+                ;
         },
         Service\SuperCategory::class => function (ContainerInterface $sm) {
             return (new Service\SuperCategory())
@@ -305,13 +332,13 @@ return [
         Service\Vote::class => function (ContainerInterface $sm) {
             return (new Service\Vote())
                 ->setDriver($sm->get(PDO::class))
-                ->setEventManager($sm->get(EventsListener::class))
+                ->setEventDispatcher($sm->get(EventDispatcherInterface::class))
                 ;
         },
         Service\VoteItem::class => function (ContainerInterface $sm) {
             return (new Service\VoteItem())
                 ->setDriver($sm->get(PDO::class))
-                ->setEventManager($sm->get(EventsListener::class))
+                ->setEventDispatcher($sm->get(EventDispatcherInterface::class))
                 ;
         },
         Service\Inflation::class => function (ContainerInterface $sm) {
@@ -340,16 +367,42 @@ return [
             );
         },
 
-        EventsListener::class => function (ContainerInterface $sm) {
-            $eventManager = (new \Laminas\EventManager\EventManager());
+        EventDispatcherInterface::class => function (ContainerInterface $container, $requestedName) {
+            $logger = $container->get(Psr\Log\LoggerInterface::class);
+            $provider = new AttachableListenerProvider();
 
-            $queueEventsListener = (new QueueEventsListener())
-                ->setLogger($sm->get(LoggerInterface::class))
-                ->setMessageBroker($sm->get(MessageBrokerInterface::class))
-                ->setIsForced(strtolower(getenv('QUEUE_FORCED')) === 'true');
-            $queueEventsListener->attach($eventManager);
+            $provider->listen(RequestSuccessEvent::class, function (RequestSuccessEvent $event) use ($logger) {
+                $logger->debug((string) $event);
+            });
+            $provider->listen(RequestFailureEvent::class, function (RequestFailureEvent $event) use ($logger) {
+                $logger->error((string) $event);
+            });
 
-            return $eventManager;
+            $provider->listen(AddEvent::class, function (AddEvent $event) use ($logger, $container) {
+                $result = (new Add($container->get(MessageBrokerInterface::class), strtolower(getenv('QUEUE_FORCED')) === 'true'))(
+                    $event->getPresenter(),
+                    $event->getParams()
+                );
+                $logger->debug((string) $event);
+            });
+
+            $provider->listen(UpdateEvent::class, function (UpdateEvent $event) use ($logger, $container) {
+                $result = (new Update($container->get(MessageBrokerInterface::class), strtolower(getenv('QUEUE_FORCED')) === 'true'))(
+                    $event->getPresenter(),
+                    $event->getParams()
+                );
+                $logger->debug((string) $event);
+            });
+
+            $provider->listen(DeleteEvent::class, function (DeleteEvent $event) use ($logger, $container) {
+                $result = (new Delete($container->get(MessageBrokerInterface::class), strtolower(getenv('QUEUE_FORCED')) === 'true'))(
+                    $event->getPresenter(),
+                    $event->getParams()
+                );
+                $logger->debug((string) $event);
+            });
+
+            return new EventDispatcher($provider);
         },
 
         LoggerInterface::class => function (ContainerInterface $sm) {

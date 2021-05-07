@@ -2,11 +2,12 @@
 
 namespace Althingi\Injector;
 
-use Laminas\EventManager\EventManagerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 interface EventsAwareInterface
 {
-    public function setEventManager(EventManagerInterface $events);
 
-    public function getEventManager();
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher): self;
+
+    public function getEventDispatcher(): EventDispatcherInterface;
 }

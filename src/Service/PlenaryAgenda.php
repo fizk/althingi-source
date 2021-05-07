@@ -7,20 +7,9 @@ use Althingi\Hydrator;
 use Althingi\Injector\DatabaseAwareInterface;
 use PDO;
 
-/**
- * Class Plenary
- * @package Althingi\Service
- */
 class PlenaryAgenda implements DatabaseAwareInterface
 {
     use DatabaseService;
-
-    /**
-     * @param int $assemblyId
-     * @param int $plenaryId
-     * @param int $itemId
-     * @return \Althingi\Model\PlenaryAgenda | null
-     */
     public function get(int $assemblyId, int $plenaryId, int $itemId): ? Model\PlenaryAgenda
     {
         $statement = $this->getDriver()->prepare("
@@ -42,8 +31,6 @@ class PlenaryAgenda implements DatabaseAwareInterface
     }
 
     /**
-     * @param int $assemblyId
-     * @param int $plenaryId
      * @return Model\PlenaryAgenda[]
      */
     public function fetch(int $assemblyId, int $plenaryId): ? array
@@ -64,10 +51,6 @@ class PlenaryAgenda implements DatabaseAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    /**
-     * @param \Althingi\Model\PlenaryAgenda $data
-     * @return string
-     */
     public function create(Model\PlenaryAgenda $data)
     {
         $statement = $this->getDriver()->prepare(
@@ -78,10 +61,6 @@ class PlenaryAgenda implements DatabaseAwareInterface
         return $this->getDriver()->lastInsertId();
     }
 
-    /**
-     * @param \Althingi\Model\PlenaryAgenda $data
-     * @return string
-     */
     public function save(Model\PlenaryAgenda $data)
     {
         $statement = $this->getDriver()->prepare(

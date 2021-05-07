@@ -17,8 +17,6 @@ class Inflation implements DatabaseAwareInterface
     use DatabaseService;
 
     /**
-     * @param \DateTime|null $from
-     * @param \DateTime|null $to
      * @return \Althingi\Model\Inflation[]
      */
     public function fetchAll(?DateTime $from = null, ?DateTime $to = null): array
@@ -70,10 +68,6 @@ class Inflation implements DatabaseAwareInterface
             : null;
     }
 
-    /**
-     * @param \Althingi\Model\Inflation $data
-     * @return int
-     */
     public function save(Model\Inflation $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -84,10 +78,6 @@ class Inflation implements DatabaseAwareInterface
         return $statement->rowCount();
     }
 
-    /**
-     * @param \Althingi\Model\Inflation | object $data
-     * @return int
-     */
     public function update(Model\Inflation $data): int
     {
         $statement = $this->getDriver()->prepare(

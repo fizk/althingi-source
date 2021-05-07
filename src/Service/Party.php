@@ -4,29 +4,17 @@ namespace Althingi\Service;
 
 use Althingi\Model;
 use Althingi\Hydrator;
-use Althingi\Injector\EventsAwareInterface;
-use Althingi\Injector\DatabaseAwareInterface;
+use Althingi\Events\{UpdateEvent, AddEvent};
 use Althingi\Presenters\IndexablePartyPresenter;
-use Althingi\Events\AddEvent;
-use Althingi\Events\UpdateEvent;
+use Althingi\Injector\{DatabaseAwareInterface, EventsAwareInterface};
 use PDO;
 use DateTime;
 
-/**
- * Class Party
- * @package Althingi\Service
- */
 class Party implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
     use EventService;
 
-    /**
-     * Get one party.
-     *
-     * @param int $id
-     * @return \Althingi\Model\Party|null
-     */
     public function get(int $id): ? Model\Party
     {
         $statement = $this->getDriver()->prepare('
@@ -39,9 +27,8 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
             ? (new Hydrator\Party())->hydrate($object, new Model\Party())
             : null;
     }
+
     /**
-     * Get one party.
-     *
      * @return \Althingi\Model\Party[]
      */
     public function fetch(): array
@@ -56,11 +43,6 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    /**
-     * @param $congressmanId
-     * @param \DateTime $date
-     * @return \Althingi\Model\Party|null
-     */
     public function getByCongressman(int $congressmanId, DateTime $date): ? Model\Party
     {
         $statement = $this->getDriver()->prepare('
@@ -83,11 +65,6 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
             : null;
     }
 
-    /**
-     * @param $congressmanId
-     * @param int $assemblyId
-     * @return \Althingi\Model\Party|null
-     */
     public function getByCongressmanAndAssembly(int $congressmanId, int $assemblyId): ? Model\Party
     {
         $statement = $this->getDriver()->prepare('
@@ -110,8 +87,6 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param $assemblyId
-     * @param $category
      * @return \Althingi\Model\PartyAndTime[]
      */
     public function fetchTimeByAssembly(int $assemblyId, array $category = ['A']): array
@@ -147,8 +122,6 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param int $congressmanId
-     * @param int $assemblyId
      * @return \Althingi\Model\Party[]
      */
     public function fetchByCongressmanAndAssembly(int $congressmanId, int $assemblyId): array
@@ -171,8 +144,6 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param $assemblyId
-     * @param array $exclude
      * @return \Althingi\Model\Party[]
      */
     public function fetchByAssembly(int $assemblyId, array $exclude = []): array
@@ -202,7 +173,6 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param int $assemblyId
      * @return \Althingi\Model\PartyAndElection[]
      */
     public function fetchElectedByAssembly(int $assemblyId): array
@@ -219,9 +189,6 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * Get all parties that a congressman as been in.
-     *
-     * @param int $congressmanId
      * @return \Althingi\Model\Party[]
      */
     public function fetchByCongressman(int $congressmanId): array
@@ -238,7 +205,6 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param int $cabinetId
      * @return \Althingi\Model\Party[]
      */
     public function fetchByCabinet(int $cabinetId): array
@@ -260,13 +226,6 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    /**
-     * Create one Party. Accept object from corresponding
-     * Form.
-     *
-     * @param \Althingi\Model\Party $data
-     * @return int
-     */
     public function create(Model\Party $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -274,20 +233,13 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
-        $this->getEventManager()
-            ->trigger(
-                AddEvent::class,
-                new AddEvent(new IndexablePartyPresenter($data)),
-                ['rows' => $statement->rowCount()]
-            );
+        $this->getEventDispatcher()->dispatch(
+            new AddEvent(new IndexablePartyPresenter($data), ['rows' => $statement->rowCount()]),
+        );
 
         return $this->getDriver()->lastInsertId();
     }
 
-    /**
-     * @param \Althingi\Model\Party $data
-     * @return int
-     */
     public function save(Model\Party $data): int
     {
         $statement = $this->getDriver()->prepare($this->toSaveString('Party', $data));
@@ -295,30 +247,20 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
 
         switch ($statement->rowCount()) {
             case 1:
-                $this->getEventManager()
-                    ->trigger(
-                        AddEvent::class,
-                        new AddEvent(new IndexablePartyPresenter($data)),
-                        ['rows' => $statement->rowCount()]
-                    );
+                $this->getEventDispatcher()->dispatch(
+                    new AddEvent(new IndexablePartyPresenter($data), ['rows' => $statement->rowCount()]),
+                );
                 break;
             case 0:
             case 2:
-                $this->getEventManager()
-                    ->trigger(
-                        UpdateEvent::class,
-                        new UpdateEvent(new IndexablePartyPresenter($data)),
-                        ['rows' => $statement->rowCount()]
-                    );
+                $this->getEventDispatcher()->dispatch(
+                    new UpdateEvent(new IndexablePartyPresenter($data), ['rows' => $statement->rowCount()]),
+                );
                 break;
         }
         return $statement->rowCount();
     }
 
-    /**
-     * @param \Althingi\Model\Party | object $data
-     * @return int
-     */
     public function update(Model\Party $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -326,12 +268,9 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
-        $this->getEventManager()
-            ->trigger(
-                UpdateEvent::class,
-                new UpdateEvent(new IndexablePartyPresenter($data)),
-                ['rows' => $statement->rowCount()]
-            );
+        $this->getEventDispatcher()->dispatch(
+            new UpdateEvent(new IndexablePartyPresenter($data), ['rows' => $statement->rowCount()]),
+        );
 
         return $statement->rowCount();
     }
