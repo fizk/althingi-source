@@ -7,18 +7,10 @@ use Althingi\Hydrator;
 use Althingi\Injector\DatabaseAwareInterface;
 use PDO;
 
-/**
- * Class Assembly
- * @package Althingi\Service
- */
 class Committee implements DatabaseAwareInterface
 {
     use DatabaseService;
 
-    /**
-     * @param $id
-     * @return \Althingi\Model\Committee|null
-     */
     public function get(int $id): ? Model\Committee
     {
         $statement = $this->getDriver()->prepare('select * from `Committee` C where C.`committee_id` = :committee_id;');
@@ -47,7 +39,6 @@ class Committee implements DatabaseAwareInterface
     }
 
     /**
-     * @param $assemblyId
      * @return \Althingi\Model\Committee[]
      */
     public function fetchByAssembly(int $assemblyId): array
@@ -70,12 +61,6 @@ class Committee implements DatabaseAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    /**
-     * Create one entry.
-     *
-     * @param \Althingi\Model\Committee $data
-     * @return int affected rows
-     */
     public function create(Model\Committee $data): int
     {
         $statement = $this->getDriver()->prepare($this->toInsertString('Committee', $data));
@@ -84,10 +69,6 @@ class Committee implements DatabaseAwareInterface
         return $this->getDriver()->lastInsertId();
     }
 
-    /**
-     * @param \Althingi\Model\Committee $data
-     * @return int affected rows
-     */
     public function save(Model\Committee $data): int
     {
         $statement = $this->getDriver()->prepare($this->toSaveString('Committee', $data));
@@ -96,10 +77,6 @@ class Committee implements DatabaseAwareInterface
         return $statement->rowCount();
     }
 
-    /**
-     * @param \Althingi\Model\Committee | object $data
-     * @return int
-     */
     public function update(Model\Committee $data): int
     {
         $statement = $this->getDriver()->prepare(

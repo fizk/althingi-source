@@ -4,18 +4,12 @@ namespace Althingi\Service;
 
 use Althingi\Model;
 use Althingi\Hydrator;
-use Althingi\Injector\DatabaseAwareInterface;
-use Althingi\Injector\EventsAwareInterface;
 use Althingi\Presenters\IndexableCongressmanPresenter;
-use Althingi\Events\AddEvent;
-use Althingi\Events\UpdateEvent;
+use Althingi\Injector\{EventsAwareInterface, DatabaseAwareInterface};
+use Althingi\Events\{UpdateEvent, AddEvent};
 use PDO;
 use DateTime;
 
-/**
- * Class Congressman
- * @package Althingi\Service
- */
 class Congressman implements DatabaseAwareInterface, EventsAwareInterface
 {
     const CONGRESSMAN_TYPE_MP = 'parliamentarian';
@@ -25,12 +19,6 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
     use DatabaseService;
     use EventService;
 
-    /**
-     * Get one Congressman.
-     *
-     * @param int $id
-     * @return \Althingi\Model\Congressman
-     */
     public function get(int $id): ? Model\Congressman
     {
         $statement = $this->getDriver()->prepare("select * from `Congressman` C where congressman_id = :id");
@@ -43,10 +31,6 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * Get all Assemblies.
-     *
-     * @param int $offset
-     * @param int $size
      * @return \Althingi\Model\CongressmanAndParty[]
      */
     public function fetchAll(): array
@@ -61,8 +45,6 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param $assemblyId
-     * @param string $congressmanType
      * @return \Althingi\Model\CongressmanAndParty[]
      */
     public function fetchByAssembly(int $assemblyId, string $congressmanType = null): array
@@ -106,10 +88,6 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
     /**
      * Accumulated speech-time per congressman for a given assembly.
      *
-     * @param int $assemblyId
-     * @param int $size
-     * @param string $order
-     * @param array $category
      * @return \Althingi\Model\CongressmanValue[]
      */
     public function fetchTimeByAssembly(
@@ -153,10 +131,6 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
     /**
      * Accumulates submitted types of issue per congressman.
      *
-     * @param int $assemblyId
-     * @param null|int $size
-     * @param null|string[] $type
-     * @param null|string $order
      * @return \Althingi\Model\CongressmanValue[]
      */
     public function fetchIssueTypeCountByAssembly(
@@ -207,7 +181,6 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param int $cabinetId
      * @return \Althingi\Model\CongressmanAndCabinet[]
      */
     public function fetchByCabinet(int $cabinetId): array
@@ -224,9 +197,6 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param int $assemblyId
-     * @param int $issueId
-     * @param string $category
      * @return \Althingi\Model\CongressmanAndDateRange[]
      */
     public function fetchAccumulatedTimeByIssue(int $assemblyId, int $issueId, ?string $category = 'A'): array
@@ -253,8 +223,6 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param int $assemblyId
-     * @param int $documentId
      * @return \Althingi\Model\Proponent[]
      */
     public function fetchProponents(int $assemblyId, int $documentId): array
@@ -276,8 +244,6 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param int $assemblyId
-     * @param int $issueId
      * @return \Althingi\Model\Proponent[]
      */
     public function fetchProponentsByIssue(int $assemblyId, int $issueId): array
@@ -340,10 +306,6 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    /**
-     * @param int $assemblyId
-     * @return \Althingi\Model\President[]
-     */
     public function getPresidentByAssembly(int $assemblyId, int $presidentId): ?Model\President
     {
         $statement = $this->getDriver()->prepare("
@@ -361,7 +323,6 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param int $assemblyId
      * @return \Althingi\Model\President[]
      */
     public function fetchPresidentsByAssembly(int $assemblyId): array
@@ -378,13 +339,6 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    /**
-     * Create one Congressman. This method accepts object
-     * from corresponding Form.
-     *
-     * @param \Althingi\Model\Congressman $data
-     * @return int
-     */
     public function create(Model\Congressman $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -399,10 +353,6 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
         return $this->getDriver()->lastInsertId();
     }
 
-    /**
-     * @param \Althingi\Model\Congressman $data
-     * @return int
-     */
     public function save(Model\Congressman $data): int
     {
         $statement = $this->getDriver()->prepare($this->toSaveString('Congressman', $data));
@@ -424,13 +374,6 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
         return $statement->rowCount();
     }
 
-    /**
-     * Update one Congressman. This method accepts object
-     * from corresponding Form.
-     *
-     * @param \Althingi\Model\Congressman $data
-     * @return int Should be 1, for one entry updated.
-     */
     public function update(Model\Congressman $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -445,12 +388,6 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
         return $statement->rowCount();
     }
 
-    /**
-     * Delete one congressman.
-     *
-     * @param $id
-     * @return int Should be 1, for one entry deleted.
-     */
     public function delete(int $id): int
     {
         $statement = $this->getDriver()->prepare("
@@ -461,11 +398,6 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
         return $statement->rowCount();
     }
 
-    /**
-     * Count all Congressmen.
-     *
-     * @return int
-     */
     public function count(): int
     {
         $statement = $this->getDriver()->prepare("

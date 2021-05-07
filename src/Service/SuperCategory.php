@@ -7,20 +7,10 @@ use Althingi\Hydrator;
 use Althingi\Injector\DatabaseAwareInterface;
 use PDO;
 
-/**
- * Class Party
- * @package Althingi\Service
- */
 class SuperCategory implements DatabaseAwareInterface
 {
     use DatabaseService;
 
-    /**
-     * Get one super category.
-     *
-     * @param int $id
-     * @return \Althingi\Model\SuperCategory
-     */
     public function get(int $id): ? Model\SuperCategory
     {
         $statement = $this->getDriver()->prepare('
@@ -50,11 +40,6 @@ class SuperCategory implements DatabaseAwareInterface
     }
 
     /**
-     * Get all super categories on an issue.
-     *
-     * @param int $assemblyId
-     * @param int $issueId
-     * @param string $category
      * @return \Althingi\Model\SuperCategory[]
      */
     public function fetchByIssue(int $assemblyId, int $issueId, string$category = 'A'): array
@@ -77,10 +62,6 @@ class SuperCategory implements DatabaseAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    /**
-     * @param \Althingi\Model\SuperCategory $data
-     * @return int
-     */
     public function create(Model\SuperCategory $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -91,10 +72,6 @@ class SuperCategory implements DatabaseAwareInterface
         return $this->getDriver()->lastInsertId();
     }
 
-    /**
-     * @param \Althingi\Model\SuperCategory $data
-     * @return int
-     */
     public function save(Model\SuperCategory $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -105,10 +82,6 @@ class SuperCategory implements DatabaseAwareInterface
         return $statement->rowCount();
     }
 
-    /**
-     * @param \Althingi\Model\SuperCategory | object $data
-     * @return int
-     */
     public function update(Model\SuperCategory $data): int
     {
         $statement = $this->getDriver()->prepare(

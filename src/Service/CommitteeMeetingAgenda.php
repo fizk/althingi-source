@@ -2,24 +2,15 @@
 
 namespace Althingi\Service;
 
-use Althingi\Injector\DatabaseAwareInterface;
 use Althingi\Model;
 use Althingi\Hydrator;
+use Althingi\Injector\DatabaseAwareInterface;
 use PDO;
 
-/**
- * Class Assembly
- * @package Althingi\Service
- */
 class CommitteeMeetingAgenda implements DatabaseAwareInterface
 {
     use DatabaseService;
 
-    /**
-     * @param $meetingId
-     * @param $agendaId
-     * @return \Althingi\Model\CommitteeMeetingAgenda|null
-     */
     public function get(int $meetingId, int $agendaId): ? Model\CommitteeMeetingAgenda
     {
         $statement = $this->getDriver()->prepare('
@@ -56,12 +47,6 @@ class CommitteeMeetingAgenda implements DatabaseAwareInterface
         }, $result);
     }
 
-    /**
-     * Create one entry.
-     *
-     * @param \Althingi\Model\CommitteeMeetingAgenda $data
-     * @return int affected rows
-     */
     public function create(Model\CommitteeMeetingAgenda $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -72,10 +57,6 @@ class CommitteeMeetingAgenda implements DatabaseAwareInterface
         return $this->getDriver()->lastInsertId();
     }
 
-    /**
-     * @param \Althingi\Model\CommitteeMeetingAgenda $data
-     * @return int affected rows
-     */
     public function save(Model\CommitteeMeetingAgenda $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -86,12 +67,6 @@ class CommitteeMeetingAgenda implements DatabaseAwareInterface
         return $statement->rowCount();
     }
 
-    /**
-     * Create one entry.
-     *
-     * @param \Althingi\Model\CommitteeMeetingAgenda | object $data
-     * @return int affected rows
-     */
     public function update(Model\CommitteeMeetingAgenda $data): int
     {
         $statement = $this->getDriver()->prepare(

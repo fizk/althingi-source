@@ -2,20 +2,14 @@
 
 namespace Althingi\Service;
 
-use Althingi\Events\AddEvent;
-use Althingi\Events\UpdateEvent;
-use Althingi\Injector\EventsAwareInterface;
 use Althingi\Model;
 use Althingi\Hydrator;
-use Althingi\Injector\DatabaseAwareInterface;
+use Althingi\Events\{UpdateEvent, AddEvent};
 use Althingi\Presenters\IndexablePresidentPresenter;
+use Althingi\Injector\{DatabaseAwareInterface, EventsAwareInterface};
 use PDO;
 use DateTime;
 
-/**
- * Class President
- * @package Althingi\Service
- */
 class President implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
@@ -50,10 +44,6 @@ class President implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    /**
-     * @param int $id
-     * @return \Althingi\Model\PresidentCongressman|null
-     */
     public function getWithCongressman(int $id): ? Model\PresidentCongressman
     {
         $statement = $this->getDriver()->prepare(
@@ -70,13 +60,6 @@ class President implements DatabaseAwareInterface, EventsAwareInterface
             : null;
     }
 
-    /**
-     * @param int $assemblyId
-     * @param int $congressmanId
-     * @param DateTime $from
-     * @param string $title
-     * @return \Althingi\Model\PresidentCongressman|null
-     */
     public function getByUnique(
         int $assemblyId,
         int $congressmanId,
@@ -105,10 +88,6 @@ class President implements DatabaseAwareInterface, EventsAwareInterface
             : null;
     }
 
-    /**
-     * @param \Althingi\Model\President $data
-     * @return int
-     */
     public function create(Model\President $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -126,10 +105,6 @@ class President implements DatabaseAwareInterface, EventsAwareInterface
         return $id;
     }
 
-    /**
-     * @param \Althingi\Model\President | object $data
-     * @return int
-     */
     public function update(Model\President $data): int
     {
         $statement = $this->getDriver()->prepare(

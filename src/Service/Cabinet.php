@@ -2,20 +2,14 @@
 
 namespace Althingi\Service;
 
-use Althingi\Injector\DatabaseAwareInterface;
-use Althingi\Injector\EventsAwareInterface;
-use Althingi\Presenters\IndexableCabinetPresenter;
 use Althingi\Model;
 use Althingi\Hydrator;
-use Althingi\Events\AddEvent;
-use Althingi\Events\UpdateEvent;
+use Althingi\Injector\{EventsAwareInterface, DatabaseAwareInterface};
+use Althingi\Events\{UpdateEvent, AddEvent};
+use Althingi\Presenters\IndexableCabinetPresenter;
 use PDO;
 use DateTime;
 
-/**
- * Class Assembly
- * @package Althingi\Service
- */
 class Cabinet implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
@@ -62,10 +56,6 @@ class Cabinet implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    /**
-     * @param int $id
-     * @return \Althingi\Model\Cabinet
-     */
     public function get(int $id): ? Model\Cabinet
     {
         $statement = $this->getDriver()->prepare("select * from `Cabinet` where cabinet_id = :id");
@@ -77,10 +67,6 @@ class Cabinet implements DatabaseAwareInterface, EventsAwareInterface
             : null;
     }
 
-    /**
-     * @param \Althingi\Model\Cabinet $data
-     * @return int
-     */
     public function save(Model\Cabinet $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -95,10 +81,6 @@ class Cabinet implements DatabaseAwareInterface, EventsAwareInterface
         return $statement->rowCount();
     }
 
-    /**
-     * @param \Althingi\Model\Cabinet | object $data
-     * @return int
-     */
     public function update(Model\Cabinet $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -114,7 +96,6 @@ class Cabinet implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param int $assemblyId
      * @return \Althingi\Model\Cabinet[]
      */
     public function fetchByAssembly(int $assemblyId): array

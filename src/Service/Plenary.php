@@ -7,19 +7,10 @@ use Althingi\Hydrator;
 use Althingi\Injector\DatabaseAwareInterface;
 use PDO;
 
-/**
- * Class Plenary
- * @package Althingi\Service
- */
 class Plenary implements DatabaseAwareInterface
 {
     use DatabaseService;
 
-    /**
-     * @param int $assemblyId
-     * @param int $plenaryId
-     * @return \Althingi\Model\Plenary|null
-     */
     public function get(int $assemblyId, int $plenaryId): ? Model\Plenary
     {
         $statement = $this->getDriver()->prepare('
@@ -37,12 +28,6 @@ class Plenary implements DatabaseAwareInterface
     }
 
     /**
-     * Fetch all Plenaries from given Assembly.
-     *
-     * @param int $id
-     * @param int $offset
-     * @param int $size
-     * @param string $order
      * @return \Althingi\Model\Plenary[]
      */
     public function fetchByAssembly(int $id, int $offset, int $size = null, string $order = 'desc'): array
@@ -60,12 +45,6 @@ class Plenary implements DatabaseAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    /**
-     * Count all plenaries by Assembly.
-     *
-     * @param int $id Assembly ID
-     * @return int
-     */
     public function countByAssembly(int $id): int
     {
         $statement = $this->getDriver()->prepare("
@@ -75,13 +54,6 @@ class Plenary implements DatabaseAwareInterface
         return (int) $statement->fetchColumn(0);
     }
 
-    /**
-     * Create one Plenary. Accepts object
-     * from corresponding Form.
-     *
-     * @param \Althingi\Model\Plenary $data
-     * @return string
-     */
     public function create(Model\Plenary $data)
     {
         $statement = $this->getDriver()->prepare(
@@ -92,10 +64,6 @@ class Plenary implements DatabaseAwareInterface
         return $this->getDriver()->lastInsertId();
     }
 
-    /**
-     * @param \Althingi\Model\Plenary $data
-     * @return string
-     */
     public function save(Model\Plenary $data)
     {
         $statement = $this->getDriver()->prepare(
@@ -106,10 +74,6 @@ class Plenary implements DatabaseAwareInterface
         return $statement->rowCount();
     }
 
-    /**
-     * @param \Althingi\Model\Plenary | object $data
-     * @return int
-     */
     public function update(Model\Plenary $data): int
     {
         $statement = $this->getDriver()->prepare(

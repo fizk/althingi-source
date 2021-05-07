@@ -4,29 +4,17 @@ namespace Althingi\Service;
 
 use Althingi\Model;
 use Althingi\Hydrator;
-use Althingi\Injector\EventsAwareInterface;
-use Althingi\Injector\DatabaseAwareInterface;
-use Althingi\Events\AddEvent;
-use Althingi\Events\UpdateEvent;
+use Althingi\Events\{UpdateEvent, AddEvent};
+use Althingi\Injector\{DatabaseAwareInterface, EventsAwareInterface};
 use Althingi\Presenters\IndexableCommitteeSittingPresenter;
 use PDO;
 use DateTime;
 
-/**
- * Class CommitteeSitting
- * @package Althingi\Service
- */
 class CommitteeSitting implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
     use EventService;
 
-    /**
-     * Get one Congressman's Session.
-     *
-     * @param int $id
-     * @return null|\Althingi\Model\Session
-     */
     public function get(int $id): ? Model\CommitteeSitting
     {
         $statement = $this->getDriver()->prepare(
@@ -40,13 +28,6 @@ class CommitteeSitting implements DatabaseAwareInterface, EventsAwareInterface
             : null;
     }
 
-    /**
-     * Create one entry. Accepts object from
-     * corresponding Form.
-     *
-     * @param \Althingi\Model\CommitteeSitting $data
-     * @return int affected rows
-     */
     public function create(Model\CommitteeSitting $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -64,13 +45,6 @@ class CommitteeSitting implements DatabaseAwareInterface, EventsAwareInterface
         return $id;
     }
 
-    /**
-     * Update one Congressman's Session. Accepts object from
-     * corresponding Form.
-     *
-     * @param \Althingi\Model\CommitteeSitting | object $data
-     * @return int
-     */
     public function update(Model\CommitteeSitting $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -86,7 +60,6 @@ class CommitteeSitting implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param int $congressmanId
      * @return \Althingi\Model\CommitteeSitting[]
      */
     public function fetchByCongressman(int $congressmanId)
@@ -102,13 +75,6 @@ class CommitteeSitting implements DatabaseAwareInterface, EventsAwareInterface
         }, $result);
     }
 
-    /**
-     * @param int $congressmanId
-     * @param int $committeeId
-     * @param int $assemblyId
-     * @param DateTime $from
-     * @return int
-     */
     public function getIdentifier(int $congressmanId, int $committeeId, int $assemblyId, DateTime $from): int
     {
         $statement = $this->getDriver()->prepare('

@@ -4,11 +4,9 @@ namespace Althingi\Service;
 
 use Althingi\Model;
 use Althingi\Hydrator;
-use Althingi\Injector\EventsAwareInterface;
-use Althingi\Injector\DatabaseAwareInterface;
-use Althingi\Events\AddEvent;
-use Althingi\Events\UpdateEvent;
+use Althingi\Events\{UpdateEvent, AddEvent};
 use Althingi\Presenters\IndexableDocumentPresenter;
+use Althingi\Injector\{DatabaseAwareInterface, EventsAwareInterface};
 use PDO;
 
 class Document implements DatabaseAwareInterface, EventsAwareInterface
@@ -16,12 +14,6 @@ class Document implements DatabaseAwareInterface, EventsAwareInterface
     use DatabaseService;
     use EventService;
 
-    /**
-     * @param int $assemblyId
-     * @param int $issueId
-     * @param int $documentId
-     * @return \Althingi\Model\Document|null
-     */
     public function get(int $assemblyId, int $issueId, int $documentId): ? Model\Document
     {
         $statement = $this->getDriver()->prepare("
@@ -41,9 +33,7 @@ class Document implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param $assemblyId
-     * @param $issueId
-     * @return \Althingi\Model\ValueAndCount[] |null
+     * @return \Althingi\Model\ValueAndCount[]
      */
     public function countTypeByIssue($assemblyId, $issueId): array
     {
@@ -63,10 +53,6 @@ class Document implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    /**
-     * @param \Althingi\Model\Document $data
-     * @return int
-     */
     public function create(Model\Document $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -81,10 +67,6 @@ class Document implements DatabaseAwareInterface, EventsAwareInterface
         return $this->getDriver()->lastInsertId();
     }
 
-    /**
-     * @param \Althingi\Model\Document $data
-     * @return int
-     */
     public function save(Model\Document $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -108,10 +90,6 @@ class Document implements DatabaseAwareInterface, EventsAwareInterface
         return $statement->rowCount();
     }
 
-    /**
-     * @param \Althingi\Model\Document | object $data
-     * @return int
-     */
     public function update(Model\Document $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -132,11 +110,6 @@ class Document implements DatabaseAwareInterface, EventsAwareInterface
         return $statement->rowCount();
     }
 
-    /**
-     * @param int $assemblyId
-     * @param int $issueId
-     * @return \Althingi\Model\Document[]
-     */
     public function fetchByIssue(int $assemblyId, int $issueId): array
     {
         $statement = $this->getDriver()->prepare('

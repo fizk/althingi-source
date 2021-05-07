@@ -8,18 +8,10 @@ use Althingi\Injector\DatabaseAwareInterface;
 use PDO;
 use DateTime;
 
-/**
- * Class Constituency
- * @package Althingi\Service
- */
 class Constituency implements DatabaseAwareInterface
 {
     use DatabaseService;
 
-    /**
-     * @param int $id
-     * @return \Althingi\Model\Constituency | null
-     */
     public function get(int $id): ? Model\Constituency
     {
         $statement = $this->getDriver()->prepare(
@@ -33,13 +25,6 @@ class Constituency implements DatabaseAwareInterface
             : null;
     }
 
-    /**
-     * Get Constituency by congressman on a specific date.
-     *
-     * @param int $congressmanId
-     * @param \DateTime $date
-     * @return \Althingi\Model\ConstituencyDate | null
-     */
     public function getByCongressman(int $congressmanId, DateTime $date): ? Model\ConstituencyDate
     {
         $statement = $this->getDriver()->prepare('
@@ -61,13 +46,6 @@ class Constituency implements DatabaseAwareInterface
             : null ;
     }
 
-    /**
-     * Get Constituency by congressman on a specific date.
-     *
-     * @param int $congressmanId
-     * @param int $assemblyId
-     * @return \Althingi\Model\ConstituencyDate | null
-     */
     public function getByCongressmanAndConstituency(int $congressmanId, int $assemblyId): ? Model\ConstituencyDate
     {
         $statement = $this->getDriver()->prepare('
@@ -88,13 +66,6 @@ class Constituency implements DatabaseAwareInterface
             : null ;
     }
 
-    /**
-     * Get Constituency by congressman on a specific assembly.
-     *
-     * @param int $congressmanId
-     * @param int $assemblyId
-     * @return \Althingi\Model\ConstituencyDate | null
-     */
     public function getByAssemblyAndCongressman(int $congressmanId, int $assemblyId): ? Model\ConstituencyDate
     {
         $statement = $this->getDriver()->prepare('
@@ -115,12 +86,9 @@ class Constituency implements DatabaseAwareInterface
     }
 
     /**
-     * Get all Constituencies by congressman, order by first occupied.
-     *
-     * @param int $congressmanId
-     * @return array
+     * @return Althingi\Model\ConstituencyDate[]
      */
-    public function fetchByCongressman(int $congressmanId)
+    public function fetchByCongressman(int $congressmanId): array
     {
         $statement = $this->getDriver()->prepare('
             select C.*, S.`from` as `date` from `Session` S
@@ -138,9 +106,6 @@ class Constituency implements DatabaseAwareInterface
     }
 
     /**
-     * Proponents of an issue (l) grouped by constituency and counted.
-     *
-     * @param int $assemblyId
      * @return \Althingi\Model\ConstituencyValue[]
      */
     public function fetchFrequencyByAssembly(int $assemblyId): array
@@ -176,13 +141,6 @@ class Constituency implements DatabaseAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    /**
-     * Create one Constituency. Accepts object from
-     * corresponding Form.
-     *
-     * @param \Althingi\Model\Constituency $data
-     * @return int
-     */
     public function create(Model\Constituency $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -193,10 +151,6 @@ class Constituency implements DatabaseAwareInterface
         return $this->getDriver()->lastInsertId();
     }
 
-    /**
-     * @param \Althingi\Model\Constituency $data
-     * @return int
-     */
     public function save(Model\Constituency $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -207,10 +161,6 @@ class Constituency implements DatabaseAwareInterface
         return $statement->rowCount();
     }
 
-    /**
-     * @param \Althingi\Model\Constituency | object $data
-     * @return int
-     */
     public function update(Model\Constituency $data): int
     {
         $statement = $this->getDriver()->prepare(

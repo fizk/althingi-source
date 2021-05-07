@@ -2,19 +2,13 @@
 
 namespace Althingi\Service;
 
-use Althingi\Injector\DatabaseAwareInterface;
-use Althingi\Injector\EventsAwareInterface;
 use Althingi\Model;
 use Althingi\Hydrator;
-use Althingi\Events\AddEvent;
-use Althingi\Events\UpdateEvent;
+use Althingi\Injector\{EventsAwareInterface, DatabaseAwareInterface};
+use Althingi\Events\{UpdateEvent, AddEvent};
 use Althingi\Presenters\IndexableAssemblyPresenter;
 use PDO;
 
-/**
- * Class Assembly
- * @package Althingi\Service
- */
 class Assembly implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
@@ -23,12 +17,6 @@ class Assembly implements DatabaseAwareInterface, EventsAwareInterface
     const ALLOWED_TYPES = ['a', 'b', 'l', 'm', 'q', 's'];
     const MAX_ROW_COUNT = '18446744073709551615';
 
-    /**
-     * Get one Assembly.
-     *
-     * @param $id
-     * @return null|\Althingi\Model\Assembly
-     */
     public function get(int $id): ? Model\Assembly
     {
         $statement = $this->getDriver()->prepare("select * from `Assembly` where assembly_id = :id");
@@ -40,11 +28,6 @@ class Assembly implements DatabaseAwareInterface, EventsAwareInterface
             : null;
     }
 
-    /**
-     * Get current assembly.
-     *
-     * @return null|\Althingi\Model\Assembly
-     */
     public function getCurrent(): ? Model\Assembly
     {
         $statement = $this->getDriver()->prepare("select * from `Assembly` order by `assembly_id` desc limit 0, 1");
@@ -57,11 +40,6 @@ class Assembly implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * Get all Assemblies.
-     *
-     * @param int $offset
-     * @param int $size
-     * @param string $order
      * @return \Althingi\Model\Assembly[]
      */
     public function fetchAll(int $offset = 0, int $size = null, string $order = 'asc'): array
@@ -78,7 +56,10 @@ class Assembly implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    public function fetchByCabinet(int $id)
+    /**
+     * @return \Althingi\Model\Assembly[]
+     */
+    public function fetchByCabinet(int $id): array
     {
         $statement = $this->getDriver()->prepare("
             select * from (
@@ -108,11 +89,6 @@ class Assembly implements DatabaseAwareInterface, EventsAwareInterface
         return self::ALLOWED_TYPES;
     }
 
-    /**
-     * Count all assemblies.
-     *
-     * @return int
-     */
     public function count(): int
     {
         $statement = $this->getDriver()->prepare("select count(*) from `Assembly` A");
@@ -121,12 +97,6 @@ class Assembly implements DatabaseAwareInterface, EventsAwareInterface
         return (int) $statement->fetchColumn(0);
     }
 
-    /**
-     * Create one entry.
-     *
-     * @param \Althingi\Model\Assembly $data
-     * @return int affected rows
-     */
     public function create(Model\Assembly $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -141,12 +111,6 @@ class Assembly implements DatabaseAwareInterface, EventsAwareInterface
         return $this->getDriver()->lastInsertId();
     }
 
-    /**
-     * Save one entry.
-     *
-     * @param \Althingi\Model\Assembly $data
-     * @return int affected rows
-     */
     public function save(Model\Assembly $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -170,12 +134,6 @@ class Assembly implements DatabaseAwareInterface, EventsAwareInterface
         return $statement->rowCount();
     }
 
-    /**
-     * Update one entry.
-     *
-     * @param \Althingi\Model\Assembly|object $data
-     * @return int affected rows
-     */
     public function update(Model\Assembly $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -190,13 +148,6 @@ class Assembly implements DatabaseAwareInterface, EventsAwareInterface
         return $statement->rowCount();
     }
 
-    /**
-     * Delete one Assembly.
-     * Should return 1, for one assembly deleted.
-     *
-     * @param int $id
-     * @return int
-     */
     public function delete(int $id): int
     {
         $statement = $this->getDriver()->prepare("delete from `Assembly` where assembly_id = :assembly_id");

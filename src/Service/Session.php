@@ -4,29 +4,17 @@ namespace Althingi\Service;
 
 use Althingi\Model;
 use Althingi\Hydrator;
-use Althingi\Injector\EventsAwareInterface;
-use Althingi\Injector\DatabaseAwareInterface;
-use Althingi\Events\AddEvent;
-use Althingi\Events\UpdateEvent;
+use Althingi\Events\{UpdateEvent, AddEvent};
 use Althingi\Presenters\IndexableSessionPresenter;
+use Althingi\Injector\{DatabaseAwareInterface, EventsAwareInterface};
 use PDO;
 use DateTime;
 
-/**
- * Class Session
- * @package Althingi\Service
- */
 class Session implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
     use EventService;
 
-    /**
-     * Get one Congressman's Session.
-     *
-     * @param int $id
-     * @return null|\Althingi\Model\Session
-     */
     public function get(int $id): ? Model\Session
     {
         $statement = $this->getDriver()->prepare(
@@ -41,9 +29,6 @@ class Session implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * Fetch all Session by Congressman.
-     *
-     * @param int $id
      * @return \Althingi\Model\Session[]
      */
     public function fetchByCongressman(int $id): array
@@ -60,12 +45,9 @@ class Session implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * Get all sessions associated with a given Assembly
-     *
-     * @param int $id
-     * @return array
+     * @return \Althingi\Model\Session[]
      */
-    public function fetchByAssembly(int $id)
+    public function fetchByAssembly(int $id): array
     {
         $statement = $this->getDriver()->prepare("
             select * from `Session` where assembly_id = :id
@@ -79,9 +61,7 @@ class Session implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param int $assemblyId
-     * @param int $congressmanId
-     * @return array
+     * @return \Althingi\Model\Session[]
      */
     public function fetchByAssemblyAndCongressman(int $assemblyId, int $congressmanId): array
     {
@@ -99,12 +79,6 @@ class Session implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    /**
-     * @param int $congressmanId
-     * @param DateTime $from
-     * @param string $type
-     * @return int
-     */
     public function getIdentifier(int $congressmanId, DateTime $from, string $type): int
     {
         $statement = $this->getDriver()->prepare('
@@ -119,13 +93,6 @@ class Session implements DatabaseAwareInterface, EventsAwareInterface
         return $statement->fetchColumn(0);
     }
 
-    /**
-     * Create one entry. Accepts object from
-     * corresponding Form.
-     *
-     * @param \Althingi\Model\Session $data
-     * @return int affected rows
-     */
     public function create(Model\Session $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -143,13 +110,6 @@ class Session implements DatabaseAwareInterface, EventsAwareInterface
         return $id;
     }
 
-    /**
-     * Update one Congressman's Session. Accepts object from
-     * corresponding Form.
-     *
-     * @param \Althingi\Model\Session | object $data
-     * @return int
-     */
     public function update(Model\Session $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -164,12 +124,6 @@ class Session implements DatabaseAwareInterface, EventsAwareInterface
         return $statement->rowCount();
     }
 
-    /**
-     * Delete one Congressman's session.
-     *
-     * @param int $id
-     * @return int
-     */
     public function delete(int $id)
     {
         $statement = $this->getDriver()->prepare("

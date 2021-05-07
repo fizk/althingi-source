@@ -3,28 +3,16 @@ namespace Althingi\Service;
 
 use Althingi\Model;
 use Althingi\Hydrator;
-use Althingi\Injector\DatabaseAwareInterface;
-use Althingi\Injector\EventsAwareInterface;
+use Althingi\Events\{UpdateEvent, AddEvent};
 use Althingi\Presenters\IndexableIssueCategoryPresenter;
-use Althingi\Events\AddEvent;
-use Althingi\Events\UpdateEvent;
+use Althingi\Injector\{EventsAwareInterface, DatabaseAwareInterface};
 use PDO;
 
-/**
- * Class Issue
- * @package Althingi\Service
- */
 class IssueCategory implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
     use EventService;
 
-    /**
-     * @param int $assemblyId
-     * @param int $issueId
-     * @param int $categoryId
-     * @return \Althingi\Model\IssueCategory|null
-     */
     public function get(int $assemblyId, int $issueId, int $categoryId): ? Model\IssueCategory
     {
         $statement = $this->getDriver()->prepare('
@@ -47,8 +35,6 @@ class IssueCategory implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param int $assemblyId
-     * @param int $issueId
      * @return \Althingi\Model\IssueCategory[]
      */
     public function fetchByIssue(int $assemblyId, int $issueId): array
@@ -66,13 +52,6 @@ class IssueCategory implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    /**
-     * Create new Issue. This method
-     * accepts object from corresponding Form.
-     *
-     * @param \Althingi\Model\IssueCategory $data
-     * @return int
-     */
     public function create(Model\IssueCategory $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -87,10 +66,6 @@ class IssueCategory implements DatabaseAwareInterface, EventsAwareInterface
         return $this->getDriver()->lastInsertId();
     }
 
-    /**
-     * @param \Althingi\Model\IssueCategory $data
-     * @return int
-     */
     public function save(Model\IssueCategory $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -113,10 +88,6 @@ class IssueCategory implements DatabaseAwareInterface, EventsAwareInterface
         return $statement->rowCount();
     }
 
-    /**
-     * @param \Althingi\Model\IssueCategory | object $data
-     * @return int
-     */
     public function update(Model\IssueCategory $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -138,9 +109,6 @@ class IssueCategory implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @param int $assemblyId
-     * @param int $congressmanId
-     * @param array $category
      * @return \Althingi\Model\IssueCategoryAndTime[]
      */
     public function fetchFrequencyByAssemblyAndCongressman(

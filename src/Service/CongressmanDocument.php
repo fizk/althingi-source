@@ -4,10 +4,8 @@ namespace Althingi\Service;
 
 use Althingi\Hydrator;
 use Althingi\Model;
-use Althingi\Injector\DatabaseAwareInterface;
-use Althingi\Injector\EventsAwareInterface;
-use Althingi\Events\AddEvent;
-use Althingi\Events\UpdateEvent;
+use Althingi\Events\{UpdateEvent, AddEvent};
+use Althingi\Injector\{EventsAwareInterface, DatabaseAwareInterface};
 use Althingi\Presenters\IndexableCongressmanDocumentPresenter;
 use PDO;
 
@@ -16,13 +14,6 @@ class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterfac
     use DatabaseService;
     use EventService;
 
-    /**
-     * @param int $assemblyId
-     * @param int $issueId
-     * @param int $documentId
-     * @param int $congressmanId
-     * @return \Althingi\Model\CongressmanDocument|null
-     */
     public function get(int $assemblyId, int $issueId, int $documentId, int $congressmanId): ? Model\CongressmanDocument
     {
         $statement = $this->getDriver()->prepare("
@@ -46,9 +37,6 @@ class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterfac
     }
 
     /**
-     * @param int $assemblyId
-     * @param int $issueId
-     * @param int $documentId
      * @return \Althingi\Model\CongressmanDocument[]
      */
     public function fetchByDocument(int $assemblyId, int $issueId, int $documentId): array
@@ -69,12 +57,6 @@ class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterfac
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    /**
-     * @param int $assemblyId
-     * @param int $issueId
-     * @param int $documentId
-     * @return \Althingi\Model\CongressmanDocument|null
-     */
     public function countProponents(int $assemblyId, int $issueId, int $documentId): ? int
     {
         $statement = $this->getDriver()->prepare("
@@ -111,10 +93,6 @@ class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterfac
             : null ;
     }
 
-    /**
-     * @param \Althingi\Model\CongressmanDocument $data
-     * @return int
-     */
     public function create(Model\CongressmanDocument $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -129,10 +107,6 @@ class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterfac
         return $this->getDriver()->lastInsertId();
     }
 
-    /**
-     * @param \Althingi\Model\CongressmanDocument $data
-     * @return int
-     */
     public function save(Model\CongressmanDocument $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -162,10 +136,6 @@ class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterfac
         return $statement->rowCount();
     }
 
-    /**
-     * @param \Althingi\Model\CongressmanDocument | object $data
-     * @return int
-     */
     public function update(Model\CongressmanDocument $data): int
     {
         $statement = $this->getDriver()->prepare(
