@@ -1,6 +1,6 @@
 {
   "name": "fizk/althingi-source",
-  "description": "API for the Loggjafarthing system",
+  "description": "API and main data-store for the Loggjafarthing system",
   "type": "project",
   "license": "BSD-3-Clause",
   "keywords": [],

@@ -9,7 +9,6 @@ use Althingi\Events\RequestSuccessEvent;
 use Althingi\Router\Http\TreeRouteStack;
 use Althingi\Router\RouteInterface;
 use Althingi\Utils\BlackHoleMessageBroker;
-use Althingi\Utils\KafkaMessageBroker;
 use Althingi\Utils\MessageBrokerInterface;
 use Althingi\Utils\AmqpMessageBroker;
 use Laminas\Cache\Storage\StorageInterface;
@@ -458,9 +457,6 @@ return [
 
         MessageBrokerInterface::class => function (ContainerInterface $container) {
             switch(strtolower(getenv('BROKER'))) {
-                case 'kafka':
-                    return new KafkaMessageBroker("10.0.0.1:9092,10.0.0.2:9092");
-                    break;
                 case 'amqp':
                     return new AmqpMessageBroker(
                         $container->get(AMQPStreamConnection::class)

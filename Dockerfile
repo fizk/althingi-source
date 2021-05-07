@@ -50,21 +50,6 @@ RUN echo "<VirtualHost *:80>\n \
     RewriteRule . /index.php [L]\n \
     </VirtualHost>\n" > /etc/apache2/sites-available/000-default.conf
 
-# Apache Kafka
-# apt install librdkafka-dev maybe?
-ENV LIBRDKAFKA_VERSION 1.6.0
-ENV EXT_RDKAFKA_VERSION 5.0.0
-
-RUN git clone --depth 1 --branch v$LIBRDKAFKA_VERSION https://github.com/edenhill/librdkafka.git; \
-    cd librdkafka; \
-    ./configure; \
-    make; \
-    make install; \
-    pecl channel-update pecl.php.net; \
-    pecl install rdkafka-$EXT_RDKAFKA_VERSION; \
-    docker-php-ext-enable rdkafka; \
-    rm -rf /librdkafka;
-
 RUN a2enmod rewrite && service apache2 restart;
 
 RUN curl -sS https://getcomposer.org/installer \
@@ -89,16 +74,16 @@ WORKDIR /var/www
 COPY ./composer.json ./composer.json
 COPY ./composer.lock ./composer.lock
 
-# RUN if [ "$ENV" != "production" ] ; then \
-#     composer config -g github-oauth.github.com 6123ac2cdc66febecc9dd6227a6819b01c0a5e66 && \
-#     composer install --prefer-source --no-interaction \
-#     && composer dump-autoload; \
-#     fi ;
+RUN if [ "$ENV" != "production" ] ; then \
+    composer config -g github-oauth.github.com 6123ac2cdc66febecc9dd6227a6819b01c0a5e66 && \
+    composer install --prefer-source --no-interaction \
+    && composer dump-autoload; \
+    fi ;
 
-# RUN if [ "$ENV" = "production" ] ; then \
-#     composer install --prefer-source --no-interaction --no-dev -o \
-#     && composer dump-autoload -o; \
-#     fi ;
+RUN if [ "$ENV" = "production" ] ; then \
+    composer install --prefer-source --no-interaction --no-dev -o \
+    && composer dump-autoload -o; \
+    fi ;
 
 COPY ./public ./public
 COPY ./src ./src

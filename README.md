@@ -15,7 +15,7 @@ The API is configures with environment variables
 | CACHE_TYPE          | none                             | file / memory / none                  |
 | CACHE_HOST          |                                  | <string>                              |
 | CACHE_PORT          |                                  | <number>                              |
-| BROKER              | none                             | amqp / kafka                          |
+| BROKER              | none                             | amqp / none                           |
 | BROKER_HOST         | localhost                        | <string>                              |
 | BROKER_PORT         | 5672                             | <string>                              |
 | BROKER_USER         | guest                            | <string>                              |
