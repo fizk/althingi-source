@@ -6,7 +6,6 @@ use Althingi\Controller\CommitteeMeetingController;
 use Althingi\Service\CommitteeMeeting;
 use Althingi\Model\CommitteeMeeting as CommitteeMeetingModel;
 use AlthingiTest\ServiceHelper;
-use Althingi\Router\Http\TreeRouteStack;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 

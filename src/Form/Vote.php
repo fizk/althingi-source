@@ -2,180 +2,138 @@
 
 namespace Althingi\Form;
 
-use Laminas\InputFilter\InputFilterProviderInterface;
+use Althingi\Hydrator;
+use Althingi\Model;
+use Althingi\Filter\ToInt;
+use Laminas\Filter\ToNull;
+use Laminas\Validator\{Digits, Date};
 
-class Vote extends Form implements InputFilterProviderInterface
+class Vote extends Form
 {
     public function __construct()
     {
         parent::__construct(get_class($this));
         $this
-            ->setHydrator(new \Althingi\Hydrator\Vote())
-            ->setObject(new \Althingi\Model\Vote());
-
-        $this->add([
-            'name' => 'vote_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-
-        $this->add([
-            'name' => 'assembly_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-
-        $this->add([
-            'name' => 'document_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-
-        $this->add([
-            'name' => 'issue_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-
-        $this->add([
-            'name' => 'category',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
-
-        $this->add([
-            'name' => 'date',
-            'type' => 'Laminas\Form\Element\DateTime',
-            'options' => [
-                'format' => 'Y-m-d H:i:s',
-
-            ],
-            'attributes' => [
-                'step' => 'any'
-            ],
-        ]);
-
-        $this->add([
-            'name' => 'type',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
-
-        $this->add([
-            'name' => 'outcome',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
-
-        $this->add([
-            'name' => 'method',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
-
-        $this->add([
-            'name' => 'yes',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-
-        $this->add([
-            'name' => 'no',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-
-        $this->add([
-            'name' => 'inaction',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-        $this->add([
-            'name' => 'committee_to',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
+            ->setHydrator(new Hydrator\Vote())
+            ->setObject(new Model\Vote());
     }
 
-
-    /**
-     * Should return an array specification compatible with
-     * {@link Laminas\InputFilter\Factory::createInputFilter()}.
-     *
-     * @return array
-     */
-    public function getInputFilterSpecification()
+    public function getInputFilterSpecification(): array
     {
         return [
             'issue_id' => [
+                'name' => 'issue_id',
                 'required' => true,
                 'allow_empty' => false,
+                'filters' => [
+                    ['name' => ToInt::class,],
+                ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
             ],
             'assembly_id' => [
+                'name' => 'assembly_id',
                 'required' => true,
                 'allow_empty' => false,
+                'filters' => [
+                    ['name' => ToInt::class,],
+                ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
             ],
             'category' => [
+                'name' => 'category',
                 'required' => true,
                 'allow_empty' => false,
             ],
             'document_id' => [
+                'name' => 'document_id',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
+                    ['name' => ToInt::class,],
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],
             ],
             'vote_id' => [
+                'name' => 'vote_id',
                 'required' => true,
                 'allow_empty' => false,
+                'filters' => [
+                    ['name' => ToInt::class,],
+                ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
             ],
             'date' => [
+                'name' => 'date',
                 'required' => true,
                 'allow_empty' => false,
+                'validators' => [
+                    [
+                        'name' => Date::class,
+                        'options' => ['step' => 'any', 'format' => 'Y-m-d H:i:s']
+                    ]
+                ],
             ],
             'type' => [
+                'name' => 'type',
                 'required' => true,
                 'allow_empty' => false,
             ],
             'outcome' => [
+                'name' => 'outcome',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],
             ],
             'method' => [
+                'name' => 'method',
                 'required' => true,
                 'allow_empty' => false,
             ],
             'yes' => [
+                'name' => 'yes',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
-                    [
-                        'name' => '\Laminas\Filter\ToInt',
-                    ]
+                    ['name' => ToInt::class,],
                 ],
             ],
             'no' => [
+                'name' => 'no',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
-                    [
-                        'name' => '\Laminas\Filter\ToInt',
-                    ]
+                    ['name' => ToInt::class,],
                 ],
             ],
             'inaction' => [
+                'name' => 'inaction',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
-                    [
-                        'name' => '\Laminas\Filter\ToInt',
-                    ]
+                    ['name' => ToInt::class,],
                 ],
             ],
             'committee_to' => [
+                'name' => 'committee_to',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],

@@ -22,7 +22,7 @@ class ValueAndCount implements ModelInterface
      * @param int $count
      * @return ValueAndCount
      */
-    public function setCount(int $count): ValueAndCount
+    public function setCount(int $count): self
     {
         $this->count = $count;
         return $this;
@@ -40,7 +40,7 @@ class ValueAndCount implements ModelInterface
      * @param string $value
      * @return ValueAndCount
      */
-    public function setValue(?string $value): ValueAndCount
+    public function setValue(?string $value): self
     {
         $this->value = $value;
         return $this;
@@ -49,7 +49,7 @@ class ValueAndCount implements ModelInterface
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'value' => $this->value,
@@ -60,7 +60,7 @@ class ValueAndCount implements ModelInterface
     /**
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

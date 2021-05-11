@@ -34,7 +34,7 @@ class AssemblyStatusProperties implements ModelInterface
      * @param DateAndCount[] $votes
      * @return AssemblyStatusProperties
      */
-    public function setVotes(array $votes): AssemblyStatusProperties
+    public function setVotes(array $votes): self
     {
         $this->votes = $votes;
         return $this;
@@ -52,7 +52,7 @@ class AssemblyStatusProperties implements ModelInterface
      * @param DateAndCount[] $speeches
      * @return AssemblyStatusProperties
      */
-    public function setSpeeches(array $speeches): AssemblyStatusProperties
+    public function setSpeeches(array $speeches): self
     {
         $this->speeches = $speeches;
         return $this;
@@ -70,7 +70,7 @@ class AssemblyStatusProperties implements ModelInterface
      * @param PartyAndTime[] $partyTimes
      * @return AssemblyStatusProperties
      */
-    public function setPartyTimes(array $partyTimes): AssemblyStatusProperties
+    public function setPartyTimes(array $partyTimes): self
     {
         $this->party_times = $partyTimes;
         return $this;
@@ -88,7 +88,7 @@ class AssemblyStatusProperties implements ModelInterface
      * @param Election $election
      * @return AssemblyStatusProperties
      */
-    public function setElection(Election $election = null): AssemblyStatusProperties
+    public function setElection(?Election $election): self
     {
         $this->election = $election;
         return $this;
@@ -106,7 +106,7 @@ class AssemblyStatusProperties implements ModelInterface
      * @param PartyAndElection[] $electionResults
      * @return AssemblyStatusProperties
      */
-    public function setElectionResults(array $electionResults): AssemblyStatusProperties
+    public function setElectionResults(array $electionResults): self
     {
         $this->election_results = $electionResults;
         return $this;
@@ -124,7 +124,7 @@ class AssemblyStatusProperties implements ModelInterface
      * @param float $averageAge
      * @return AssemblyStatusProperties
      */
-    public function setAverageAge(float $averageAge): AssemblyStatusProperties
+    public function setAverageAge(float $averageAge): self
     {
         $this->averageAge = $averageAge;
         return $this;
@@ -133,7 +133,7 @@ class AssemblyStatusProperties implements ModelInterface
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'votes' => $this->votes,
@@ -148,7 +148,7 @@ class AssemblyStatusProperties implements ModelInterface
     /**
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

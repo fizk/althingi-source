@@ -2,11 +2,13 @@
 
 namespace Althingi\Form;
 
-use Laminas\InputFilter\InputFilterProviderInterface;
 use Althingi\Hydrator;
 use Althingi\Model;
+use Laminas\Filter\ToNull;
+use Althingi\Filter\ToInt;
+use Laminas\Validator\{Date, Digits};
 
-class CommitteeSitting extends Form implements InputFilterProviderInterface
+class CommitteeSitting extends Form
 {
     public function __construct()
     {
@@ -14,110 +16,106 @@ class CommitteeSitting extends Form implements InputFilterProviderInterface
         $this
             ->setHydrator(new Hydrator\CommitteeSitting())
             ->setObject(new Model\CommitteeSitting());
-
-        $this->add([
-            'name' => 'committee_sitting_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-        $this->add([
-            'name' => 'congressman_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-        $this->add([
-            'name' => 'committee_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-        $this->add([
-            'name' => 'assembly_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-        $this->add([
-            'name' => 'order',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-        $this->add([
-            'name' => 'role',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
-        $this->add([
-            'name' => 'from',
-            'type' => 'Laminas\Form\Element\Date',
-            'options' => [
-                'format' => 'Y-m-d'
-            ],
-            'attributes' => [
-                'step' => 'any'
-            ],
-        ]);
-        $this->add([
-            'name' => 'to',
-            'type' => 'Laminas\Form\Element\Date',
-            'options' => [
-                'format' => 'Y-m-d'
-            ],
-            'attributes' => [
-                'step' => 'any'
-            ],
-        ]);
     }
 
-
-    /**
-     * Should return an array specification compatible with
-     * {@link Laminas\InputFilter\Factory::createInputFilter()}.
-     *
-     * @return array
-     */
-    public function getInputFilterSpecification()
+    public function getInputFilterSpecification(): array
     {
         return [
             'committee_sitting_id' => [
+                'name' => 'committee_sitting_id',
                 'required' => false,
                 'allow_empty' => true,
+                'filters' => [
+                    ['name' => ToInt::class,],
+                    [
+                        'name' => ToNull::class,
+                        'options' => ['type' => 'all']
+                    ]
+                ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
             ],
             'congressman_id' => [
+                'name' => 'congressman_id',
                 'required' => true,
                 'allow_empty' => false,
+                'filters' => [
+                    ['name' => ToInt::class,],
+                ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
             ],
             'committee_id' => [
+                'name' => 'committee_id',
                 'required' => true,
                 'allow_empty' => false,
+                'filters' => [
+                    ['name' => ToInt::class,],
+                ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
             ],
             'assembly_id' => [
+                'name' => 'assembly_id',
                 'required' => true,
                 'allow_empty' => false,
+                'filters' => [
+                    ['name' => ToInt::class,],
+                ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
             ],
             'order' => [
+                'name' => 'order',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],
             ],
             'role' => [
+                'name' => 'role',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],
             ],
             'from' => [
+                'name' => 'from',
                 'required' => true,
                 'allow_empty' => false,
+                'validators' => [
+                    [
+                        'name' => Date::class,
+                        'options' => ['step' => 'any', 'format' => 'Y-m-d']
+                    ]
+                ],
             ],
             'to' => [
+                'name' => 'to',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
+                    ]
+                ],
+                'validators' => [
+                    [
+                        'name' => Date::class,
+                        'options' => ['step' => 'any', 'format' => 'Y-m-d']
                     ]
                 ],
             ],

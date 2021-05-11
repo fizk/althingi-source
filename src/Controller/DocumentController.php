@@ -67,7 +67,7 @@ class DocumentController implements
         $documentId = $request->getAttribute('document_id');
 
         $form = new Form\Document();
-        $form->bindValues(array_merge(
+        $form->setData(array_merge(
             $request->getParsedBody(),
             [
                 'assembly_id' => $assemblyId,
@@ -103,7 +103,7 @@ class DocumentController implements
             $form->setData($request->getParsedBody());
 
             if ($form->isValid()) {
-                $this->documentService->update($form->getData());
+                $this->documentService->update($form->getObject());
                 return new EmptyResponse(205);
             }
 

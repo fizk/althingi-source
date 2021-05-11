@@ -5,7 +5,6 @@ namespace AlthingiTest\Controller;
 use Althingi\Controller\PlenaryController;
 use Althingi\Service\Plenary;
 use AlthingiTest\ServiceHelper;
-use Althingi\Router\Http\TreeRouteStack;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 

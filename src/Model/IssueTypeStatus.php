@@ -22,7 +22,7 @@ class IssueTypeStatus implements ModelInterface
      * @param int $count
      * @return IssueTypeStatus
      */
-    public function setCount(int $count = null): IssueTypeStatus
+    public function setCount(int $count = null): self
     {
         $this->count = $count;
         return $this;
@@ -40,13 +40,13 @@ class IssueTypeStatus implements ModelInterface
      * @param string $status
      * @return IssueTypeStatus
      */
-    public function setStatus(string $status = null): IssueTypeStatus
+    public function setStatus(string $status = null): self
     {
         $this->status = $status;
         return $this;
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'count' => $this->count,
@@ -54,7 +54,7 @@ class IssueTypeStatus implements ModelInterface
         ];
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

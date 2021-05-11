@@ -28,7 +28,7 @@ class IssueCategory implements ModelInterface
      * @param int $category_id
      * @return IssueCategory
      */
-    public function setCategoryId(int $category_id): IssueCategory
+    public function setCategoryId(int $category_id): self
     {
         $this->category_id = $category_id;
         return $this;
@@ -46,7 +46,7 @@ class IssueCategory implements ModelInterface
      * @param int $issue_id
      * @return IssueCategory
      */
-    public function setIssueId(int $issue_id): IssueCategory
+    public function setIssueId(int $issue_id): self
     {
         $this->issue_id = $issue_id;
         return $this;
@@ -64,7 +64,7 @@ class IssueCategory implements ModelInterface
      * @param int $assembly_id
      * @return IssueCategory
      */
-    public function setAssemblyId(int $assembly_id): IssueCategory
+    public function setAssemblyId(int $assembly_id): self
     {
         $this->assembly_id = $assembly_id;
         return $this;
@@ -88,7 +88,7 @@ class IssueCategory implements ModelInterface
         return $this;
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'category_id' => $this->category_id,
@@ -98,7 +98,7 @@ class IssueCategory implements ModelInterface
         ];
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

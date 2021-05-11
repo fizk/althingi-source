@@ -19,7 +19,7 @@ class CategoryAndCount extends Category
      * @param int $count
      * @return CategoryAndCount
      */
-    public function setCount(int $count = null): CategoryAndCount
+    public function setCount(int $count = null): self
     {
         $this->count = $count;
         return $this;
@@ -28,7 +28,7 @@ class CategoryAndCount extends Category
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return array_merge(parent::toArray(), ['count' => $this->count]);
     }

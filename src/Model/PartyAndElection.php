@@ -31,7 +31,7 @@ class PartyAndElection extends Party
      * @param float $results
      * @return PartyAndElection
      */
-    public function setResults(float $results): PartyAndElection
+    public function setResults(float $results): self
     {
         $this->results = $results;
         return $this;
@@ -49,7 +49,7 @@ class PartyAndElection extends Party
      * @param int $seat
      * @return PartyAndElection
      */
-    public function setSeat(?int $seat): PartyAndElection
+    public function setSeat(?int $seat): self
     {
         $this->seat = $seat;
         return $this;
@@ -67,7 +67,7 @@ class PartyAndElection extends Party
      * @param int $election_id
      * @return PartyAndElection
      */
-    public function setElectionId(int $election_id): PartyAndElection
+    public function setElectionId(int $election_id): self
     {
         $this->election_id = $election_id;
         return $this;
@@ -85,7 +85,7 @@ class PartyAndElection extends Party
      * @param int $election_result_id
      * @return PartyAndElection
      */
-    public function setElectionResultId(int $election_result_id): PartyAndElection
+    public function setElectionResultId(int $election_result_id): self
     {
         $this->election_result_id = $election_result_id;
         return $this;
@@ -103,13 +103,13 @@ class PartyAndElection extends Party
      * @param int $assembly_id
      * @return PartyAndElection
      */
-    public function setAssemblyId(int $assembly_id): PartyAndElection
+    public function setAssemblyId(int $assembly_id): self
     {
         $this->assembly_id = $assembly_id;
         return $this;
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return array_merge(
             parent::toArray(),

@@ -20,7 +20,7 @@ class ConstituencyDate extends Constituency
      * @param \DateTime $date
      * @return ConstituencyDate
      */
-    public function setDate(?DateTime $date): ConstituencyDate
+    public function setDate(?DateTime $date): self
     {
         $this->date = $date;
         return $this;
@@ -32,7 +32,7 @@ class ConstituencyDate extends Constituency
     public function toArray(): array
     {
         return array_merge(parent::toArray(), [
-            'date' => $this->date ? $this->date->format('Y-m-d') : null,
+            'date' => $this->date?->format('Y-m-d'),
         ]);
     }
 }

@@ -101,7 +101,7 @@ class PlenaryController implements
             $form->setData($request->getParsedBody());
 
             if ($form->isValid()) {
-                $this->plenaryService->update($form->getData());
+                $this->plenaryService->update($form->getObject());
                 return new EmptyResponse(205);
             }
 

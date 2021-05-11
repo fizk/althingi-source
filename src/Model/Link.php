@@ -30,7 +30,7 @@ class Link implements ModelInterface
      * @param int $assembly_id
      * @return Link
      */
-    public function setAssemblyId(int $assembly_id): Link
+    public function setAssemblyId(int $assembly_id): self
     {
         $this->assembly_id = $assembly_id;
         return $this;
@@ -48,7 +48,7 @@ class Link implements ModelInterface
      * @param int $issue_id
      * @return Link
      */
-    public function setIssueId(int $issue_id): Link
+    public function setIssueId(int $issue_id): self
     {
         $this->issue_id = $issue_id;
         return $this;
@@ -66,7 +66,7 @@ class Link implements ModelInterface
      * @param string $category
      * @return Link
      */
-    public function setCategory(string $category): Link
+    public function setCategory(string $category): self
     {
         $this->category = $category;
         return $this;
@@ -84,7 +84,7 @@ class Link implements ModelInterface
      * @param string $type
      * @return Link
      */
-    public function setType(string $type): Link
+    public function setType(string $type): self
     {
         $this->type = $type;
         return $this;
@@ -93,7 +93,7 @@ class Link implements ModelInterface
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'assembly_id' => $this->assembly_id,
@@ -106,7 +106,7 @@ class Link implements ModelInterface
     /**
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

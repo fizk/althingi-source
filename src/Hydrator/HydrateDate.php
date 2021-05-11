@@ -18,9 +18,5 @@ trait HydrateDate
         if ($date instanceof DateTime) {
             return $date;
         }
-
-        if ($date instanceof \MongoDB\BSON\UTCDateTime) {
-            return $date->toDateTime();
-        }
     }
 }

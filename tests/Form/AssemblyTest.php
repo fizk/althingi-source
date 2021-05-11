@@ -16,7 +16,9 @@ class AssemblyTest extends TestCase
             'to' => '',
         ])->isValid();
 
-        $this->assertNull($form->getObject()->getTo());
+        /** @var \Althingi\Model\Assembly */
+        $model = $form->getObject();
+        $this->assertNull($model->getTo());
     }
 
     public function testNonEmptyToValue()
@@ -28,6 +30,8 @@ class AssemblyTest extends TestCase
             'to' => '2001-02-02',
         ])->isValid();
 
-        $this->assertNotNull($form->getObject()->getTo());
+        /** @var \Althingi\Model\Assembly */
+        $model = $form->getObject();
+        $this->assertNotNull($model->getTo());
     }
 }

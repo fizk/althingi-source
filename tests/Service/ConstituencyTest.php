@@ -33,7 +33,8 @@ class ConstituencyTest extends TestCase
     public function testCreate()
     {
         $constituency = (new ConstituencyModel())
-            ->setName('name');
+            ->setName('name')
+            ->setConstituencyId(2);
 
         $expectedTable = $this->createArrayDataSet([
             'Constituency' => [
@@ -64,7 +65,8 @@ class ConstituencyTest extends TestCase
     public function testSave()
     {
         $constituency = (new ConstituencyModel())
-            ->setName('name');
+            ->setName('name')
+            ->setConstituencyId(2);
 
         $expectedTable = $this->createArrayDataSet([
             'Constituency' => [

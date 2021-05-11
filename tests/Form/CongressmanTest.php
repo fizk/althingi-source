@@ -17,7 +17,9 @@ class CongressmanTest extends TestCase
             'death' => '',
         ])->isValid();
 
-        $this->assertNull($form->getObject()->getDeath());
+        /** @var \Althingi\Model\Congressman */
+        $model = $form->getObject();
+        $this->assertNull($model->getDeath());
     }
 
     public function testNonEmptyToValue()
@@ -30,6 +32,8 @@ class CongressmanTest extends TestCase
             'death' => '2010-01-01',
         ])->isValid();
 
-        $this->assertNotNull($form->getObject()->getDeath());
+        /** @var \Althingi\Model\Congressman */
+        $model = $form->getObject();
+        $this->assertNotNull($model->getDeath());
     }
 }

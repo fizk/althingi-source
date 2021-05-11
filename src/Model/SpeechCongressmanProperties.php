@@ -22,7 +22,7 @@ class SpeechCongressmanProperties implements ModelInterface
      * @param CongressmanPartyProperties $congressman
      * @return SpeechCongressmanProperties
      */
-    public function setCongressman(CongressmanPartyProperties $congressman): SpeechCongressmanProperties
+    public function setCongressman(CongressmanPartyProperties $congressman): self
     {
         $this->congressman = $congressman;
         return $this;
@@ -40,7 +40,7 @@ class SpeechCongressmanProperties implements ModelInterface
      * @param Speech $speech
      * @return SpeechCongressmanProperties
      */
-    public function setSpeech(Speech $speech): SpeechCongressmanProperties
+    public function setSpeech(Speech $speech): self
     {
         $this->speech = $speech;
         return $this;
@@ -49,7 +49,7 @@ class SpeechCongressmanProperties implements ModelInterface
     /**
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }
@@ -57,8 +57,10 @@ class SpeechCongressmanProperties implements ModelInterface
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
-        return array_merge($this->speech->toArray(), ['congressman' => $this->congressman->toArray()]);
+        return array_merge($this->speech->toArray(), [
+            'congressman' => $this->congressman->toArray()
+        ]);
     }
 }

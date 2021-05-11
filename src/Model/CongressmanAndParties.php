@@ -22,7 +22,7 @@ class CongressmanAndParties implements ModelInterface
      * @param Congressman $congressman
      * @return CongressmanAndParties
      */
-    public function setCongressman(Congressman $congressman): CongressmanAndParties
+    public function setCongressman(Congressman $congressman): self
     {
         $this->congressman = $congressman;
         return $this;
@@ -40,7 +40,7 @@ class CongressmanAndParties implements ModelInterface
      * @param \Althingi\Model\Party[] $parties
      * @return CongressmanAndParties
      */
-    public function setParties(array $parties = []): CongressmanAndParties
+    public function setParties(array $parties = []): self
     {
         $this->parties = $parties;
         return $this;
@@ -49,7 +49,7 @@ class CongressmanAndParties implements ModelInterface
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return array_merge(
             $this->congressman->toArray(),
@@ -60,7 +60,7 @@ class CongressmanAndParties implements ModelInterface
     /**
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

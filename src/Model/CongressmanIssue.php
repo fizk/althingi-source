@@ -34,7 +34,7 @@ class CongressmanIssue implements ModelInterface
      * @param int $order
      * @return CongressmanIssue
      */
-    public function setOrder(?int $order): CongressmanIssue
+    public function setOrder(?int $order): self
     {
         $this->order = $order;
         return $this;
@@ -52,7 +52,7 @@ class CongressmanIssue implements ModelInterface
      * @param string $type
      * @return CongressmanIssue
      */
-    public function setType(?string $type): CongressmanIssue
+    public function setType(?string $type): self
     {
         $this->type = $type;
         return $this;
@@ -70,7 +70,7 @@ class CongressmanIssue implements ModelInterface
      * @param string $type_name
      * @return CongressmanIssue
      */
-    public function setTypeName(?string $type_name): CongressmanIssue
+    public function setTypeName(?string $type_name): self
     {
         $this->type_name = $type_name;
         return $this;
@@ -88,7 +88,7 @@ class CongressmanIssue implements ModelInterface
      * @param string $type_subname
      * @return CongressmanIssue
      */
-    public function setTypeSubname(?string $type_subname): CongressmanIssue
+    public function setTypeSubname(?string $type_subname): self
     {
         $this->type_subname = $type_subname;
         return $this;
@@ -106,7 +106,7 @@ class CongressmanIssue implements ModelInterface
      * @param string $document_type
      * @return CongressmanIssue
      */
-    public function setDocumentType(?string $document_type): CongressmanIssue
+    public function setDocumentType(?string $document_type): self
     {
         $this->document_type = $document_type;
         return $this;
@@ -124,13 +124,13 @@ class CongressmanIssue implements ModelInterface
      * @param int $count
      * @return CongressmanIssue
      */
-    public function setCount(?int $count): CongressmanIssue
+    public function setCount(?int $count): self
     {
         $this->count = $count;
         return $this;
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'order' => $this->order,
@@ -142,7 +142,7 @@ class CongressmanIssue implements ModelInterface
         ];
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

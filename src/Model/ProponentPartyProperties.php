@@ -22,7 +22,7 @@ class ProponentPartyProperties extends CongressmanPartyProperties
      * @param int $order
      * @return ProponentPartyProperties
      */
-    public function setOrder(int $order): ProponentPartyProperties
+    public function setOrder(int $order): self
     {
         $this->order = $order;
         return $this;
@@ -40,7 +40,7 @@ class ProponentPartyProperties extends CongressmanPartyProperties
      * @param null|string $minister
      * @return ProponentPartyProperties
      */
-    public function setMinister(?string $minister): ProponentPartyProperties
+    public function setMinister(?string $minister): self
     {
         $this->minister = $minister;
         return $this;
@@ -49,7 +49,7 @@ class ProponentPartyProperties extends CongressmanPartyProperties
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return array_merge(parent::toArray(), [
             'order' => $this->order,

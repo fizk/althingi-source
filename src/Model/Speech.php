@@ -6,302 +6,176 @@ use DateTime;
 
 class Speech implements ModelInterface
 {
-
-    /** @var string */
     private $speech_id;
-
-    /** @var int */
     private $plenary_id;
-
-    /** @var int */
     private $assembly_id;
-
-    /** @var int */
     private $issue_id;
-
-    /** @var  string */
     private $category;
-
-    /** @var int */
     private $congressman_id;
-
-    /** @var string */
-    private $congressman_type = null;
-
-    /** @var \DateTime */
-    private $from = null;
-
-    /** @var \DateTime */
-    private $to = null;
-
-    /** @var string */
-    private $text = null;
-
-    /** @var string */
-    private $type = null;
-
-    /** @var string */
-    private $iteration = null;
-
-    /** @var int */
+    private ?string $congressman_type = null;
+    private ?DateTime $from = null;
+    private ?DateTime $to = null;
+    private ?string $text = null;
+    private ?string $type = null;
+    private ?string $iteration = null;
     private $word_count = 0;
-
-    /** @var bool */
     private $validated = true;
 
-    /**
-     * @return string
-     */
     public function getSpeechId(): string
     {
         return $this->speech_id;
     }
 
-    /**
-     * @param string $speech_id
-     * @return Speech
-     */
-    public function setSpeechId(string $speech_id): Speech
+    public function setSpeechId(string $speech_id): self
     {
         $this->speech_id = $speech_id;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getPlenaryId(): int
     {
         return $this->plenary_id;
     }
 
-    /**
-     * @param int $plenary_id
-     * @return Speech
-     */
-    public function setPlenaryId(int $plenary_id): Speech
+    public function setPlenaryId(int $plenary_id): self
     {
         $this->plenary_id = $plenary_id;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getAssemblyId(): int
     {
         return $this->assembly_id;
     }
 
-    /**
-     * @param int $assembly_id
-     * @return Speech
-     */
-    public function setAssemblyId(int $assembly_id): Speech
+    public function setAssemblyId(int $assembly_id): self
     {
         $this->assembly_id = $assembly_id;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getIssueId(): int
     {
         return $this->issue_id;
     }
 
-    /**
-     * @param int $issue_id
-     * @return Speech
-     */
-    public function setIssueId(int $issue_id): Speech
+    public function setIssueId(int $issue_id): self
     {
         $this->issue_id = $issue_id;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getCategory(): ?string
     {
         return $this->category;
     }
 
-    /**
-     * @param string $category
-     * @return Speech
-     */
-    public function setCategory(?string $category): Speech
+    public function setCategory(?string $category): self
     {
         $this->category = $category;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getCongressmanId(): int
     {
         return $this->congressman_id;
     }
 
-    /**
-     * @param int $congressman_id
-     * @return Speech
-     */
-    public function setCongressmanId(int $congressman_id): Speech
+    public function setCongressmanId(int $congressman_id): self
     {
         $this->congressman_id = $congressman_id;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getCongressmanType(): ?string
     {
         return $this->congressman_type;
     }
 
-    /**
-     * @param string $congressman_type
-     * @return Speech
-     */
-    public function setCongressmanType(string $congressman_type = null): Speech
+    public function setCongressmanType(?string $congressman_type = null): self
     {
         $this->congressman_type = $congressman_type;
         return $this;
     }
 
-    /**
-     * @return \DateTime
-     */
     public function getFrom(): ?DateTime
     {
         return $this->from;
     }
 
-    /**
-     * @param \DateTime $from
-     * @return Speech
-     */
-    public function setFrom(DateTime $from = null): Speech
+    public function setFrom(?DateTime $from = null): self
     {
         $this->from = $from;
         return $this;
     }
 
-    /**
-     * @return \DateTime
-     */
     public function getTo(): ?DateTime
     {
         return $this->to;
     }
 
-    /**
-     * @param \DateTime $to
-     * @return Speech
-     */
-    public function setTo(DateTime $to = null): Speech
+    public function setTo(?DateTime $to = null): self
     {
         $this->to = $to;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getText(): ?string
     {
         return $this->text;
     }
 
-    /**
-     * @param string $text
-     * @return Speech
-     */
-    public function setText(string $text = null): Speech
+    public function setText(string $text = null): self
     {
         $this->text = $text;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): ?string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $type
-     * @return Speech
-     */
-    public function setType(string $type = null): Speech
+    public function setType(?string $type = null): self
     {
         $this->type = $type;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getIteration(): ?string
     {
         return $this->iteration;
     }
 
-    /**
-     * @param string $iteration
-     * @return Speech
-     */
-    public function setIteration(string $iteration = null): Speech
+    public function setIteration(?string $iteration = null): self
     {
         $this->iteration = $iteration;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getWordCount(): int
     {
         return $this->word_count;
     }
 
-    /**
-     * @param int $word_count
-     * @return Speech
-     */
-    public function setWordCount(?int $word_count): Speech
+    public function setWordCount(?int $word_count): self
     {
         $this->word_count = $word_count ? : 0;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isValidated(): bool
     {
         return $this->validated;
     }
 
-    /**
-     * @param bool $validated
-     * @return Speech
-     */
-    public function setValidated(bool $validated): Speech
+    public function setValidated(bool $validated = true): self
     {
         $this->validated = $validated;
         return $this;
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'speech_id' => $this->speech_id,
@@ -311,8 +185,8 @@ class Speech implements ModelInterface
             'category' => $this->category,
             'congressman_id' => $this->congressman_id,
             'congressman_type' => $this->congressman_type,
-            'from' => $this->from ? $this->from->format('Y-m-d H:i:s') : null,
-            'to' => $this->to ? $this->to->format('Y-m-d H:i:s') : null,
+            'from' => $this->from?->format('Y-m-d H:i:s'),
+            'to' => $this->to?->format('Y-m-d H:i:s'),
             'text' => $this->text,
             'type' => $this->type,
             'iteration' => $this->iteration,
@@ -321,7 +195,7 @@ class Speech implements ModelInterface
         ];
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

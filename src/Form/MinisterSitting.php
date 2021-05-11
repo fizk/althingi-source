@@ -2,95 +2,106 @@
 
 namespace Althingi\Form;
 
-use Laminas\InputFilter\InputFilterProviderInterface;
+use Althingi\Hydrator;
+use Althingi\Model;
+use Althingi\Filter\ToInt;
+use Laminas\Filter\ToNull;
+use Laminas\Validator\{Digits, Date};
 
-class MinisterSitting extends Form implements InputFilterProviderInterface
+class MinisterSitting extends Form
 {
     public function __construct()
     {
         parent::__construct(get_class($this));
         $this
-            ->setObject(new \Althingi\Model\MinisterSitting())
-            ->setHydrator(new \Althingi\Hydrator\MinisterSitting());
-
-        $this->add([
-            'name' => 'minister_sitting_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-        $this->add([
-            'name' => 'assembly_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-        $this->add([
-            'name' => 'ministry_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-        $this->add([
-            'name' => 'congressman_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-        $this->add([
-            'name' => 'party_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-
-        $this->add([
-            'name' => 'from',
-            'type' => 'Laminas\Form\Element\Date',
-        ]);
-
-        $this->add([
-            'name' => 'to',
-            'type' => 'Laminas\Form\Element\Date',
-        ]);
+            ->setObject(new Model\MinisterSitting())
+            ->setHydrator(new Hydrator\MinisterSitting());
     }
 
-
-    /**
-     * Should return an array specification compatible with
-     * {@link Laminas\InputFilter\Factory::createInputFilter()}.
-     *
-     * @return array
-     */
-    public function getInputFilterSpecification()
+    public function getInputFilterSpecification(): array
     {
         return [
             'minister_sitting_id' => [
-                'required' => false,
-                'allow_empty' => true,
-            ],
-            'assembly_id' => [
-                'required' => true,
-                'allow_empty' => false,
-            ],
-            'ministry_id' => [
-                'required' => true,
-                'allow_empty' => false,
-            ],
-            'congressman_id' => [
-                'required' => true,
-                'allow_empty' => false,
-            ],
-            'party_id' => [
+                'name' => 'minister_sitting_id',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
+                    ['name' => ToInt::class,],
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
+                        'options' => ['type' => 'all']
+                    ]
+                ],
+            ],
+            'assembly_id' => [
+                'name' => 'assembly_id',
+                'required' => true,
+                'allow_empty' => false,
+                'filters' => [
+                    ['name' => ToInt::class,],
+                ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
+            ],
+            'ministry_id' => [
+                'name' => 'ministry_id',
+                'required' => true,
+                'allow_empty' => false,
+                'filters' => [
+                    ['name' => ToInt::class,],
+                ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
+            ],
+            'congressman_id' => [
+                'name' => 'congressman_id',
+                'required' => true,
+                'allow_empty' => false,
+                'filters' => [
+                    ['name' => ToInt::class,],
+                ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
+            ],
+            'party_id' => [
+                'name' => 'party_id',
+                'required' => false,
+                'allow_empty' => true,
+                'filters' => [
+                    ['name' => ToInt::class,],
+                    [
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],
             ],
             'from' => [
+                'name' => 'from',
                 'required' => true,
                 'allow_empty' => false,
+                'validators' => [
+                    [
+                        'name' => Date::class,
+                        'options' => ['step' => 'any', 'format' => 'Y-m-d']
+                    ]
+                ],
             ],
             'to' => [
+                'name' => 'to',
                 'required' => false,
                 'allow_empty' => true,
+                'validators' => [
+                    [
+                        'name' => Date::class,
+                        'options' => ['step' => 'any', 'format' => 'Y-m-d']
+                    ]
+                ],
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],

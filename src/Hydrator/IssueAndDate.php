@@ -37,7 +37,6 @@ class IssueAndDate implements HydratorInterface
             ->setDate($data['date'] ? new DateTime($data['date']) : null);
     }
 
-
     /**
      * Extract values from an object
      *

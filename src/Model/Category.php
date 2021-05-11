@@ -4,94 +4,56 @@ namespace Althingi\Model;
 
 class Category implements ModelInterface
 {
-    /** @var  int */
-    private $category_id;
+    private int $category_id;
+    private int $super_category_id;
+    private ?string $title = null;
+    private ?string $description = null;
 
-    /** @var  int */
-    private $super_category_id;
-
-    /** @var  string */
-    private $title;
-
-    /** @var  string */
-    private $description;
-
-    /**
-     * @return int
-     */
     public function getCategoryId(): int
     {
         return $this->category_id;
     }
 
-    /**
-     * @param int $category_id
-     * @return Category
-     */
-    public function setCategoryId(int $category_id): Category
+    public function setCategoryId(int $category_id): self
     {
         $this->category_id = $category_id;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getSuperCategoryId(): int
     {
         return $this->super_category_id;
     }
 
-    /**
-     * @param int $super_category_id
-     * @return Category
-     */
-    public function setSuperCategoryId(int $super_category_id): Category
+    public function setSuperCategoryId(int $super_category_id): self
     {
         $this->super_category_id = $super_category_id;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getTitle(): ?string
     {
         return $this->title;
     }
 
-    /**
-     * @param string $title
-     * @return Category
-     */
-    public function setTitle(string $title = null): Category
+    public function setTitle(?string $title): self
     {
         $this->title = $title;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    /**
-     * @param string $description
-     * @return Category
-     */
-    public function setDescription(string $description = null): Category
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'category_id' => $this->category_id,
@@ -101,10 +63,7 @@ class Category implements ModelInterface
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

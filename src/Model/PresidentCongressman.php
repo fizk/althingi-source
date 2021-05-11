@@ -36,7 +36,7 @@ class PresidentCongressman extends Congressman
      * @param int $president_id
      * @return PresidentCongressman
      */
-    public function setPresidentId(int $president_id): PresidentCongressman
+    public function setPresidentId(int $president_id): self
     {
         $this->president_id = $president_id;
         return $this;
@@ -54,7 +54,7 @@ class PresidentCongressman extends Congressman
      * @param int $assembly_id
      * @return PresidentCongressman
      */
-    public function setAssemblyId(int $assembly_id): PresidentCongressman
+    public function setAssemblyId(int $assembly_id): self
     {
         $this->assembly_id = $assembly_id;
         return $this;
@@ -72,7 +72,7 @@ class PresidentCongressman extends Congressman
      * @param \DateTime $from
      * @return PresidentCongressman
      */
-    public function setFrom(DateTime $from): PresidentCongressman
+    public function setFrom(DateTime $from): self
     {
         $this->from = $from;
         return $this;
@@ -90,7 +90,7 @@ class PresidentCongressman extends Congressman
      * @param \DateTime $to
      * @return PresidentCongressman
      */
-    public function setTo(DateTime $to = null): PresidentCongressman
+    public function setTo(DateTime $to = null): self
     {
         $this->to = $to;
         return $this;
@@ -108,7 +108,7 @@ class PresidentCongressman extends Congressman
      * @param string $title
      * @return PresidentCongressman
      */
-    public function setTitle(string $title): PresidentCongressman
+    public function setTitle(string $title): self
     {
         $this->title = $title;
         return $this;
@@ -126,24 +126,24 @@ class PresidentCongressman extends Congressman
      * @param string $abbr
      * @return PresidentCongressman
      */
-    public function setAbbr(string $abbr = null): PresidentCongressman
+    public function setAbbr(string $abbr = null): self
     {
         $this->abbr = $abbr;
         return $this;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return array_merge(parent::toArray(), [
             'president_id' => $this->president_id,
             'assembly_id' => $this->assembly_id,
-            'from' => $this->from->format('Y-m-d'),
-            'to' => $this->to ? $this->to->format('Y-m-d') : null,
+            'from' => $this->from?->format('Y-m-d'),
+            'to' => $this->to?->format('Y-m-d'),
             'title' => $this->title,
             'abbr' => $this->abbr,
         ]);

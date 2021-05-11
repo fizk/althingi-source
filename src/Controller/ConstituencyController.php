@@ -67,13 +67,13 @@ class ConstituencyController implements
     {
         if (($constituency = $this->constituencyService->get(
             $request->getAttribute('id')
-        )) != null) {
+        )) !== null) {
             $form = new Form\Constituency();
             $form->bind($constituency);
             $form->setData($request->getParsedBody());
 
             if ($form->isValid()) {
-                $this->constituencyService->update($form->getData());
+                $this->constituencyService->update($form->getObject());
                 return new EmptyResponse(205);
             }
 

@@ -19,13 +19,13 @@ class Proponent extends Congressman
      * @param string $minister
      * @return Proponent
      */
-    public function setMinister(string $minister = null): Proponent
+    public function setMinister(string $minister = null): self
     {
         $this->minister = $minister;
         return $this;
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return array_merge(
             parent::toArray(),

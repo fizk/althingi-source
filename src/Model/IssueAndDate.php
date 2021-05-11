@@ -21,21 +21,21 @@ class IssueAndDate extends Issue
      * @param \DateTime $date
      * @return IssueAndDate
      */
-    public function setDate(DateTime $date = null): IssueAndDate
+    public function setDate(DateTime $date = null): self
     {
         $this->date = $date;
         return $this;
     }
 
 
-    public function toArray()
+    public function toArray(): array
     {
         return array_merge(parent::toArray(), [
-            'date' => $this->date ? $this->date->format('Y-m-d H:i:s') : null,
+            'date' => $this->date?->format('Y-m-d H:i:s'),
         ]);
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

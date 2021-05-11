@@ -19,7 +19,9 @@ class ConstituencyTest extends TestCase
             'description' => null,
         ])->isValid();
 
-        $this->assertEquals('-', $form->getObject()->getName());
+        /** @var \Althingi\Model\Constituency */
+        $model = $form->getObject();
+        $this->assertEquals('-', $model->getName());
     }
 
     public function testEmptyName()
@@ -33,6 +35,8 @@ class ConstituencyTest extends TestCase
             'description' => null,
         ])->isValid();
 
-        $this->assertEquals('-', $form->getObject()->getName());
+        /** @var \Althingi\Model\Constituency */
+        $model = $form->getObject();
+        $this->assertEquals('-', $model->getName());
     }
 }

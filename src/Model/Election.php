@@ -6,107 +6,66 @@ use DateTime;
 
 class Election implements ModelInterface
 {
-    /** @var  int */
     private $election_id;
-
-    /** @var  \DateTime */
     private $date;
+    private ?string $title = null;
+    private ?string $description = null;
 
-    /** @var  string */
-    private $title;
-
-    /** @var  string */
-    private $description;
-
-    /**
-     * @return int
-     */
     public function getElectionId(): int
     {
         return $this->election_id;
     }
 
-    /**
-     * @param int $election_id
-     * @return Election
-     */
-    public function setElectionId(int $election_id): Election
+    public function setElectionId(int $election_id): self
     {
         $this->election_id = $election_id;
         return $this;
     }
 
-    /**
-     * @return \DateTime
-     */
     public function getDate(): DateTime
     {
         return $this->date;
     }
 
-    /**
-     * @param \DateTime $date
-     * @return Election
-     */
-    public function setDate(DateTime $date): Election
+    public function setDate(DateTime $date): self
     {
         $this->date = $date;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getTitle(): ?string
     {
         return $this->title;
     }
 
-    /**
-     * @param string $title
-     * @return Election
-     */
-    public function setTitle(string $title = null): Election
+    public function setTitle(?string $title = null): self
     {
         $this->title = $title;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    /**
-     * @param string $description
-     * @return Election
-     */
-    public function setDescription(string $description = null): Election
+    public function setDescription(?string $description = null): self
     {
         $this->description = $description;
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'election_id' => $this->election_id,
-            'date' => $this->date->format('Y-m-d'),
+            'date' => $this->date?->format('Y-m-d'),
             'title' => $this->title,
             'description' => $this->description,
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

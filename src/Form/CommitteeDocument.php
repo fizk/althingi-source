@@ -2,11 +2,13 @@
 
 namespace Althingi\Form;
 
-use Laminas\InputFilter\InputFilterProviderInterface;
 use Althingi\Hydrator;
 use Althingi\Model;
+use Laminas\Filter\ToNull;
+use Althingi\Filter\ToInt;
+use Laminas\Validator\Digits;
 
-class CommitteeDocument extends Form implements InputFilterProviderInterface
+class CommitteeDocument extends Form
 {
     public function __construct()
     {
@@ -14,91 +16,93 @@ class CommitteeDocument extends Form implements InputFilterProviderInterface
         $this
             ->setHydrator(new Hydrator\CommitteeDocument())
             ->setObject(new Model\CommitteeDocument());
-
-        $this->add([
-            'name' => 'document_committee_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-        $this->add([
-            'name' => 'document_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-        $this->add([
-            'name' => 'assembly_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-        $this->add([
-            'name' => 'issue_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-        $this->add([
-            'name' => 'category',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
-        $this->add([
-            'name' => 'committee_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-        $this->add([
-            'name' => 'part',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
-        $this->add([
-            'name' => 'name',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
     }
 
-
-    /**
-     * Should return an array specification compatible with
-     * {@link Laminas\InputFilter\Factory::createInputFilter()}.
-     *
-     * @return array
-     */
-    public function getInputFilterSpecification()
+    public function getInputFilterSpecification(): array
     {
         return [
             'document_committee_id' => [
+                'name' => 'document_committee_id',
                 'required' => false,
                 'allow_empty' => true,
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
+                'filters' => [
+                    ['name' => ToInt::class,],
+                    [
+                        'name' => ToNull::class,
+                        'options' => ['type' => 'all']
+                    ]
+                ],
             ],
             'document_id' => [
+                'name' => 'document_id',
                 'required' => true,
                 'allow_empty' => false,
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
+                'filters' => [
+                    ['name' => ToInt::class,]
+                ],
             ],
             'assembly_id' => [
+                'name' => 'assembly_id',
                 'required' => true,
                 'allow_empty' => false,
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
+                'filters' => [
+                    ['name' => ToInt::class,],
+                ],
             ],
             'issue_id' => [
+                'name' => 'issue_id',
                 'required' => true,
                 'allow_empty' => false,
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
+                'filters' => [
+                    ['name' => ToInt::class,]
+                ],
             ],
             'category' => [
+                'name' => 'category',
                 'required' => true,
                 'allow_empty' => false,
             ],
             'committee_id' => [
+                'name' => 'committee_id',
                 'required' => true,
                 'allow_empty' => false,
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
+                'filters' => [
+                    ['name' => ToInt::class,]
+                ],
             ],
             'part' => [
+                'name' => 'part',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],
             ],
             'name' => [
+                'name' => 'name',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],

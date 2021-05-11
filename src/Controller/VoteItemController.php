@@ -67,6 +67,7 @@ class VoteItemController implements
         $form->setData(array_merge($request->getParsedBody(), ['vote_id' => $voteId,]));
 
         if ($form->isValid()) {
+            /** @var \Althingi\Model\VoteItem */
             $formData = $form->getObject();
 
             try {
@@ -74,6 +75,7 @@ class VoteItemController implements
                 return new EmptyResponse(201);
             } catch (\PDOException $e) {
                 if ($e->errorInfo[1] === 1062) {
+                    /** @var \Althingi\Model\VoteItemAndAssemblyIssue */
                     $voteObject = $this->voteItemService->getByVote(
                         $formData->getVoteId(),
                         $formData->getCongressmanId()
@@ -137,13 +139,13 @@ class VoteItemController implements
     {
         $voteItemId = $request->getAttribute('vote_item_id');
 
-        if (($voteItem = $this->voteItemService->get($voteItemId)) != null) {
+        if (($voteItem = $this->voteItemService->get($voteItemId)) !== null) {
             $form = new Form\VoteItem();
             $form->bind($voteItem);
             $form->setData($request->getParsedBody());
 
             if ($form->isValid()) {
-                $this->voteItemService->update($form->getData());
+                $this->voteItemService->update($form->getObject());
                 return new EmptyResponse(205);
             }
 

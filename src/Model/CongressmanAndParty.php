@@ -19,7 +19,7 @@ class CongressmanAndParty extends Congressman
      * @param int $party_id
      * @return CongressmanAndParty
      */
-    public function setPartyId(int $party_id = null): CongressmanAndParty
+    public function setPartyId(int $party_id = null): self
     {
         $this->party_id = $party_id;
         return $this;
@@ -28,7 +28,7 @@ class CongressmanAndParty extends Congressman
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return array_merge(
             parent::toArray(),

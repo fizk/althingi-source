@@ -7,7 +7,6 @@ use DateTime;
 
 class President implements HydratorInterface
 {
-
     /**
      * Hydrate $object with the provided $data.
      *
@@ -26,7 +25,6 @@ class President implements HydratorInterface
             ->setTitle($data['title'])
             ->setAbbr($data['abbr']);
     }
-
 
     /**
      * Extract values from an object

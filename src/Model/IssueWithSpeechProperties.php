@@ -22,7 +22,7 @@ class IssueWithSpeechProperties implements ModelInterface
      * @param SpeechCongressmanProperties $speech
      * @return IssueWithSpeechProperties
      */
-    public function setSpeech(SpeechCongressmanProperties $speech): IssueWithSpeechProperties
+    public function setSpeech(SpeechCongressmanProperties $speech): self
     {
         $this->speech = $speech;
         return $this;
@@ -40,7 +40,7 @@ class IssueWithSpeechProperties implements ModelInterface
      * @param IssueAndDate $issue
      * @return IssueWithSpeechProperties
      */
-    public function setIssue(IssueAndDate $issue): IssueWithSpeechProperties
+    public function setIssue(IssueAndDate $issue): self
     {
         $this->issue = $issue;
         return $this;
@@ -49,15 +49,17 @@ class IssueWithSpeechProperties implements ModelInterface
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
-        return array_merge($this->issue->toArray(), ['speech' => $this->speech]);
+        return array_merge($this->issue->toArray(), [
+            'speech' => $this->speech
+        ]);
     }
 
     /**
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

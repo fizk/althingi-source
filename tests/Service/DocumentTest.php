@@ -47,6 +47,7 @@ class DocumentTest extends TestCase
     {
         $document = (new DocumentModel())
             ->setAssemblyId(1)
+            ->setDocumentId(5)
             ->setIssueId(1)
             ->setCategory('A')
             ->setDate(new \DateTime('2000-01-01'))
@@ -87,6 +88,7 @@ class DocumentTest extends TestCase
     {
         $document = (new DocumentModel())
             ->setAssemblyId(1)
+            ->setDocumentId(5)
             ->setIssueId(1)
             ->setCategory('A')
             ->setDate(new \DateTime('2000-01-01'))

@@ -52,7 +52,7 @@ class Status implements ModelInterface
      * @param int $assembly_id
      * @return Status
      */
-    public function setAssemblyId(int $assembly_id): Status
+    public function setAssemblyId(int $assembly_id): self
     {
         $this->assembly_id = $assembly_id;
         return $this;
@@ -70,7 +70,7 @@ class Status implements ModelInterface
      * @param int $issue_id
      * @return Status
      */
-    public function setIssueId(int $issue_id): Status
+    public function setIssueId(int $issue_id): self
     {
         $this->issue_id = $issue_id;
         return $this;
@@ -88,7 +88,7 @@ class Status implements ModelInterface
      * @param int $committee_id
      * @return Status
      */
-    public function setCommitteeId(?int $committee_id): Status
+    public function setCommitteeId(?int $committee_id): self
     {
         $this->committee_id = $committee_id;
         return $this;
@@ -106,7 +106,7 @@ class Status implements ModelInterface
      * @param string $speech_id
      * @return Status
      */
-    public function setSpeechId(?string $speech_id): Status
+    public function setSpeechId(?string $speech_id): self
     {
         $this->speech_id = $speech_id;
         return $this;
@@ -124,7 +124,7 @@ class Status implements ModelInterface
      * @param int $document_id
      * @return Status
      */
-    public function setDocumentId(?int $document_id): Status
+    public function setDocumentId(?int $document_id): self
     {
         $this->document_id = $document_id;
         return $this;
@@ -142,7 +142,7 @@ class Status implements ModelInterface
      * @param DateTime $date
      * @return Status
      */
-    public function setDate(?DateTime $date): Status
+    public function setDate(?DateTime $date): self
     {
         $this->date = $date;
         return $this;
@@ -160,7 +160,7 @@ class Status implements ModelInterface
      * @param string $title
      * @return Status
      */
-    public function setTitle(?string $title): Status
+    public function setTitle(?string $title): self
     {
         $this->title = $title;
         return $this;
@@ -178,7 +178,7 @@ class Status implements ModelInterface
      * @param string $type
      * @return Status
      */
-    public function setType(string $type): Status
+    public function setType(string $type): self
     {
         $this->type = $type;
         return $this;
@@ -196,7 +196,7 @@ class Status implements ModelInterface
      * @param string $committee_name
      * @return Status
      */
-    public function setCommitteeName(?string $committee_name): Status
+    public function setCommitteeName(?string $committee_name): self
     {
         $this->committee_name = $committee_name;
         return $this;
@@ -214,7 +214,7 @@ class Status implements ModelInterface
      * @param int $value
      * @return Status
      */
-    public function setValue(?int $value): Status
+    public function setValue(?int $value): self
     {
         $this->value = $value;
         return $this;
@@ -232,13 +232,13 @@ class Status implements ModelInterface
      * @param boolean $complete
      * @return Status
      */
-    public function setCompleted(bool $complete): Status
+    public function setCompleted(bool $complete): self
     {
         $this->completed = $complete;
         return $this;
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'assembly_id' => $this->assembly_id,
@@ -246,7 +246,7 @@ class Status implements ModelInterface
             'committee_id' => $this->committee_id,
             'speech_id' => $this->speech_id,
             'document_id' => $this->document_id,
-            'date' => $this->date ? $this->date->format('Y-m-d H:i:s') : null,
+            'date' => $this->date?->format('Y-m-d H:i:s'),
             'title' => $this->title,
             'type' => $this->type,
             'committee_name' => $this->committee_name,
@@ -255,7 +255,7 @@ class Status implements ModelInterface
         ];
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

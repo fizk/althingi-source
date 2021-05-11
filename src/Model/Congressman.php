@@ -6,129 +6,79 @@ use DateTime;
 
 class Congressman implements ModelInterface
 {
-    /** @var  int */
     private $congressman_id;
-
-    /** @var  string */
     private $name;
-
-    /** @var  \DateTime */
     private $birth;
+    private ?DateTime $death = null;
+    private ?string $abbreviation = null;
 
-    /** @var  \DateTime */
-    private $death;
-
-    /** @var  string */
-    private $abbreviation;
-
-    /**
-     * @return int
-     */
     public function getCongressmanId(): int
     {
         return $this->congressman_id;
     }
 
-    /**
-     * @param int $congressman_id
-     * @return $this
-     */
-    public function setCongressmanId(int $congressman_id): Congressman
+    public function setCongressmanId(int $congressman_id): self
     {
         $this->congressman_id = $congressman_id;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     * @return $this
-     */
-    public function setName(string $name): Congressman
+    public function setName(string $name): self
     {
         $this->name = $name;
         return $this;
     }
 
-    /**
-     * @return \DateTime
-     */
     public function getBirth(): DateTime
     {
         return $this->birth;
     }
 
-    /**
-     * @param \DateTime $birth
-     * @return $this
-     */
-    public function setBirth(DateTime $birth = null): Congressman
+    public function setBirth(DateTime $birth = null): self
     {
         $this->birth = $birth;
         return $this;
     }
 
-    /**
-     * @return \DateTime
-     */
     public function getDeath(): ?DateTime
     {
         return $this->death;
     }
 
-    /**
-     * @param \DateTime $death
-     * @return $this
-     */
-    public function setDeath(DateTime $death = null): Congressman
+    public function setDeath(?DateTime $death = null): self
     {
         $this->death = $death;
         return $this;
     }
 
-    /**
-     * @return string | null
-     */
     public function getAbbreviation(): ?string
     {
         return $this->abbreviation;
     }
 
-    /**
-     * @param string $abbreviation | null
-     * @return $this
-     */
-    public function setAbbreviation(?string $abbreviation): Congressman
+    public function setAbbreviation(?string $abbreviation): self
     {
         $this->abbreviation = $abbreviation;
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'congressman_id' => $this->congressman_id,
             'name' => $this->name,
-            'birth' => $this->birth ? $this->birth->format('Y-m-d') : null,
-            'death' => $this->death ? $this->death->format('Y-m-d') : null,
+            'birth' => $this->birth?->format('Y-m-d'),
+            'death' => $this->death?->format('Y-m-d'),
             'abbreviation' => $this->abbreviation,
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

@@ -25,7 +25,7 @@ class DocumentProperties implements ModelInterface
      * @param Document $document
      * @return DocumentProperties
      */
-    public function setDocument(Document $document): DocumentProperties
+    public function setDocument(Document $document): self
     {
         $this->document = $document;
         return $this;
@@ -43,7 +43,7 @@ class DocumentProperties implements ModelInterface
      * @param Vote[] $votes
      * @return DocumentProperties
      */
-    public function setVotes(array $votes): DocumentProperties
+    public function setVotes(array $votes): self
     {
         $this->votes = $votes;
         return $this;
@@ -61,7 +61,7 @@ class DocumentProperties implements ModelInterface
      * @param Proponent[] $proponents
      * @return DocumentProperties
      */
-    public function setProponents(array $proponents): DocumentProperties
+    public function setProponents(array $proponents): self
     {
         $this->proponents = $proponents;
         return $this;
@@ -70,7 +70,7 @@ class DocumentProperties implements ModelInterface
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return array_merge(
             $this->document->toArray(),
@@ -84,7 +84,7 @@ class DocumentProperties implements ModelInterface
     /**
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

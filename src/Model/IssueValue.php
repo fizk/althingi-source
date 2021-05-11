@@ -19,20 +19,20 @@ class IssueValue extends Issue
      * @param int $value
      * @return IssueValue
      */
-    public function setValue(?int $value): IssueValue
+    public function setValue(?int $value): self
     {
         $this->value = $value;
         return $this;
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return array_merge(parent::toArray(), [
             'value' => $this->value,
         ]);
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

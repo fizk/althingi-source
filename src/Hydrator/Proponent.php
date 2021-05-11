@@ -24,7 +24,6 @@ class Proponent implements HydratorInterface
             ->setDeath($data['death'] ? new DateTime($data['death']) : null);
     }
 
-
     /**
      * Extract values from an object
      *

@@ -28,7 +28,7 @@ class IssueCategoryAndTime implements ModelInterface
      * @param int $category_id
      * @return IssueCategoryAndTime
      */
-    public function setCategoryId(int $category_id): IssueCategoryAndTime
+    public function setCategoryId(int $category_id): self
     {
         $this->category_id = $category_id;
         return $this;
@@ -46,7 +46,7 @@ class IssueCategoryAndTime implements ModelInterface
      * @param int $super_category_id
      * @return IssueCategoryAndTime
      */
-    public function setSuperCategoryId(int $super_category_id): IssueCategoryAndTime
+    public function setSuperCategoryId(int $super_category_id): self
     {
         $this->super_category_id = $super_category_id;
         return $this;
@@ -64,7 +64,7 @@ class IssueCategoryAndTime implements ModelInterface
      * @param string $title
      * @return IssueCategoryAndTime
      */
-    public function setTitle(string $title): IssueCategoryAndTime
+    public function setTitle(string $title): self
     {
         $this->title = $title;
         return $this;
@@ -82,13 +82,13 @@ class IssueCategoryAndTime implements ModelInterface
      * @param int $time
      * @return IssueCategoryAndTime
      */
-    public function setTime(int $time): IssueCategoryAndTime
+    public function setTime(int $time): self
     {
         $this->time = $time;
         return $this;
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'category_id' => $this->category_id,
@@ -98,7 +98,7 @@ class IssueCategoryAndTime implements ModelInterface
         ];
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

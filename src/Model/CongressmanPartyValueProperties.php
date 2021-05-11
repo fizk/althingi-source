@@ -19,7 +19,7 @@ class CongressmanPartyValueProperties extends CongressmanPartyProperties
      * @param int|null $value
      * @return CongressmanPartyValueProperties
      */
-    public function setValue(?int $value): CongressmanPartyValueProperties
+    public function setValue(?int $value): self
     {
         $this->value = $value;
         return $this;
@@ -28,7 +28,7 @@ class CongressmanPartyValueProperties extends CongressmanPartyProperties
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return array_merge(parent::toArray(), [
             'value' => $this->value,

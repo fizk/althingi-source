@@ -2,8 +2,10 @@
 
 namespace Althingi\Events;
 
-use Althingi\Presenters\IndexablePresenter;
-use Althingi\Presenters\IndexablePresenterAwareInterface;
+use Althingi\Presenters\{
+    IndexablePresenter,
+    IndexablePresenterAwareInterface
+};
 
 class DeleteEvent implements EventInterface, IndexablePresenterAwareInterface
 {

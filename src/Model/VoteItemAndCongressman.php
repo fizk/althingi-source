@@ -22,7 +22,7 @@ class VoteItemAndCongressman implements ModelInterface
      * @param VoteItem $voteItem
      * @return VoteItemAndCongressman
      */
-    public function setVoteItem(VoteItem $voteItem): VoteItemAndCongressman
+    public function setVoteItem(VoteItem $voteItem): self
     {
         $this->voteItem = $voteItem;
         return $this;
@@ -40,7 +40,7 @@ class VoteItemAndCongressman implements ModelInterface
      * @param CongressmanPartyProperties $congressman
      * @return VoteItemAndCongressman
      */
-    public function setCongressman(CongressmanPartyProperties $congressman): VoteItemAndCongressman
+    public function setCongressman(CongressmanPartyProperties $congressman): self
     {
         $this->congressman = $congressman;
         return $this;
@@ -49,7 +49,7 @@ class VoteItemAndCongressman implements ModelInterface
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return array_merge(
             $this->voteItem->toArray(),

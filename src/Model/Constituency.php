@@ -4,114 +4,67 @@ namespace Althingi\Model;
 
 class Constituency implements ModelInterface
 {
-    /** @var  int */
-    private $constituency_id;
+    private int $constituency_id;
+    private ? string $name = null;
+    private ?string $abbr_short = null;
+    private ?string $abbr_long = null;
+    private ?string $description = null;
 
-    /** @var string|null */
-    private $name = null;
-
-    /** @var string|null */
-    private $abbr_short = null;
-
-    /** @var string|null */
-    private $abbr_long = null;
-
-    /** @var string|null */
-    private $description = null;
-
-    /**
-     * @return int
-     */
     public function getConstituencyId(): int
     {
         return $this->constituency_id;
     }
 
-    /**
-     * @param int $constituency_id
-     * @return Constituency
-     */
-    public function setConstituencyId(int $constituency_id): Constituency
+    public function setConstituencyId(int $constituency_id): self
     {
         $this->constituency_id = $constituency_id;
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
     public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * @param null|string $name
-     * @return Constituency
-     */
-    public function setName(string $name = null): Constituency
+    public function setName(?string $name = null): self
     {
         $this->name = $name;
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
     public function getAbbrShort(): ?string
     {
         return $this->abbr_short;
     }
 
-    /**
-     * @param null|string $abbr_short
-     * @return Constituency
-     */
-    public function setAbbrShort(string $abbr_short = null): Constituency
+    public function setAbbrShort(?string $abbr_short = null): self
     {
         $this->abbr_short = $abbr_short;
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
     public function getAbbrLong(): ?string
     {
         return $this->abbr_long;
     }
 
-    /**
-     * @param null|string $abbr_long
-     * @return Constituency
-     */
-    public function setAbbrLong(string $abbr_long = null): Constituency
+    public function setAbbrLong(?string $abbr_long = null): self
     {
         $this->abbr_long = $abbr_long;
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
     public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    /**
-     * @param null|string $description
-     * @return Constituency
-     */
-    public function setDescription(string $description = null): Constituency
+    public function setDescription(?string $description = null): self
     {
         $this->description = $description;
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function toArray(): array
     {
         return [
@@ -123,10 +76,7 @@ class Constituency implements ModelInterface
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

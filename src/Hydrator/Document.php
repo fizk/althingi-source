@@ -3,7 +3,6 @@
 namespace Althingi\Hydrator;
 
 use Laminas\Hydrator\HydratorInterface;
-use DateTime;
 
 class Document implements HydratorInterface
 {

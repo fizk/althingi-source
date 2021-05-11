@@ -67,7 +67,7 @@ class IssueSuperCategoryAndTime implements ModelInterface
         return $this;
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'super_category_id' => $this->super_category_id,
@@ -76,7 +76,7 @@ class IssueSuperCategoryAndTime implements ModelInterface
         ];
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

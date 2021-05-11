@@ -3,7 +3,6 @@
 namespace Althingi\Hydrator;
 
 use Laminas\Hydrator\HydratorInterface;
-use DateTime;
 
 class Session implements HydratorInterface
 {
@@ -29,7 +28,6 @@ class Session implements HydratorInterface
             ->setType(isset($data['type']) ? $data['type'] : null)
             ->setAbbr(isset($data['abbr']) ? $data['abbr'] : null);
     }
-
 
     /**
      * Extract values from an object

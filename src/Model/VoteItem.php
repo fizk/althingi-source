@@ -4,94 +4,56 @@ namespace Althingi\Model;
 
 class VoteItem implements ModelInterface
 {
-    /** @var int */
-    private $vote_id;
+    private ?int $vote_id = null;
+    private int $congressman_id;
+    private string $vote;
+    private ?int $vote_item_id = null;
 
-    /** @var int */
-    private $congressman_id;
-
-    /** @var string */
-    private $vote;
-
-    /** @var int */
-    private $vote_item_id;
-
-    /**
-     * @return int
-     */
     public function getVoteId(): ?int
     {
         return $this->vote_id;
     }
 
-    /**
-     * @param int $vote_id
-     * @return VoteItem
-     */
-    public function setVoteId(int $vote_id = null): VoteItem
+    public function setVoteId(int $vote_id = null): self
     {
         $this->vote_id = $vote_id;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getCongressmanId(): int
     {
         return $this->congressman_id;
     }
 
-    /**
-     * @param int $congressman_id
-     * @return VoteItem
-     */
-    public function setCongressmanId(int $congressman_id): VoteItem
+    public function setCongressmanId(int $congressman_id): self
     {
         $this->congressman_id = $congressman_id;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getVote(): string
     {
         return $this->vote;
     }
 
-    /**
-     * @param string $vote
-     * @return VoteItem
-     */
-    public function setVote(string $vote): VoteItem
+    public function setVote(string $vote): self
     {
         $this->vote = $vote;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getVoteItemId(): ?int
     {
         return $this->vote_item_id;
     }
 
-    /**
-     * @param int $vote_item_id
-     * @return VoteItem
-     */
-    public function setVoteItemId(int $vote_item_id = null): VoteItem
+    public function setVoteItemId(?int $vote_item_id = null): self
     {
         $this->vote_item_id = $vote_item_id;
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'vote_id' => $this->vote_id,
@@ -101,10 +63,7 @@ class VoteItem implements ModelInterface
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

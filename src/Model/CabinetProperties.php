@@ -22,7 +22,7 @@ class CabinetProperties implements ModelInterface
      * @param Cabinet $cabinet
      * @return CabinetProperties
      */
-    public function setCabinet(Cabinet $cabinet): CabinetProperties
+    public function setCabinet(Cabinet $cabinet): self
     {
         $this->cabinet = $cabinet;
         return $this;
@@ -40,7 +40,7 @@ class CabinetProperties implements ModelInterface
      * @param CongressmanPartyProperties[] $congressmen
      * @return CabinetProperties
      */
-    public function setCongressmen(array $congressmen): CabinetProperties
+    public function setCongressmen(array $congressmen): self
     {
         $this->congressmen = $congressmen;
         return $this;
@@ -49,7 +49,7 @@ class CabinetProperties implements ModelInterface
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return array_merge($this->cabinet->toArray(), [
             'congressmen' => $this->congressmen,
@@ -59,7 +59,7 @@ class CabinetProperties implements ModelInterface
     /**
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

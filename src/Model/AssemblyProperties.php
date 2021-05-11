@@ -28,7 +28,7 @@ class AssemblyProperties implements ModelInterface
      * @param Assembly $assembly
      * @return AssemblyProperties
      */
-    public function setAssembly(Assembly $assembly): AssemblyProperties
+    public function setAssembly(Assembly $assembly): self
     {
         $this->assembly = $assembly;
         return $this;
@@ -46,7 +46,7 @@ class AssemblyProperties implements ModelInterface
      * @param Party[] $majority
      * @return AssemblyProperties
      */
-    public function setMajority(array $majority): AssemblyProperties
+    public function setMajority(array $majority): self
     {
         $this->majority = $majority;
         return $this;
@@ -56,7 +56,7 @@ class AssemblyProperties implements ModelInterface
      * @param Party $majority
      * @return AssemblyProperties
      */
-    public function addMajority(Party $majority): AssemblyProperties
+    public function addMajority(Party $majority): self
     {
         $this->majority[] = $majority;
         return $this;
@@ -84,7 +84,7 @@ class AssemblyProperties implements ModelInterface
      * @param Party[] $minority
      * @return AssemblyProperties
      */
-    public function setMinority(array $minority): AssemblyProperties
+    public function setMinority(array $minority): self
     {
         $this->minority = $minority;
         return $this;
@@ -94,7 +94,7 @@ class AssemblyProperties implements ModelInterface
      * @param Party $minority
      * @return AssemblyProperties
      */
-    public function addMinority(Party $minority): AssemblyProperties
+    public function addMinority(Party $minority): self
     {
         $this->minority[] = $minority;
         return $this;
@@ -112,7 +112,7 @@ class AssemblyProperties implements ModelInterface
      * @param Cabinet $cabinet
      * @return AssemblyProperties
      */
-    public function setCabinet(?Cabinet $cabinet): AssemblyProperties
+    public function setCabinet(?Cabinet $cabinet): self
     {
         $this->cabinet = $cabinet;
         return $this;
@@ -121,7 +121,7 @@ class AssemblyProperties implements ModelInterface
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return array_merge($this->assembly->toArray(), [
             'party' => [
@@ -135,7 +135,7 @@ class AssemblyProperties implements ModelInterface
     /**
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

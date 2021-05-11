@@ -36,7 +36,6 @@ class IssueValue implements HydratorInterface
             ->setValue($data['value']);
     }
 
-
     /**
      * Extract values from an object
      *

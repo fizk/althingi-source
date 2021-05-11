@@ -22,7 +22,7 @@ class VoteItemAndAssemblyIssue extends VoteItem
      * @param int $issue_id
      * @return VoteItemAndAssemblyIssue
      */
-    public function setIssueId(int $issue_id): VoteItemAndAssemblyIssue
+    public function setIssueId(int $issue_id): self
     {
         $this->issue_id = $issue_id;
         return $this;
@@ -40,7 +40,7 @@ class VoteItemAndAssemblyIssue extends VoteItem
      * @param int $assembly_id
      * @return VoteItemAndAssemblyIssue
      */
-    public function setAssemblyId(int $assembly_id): VoteItemAndAssemblyIssue
+    public function setAssemblyId(int $assembly_id): self
     {
         $this->assembly_id = $assembly_id;
         return $this;
@@ -49,7 +49,7 @@ class VoteItemAndAssemblyIssue extends VoteItem
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return array_merge(
             parent::toArray(),

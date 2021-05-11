@@ -22,7 +22,7 @@ class PresidentPartyProperties implements ModelInterface
      * @param President $president
      * @return PresidentPartyProperties
      */
-    public function setPresident(President $president): PresidentPartyProperties
+    public function setPresident(President $president): self
     {
         $this->president = $president;
         return $this;
@@ -40,20 +40,20 @@ class PresidentPartyProperties implements ModelInterface
      * @param Party $party
      * @return PresidentPartyProperties|null
      */
-    public function setParty(Party $party = null): PresidentPartyProperties
+    public function setParty(Party $party = null): self
     {
         $this->party = $party;
         return $this;
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return array_merge($this->president->toArray(), [
             'party' => $this->party
         ]);
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

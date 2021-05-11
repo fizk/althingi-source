@@ -37,7 +37,7 @@ class CongressmanDocument implements ModelInterface
      * @param int $document_id
      * @return CongressmanDocument
      */
-    public function setDocumentId(int $document_id): CongressmanDocument
+    public function setDocumentId(int $document_id): self
     {
         $this->document_id = $document_id;
         return $this;
@@ -55,7 +55,7 @@ class CongressmanDocument implements ModelInterface
      * @param int $issue_id
      * @return CongressmanDocument
      */
-    public function setIssueId(int $issue_id): CongressmanDocument
+    public function setIssueId(int $issue_id): self
     {
         $this->issue_id = $issue_id;
         return $this;
@@ -91,7 +91,7 @@ class CongressmanDocument implements ModelInterface
      * @param int $assembly_id
      * @return CongressmanDocument
      */
-    public function setAssemblyId(int $assembly_id): CongressmanDocument
+    public function setAssemblyId(int $assembly_id): self
     {
         $this->assembly_id = $assembly_id;
         return $this;
@@ -109,7 +109,7 @@ class CongressmanDocument implements ModelInterface
      * @param int $congressman_id
      * @return CongressmanDocument
      */
-    public function setCongressmanId(int $congressman_id): CongressmanDocument
+    public function setCongressmanId(int $congressman_id): self
     {
         $this->congressman_id = $congressman_id;
         return $this;
@@ -127,7 +127,7 @@ class CongressmanDocument implements ModelInterface
      * @param string|null $minister
      * @return CongressmanDocument
      */
-    public function setMinister(string $minister = null): CongressmanDocument
+    public function setMinister(string $minister = null): self
     {
         $this->minister = $minister;
         return $this;
@@ -145,7 +145,7 @@ class CongressmanDocument implements ModelInterface
      * @param int $order
      * @return CongressmanDocument
      */
-    public function setOrder(int $order): CongressmanDocument
+    public function setOrder(int $order): self
     {
         $this->order = $order;
         return $this;
@@ -154,7 +154,7 @@ class CongressmanDocument implements ModelInterface
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'document_id' => $this->document_id,
@@ -170,7 +170,7 @@ class CongressmanDocument implements ModelInterface
     /**
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

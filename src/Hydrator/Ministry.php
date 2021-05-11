@@ -6,7 +6,6 @@ use Laminas\Hydrator\HydratorInterface;
 
 class Ministry implements HydratorInterface
 {
-
     /**
      * Hydrate $object with the provided $data.
      *

@@ -6,7 +6,6 @@ use Althingi\Controller\CategoryController;
 use Althingi\Service\Category;
 use Althingi\Model;
 use AlthingiTest\ServiceHelper;
-use Althingi\Router\Http\TreeRouteStack;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 use Mockery;
@@ -47,7 +46,7 @@ class CategoryControllerTest extends TestCase
         $this->getMockService(Category::class)
             ->shouldReceive('get')
             ->with(2)
-            ->andReturn(new Model\Category())
+            ->andReturn((new Model\Category())->setCategoryId(2)->setSuperCategoryId(1))
             ->once()
             ->getMock();
 
@@ -83,7 +82,9 @@ class CategoryControllerTest extends TestCase
         $this->getMockService(Category::class)
             ->shouldReceive('fetch')
             ->with(1)
-            ->andReturn([new Model\Category()])
+            ->andReturn([
+                (new Model\Category())->setCategoryId(2)->setSuperCategoryId(1)
+            ])
             ->once()
             ->getMock();
 
@@ -209,7 +210,9 @@ class CategoryControllerTest extends TestCase
         $this->getMockService(Category::class)
             ->shouldReceive('fetchByAssembly')
             ->with(123)
-            ->andReturn([new Model\CategoryAndCount()])
+            ->andReturn([
+                (new Model\CategoryAndCount())->setCategoryId(1)->setSuperCategoryId(123)
+            ])
             ->once()
             ->getMock();
 

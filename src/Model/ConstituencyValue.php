@@ -18,7 +18,7 @@ class ConstituencyValue extends Constituency
      * @param int $value
      * @return ConstituencyValue
      */
-    public function setValue(int $value): ConstituencyValue
+    public function setValue(int $value): self
     {
         $this->value = $value;
         return $this;

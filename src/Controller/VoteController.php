@@ -102,7 +102,7 @@ class VoteController implements
             ]));
 
             if ($form->isValid()) {
-                $this->voteService->update($form->getData());
+                $this->voteService->update($form->getObject());
                 return new EmptyResponse(205);
             }
 

@@ -4,112 +4,68 @@ namespace Althingi\Model;
 
 class Party implements ModelInterface
 {
-    /** @var  int */
-    private $party_id;
+    private int $party_id;
+    private string $name;
+    private ?string $abbr_short = null;
+    private ?string $abbr_long = null;
+    private ?string $color = null;
 
-    /** @var  string */
-    private $name;
-
-    /** @var  string */
-    private $abbr_short;
-
-    /** @var  string */
-    private $abbr_long;
-
-    /** @var  string */
-    private $color;
-
-    /**
-     * @return int | null
-     */
     public function getPartyId(): ?int
     {
         return $this->party_id;
     }
 
-    /**
-     * @param int $party_id
-     * @return Party
-     */
-    public function setPartyId(?int $party_id): Party
+    public function setPartyId(?int $party_id): self
     {
         $this->party_id = $party_id;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     * @return Party
-     */
-    public function setName(string $name): Party
+    public function setName(string $name): self
     {
         $this->name = $name;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getAbbrShort(): string
+    public function getAbbrShort(): ?string
     {
         return $this->abbr_short;
     }
 
-    /**
-     * @param string $abbr_short
-     * @return Party
-     */
-    public function setAbbrShort(string $abbr_short = null): Party
+    public function setAbbrShort(?string $abbr_short = null): self
     {
         $this->abbr_short = $abbr_short;
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getAbbrLong(): string
+    public function getAbbrLong(): ?string
     {
         return $this->abbr_long;
     }
 
-    /**
-     * @param string $abbr_long
-     * @return Party
-     */
-    public function setAbbrLong(string $abbr_long = null): Party
+    public function setAbbrLong(?string $abbr_long = null): self
     {
         $this->abbr_long = $abbr_long;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getColor(): ?string
     {
         return $this->color;
     }
 
-    /**
-     * @param string $color
-     * @return Party
-     */
-    public function setColor(string $color = null): Party
+    public function setColor(?string $color = null): self
     {
         $this->color = $color;
         return $this;
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'party_id' => $this->party_id,
@@ -120,7 +76,7 @@ class Party implements ModelInterface
         ];
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

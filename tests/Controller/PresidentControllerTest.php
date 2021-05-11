@@ -7,9 +7,9 @@ use Althingi\Service\Congressman;
 use Althingi\Service\President;
 use Althingi\Service\Party;
 use AlthingiTest\ServiceHelper;
-use Althingi\Router\Http\TreeRouteStack;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
+use DateTime;
 
 /**
  * Class PresidentControllerTest
@@ -50,7 +50,14 @@ class PresidentControllerTest extends TestCase
         $this->getMockService(President::class)
             ->shouldReceive('get')
             ->with(1)
-            ->andReturn(new \Althingi\Model\President())
+            ->andReturn(
+                (new \Althingi\Model\President())
+                    ->setPresidentId(1)
+                    ->setCongressmanId(2)
+                    ->setAssemblyId(4)
+                    ->setFrom(new DateTime())
+                    ->setTitle('title')
+            )
             ->once()
             ->getMock();
 
@@ -90,7 +97,12 @@ class PresidentControllerTest extends TestCase
             ->shouldReceive('fetch')
             ->withNoArgs()
             ->andReturn([
-                new \Althingi\Model\President()
+                (new \Althingi\Model\President())
+                    ->setPresidentId(1)
+                    ->setCongressmanId(2)
+                    ->setAssemblyId(4)
+                    ->setFrom(new DateTime())
+                    ->setTitle('title')
             ])
             ->once()
             ->getMock();

@@ -32,7 +32,7 @@ class IssuesStatusProperties implements ModelInterface
      * @param IssueTypeStatus[] $bills
      * @return IssuesStatusProperties
      */
-    public function setBills(array $bills): IssuesStatusProperties
+    public function setBills(array $bills): self
     {
         $this->bills = $bills;
         return $this;
@@ -50,7 +50,7 @@ class IssuesStatusProperties implements ModelInterface
      * @param IssueTypeStatus[] $governmentBills
      * @return IssuesStatusProperties
      */
-    public function setGovernmentBills(array $governmentBills): IssuesStatusProperties
+    public function setGovernmentBills(array $governmentBills): self
     {
         $this->government_bills = $governmentBills;
         return $this;
@@ -68,7 +68,7 @@ class IssuesStatusProperties implements ModelInterface
      * @param AssemblyStatus[] $types
      * @return IssuesStatusProperties
      */
-    public function setTypes(array $types): IssuesStatusProperties
+    public function setTypes(array $types): self
     {
         $this->types = $types;
         return $this;
@@ -86,7 +86,7 @@ class IssuesStatusProperties implements ModelInterface
      * @param CategoryAndCount[] $categories
      * @return IssuesStatusProperties
      */
-    public function setCategories(array $categories): IssuesStatusProperties
+    public function setCategories(array $categories): self
     {
         $this->categories = $categories;
         return $this;
@@ -104,7 +104,7 @@ class IssuesStatusProperties implements ModelInterface
      * @param IssueTypeStatus[] $proposals
      * @return IssuesStatusProperties
      */
-    public function setProposals(array $proposals): IssuesStatusProperties
+    public function setProposals(array $proposals): self
     {
         $this->proposals = $proposals;
         return $this;
@@ -113,7 +113,7 @@ class IssuesStatusProperties implements ModelInterface
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'bills' => $this->bills,
@@ -127,7 +127,7 @@ class IssuesStatusProperties implements ModelInterface
     /**
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

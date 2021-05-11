@@ -5,12 +5,10 @@ namespace AlthingiTest\Controller;
 use Althingi\Service;
 use Althingi\Model;
 use Althingi\Controller;
-
 use AlthingiTest\ServiceHelper;
-use Mockery;
-use Althingi\Router\Http\TreeRouteStack;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
+use Mockery;
 
 /**
  * Class IssueControllerTest

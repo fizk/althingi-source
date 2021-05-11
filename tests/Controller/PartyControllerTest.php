@@ -6,7 +6,6 @@ use Althingi\Controller\PartyController;
 use Althingi\Service;
 use Althingi\Model;
 use AlthingiTest\ServiceHelper;
-use Althingi\Router\Http\TreeRouteStack;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 
@@ -45,7 +44,7 @@ class PartyControllerTest extends TestCase
         $this->getMockService(Service\Party::class)
             ->shouldReceive('get')
             ->with(100)
-            ->andReturn(new Model\Party())
+            ->andReturn((new Model\Party())->setPartyId(100)->setName('name'))
             ->once()
             ->getMock();
 

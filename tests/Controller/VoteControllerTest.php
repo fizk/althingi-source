@@ -5,10 +5,9 @@ namespace AlthingiTest\Controller;
 use Althingi\Controller\VoteController;
 use Althingi\Service\Vote;
 use AlthingiTest\ServiceHelper;
-use Mockery;
-use Althingi\Router\Http\TreeRouteStack;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
+use Mockery;
 
 /**
  * Class VoteControllerTest

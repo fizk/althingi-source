@@ -7,7 +7,6 @@ use DateTime;
 
 class Election implements HydratorInterface
 {
-
     /**
      * Hydrate $object with the provided $data.
      *

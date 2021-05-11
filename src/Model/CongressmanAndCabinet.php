@@ -24,7 +24,7 @@ class CongressmanAndCabinet extends Congressman
      * @param string $title
      * @return CongressmanAndCabinet
      */
-    public function setTitle(string $title): CongressmanAndCabinet
+    public function setTitle(string $title): self
     {
         $this->title = $title;
         return $this;
@@ -42,7 +42,7 @@ class CongressmanAndCabinet extends Congressman
      * @param \DateTime $date
      * @return CongressmanAndCabinet
      */
-    public function setDate(DateTime $date = null): CongressmanAndCabinet
+    public function setDate(DateTime $date = null): self
     {
         $this->date = $date;
         return $this;
@@ -51,7 +51,7 @@ class CongressmanAndCabinet extends Congressman
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return array_merge(
             parent::toArray(),

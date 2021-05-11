@@ -4,49 +4,32 @@ namespace Althingi\Model;
 
 class SuperCategory implements ModelInterface
 {
-    /** @var int */
     private $super_category_id;
+    private ?string $title = null;
 
-    /** @var string */
-    private $title;
-
-    /**
-     * @return int
-     */
     public function getSuperCategoryId(): int
     {
         return $this->super_category_id;
     }
 
-    /**
-     * @param int $super_category_id
-     * @return SuperCategory
-     */
-    public function setSuperCategoryId(int $super_category_id): SuperCategory
+    public function setSuperCategoryId(int $super_category_id): self
     {
         $this->super_category_id = $super_category_id;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getTitle(): ?string
     {
         return $this->title;
     }
 
-    /**
-     * @param string $title
-     * @return SuperCategory
-     */
-    public function setTitle(string $title = null): SuperCategory
+    public function setTitle(?string $title = null): self
     {
         $this->title = $title;
         return $this;
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'super_category_id' => $this->super_category_id,
@@ -54,7 +37,7 @@ class SuperCategory implements ModelInterface
         ];
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

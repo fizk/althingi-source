@@ -22,7 +22,7 @@ class VoteTypeAndCount implements ModelInterface
      * @param int $count
      * @return VoteTypeAndCount
      */
-    public function setCount(int $count): VoteTypeAndCount
+    public function setCount(int $count): self
     {
         $this->count = $count;
         return $this;
@@ -40,13 +40,13 @@ class VoteTypeAndCount implements ModelInterface
      * @param string $vote
      * @return VoteTypeAndCount
      */
-    public function setVote(string $vote): VoteTypeAndCount
+    public function setVote(string $vote): self
     {
         $this->vote = $vote;
         return $this;
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'count' => $this->count,
@@ -54,7 +54,7 @@ class VoteTypeAndCount implements ModelInterface
         ];
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

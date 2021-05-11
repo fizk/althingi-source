@@ -34,7 +34,7 @@ class PlenaryAgendaProperties implements ModelInterface
      * @param PlenaryAgenda $plenaryAgenda
      * @return PlenaryAgendaProperties
      */
-    public function setPlenaryAgenda(PlenaryAgenda $plenaryAgenda): PlenaryAgendaProperties
+    public function setPlenaryAgenda(PlenaryAgenda $plenaryAgenda): self
     {
         $this->plenaryAgenda = $plenaryAgenda;
         return $this;
@@ -52,7 +52,7 @@ class PlenaryAgendaProperties implements ModelInterface
      * @param Issue $issue
      * @return PlenaryAgendaProperties
      */
-    public function setIssue(Issue $issue): PlenaryAgendaProperties
+    public function setIssue(Issue $issue): self
     {
         $this->issue = $issue;
         return $this;
@@ -70,7 +70,7 @@ class PlenaryAgendaProperties implements ModelInterface
      * @param CongressmanPartyProperties $posedCongressman
      * @return PlenaryAgendaProperties
      */
-    public function setPosedCongressman(CongressmanPartyProperties $posedCongressman): PlenaryAgendaProperties
+    public function setPosedCongressman(CongressmanPartyProperties $posedCongressman): self
     {
         $this->posedCongressman = $posedCongressman;
         return $this;
@@ -88,7 +88,7 @@ class PlenaryAgendaProperties implements ModelInterface
      * @param CongressmanPartyProperties $answererCongressman
      * @return PlenaryAgendaProperties
      */
-    public function setAnswererCongressman(CongressmanPartyProperties $answererCongressman): PlenaryAgendaProperties
+    public function setAnswererCongressman(CongressmanPartyProperties $answererCongressman): self
     {
         $this->answererCongressman = $answererCongressman;
         return $this;
@@ -108,7 +108,7 @@ class PlenaryAgendaProperties implements ModelInterface
      */
     public function setCounterAnswererCongressman(
         CongressmanPartyProperties $counterAnswererCongressman
-    ): PlenaryAgendaProperties {
+    ): self {
         $this->counterAnswererCongressman = $counterAnswererCongressman;
         return $this;
     }
@@ -125,13 +125,13 @@ class PlenaryAgendaProperties implements ModelInterface
      * @param CongressmanPartyProperties $instigatorCongressman
      * @return PlenaryAgendaProperties
      */
-    public function setInstigatorCongressman(CongressmanPartyProperties $instigatorCongressman): PlenaryAgendaProperties
+    public function setInstigatorCongressman(CongressmanPartyProperties $instigatorCongressman): self
     {
         $this->instigatorCongressman = $instigatorCongressman;
         return $this;
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return array_merge($this->plenaryAgenda->toArray(), [
             'issue' => $this->issue,

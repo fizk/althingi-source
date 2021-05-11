@@ -27,7 +27,7 @@ class CongressmanAndDateRange extends Congressman
      * @param int $time
      * @return CongressmanAndDateRange
      */
-    public function setTime(int $time = null): CongressmanAndDateRange
+    public function setTime(int $time = null): self
     {
         $this->time = $time;
         return $this;
@@ -45,7 +45,7 @@ class CongressmanAndDateRange extends Congressman
      * @param \DateTime $begin
      * @return CongressmanAndDateRange
      */
-    public function setBegin(DateTime $begin = null): CongressmanAndDateRange
+    public function setBegin(DateTime $begin = null): self
     {
         $this->begin = $begin;
         return $this;
@@ -63,7 +63,7 @@ class CongressmanAndDateRange extends Congressman
      * @param \DateTime $end
      * @return CongressmanAndDateRange
      */
-    public function setEnd(DateTime $end = null): CongressmanAndDateRange
+    public function setEnd(DateTime $end = null): self
     {
         $this->end = $end;
         return $this;
@@ -72,7 +72,7 @@ class CongressmanAndDateRange extends Congressman
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return array_merge(
             parent::toArray(),

@@ -4,154 +4,92 @@ namespace Althingi\Model;
 
 class IssueLink implements ModelInterface
 {
-    /** @var int */
     private $from_assembly_id;
-
-    /** @var int */
     private $from_issue_id;
-
-    /** @var string */
     private $from_category;
-
-    /** @var int */
     private $assembly_id;
-
-    /** @var int */
     private $issue_id;
-
-    /** @var string */
     private $category;
+    private ?string $type = null;
 
-    /** @var string */
-    private $type;
-
-    /**
-     * @return int
-     */
     public function getFromAssemblyId(): int
     {
         return $this->from_assembly_id;
     }
 
-    /**
-     * @param int $from_assembly_id
-     * @return IssueLink
-     */
-    public function setFromAssemblyId(int $from_assembly_id): IssueLink
+    public function setFromAssemblyId(int $from_assembly_id): self
     {
         $this->from_assembly_id = $from_assembly_id;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getFromIssueId(): int
     {
         return $this->from_issue_id;
     }
 
-    /**
-     * @param int $from_issue_id
-     * @return IssueLink
-     */
-    public function setFromIssueId(int $from_issue_id): IssueLink
+    public function setFromIssueId(int $from_issue_id): self
     {
         $this->from_issue_id = $from_issue_id;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getFromCategory(): string
     {
         return $this->from_category;
     }
 
-    /**
-     * @param string $from_category
-     * @return IssueLink
-     */
-    public function setFromCategory(string $from_category): IssueLink
+    public function setFromCategory(string $from_category): self
     {
         $this->from_category = $from_category;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getAssemblyId(): int
     {
         return $this->assembly_id;
     }
 
-    /**
-     * @param int $assembly_id
-     * @return IssueLink
-     */
-    public function setAssemblyId(int $assembly_id): IssueLink
+    public function setAssemblyId(int $assembly_id): self
     {
         $this->assembly_id = $assembly_id;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getIssueId(): int
     {
         return $this->issue_id;
     }
 
-    /**
-     * @param int $issue_id
-     * @return IssueLink
-     */
-    public function setIssueId(int $issue_id): IssueLink
+    public function setIssueId(int $issue_id): self
     {
         $this->issue_id = $issue_id;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getCategory(): string
     {
         return $this->category;
     }
 
-    /**
-     * @param string $category
-     * @return IssueLink
-     */
-    public function setCategory(string $category): IssueLink
+    public function setCategory(string $category): self
     {
         $this->category = $category;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): ?string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $type
-     * @return IssueLink
-     */
-    public function setType(?string $type): IssueLink
+    public function setType(?string $type): self
     {
         $this->type = $type;
         return $this;
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'to_assembly_id' => $this->assembly_id,

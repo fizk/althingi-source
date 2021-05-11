@@ -2,128 +2,122 @@
 
 namespace Althingi\Form;
 
-use Laminas\InputFilter\InputFilterProviderInterface;
+use Althingi\Hydrator;
+use Althingi\Model;
+use Laminas\Filter\ToNull;
+use Althingi\Filter\ToInt;
+use Laminas\Validator\{Date, Digits};
 
-class Session extends Form implements InputFilterProviderInterface
+class Session extends Form
 {
     public function __construct()
     {
         parent::__construct(get_class($this));
         $this
-            ->setHydrator(new \Althingi\Hydrator\Session())
-            ->setObject(new \Althingi\Model\Session());
-
-        $this->add([
-            'name' => 'session_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-
-        $this->add([
-            'name' => 'congressman_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-
-        $this->add([
-            'name' => 'constituency_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-
-        $this->add([
-            'name' => 'assembly_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-
-        $this->add([
-            'name' => 'from',
-            'type' => 'Laminas\Form\Element\Date',
-            'options' => [
-                'format' => 'Y-m-d'
-            ],
-            'attributes' => [
-                'step' => 'any'
-            ],
-        ]);
-
-        $this->add([
-            'name' => 'to',
-            'type' => 'Laminas\Form\Element\Date',
-            'options' => [
-                'format' => 'Y-m-d'
-            ],
-            'attributes' => [
-                'step' => 'any'
-            ],
-        ]);
-
-        $this->add([
-            'name' => 'type',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
-
-        $this->add([
-            'name' => 'party_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
+            ->setHydrator(new Hydrator\Session())
+            ->setObject(new Model\Session());
     }
 
-
-    /**
-     * Should return an array specification compatible with
-     * {@link Laminas\InputFilter\Factory::createInputFilter()}.
-     *
-     * @return array
-     */
-    public function getInputFilterSpecification()
+    public function getInputFilterSpecification(): array
     {
         return [
             'session_id' => [
+                'name' => 'session_id',
                 'required' => false,
                 'allow_empty' => true,
+                'filters' => [
+                    ['name' => ToInt::class,],
+                    [
+                        'name' => ToNull::class,
+                        'options' => ['type' => 'all']
+                    ]
+                ],
             ],
             'congressman_id' => [
+                'name' => 'congressman_id',
                 'required' => true,
                 'allow_empty' => false,
+                'filters' => [
+                    ['name' => ToInt::class,],
+                ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
             ],
             'constituency_id' => [
+                'name' => 'constituency_id',
                 'required' => true,
                 'allow_empty' => false,
+                'filters' => [
+                    ['name' => ToInt::class,],
+                ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
             ],
             'assembly_id' => [
+                'name' => 'assembly_id',
                 'required' => true,
                 'allow_empty' => false,
+                'filters' => [
+                    ['name' => ToInt::class,],
+                ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
             ],
             'from' => [
+                'name' => 'from',
                 'required' => true,
                 'allow_empty' => false,
+                'validators' => [
+                    [
+                        'name' => Date::class,
+                        'options' => ['step' => 'any', 'format' => 'Y-m-d']
+                    ]
+                ],
             ],
             'to' => [
+                'name' => 'to',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
+                    ]
+                ],
+                'validators' => [
+                    [
+                        'name' => Date::class,
+                        'options' => ['step' => 'any', 'format' => 'Y-m-d']
                     ]
                 ],
             ],
             'type' => [
+                'name' => 'type',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],
             ],
-            'party' => [
+            'party_id' => [
+                'name' => 'party_id',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
+                    ['name' => ToInt::class,],
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
+                ],
+                'validators' => [
+                    ['name' => Digits::class]
                 ],
             ],
         ];

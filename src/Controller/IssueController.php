@@ -125,7 +125,7 @@ class IssueController implements
         }
 
         $form = new Form\Issue();
-        $form->setObject($issue);
+        $form->bind($issue);
         $form->setData($request->getParsedBody());
 
         if ($form->isValid()) {

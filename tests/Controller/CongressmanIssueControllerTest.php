@@ -6,7 +6,6 @@ use Althingi\Controller\CongressmanIssueController;
 use Althingi\Service\Issue;
 use Althingi\Model;
 use AlthingiTest\ServiceHelper;
-use Althingi\Router\Http\TreeRouteStack;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 

@@ -1,8 +1,8 @@
 <?php
 namespace Althingi\Utils;
 
-use Laminas\Form\Form;
-use  Laminas\Diactoros\Response\JsonResponse;
+use Althingi\Form\Form;
+use Laminas\Diactoros\Response\JsonResponse;
 
 class ErrorFormResponse extends JsonResponse
 {

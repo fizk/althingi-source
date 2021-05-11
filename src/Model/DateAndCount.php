@@ -24,7 +24,7 @@ class DateAndCount implements ModelInterface
      * @param int $count
      * @return DateAndCount
      */
-    public function setCount(int $count): DateAndCount
+    public function setCount(int $count): self
     {
         $this->count = $count;
         return $this;
@@ -42,7 +42,7 @@ class DateAndCount implements ModelInterface
      * @param \DateTime $date
      * @return DateAndCount
      */
-    public function setDate(DateTime $date = null): DateAndCount
+    public function setDate(DateTime $date = null): self
     {
         $this->date = $date;
         return $this;
@@ -51,10 +51,10 @@ class DateAndCount implements ModelInterface
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return [
-            'date' => $this->date ? $this->date->format('c') : null,
+            'date' => $this->date?->format('c'),
             'count' => $this->count
         ];
     }
@@ -62,7 +62,7 @@ class DateAndCount implements ModelInterface
     /**
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

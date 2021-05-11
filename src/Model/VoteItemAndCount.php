@@ -19,13 +19,13 @@ class VoteItemAndCount extends VoteItem
      * @param int $count
      * @return VoteItemAndCount
      */
-    public function setCount(int $count): VoteItemAndCount
+    public function setCount(int $count): self
     {
         $this->count = $count;
         return $this;
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return array_merge(parent::toArray(), ['count' => $this->count]);
     }

@@ -7,7 +7,6 @@ use DateTime;
 
 class PresidentCongressman implements HydratorInterface
 {
-
     /**
      * Hydrate $object with the provided $data.
      *
@@ -29,7 +28,6 @@ class PresidentCongressman implements HydratorInterface
             ->setDeath($data['death'] ? new DateTime($data['death']) : null)
             ->setAbbr($data['abbr']);
     }
-
 
     /**
      * Extract values from an object

@@ -58,7 +58,7 @@ class SuperCategoryController implements
     public function put(ServerRequest $request): ResponseInterface
     {
         $form = new Form\SuperCategory();
-        $form->bindValues(array_merge($request->getParsedBody(), [
+        $form->setData(array_merge($request->getParsedBody(), [
             'super_category_id' => $request->getAttribute('super_category_id')
         ]));
         if ($form->isValid()) {
@@ -85,7 +85,7 @@ class SuperCategoryController implements
             $form->setData($request->getParsedBody());
 
             if ($form->isValid()) {
-                $this->superCategoryService->update($form->getData());
+                $this->superCategoryService->update($form->getObject());
                 return new EmptyResponse(205);
             }
 

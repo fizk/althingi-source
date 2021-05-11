@@ -2,11 +2,13 @@
 
 namespace Althingi\Form;
 
-use Althingi\Model;
 use Althingi\Hydrator;
-use Laminas\InputFilter\InputFilterProviderInterface;
+use Althingi\Model;
+use Althingi\Filter\ToInt;
+use Laminas\Filter\ToNull;
+use Laminas\Validator\Digits;
 
-class Ministry extends Form implements InputFilterProviderInterface
+class Ministry extends Form
 {
     public function __construct()
     {
@@ -14,89 +16,77 @@ class Ministry extends Form implements InputFilterProviderInterface
         $this
             ->setObject(new Model\Ministry())
             ->setHydrator(new Hydrator\Ministry());
-
-        $this->add([
-            'name' => 'ministry_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-        $this->add([
-            'name' => 'name',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
-        $this->add([
-            'name' => 'abbr_short',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
-        $this->add([
-            'name' => 'abbr_long',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
-        $this->add([
-            'name' => 'first',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-        $this->add([
-            'name' => 'last',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
     }
 
-
-    /**
-     * Should return an array specification compatible with
-     * {@link Laminas\InputFilter\Factory::createInputFilter()}.
-     *
-     * @return array
-     */
-    public function getInputFilterSpecification()
+    public function getInputFilterSpecification(): array
     {
         return [
             'ministry_id' => [
+                'name' => 'ministry_id',
                 'required' => true,
                 'allow_empty' => false,
+                'filters' => [
+                    ['name' => ToInt::class,],
+                ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
             ],
             'name' => [
+                'name' => 'name',
                 'required' => true,
                 'allow_empty' => false,
             ],
             'abbr_short' => [
+                'name' => 'abbr_short',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],
             ],
             'abbr_long' => [
+                'name' => 'abbr_long',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],
             ],
             'first' => [
+                'name' => 'first',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
+                    ['name' => ToInt::class,],
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
             ],
             'last' => [
+                'name' => 'last',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
+                    ['name' => ToInt::class,],
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
+                ],
+                'validators' => [
+                    ['name' => Digits::class]
                 ],
             ],
         ];

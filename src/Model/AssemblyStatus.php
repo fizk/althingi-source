@@ -34,7 +34,7 @@ class AssemblyStatus implements ModelInterface
      * @param int $count
      * @return AssemblyStatus|null
      */
-    public function setCount(int $count = null): AssemblyStatus
+    public function setCount(?int $count): self
     {
         $this->count = $count;
         return $this;
@@ -52,7 +52,7 @@ class AssemblyStatus implements ModelInterface
      * @param string $type
      * @return AssemblyStatus
      */
-    public function setType(string $type = null): AssemblyStatus
+    public function setType(?string $type): self
     {
         $this->type = $type;
         return $this;
@@ -70,7 +70,7 @@ class AssemblyStatus implements ModelInterface
      * @param string $type_name
      * @return AssemblyStatus
      */
-    public function setTypeName(string $type_name = null): AssemblyStatus
+    public function setTypeName(?string $type_name): self
     {
         $this->type_name = $type_name;
         return $this;
@@ -88,7 +88,7 @@ class AssemblyStatus implements ModelInterface
      * @param string $type_subname
      * @return AssemblyStatus
      */
-    public function setTypeSubname(string $type_subname = null): AssemblyStatus
+    public function setTypeSubname(?string $type_subname): self
     {
         $this->type_subname = $type_subname;
         return $this;
@@ -106,7 +106,7 @@ class AssemblyStatus implements ModelInterface
      * @param string $status
      * @return AssemblyStatus
      */
-    public function setStatus(?string $status): AssemblyStatus
+    public function setStatus(?string $status): self
     {
         $this->status = $status;
         return $this;
@@ -124,7 +124,7 @@ class AssemblyStatus implements ModelInterface
      * @param string $category
      * @return AssemblyStatus
      */
-    public function setCategory(?string $category): AssemblyStatus
+    public function setCategory(?string $category): self
     {
         $this->category = $category;
         return $this;
@@ -133,7 +133,7 @@ class AssemblyStatus implements ModelInterface
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'count' => $this->count,
@@ -148,7 +148,7 @@ class AssemblyStatus implements ModelInterface
     /**
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

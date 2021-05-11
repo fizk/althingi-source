@@ -2,21 +2,20 @@
 
 namespace AlthingiTest\Controller;
 
-use Althingi\Controller\VoteItemController;
-use Althingi\Model\VoteItemAndAssemblyIssue;
 use Althingi\Service;
 use Althingi\Model;
+use Althingi\Controller\VoteItemController;
+use Althingi\Model\VoteItemAndAssemblyIssue;
 use Althingi\Service\Congressman;
 use Althingi\Service\Constituency;
 use Althingi\Service\Party;
 use Althingi\Service\Vote;
 use Althingi\Service\VoteItem;
 use AlthingiTest\ServiceHelper;
-use Mockery;
-use DateTime;
-use Althingi\Router\Http\TreeRouteStack;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
+use Mockery;
+use DateTime;
 
 /**
  * Class VoteItemControllerTest
@@ -64,7 +63,9 @@ class VoteItemControllerTest extends TestCase
             ->shouldReceive('get')
             ->with(3)
             ->andReturn(
-                (new Model\Vote())->setVoteId(3)->setDate(new DateTime('2001-01-01'))
+                (new Model\Vote())
+                    ->setVoteId(3)
+                    ->setDate(new DateTime('2001-01-01'))
             )
             ->once()
             ->getMock();
@@ -73,7 +74,12 @@ class VoteItemControllerTest extends TestCase
             ->shouldReceive('fetchByVote')
             ->with(3)
             ->andReturn([
-                (new Model\VoteItem())->setCongressmanId(101)
+                (new Model\VoteItem())
+                    ->setVoteId(3)
+                    ->setVote('yes')
+                    ->setVoteItemId(1)
+                    ->setCongressmanId(101)
+
             ])
             ->once()
             ->getMock();
@@ -87,13 +93,20 @@ class VoteItemControllerTest extends TestCase
 
         $this->getMockService(Service\Party::class)
             ->shouldReceive('getByCongressman')
-            ->andReturn(new Model\Party())
+            ->andReturn(
+                (new Model\Party())
+                    ->setPartyId(1)
+                    ->setName('name')
+            )
             ->once()
             ->getMock();
 
         $this->getMockService(Service\Constituency::class)
             ->shouldReceive('getByCongressman')
-            ->andReturn(new Model\ConstituencyDate())
+            ->andReturn(
+                (new Model\ConstituencyDate())
+                    ->setConstituencyId(1)
+            )
             ->once()
             ->getMock();
 
@@ -235,32 +248,6 @@ class VoteItemControllerTest extends TestCase
         $this->assertControllerName(VoteItemController::class);
         $this->assertActionName('patch');
         $this->assertResponseStatusCode(205);
-    }
-    /**
-     * @covers ::patch
-     */
-    public function testPatchInvalidParams()
-    {
-        $this->getMockService(VoteItem::class)
-            ->shouldReceive('get')
-            ->with(30)
-            ->once()
-            ->andReturn(
-                (new \Althingi\Model\VoteItem())
-                ->setCongressmanId(1)
-                ->setVoteId(3)
-                ->setVoteItemId(30)
-            )
-            ->getMock()
-        ->shouldReceive('update')
-        ->never()
-        ->getMock();
-
-        $this->dispatch('/loggjafarthing/1/thingmal/a/2/atkvaedagreidslur/3/atkvaedi/30', 'PATCH', []);
-
-        $this->assertControllerName(VoteItemController::class);
-        $this->assertActionName('patch');
-        $this->assertResponseStatusCode(400);
     }
 
     /**

@@ -24,7 +24,6 @@ class Plenary implements HydratorInterface
             ->setTo($data['to'] ? new DateTime($data['to']) : null);
     }
 
-
     /**
      * Extract values from an object
      *

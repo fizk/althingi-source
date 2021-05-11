@@ -22,7 +22,7 @@ class CabinetAndAssemblies implements ModelInterface
      * @param Cabinet $cabinet
      * @return CabinetAndAssemblies
      */
-    public function setCabinet(Cabinet $cabinet): CabinetAndAssemblies
+    public function setCabinet(Cabinet $cabinet): self
     {
         $this->cabinet = $cabinet;
         return $this;
@@ -40,7 +40,7 @@ class CabinetAndAssemblies implements ModelInterface
      * @param Assembly[] $assemblies
      * @return CabinetAndAssemblies
      */
-    public function setAssemblies(array $assemblies): CabinetAndAssemblies
+    public function setAssemblies(array $assemblies): self
     {
         $this->assemblies = $assemblies;
         return $this;
@@ -49,7 +49,7 @@ class CabinetAndAssemblies implements ModelInterface
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return array_merge($this->cabinet->toArray(), [
             'assemblies' => $this->assemblies,
@@ -59,7 +59,7 @@ class CabinetAndAssemblies implements ModelInterface
     /**
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

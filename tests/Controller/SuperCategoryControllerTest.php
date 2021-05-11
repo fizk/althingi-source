@@ -2,11 +2,10 @@
 
 namespace AlthingiTest\Controller;
 
+use Althingi\Model;
 use Althingi\Controller\SuperCategoryController;
 use Althingi\Service\SuperCategory;
-use Althingi\Model;
 use AlthingiTest\ServiceHelper;
-use Althingi\Router\Http\TreeRouteStack;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 

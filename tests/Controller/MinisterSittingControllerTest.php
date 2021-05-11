@@ -6,7 +6,6 @@ use Althingi\Service;
 use Althingi\Model;
 use Althingi\Controller;
 use AlthingiTest\ServiceHelper;
-use Althingi\Router\Http\TreeRouteStack;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 
@@ -301,7 +300,12 @@ class MinisterSittingControllerTest extends TestCase
     {
         $this->getMockService(Service\MinisterSitting::class)
             ->shouldReceive('get')
-            ->andReturn(new Model\MinisterSitting())
+            ->andReturn(
+                (new Model\MinisterSitting())
+                    ->setAssemblyId(1)
+                    ->setMinistryId(3)
+                    ->setCongressmanId(2)
+                )
             ->getMock();
 
         $this->dispatch('/thingmenn/2/radherraseta/1', 'GET');
@@ -336,9 +340,9 @@ class MinisterSittingControllerTest extends TestCase
             ->with(123, 456)
             ->andReturn([
                 (new Model\MinisterSitting())
-                    ->setMinistryId(987)
-                    ->setCongressmanId(456)
-                    ->setPartyId(101)
+                    ->setAssemblyId(1)
+                    ->setMinistryId(3)
+                    ->setCongressmanId(2)
             ])
             ->once()
             ->getMock();

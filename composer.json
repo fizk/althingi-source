@@ -34,14 +34,15 @@
     "fizk/laminas-cache-storage-adapter-redis": "^2.0.1",
     "laminas/laminas-cache-storage-adapter-blackhole": "^1.0",
     "laminas/laminas-cache-storage-adapter-filesystem": "^1.0",
-    "laminas/laminas-form": "^2.17",
     "league/html-to-markdown": "^5.0",
     "monolog/monolog": "^2.2",
     "phly/phly-event-dispatcher": "dev-php8",
     "php-amqplib/php-amqplib": "^3.0",
     "zeptech/annotations": "^1.1",
     "laminas/laminas-diactoros": "^2.5",
-    "laminas/laminas-httphandlerrunner": "^1.4"
+    "laminas/laminas-httphandlerrunner": "^1.4",
+    "laminas/laminas-inputfilter": "^2.12",
+    "laminas/laminas-hydrator": "^4.1"
 
   },
   "require-dev": {

@@ -8,7 +8,6 @@ use Althingi\Model\IssueCategory as IssueCategoryModel;
 use Althingi\Service\Category;
 use Althingi\Service\IssueCategory;
 use AlthingiTest\ServiceHelper;
-use Althingi\Router\Http\TreeRouteStack;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 
@@ -49,7 +48,7 @@ class IssueCategoryControllerTest extends TestCase
         $this->getMockService(Category::class)
             ->shouldReceive('fetchByAssemblyIssueAndCategory')
             ->withArgs([141, 131, 21])
-            ->andReturn(new CategoryModel())
+            ->andReturn((new CategoryModel())->setCategoryId(21)->setSuperCategoryId(1))
             ->getMock();
 
         $this->dispatch('/loggjafarthing/141/thingmal/a/131/efnisflokkar/21', 'GET');
@@ -85,7 +84,9 @@ class IssueCategoryControllerTest extends TestCase
         $this->getMockService(Category::class)
             ->shouldReceive('fetchByAssemblyAndIssue')
             ->withArgs([141, 131])
-            ->andReturn([new CategoryModel()])
+            ->andReturn([
+                (new CategoryModel())->setCategoryId(1)->setSuperCategoryId(2)
+            ])
             ->getMock();
 
         $this->dispatch('/loggjafarthing/141/thingmal/a/131/efnisflokkar', 'GET');

@@ -19,7 +19,7 @@ class CongressmanValue extends Congressman
      * @param int $value
      * @return $this
      */
-    public function setValue(?int $value): CongressmanValue
+    public function setValue(?int $value): self
     {
         $this->value = $value;
         return $this;
@@ -28,7 +28,7 @@ class CongressmanValue extends Congressman
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return array_merge(
             parent::toArray(),

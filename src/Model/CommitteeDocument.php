@@ -40,7 +40,7 @@ class CommitteeDocument implements ModelInterface
      * @param int $document_committee_id
      * @return CommitteeDocument
      */
-    public function setDocumentCommitteeId(? int $document_committee_id): CommitteeDocument
+    public function setDocumentCommitteeId(? int $document_committee_id): self
     {
         $this->document_committee_id = $document_committee_id;
         return $this;
@@ -58,7 +58,7 @@ class CommitteeDocument implements ModelInterface
      * @param int $document_id
      * @return CommitteeDocument
      */
-    public function setDocumentId(int $document_id): CommitteeDocument
+    public function setDocumentId(int $document_id): self
     {
         $this->document_id = $document_id;
         return $this;
@@ -76,7 +76,7 @@ class CommitteeDocument implements ModelInterface
      * @param int $assembly_id
      * @return CommitteeDocument
      */
-    public function setAssemblyId(int $assembly_id): CommitteeDocument
+    public function setAssemblyId(int $assembly_id): self
     {
         $this->assembly_id = $assembly_id;
         return $this;
@@ -94,7 +94,7 @@ class CommitteeDocument implements ModelInterface
      * @param int $issue_id
      * @return CommitteeDocument
      */
-    public function setIssueId(int $issue_id): CommitteeDocument
+    public function setIssueId(int $issue_id): self
     {
         $this->issue_id = $issue_id;
         return $this;
@@ -112,7 +112,7 @@ class CommitteeDocument implements ModelInterface
      * @param string $category
      * @return CommitteeDocument
      */
-    public function setCategory(string $category): CommitteeDocument
+    public function setCategory(string $category): self
     {
         $this->category = $category;
         return $this;
@@ -130,7 +130,7 @@ class CommitteeDocument implements ModelInterface
      * @param int $committee_id
      * @return CommitteeDocument
      */
-    public function setCommitteeId(int $committee_id): CommitteeDocument
+    public function setCommitteeId(int $committee_id): self
     {
         $this->committee_id = $committee_id;
         return $this;
@@ -148,7 +148,7 @@ class CommitteeDocument implements ModelInterface
      * @param string $part
      * @return CommitteeDocument
      */
-    public function setPart(?string $part): CommitteeDocument
+    public function setPart(?string $part): self
     {
         $this->part = $part;
         return $this;
@@ -166,7 +166,7 @@ class CommitteeDocument implements ModelInterface
      * @param string $name
      * @return CommitteeDocument
      */
-    public function setName(?string $name): CommitteeDocument
+    public function setName(?string $name): self
     {
         $this->name = $name;
         return $this;
@@ -175,7 +175,7 @@ class CommitteeDocument implements ModelInterface
     /**
      * @return array
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }
@@ -183,7 +183,7 @@ class CommitteeDocument implements ModelInterface
     /**
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'document_committee_id' => $this->document_committee_id,

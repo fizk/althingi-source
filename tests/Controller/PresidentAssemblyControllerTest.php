@@ -7,7 +7,6 @@ use Althingi\Model\President;
 use Althingi\Service\Congressman;
 use Althingi\Service\Party;
 use AlthingiTest\ServiceHelper;
-use Althingi\Router\Http\TreeRouteStack;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 
@@ -47,7 +46,14 @@ class PresidentAssemblyControllerTest extends TestCase
     {
         $this->getMockService(Congressman::class)
             ->shouldReceive('fetchPresidentsByAssembly')
-            ->andReturn([(new President())->setPresidentId(1)->setFrom(new \DateTime())])
+            ->andReturn([
+                (new President())
+                    ->setPresidentId(1)
+                    ->setFrom(new \DateTime())
+                    ->setCongressmanId(1)
+                    ->setAssemblyId(1)
+                    ->setTitle('title')
+            ])
             ->once()
             ->getMock();
 
