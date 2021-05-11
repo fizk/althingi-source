@@ -1,11 +1,11 @@
 <?php
 
-namespace AlthingiTest\Controller;
+namespace Althingi\Controller;
 
 use Althingi\Controller\InflationController;
 use Althingi\Service\Assembly;
 use Althingi\Service\Cabinet;
-use AlthingiTest\ServiceHelper;
+use Althingi\ServiceHelper;
 use Althingi\Service\Inflation;
 use Althingi\Model\Inflation as InflationModel;
 use Laminas\ServiceManager\ServiceManager;

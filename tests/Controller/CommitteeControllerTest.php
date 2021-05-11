@@ -1,11 +1,11 @@
 <?php
 
-namespace AlthingiTest\Controller;
+namespace Althingi\Controller;
 
 use Althingi\Controller\CommitteeController;
 use Althingi\Service;
 use Althingi\Model;
-use AlthingiTest\ServiceHelper;
+use Althingi\ServiceHelper;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 use Mockery;

@@ -1,6 +1,6 @@
 <?php
 
-namespace AlthingiTest\Service;
+namespace Althingi\Service;
 
 use Althingi\Model\ModelInterface;
 use Althingi\Service\DatabaseService;

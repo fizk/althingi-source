@@ -1,10 +1,10 @@
 <?php
 
-namespace AlthingiTest\Controller;
+namespace Althingi\Controller;
 
 use Althingi\Controller\SessionController;
 use Althingi\Service\Session;
-use AlthingiTest\ServiceHelper;
+use Althingi\ServiceHelper;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 use DateTime;

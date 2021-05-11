@@ -1,6 +1,6 @@
 <?php
 
-namespace AlthingiTest;
+namespace Althingi;
 
 use Psr\Http\Message\ResponseInterface;
 use Mockery\MockInterface;

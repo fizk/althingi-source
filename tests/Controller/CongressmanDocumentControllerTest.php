@@ -1,11 +1,11 @@
 <?php
 
-namespace AlthingiTest\Controller;
+namespace Althingi\Controller;
 
 use Althingi\Controller\CongressmanDocumentController;
 use Althingi\Service\CongressmanDocument;
 use Althingi\Model\CongressmanDocument as CongressmanDocumentModel;
-use AlthingiTest\ServiceHelper;
+use Althingi\ServiceHelper;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 

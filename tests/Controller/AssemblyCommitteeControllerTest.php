@@ -1,9 +1,9 @@
 <?php
 
-namespace AlthingiTest\Controller;
+namespace Althingi\Controller;
 
 use Althingi\Controller\AssemblyCommitteeController;
-use AlthingiTest\ServiceHelper;
+use Althingi\ServiceHelper;
 use Althingi\Service\Committee;
 use Althingi\Model\Committee as CommitteeModel;
 use Laminas\ServiceManager\ServiceManager;

@@ -1,9 +1,9 @@
 <?php
 
-namespace AlthingiTest\Service;
+namespace Althingi\Service;
 
 use Althingi\Service\Election;
-use AlthingiTest\DatabaseConnection;
+use Althingi\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\Election as ElectionModel;
 use PDO;

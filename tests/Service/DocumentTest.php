@@ -1,9 +1,9 @@
 <?php
 
-namespace AlthingiTest\Service;
+namespace Althingi\Service;
 
 use Althingi\Service\Document;
-use AlthingiTest\DatabaseConnection;
+use Althingi\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\Document as DocumentModel;
 use PDO;

@@ -1,10 +1,10 @@
 <?php
 
-namespace AlthingiTest\Service;
+namespace Althingi\Service;
 
 use Althingi\Model\CongressmanDocument as CongressmanDocumentModel;
 use Althingi\Service\CongressmanDocument;
-use AlthingiTest\DatabaseConnection;
+use Althingi\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
 use PDO;
 class CongressmanDocumentTest extends TestCase

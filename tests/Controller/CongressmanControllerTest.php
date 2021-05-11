@@ -1,9 +1,9 @@
 <?php
 
-namespace AlthingiTest\Controller;
+namespace Althingi\Controller;
 
 use Althingi\Controller\CongressmanController;
-use AlthingiTest\ServiceHelper;
+use Althingi\ServiceHelper;
 use Althingi\Service;
 use Althingi\Model;
 use Laminas\ServiceManager\ServiceManager;

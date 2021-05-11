@@ -1,12 +1,12 @@
 <?php
 
-namespace AlthingiTest\Controller;
+namespace Althingi\Controller;
 
 use Althingi\Controller\PresidentController;
 use Althingi\Service\Congressman;
 use Althingi\Service\President;
 use Althingi\Service\Party;
-use AlthingiTest\ServiceHelper;
+use Althingi\ServiceHelper;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 use DateTime;

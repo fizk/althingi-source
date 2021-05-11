@@ -1,12 +1,12 @@
 <?php
 
-namespace AlthingiTest\Service;
+namespace Althingi\Service;
 
 use DateTime;
 use Althingi\Model\President;
 use Althingi\Model\PresidentCongressman as PresidentCongressmanModel;
 use Althingi\Service\President as PresidentService;
-use AlthingiTest\DatabaseConnection;
+use Althingi\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
 use PDO;
 

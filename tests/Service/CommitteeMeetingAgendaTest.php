@@ -1,9 +1,9 @@
 <?php
 
-namespace AlthingiTest\Service;
+namespace Althingi\Service;
 
 use Althingi\Service\CommitteeMeetingAgenda;
-use AlthingiTest\DatabaseConnection;
+use Althingi\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\CommitteeMeetingAgenda as CommitteeMeetingAgendaModel;
 use PDO;

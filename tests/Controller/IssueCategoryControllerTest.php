@@ -1,13 +1,13 @@
 <?php
 
-namespace AlthingiTest\Controller;
+namespace Althingi\Controller;
 
 use Althingi\Controller\IssueCategoryController;
 use Althingi\Model\Category as CategoryModel;
 use Althingi\Model\IssueCategory as IssueCategoryModel;
 use Althingi\Service\Category;
 use Althingi\Service\IssueCategory;
-use AlthingiTest\ServiceHelper;
+use Althingi\ServiceHelper;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 

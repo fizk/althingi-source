@@ -1,11 +1,11 @@
 <?php
 
-namespace AlthingiTest\Service;
+namespace Althingi\Service;
 
 use Althingi\Model\VoteItem as VoteItemModel;
 use Althingi\Model\VoteItemAndAssemblyIssue as VoteItemAndAssemblyIssueModel;
 use Althingi\Service\VoteItem;
-use AlthingiTest\DatabaseConnection;
+use Althingi\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
 use PDO;
 

@@ -1,9 +1,9 @@
 <?php
 
-namespace AlthingiTest\Service;
+namespace Althingi\Service;
 
 use Althingi\Service\Cabinet;
-use AlthingiTest\DatabaseConnection;
+use Althingi\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\Cabinet as CabinetModel;
 use PDO;

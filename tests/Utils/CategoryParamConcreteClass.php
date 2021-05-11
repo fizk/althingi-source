@@ -1,5 +1,5 @@
 <?php
-namespace AlthingiTest\Utils;
+namespace Althingi\Utils;
 
 use Althingi\Utils\CategoryParam;
 

@@ -1,12 +1,12 @@
 <?php
 
-namespace AlthingiTest\Controller;
+namespace Althingi\Controller;
 
 use Althingi\Service;
 use Althingi\Model;
 use Althingi\Controller\AssemblyController;
 use Althingi\Model\Assembly;
-use AlthingiTest\ServiceHelper;
+use Althingi\ServiceHelper;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 use DateTime;

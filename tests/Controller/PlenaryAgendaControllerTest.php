@@ -1,6 +1,6 @@
 <?php
 
-namespace AlthingiTest\Controller;
+namespace Althingi\Controller;
 
 use Althingi\Model;
 use Althingi\Controller\PlenaryAgendaController;
@@ -9,7 +9,7 @@ use Althingi\Service\Issue;
 use Althingi\Service\Party;
 use Althingi\Service\Plenary;
 use Althingi\Service\PlenaryAgenda;
-use AlthingiTest\ServiceHelper;
+use Althingi\ServiceHelper;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 

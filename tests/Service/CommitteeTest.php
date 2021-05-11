@@ -1,10 +1,10 @@
 <?php
 
-namespace AlthingiTest\Service;
+namespace Althingi\Service;
 
 use Althingi\Model\Committee as CommitteeModel;
 use Althingi\Service\Committee;
-use AlthingiTest\DatabaseConnection;
+use Althingi\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
 use PDO;
 class CommitteeTest extends TestCase

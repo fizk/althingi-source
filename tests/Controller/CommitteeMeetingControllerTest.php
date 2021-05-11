@@ -1,11 +1,11 @@
 <?php
 
-namespace AlthingiTest\Controller;
+namespace Althingi\Controller;
 
 use Althingi\Controller\CommitteeMeetingController;
 use Althingi\Service\CommitteeMeeting;
 use Althingi\Model\CommitteeMeeting as CommitteeMeetingModel;
-use AlthingiTest\ServiceHelper;
+use Althingi\ServiceHelper;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 

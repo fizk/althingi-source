@@ -1,8 +1,8 @@
 <?php
 
-namespace AlthingiTest\Service;
+namespace Althingi\Service;
 
-use AlthingiTest\DatabaseConnection;
+use Althingi\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
 use Althingi\Service;
 use Althingi\Model;

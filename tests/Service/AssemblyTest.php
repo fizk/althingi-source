@@ -1,8 +1,8 @@
 <?php
 
-namespace AlthingiTest\Service;
+namespace Althingi\Service;
 
-use AlthingiTest\DatabaseConnection;
+use Althingi\DatabaseConnection;
 use Althingi\Service\Assembly;
 use Althingi\Service\President;
 use Althingi\Model\Assembly as AssemblyModel;
