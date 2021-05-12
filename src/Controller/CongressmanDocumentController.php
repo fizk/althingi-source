@@ -74,7 +74,7 @@ class CongressmanDocumentController implements
             $form->setData($request->getParsedBody());
 
             if ($form->isValid()) {
-                $this->congressmanDocumentService->update($form->getData());
+                $this->congressmanDocumentService->update($form->getObject());
                 return new EmptyResponse(205);
             }
 

@@ -1,12 +1,11 @@
 <?php
 
-namespace AlthingiTest\Controller;
+namespace Althingi\Controller;
 
 use Althingi\Controller\AssemblyCommitteeController;
-use AlthingiTest\ServiceHelper;
+use Althingi\ServiceHelper;
 use Althingi\Service\Committee;
 use Althingi\Model\Committee as CommitteeModel;
-use Althingi\Router\Http\TreeRouteStack;
 use Laminas\ServiceManager\ServiceManager;
 use Mockery;
 use PHPUnit\Framework\TestCase;
@@ -87,10 +86,10 @@ class AssemblyCommitteeControllerTest extends TestCase
             ->shouldReceive('fetchByAssembly')
             ->withArgs([144])
             ->andReturn([
-                (new CommitteeModel()),
-                (new CommitteeModel()),
-                (new CommitteeModel()),
-                (new CommitteeModel()),
+                (new CommitteeModel())->setCommitteeId(1)->setFirstAssemblyId(100),
+                (new CommitteeModel())->setCommitteeId(2)->setFirstAssemblyId(100),
+                (new CommitteeModel())->setCommitteeId(3)->setFirstAssemblyId(100),
+                (new CommitteeModel())->setCommitteeId(4)->setFirstAssemblyId(100),
             ])
             ->once()
             ->getMock();

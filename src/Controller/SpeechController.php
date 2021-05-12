@@ -163,6 +163,7 @@ class SpeechController implements
                  *  it self is empty http://www.althingi.is/altext/xml/thingfundir/?lthing=20
                  */
                 if ($e->errorInfo[1] === 1452) {
+                    /** @var \althingi\Model\Speech */
                     $speech = $form->getObject();
                     $plenary = (new Model\Plenary())
                         ->setAssemblyId($speech->getAssemblyId())
@@ -207,7 +208,7 @@ class SpeechController implements
             $form->setData($request->getParsedBody());
 
             if ($form->isValid()) {
-                $this->speechService->update($form->getData());
+                $this->speechService->update($form->getObject());
                 return new EmptyResponse(205);
             }
 

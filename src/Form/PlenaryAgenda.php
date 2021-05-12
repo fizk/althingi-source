@@ -2,264 +2,225 @@
 
 namespace Althingi\Form;
 
-use Laminas\InputFilter\InputFilterProviderInterface;
+use Althingi\Hydrator;
+use Althingi\Model;
+use Althingi\Filter\ToInt;
+use Laminas\Filter\ToNull;
+use Laminas\Validator\Digits;
 
-class PlenaryAgenda extends Form implements InputFilterProviderInterface
+class PlenaryAgenda extends Form
 {
     public function __construct()
     {
         parent::__construct(get_class($this));
         $this
-            ->setHydrator(new \Althingi\Hydrator\PlenaryAgenda())
-            ->setObject(new \Althingi\Model\PlenaryAgenda());
-
-        $this->add([
-            'name' => 'item_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-
-        $this->add([
-            'name' => 'plenary_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-
-        $this->add([
-            'name' => 'issue_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-
-        $this->add([
-            'name' => 'assembly_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-
-        $this->add([
-            'name' => 'category',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
-
-        $this->add([
-            'name' => 'iteration_type',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
-
-        $this->add([
-            'name' => 'iteration_continue',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
-
-        $this->add([
-            'name' => 'iteration_comment',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
-
-        $this->add([
-            'name' => 'comment',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
-
-        $this->add([
-            'name' => 'comment_type',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
-
-        $this->add([
-            'name' => 'posed_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-
-        $this->add([
-            'name' => 'posed',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
-
-        $this->add([
-            'name' => 'answerer_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-
-        $this->add([
-            'name' => 'answerer',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
-
-        $this->add([
-            'name' => 'counter_answerer_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-
-        $this->add([
-            'name' => 'counter_answerer',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
-
-        $this->add([
-            'name' => 'instigator_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-
-        $this->add([
-            'name' => 'instigator',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
+            ->setHydrator(new Hydrator\PlenaryAgenda())
+            ->setObject(new Model\PlenaryAgenda());
     }
 
-
-    /**
-     * Should return an array specification compatible with
-     * {@link Laminas\InputFilter\Factory::createInputFilter()}.
-     *
-     * @return array
-     */
-    public function getInputFilterSpecification()
+    public function getInputFilterSpecification(): array
     {
         return [
             'item_id' => [
+                'name' => 'item_id',
                 'required' => true,
                 'allow_empty' => false,
+                'filters' => [
+                    ['name' => ToInt::class,],
+                ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
             ],
             'plenary_id' => [
+                'name' => 'plenary_id',
                 'required' => true,
                 'allow_empty' => false,
+                'filters' => [
+                    ['name' => ToInt::class,],
+                ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
             ],
             'issue_id' => [
+                'name' => 'issue_id',
                 'required' => true,
                 'allow_empty' => false,
+                'filters' => [
+                    ['name' => ToInt::class,],
+                ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
             ],
             'assembly_id' => [
+                'name' => 'assembly_id',
                 'required' => true,
                 'allow_empty' => false,
+                'filters' => [
+                    ['name' => ToInt::class,],
+                ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
             ],
             'category' => [
+                'name' => 'category',
                 'required' => true,
                 'allow_empty' => false,
             ],
             'iteration_type' => [
+                'name' => 'iteration_type',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],
             ],
             'iteration_continue' => [
+                'name' => 'iteration_continue',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],
             ],
             'iteration_comment' => [
+                'name' => 'iteration_comment',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],
             ],
             'comment' => [
+                'name' => 'comment',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],
             ],
             'comment_type' => [
+                'name' => 'comment_type',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],
             ],
             'posed_id' => [
+                'name' => 'posed_id',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
             ],
             'posed' => [
+                'name' => 'posed',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],
             ],
             'answerer_id' => [
+                'name' => 'answerer_id',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
             ],
             'answerer' => [
+                'name' => 'answerer',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],
             ],
             'counter_answerer_id' => [
+                'name' => 'counter_answerer_id',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
             ],
             'counter_answerer' => [
+                'name' => 'counter_answerer',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],
             ],
             'instigator_id' => [
+                'name' => 'instigator_id',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
             ],
             'instigator' => [
+                'name' => 'instigator',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],

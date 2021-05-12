@@ -1,11 +1,11 @@
 <?php
 
-namespace AlthingiTest\Service;
+namespace Althingi\Service;
 
 use Althingi\Model\IssueCategory as IssueCategoryModel;
 use Althingi\Model\IssueCategoryAndTime;
 use Althingi\Service\IssueCategory;
-use AlthingiTest\DatabaseConnection;
+use Althingi\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
 use PDO;
 

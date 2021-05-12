@@ -4,31 +4,20 @@ namespace Althingi\Model;
 
 class CategoryAndCount extends Category
 {
-    /** @var  int */
-    private $count;
+    private ?int $count = null;
 
-    /**
-     * @return int
-     */
     public function getCount(): ?int
     {
         return $this->count;
     }
 
-    /**
-     * @param int $count
-     * @return CategoryAndCount
-     */
-    public function setCount(int $count = null): CategoryAndCount
+    public function setCount(?int $count): self
     {
         $this->count = $count;
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function toArray()
+    public function toArray(): array
     {
         return array_merge(parent::toArray(), ['count' => $this->count]);
     }

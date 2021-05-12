@@ -4,70 +4,41 @@ namespace Althingi\Model;
 
 class IssueTypeAndStatus implements ModelInterface
 {
-    /** @var  string */
-    private $type;
-
-    /** @var  string */
-    private $typeName;
-
-    /** @var  string */
-    private $typeSubName;
-
-    /** @var int */
-    private $count = 0;
-
+    private ?string $type = null;
+    private ?string $typeName = null;
+    private ?string $typeSubName = null;
+    private int $count = 0;
     /** @var \Althingi\Model\IssueTypeStatus[] */
-    private $status = [];
+    private array $status = [];
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $type
-     * @return IssueTypeAndStatus
-     */
-    public function setType(?string $type): IssueTypeAndStatus
+    public function setType(?string $type): self
     {
         $this->type = $type;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getTypeName(): ?string
     {
         return $this->typeName;
     }
 
-    /**
-     * @param string $typeName
-     * @return IssueTypeAndStatus
-     */
-    public function setTypeName(?string $typeName): IssueTypeAndStatus
+    public function setTypeName(?string $typeName): self
     {
         $this->typeName = $typeName;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getTypeSubName(): ?string
     {
         return $this->typeSubName;
     }
 
-    /**
-     * @param string $typeSubName
-     * @return IssueTypeAndStatus
-     */
-    public function setTypeSubName(?string $typeSubName): IssueTypeAndStatus
+    public function setTypeSubName(?string $typeSubName): self
     {
         $this->typeSubName = $typeSubName;
         return $this;
@@ -83,45 +54,37 @@ class IssueTypeAndStatus implements ModelInterface
 
     /**
      * @param IssueTypeStatus[] $status
-     * @return IssueTypeAndStatus
      */
-    public function setStatus(array $status): IssueTypeAndStatus
+    public function setStatus(array $status): self
     {
         $this->status = $status;
         return $this;
     }
 
-    public function addStatus(IssueTypeStatus $status): IssueTypeAndStatus
+    public function addStatus(IssueTypeStatus $status): self
     {
         $this->status[] = $status;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getCount(): int
     {
         return $this->count;
     }
 
-    /**
-     * @param int $count
-     * @return IssueTypeAndStatus
-     */
-    public function setCount(int $count): IssueTypeAndStatus
+    public function setCount(int $count): self
     {
         $this->count = $count;
         return $this;
     }
 
-    public function addCount(int $count): IssueTypeAndStatus
+    public function addCount(int $count): self
     {
         $this->count += $count;
         return $this;
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'type' => $this->type,
@@ -132,7 +95,7 @@ class IssueTypeAndStatus implements ModelInterface
         ];
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

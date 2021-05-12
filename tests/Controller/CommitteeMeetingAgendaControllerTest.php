@@ -1,11 +1,10 @@
 <?php
 
-namespace AlthingiTest\Controller;
+namespace Althingi\Controller;
 
 use Althingi\Controller\CommitteeMeetingAgendaController;
 use Althingi\Service\CommitteeMeetingAgenda;
-use AlthingiTest\ServiceHelper;
-use Althingi\Router\Http\TreeRouteStack;
+use Althingi\ServiceHelper;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 
@@ -45,6 +44,7 @@ class CommitteeMeetingAgendaControllerTest extends TestCase
             ->shouldReceive('get')
             ->andReturn(
                 (new \Althingi\Model\CommitteeMeetingAgenda())
+                ->setCategory('category')
                 ->setCommitteeMeetingAgendaId(1)
                 ->setCommitteeMeetingId(1646)
                 ->setAssemblyId(145)
@@ -129,6 +129,7 @@ class CommitteeMeetingAgendaControllerTest extends TestCase
             ->with(1646, 1)
             ->andReturn(
                 (new \Althingi\Model\CommitteeMeetingAgenda())
+                ->setCategory('category')
                 ->setCommitteeMeetingId(1646)
                 ->setCommitteeMeetingAgendaId(1)
                 ->setAssemblyId(145)

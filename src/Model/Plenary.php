@@ -6,123 +6,79 @@ use DateTime;
 
 class Plenary implements ModelInterface
 {
-    /** @var int */
     private $plenary_id;
-
-    /** @var int */
     private $assembly_id;
+    private ?DateTime $from = null;
+    private ?DateTime $to = null;
+    private ?string $name = null;
 
-    /** @var \DateTime */
-    private $from;
-
-    /** @var \DateTime */
-    private $to;
-
-    /** @var string */
-    private $name;
-
-    /**
-     * @return int
-     */
     public function getPlenaryId(): int
     {
         return $this->plenary_id;
     }
 
-    /**
-     * @param int $plenary_id
-     * @return Plenary
-     */
-    public function setPlenaryId(int $plenary_id): Plenary
+    public function setPlenaryId(int $plenary_id): self
     {
         $this->plenary_id = $plenary_id;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getAssemblyId(): int
     {
         return $this->assembly_id;
     }
 
-    /**
-     * @param int $assembly_id
-     * @return Plenary
-     */
-    public function setAssemblyId(int $assembly_id): Plenary
+    public function setAssemblyId(int $assembly_id): self
     {
         $this->assembly_id = $assembly_id;
         return $this;
     }
 
-    /**
-     * @return \DateTime
-     */
     public function getFrom(): ?DateTime
     {
         return $this->from;
     }
 
-    /**
-     * @param \DateTime $from
-     * @return Plenary
-     */
-    public function setFrom(DateTime $from = null): Plenary
+    public function setFrom(?DateTime $from): self
     {
         $this->from = $from;
         return $this;
     }
 
-    /**
-     * @return \DateTime
-     */
     public function getTo(): ?DateTime
     {
         return $this->to;
     }
 
-    /**
-     * @param \DateTime $to
-     * @return Plenary
-     */
-    public function setTo(DateTime $to = null): Plenary
+    public function setTo(?DateTime $to): self
     {
         $this->to = $to;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     * @return Plenary
-     */
-    public function setName(string $name = null): Plenary
+    public function setName(?string $name): self
     {
         $this->name = $name;
         return $this;
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'plenary_id' => $this->plenary_id,
             'assembly_id' => $this->assembly_id,
-            'from' => $this->from ? $this->from->format('Y-m-d H:i') : null,
-            'to' => $this->to ? $this->to->format('Y-m-d H:i') : null,
+            'from' => $this->from?->format('Y-m-d H:i'),
+            'to' => $this->to?->format('Y-m-d H:i'),
             'name' => $this->name,
         ];
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

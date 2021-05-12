@@ -50,7 +50,7 @@ class IssueLinkController implements
         $category = $request->getAttribute('category', 'A');
 
         $form = new Form\IssueLink();
-        $form->bindValues(array_merge($request->getParsedBody(), [
+        $form->setData(array_merge($request->getParsedBody(), [
             'from_assembly_id' => $assemblyId,
             'from_issue_id' => $issueId,
             'from_category' => strtoupper($category),

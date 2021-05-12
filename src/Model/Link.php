@@ -6,94 +6,56 @@ use DateTime;
 
 class Link implements ModelInterface
 {
-    /** @var  int */
-    private $assembly_id;
+    private int $assembly_id;
+    private int $issue_id;
+    private string $category;
+    private string $type;
 
-    /** @var  int */
-    private $issue_id;
-
-    /** @var  string */
-    private $category;
-
-    /** @var  string */
-    private $type;
-
-    /**
-     * @return int
-     */
     public function getAssemblyId(): int
     {
         return $this->assembly_id;
     }
 
-    /**
-     * @param int $assembly_id
-     * @return Link
-     */
-    public function setAssemblyId(int $assembly_id): Link
+    public function setAssemblyId(int $assembly_id): self
     {
         $this->assembly_id = $assembly_id;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getIssueId(): int
     {
         return $this->issue_id;
     }
 
-    /**
-     * @param int $issue_id
-     * @return Link
-     */
-    public function setIssueId(int $issue_id): Link
+    public function setIssueId(int $issue_id): self
     {
         $this->issue_id = $issue_id;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getCategory(): string
     {
         return $this->category;
     }
 
-    /**
-     * @param string $category
-     * @return Link
-     */
-    public function setCategory(string $category): Link
+    public function setCategory(string $category): self
     {
         $this->category = $category;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $type
-     * @return Link
-     */
-    public function setType(string $type): Link
+    public function setType(string $type): self
     {
         $this->type = $type;
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'assembly_id' => $this->assembly_id,
@@ -103,10 +65,7 @@ class Link implements ModelInterface
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

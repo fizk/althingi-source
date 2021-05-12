@@ -22,7 +22,6 @@ class IssueCategory implements HydratorInterface
             ->setAssemblyId($data['assembly_id']);
     }
 
-
     /**
      * Extract values from an object
      *

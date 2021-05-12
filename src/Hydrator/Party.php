@@ -23,7 +23,6 @@ class Party implements HydratorInterface
             ->setColor($data['color']);
     }
 
-
     /**
      * Extract values from an object
      *

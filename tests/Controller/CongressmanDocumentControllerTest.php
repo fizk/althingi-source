@@ -1,12 +1,11 @@
 <?php
 
-namespace AlthingiTest\Controller;
+namespace Althingi\Controller;
 
 use Althingi\Controller\CongressmanDocumentController;
 use Althingi\Service\CongressmanDocument;
 use Althingi\Model\CongressmanDocument as CongressmanDocumentModel;
-use AlthingiTest\ServiceHelper;
-use Althingi\Router\Http\TreeRouteStack;
+use Althingi\ServiceHelper;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 
@@ -74,6 +73,7 @@ class CongressmanDocumentControllerTest extends TestCase
                     ->setCategory('A')
                     ->setCongressmanId(637)
                     ->setDocumentId(1018)
+                    ->setOrder(1)
             )
             ->getMock()
             ->shouldReceive('update')

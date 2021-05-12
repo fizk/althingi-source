@@ -1,6 +1,6 @@
 <?php
 
-namespace AlthingiTest\Lib;
+namespace Althingi\Lib;
 
 use Althingi\Utils\Transformer;
 use PHPUnit\Framework\TestCase;

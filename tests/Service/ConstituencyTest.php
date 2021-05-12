@@ -1,9 +1,9 @@
 <?php
 
-namespace AlthingiTest\Service;
+namespace Althingi\Service;
 
 use Althingi\Service\Constituency;
-use AlthingiTest\DatabaseConnection;
+use Althingi\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\Constituency as ConstituencyModel;
 use PDO;
@@ -33,7 +33,8 @@ class ConstituencyTest extends TestCase
     public function testCreate()
     {
         $constituency = (new ConstituencyModel())
-            ->setName('name');
+            ->setName('name')
+            ->setConstituencyId(2);
 
         $expectedTable = $this->createArrayDataSet([
             'Constituency' => [
@@ -64,7 +65,8 @@ class ConstituencyTest extends TestCase
     public function testSave()
     {
         $constituency = (new ConstituencyModel())
-            ->setName('name');
+            ->setName('name')
+            ->setConstituencyId(2);
 
         $expectedTable = $this->createArrayDataSet([
             'Constituency' => [

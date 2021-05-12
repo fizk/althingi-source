@@ -108,6 +108,7 @@ class CommitteeDocumentController implements
         ]));
 
         if ($form->isValid()) {
+            /** @var \Althingi\Model\CommitteeDocument */
             $committeeDocument = $form->getObject();
 
             try {
@@ -159,7 +160,7 @@ class CommitteeDocumentController implements
             $form->setData($request->getParsedBody());
 
             if ($form->isValid()) {
-                $this->committeeDocumentService->update($form->getData());
+                $this->committeeDocumentService->update($form->getObject());
                 return new EmptyResponse(205);
             }
 

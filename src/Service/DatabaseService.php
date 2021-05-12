@@ -10,20 +10,13 @@ trait DatabaseService
 {
     private PDO $pdo;
 
-    /**
-     * @param \PDO $pdo
-     * @return $this
-     */
     public function setDriver(PDO $pdo)
     {
         $this->pdo = $pdo;
         return $this;
     }
 
-    /**
-     * @return \PDO
-     */
-    public function getDriver()
+    public function getDriver(): PDO
     {
         return $this->pdo;
     }

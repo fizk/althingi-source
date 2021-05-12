@@ -97,6 +97,7 @@ class CommitteeSittingController implements
         $form->setData(array_merge($request->getParsedBody(), ['congressman_id' => $congressmanId]));
 
         if ($form->isValid()) {
+            /** @var \Althingi\Model\CommitteeSitting */
             $committeeSitting = $form->getObject();
 
             try {
@@ -143,7 +144,7 @@ class CommitteeSittingController implements
             $form->setData($request->getParsedBody());
 
             if ($form->isValid()) {
-                $this->committeeSittingService->update($form->getData());
+                $this->committeeSittingService->update($form->getObject());
                 return new EmptyResponse(205);
             }
 

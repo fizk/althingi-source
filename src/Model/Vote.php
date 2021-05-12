@@ -6,280 +6,164 @@ use DateTime;
 
 class Vote implements ModelInterface
 {
-    /** @var int */
     private $vote_id;
-
-    /** @var int */
     private $issue_id;
-
-    /** @var string */
     private $category;
-
-    /** @var int */
     private $assembly_id;
+    private ?int $document_id = null;
+    private ?DateTime $date = null;
+    private ?string $type = null;
+    private ?string $outcome = null;
+    private ?string $method = null;
+    private ?int $yes = null;
+    private ?int $no = null;
+    private ?int $inaction = null;
+    private ?string $committee_to = null;
 
-    /** @var int */
-    private $document_id;
-
-    /** @var \DateTime */
-    private $date;
-
-    /** @var string */
-    private $type;
-
-    /** @var string */
-    private $outcome;
-
-    /** @var string */
-    private $method;
-
-    /** @var int */
-    private $yes;
-
-    /** @var int */
-    private $no;
-
-    /** @var int */
-    private $inaction;
-
-    /** @var string */
-    private $committee_to;
-
-    /**
-     * @return int
-     */
     public function getVoteId(): int
     {
         return $this->vote_id;
     }
 
-    /**
-     * @param int $vote_id
-     * @return Vote
-     */
-    public function setVoteId(int $vote_id): Vote
+    public function setVoteId(int $vote_id): self
     {
         $this->vote_id = $vote_id;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getIssueId(): int
     {
         return $this->issue_id;
     }
 
-    /**
-     * @param int $issue_id
-     * @return Vote
-     */
-    public function setIssueId(int $issue_id): Vote
+    public function setIssueId(int $issue_id): self
     {
         $this->issue_id = $issue_id;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getAssemblyId(): int
     {
         return $this->assembly_id;
     }
 
-    /**
-     * @param int $assembly_id
-     * @return Vote
-     */
-    public function setAssemblyId(int $assembly_id): Vote
+    public function setAssemblyId(int $assembly_id): self
     {
         $this->assembly_id = $assembly_id;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getDocumentId(): ?int
     {
         return $this->document_id;
     }
 
-    /**
-     * @param int $document_id
-     * @return Vote
-     */
-    public function setDocumentId(int $document_id = null): Vote
+    public function setDocumentId(?int $document_id): self
     {
         $this->document_id = $document_id;
         return $this;
     }
 
-    /**
-     * @return \DateTime
-     */
     public function getDate(): ?DateTime
     {
         return $this->date;
     }
 
-    /**
-     * @param \DateTime $date
-     * @return Vote
-     */
-    public function setDate(DateTime $date = null): Vote
+    public function setDate(?DateTime $date): self
     {
         $this->date = $date;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): ?string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $type
-     * @return Vote
-     */
-    public function setType(string $type = null): Vote
+    public function setType(?string $type): self
     {
         $this->type = $type;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getOutcome(): ?string
     {
         return $this->outcome;
     }
 
-    /**
-     * @param string $outcome
-     * @return Vote
-     */
-    public function setOutcome(string $outcome = null): Vote
+    public function setOutcome(?string $outcome): self
     {
         $this->outcome = $outcome;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getMethod(): ?string
     {
         return $this->method;
     }
 
-    /**
-     * @param string $method
-     * @return Vote
-     */
-    public function setMethod(string $method = null): Vote
+    public function setMethod(?string $method): self
     {
         $this->method = $method;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getYes(): ?int
     {
         return $this->yes;
     }
 
-    /**
-     * @param int $yes
-     * @return Vote
-     */
-    public function setYes(int $yes = null): Vote
+    public function setYes(?int $yes): self
     {
         $this->yes = $yes;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getNo(): ?int
     {
         return $this->no;
     }
 
-    /**
-     * @param int $no
-     * @return Vote
-     */
-    public function setNo(int $no = null): Vote
+    public function setNo(?int $no): self
     {
         $this->no = $no;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getInaction(): ?int
     {
         return $this->inaction;
     }
 
-    /**
-     * @param int $inaction
-     * @return Vote
-     */
-    public function setInaction(int $inaction = null): Vote
+    public function setInaction(?int $inaction): self
     {
         $this->inaction = $inaction;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getCommitteeTo(): ?string
     {
         return $this->committee_to;
     }
 
-    /**
-     * @param string $committee_to
-     * @return Vote
-     */
-    public function setCommitteeTo(string $committee_to = null): Vote
+    public function setCommitteeTo(?string $committee_to): self
     {
         $this->committee_to = $committee_to;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getCategory(): string
     {
         return $this->category;
     }
 
-    /**
-     * @param string $category
-     * @return Vote
-     */
-    public function setCategory(string $category)
+    public function setCategory(string $category): self
     {
         $this->category = $category;
         return $this;
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'vote_id' => $this->vote_id,
@@ -287,7 +171,7 @@ class Vote implements ModelInterface
             'category' => $this->category,
             'assembly_id' => $this->assembly_id,
             'document_id' => $this->document_id,
-            'date' => $this->date ? $this->date->format('Y-m-d H:m:s') : null,
+            'date' => $this->date?->format('Y-m-d H:m:s'),
             'type' => $this->type,
             'outcome' => $this->outcome,
             'method' => $this->method,
@@ -298,7 +182,7 @@ class Vote implements ModelInterface
         ];
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

@@ -1,14 +1,13 @@
 <?php
 
-namespace AlthingiTest\Controller;
+namespace Althingi\Controller;
 
 use Althingi\Controller\CabinetController;
 use Althingi\Service\Assembly;
 use Althingi\Service\Cabinet;
 use Althingi\Service\Congressman;
 use Althingi\Service\Party;
-use AlthingiTest\ServiceHelper;
-use Althingi\Router\Http\TreeRouteStack;
+use Althingi\ServiceHelper;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 use DateTime;

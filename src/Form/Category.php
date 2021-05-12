@@ -2,65 +2,59 @@
 
 namespace Althingi\Form;
 
-use Laminas\InputFilter\InputFilterProviderInterface;
+use Althingi\Model;
+use Althingi\Hydrator;
+use Laminas\Filter\ToNull;
+use Althingi\Filter\ToInt;
+use Laminas\Validator\Digits;
 
-class Category extends Form implements InputFilterProviderInterface
+class Category extends Form
 {
     public function __construct()
     {
         parent::__construct(get_class($this));
         $this
-            ->setHydrator(new \Althingi\Hydrator\Category())
-            ->setObject(new \Althingi\Model\Category());
-
-        $this->add([
-            'name' => 'super_category_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-        $this->add([
-            'name' => 'category_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-
-        $this->add([
-            'name' => 'title',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
-
-        $this->add([
-            'name' => 'description',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
+            ->setHydrator(new Hydrator\Category())
+            ->setObject(new Model\Category());
     }
 
-
-    /**
-     * Should return an array specification compatible with
-     * {@link Laminas\InputFilter\Factory::createInputFilter()}.
-     *
-     * @return array
-     */
-    public function getInputFilterSpecification()
+    public function getInputFilterSpecification(): array
     {
         return [
             'super_category_id' => [
+                'name' => 'super_category_id',
                 'required' => true,
                 'allow_empty' => false,
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
+                'filters' => [
+                    ['name' => ToInt::class,]
+                ],
             ],
             'category_id' => [
+                'name' => 'category_id',
                 'required' => true,
                 'allow_empty' => false,
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
+                'filters' => [
+                    ['name' => ToInt::class,]
+                ],
             ],
             'title' => [
+                'name' => 'title',
                 'required' => true,
                 'allow_empty' => false,
             ],
             'description' => [
+                'name' => 'description',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],

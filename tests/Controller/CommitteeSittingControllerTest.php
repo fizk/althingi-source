@@ -1,14 +1,14 @@
 <?php
 
-namespace AlthingiTest\Controller;
+namespace Althingi\Controller;
 
 use Althingi\Service;
 use Althingi\Model;
 use Althingi\Controller;
-use AlthingiTest\ServiceHelper;
-use Althingi\Router\Http\TreeRouteStack;
+use Althingi\ServiceHelper;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
+use DateTime;
 
 /**
  * Class SessionControllerTest
@@ -249,7 +249,7 @@ class CommitteeSittingControllerTest extends TestCase
     {
         $this->getMockService(Service\CommitteeSitting::class)
             ->shouldReceive('get')
-            ->andReturn(new Model\CommitteeSitting())
+            ->andReturn((new Model\CommitteeSitting())->setFrom(new DateTime()))
             ->getMock();
 
         $this->dispatch('/thingmenn/2/nefndaseta/1', 'GET');

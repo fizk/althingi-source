@@ -1,12 +1,11 @@
 <?php
 
-namespace AlthingiTest\Controller;
+namespace Althingi\Controller;
 
 use Althingi\Controller\CongressmanIssueController;
 use Althingi\Service\Issue;
 use Althingi\Model;
-use AlthingiTest\ServiceHelper;
-use Althingi\Router\Http\TreeRouteStack;
+use Althingi\ServiceHelper;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 

@@ -6,73 +6,44 @@ use DateTime;
 
 class CongressmanAndDateRange extends Congressman
 {
-    /** @var  int */
-    private $time;
+    private ?int $time = null;
+    private ?DateTime $begin = null;
+    private ?DateTime $end = null;
 
-    /** @var  \DateTime */
-    private $begin;
-
-    /** @var  \DateTime */
-    private $end;
-
-    /**
-     * @return int
-     */
     public function getTime(): ?int
     {
         return $this->time;
     }
 
-    /**
-     * @param int $time
-     * @return CongressmanAndDateRange
-     */
-    public function setTime(int $time = null): CongressmanAndDateRange
+    public function setTime(?int $time): self
     {
         $this->time = $time;
         return $this;
     }
 
-    /**
-     * @return \DateTime
-     */
     public function getBegin(): ?DateTime
     {
         return $this->begin;
     }
 
-    /**
-     * @param \DateTime $begin
-     * @return CongressmanAndDateRange
-     */
-    public function setBegin(DateTime $begin = null): CongressmanAndDateRange
+    public function setBegin(?DateTime $begin): self
     {
         $this->begin = $begin;
         return $this;
     }
 
-    /**
-     * @return \DateTime
-     */
     public function getEnd(): ?DateTime
     {
         return $this->end;
     }
 
-    /**
-     * @param \DateTime $end
-     * @return CongressmanAndDateRange
-     */
-    public function setEnd(DateTime $end = null): CongressmanAndDateRange
+    public function setEnd(?DateTime $end): self
     {
         $this->end = $end;
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function toArray()
+    public function toArray(): array
     {
         return array_merge(
             parent::toArray(),

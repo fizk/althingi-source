@@ -1,12 +1,11 @@
 <?php
 
-namespace AlthingiTest\Controller;
+namespace Althingi\Controller;
 
 use Althingi\Controller\DocumentController;
 use Althingi\Service;
 use Althingi\Model;
-use AlthingiTest\ServiceHelper;
-use Althingi\Router\Http\TreeRouteStack;
+use Althingi\ServiceHelper;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 
@@ -46,7 +45,14 @@ class DocumentControllerTest extends TestCase
             ->shouldReceive('get')
             ->with(145, 2, 2)
             ->once()
-            ->andReturn((new Model\Document())->setDate(new \DateTime()))
+            ->andReturn((new Model\Document())
+                ->setDate(new \DateTime())
+                ->setDocumentId(2)
+                ->setIssueId(2)
+                ->setCategory('category')
+                ->setAssemblyId(145)
+                ->setType('type')
+            )
             ->getMock();
 
         $this->dispatch('/loggjafarthing/145/thingmal/a/2/thingskjal/2', 'GET');
@@ -84,8 +90,25 @@ class DocumentControllerTest extends TestCase
             ->shouldReceive('fetchByIssue')
             ->with(145, 2)
             ->andReturn([
-                (new Model\DocumentProperties())->setDocument(new Model\Document()),
-                (new Model\DocumentProperties())->setDocument(new Model\Document()),
+                (new Model\DocumentProperties())->setDocument(
+                    (new Model\Document())
+                        ->setDate(new \DateTime())
+                        ->setDocumentId(2)
+                        ->setIssueId(2)
+                        ->setCategory('category')
+                        ->setAssemblyId(145)
+                        ->setType('type')
+                ),
+                (new Model\DocumentProperties())->setDocument(
+                    (new Model\Document())
+                        ->setDate(new \DateTime())
+                        ->setDocumentId(2)
+                        ->setIssueId(2)
+                        ->setCategory('category')
+                        ->setAssemblyId(145)
+                        ->setType('type')
+
+                ),
             ])
             ->once()
             ->getMock();
@@ -187,6 +210,7 @@ class DocumentControllerTest extends TestCase
                     ->setDocumentId(2)
                     ->setDate(new \DateTime())
                     ->setType('some-type')
+                    ->setCategory('category')
             )
             ->getMock()
 

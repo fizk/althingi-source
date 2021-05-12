@@ -2,43 +2,37 @@
 
 namespace Althingi\Form;
 
-use Laminas\InputFilter\InputFilterProviderInterface;
+use Althingi\Hydrator;
+use Althingi\Model;
+use Laminas\Validator\Digits;
+use Althingi\Filter\ToInt;
 
-class SuperCategory extends Form implements InputFilterProviderInterface
+class SuperCategory extends Form
 {
     public function __construct()
     {
         parent::__construct(get_class($this));
         $this
-            ->setHydrator(new \Althingi\Hydrator\SuperCategory())
-            ->setObject(new \Althingi\Model\SuperCategory());
-
-        $this->add([
-            'name' => 'super_category_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-
-        $this->add([
-            'name' => 'title',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
+            ->setHydrator(new Hydrator\SuperCategory())
+            ->setObject(new Model\SuperCategory());
     }
 
-
-    /**
-     * Should return an array specification compatible with
-     * {@link Laminas\InputFilter\Factory::createInputFilter()}.
-     *
-     * @return array
-     */
-    public function getInputFilterSpecification()
+    public function getInputFilterSpecification(): array
     {
         return [
             'super_category_id' => [
+                'name' => 'super_category_id',
                 'required' => true,
                 'allow_empty' => false,
+                'filters' => [
+                    ['name' => ToInt::class,],
+                ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
             ],
             'title' => [
+                'name' => 'title',
                 'required' => true,
                 'allow_empty' => false,
             ],

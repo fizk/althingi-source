@@ -1,10 +1,10 @@
 <?php
 
-namespace AlthingiTest\Service;
+namespace Althingi\Service;
 
 use Althingi\Model\Committee as CommitteeModel;
 use Althingi\Service\Committee;
-use AlthingiTest\DatabaseConnection;
+use Althingi\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
 use PDO;
 class CommitteeTest extends TestCase
@@ -94,7 +94,8 @@ class CommitteeTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('Committee', 'SELECT * FROM Committee');
 
         $committee = (new CommitteeModel())
-            ->setFirstAssemblyId(1);
+            ->setFirstAssemblyId(1)
+            ->setCommitteeId(4);
 
         $service = new Committee();
         $service->setDriver($this->pdo);
@@ -141,7 +142,8 @@ class CommitteeTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('Committee', 'SELECT * FROM Committee');
 
         $committee = (new CommitteeModel())
-            ->setFirstAssemblyId(1);
+            ->setFirstAssemblyId(1)
+            ->setCommitteeId(4);
 
         $service = new Committee();
         $service->setDriver($this->pdo);

@@ -2,128 +2,118 @@
 
 namespace Althingi\Form;
 
-use Laminas\InputFilter\InputFilterProviderInterface;
+use Althingi\Hydrator;
+use Althingi\Model;
+use Althingi\Filter\ToInt;
+use Laminas\Filter\ToNull;
+use Laminas\Validator\{Digits, Date};
 
-class Document extends Form implements InputFilterProviderInterface
+class Document extends Form
 {
     public function __construct()
     {
         parent::__construct(get_class($this));
         $this
-            ->setHydrator(new \Althingi\Hydrator\Document())
-            ->setObject(new \Althingi\Model\Document());
-
-        $this->add([
-            'name' => 'issue_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-
-        $this->add([
-            'name' => 'assembly_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-
-        $this->add([
-            'name' => 'document_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-        $this->add([
-            'name' => 'committee_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-        $this->add([
-            'name' => 'date',
-            'type' => 'Laminas\Form\Element\DateTime',
-            'options' => [
-                'format' => 'Y-m-d H:i'
-            ],
-            'attributes' => [
-                'step' => 'any'
-            ],
-        ]);
-        $this->add([
-            'name' => 'url',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
-        $this->add([
-            'name' => 'type',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
-        $this->add([
-            'name' => 'note',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
-        $this->add([
-            'name' => 'category',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
+            ->setHydrator(new Hydrator\Document())
+            ->setObject(new Model\Document());
     }
 
-    /**
-     * Should return an array specification compatible with
-     * {@link Laminas\InputFilter\Factory::createInputFilter()}.
-     *
-     * @return array
-     */
-    public function getInputFilterSpecification()
+    public function getInputFilterSpecification(): array
     {
         return [
             'issue_id' => [
+                'name' => 'issue_id',
                 'required' => true,
                 'allow_empty' => false,
+                'filters' => [
+                    ['name' => ToInt::class,],
+                ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
             ],
             'assembly_id' => [
+                'name' => 'assembly_id',
                 'required' => true,
                 'allow_empty' => false,
+                'filters' => [
+                    ['name' => ToInt::class,],
+                ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
             ],
             'document_id' => [
+                'name' => 'document_id',
                 'required' => true,
                 'allow_empty' => false,
+                'filters' => [
+                    ['name' => ToInt::class,],
+                ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
             ],
             'committee_id' => [
+                'name' => 'committee_id',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
+                    ['name' => ToInt::class,],
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
             ],
             'date' => [
+                'name' => 'date',
                 'required' => true,
                 'allow_empty' => false,
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
+                    ]
+                ],
+                'validators' => [
+                    [
+                        'name' => Date::class,
+                        'options' => ['step' => 'any', 'format' => 'Y-m-d H:i']
                     ]
                 ],
             ],
             'url' => [
+                'name' => 'url',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],
             ],
             'type' => [
+                'name' => 'type',
                 'required' => true,
                 'allow_empty' => false,
             ],
             'category' => [
+                'name' => 'category',
                 'required' => true,
                 'allow_empty' => false,
             ],
             'note' => [
+                'name' => 'note',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],

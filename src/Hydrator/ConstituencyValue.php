@@ -2,7 +2,6 @@
 
 namespace Althingi\Hydrator;
 
-use DateTime;
 use Laminas\Hydrator\HydratorInterface;
 
 class ConstituencyValue implements HydratorInterface
@@ -24,7 +23,6 @@ class ConstituencyValue implements HydratorInterface
             ->setDescription($data['description'])
             ->setValue($data['value']);
     }
-
 
     /**
      * Extract values from an object

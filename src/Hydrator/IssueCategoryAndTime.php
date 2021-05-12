@@ -22,7 +22,6 @@ class IssueCategoryAndTime implements HydratorInterface
             ->setTime($data['time']);
     }
 
-
     /**
      * Extract values from an object
      *

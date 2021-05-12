@@ -1,16 +1,15 @@
 <?php
 
-namespace AlthingiTest\Controller;
+namespace Althingi\Controller;
 
+use Althingi\Model;
 use Althingi\Controller\PlenaryAgendaController;
 use Althingi\Service\Congressman;
 use Althingi\Service\Issue;
 use Althingi\Service\Party;
 use Althingi\Service\Plenary;
 use Althingi\Service\PlenaryAgenda;
-use Althingi\Model;
-use AlthingiTest\ServiceHelper;
-use Althingi\Router\Http\TreeRouteStack;
+use Althingi\ServiceHelper;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 
@@ -58,6 +57,7 @@ class PlenaryAgendaControllerTest extends TestCase
                     ->setIssueId(10)
                     ->setAssemblyId(1)
                     ->setCategory('a')
+                    ->setPlenaryId(2)
             ])
             ->once()
             ->getMock();

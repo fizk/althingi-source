@@ -66,7 +66,7 @@ class CommitteeMeetingController implements
         $committeeMeetingId = $request->getAttribute('committee_meeting_id');
 
         $form = new Form\CommitteeMeeting();
-        $form->bindValues(array_merge($request->getParsedBody(), [
+        $form->setData(array_merge($request->getParsedBody(), [
             'committee_id' => $committeeId,
             'assembly_id' => $assemblyId,
             'committee_meeting_id' => $committeeMeetingId
@@ -75,6 +75,7 @@ class CommitteeMeetingController implements
             $affectedRows = $this->committeeMeetingService->save($form->getObject());
             return new EmptyResponse($affectedRows === 1 ? 201 : 205);
         }
+        var_dump($form->getMessages());
 
         return new ErrorFormResponse($form);
     }
@@ -95,7 +96,7 @@ class CommitteeMeetingController implements
             $form->setData($request->getParsedBody());
 
             if ($form->isValid()) {
-                $this->committeeMeetingService->update($form->getData());
+                $this->committeeMeetingService->update($form->getObject());
                 return new EmptyResponse(205);
             }
 

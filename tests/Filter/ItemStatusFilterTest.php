@@ -1,6 +1,6 @@
 <?php
 
-namespace AlthingiTest\Filter;
+namespace Althingi\Filter;
 
 use Althingi\Filter\ItemStatusFilter;
 use PHPUnit\Framework\TestCase;

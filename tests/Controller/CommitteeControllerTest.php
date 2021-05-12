@@ -1,12 +1,11 @@
 <?php
 
-namespace AlthingiTest\Controller;
+namespace Althingi\Controller;
 
 use Althingi\Controller\CommitteeController;
-use Althingi\Service\Committee;
-use Althingi\Model\Committee as CommitteeModel;
-use AlthingiTest\ServiceHelper;
-use Althingi\Router\Http\TreeRouteStack;
+use Althingi\Service;
+use Althingi\Model;
+use Althingi\ServiceHelper;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 use Mockery;
@@ -28,7 +27,7 @@ class CommitteeControllerTest extends TestCase
             new ServiceManager(require __DIR__ . '/../../config/service.php')
         );
         $this->buildServices([
-            Committee::class,
+            Service\Committee::class,
         ]);
     }
 
@@ -44,11 +43,11 @@ class CommitteeControllerTest extends TestCase
      */
     public function testGet()
     {
-        $this->getMockService(Committee::class)
+        $this->getMockService(Service\Committee::class)
             ->shouldReceive('get')
             ->once()
             ->with(1)
-            ->andReturn((new \Althingi\Model\Committee()))
+            ->andReturn((new Model\Committee())->setCommitteeId(1)->setFirstAssemblyId(1))
             ->getMock();
 
         $this->dispatch('/nefndir/1', 'GET');
@@ -63,7 +62,7 @@ class CommitteeControllerTest extends TestCase
      */
     public function testGetNotFound()
     {
-        $this->getMockService(Committee::class)
+        $this->getMockService(Service\Committee::class)
             ->shouldReceive('get')
             ->once()
             ->with(1)
@@ -82,13 +81,13 @@ class CommitteeControllerTest extends TestCase
      */
     public function testGetList()
     {
-        $this->getMockService(Committee::class)
+        $this->getMockService(Service\Committee::class)
             ->shouldReceive('fetchAll')
             ->once()
             ->andReturn([
-                (new CommitteeModel()),
-                (new CommitteeModel()),
-                (new CommitteeModel()),
+                (new Model\Committee())->setCommitteeId(1)->setFirstAssemblyId(1),
+                (new Model\Committee())->setCommitteeId(2)->setFirstAssemblyId(1),
+                (new Model\Committee())->setCommitteeId(3)->setFirstAssemblyId(1),
             ])
             ->getMock();
 
@@ -104,7 +103,7 @@ class CommitteeControllerTest extends TestCase
      */
     public function testPut()
     {
-        $this->getMockService(Committee::class)
+        $this->getMockService(Service\Committee::class)
             ->shouldReceive('save')
             ->once()
             ->andReturn(1)
@@ -129,7 +128,7 @@ class CommitteeControllerTest extends TestCase
      */
     public function testPutInvalidParameters()
     {
-        $this->getMockService(Committee::class)
+        $this->getMockService(Service\Committee::class)
             ->shouldReceive('create')
             ->never()
             ->andReturn(1)
@@ -147,11 +146,11 @@ class CommitteeControllerTest extends TestCase
      */
     public function testPatch()
     {
-        $this->getMockService(Committee::class)
+        $this->getMockService(Service\Committee::class)
             ->shouldReceive('get')
             ->once()
             ->andReturn(
-                (new \Althingi\Model\Committee())
+                (new Model\Committee())
                 ->setCommitteeId(1)
                 ->setFirstAssemblyId(1)
                 ->setLastAssemblyId(1)
@@ -179,11 +178,11 @@ class CommitteeControllerTest extends TestCase
      */
     public function testPatchInvalidForm()
     {
-        $this->getMockService(Committee::class)
+        $this->getMockService(Service\Committee::class)
             ->shouldReceive('get')
             ->once()
             ->andReturn(
-                (new \Althingi\Model\Committee())
+                (new Model\Committee())
                 ->setCommitteeId(1)
                 ->setFirstAssemblyId(1)
                 ->setLastAssemblyId(1)

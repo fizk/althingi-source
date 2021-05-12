@@ -20,7 +20,6 @@ class IssueTypeStatus implements HydratorInterface
             ->setStatus($data['status']);
     }
 
-
     /**
      * Extract values from an object
      *

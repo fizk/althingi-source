@@ -1,12 +1,11 @@
 <?php
 
-namespace AlthingiTest\Controller;
+namespace Althingi\Controller;
 
 use Althingi\Controller\ConstituencyController;
 use Althingi\Service\Constituency;
 use Althingi\Model;
-use AlthingiTest\ServiceHelper;
-use Althingi\Router\Http\TreeRouteStack;
+use Althingi\ServiceHelper;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 
@@ -46,7 +45,7 @@ class ConstituencyControllerTest extends TestCase
         $this->getMockService(Constituency::class)
             ->shouldReceive('get')
             ->with(1)
-            ->andReturn(new Model\Constituency())
+            ->andReturn((new Model\Constituency())->setConstituencyId(1))
             ->once()
             ->getMock();
 

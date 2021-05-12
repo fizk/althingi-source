@@ -6,196 +6,116 @@ use DateTime;
 
 class Session implements ModelInterface
 {
-    /** @var int */
-    private $session_id;
+    private ?int $session_id = null;
+    private int $congressman_id;
+    private int $constituency_id;
+    private int $assembly_id;
+    private ?int $party_id = null;
+    private ?DateTime $from = null;
+    private ?DateTime $to = null;
+    private ?string $type = null;
+    private ?string $abbr = null;
 
-    /** @var int */
-    private $congressman_id;
-
-    /** @var int */
-    private $constituency_id;
-
-    /** @var int */
-    private $assembly_id;
-
-    /** @var int */
-    private $party_id;
-
-    /** @var \DateTime */
-    private $from;
-
-    /** @var \DateTime */
-    private $to;
-
-    /** @var string */
-    private $type;
-
-    /** @var string */
-    private $abbr;
-
-    /**
-     * @return int
-     */
     public function getSessionId(): ?int
     {
         return $this->session_id;
     }
 
-    /**
-     * @param int $session_id
-     * @return Session
-     */
-    public function setSessionId(int $session_id = null): Session
+    public function setSessionId(?int $session_id): self
     {
         $this->session_id = $session_id;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getCongressmanId(): int
     {
         return $this->congressman_id;
     }
 
-    /**
-     * @param int $congressman_id
-     * @return Session
-     */
-    public function setCongressmanId(int $congressman_id): Session
+    public function setCongressmanId(int $congressman_id): self
     {
         $this->congressman_id = $congressman_id;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getConstituencyId(): int
     {
         return $this->constituency_id;
     }
 
-    /**
-     * @param int $constituency_id
-     * @return Session
-     */
-    public function setConstituencyId(int $constituency_id): Session
+    public function setConstituencyId(int $constituency_id): self
     {
         $this->constituency_id = $constituency_id;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getAssemblyId(): int
     {
         return $this->assembly_id;
     }
 
-    /**
-     * @param int $assembly_id
-     * @return Session
-     */
-    public function setAssemblyId(int $assembly_id): Session
+    public function setAssemblyId(int $assembly_id): self
     {
         $this->assembly_id = $assembly_id;
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getPartyId(): ?int
     {
         return $this->party_id;
     }
 
-    /**
-     * @param int $party_id
-     * @return Session
-     */
-    public function setPartyId(int $party_id = null): Session
+    public function setPartyId(?int $party_id): self
     {
         $this->party_id = $party_id;
         return $this;
     }
 
-    /**
-     * @return \DateTime|null
-     */
     public function getFrom(): ?DateTime
     {
         return $this->from;
     }
 
-    /**
-     * @param \DateTime|null $from
-     * @return Session
-     */
-    public function setFrom(DateTime $from = null): Session
+    public function setFrom(?DateTime $from): self
     {
         $this->from = $from;
         return $this;
     }
 
-    /**
-     * @return \DateTime|null
-     */
     public function getTo(): ?DateTime
     {
         return $this->to;
     }
 
-    /**
-     * @param \DateTime|null $to
-     * @return Session
-     */
-    public function setTo(DateTime $to = null): Session
+    public function setTo(?DateTime $to): self
     {
         $this->to = $to;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getType(): ?string
     {
         return $this->type;
     }
 
-    /**
-     * @param string|null $type
-     * @return Session
-     */
-    public function setType(string $type = null): Session
+    public function setType(?string $type): self
     {
         $this->type = $type;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getAbbr(): ?string
     {
         return $this->abbr;
     }
 
-    /**
-     * @param string|null $abbr
-     * @return Session
-     */
-    public function setAbbr(string $abbr = null): Session
+    public function setAbbr(?string $abbr): self
     {
         $this->abbr = $abbr;
         return $this;
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'session_id' => $this->session_id,
@@ -203,8 +123,8 @@ class Session implements ModelInterface
             'constituency_id' => $this->constituency_id,
             'assembly_id' => $this->assembly_id,
             'party_id' => $this->party_id,
-            'from' => $this->from ? $this->from->format('Y-m-d') : null,
-            'to' => $this->to ? $this->to->format('Y-m-d') : null,
+            'from' => $this->from?->format('Y-m-d'),
+            'to' => $this->to?->format('Y-m-d'),
             'type' => $this->type,
             'abbr' => $this->abbr,
         ];

@@ -1,8 +1,7 @@
 <?php
 
-namespace AlthingiTest;
+namespace Althingi;
 
-//use PHPUnit_Extensions_Database_DB_IDatabaseConnection;
 use PHPUnit\DbUnit\TestCaseTrait;
 use PDO;
 

@@ -84,7 +84,10 @@ class AssemblyController implements
     public function put(ServerRequest $request): ResponseInterface
     {
         $form = new Form\Assembly();
-        $form->bindValues(array_merge($request->getParsedBody(), ['assembly_id' => $request->getAttribute('id')]));
+        $form->setData(array_merge(
+            $request->getParsedBody(),
+            ['assembly_id' => $request->getAttribute('id')]
+        ));
 
         if ($form->isValid()) {
             $object = $form->getObject();
@@ -111,7 +114,7 @@ class AssemblyController implements
             $form->setData($request->getParsedBody());
 
             if ($form->isValid()) {
-                $this->assemblyService->update($form->getData());
+                $this->assemblyService->update($form->getObject());
                 return new EmptyResponse(205);
             }
             return new EmptyResponse(400);

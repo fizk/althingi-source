@@ -3,11 +3,9 @@
 namespace Althingi\Hydrator;
 
 use Laminas\Hydrator\HydratorInterface;
-use DateTime;
 
 class CongressmanDocument implements HydratorInterface
 {
-
     /**
      * Hydrate $object with the provided $data.
      *

@@ -58,7 +58,7 @@ class PartyController implements
     public function put(ServerRequest $request): ResponseInterface
     {
         $form = new Form\Party();
-        $form->bindValues(array_merge($request->getParsedBody(), ['party_id' => $request->getAttribute('id')]));
+        $form->setData(array_merge($request->getParsedBody(), ['party_id' => $request->getAttribute('id')]));
         if ($form->isValid()) {
             $affectedRow = $this->partyService->save($form->getObject());
             return new EmptyResponse($affectedRow === 1 ? 201 : 205);
@@ -77,13 +77,13 @@ class PartyController implements
     {
         if (($party = $this->partyService->get(
             $request->getAttribute('id')
-        )) != null) {
+        )) !== null) {
             $form = new Form\Party();
             $form->bind($party);
             $form->setData($request->getParsedBody());
 
             if ($form->isValid()) {
-                $this->partyService->update($form->getData());
+                $this->partyService->update($form->getObject());
                 return new EmptyResponse(205);
             }
 

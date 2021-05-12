@@ -6,85 +6,53 @@ use DateTime;
 
 class Assembly implements ModelInterface
 {
-    /** @var  int */
-    private $assembly_id;
+    private int $assembly_id;
+    private DateTime $from;
+    private ?DateTime $to = null;
 
-    /** @var  \DateTime */
-    private $from;
-
-    /** @var  \DateTime */
-    private $to;
-
-    /**
-     * @return int
-     */
     public function getAssemblyId(): int
     {
         return $this->assembly_id;
     }
 
-    /**
-     * @param int $assembly_id
-     * @return $this
-     */
-    public function setAssemblyId(int $assembly_id)
+    public function setAssemblyId(int $assembly_id): self
     {
         $this->assembly_id = $assembly_id;
         return $this;
     }
 
-    /**
-     * @return \DateTime
-     */
     public function getFrom(): DateTime
     {
         return $this->from;
     }
 
-    /**
-     * @param \DateTime $from
-     * @return $this
-     */
-    public function setFrom(DateTime $from)
+    public function setFrom(DateTime $from): self
     {
         $this->from = $from;
         return $this;
     }
 
-    /**
-     * @return \DateTime
-     */
     public function getTo(): ?DateTime
     {
         return $this->to;
     }
 
-    /**
-     * @param \DateTime $to
-     * @return $this
-     */
-    public function setTo(DateTime $to = null)
+    public function setTo(?DateTime $to): self
     {
         $this->to = $to;
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'assembly_id' => $this->assembly_id,
-            'from' => $this->from ? $this->from->format('Y-m-d') : null,
-            'to' => $this->to ? $this->to->format('Y-m-d') : null,
+            'from' => $this->from?->format('Y-m-d'),
+            'to' => $this->to?->format('Y-m-d'),
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

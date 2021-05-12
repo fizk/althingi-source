@@ -2,57 +2,54 @@
 
 namespace Althingi\Form;
 
-use Laminas\InputFilter\InputFilterProviderInterface;
+use Althingi\Model;
+use Althingi\Hydrator;
+use Laminas\Filter\ToNull;
+use Althingi\Filter\ToInt;
+use Laminas\Validator\{Digits, Date};
 
-class Assembly extends Form implements InputFilterProviderInterface
+class Assembly extends Form
 {
     public function __construct()
     {
         parent::__construct(get_class($this));
         $this
-            ->setObject(new \Althingi\Model\Assembly())
-            ->setHydrator(new \Althingi\Hydrator\Assembly());
-
-        $this->add([
-            'name' => 'assembly_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-
-        $this->add([
-            'name' => 'from',
-            'type' => 'Laminas\Form\Element\Date',
-        ]);
-
-        $this->add([
-            'name' => 'to',
-            'type' => 'Laminas\Form\Element\Date',
-        ]);
+            ->setObject(new Model\Assembly())
+            ->setHydrator(new Hydrator\Assembly());
     }
 
-
-    /**
-     * Should return an array specification compatible with
-     * {@link Laminas\InputFilter\Factory::createInputFilter()}.
-     *
-     * @return array
-     */
-    public function getInputFilterSpecification()
+    public function getInputFilterSpecification(): array
     {
         return [
             'assembly_id' => [
+                'name' => 'assembly_id',
                 'required' => true,
                 'allow_empty' => false,
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
+                'filters' => [
+                    ['name' => ToInt::class,]
+                ],
             ],
             'from' => [
+                'name'  => 'from',
                 'required' => true,
                 'allow_empty' => false,
+                'validators' => [
+                    ['name' => Date::class]
+                ],
             ],
             'to' => [
+                'name' => 'to',
                 'required' => false,
                 'allow_empty' => true,
+                'validators' => [
+                    ['name' => Date::class]
+                ],
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],

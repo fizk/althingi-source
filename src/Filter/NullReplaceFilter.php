@@ -2,8 +2,10 @@
 
 namespace Althingi\Filter;
 
-use Laminas\Filter\Exception;
-use Laminas\Filter\FilterInterface;
+use Laminas\Filter\{
+    Exception,
+    FilterInterface
+};
 
 class NullReplaceFilter implements FilterInterface
 {

@@ -2,8 +2,10 @@
 
 namespace Althingi\Events;
 
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\{
+    ResponseInterface,
+    ServerRequestInterface
+};
 
 class RequestSuccessEvent
 {

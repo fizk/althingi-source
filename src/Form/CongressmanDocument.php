@@ -2,87 +2,92 @@
 
 namespace Althingi\Form;
 
-use Laminas\InputFilter\InputFilterProviderInterface;
+use Althingi\Hydrator;
+use Althingi\Model;
+use Althingi\Filter\ToInt;
+use Laminas\Filter\ToNull;
+use Laminas\Validator\Digits;
 
-class CongressmanDocument extends Form implements InputFilterProviderInterface
+class CongressmanDocument extends Form
 {
     public function __construct()
     {
         parent::__construct(get_class($this));
         $this
-            ->setHydrator(new \Althingi\Hydrator\CongressmanDocument())
-            ->setObject(new \Althingi\Model\CongressmanDocument());
-
-        $this->add([
-            'name' => 'issue_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-        $this->add([
-            'name' => 'assembly_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-        $this->add([
-            'name' => 'document_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-        $this->add([
-            'name' => 'congressman_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-        $this->add([
-            'name' => 'order',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-        $this->add([
-            'name' => 'minister',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
-        $this->add([
-            'name' => 'category',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
+            ->setHydrator(new Hydrator\CongressmanDocument())
+            ->setObject(new Model\CongressmanDocument());
     }
 
-
-    /**
-     * Should return an array specification compatible with
-     * {@link Laminas\InputFilter\Factory::createInputFilter()}.
-     *
-     * @return array
-     */
-    public function getInputFilterSpecification()
+    public function getInputFilterSpecification(): array
     {
         return [
             'issue_id' => [
+                'name' => 'issue_id',
                 'required' => true,
                 'allow_empty' => false,
+                'filters' => [
+                    ['name' => ToInt::class,],
+                ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
             ],
             'assembly_id' => [
+                'name' => 'assembly_id',
                 'required' => true,
                 'allow_empty' => false,
+                'filters' => [
+                    ['name' => ToInt::class,],
+                ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
             ],
             'document_id' => [
+                'name' => 'document_id',
                 'required' => true,
                 'allow_empty' => false,
+                'filters' => [
+                    ['name' => ToInt::class,],
+                ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
             ],
             'congressman_id' => [
+                'name' => 'congressman_id',
                 'required' => true,
                 'allow_empty' => false,
+                'filters' => [
+                    ['name' => ToInt::class,],
+                ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
             ],
             'category' => [
+                'name' => 'category',
                 'required' => true,
                 'allow_empty' => false,
             ],
             'order' => [
+                'name' => 'order',
                 'required' => true,
                 'allow_empty' => false,
+                'filters' => [
+                    ['name' => ToInt::class,],
+                ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
             ],
             'minister' => [
+                'name' => 'minister',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],

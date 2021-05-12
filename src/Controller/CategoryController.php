@@ -63,7 +63,7 @@ class CategoryController implements
         $categoryId = $request->getAttribute('category_id');
 
         $form = new Form\Category();
-        $form->bindValues(array_merge($request->getParsedBody(), [
+        $form->setData(array_merge($request->getParsedBody(), [
             'super_category_id' => $superCategoryId,
             'category_id' => $categoryId
         ]));
@@ -89,7 +89,7 @@ class CategoryController implements
             $form->setData($request->getParsedBody());
 
             if ($form->isValid()) {
-                $this->categoryService->update($form->getData());
+                $this->categoryService->update($form->getObject());
                 return new EmptyResponse(205);
             }
 

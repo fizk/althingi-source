@@ -64,7 +64,7 @@ class PlenaryAgendaController implements
         $assemblyId = $request->getAttribute('id');
         $plenaryId  = $request->getAttribute('plenary_id');
         $form = new Form\PlenaryAgenda();
-        $form->bindValues(array_merge($request->getParsedBody(), [
+        $form->setData(array_merge($request->getParsedBody(), [
             'item_id' => $request->getAttribute('item_id'),
             'assembly_id' => $assemblyId,
             'plenary_id' => $plenaryId,

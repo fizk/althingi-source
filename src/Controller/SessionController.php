@@ -106,6 +106,7 @@ class SessionController implements
         $form->setData(array_merge($request->getParsedBody(), ['congressman_id' => $congressmanId]));
 
         if ($form->isValid()) {
+            /** @var \Althingi\Model\Session */
             $sessionObject = $form->getObject();
 
             try {
@@ -145,13 +146,13 @@ class SessionController implements
     {
         if (($session = $this->sessionService->get(
             $request->getAttribute('session_id')
-        )) != null) {
+        )) !== null) {
             $form = new Form\Session();
             $form->bind($session);
             $form->setData($request->getParsedBody());
 
             if ($form->isValid()) {
-                $this->sessionService->update($form->getData());
+                $this->sessionService->update($form->getObject());
                 return new EmptyResponse(205);
             }
 

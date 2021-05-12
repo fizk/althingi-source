@@ -75,7 +75,7 @@ class CabinetController implements
     public function put(ServerRequest $request): ResponseInterface
     {
         $form = new Form\Cabinet();
-        $form->bindValues(array_merge($request->getParsedBody(), ['cabinet_id' => $request->getAttribute('id')]));
+        $form->setData(array_merge($request->getParsedBody(), ['cabinet_id' => $request->getAttribute('id')]));
 
         if ($form->isValid()) {
             $affectedRows = $this->cabinetService->save($form->getObject());
@@ -99,7 +99,7 @@ class CabinetController implements
             $form->setData($request->getParsedBody());
 
             if ($form->isValid()) {
-                $this->cabinetService->update($form->getData());
+                $this->cabinetService->update($form->getObject());
                 return (new EmptyResponse(205));
             }
 

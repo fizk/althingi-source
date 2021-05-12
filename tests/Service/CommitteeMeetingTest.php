@@ -1,9 +1,9 @@
 <?php
 
-namespace AlthingiTest\Service;
+namespace Althingi\Service;
 
 use Althingi\Service\CommitteeMeeting;
-use AlthingiTest\DatabaseConnection;
+use Althingi\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\CommitteeMeeting as CommitteeMeetingModel;
 use PDO;
@@ -92,7 +92,8 @@ class CommitteeMeetingTest extends TestCase
 
         $committeeMeeting = (new CommitteeMeetingModel())
             ->setCommitteeId(1)
-            ->setAssemblyId(2);
+            ->setAssemblyId(2)
+            ->setCommitteeMeetingId(6);
 
         $service = new CommitteeMeeting();
         $service->setDriver($this->pdo);
@@ -154,7 +155,8 @@ class CommitteeMeetingTest extends TestCase
 
         $committeeMeeting = (new CommitteeMeetingModel())
             ->setCommitteeId(1)
-            ->setAssemblyId(2);
+            ->setAssemblyId(2)
+            ->setCommitteeMeetingId(6);
 
         $service = new CommitteeMeeting();
         $service->setDriver($this->pdo);

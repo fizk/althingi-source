@@ -65,7 +65,7 @@ class CommitteeMeetingAgendaController implements
         $committeeMeetingAgendaId = $request->getAttribute('committee_meeting_agenda_id');
 
         $form = new Form\CommitteeMeetingAgenda();
-        $form->bindValues(array_merge($request->getParsedBody(), [
+        $form->setData(array_merge($request->getParsedBody(), [
             'committee_meeting_agenda_id' => $committeeMeetingAgendaId,
             'assembly_id' => $assemblyId,
             'committee_meeting_id' => $committeeMeetingId
@@ -97,7 +97,7 @@ class CommitteeMeetingAgendaController implements
             $form->setData($request->getParsedBody());
 
             if ($form->isValid()) {
-                $this->committeeMeetingAgendaService->update($form->getData());
+                $this->committeeMeetingAgendaService->update($form->getObject());
                 return new EmptyResponse(205);
             }
 

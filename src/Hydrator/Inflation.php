@@ -7,7 +7,6 @@ use DateTime;
 
 class Inflation implements HydratorInterface
 {
-
     /**
      * Hydrate $object with the provided $data.
      *
@@ -21,7 +20,6 @@ class Inflation implements HydratorInterface
             ->setValue((float) $data['value'])
             ->setDate($data['date'] ? new DateTime($data['date']) : null);
     }
-
 
     /**
      * Extract values from an object

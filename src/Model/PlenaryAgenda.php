@@ -3,388 +3,224 @@ namespace Althingi\Model;
 
 class PlenaryAgenda implements ModelInterface
 {
-    /** @var int */
     private $itemId;
+    private int $plenaryId;
+    private int $issueId;
+    private int $assemblyId;
+    private string $category;
+    private ?string $iterationType = null;
+    private ?string $iterationContinue = null;
+    private ?string $iterationComment = null;
+    private ?string $comment = null;
+    private ?string $commentType = null;
+    private ?int $posedId = null;
+    private ?string $posed = null;
+    private ?int $answererId = null;
+    private ?string $answerer = null;
+    private ?int $counterAnswererId = null;
+    private ?string $counterAnswerer = null;
+    private ?int $instigatorId = null;
+    private ?string $instigator = null;
 
-    /** @var int */
-    private $plenaryId;
-
-    /** @var int */
-    private $issueId;
-
-    /** @var int */
-    private $assemblyId;
-
-    /** @var string */
-    private $category;
-
-    /** @var string */
-    private $iterationType = null;
-
-    /** @var string */
-    private $iterationContinue = null;
-
-    /** @var string */
-    private $iterationComment = null;
-
-    /** @var string */
-    private $comment = null;
-
-    /** @var string */
-    private $commentType = null;
-
-    /** @var int */
-    private $posedId = null;
-
-    /** @var string */
-    private $posed = null;
-
-    /** @var int */
-    private $answererId = null;
-
-    /** @var string */
-    private $answerer = null;
-
-    /** @var int */
-    private $counterAnswererId = null;
-
-    /** @var string */
-    private $counterAnswerer = null;
-
-    /** @var int */
-    private $instigatorId = null;
-
-    /** @var string */
-    private $instigator = null;
-
-    /**
-     * @return int
-     */
     public function getItemId(): int
     {
         return $this->itemId;
     }
 
-    /**
-     * @param int $itemId
-     * @return PlenaryAgenda
-     */
-    public function setItemId(int $itemId): PlenaryAgenda
+    public function setItemId(int $itemId): self
     {
         $this->itemId = $itemId;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getPlenaryId(): int
     {
         return $this->plenaryId;
     }
 
-    /**
-     * @param int $plenaryId
-     * @return PlenaryAgenda
-     */
-    public function setPlenaryId(int $plenaryId): PlenaryAgenda
+    public function setPlenaryId(int $plenaryId): self
     {
         $this->plenaryId = $plenaryId;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getIssueId(): int
     {
         return $this->issueId;
     }
 
-    /**
-     * @param int $issueId
-     * @return PlenaryAgenda
-     */
-    public function setIssueId(int $issueId): PlenaryAgenda
+    public function setIssueId(int $issueId): self
     {
         $this->issueId = $issueId;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getAssemblyId(): int
     {
         return $this->assemblyId;
     }
 
-    /**
-     * @param int $assemblyId
-     * @return PlenaryAgenda
-     */
-    public function setAssemblyId(int $assemblyId): PlenaryAgenda
+    public function setAssemblyId(int $assemblyId): self
     {
         $this->assemblyId = $assemblyId;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getCategory(): string
     {
         return $this->category;
     }
 
-    /**
-     * @param string $category
-     * @return PlenaryAgenda
-     */
-    public function setCategory(string $category): PlenaryAgenda
+    public function setCategory(string $category): self
     {
         $this->category = $category;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getIterationType(): ?string
     {
         return $this->iterationType;
     }
 
-    /**
-     * @param string $iterationType
-     * @return PlenaryAgenda
-     */
-    public function setIterationType(?string $iterationType): PlenaryAgenda
+    public function setIterationType(?string $iterationType): self
     {
         $this->iterationType = $iterationType;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getIterationContinue(): ?string
     {
         return $this->iterationContinue;
     }
 
-    /**
-     * @param string $iterationContinue
-     * @return PlenaryAgenda
-     */
-    public function setIterationContinue(?string $iterationContinue): PlenaryAgenda
+    public function setIterationContinue(?string $iterationContinue): self
     {
         $this->iterationContinue = $iterationContinue;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getIterationComment(): ?string
     {
         return $this->iterationComment;
     }
 
-    /**
-     * @param string $iterationComment
-     * @return PlenaryAgenda
-     */
-    public function setIterationComment(?string $iterationComment): PlenaryAgenda
+    public function setIterationComment(?string $iterationComment): self
     {
         $this->iterationComment = $iterationComment;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getComment(): ?string
     {
         return $this->comment;
     }
 
-    /**
-     * @param string $comment
-     * @return PlenaryAgenda
-     */
-    public function setComment(?string $comment): PlenaryAgenda
+    public function setComment(?string $comment): self
     {
         $this->comment = $comment;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getCommentType(): ?string
     {
         return $this->commentType;
     }
 
-    /**
-     * @param string $commentType
-     * @return PlenaryAgenda
-     */
-    public function setCommentType(?string $commentType): PlenaryAgenda
+    public function setCommentType(?string $commentType): self
     {
         $this->commentType = $commentType;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getPosedId(): ?int
     {
         return $this->posedId;
     }
 
-    /**
-     * @param int $posedId
-     * @return PlenaryAgenda
-     */
-    public function setPosedId(?int $posedId): PlenaryAgenda
+    public function setPosedId(?int $posedId): self
     {
         $this->posedId = $posedId;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getPosed(): ?string
     {
         return $this->posed;
     }
 
-    /**
-     * @param string $posed
-     * @return PlenaryAgenda
-     */
-    public function setPosed(?string $posed): PlenaryAgenda
+    public function setPosed(?string $posed): self
     {
         $this->posed = $posed;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getAnswererId(): ?int
     {
         return $this->answererId;
     }
 
-    /**
-     * @param int $answererId
-     * @return PlenaryAgenda
-     */
-    public function setAnswererId(?int $answererId): PlenaryAgenda
+    public function setAnswererId(?int $answererId): self
     {
         $this->answererId = $answererId;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getAnswerer(): ?string
     {
         return $this->answerer;
     }
 
-    /**
-     * @param string $answerer
-     * @return PlenaryAgenda
-     */
-    public function setAnswerer(?string $answerer): PlenaryAgenda
+    public function setAnswerer(?string $answerer): self
     {
         $this->answerer = $answerer;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getCounterAnswererId(): ?int
     {
         return $this->counterAnswererId;
     }
 
-    /**
-     * @param int $counterAnswererId
-     * @return PlenaryAgenda
-     */
-    public function setCounterAnswererId(?int $counterAnswererId): PlenaryAgenda
+    public function setCounterAnswererId(?int $counterAnswererId): self
     {
         $this->counterAnswererId = $counterAnswererId;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getCounterAnswerer(): ?string
     {
         return $this->counterAnswerer;
     }
 
-    /**
-     * @param string $counterAnswerer
-     * @return PlenaryAgenda
-     */
-    public function setCounterAnswerer(?string $counterAnswerer): PlenaryAgenda
+    public function setCounterAnswerer(?string $counterAnswerer): self
     {
         $this->counterAnswerer = $counterAnswerer;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getInstigatorId(): ?int
     {
         return $this->instigatorId;
     }
 
-    /**
-     * @param int $instigatorId
-     * @return PlenaryAgenda
-     */
-    public function setInstigatorId(?int $instigatorId): PlenaryAgenda
+    public function setInstigatorId(?int $instigatorId): self
     {
         $this->instigatorId = $instigatorId;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getInstigator(): ?string
     {
         return $this->instigator;
     }
 
-    /**
-     * @param string $instigator
-     * @return PlenaryAgenda
-     */
-    public function setInstigator(?string $instigator): PlenaryAgenda
+    public function setInstigator(?string $instigator): self
     {
         $this->instigator = $instigator;
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'item_id' => $this->itemId,
@@ -408,7 +244,7 @@ class PlenaryAgenda implements ModelInterface
         ];
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

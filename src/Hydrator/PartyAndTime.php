@@ -24,7 +24,6 @@ class PartyAndTime implements HydratorInterface
             ->setTotalTime($data['total_time']);
     }
 
-
     /**
      * Extract values from an object
      *

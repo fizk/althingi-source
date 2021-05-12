@@ -2,8 +2,10 @@
 
 namespace Althingi\Filter;
 
-use Laminas\Filter\Exception;
-use Laminas\Filter\FilterInterface;
+use Laminas\Filter\{
+    FilterInterface,
+    Exception
+};
 
 class ItemStatusFilter implements FilterInterface
 {

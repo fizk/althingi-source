@@ -1,12 +1,11 @@
 <?php
 
-namespace AlthingiTest\Controller;
+namespace Althingi\Controller;
 
 use Althingi\Service;
 use Althingi\Model;
 use Althingi\Controller;
-use AlthingiTest\ServiceHelper;
-use Althingi\Router\Http\TreeRouteStack;
+use Althingi\ServiceHelper;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 
@@ -232,7 +231,14 @@ class CommitteeDocumentControllerTest extends TestCase
     {
         $this->getMockService(Service\CommitteeDocument::class)
             ->shouldReceive('get')
-            ->andReturn(new Model\CommitteeDocument())
+            ->andReturn(
+                (new Model\CommitteeDocument())
+                    ->setDocumentId(4)
+                    ->setAssemblyId(1)
+                    ->setIssueId(1)
+                    ->setCategory('')
+                    ->setCommitteeId(1)
+            )
             ->getMock();
 
         $this->dispatch('/loggjafarthing/1/thingmal/a/2/thingskjal/4/nefndir/555', 'GET');
@@ -265,7 +271,14 @@ class CommitteeDocumentControllerTest extends TestCase
         $this->getMockService(Service\CommitteeDocument::class)
             ->shouldReceive('fetchByDocument')
             ->with(1, 2, 4)
-            ->andReturn([new Model\CommitteeDocument()])
+            ->andReturn([
+                (new Model\CommitteeDocument())
+                    ->setDocumentId(4)
+                    ->setAssemblyId(1)
+                    ->setIssueId(1)
+                    ->setCategory('')
+                    ->setCommitteeId(1)
+            ])
             ->getMock();
 
         $this->dispatch('/loggjafarthing/1/thingmal/a/2/thingskjal/4/nefndir', 'GET');

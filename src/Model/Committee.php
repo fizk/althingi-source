@@ -4,144 +4,85 @@ namespace Althingi\Model;
 
 class Committee implements ModelInterface
 {
-    /** @var  int */
-    private $committee_id;
+    private int $committee_id;
+    private ?string $name = null;
+    private int $first_assembly_id;
+    private ?int $last_assembly_id = null;
+    private ?string $abbr_long = null;
+    private ?string $abbr_short = null;
 
-    /** @var  string */
-    private $name;
-
-    /** @var  int */
-    private $first_assembly_id;
-
-    /** @var  int */
-    private $last_assembly_id;
-
-    /** @var  string */
-    private $abbr_long;
-
-    /** @var  string */
-    private $abbr_short;
-
-    /**
-     * @return int
-     */
     public function getCommitteeId(): int
     {
         return $this->committee_id;
     }
 
-    /**
-     * @param int $committee_id
-     * @return Committee
-     */
-    public function setCommitteeId(int $committee_id): Committee
+    public function setCommitteeId(int $committee_id): self
     {
         $this->committee_id = $committee_id;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): ?string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     * @return Committee
-     */
-    public function setName(string $name = null): Committee
+    public function setName(?string $name): self
     {
         $this->name = $name;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getFirstAssemblyId(): int
     {
         return $this->first_assembly_id;
     }
 
-    /**
-     * @param int $first_assembly_id
-     * @return Committee
-     */
-    public function setFirstAssemblyId(int $first_assembly_id): Committee
+    public function setFirstAssemblyId(int $first_assembly_id): self
     {
         $this->first_assembly_id = $first_assembly_id;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getLastAssemblyId(): ?int
     {
         return $this->last_assembly_id;
     }
 
-    /**
-     * @param int $last_assembly_id
-     * @return Committee
-     */
-    public function setLastAssemblyId(int $last_assembly_id = null): Committee
+    public function setLastAssemblyId(?int $last_assembly_id): self
     {
         $this->last_assembly_id = $last_assembly_id;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getAbbrLong(): ?string
     {
         return $this->abbr_long;
     }
 
-    /**
-     * @param string $abbr_long
-     * @return Committee
-     */
-    public function setAbbrLong(string $abbr_long = null): Committee
+    public function setAbbrLong(?string $abbr_long): self
     {
         $this->abbr_long = $abbr_long;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getAbbrShort(): ?string
     {
         return $this->abbr_short;
     }
 
-    /**
-     * @param string $abbr_short
-     * @return Committee
-     */
-    public function setAbbrShort(string $abbr_short = null): Committee
+    public function setAbbrShort(?string $abbr_short): self
     {
         $this->abbr_short = $abbr_short;
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }
 
-    /**
-     * @return array
-     */
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'committee_id' => $this->committee_id,

@@ -1,6 +1,6 @@
 <?php
 
-namespace AlthingiTest\Service;
+namespace Althingi\Service;
 
 use Althingi\Model\ModelInterface;
 use Althingi\Service\DatabaseService;
@@ -30,7 +30,7 @@ class DatabaseServiceTest extends TestCase
 
         $this->data = new class implements ModelInterface
         {
-            public function toArray()
+            public function toArray(): array
             {
                 return [
                     'hundur' => 'voff'

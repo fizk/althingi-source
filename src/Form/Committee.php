@@ -2,72 +2,52 @@
 
 namespace Althingi\Form;
 
-use Laminas\InputFilter\InputFilterProviderInterface;
+use Althingi\Model;
+use Althingi\Hydrator;
+use Althingi\Filter\ToInt;
+use Laminas\Filter\ToNull;
+use Laminas\Validator\Digits;
 
-class Committee extends Form implements InputFilterProviderInterface
+class Committee extends Form
 {
     public function __construct()
     {
         parent::__construct(get_class($this));
         $this
-            ->setObject(new \Althingi\Model\Committee())
-            ->setHydrator(new \Althingi\Hydrator\Committee());
-
-        $this->add([
-            'name' => 'committee_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-
-        $this->add([
-            'name' => 'first_assembly_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-
-        $this->add([
-            'name' => 'last_assembly_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-
-        $this->add([
-            'name' => 'name',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
-
-        $this->add([
-            'name' => 'abbr_short',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
-
-        $this->add([
-            'name' => 'abbr_long',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
+            ->setObject(new Model\Committee())
+            ->setHydrator(new Hydrator\Committee());
     }
 
-
-    /**
-     * Should return an array specification compatible with
-     * {@link Laminas\InputFilter\Factory::createInputFilter()}.
-     *
-     * @return array
-     */
-    public function getInputFilterSpecification()
+    public function getInputFilterSpecification(): array
     {
         return [
             'committee_id' => [
                 'required' => true,
                 'allow_empty' => false,
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
+                'filters' => [
+                    ['name' => ToInt::class,]
+                ],
             ],
             'first_assembly_id' => [
                 'required' => true,
                 'allow_empty' => false,
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
+                'filters' => [
+                    ['name' => ToInt::class,]
+                ],
             ],
             'last_assembly_id' => [
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
+                    ['name' => ToInt::class,],
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],
@@ -81,7 +61,7 @@ class Committee extends Form implements InputFilterProviderInterface
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],
@@ -91,7 +71,7 @@ class Committee extends Form implements InputFilterProviderInterface
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],

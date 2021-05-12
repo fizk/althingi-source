@@ -66,9 +66,10 @@ class PresidentController implements
     public function post(ServerRequest $request): ResponseInterface
     {
         $form = new Form\President();
-        $form->bindValues($request->getParsedBody());
+        $form->setData($request->getParsedBody());
 
         if ($form->isValid()) {
+            /** @var \Althingi\Model\President */
             $newPresident = $form->getObject();
             $statusCode = 201;
             $presidentId = 0;
@@ -116,7 +117,7 @@ class PresidentController implements
             $form->setData($request->getParsedBody());
 
             if ($form->isValid()) {
-                $this->presidentService->update($form->getData());
+                $this->presidentService->update($form->getObject());
                 return new EmptyResponse(205);
             }
 

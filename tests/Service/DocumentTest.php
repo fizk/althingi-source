@@ -1,9 +1,9 @@
 <?php
 
-namespace AlthingiTest\Service;
+namespace Althingi\Service;
 
 use Althingi\Service\Document;
-use AlthingiTest\DatabaseConnection;
+use Althingi\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\Document as DocumentModel;
 use PDO;
@@ -47,6 +47,7 @@ class DocumentTest extends TestCase
     {
         $document = (new DocumentModel())
             ->setAssemblyId(1)
+            ->setDocumentId(5)
             ->setIssueId(1)
             ->setCategory('A')
             ->setDate(new \DateTime('2000-01-01'))
@@ -87,6 +88,7 @@ class DocumentTest extends TestCase
     {
         $document = (new DocumentModel())
             ->setAssemblyId(1)
+            ->setDocumentId(5)
             ->setIssueId(1)
             ->setCategory('A')
             ->setDate(new \DateTime('2000-01-01'))

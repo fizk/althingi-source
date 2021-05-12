@@ -114,7 +114,7 @@ class IssueCategoryController implements
             $form->setData($request->getParsedBody());
 
             if ($form->isValid()) {
-                $this->issueCategoryService->update($form->getData());
+                $this->issueCategoryService->update($form->getObject());
                 return new EmptyResponse(205);
             }
 

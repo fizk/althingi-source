@@ -2,95 +2,81 @@
 
 namespace Althingi\Form;
 
-use Laminas\InputFilter\InputFilterProviderInterface;
-use DateTime;
+use Althingi\Hydrator;
+use Althingi\Model;
+use Althingi\Filter\ToInt;
+use Laminas\Filter\ToNull;
+use Laminas\Validator\{Digits, Date};
 
-class Congressman extends Form implements InputFilterProviderInterface
+class Congressman extends Form
 {
     public function __construct()
     {
         parent::__construct(get_class($this));
         $this
-            ->setHydrator(new \Althingi\Hydrator\Congressman())
-            ->setObject(new \Althingi\Model\Congressman());
-
-        $this->add([
-            'name' => 'congressman_id',
-            'type' => 'Laminas\Form\Element\Number',
-        ]);
-
-        $this->add([
-            'name' => 'name',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
-
-        $this->add([
-            'name' => 'abbreviation',
-            'type' => 'Laminas\Form\Element\Text',
-        ]);
-
-        $this->add([
-            'name' => 'birth',
-            'type' => 'Laminas\Form\Element\Date',
-            'options' => [
-                'format' => 'Y-m-d'
-            ],
-            'attributes' => [
-                'step' => 'any'
-            ],
-        ]);
-
-        $this->add([
-            'name' => 'death',
-            'type' => 'Laminas\Form\Element\Date',
-            'options' => [
-                'format' => 'Y-m-d'
-            ],
-            'attributes' => [
-                'step' => 'any'
-            ],
-        ]);
+            ->setHydrator(new Hydrator\Congressman())
+            ->setObject(new Model\Congressman());
     }
 
-
-    /**
-     * Should return an array specification compatible with
-     * {@link Laminas\InputFilter\Factory::createInputFilter()}.
-     *
-     * @return array
-     */
-    public function getInputFilterSpecification()
+    public function getInputFilterSpecification(): array
     {
         return [
             'name' => [
+                'name' => 'name',
                 'required' => true,
                 'allow_empty' => false,
             ],
             'congressman_id' => [
+                'name' => 'congressman_id',
                 'required' => true,
                 'allow_empty' => false,
+                'filters' => [
+                    ['name' => ToInt::class,],
+                    [
+                        'name' => ToNull::class,
+                        'options' => ['type' => 'all']
+                    ]
+                ],
+                'validators' => [
+                    ['name' => Digits::class]
+                ],
             ],
             'birth' => [
+                'name' => 'birth',
                 'required' => true,
                 'allow_empty' => false,
+                'validators' => [
+                    [
+                        'name' => Date::class,
+                        'options' => ['step' => 'any', 'format' => 'Y-m-d']
+                    ]
+                ],
             ],
             'abbreviation' => [
+                'name' => 'abbreviation',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
                 ],
             ],
             'death' => [
+                'name' => 'death',
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
                     [
-                        'name' => '\Laminas\Filter\ToNull',
+                        'name' => ToNull::class,
                         'options' => ['type' => 'all']
+                    ]
+                ],
+                'validators' => [
+                    [
+                        'name' => Date::class,
+                        'options' => ['step' => 'any', 'format' => 'Y-m-d']
                     ]
                 ],
             ],

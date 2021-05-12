@@ -2,14 +2,18 @@
 
 namespace Althingi\Controller;
 
+use Althingi\Service\Assembly;
 use Althingi\Events\AddEvent;
 use Althingi\Utils\ConsoleResponse;
-use Althingi\Injector\ServiceAssemblyAwareInterface;
 use Althingi\Presenters\IndexableAssemblyPresenter;
-use Althingi\Service\Assembly;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Althingi\Injector\EventsAwareInterface;
+use Althingi\Injector\{
+    EventsAwareInterface,
+    ServiceAssemblyAwareInterface
+};
+use Psr\Http\Message\{
+    ServerRequestInterface,
+    ResponseInterface
+};
 
 use Althingi\Service\EventService;
 

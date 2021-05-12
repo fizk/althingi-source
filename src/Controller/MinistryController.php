@@ -79,7 +79,10 @@ class MinistryController implements
     public function put(ServerRequest $request): ResponseInterface
     {
         $form = new Form\Ministry();
-        $form->bindValues(array_merge($request->getParsedBody(), ['ministry_id' => $request->getAttribute('id')]));
+        $form->setData(array_merge(
+            $request->getParsedBody(),
+            ['ministry_id' => $request->getAttribute('id')]
+        ));
 
         if ($form->isValid()) {
             $object = $form->getObject();
@@ -99,13 +102,13 @@ class MinistryController implements
     {
         if (($assembly = $this->ministryService->get(
             $request->getAttribute('id')
-        )) != null) {
+        )) !== null) {
             $form = new Form\Ministry();
             $form->bind($assembly);
             $form->setData($request->getParsedBody());
 
             if ($form->isValid()) {
-                $this->ministryService->update($form->getData());
+                $this->ministryService->update($form->getObject());
                 return new EmptyResponse(205);
             }
 

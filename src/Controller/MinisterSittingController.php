@@ -85,6 +85,7 @@ class MinisterSittingController implements
         $form->setData(array_merge($request->getParsedBody(), ['congressman_id' => $congressmanId]));
 
         if ($form->isValid()) {
+            /** @var \Althingi\Model\MinisterSitting */
             $ministerSitting = $form->getObject();
 
             try {
@@ -131,7 +132,7 @@ class MinisterSittingController implements
             $form->setData($request->getParsedBody());
 
             if ($form->isValid()) {
-                $this->ministerSittingService->update($form->getData());
+                $this->ministerSittingService->update($form->getObject());
                 return new EmptyResponse(205);
             }
 

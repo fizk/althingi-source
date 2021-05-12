@@ -1,12 +1,13 @@
 <?php
 
-namespace AlthingiTest\Controller;
+namespace Althingi\Controller;
 
 use Althingi\Model;
 use Althingi\Service;
 use Althingi\Controller;
-use AlthingiTest\ServiceHelper;
-use Althingi\Router\Http\TreeRouteStack;
+use Althingi\Model\Assembly;
+use Althingi\ServiceHelper;
+use DateTime;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 use Mockery;
@@ -61,24 +62,38 @@ class SpeechControllerTest extends TestCase
             ->shouldReceive('fetch')
             ->with(4, 1, 3, 25, 'A')
             ->andReturn([
-                (new Model\SpeechAndPosition())->setPosition(1)->setCongressmanId(1)->setFrom(new \DateTime())
+                (new Model\SpeechAndPosition())
+                    ->setPosition(1)
+                    ->setCongressmanId(1)
+                    ->setFrom(new \DateTime())
+
             ])
             ->once()
             ->getMock();
 
         $this->getMockService(Service\Congressman::class)
             ->shouldReceive('get')
-            ->andReturn((new \Althingi\Model\Congressman())->setCongressmanId(1))
+            ->andReturn(
+                (new \Althingi\Model\Congressman())
+                    ->setCongressmanId(1)
+            )
             ->getMock();
 
         $this->getMockService(Service\Party::class)
             ->shouldReceive('getByCongressman')
-            ->andReturn(new \Althingi\Model\Party())
+            ->andReturn(
+                (new \Althingi\Model\Party())
+                    ->setPartyId(1)
+                    ->setName('name')
+            )
             ->getMock();
 
         $this->getMockService(Service\Constituency::class)
             ->shouldReceive('getByCongressman')
-            ->andReturn(new Model\ConstituencyDate())
+            ->andReturn(
+                (new Model\ConstituencyDate())
+                    ->setConstituencyId(1)
+            )
             ->once()
             ->getMock();
 
@@ -115,12 +130,19 @@ class SpeechControllerTest extends TestCase
 
         $this->getMockService(Service\Party::class)
             ->shouldReceive('getByCongressman')
-            ->andReturn(new \Althingi\Model\Party())
+            ->andReturn(
+                (new \Althingi\Model\Party())
+                    ->setPartyId(1)
+                    ->setName('name')
+            )
             ->getMock();
 
         $this->getMockService(Service\Constituency::class)
             ->shouldReceive('getByCongressman')
-            ->andReturn(new Model\ConstituencyDate())
+            ->andReturn(
+                (new Model\ConstituencyDate())
+                    ->setConstituencyId(1)
+            )
             ->times(25)
             ->getMock();
 
@@ -286,8 +308,11 @@ class SpeechControllerTest extends TestCase
             ->andReturn([
                 (new Model\SpeechCongressmanProperties())
                         ->setSpeech(new Model\Speech())
-                        ->setCongressman((new Model\CongressmanPartyProperties())
-                            ->setCongressman(new Model\Congressman()))
+                        ->setCongressman((
+                            (new Model\CongressmanPartyProperties())
+                                ->setAssembly((new Assembly())->setAssemblyId(1)->setFrom(new DateTime()))
+                        )
+                        ->setCongressman(new Model\Congressman()))
                 ])
             ->getMock()
             ->shouldReceive('countByIssue')

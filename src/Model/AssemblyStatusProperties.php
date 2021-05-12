@@ -4,23 +4,16 @@ namespace Althingi\Model;
 
 class AssemblyStatusProperties implements ModelInterface
 {
-    /** @var  \Althingi\Model\DateAndCount[] */
-    private $votes = [];
-
-    /** @var  \Althingi\Model\DateAndCount[] */
-    private $speeches = [];
-
-    /** @var  \Althingi\Model\PartyAndTime[] */
-    private $party_times = [];
-
-    /** @var  \Althingi\Model\Election */
-    private $election;
-
-    /** @var  \Althingi\Model\PartyAndElection[] */
-    private $election_results;
-
-    /** @var float */
-    private $averageAge = 0;
+    /** @var \Althingi\Model\DateAndCount[] */
+    private array $votes = [];
+    /** @var \Althingi\Model\DateAndCount[] */
+    private array $speeches = [];
+    /** @var \Althingi\Model\PartyAndTime[] */
+    private array $party_times = [];
+    private ?Election $election = null;
+    /** @var \Althingi\Model\PartyAndElection[] */
+    private array $election_results;
+    private float $averageAge = 0;
 
     /**
      * @return DateAndCount[]
@@ -32,9 +25,8 @@ class AssemblyStatusProperties implements ModelInterface
 
     /**
      * @param DateAndCount[] $votes
-     * @return AssemblyStatusProperties
      */
-    public function setVotes(array $votes): AssemblyStatusProperties
+    public function setVotes(array $votes): self
     {
         $this->votes = $votes;
         return $this;
@@ -50,9 +42,8 @@ class AssemblyStatusProperties implements ModelInterface
 
     /**
      * @param DateAndCount[] $speeches
-     * @return AssemblyStatusProperties
      */
-    public function setSpeeches(array $speeches): AssemblyStatusProperties
+    public function setSpeeches(array $speeches): self
     {
         $this->speeches = $speeches;
         return $this;
@@ -68,27 +59,19 @@ class AssemblyStatusProperties implements ModelInterface
 
     /**
      * @param PartyAndTime[] $partyTimes
-     * @return AssemblyStatusProperties
      */
-    public function setPartyTimes(array $partyTimes): AssemblyStatusProperties
+    public function setPartyTimes(array $partyTimes): self
     {
         $this->party_times = $partyTimes;
         return $this;
     }
 
-    /**
-     * @return Election
-     */
     public function getElection(): ?Election
     {
         return $this->election;
     }
 
-    /**
-     * @param Election $election
-     * @return AssemblyStatusProperties
-     */
-    public function setElection(Election $election = null): AssemblyStatusProperties
+    public function setElection(?Election $election): self
     {
         $this->election = $election;
         return $this;
@@ -104,36 +87,25 @@ class AssemblyStatusProperties implements ModelInterface
 
     /**
      * @param PartyAndElection[] $electionResults
-     * @return AssemblyStatusProperties
      */
-    public function setElectionResults(array $electionResults): AssemblyStatusProperties
+    public function setElectionResults(array $electionResults): self
     {
         $this->election_results = $electionResults;
         return $this;
     }
 
-    /**
-     * @return float
-     */
     public function getAverageAge(): float
     {
         return $this->averageAge;
     }
 
-    /**
-     * @param float $averageAge
-     * @return AssemblyStatusProperties
-     */
-    public function setAverageAge(float $averageAge): AssemblyStatusProperties
+    public function setAverageAge(float $averageAge = 0): self
     {
         $this->averageAge = $averageAge;
         return $this;
     }
 
-    /**
-     * @return array
-     */
-    public function toArray()
+    public function toArray(): array
     {
         return [
             'votes' => $this->votes,
@@ -145,10 +117,7 @@ class AssemblyStatusProperties implements ModelInterface
         ];
     }
 
-    /**
-     * @return array
-     */
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }

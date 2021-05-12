@@ -1,17 +1,16 @@
 <?php
 
-namespace AlthingiTest\Controller;
+namespace Althingi\Controller;
 
 use Althingi\Controller\InflationController;
 use Althingi\Service\Assembly;
 use Althingi\Service\Cabinet;
-use AlthingiTest\ServiceHelper;
-use Mockery;
+use Althingi\ServiceHelper;
 use Althingi\Service\Inflation;
 use Althingi\Model\Inflation as InflationModel;
-use Althingi\Router\Http\TreeRouteStack;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
+use Mockery;
 use DateTime;
 
 /**
@@ -54,7 +53,12 @@ class InflationControllerTest extends TestCase
         $this->getMockService(Inflation::class)
             ->shouldReceive('get')
             ->withArgs([14])
-            ->andReturn((new InflationModel())->setId(1)->setValue(1)->setDate(new \DateTime()))
+            ->andReturn(
+                (new InflationModel())
+                    ->setId(1)
+                    ->setValue(1)
+                    ->setDate(new \DateTime())
+                )
             ->once()
             ->getMock();
 
@@ -92,10 +96,22 @@ class InflationControllerTest extends TestCase
         $this->getMockService(Inflation::class)
             ->shouldReceive('fetchAll')
             ->andReturn([
-                (new InflationModel()),
-                (new InflationModel()),
-                (new InflationModel()),
-                (new InflationModel()),
+                (new InflationModel())
+                    ->setId(1)
+                    ->setValue(1)
+                    ->setDate(new \DateTime()),
+                (new InflationModel())
+                    ->setId(1)
+                    ->setValue(1)
+                    ->setDate(new \DateTime()),
+                (new InflationModel())
+                    ->setId(1)
+                    ->setValue(1)
+                    ->setDate(new \DateTime()),
+                (new InflationModel())
+                    ->setId(1)
+                    ->setValue(1)
+                    ->setDate(new \DateTime()),
             ])
             ->once()
             ->getMock();
@@ -125,10 +141,22 @@ class InflationControllerTest extends TestCase
         $this->getMockService(Inflation::class)
             ->shouldReceive('fetchAll')
             ->andReturn([
-                (new InflationModel()),
-                (new InflationModel()),
-                (new InflationModel()),
-                (new InflationModel()),
+                (new InflationModel())
+                    ->setId(1)
+                    ->setValue(1)
+                    ->setDate(new \DateTime()),
+                (new InflationModel())
+                    ->setId(1)
+                    ->setValue(1)
+                    ->setDate(new \DateTime()),
+                (new InflationModel())
+                    ->setId(1)
+                    ->setValue(1)
+                    ->setDate(new \DateTime()),
+                (new InflationModel())
+                    ->setId(1)
+                    ->setValue(1)
+                    ->setDate(new \DateTime()),
             ])
             ->once()
             ->getMock();
@@ -167,10 +195,22 @@ class InflationControllerTest extends TestCase
         $this->getMockService(Inflation::class)
             ->shouldReceive('fetchAll')
             ->andReturn([
-                (new InflationModel()),
-                (new InflationModel()),
-                (new InflationModel()),
-                (new InflationModel()),
+                (new InflationModel())
+                    ->setId(1)
+                    ->setValue(1)
+                    ->setDate(new \DateTime()),
+                (new InflationModel())
+                    ->setId(1)
+                    ->setValue(1)
+                    ->setDate(new \DateTime()),
+                (new InflationModel())
+                    ->setId(1)
+                    ->setValue(1)
+                    ->setDate(new \DateTime()),
+                (new InflationModel())
+                    ->setId(1)
+                    ->setValue(1)
+                    ->setDate(new \DateTime()),
             ])
             ->once()
             ->getMock();

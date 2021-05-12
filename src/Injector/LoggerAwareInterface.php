@@ -15,5 +15,5 @@ interface LoggerAwareInterface
     /**
      * @return LoggerInterface
      */
-    public function getLogger();
+    public function getLogger(): LoggerInterface;
 }

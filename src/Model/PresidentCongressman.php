@@ -6,144 +6,91 @@ use DateTime;
 
 class PresidentCongressman extends Congressman
 {
-    /** @var int */
-    private $president_id;
+    private int $president_id;
+    private int $assembly_id;
+    private DateTime $from;
+    private ?DateTime $to = null;
+    private string $title;
+    private ?string $abbr = null;
 
-    /** @var int */
-    private $assembly_id;
-
-    /** @var \DateTime */
-    private $from;
-
-    /** @var \DateTime */
-    private $to;
-
-    /** @var string */
-    private $title;
-
-    /** @var string */
-    private $abbr;
-
-    /**
-     * @return int
-     */
     public function getPresidentId(): int
     {
         return $this->president_id;
     }
 
-    /**
-     * @param int $president_id
-     * @return PresidentCongressman
-     */
-    public function setPresidentId(int $president_id): PresidentCongressman
+    public function setPresidentId(int $president_id): self
     {
         $this->president_id = $president_id;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getAssemblyId(): int
     {
         return $this->assembly_id;
     }
 
-    /**
-     * @param int $assembly_id
-     * @return PresidentCongressman
-     */
-    public function setAssemblyId(int $assembly_id): PresidentCongressman
+    public function setAssemblyId(int $assembly_id): self
     {
         $this->assembly_id = $assembly_id;
         return $this;
     }
 
-    /**
-     * @return \DateTime
-     */
     public function getFrom(): DateTime
     {
         return $this->from;
     }
 
-    /**
-     * @param \DateTime $from
-     * @return PresidentCongressman
-     */
-    public function setFrom(DateTime $from): PresidentCongressman
+    public function setFrom(DateTime $from): self
     {
         $this->from = $from;
         return $this;
     }
 
-    /**
-     * @return \DateTime
-     */
     public function getTo(): ?DateTime
     {
         return $this->to;
     }
 
-    /**
-     * @param \DateTime $to
-     * @return PresidentCongressman
-     */
-    public function setTo(DateTime $to = null): PresidentCongressman
+    public function setTo(?DateTime $to): self
     {
         $this->to = $to;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getTitle(): string
     {
         return $this->title;
     }
 
-    /**
-     * @param string $title
-     * @return PresidentCongressman
-     */
-    public function setTitle(string $title): PresidentCongressman
+    public function setTitle(string $title): self
     {
         $this->title = $title;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getAbbr(): ?string
     {
         return $this->abbr;
     }
 
-    /**
-     * @param string $abbr
-     * @return PresidentCongressman
-     */
-    public function setAbbr(string $abbr = null): PresidentCongressman
+    public function setAbbr(?string $abbr): self
     {
         $this->abbr = $abbr;
         return $this;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }
 
-    public function toArray()
+    public function toArray(): array
     {
         return array_merge(parent::toArray(), [
             'president_id' => $this->president_id,
             'assembly_id' => $this->assembly_id,
-            'from' => $this->from->format('Y-m-d'),
-            'to' => $this->to ? $this->to->format('Y-m-d') : null,
+            'from' => $this->from?->format('Y-m-d'),
+            'to' => $this->to?->format('Y-m-d'),
             'title' => $this->title,
             'abbr' => $this->abbr,
         ]);

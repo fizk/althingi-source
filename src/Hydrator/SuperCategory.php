@@ -20,7 +20,6 @@ class SuperCategory implements HydratorInterface
             ->setTitle($data['title']);
     }
 
-
     /**
      * Extract values from an object
      *

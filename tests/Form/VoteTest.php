@@ -1,6 +1,6 @@
 <?php
 
-namespace AlthingiTest\Form;
+namespace Althingi\Form;
 
 use PHPUnit\Framework\TestCase;
 

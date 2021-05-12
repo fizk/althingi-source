@@ -63,7 +63,7 @@ class CommitteeController implements
         $committeeId = $request->getAttribute('committee_id');
 
         $form = new Form\Committee();
-        $form->bindValues(array_merge($request->getParsedBody(), [
+        $form->setData(array_merge($request->getParsedBody(), [
             'assembly_id' => $assemblyId,
             'committee_id' => $committeeId
         ]));
@@ -90,7 +90,7 @@ class CommitteeController implements
             $form->setData($request->getParsedBody());
 
             if ($form->isValid()) {
-                $this->committeeService->update($form->getData());
+                $this->committeeService->update($form->getObject());
                 return new EmptyResponse(205);
             }
 

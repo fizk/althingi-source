@@ -21,7 +21,6 @@ use Althingi\Router\{
     RestControllerInterface
 };
 use DateTime;
-use Laminas\Diactoros\Uri;
 
 class InflationController implements
     RestControllerInterface,
@@ -112,7 +111,7 @@ class InflationController implements
     {
 
         $form = new Form\Inflation();
-        $form->bindValues(array_merge($request->getParsedBody(), ['id' =>
+        $form->setData(array_merge($request->getParsedBody(), ['id' =>
             $request->getAttribute('id')
         ]));
 
@@ -140,7 +139,7 @@ class InflationController implements
             $form->setData($request->getParsedBody());
 
             if ($form->isValid()) {
-                $this->inflationService->update($form->getData());
+                $this->inflationService->update($form->getObject());
                 return new EmptyResponse(205);
             }
 

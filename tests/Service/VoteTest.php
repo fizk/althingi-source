@@ -1,11 +1,11 @@
 <?php
 
-namespace AlthingiTest\Service;
+namespace Althingi\Service;
 
 use Althingi\Model\Vote as VoteModel;
 use Althingi\Model\VoteTypeAndCount;
 use Althingi\Service\Vote;
-use AlthingiTest\DatabaseConnection;
+use Althingi\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\DateAndCount as DateAndCountModel;
 use PDO;
