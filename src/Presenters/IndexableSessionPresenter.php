@@ -3,7 +3,6 @@ namespace Althingi\Presenters;
 
 use Althingi\Model\ModelInterface;
 use Althingi\Model\Session;
-use Althingi\Model\Speech;
 use Laminas\Hydrator\HydratorInterface;
 
 class IndexableSessionPresenter implements IndexablePresenter

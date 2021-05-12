@@ -1,7 +1,6 @@
 <?php
 namespace Althingi\Presenters;
 
-use Althingi\Model\Issue;
 use Althingi\Model\IssueLink;
 use Althingi\Model\ModelInterface;
 use Laminas\Hydrator\HydratorInterface;

@@ -1,8 +1,3 @@
-# #####################################################
-#
-#   Apache PHP setup
-#
-# #####################################################
 FROM php:8.0.5-apache-buster
 
 ARG ENV
@@ -27,6 +22,8 @@ RUN apt-get update; \
         libpcre3-dev; \
     pecl install -o -f redis-4.3.0; \
     rm -rf /tmp/pear; \
+    docker-php-ext-configure opcache --enable-opcache; \
+    docker-php-ext-install opcache; \
     docker-php-ext-enable redis; \
     docker-php-ext-install zip; \
     docker-php-ext-install pdo_mysql; \
@@ -38,6 +35,12 @@ RUN apt-get update; \
 RUN echo "memory_limit = 2048M \n \
     upload_max_filesize = 512M \n \
     date.timezone = Atlantic/Reykjavik \n" > /usr/local/etc/php/conf.d/php.ini
+
+RUN if [ "$ENV" = "production" ] ; then \
+    echo "opcache.enable=1 \n \
+    opcache.jit_buffer_size=100M \n \
+    opcache.jit=1255 \n" > /usr/local/etc/php/conf.d/php.ini; \
+    fi ;
 
 RUN echo "<VirtualHost *:80>\n \
     DocumentRoot /var/www/public\n \

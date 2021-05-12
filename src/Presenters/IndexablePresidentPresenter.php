@@ -1,7 +1,6 @@
 <?php
 namespace Althingi\Presenters;
 
-use Althingi\Model\Assembly;
 use Althingi\Model\ModelInterface;
 use Althingi\Model\President;
 use Laminas\Hydrator\HydratorInterface;
