@@ -4,24 +4,15 @@ namespace Althingi\Model;
 
 class CabinetProperties implements ModelInterface
 {
-    /** @var  \Althingi\Model\Cabinet */
-    private $cabinet;
+    private Cabinet $cabinet;
+    /** @var \Althingi\Model\CongressmanPartyProperties[] */
+    private array $congressmen = [];
 
-    /** @var  \Althingi\Model\CongressmanPartyProperties[] */
-    private $congressmen;
-
-    /**
-     * @return Cabinet
-     */
     public function getCabinet(): Cabinet
     {
         return $this->cabinet;
     }
 
-    /**
-     * @param Cabinet $cabinet
-     * @return CabinetProperties
-     */
     public function setCabinet(Cabinet $cabinet): self
     {
         $this->cabinet = $cabinet;
@@ -38,7 +29,6 @@ class CabinetProperties implements ModelInterface
 
     /**
      * @param CongressmanPartyProperties[] $congressmen
-     * @return CabinetProperties
      */
     public function setCongressmen(array $congressmen): self
     {
@@ -46,9 +36,6 @@ class CabinetProperties implements ModelInterface
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function toArray(): array
     {
         return array_merge($this->cabinet->toArray(), [
@@ -56,9 +43,6 @@ class CabinetProperties implements ModelInterface
         ]);
     }
 
-    /**
-     * @return array
-     */
     public function jsonSerialize(): array
     {
         return $this->toArray();

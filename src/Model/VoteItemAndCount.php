@@ -4,21 +4,13 @@ namespace Althingi\Model;
 
 class VoteItemAndCount extends VoteItem
 {
-    /** @var int */
-    private $count;
+    private int $count;
 
-    /**
-     * @return int
-     */
     public function getCount(): int
     {
         return $this->count;
     }
 
-    /**
-     * @param int $count
-     * @return VoteItemAndCount
-     */
     public function setCount(int $count): self
     {
         $this->count = $count;

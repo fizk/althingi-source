@@ -6,51 +6,31 @@ use DateTime;
 
 class DateAndCount implements ModelInterface
 {
-    /** @var int */
-    private $count = 0;
+    private int $count = 0;
+    private ?DateTime $date = null;
 
-    /** @var \DateTime */
-    private $date;
-
-    /**
-     * @return int
-     */
     public function getCount(): int
     {
         return $this->count;
     }
 
-    /**
-     * @param int $count
-     * @return DateAndCount
-     */
-    public function setCount(int $count): self
+    public function setCount(int $count = 0): self
     {
         $this->count = $count;
         return $this;
     }
 
-    /**
-     * @return \DateTime
-     */
     public function getDate(): ?DateTime
     {
         return $this->date;
     }
 
-    /**
-     * @param \DateTime $date
-     * @return DateAndCount
-     */
-    public function setDate(DateTime $date = null): self
+    public function setDate(?DateTime $date): self
     {
         $this->date = $date;
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function toArray(): array
     {
         return [
@@ -59,9 +39,6 @@ class DateAndCount implements ModelInterface
         ];
     }
 
-    /**
-     * @return array
-     */
     public function jsonSerialize(): array
     {
         return $this->toArray();

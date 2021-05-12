@@ -4,73 +4,43 @@ namespace Althingi\Model;
 
 class MinisterSittingProperties implements ModelInterface
 {
+    private CongressmanPartyProperties $congressman;
+    private Ministry $ministry;
+    private MinisterSitting $minister_sitting;
 
-    /** @var \Althingi\Model\CongressmanPartyProperties */
-    private $congressman;
-
-    /** @var \Althingi\Model\Ministry */
-    private $ministry;
-
-    /** @var \Althingi\Model\MinisterSitting */
-    private $minister_sitting;
-
-    /**
-     * @return CongressmanPartyProperties
-     */
     public function getCongressman(): CongressmanPartyProperties
     {
         return $this->congressman;
     }
 
-    /**
-     * @param CongressmanPartyProperties $congressman
-     * @return MinisterSittingProperties
-     */
     public function setCongressman(CongressmanPartyProperties $congressman): self
     {
         $this->congressman = $congressman;
         return $this;
     }
 
-    /**
-     * @return Ministry
-     */
     public function getMinistry(): Ministry
     {
         return $this->ministry;
     }
 
-    /**
-     * @param Ministry $ministry
-     * @return MinisterSittingProperties
-     */
     public function setMinistry(Ministry $ministry): self
     {
         $this->ministry = $ministry;
         return $this;
     }
 
-    /**
-     * @return MinisterSitting
-     */
     public function getMinisterSitting(): MinisterSitting
     {
         return $this->minister_sitting;
     }
 
-    /**
-     * @param MinisterSitting $minister_sitting
-     * @return MinisterSittingProperties
-     */
     public function setMinisterSitting(MinisterSitting $minister_sitting): self
     {
         $this->minister_sitting = $minister_sitting;
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function toArray(): array
     {
         return array_merge($this->minister_sitting->toArray(), [
@@ -79,9 +49,6 @@ class MinisterSittingProperties implements ModelInterface
         ]);
     }
 
-    /**
-     * @return array
-     */
     public function jsonSerialize(): array
     {
         return $this->toArray();

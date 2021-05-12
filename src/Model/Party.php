@@ -37,7 +37,7 @@ class Party implements ModelInterface
         return $this->abbr_short;
     }
 
-    public function setAbbrShort(?string $abbr_short = null): self
+    public function setAbbrShort(?string $abbr_short): self
     {
         $this->abbr_short = $abbr_short;
         return $this;
@@ -48,7 +48,7 @@ class Party implements ModelInterface
         return $this->abbr_long;
     }
 
-    public function setAbbrLong(?string $abbr_long = null): self
+    public function setAbbrLong(?string $abbr_long): self
     {
         $this->abbr_long = $abbr_long;
         return $this;
@@ -59,7 +59,7 @@ class Party implements ModelInterface
         return $this->color;
     }
 
-    public function setColor(?string $color = null): self
+    public function setColor(?string $color): self
     {
         $this->color = $color;
         return $this;

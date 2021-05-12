@@ -6,27 +6,18 @@ use DateTime;
 
 class IssueAndDate extends Issue
 {
-    /** @var \DateTime */
-    private $date;
+    private ?DateTime $date = null;
 
-    /**
-     * @return \DateTime
-     */
     public function getDate(): ?DateTime
     {
         return $this->date;
     }
 
-    /**
-     * @param \DateTime $date
-     * @return IssueAndDate
-     */
-    public function setDate(DateTime $date = null): self
+    public function setDate(?DateTime $date): self
     {
         $this->date = $date;
         return $this;
     }
-
 
     public function toArray(): array
     {

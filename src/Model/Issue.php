@@ -49,7 +49,7 @@ class Issue implements ModelInterface
         return $this->congressman_id;
     }
 
-    public function setCongressmanId(?int $congressman_id = null): self
+    public function setCongressmanId(?int $congressman_id): self
     {
         $this->congressman_id = $congressman_id;
         return $this;
@@ -71,7 +71,7 @@ class Issue implements ModelInterface
         return $this->name;
     }
 
-    public function setName(?string $name = null): self
+    public function setName(?string $name): self
     {
         $this->name = $name;
         return $this;
@@ -82,7 +82,7 @@ class Issue implements ModelInterface
         return $this->sub_name;
     }
 
-    public function setSubName(?string $sub_name = null): self
+    public function setSubName(?string $sub_name): self
     {
         $this->sub_name = $sub_name;
         return $this;
@@ -93,7 +93,7 @@ class Issue implements ModelInterface
         return $this->type;
     }
 
-    public function setType(?string $type = null): self
+    public function setType(?string $type): self
     {
         $this->type = $type;
         return $this;
@@ -104,7 +104,7 @@ class Issue implements ModelInterface
         return $this->type_name;
     }
 
-    public function setTypeName(?string $type_name = null): self
+    public function setTypeName(?string $type_name): self
     {
         $this->type_name = $type_name;
         return $this;
@@ -115,7 +115,7 @@ class Issue implements ModelInterface
         return $this->type_subname;
     }
 
-    public function setTypeSubname(?string $type_subname = null): self
+    public function setTypeSubname(?string $type_subname): self
     {
         $this->type_subname = $type_subname;
         return $this;
@@ -126,7 +126,7 @@ class Issue implements ModelInterface
         return $this->status;
     }
 
-    public function setStatus(?string $status = null): self
+    public function setStatus(?string $status): self
     {
         $this->status = $status;
         return $this;
@@ -137,7 +137,7 @@ class Issue implements ModelInterface
         return $this->question;
     }
 
-    public function setQuestion(?string $question = null): self
+    public function setQuestion(?string $question): self
     {
         $this->question = $question;
         return $this;
@@ -148,7 +148,7 @@ class Issue implements ModelInterface
         return $this->goal;
     }
 
-    public function setGoal(?string $goal = null): self
+    public function setGoal(?string $goal): self
     {
         $this->goal = $goal;
         return $this;
@@ -159,7 +159,7 @@ class Issue implements ModelInterface
         return $this->major_changes;
     }
 
-    public function setMajorChanges(?string $major_changes = null): self
+    public function setMajorChanges(?string $major_changes): self
     {
         $this->major_changes = $major_changes;
         return $this;
@@ -170,7 +170,7 @@ class Issue implements ModelInterface
         return $this->changes_in_law;
     }
 
-    public function setChangesInLaw(?string $changes_in_law = null): self
+    public function setChangesInLaw(?string $changes_in_law): self
     {
         $this->changes_in_law = $changes_in_law;
         return $this;
@@ -181,7 +181,7 @@ class Issue implements ModelInterface
         return $this->costs_and_revenues;
     }
 
-    public function setCostsAndRevenues(?string $costs_and_revenues = null): self
+    public function setCostsAndRevenues(?string $costs_and_revenues): self
     {
         $this->costs_and_revenues = $costs_and_revenues;
         return $this;
@@ -192,7 +192,7 @@ class Issue implements ModelInterface
         return $this->deliveries;
     }
 
-    public function setDeliveries(?string $deliveries = null): self
+    public function setDeliveries(?string $deliveries): self
     {
         $this->deliveries = $deliveries;
         return $this;
@@ -203,7 +203,7 @@ class Issue implements ModelInterface
         return $this->additional_information;
     }
 
-    public function setAdditionalInformation(?string $additional_information = null): self
+    public function setAdditionalInformation(?string $additional_information): self
     {
         $this->additional_information = $additional_information;
         return $this;

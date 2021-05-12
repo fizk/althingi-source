@@ -4,21 +4,13 @@ namespace Althingi\Model;
 
 class IssueValue extends Issue
 {
-    /** @var  int */
-    private $value;
+    private ?int $value = null;
 
-    /**
-     * @return int
-     */
     public function getValue(): ?int
     {
         return $this->value;
     }
 
-    /**
-     * @param int $value
-     * @return IssueValue
-     */
     public function setValue(?int $value): self
     {
         $this->value = $value;

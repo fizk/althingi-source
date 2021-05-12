@@ -4,27 +4,17 @@ namespace Althingi\Model;
 
 class DocumentProperties implements ModelInterface
 {
-    /** @var  \Althingi\Model\Document */
-    private $document;
-
+    private Document $document;
     /** @var  \Althingi\Model\Vote[] */
-    private $votes;
-
+    private array $votes = [];
     /** @var  \Althingi\Model\Proponent[] */
-    private $proponents;
+    private array $proponents = [];
 
-    /**
-     * @return Document
-     */
     public function getDocument(): Document
     {
         return $this->document;
     }
 
-    /**
-     * @param Document $document
-     * @return DocumentProperties
-     */
     public function setDocument(Document $document): self
     {
         $this->document = $document;
@@ -41,7 +31,6 @@ class DocumentProperties implements ModelInterface
 
     /**
      * @param Vote[] $votes
-     * @return DocumentProperties
      */
     public function setVotes(array $votes): self
     {
@@ -59,7 +48,6 @@ class DocumentProperties implements ModelInterface
 
     /**
      * @param Proponent[] $proponents
-     * @return DocumentProperties
      */
     public function setProponents(array $proponents): self
     {
@@ -67,9 +55,6 @@ class DocumentProperties implements ModelInterface
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function toArray(): array
     {
         return array_merge(
@@ -81,9 +66,6 @@ class DocumentProperties implements ModelInterface
         );
     }
 
-    /**
-     * @return array
-     */
     public function jsonSerialize(): array
     {
         return $this->toArray();

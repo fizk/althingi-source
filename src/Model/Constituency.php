@@ -26,7 +26,7 @@ class Constituency implements ModelInterface
         return $this->name;
     }
 
-    public function setName(?string $name = null): self
+    public function setName(?string $name): self
     {
         $this->name = $name;
         return $this;
@@ -37,7 +37,7 @@ class Constituency implements ModelInterface
         return $this->abbr_short;
     }
 
-    public function setAbbrShort(?string $abbr_short = null): self
+    public function setAbbrShort(?string $abbr_short): self
     {
         $this->abbr_short = $abbr_short;
         return $this;
@@ -48,7 +48,7 @@ class Constituency implements ModelInterface
         return $this->abbr_long;
     }
 
-    public function setAbbrLong(?string $abbr_long = null): self
+    public function setAbbrLong(?string $abbr_long): self
     {
         $this->abbr_long = $abbr_long;
         return $this;
@@ -59,7 +59,7 @@ class Constituency implements ModelInterface
         return $this->description;
     }
 
-    public function setDescription(?string $description = null): self
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
         return $this;

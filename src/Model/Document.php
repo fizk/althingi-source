@@ -63,7 +63,7 @@ class Document implements ModelInterface
         return $this->url;
     }
 
-    public function setUrl(?string $url = null): self
+    public function setUrl(?string $url): self
     {
         $this->url = $url;
         return $this;

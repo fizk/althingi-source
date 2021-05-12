@@ -4,24 +4,15 @@ namespace Althingi\Model;
 
 class CongressmanAndParties implements ModelInterface
 {
-    /** @var  \Althingi\Model\Congressman */
-    private $congressman;
-
+    private Congressman $congressman;
     /** @var  \Althingi\Model\Party[] */
-    private $parties;
+    private array $parties = [];
 
-    /**
-     * @return Congressman
-     */
     public function getCongressman(): Congressman
     {
         return $this->congressman;
     }
 
-    /**
-     * @param Congressman $congressman
-     * @return CongressmanAndParties
-     */
     public function setCongressman(Congressman $congressman): self
     {
         $this->congressman = $congressman;
@@ -38,7 +29,6 @@ class CongressmanAndParties implements ModelInterface
 
     /**
      * @param \Althingi\Model\Party[] $parties
-     * @return CongressmanAndParties
      */
     public function setParties(array $parties = []): self
     {
@@ -46,9 +36,6 @@ class CongressmanAndParties implements ModelInterface
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function toArray(): array
     {
         return array_merge(
@@ -57,9 +44,6 @@ class CongressmanAndParties implements ModelInterface
         );
     }
 
-    /**
-     * @return array
-     */
     public function jsonSerialize(): array
     {
         return $this->toArray();

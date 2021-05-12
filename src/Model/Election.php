@@ -38,7 +38,7 @@ class Election implements ModelInterface
         return $this->title;
     }
 
-    public function setTitle(?string $title = null): self
+    public function setTitle(?string $title): self
     {
         $this->title = $title;
         return $this;
@@ -49,7 +49,7 @@ class Election implements ModelInterface
         return $this->description;
     }
 
-    public function setDescription(?string $description = null): self
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
         return $this;

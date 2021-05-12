@@ -107,6 +107,7 @@ class DocumentControllerTest extends TestCase
                         ->setCategory('category')
                         ->setAssemblyId(145)
                         ->setType('type')
+
                 ),
             ])
             ->once()

@@ -39,7 +39,7 @@ class Congressman implements ModelInterface
         return $this->birth;
     }
 
-    public function setBirth(DateTime $birth = null): self
+    public function setBirth(?DateTime $birth): self
     {
         $this->birth = $birth;
         return $this;
@@ -50,7 +50,7 @@ class Congressman implements ModelInterface
         return $this->death;
     }
 
-    public function setDeath(?DateTime $death = null): self
+    public function setDeath(?DateTime $death): self
     {
         $this->death = $death;
         return $this;

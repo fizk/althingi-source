@@ -4,51 +4,31 @@ namespace Althingi\Model;
 
 class ProponentPartyProperties extends CongressmanPartyProperties
 {
-    /** @var int */
-    private $order = 0;
+    private int $order = 0;
+    private ?string $minister = null;
 
-    /** @var string | null  */
-    private $minister = null;
-
-    /**
-     * @return int
-     */
     public function getOrder(): int
     {
         return $this->order;
     }
 
-    /**
-     * @param int $order
-     * @return ProponentPartyProperties
-     */
     public function setOrder(int $order): self
     {
         $this->order = $order;
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
     public function getMinister(): ?string
     {
         return $this->minister;
     }
 
-    /**
-     * @param null|string $minister
-     * @return ProponentPartyProperties
-     */
     public function setMinister(?string $minister): self
     {
         $this->minister = $minister;
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function toArray(): array
     {
         return array_merge(parent::toArray(), [

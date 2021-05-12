@@ -4,69 +4,40 @@ namespace Althingi\Model;
 
 class IssueTypeAndStatus implements ModelInterface
 {
-    /** @var  string */
-    private $type;
-
-    /** @var  string */
-    private $typeName;
-
-    /** @var  string */
-    private $typeSubName;
-
-    /** @var int */
-    private $count = 0;
-
+    private ?string $type = null;
+    private ?string $typeName = null;
+    private ?string $typeSubName = null;
+    private int $count = 0;
     /** @var \Althingi\Model\IssueTypeStatus[] */
-    private $status = [];
+    private array $status = [];
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @param string $type
-     * @return IssueTypeAndStatus
-     */
     public function setType(?string $type): self
     {
         $this->type = $type;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getTypeName(): ?string
     {
         return $this->typeName;
     }
 
-    /**
-     * @param string $typeName
-     * @return IssueTypeAndStatus
-     */
     public function setTypeName(?string $typeName): self
     {
         $this->typeName = $typeName;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getTypeSubName(): ?string
     {
         return $this->typeSubName;
     }
 
-    /**
-     * @param string $typeSubName
-     * @return IssueTypeAndStatus
-     */
     public function setTypeSubName(?string $typeSubName): self
     {
         $this->typeSubName = $typeSubName;
@@ -83,7 +54,6 @@ class IssueTypeAndStatus implements ModelInterface
 
     /**
      * @param IssueTypeStatus[] $status
-     * @return IssueTypeAndStatus
      */
     public function setStatus(array $status): self
     {
@@ -97,18 +67,11 @@ class IssueTypeAndStatus implements ModelInterface
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getCount(): int
     {
         return $this->count;
     }
 
-    /**
-     * @param int $count
-     * @return IssueTypeAndStatus
-     */
     public function setCount(int $count): self
     {
         $this->count = $count;

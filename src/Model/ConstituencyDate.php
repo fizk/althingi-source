@@ -5,30 +5,19 @@ use DateTime;
 
 class ConstituencyDate extends Constituency
 {
-    /** @var DateTime */
-    private $date;
+    private ?DateTime $date = null;
 
-    /**
-     * @return \DateTime
-     */
     public function getDate(): ?DateTime
     {
         return $this->date;
     }
 
-    /**
-     * @param \DateTime $date
-     * @return ConstituencyDate
-     */
     public function setDate(?DateTime $date): self
     {
         $this->date = $date;
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function toArray(): array
     {
         return array_merge(parent::toArray(), [

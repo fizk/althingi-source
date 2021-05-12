@@ -6,60 +6,32 @@ use DateTime;
 
 class IssueProperties implements ModelInterface
 {
-    /** @var  \Althingi\Model\Issue */
-    private $issue;
-
-    /** @var  \Althingi\Model\CongressmanPartyProperties[] */
-    private $proponents;
-
-    /** @var  \Althingi\Model\DateAndCount[] */
-    private $voteRange;
-
-    /** @var  \Althingi\Model\DateAndCount[] */
-    private $speechRange;
-
-    /** @var  \Althingi\Model\CongressmanAndDateRange[] */
-    private $speakers;
-
-    /** @var DateTime */
-    private $date;
-
-    /** @var bool */
-    private $governmentIssue = false;
-
-    /** @var string | null  */
-    private $document_type = null;
-
-    /** @var string | null  */
-    private $document_url = null;
-
+    private Issue $issue;
+    /** @var \Althingi\Model\CongressmanPartyProperties[] */
+    private array $proponents;
+    /** @var \Althingi\Model\DateAndCount[] */
+    private array $voteRange;
+    /** @var \Althingi\Model\DateAndCount[] */
+    private array $speechRange;
+    /** @var \Althingi\Model\CongressmanAndDateRange[] */
+    private array $speakers;
+    private DateTime $date;
+    private bool $governmentIssue = false;
+    private ?string $document_type = null;
+    private ?string $document_url = null;
     /** @var \Althingi\Model\Category[] */
-    private $categories;
-
+    private array $categories;
     /** @var \Althingi\Model\SuperCategory[] */
-    private $superCategory;
+    private array $superCategory;
+    private int $speech_time = 0;
+    private int $speech_count = 0;
+    private array $links = [];
 
-    /** @var int */
-    private $speech_time = 0;
-
-    /** @var int */
-    private $speech_count = 0;
-
-    /** @var \Althingi\Model\Link[] */
-    private $links = [];
-
-    /**
-     * @return Issue
-     */
     public function getIssue(): Issue
     {
         return $this->issue;
     }
 
-    /**
-     * @param Issue $issue
-     * @return IssueProperties
-     */
     public function setIssue(Issue $issue): self
     {
         $this->issue = $issue;
@@ -67,7 +39,7 @@ class IssueProperties implements ModelInterface
     }
 
     /**
-     * @return array
+     * @return \Althingi\Model\CongressmanPartyProperties[]
      */
     public function getProponents(): array
     {
@@ -94,7 +66,6 @@ class IssueProperties implements ModelInterface
 
     /**
      * @param DateAndCount[] $voteRange
-     * @return IssueProperties
      */
     public function setVoteRange(array $voteRange): self
     {
@@ -112,7 +83,6 @@ class IssueProperties implements ModelInterface
 
     /**
      * @param DateAndCount[] $speechRange
-     * @return IssueProperties
      */
     public function setSpeechRange(array $speechRange): self
     {
@@ -130,7 +100,6 @@ class IssueProperties implements ModelInterface
 
     /**
      * @param CongressmanAndDateRange[] $speakers
-     * @return IssueProperties
      */
     public function setSpeakers(array $speakers): self
     {
@@ -138,72 +107,44 @@ class IssueProperties implements ModelInterface
         return $this;
     }
 
-    /**
-     * @return DateTime
-     */
     public function getDate(): ?DateTime
     {
         return $this->date;
     }
 
-    /**
-     * @param DateTime $date
-     * @return IssueProperties
-     */
     public function setDate(?DateTime $date): self
     {
         $this->date = $date;
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isGovernmentIssue(): bool
     {
         return $this->governmentIssue;
     }
 
-    /**
-     * @param bool $governmentIssue
-     * @return IssueProperties
-     */
     public function setGovernmentIssue(bool $governmentIssue): self
     {
         $this->governmentIssue = $governmentIssue;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getDocumentType(): ?string
     {
         return $this->document_type;
     }
 
-    /**
-     * @param string|null $document_type
-     * @return IssueProperties
-     */
     public function setDocumentType(?string $document_type): self
     {
         $this->document_type = $document_type;
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getDocumentUrl(): ?string
     {
         return $this->document_url;
     }
 
-    /**
-     * @param string|null $document_url
-     * @return IssueProperties
-     */
     public function setDocumentUrl(?string $document_url): self
     {
         $this->document_url = $document_url;
@@ -220,7 +161,6 @@ class IssueProperties implements ModelInterface
 
     /**
      * @param Category[] $categories
-     * @return IssueProperties
      */
     public function setCategories(array $categories): self
     {
@@ -238,7 +178,6 @@ class IssueProperties implements ModelInterface
 
     /**
      * @param SuperCategory[] $superCategory
-     * @return IssueProperties
      */
     public function setSuperCategory(array $superCategory): self
     {
@@ -246,37 +185,22 @@ class IssueProperties implements ModelInterface
         return $this;
     }
 
-
-    /**
-     * @return int
-     */
     public function getSpeechTime(): ?int
     {
         return $this->speech_time;
     }
 
-    /**
-     * @param int $speech_time
-     * @return IssueProperties
-     */
     public function setSpeechTime(?int $speech_time): self
     {
         $this->speech_time = $speech_time;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getSpeechCount(): ?int
     {
         return $this->speech_count;
     }
 
-    /**
-     * @param int $speech_count
-     * @return IssueProperties
-     */
     public function setSpeechCount(?int $speech_count): self
     {
         $this->speech_count = $speech_count;
@@ -293,7 +217,6 @@ class IssueProperties implements ModelInterface
 
     /**
      * @param Link[] $links
-     * @return IssueProperties
      */
     public function setLinks(array $links): self
     {

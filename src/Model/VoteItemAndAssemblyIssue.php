@@ -4,51 +4,31 @@ namespace Althingi\Model;
 
 class VoteItemAndAssemblyIssue extends VoteItem
 {
-    /** @var int */
-    private $issue_id;
+    private int $issue_id;
+    private int $assembly_id;
 
-    /** @var int */
-    private $assembly_id;
-
-    /**
-     * @return int
-     */
     public function getIssueId(): int
     {
         return $this->issue_id;
     }
 
-    /**
-     * @param int $issue_id
-     * @return VoteItemAndAssemblyIssue
-     */
     public function setIssueId(int $issue_id): self
     {
         $this->issue_id = $issue_id;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getAssemblyId(): int
     {
         return $this->assembly_id;
     }
 
-    /**
-     * @param int $assembly_id
-     * @return VoteItemAndAssemblyIssue
-     */
     public function setAssemblyId(int $assembly_id): self
     {
         $this->assembly_id = $assembly_id;
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function toArray(): array
     {
         return array_merge(

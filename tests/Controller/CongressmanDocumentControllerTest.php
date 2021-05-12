@@ -73,6 +73,7 @@ class CongressmanDocumentControllerTest extends TestCase
                     ->setCategory('A')
                     ->setCongressmanId(637)
                     ->setDocumentId(1018)
+                    ->setOrder(1)
             )
             ->getMock()
             ->shouldReceive('update')

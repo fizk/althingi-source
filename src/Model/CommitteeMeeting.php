@@ -51,7 +51,7 @@ class CommitteeMeeting implements ModelInterface
         return $this->from;
     }
 
-    public function setFrom(?DateTime $from = null): self
+    public function setFrom(?DateTime $from): self
     {
         $this->from = $from;
         return $this;
@@ -62,7 +62,7 @@ class CommitteeMeeting implements ModelInterface
         return $this->to;
     }
 
-    public function setTo(?DateTime $to = null): self
+    public function setTo(?DateTime $to): self
     {
         $this->to = $to;
         return $this;
@@ -73,7 +73,7 @@ class CommitteeMeeting implements ModelInterface
         return $this->description;
     }
 
-    public function setDescription(?string $description = null): self
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
         return $this;

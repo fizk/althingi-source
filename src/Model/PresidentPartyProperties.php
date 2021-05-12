@@ -4,43 +4,26 @@ namespace Althingi\Model;
 
 class PresidentPartyProperties implements ModelInterface
 {
-    /** @var  \Althingi\Model\President */
-    private $president;
+    private President $president;
+    private ?Party $party = null;
 
-    /** @var  \Althingi\Model\Party */
-    private $party;
-
-    /**
-     * @return President
-     */
     public function getPresident(): President
     {
         return $this->president;
     }
 
-    /**
-     * @param President $president
-     * @return PresidentPartyProperties
-     */
     public function setPresident(President $president): self
     {
         $this->president = $president;
         return $this;
     }
 
-    /**
-     * @return Party|null
-     */
     public function getParty(): ?Party
     {
         return $this->party;
     }
 
-    /**
-     * @param Party $party
-     * @return PresidentPartyProperties|null
-     */
-    public function setParty(Party $party = null): self
+    public function setParty(?Party $party): self
     {
         $this->party = $party;
         return $this;

@@ -4,21 +4,16 @@ namespace Althingi\Model;
 
 class IssuesStatusProperties implements ModelInterface
 {
-    /** @var  \Althingi\Model\IssueTypeStatus[] */
-    private $bills = [];
-
-    /** @var  \Althingi\Model\IssueTypeStatus[] */
-    private $government_bills = [];
-
-    /** @var  \Althingi\Model\IssueTypeStatus[] */
-    private $proposals = [];
-
-    /** @var  \Althingi\Model\AssemblyStatus[] */
-    private $types = [];
-
-    /** @var  \Althingi\Model\CategoryAndCount[] */
-    private $categories = [];
-
+    /** @var \Althingi\Model\IssueTypeStatus[] */
+    private array $bills = [];
+    /** @var \Althingi\Model\IssueTypeStatus[] */
+    private array $government_bills = [];
+    /** @var \Althingi\Model\IssueTypeStatus[] */
+    private array $proposals = [];
+    /** @var \Althingi\Model\AssemblyStatus[] */
+    private array $types = [];
+    /** @var \Althingi\Model\CategoryAndCount[] */
+    private array $categories = [];
 
     /**
      * @return IssueTypeStatus[]
@@ -30,7 +25,6 @@ class IssuesStatusProperties implements ModelInterface
 
     /**
      * @param IssueTypeStatus[] $bills
-     * @return IssuesStatusProperties
      */
     public function setBills(array $bills): self
     {
@@ -48,7 +42,6 @@ class IssuesStatusProperties implements ModelInterface
 
     /**
      * @param IssueTypeStatus[] $governmentBills
-     * @return IssuesStatusProperties
      */
     public function setGovernmentBills(array $governmentBills): self
     {
@@ -66,7 +59,6 @@ class IssuesStatusProperties implements ModelInterface
 
     /**
      * @param AssemblyStatus[] $types
-     * @return IssuesStatusProperties
      */
     public function setTypes(array $types): self
     {
@@ -84,7 +76,6 @@ class IssuesStatusProperties implements ModelInterface
 
     /**
      * @param CategoryAndCount[] $categories
-     * @return IssuesStatusProperties
      */
     public function setCategories(array $categories): self
     {
@@ -102,7 +93,6 @@ class IssuesStatusProperties implements ModelInterface
 
     /**
      * @param IssueTypeStatus[] $proposals
-     * @return IssuesStatusProperties
      */
     public function setProposals(array $proposals): self
     {
@@ -110,9 +100,6 @@ class IssuesStatusProperties implements ModelInterface
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function toArray(): array
     {
         return [
@@ -124,9 +111,6 @@ class IssuesStatusProperties implements ModelInterface
         ];
     }
 
-    /**
-     * @return array
-     */
     public function jsonSerialize(): array
     {
         return $this->toArray();

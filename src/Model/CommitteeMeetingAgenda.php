@@ -38,7 +38,7 @@ class CommitteeMeetingAgenda implements ModelInterface
         return $this->issue_id;
     }
 
-    public function setIssueId(?int $issue_id = null): self
+    public function setIssueId(?int $issue_id): self
     {
         $this->issue_id = $issue_id;
         return $this;
@@ -60,7 +60,7 @@ class CommitteeMeetingAgenda implements ModelInterface
         return $this->title;
     }
 
-    public function setTitle(?string $title = null): self
+    public function setTitle(?string $title): self
     {
         $this->title = $title;
         return $this;

@@ -19,7 +19,7 @@ class President implements ModelInterface
         return $this->president_id;
     }
 
-    public function setPresidentId(int $president_id = null): self
+    public function setPresidentId(?int $president_id): self
     {
         $this->president_id = $president_id;
         return $this;
@@ -63,7 +63,7 @@ class President implements ModelInterface
         return $this->to;
     }
 
-    public function setTo(?DateTime $to = null): self
+    public function setTo(?DateTime $to): self
     {
         $this->to = $to;
         return $this;
@@ -85,7 +85,7 @@ class President implements ModelInterface
         return $this->abbr;
     }
 
-    public function setAbbr(?string $abbr = null): self
+    public function setAbbr(?string $abbr): self
     {
         $this->abbr = $abbr;
         return $this;

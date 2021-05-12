@@ -4,105 +4,61 @@ namespace Althingi\Model;
 
 class PartyAndElection extends Party
 {
-    /** @var  float */
-    private $results;
+    private ?float $results = null;
+    private ?int $seat = null;
+    private int $election_id;
+    private int $election_result_id;
+    private int $assembly_id;
 
-    /** @var  int */
-    private $seat;
-
-    /** @var  int */
-    private $election_id;
-
-    /** @var  int */
-    private $election_result_id;
-
-    /** @var  int */
-    private $assembly_id;
-
-    /**
-     * @return float
-     */
     public function getResults(): ?float
     {
         return $this->results;
     }
 
-    /**
-     * @param float $results
-     * @return PartyAndElection
-     */
-    public function setResults(float $results): self
+    public function setResults(?float $results): self
     {
         $this->results = $results;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getSeat(): ?int
     {
         return $this->seat;
     }
 
-    /**
-     * @param int $seat
-     * @return PartyAndElection
-     */
     public function setSeat(?int $seat): self
     {
         $this->seat = $seat;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getElectionId(): int
     {
         return $this->election_id;
     }
 
-    /**
-     * @param int $election_id
-     * @return PartyAndElection
-     */
     public function setElectionId(int $election_id): self
     {
         $this->election_id = $election_id;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getElectionResultId(): int
     {
         return $this->election_result_id;
     }
 
-    /**
-     * @param int $election_result_id
-     * @return PartyAndElection
-     */
     public function setElectionResultId(int $election_result_id): self
     {
         $this->election_result_id = $election_result_id;
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getAssemblyId(): int
     {
         return $this->assembly_id;
     }
 
-    /**
-     * @param int $assembly_id
-     * @return PartyAndElection
-     */
     public function setAssemblyId(int $assembly_id): self
     {
         $this->assembly_id = $assembly_id;

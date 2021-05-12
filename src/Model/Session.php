@@ -11,7 +11,7 @@ class Session implements ModelInterface
     private int $constituency_id;
     private int $assembly_id;
     private ?int $party_id = null;
-    private DateTime $from;
+    private ?DateTime $from = null;
     private ?DateTime $to = null;
     private ?string $type = null;
     private ?string $abbr = null;
@@ -21,7 +21,7 @@ class Session implements ModelInterface
         return $this->session_id;
     }
 
-    public function setSessionId(int $session_id = null): self
+    public function setSessionId(?int $session_id): self
     {
         $this->session_id = $session_id;
         return $this;
@@ -65,7 +65,7 @@ class Session implements ModelInterface
         return $this->party_id;
     }
 
-    public function setPartyId(?int $party_id = null): self
+    public function setPartyId(?int $party_id): self
     {
         $this->party_id = $party_id;
         return $this;
@@ -76,7 +76,7 @@ class Session implements ModelInterface
         return $this->from;
     }
 
-    public function setFrom(DateTime $from = null): self
+    public function setFrom(?DateTime $from): self
     {
         $this->from = $from;
         return $this;
@@ -87,7 +87,7 @@ class Session implements ModelInterface
         return $this->to;
     }
 
-    public function setTo(?DateTime $to = null): self
+    public function setTo(?DateTime $to): self
     {
         $this->to = $to;
         return $this;
@@ -98,7 +98,7 @@ class Session implements ModelInterface
         return $this->type;
     }
 
-    public function setType(?string $type = null): self
+    public function setType(?string $type): self
     {
         $this->type = $type;
         return $this;
@@ -109,7 +109,7 @@ class Session implements ModelInterface
         return $this->abbr;
     }
 
-    public function setAbbr(?string $abbr = null): self
+    public function setAbbr(?string $abbr): self
     {
         $this->abbr = $abbr;
         return $this;

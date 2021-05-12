@@ -5,7 +5,9 @@ namespace Althingi\Controller;
 use Althingi\Model;
 use Althingi\Service;
 use Althingi\Controller;
+use Althingi\Model\Assembly;
 use Althingi\ServiceHelper;
+use DateTime;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
 use Mockery;
@@ -64,6 +66,7 @@ class SpeechControllerTest extends TestCase
                     ->setPosition(1)
                     ->setCongressmanId(1)
                     ->setFrom(new \DateTime())
+
             ])
             ->once()
             ->getMock();
@@ -305,8 +308,11 @@ class SpeechControllerTest extends TestCase
             ->andReturn([
                 (new Model\SpeechCongressmanProperties())
                         ->setSpeech(new Model\Speech())
-                        ->setCongressman((new Model\CongressmanPartyProperties())
-                            ->setCongressman(new Model\Congressman()))
+                        ->setCongressman((
+                            (new Model\CongressmanPartyProperties())
+                                ->setAssembly((new Assembly())->setAssemblyId(1)->setFrom(new DateTime()))
+                        )
+                        ->setCongressman(new Model\Congressman()))
                 ])
             ->getMock()
             ->shouldReceive('countByIssue')

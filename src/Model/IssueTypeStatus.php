@@ -4,43 +4,26 @@ namespace Althingi\Model;
 
 class IssueTypeStatus implements ModelInterface
 {
-    /** @var  int */
-    private $count;
+    private ?int $count = null;
+    private ?string $status = null;
 
-    /** @var  string */
-    private $status;
-
-    /**
-     * @return int
-     */
     public function getCount(): ?int
     {
         return $this->count;
     }
 
-    /**
-     * @param int $count
-     * @return IssueTypeStatus
-     */
-    public function setCount(int $count = null): self
+    public function setCount(?int $count): self
     {
         $this->count = $count;
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getStatus(): ?string
     {
         return $this->status;
     }
 
-    /**
-     * @param string $status
-     * @return IssueTypeStatus
-     */
-    public function setStatus(string $status = null): self
+    public function setStatus(?string $status): self
     {
         $this->status = $status;
         return $this;

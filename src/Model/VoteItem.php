@@ -14,7 +14,7 @@ class VoteItem implements ModelInterface
         return $this->vote_id;
     }
 
-    public function setVoteId(int $vote_id = null): self
+    public function setVoteId(?int $vote_id): self
     {
         $this->vote_id = $vote_id;
         return $this;
@@ -47,7 +47,7 @@ class VoteItem implements ModelInterface
         return $this->vote_item_id;
     }
 
-    public function setVoteItemId(?int $vote_item_id = null): self
+    public function setVoteItemId(?int $vote_item_id): self
     {
         $this->vote_item_id = $vote_item_id;
         return $this;

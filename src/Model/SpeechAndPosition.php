@@ -4,21 +4,13 @@ namespace Althingi\Model;
 
 class SpeechAndPosition extends Speech
 {
-    /** @var int */
-    private $position;
+    private int $position;
 
-    /**
-     * @return int
-     */
     public function getPosition(): int
     {
         return $this->position;
     }
 
-    /**
-     * @param int $position
-     * @return SpeechAndPosition
-     */
     public function setPosition(int $position): self
     {
         $this->position = $position;

@@ -6,51 +6,31 @@ use DateTime;
 
 class CongressmanAndCabinet extends Congressman
 {
-    /** @var  string */
-    private $title;
+    private string $title;
+    private ?DateTime $date = null;
 
-    /** @var  \DateTime */
-    private $date;
-
-    /**
-     * @return string
-     */
     public function getTitle(): string
     {
         return $this->title;
     }
 
-    /**
-     * @param string $title
-     * @return CongressmanAndCabinet
-     */
     public function setTitle(string $title): self
     {
         $this->title = $title;
         return $this;
     }
 
-    /**
-     * @return \DateTime
-     */
-    public function getDate(): DateTime
+    public function getDate(): ?DateTime
     {
         return $this->date;
     }
 
-    /**
-     * @param \DateTime $date
-     * @return CongressmanAndCabinet
-     */
-    public function setDate(DateTime $date = null): self
+    public function setDate(?DateTime $date): self
     {
         $this->date = $date;
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function toArray(): array
     {
         return array_merge(

@@ -39,7 +39,7 @@ class Plenary implements ModelInterface
         return $this->from;
     }
 
-    public function setFrom(?DateTime $from = null): self
+    public function setFrom(?DateTime $from): self
     {
         $this->from = $from;
         return $this;
@@ -50,7 +50,7 @@ class Plenary implements ModelInterface
         return $this->to;
     }
 
-    public function setTo(?DateTime $to = null): self
+    public function setTo(?DateTime $to): self
     {
         $this->to = $to;
         return $this;
@@ -61,7 +61,7 @@ class Plenary implements ModelInterface
         return $this->name;
     }
 
-    public function setName(?string $name = null): self
+    public function setName(?string $name): self
     {
         $this->name = $name;
         return $this;

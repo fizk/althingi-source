@@ -92,7 +92,7 @@ class Speech implements ModelInterface
         return $this->congressman_type;
     }
 
-    public function setCongressmanType(?string $congressman_type = null): self
+    public function setCongressmanType(?string $congressman_type): self
     {
         $this->congressman_type = $congressman_type;
         return $this;
@@ -103,7 +103,7 @@ class Speech implements ModelInterface
         return $this->from;
     }
 
-    public function setFrom(?DateTime $from = null): self
+    public function setFrom(?DateTime $from): self
     {
         $this->from = $from;
         return $this;
@@ -114,7 +114,7 @@ class Speech implements ModelInterface
         return $this->to;
     }
 
-    public function setTo(?DateTime $to = null): self
+    public function setTo(?DateTime $to): self
     {
         $this->to = $to;
         return $this;
@@ -125,7 +125,7 @@ class Speech implements ModelInterface
         return $this->text;
     }
 
-    public function setText(string $text = null): self
+    public function setText(?string $text): self
     {
         $this->text = $text;
         return $this;
@@ -136,7 +136,7 @@ class Speech implements ModelInterface
         return $this->type;
     }
 
-    public function setType(?string $type = null): self
+    public function setType(?string $type): self
     {
         $this->type = $type;
         return $this;
@@ -147,7 +147,7 @@ class Speech implements ModelInterface
         return $this->iteration;
     }
 
-    public function setIteration(?string $iteration = null): self
+    public function setIteration(?string $iteration ): self
     {
         $this->iteration = $iteration;
         return $this;

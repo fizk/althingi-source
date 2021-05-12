@@ -4,24 +4,15 @@ namespace Althingi\Model;
 
 class CabinetAndAssemblies implements ModelInterface
 {
-    /** @var  \Althingi\Model\Cabinet */
-    private $cabinet;
+    private Cabinet $cabinet;
+    /** @var \Althingi\Model\Assembly[] */
+    private array $assemblies;
 
-    /** @var  \Althingi\Model\Assembly[] */
-    private $assemblies;
-
-    /**
-     * @return Cabinet
-     */
     public function getCabinet(): Cabinet
     {
         return $this->cabinet;
     }
 
-    /**
-     * @param Cabinet $cabinet
-     * @return CabinetAndAssemblies
-     */
     public function setCabinet(Cabinet $cabinet): self
     {
         $this->cabinet = $cabinet;
@@ -38,7 +29,6 @@ class CabinetAndAssemblies implements ModelInterface
 
     /**
      * @param Assembly[] $assemblies
-     * @return CabinetAndAssemblies
      */
     public function setAssemblies(array $assemblies): self
     {
@@ -46,9 +36,6 @@ class CabinetAndAssemblies implements ModelInterface
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function toArray(): array
     {
         return array_merge($this->cabinet->toArray(), [
@@ -56,9 +43,6 @@ class CabinetAndAssemblies implements ModelInterface
         ]);
     }
 
-    /**
-     * @return array
-     */
     public function jsonSerialize(): array
     {
         return $this->toArray();

@@ -58,7 +58,7 @@ class Vote implements ModelInterface
         return $this->document_id;
     }
 
-    public function setDocumentId(int $document_id = null): self
+    public function setDocumentId(?int $document_id): self
     {
         $this->document_id = $document_id;
         return $this;
@@ -69,7 +69,7 @@ class Vote implements ModelInterface
         return $this->date;
     }
 
-    public function setDate(?DateTime $date = null): self
+    public function setDate(?DateTime $date): self
     {
         $this->date = $date;
         return $this;
@@ -80,7 +80,7 @@ class Vote implements ModelInterface
         return $this->type;
     }
 
-    public function setType(?string $type = null): self
+    public function setType(?string $type): self
     {
         $this->type = $type;
         return $this;
@@ -91,7 +91,7 @@ class Vote implements ModelInterface
         return $this->outcome;
     }
 
-    public function setOutcome(?string $outcome = null): self
+    public function setOutcome(?string $outcome): self
     {
         $this->outcome = $outcome;
         return $this;
@@ -102,7 +102,7 @@ class Vote implements ModelInterface
         return $this->method;
     }
 
-    public function setMethod(?string $method = null): self
+    public function setMethod(?string $method): self
     {
         $this->method = $method;
         return $this;
@@ -113,7 +113,7 @@ class Vote implements ModelInterface
         return $this->yes;
     }
 
-    public function setYes(?int $yes = null): self
+    public function setYes(?int $yes): self
     {
         $this->yes = $yes;
         return $this;
@@ -124,7 +124,7 @@ class Vote implements ModelInterface
         return $this->no;
     }
 
-    public function setNo(?int $no = null): self
+    public function setNo(?int $no): self
     {
         $this->no = $no;
         return $this;
@@ -135,7 +135,7 @@ class Vote implements ModelInterface
         return $this->inaction;
     }
 
-    public function setInaction(?int $inaction = null): self
+    public function setInaction(?int $inaction): self
     {
         $this->inaction = $inaction;
         return $this;
@@ -146,7 +146,7 @@ class Vote implements ModelInterface
         return $this->committee_to;
     }
 
-    public function setCommitteeTo(?string $committee_to = null): self
+    public function setCommitteeTo(?string $committee_to): self
     {
         $this->committee_to = $committee_to;
         return $this;

@@ -4,30 +4,18 @@ namespace Althingi\Model;
 
 class AssemblyProperties implements ModelInterface
 {
-    /** @var  \Althingi\Model\Assembly */
-    private $assembly;
+    private Assembly $assembly;
+    /** @var \Althingi\Model\Party[] */
+    private array $majority = [];
+    /** @var \Althingi\Model\Party[] */
+    private array $minority = [];
+    private Cabinet $cabinet;
 
-    /** @var  \Althingi\Model\Party[] */
-    private $majority = [];
-
-    /** @var  \Althingi\Model\Party[] */
-    private $minority = [];
-
-    /** @var  \Althingi\Model\Cabinet */
-    private $cabinet;
-
-    /**
-     * @return Assembly
-     */
     public function getAssembly(): Assembly
     {
         return $this->assembly;
     }
 
-    /**
-     * @param Assembly $assembly
-     * @return AssemblyProperties
-     */
     public function setAssembly(Assembly $assembly): self
     {
         $this->assembly = $assembly;
@@ -44,7 +32,6 @@ class AssemblyProperties implements ModelInterface
 
     /**
      * @param Party[] $majority
-     * @return AssemblyProperties
      */
     public function setMajority(array $majority): self
     {
@@ -52,10 +39,6 @@ class AssemblyProperties implements ModelInterface
         return $this;
     }
 
-    /**
-     * @param Party $majority
-     * @return AssemblyProperties
-     */
     public function addMajority(Party $majority): self
     {
         $this->majority[] = $majority;
@@ -82,7 +65,6 @@ class AssemblyProperties implements ModelInterface
 
     /**
      * @param Party[] $minority
-     * @return AssemblyProperties
      */
     public function setMinority(array $minority): self
     {
@@ -90,37 +72,23 @@ class AssemblyProperties implements ModelInterface
         return $this;
     }
 
-    /**
-     * @param Party $minority
-     * @return AssemblyProperties
-     */
     public function addMinority(Party $minority): self
     {
         $this->minority[] = $minority;
         return $this;
     }
 
-    /**
-     * @return Cabinet
-     */
     public function getCabinet(): ?Cabinet
     {
         return $this->cabinet;
     }
 
-    /**
-     * @param Cabinet $cabinet
-     * @return AssemblyProperties
-     */
     public function setCabinet(?Cabinet $cabinet): self
     {
         $this->cabinet = $cabinet;
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function toArray(): array
     {
         return array_merge($this->assembly->toArray(), [
@@ -132,9 +100,6 @@ class AssemblyProperties implements ModelInterface
         ]);
     }
 
-    /**
-     * @return array
-     */
     public function jsonSerialize(): array
     {
         return $this->toArray();
