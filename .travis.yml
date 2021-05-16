@@ -4,7 +4,7 @@ services:
   - docker
 
 env:
-  - IMAGE_NAME=einarvalur/althingi-store
+  - IMAGE_NAME=einarvalur/althingi-source
 
 script:
     - docker-compose up --build test
