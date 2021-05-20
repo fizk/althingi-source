@@ -9,6 +9,7 @@ use Althingi\Injector\{DatabaseAwareInterface, EventsAwareInterface};
 use Althingi\Presenters\IndexableCommitteeSittingPresenter;
 use PDO;
 use DateTime;
+use Generator;
 
 class CommitteeSitting implements DatabaseAwareInterface, EventsAwareInterface
 {
@@ -26,6 +27,33 @@ class CommitteeSitting implements DatabaseAwareInterface, EventsAwareInterface
         return $object
             ? (new Hydrator\CommitteeSitting())->hydrate($object, new Model\CommitteeSitting())
             : null;
+    }
+
+    public function fetchAllGenerator(
+        ?int $assemblyId = null,
+        ?int $congressmanId = null,
+        ?int $committeeId = null
+    ): Generator {
+        $params = [
+            'assembly_id' => $assemblyId,
+            'congressman_id' => $congressmanId,
+            'committee_id' => $committeeId,
+        ];
+
+        $filteredParams = array_filter($params, function ($value) {
+            return $value !== null;
+        });
+
+        $statement = $this->getDriver()->prepare(
+            $this->toSelectString('CommitteeSitting', $filteredParams, 'committee_sitting_id')
+        );
+        $statement->execute($filteredParams);
+
+        while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
+            yield (new Hydrator\CommitteeSitting)->hydrate($object, new Model\CommitteeSitting());
+        }
+        $statement->closeCursor();
+        return null;
     }
 
     public function create(Model\CommitteeSitting $data): int
@@ -61,6 +89,7 @@ class CommitteeSitting implements DatabaseAwareInterface, EventsAwareInterface
 
     /**
      * @return \Althingi\Model\CommitteeSitting[]
+     * @deprecated
      */
     public function fetchByCongressman(int $congressmanId)
     {

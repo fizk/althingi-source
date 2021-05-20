@@ -147,7 +147,7 @@ class Speech implements ModelInterface
         return $this->iteration;
     }
 
-    public function setIteration(?string $iteration ): self
+    public function setIteration(?string $iteration): self
     {
         $this->iteration = $iteration;
         return $this;

@@ -7,6 +7,7 @@ use Althingi\Model;
 use Althingi\Events\{UpdateEvent, AddEvent};
 use Althingi\Injector\{EventsAwareInterface, DatabaseAwareInterface};
 use Althingi\Presenters\IndexableCongressmanDocumentPresenter;
+use Generator;
 use PDO;
 
 class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterface
@@ -37,7 +38,39 @@ class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterfac
     }
 
     /**
+     * @todo does this need to be orderd on something.
+     */
+    public function fetchAllGenerator(
+        ?int $congressmanId = null,
+        ?int $assemblyId = null,
+        ?int $issueId = null
+    ): Generator {
+        $params = [
+            'assembly_id' => $assemblyId,
+            'congressman_id' => $congressmanId,
+            'issue_id' => $issueId,
+        ];
+
+        $filteredParams = array_filter($params, function ($value) {
+            return $value !== null;
+        });
+
+        $statement = $this->getDriver()->prepare(
+            $this->toSelectString('Document_has_Congressman', $filteredParams, 'document_id')
+        );
+        $statement->execute($filteredParams);
+
+        while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
+            yield (new Hydrator\CongressmanDocument)->hydrate($object, new Model\CongressmanDocument());
+        }
+
+        $statement->closeCursor();
+        return null;
+    }
+
+    /**
      * @return \Althingi\Model\CongressmanDocument[]
+     * @deprecated
      */
     public function fetchByDocument(int $assemblyId, int $issueId, int $documentId): array
     {
@@ -57,6 +90,9 @@ class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterfac
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
+    /**
+     * @deprecated
+     */
     public function countProponents(int $assemblyId, int $issueId, int $documentId): ? int
     {
         $statement = $this->getDriver()->prepare("
@@ -73,6 +109,9 @@ class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterfac
         return $statement->fetchColumn(0);
     }
 
+    /**
+     * @deprecated
+     */
     public function fetchProponents($assemblyId, $issueId, $documentId): ? Model\CongressmanValue
     {
         $statement = $this->getDriver()->prepare("

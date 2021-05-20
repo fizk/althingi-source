@@ -8,7 +8,8 @@ use Psr\Http\Message\UriInterface;
 
 class ConsoleRequest implements ServerRequestInterface
 {
-    private $uri;
+    private UriInterface $uri;
+    private array $attributes = [];
 
     public function __construct(UriInterface $uri)
     {
@@ -62,17 +63,23 @@ class ConsoleRequest implements ServerRequestInterface
 
     public function getAttributes()
     {
-        return [];
+        return $this->attributes;
     }
 
-    public function getAttribute($name, $default = null)
+    public function getAttribute($attribute, $default = null)
     {
-        return null;
+        if (!array_key_exists($attribute, $this->attributes)) {
+            return $default;
+        }
+
+        return $this->attributes[$attribute];
     }
 
-    public function withAttribute($name, $value)
+    public function withAttribute($attribute, $value)
     {
-        return $this;
+        $new = clone $this;
+        $new->attributes[$attribute] = $value;
+        return $new;
     }
 
     public function withoutAttribute($name)

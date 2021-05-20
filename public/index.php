@@ -38,7 +38,10 @@ try {
     $request = $request->withAttribute('matched_route_name', $routeMatch->getMatchedRouteName());
     $controller = $manager->get($routeMatch->getParam('controller'));
 
-    foreach($routeMatch->getParams() as $key => $value) {
+    $params = php_sapi_name() === 'cli'
+        ? extractCliParams(implode(' ', array_slice($argv, 1)))
+        : $routeMatch->getParams();
+    foreach($params as $key => $value) {
         $request = $request->withAttribute($key, $value);
     }
     $response = $controller->handle($request);
@@ -78,4 +81,23 @@ function read_resource(/*resource*/$resource): string
     fclose($resource);
 
     return $result;
+}
+
+function extractCliParams(string $string): array
+{
+    $result = [];
+    preg_match_all(
+        '/(-([a-z]) ([a-zA-Z0-9]*))|(--([a-z_]*)=([a-zA-Z0-9_]*))/',
+        $string,
+        $result,
+        PREG_SET_ORDER
+    );
+
+    $return = [];
+    foreach($result as $item) {
+        $value = array_pop($item);
+        $key = array_pop($item);
+        $return[$key] = $value;
+    }
+    return $return;
 }

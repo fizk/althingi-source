@@ -189,10 +189,44 @@ return [
         },
 
 
-        Controller\IndexerAssemblyController::class => function (ContainerInterface $container) {
-            return (new Controller\IndexerAssemblyController())
+        Controller\Cli\IndexerAssemblyController::class => function (ContainerInterface $container) {
+            return (new Controller\Cli\IndexerAssemblyController())
                 ->setAssemblyService($container->get(Service\Assembly::class))
                 ->setEventDispatcher($container->get(EventDispatcherInterface::class))
+                ;
+        },
+        Controller\Cli\IndexerCabinetController::class => function (ContainerInterface $container) {
+            return (new Controller\Cli\IndexerCabinetController())
+                ->setCabinetService($container->get(Service\Cabinet::class))
+                ->setEventDispatcher($container->get(EventDispatcherInterface::class))
+                ;
+        },
+        Controller\Cli\IndexerCommitteeSittingController::class => function (ContainerInterface $container) {
+            return (new Controller\Cli\IndexerCommitteeSittingController())
+                ->setCommitteeSitting($container->get(Service\CommitteeSitting::class))
+                ->setEventDispatcher($container->get(EventDispatcherInterface::class))
+                ;
+        },
+        Controller\Cli\IndexerCongressmanDocumentController::class => function (ContainerInterface $container) {
+            return (new Controller\Cli\IndexerCongressmanDocumentController())
+                ->setCongressmanDocumentService($container->get(Service\CongressmanDocument::class))
+                ->setEventDispatcher($container->get(EventDispatcherInterface::class))
+                ;
+        },
+        Controller\Cli\IndexerSessionController::class => function (ContainerInterface $container) {
+            return (new Controller\Cli\IndexerSessionController())
+                ->setSessionService($container->get(Service\Session::class))
+                ->setEventDispatcher($container->get(EventDispatcherInterface::class))
+                ;
+        },
+        Controller\Cli\IndexerCongressmanController::class => function (ContainerInterface $container) {
+            return (new Controller\Cli\IndexerCongressmanController())
+                ->setCongressmanService($container->get(Service\Congressman::class))
+                ->setEventDispatcher($container->get(EventDispatcherInterface::class))
+                ;
+        },
+        Controller\Cli\IndexController::class => function (ContainerInterface $container) {
+            return (new Controller\Cli\IndexController())
                 ;
         },
 
