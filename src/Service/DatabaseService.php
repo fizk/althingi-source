@@ -21,6 +21,17 @@ trait DatabaseService
         return $this->pdo;
     }
 
+    protected function toSelectString(string $table, array $params = [], string $order = null)
+    {
+        $mappedParams = array_map(function ($key) {
+            return "`{$key}` = :${key}";
+        }, array_keys($params));
+
+        return ("select * from `{$table}` ") .
+        (count($mappedParams) > 0 ? (' where ' . implode(' and ', $mappedParams)) : '') .
+        ($order !== null ? (" order by `{$order}`") : '');
+    }
+
     /**
      * This is a simple utility function that creates
      * a SQL INSERT string bases on the name of the table

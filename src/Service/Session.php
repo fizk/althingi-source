@@ -9,6 +9,7 @@ use Althingi\Presenters\IndexableSessionPresenter;
 use Althingi\Injector\{DatabaseAwareInterface, EventsAwareInterface};
 use PDO;
 use DateTime;
+use Generator;
 
 class Session implements DatabaseAwareInterface, EventsAwareInterface
 {
@@ -28,8 +29,32 @@ class Session implements DatabaseAwareInterface, EventsAwareInterface
             : null;
     }
 
+    public function fetchAllGenerator(?int $assembly_id = null, ?int $congressman_id = null): Generator
+    {
+        $params = [
+            'assembly_id' => $assembly_id,
+            'congressman_id' => $congressman_id,
+        ];
+
+        $filteredParams = array_filter($params, function ($value) {
+            return $value !== null;
+        });
+
+        $statement = $this->getDriver()->prepare(
+            $this->toSelectString('Session', $filteredParams, 'session_id')
+        );
+        $statement->execute($filteredParams);
+
+        while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
+            yield (new Hydrator\Session)->hydrate($object, new Model\Session());
+        }
+        $statement->closeCursor();
+        return null;
+    }
+
     /**
      * @return \Althingi\Model\Session[]
+     * @deprecated
      */
     public function fetchByCongressman(int $id): array
     {
@@ -46,6 +71,7 @@ class Session implements DatabaseAwareInterface, EventsAwareInterface
 
     /**
      * @return \Althingi\Model\Session[]
+     * @deprecated
      */
     public function fetchByAssembly(int $id): array
     {
@@ -62,6 +88,7 @@ class Session implements DatabaseAwareInterface, EventsAwareInterface
 
     /**
      * @return \Althingi\Model\Session[]
+     * @deprecated
      */
     public function fetchByAssemblyAndCongressman(int $assemblyId, int $congressmanId): array
     {

@@ -7,6 +7,7 @@ use Althingi\Hydrator;
 use Althingi\Injector\{EventsAwareInterface, DatabaseAwareInterface};
 use Althingi\Events\{UpdateEvent, AddEvent};
 use Althingi\Presenters\IndexableAssemblyPresenter;
+use Generator;
 use PDO;
 
 class Assembly implements DatabaseAwareInterface, EventsAwareInterface
@@ -56,8 +57,23 @@ class Assembly implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
+    public function fetchAllGenerator(): Generator
+    {
+        $statement = $this->getDriver()
+            ->prepare('select * from `Assembly` order by `assembly_id`');
+        $statement->execute();
+
+
+        while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
+            yield (new Hydrator\Assembly)->hydrate($object, new Model\Assembly());
+        }
+        $statement->closeCursor();
+        return null;
+    }
+
     /**
      * @return \Althingi\Model\Assembly[]
+     * @deprecated
      */
     public function fetchByCabinet(int $id): array
     {

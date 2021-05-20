@@ -441,12 +441,68 @@ return [
             ],
         ],
         'console' => [
-            'type' => Segment::class,
+            'type' => Literal::class,
             'options' => [
-                'route'    => '/console:assembly',
+                'route'    => '/console',
                 'defaults' => [
-                    'controller' => Controller\IndexerAssemblyController::class,
-                    'identifier' => 'id'
+                    'controller' => Controller\Cli\IndexController::class,
+                ],
+            ],
+            'may_terminate' => true,
+            'child_routes' => [
+                'assembly' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route'    => ':assembly',
+                        'defaults' => [
+                            'controller' => Controller\Cli\IndexerAssemblyController::class,
+                        ],
+                    ],
+                ],
+                'cabinet' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route'    => ':cabinet',
+                        'defaults' => [
+                            'controller' => Controller\Cli\IndexerCabinetController::class,
+                        ],
+                    ],
+                ],
+                'congressman' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route'    => ':congressman',
+                        'defaults' => [
+                            'controller' => Controller\Cli\IndexerCongressmanController::class,
+                        ],
+                    ],
+                ],
+                'committee-sitting' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route'    => ':committee-sitting',
+                        'defaults' => [
+                            'controller' => Controller\Cli\IndexerCommitteeSittingController::class,
+                        ],
+                    ],
+                ],
+                'congressman-document' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route'    => ':congressman-document',
+                        'defaults' => [
+                            'controller' => Controller\Cli\IndexerCongressmanDocumentController::class,
+                        ],
+                    ],
+                ],
+                'session' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route'    => ':session',
+                        'defaults' => [
+                            'controller' => Controller\Cli\IndexerSessionController::class,
+                        ],
+                    ],
                 ],
             ],
         ],

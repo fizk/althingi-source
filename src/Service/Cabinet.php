@@ -56,6 +56,20 @@ class Cabinet implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
+    public function fetchAllGenerator()
+    {
+        $statement = $this->getDriver()
+            ->prepare('select * from `Cabinet` order by `cabinet_id`');
+        $statement->execute();
+
+
+        while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
+            yield (new Hydrator\Cabinet)->hydrate($object, new Model\Cabinet());
+        }
+        $statement->closeCursor();
+        return null;
+    }
+
     public function get(int $id): ? Model\Cabinet
     {
         $statement = $this->getDriver()->prepare("select * from `Cabinet` where cabinet_id = :id");
@@ -97,6 +111,7 @@ class Cabinet implements DatabaseAwareInterface, EventsAwareInterface
 
     /**
      * @return \Althingi\Model\Cabinet[]
+     * @deprecated
      */
     public function fetchByAssembly(int $assemblyId): array
     {

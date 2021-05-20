@@ -144,6 +144,7 @@ class CongressmanController implements
      * @output \Althingi\Model\CongressmanPartyProperties[]
      * @query tegund thingmadur|varamadur
      * @206 Success
+     * @deprecated
      */
     public function assemblyAction(ServerRequest $request): ResponseInterface
     {
@@ -167,6 +168,7 @@ class CongressmanController implements
      * @output \Althingi\Model\CongressmanPartyProperties
      * @200 Success
      * @404 Resource not found
+     * @deprecated
      */
     public function assemblyCongressmanAction(ServerRequest $request): ResponseInterface
     {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Althingi\Controller;
+namespace Althingi\Controller\Cli;
 
 use Althingi\Service\Assembly;
 use Althingi\Events\AddEvent;
@@ -24,7 +24,7 @@ class IndexerAssemblyController implements ServiceAssemblyAwareInterface, Events
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        foreach ($this->assemblyService->fetchAll() as $model) {
+        foreach ($this->assemblyService->fetchAllGenerator() as $model) {
             $this->getEventDispatcher()->dispatch(
                 new AddEvent(new IndexableAssemblyPresenter($model), ['rows' => 1]),
             );

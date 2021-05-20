@@ -43,6 +43,9 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
+    /**
+     * @deprecated
+     */
     public function getByCongressman(int $congressmanId, DateTime $date): ? Model\Party
     {
         $statement = $this->getDriver()->prepare('
@@ -65,6 +68,9 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
             : null;
     }
 
+    /**
+     * @deprecated
+     */
     public function getByCongressmanAndAssembly(int $congressmanId, int $assemblyId): ? Model\Party
     {
         $statement = $this->getDriver()->prepare('
@@ -88,6 +94,7 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
 
     /**
      * @return \Althingi\Model\PartyAndTime[]
+     * @deprecated
      */
     public function fetchTimeByAssembly(int $assemblyId, array $category = ['A']): array
     {
@@ -123,6 +130,7 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
 
     /**
      * @return \Althingi\Model\Party[]
+     * @deprecated
      */
     public function fetchByCongressmanAndAssembly(int $congressmanId, int $assemblyId): array
     {
@@ -145,6 +153,7 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
 
     /**
      * @return \Althingi\Model\Party[]
+     * @deprecated
      */
     public function fetchByAssembly(int $assemblyId, array $exclude = []): array
     {
@@ -174,6 +183,7 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
 
     /**
      * @return \Althingi\Model\PartyAndElection[]
+     * @deprecated
      */
     public function fetchElectedByAssembly(int $assemblyId): array
     {
@@ -190,6 +200,7 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
 
     /**
      * @return \Althingi\Model\Party[]
+     * @deprecated
      */
     public function fetchByCongressman(int $congressmanId): array
     {
@@ -206,6 +217,7 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
 
     /**
      * @return \Althingi\Model\Party[]
+     * @deprecated
      */
     public function fetchByCabinet(int $cabinetId): array
     {
