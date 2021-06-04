@@ -225,6 +225,18 @@ return [
                 ->setEventDispatcher($container->get(EventDispatcherInterface::class))
                 ;
         },
+        Controller\Cli\IndexerPartyController::class => function (ContainerInterface $container) {
+            return (new Controller\Cli\IndexerPartyController())
+                ->setPartyService($container->get(Service\Party::class))
+                ->setEventDispatcher($container->get(EventDispatcherInterface::class))
+                ;
+        },
+        Controller\Cli\IndexerConstituencyController::class => function (ContainerInterface $container) {
+            return (new Controller\Cli\IndexerConstituencyController())
+                ->setConstituencyService($container->get(Service\Constituency::class))
+                ->setEventDispatcher($container->get(EventDispatcherInterface::class))
+                ;
+        },
         Controller\Cli\IndexController::class => function (ContainerInterface $container) {
             return (new Controller\Cli\IndexController())
                 ;

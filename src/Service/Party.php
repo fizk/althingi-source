@@ -9,6 +9,7 @@ use Althingi\Presenters\IndexablePartyPresenter;
 use Althingi\Injector\{DatabaseAwareInterface, EventsAwareInterface};
 use PDO;
 use DateTime;
+use Generator;
 
 class Party implements DatabaseAwareInterface, EventsAwareInterface
 {
@@ -41,6 +42,20 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
         return array_map(function ($object) {
             return (new Hydrator\Party())->hydrate($object, new Model\Party());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
+    }
+
+    public function fetchAllGenerator(): Generator
+    {
+        $statement = $this->getDriver()
+            ->prepare('select * from `Party` order by `party_id`');
+        $statement->execute();
+
+
+        while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
+            yield (new Hydrator\Party)->hydrate($object, new Model\Party());
+        }
+        $statement->closeCursor();
+        return null;
     }
 
     /**

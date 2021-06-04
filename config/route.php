@@ -468,6 +468,24 @@ return [
                         ],
                     ],
                 ],
+                'party' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route'    => ':party',
+                        'defaults' => [
+                            'controller' => Controller\Cli\IndexerPartyController::class,
+                        ],
+                    ],
+                ],
+                'constituency' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route'    => ':constituency',
+                        'defaults' => [
+                            'controller' => Controller\Cli\IndexerConstituencyController::class,
+                        ],
+                    ],
+                ],
                 'congressman' => [
                     'type' => Literal::class,
                     'options' => [

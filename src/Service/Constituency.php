@@ -7,6 +7,7 @@ use Althingi\Hydrator;
 use Althingi\Injector\DatabaseAwareInterface;
 use PDO;
 use DateTime;
+use Generator;
 
 class Constituency implements DatabaseAwareInterface
 {
@@ -25,6 +26,23 @@ class Constituency implements DatabaseAwareInterface
             : null;
     }
 
+    public function fetchAllGenerator(): Generator
+    {
+        $statement = $this->getDriver()
+            ->prepare('select * from `Constituency` order by `constituency_id`');
+        $statement->execute();
+
+
+        while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
+            yield (new Hydrator\Constituency)->hydrate($object, new Model\Constituency());
+        }
+        $statement->closeCursor();
+        return null;
+    }
+
+    /**
+     * @deprecated
+     */
     public function getByCongressman(int $congressmanId, DateTime $date): ? Model\ConstituencyDate
     {
         $statement = $this->getDriver()->prepare('
@@ -46,6 +64,9 @@ class Constituency implements DatabaseAwareInterface
             : null ;
     }
 
+    /**
+     * @deprecated
+     */
     public function getByCongressmanAndConstituency(int $congressmanId, int $assemblyId): ? Model\ConstituencyDate
     {
         $statement = $this->getDriver()->prepare('
@@ -87,6 +108,7 @@ class Constituency implements DatabaseAwareInterface
 
     /**
      * @return Althingi\Model\ConstituencyDate[]
+     * @deprecated
      */
     public function fetchByCongressman(int $congressmanId): array
     {
@@ -107,6 +129,7 @@ class Constituency implements DatabaseAwareInterface
 
     /**
      * @return \Althingi\Model\ConstituencyValue[]
+     * @deprecated
      */
     public function fetchFrequencyByAssembly(int $assemblyId): array
     {
