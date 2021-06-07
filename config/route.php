@@ -334,6 +334,26 @@ return [
                         ],
                     ],
                 ],
+                'thingflokkur' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route'    => '/thingflokkur',
+                        'defaults' => [
+                            'controller' => Controller\PartyController::class,
+                            'action' => 'get-by-congressman',
+                        ],
+                    ],
+                ],
+                'kjordaemi' => [
+                    'type' => Segment::class,
+                    'options' => [
+                        'route'    => '/kjordaemi',
+                        'defaults' => [
+                            'controller' => Controller\ConstituencyController::class,
+                            'action' => 'get-by-congressman',
+                        ],
+                    ],
+                ],
                 'nefndaseta' => [
                     'type' => Segment::class,
                     'options' => [
@@ -492,6 +512,15 @@ return [
                         'route'    => ':congressman',
                         'defaults' => [
                             'controller' => Controller\Cli\IndexerCongressmanController::class,
+                        ],
+                    ],
+                ],
+                'committee' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route'    => ':committee',
+                        'defaults' => [
+                            'controller' => Controller\Cli\IndexerCommitteeController::class,
                         ],
                     ],
                 ],

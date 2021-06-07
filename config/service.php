@@ -237,6 +237,12 @@ return [
                 ->setEventDispatcher($container->get(EventDispatcherInterface::class))
                 ;
         },
+        Controller\Cli\IndexerCommitteeController::class => function (ContainerInterface $container) {
+            return (new Controller\Cli\IndexerCommitteeController())
+                ->setCommitteeService($container->get(Service\Committee::class))
+                ->setEventDispatcher($container->get(EventDispatcherInterface::class))
+                ;
+        },
         Controller\Cli\IndexController::class => function (ContainerInterface $container) {
             return (new Controller\Cli\IndexController())
                 ;

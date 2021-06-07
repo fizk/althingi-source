@@ -40,9 +40,6 @@ class Constituency implements DatabaseAwareInterface
         return null;
     }
 
-    /**
-     * @deprecated
-     */
     public function getByCongressman(int $congressmanId, DateTime $date): ? Model\ConstituencyDate
     {
         $statement = $this->getDriver()->prepare('

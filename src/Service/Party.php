@@ -58,9 +58,6 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
         return null;
     }
 
-    /**
-     * @deprecated
-     */
     public function getByCongressman(int $congressmanId, DateTime $date): ? Model\Party
     {
         $statement = $this->getDriver()->prepare('

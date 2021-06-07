@@ -16,6 +16,7 @@ use Althingi\Router\{
     RestControllerInterface,
     RestControllerTrait
 };
+use DateTime;
 
 class ConstituencyController implements
     RestControllerInterface,
@@ -81,6 +82,22 @@ class ConstituencyController implements
         }
 
         return new EmptyResponse(404);
+    }
+
+    public function getByCongressmanAction(ServerRequest $request): ResponseInterface
+    {
+        $params = $request->getQueryParams();
+        if (array_key_exists('dags', $params)) {
+            $constituencies = $this->constituencyService->getByCongressman(
+                $request->getAttribute('congressman_id'),
+                new DateTime($params['dags'])
+            );
+            return new JsonResponse([$constituencies]);
+        } else {
+            return new JsonResponse([]);
+        }
+
+
     }
 
     public function setConstituencyService(Service\Constituency $constituency): self

@@ -16,6 +16,7 @@ use Althingi\Router\{
     RestControllerInterface,
     RestControllerTrait
 };
+use DateTime;
 
 class PartyController implements
     RestControllerInterface,
@@ -47,6 +48,25 @@ class PartyController implements
     {
         $parties = $this->partyService->fetch();
         return new JsonResponse($parties);
+    }
+
+    /**
+     * @output \Althingi\Model\Party[]
+     * @200 Success
+     */
+    public function getByCongressmanAction(ServerRequest $request): ResponseInterface
+    {
+        $params = $request->getQueryParams();
+        if (array_key_exists('dags', $params)) {
+            $parties = $this->partyService->getByCongressman(
+                $request->getAttribute('congressman_id'),
+                new DateTime($params['dags'])
+            );
+            return new JsonResponse([$parties]);
+        }
+        else {
+            return new JsonResponse([]);
+        }
     }
 
     /**
@@ -92,6 +112,7 @@ class PartyController implements
 
         return new EmptyResponse(404);
     }
+
 
     public function setPartyService(Service\Party $party): self
     {

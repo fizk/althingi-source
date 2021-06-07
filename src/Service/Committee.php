@@ -5,6 +5,7 @@ namespace Althingi\Service;
 use Althingi\Model;
 use Althingi\Hydrator;
 use Althingi\Injector\DatabaseAwareInterface;
+use Generator;
 use PDO;
 
 class Committee implements DatabaseAwareInterface
@@ -36,6 +37,21 @@ class Committee implements DatabaseAwareInterface
                 ? (new Hydrator\Committee())->hydrate($object, new Model\Committee())
                 : null;
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
+    }
+
+
+    public function fetchAllGenerator(): Generator
+    {
+        $statement = $this->getDriver()
+            ->prepare('select * from `Committee` order by `committee_id`');
+        $statement->execute();
+
+
+        while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
+            yield (new Hydrator\Committee)->hydrate($object, new Model\Committee());
+        }
+        $statement->closeCursor();
+        return null;
     }
 
     /**
