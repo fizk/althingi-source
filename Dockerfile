@@ -78,7 +78,6 @@ COPY ./composer.json ./composer.json
 COPY ./composer.lock ./composer.lock
 
 RUN if [ "$ENV" != "production" ] ; then \
-    composer config -g github-oauth.github.com 6123ac2cdc66febecc9dd6227a6819b01c0a5e66 && \
     composer install --prefer-source --no-interaction \
     && composer dump-autoload; \
     fi ;

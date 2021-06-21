@@ -63,8 +63,7 @@ class PartyController implements
                 new DateTime($params['dags'])
             );
             return new JsonResponse([$parties]);
-        }
-        else {
+        } else {
             return new JsonResponse([]);
         }
     }

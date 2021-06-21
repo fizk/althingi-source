@@ -96,8 +96,6 @@ class ConstituencyController implements
         } else {
             return new JsonResponse([]);
         }
-
-
     }
 
     public function setConstituencyService(Service\Constituency $constituency): self

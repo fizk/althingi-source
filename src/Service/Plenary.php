@@ -5,6 +5,7 @@ namespace Althingi\Service;
 use Althingi\Model;
 use Althingi\Hydrator;
 use Althingi\Injector\DatabaseAwareInterface;
+use Generator;
 use PDO;
 
 class Plenary implements DatabaseAwareInterface
@@ -43,6 +44,28 @@ class Plenary implements DatabaseAwareInterface
         return array_map(function ($object) {
             return (new Hydrator\Plenary())->hydrate($object, new Model\Plenary());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
+    }
+
+    public function fetchAllGenerator(?int $assembly_id): Generator
+    {
+        $params = [
+            'assembly_id' => $assembly_id,
+        ];
+
+        $filteredParams = array_filter($params, function ($value) {
+            return $value !== null;
+        });
+
+        $statement = $this->getDriver()->prepare(
+            $this->toSelectString('Plenary', $filteredParams, 'plenary_id')
+        );
+        $statement->execute($filteredParams);
+
+        while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
+            yield (new Hydrator\Plenary)->hydrate($object, new Model\Plenary());
+        }
+        $statement->closeCursor();
+        return null;
     }
 
     public function countByAssembly(int $id): int

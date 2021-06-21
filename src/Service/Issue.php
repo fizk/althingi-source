@@ -32,15 +32,15 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
 
     public function get(int $issue_id, int $assembly_id, $category = 'A'): ? Model\Issue
     {
-        $issueStatement = $this->getDriver()->prepare(
-            'select * from `Issue` I
-              where I.assembly_id = :assembly_id
-              and I.issue_id = :issue_id
-              and I.category = :category'
-        );
+        $issueStatement = $this->getDriver()->prepare('
+            select * from `Issue` I
+            where I.`assembly_id` = :assembly_id
+            and I.`issue_id` = :issue_id
+            and I.`category` = :category
+        ');
         $issueStatement->execute([
-            'issue_id' => $issue_id,
             'assembly_id' => $assembly_id,
+            'issue_id' => $issue_id,
             'category' => $category
         ]);
 

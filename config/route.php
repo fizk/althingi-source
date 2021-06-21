@@ -542,6 +542,24 @@ return [
                         ],
                     ],
                 ],
+                'plenary' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route'    => ':plenary',
+                        'defaults' => [
+                            'controller' => Controller\Cli\IndexerPlenaryController::class,
+                        ],
+                    ],
+                ],
+                'plenary-agenda' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route'    => ':plenary-agenda',
+                        'defaults' => [
+                            'controller' => Controller\Cli\IndexerPlenaryAgentaController::class,
+                        ],
+                    ],
+                ],
                 'session' => [
                     'type' => Literal::class,
                     'options' => [

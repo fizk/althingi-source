@@ -59,15 +59,13 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
             $statement->execute([
                 'assembly_id' => $assemblyId
             ]);
-        }
-        else {
+        } else {
             $statement = $this->getDriver()
                 ->prepare('
                     select * from `Congressman`
                     order by `name`;
                 ');
             $statement->execute();
-
         }
 
         while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {

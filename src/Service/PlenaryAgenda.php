@@ -5,6 +5,7 @@ namespace Althingi\Service;
 use Althingi\Model;
 use Althingi\Hydrator;
 use Althingi\Injector\DatabaseAwareInterface;
+use Generator;
 use PDO;
 
 class PlenaryAgenda implements DatabaseAwareInterface
@@ -49,6 +50,28 @@ class PlenaryAgenda implements DatabaseAwareInterface
         return array_map(function ($item) {
             return (new Hydrator\PlenaryAgenda)->hydrate($item, new Model\PlenaryAgenda());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
+    }
+
+    public function fetchAllGenerator(?int $assembly_id): Generator
+    {
+        $params = [
+            'assembly_id' => $assembly_id,
+        ];
+
+        $filteredParams = array_filter($params, function ($value) {
+            return $value !== null;
+        });
+
+        $statement = $this->getDriver()->prepare(
+            $this->toSelectString('PlenaryAgenda', $filteredParams, 'item_id')
+        );
+        $statement->execute($filteredParams);
+
+        while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
+            yield (new Hydrator\PlenaryAgenda)->hydrate($object, new Model\PlenaryAgenda());
+        }
+        $statement->closeCursor();
+        return null;
     }
 
     public function create(Model\PlenaryAgenda $data)

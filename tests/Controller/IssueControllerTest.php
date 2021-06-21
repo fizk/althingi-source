@@ -50,7 +50,7 @@ class IssueControllerTest extends TestCase
     {
         $this->getMockService(Service\Issue::class)
             ->shouldReceive('get')
-            ->with(100, 200, 'A')
+            ->with(200, 100, 'A')
             ->andReturn(new Model\Issue())
             ->getMock();
 
@@ -68,7 +68,7 @@ class IssueControllerTest extends TestCase
     {
         $this->getMockService(Service\Issue::class)
             ->shouldReceive('get')
-            ->with(100, 200, 'B')
+            ->with(200, 100, 'B')
             ->andReturn(new Model\Issue())
             ->getMock();
 
@@ -86,7 +86,7 @@ class IssueControllerTest extends TestCase
     {
         $this->getMockService(Service\Issue::class)
             ->shouldReceive('get')
-            ->with(100, 200, 'A')
+            ->with(200, 100, 'A')
             ->andReturn(null)
             ->getMock();
 

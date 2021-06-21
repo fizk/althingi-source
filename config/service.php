@@ -2,29 +2,36 @@
 
 use Althingi\Service;
 use Althingi\Controller;
-use Psr\Container\ContainerInterface;
-use Psr\Log\LoggerInterface;
-use Althingi\Events\RequestFailureEvent;
-use Althingi\Events\RequestSuccessEvent;
+use Althingi\Events\{
+    AddEvent,
+    UpdateEvent,
+    DeleteEvent
+};
+use Althingi\QueueActions\{
+    Add,
+    Update,
+    Delete
+};
+use Althingi\Events\{
+    RequestSuccessEvent,
+    RequestFailureEvent
+};
 use Althingi\Router\Http\TreeRouteStack;
 use Althingi\Router\RouteInterface;
-use Althingi\Utils\BlackHoleMessageBroker;
-use Althingi\Utils\MessageBrokerInterface;
-use Althingi\Utils\AmqpMessageBroker;
-use Laminas\Cache\Storage\StorageInterface;
-use Laminas\Cache\Storage;
-use PhpAmqpLib\Connection\AMQPStreamConnection;
+use Althingi\Utils\{
+    MessageBrokerInterface,
+    BlackHoleMessageBroker,
+    AmqpMessageBroker
+};
+use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Phly\EventDispatcher\EventDispatcher;
-use Phly\EventDispatcher\ListenerProvider\AttachableListenerProvider;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
+use League\Event\{
+    EventDispatcher,
+    PrioritizedListenerRegistry
+};
 
-use Althingi\Events\AddEvent;
-use Althingi\Events\UpdateEvent;
-use Althingi\Events\DeleteEvent;
-
-use Althingi\QueueActions\Add;
-use Althingi\QueueActions\Update;
-use Althingi\QueueActions\Delete;
 
 return [
     'factories' => [
@@ -243,6 +250,18 @@ return [
                 ->setEventDispatcher($container->get(EventDispatcherInterface::class))
                 ;
         },
+        Controller\Cli\IndexerPlenaryController::class => function (ContainerInterface $container) {
+            return (new Controller\Cli\IndexerPlenaryController())
+                ->setPlenaryService($container->get(Service\Plenary::class))
+                ->setEventDispatcher($container->get(EventDispatcherInterface::class))
+                ;
+        },
+        Controller\Cli\IndexerPlenaryAgentaController::class => function (ContainerInterface $container) {
+            return (new Controller\Cli\IndexerPlenaryAgentaController())
+                ->setPlenaryAgendaService($container->get(Service\PlenaryAgenda::class))
+                ->setEventDispatcher($container->get(EventDispatcherInterface::class))
+                ;
+        },
         Controller\Cli\IndexController::class => function (ContainerInterface $container) {
             return (new Controller\Cli\IndexController())
                 ;
@@ -420,16 +439,16 @@ return [
 
         EventDispatcherInterface::class => function (ContainerInterface $container, $requestedName) {
             $logger = $container->get(Psr\Log\LoggerInterface::class);
-            $provider = new AttachableListenerProvider();
+            $provider = new PrioritizedListenerRegistry();
 
-            $provider->listen(RequestSuccessEvent::class, function (RequestSuccessEvent $event) use ($logger) {
+            $provider->subscribeTo(RequestSuccessEvent::class, function (RequestSuccessEvent $event) use ($logger) {
                 $logger->debug((string) $event);
             });
-            $provider->listen(RequestFailureEvent::class, function (RequestFailureEvent $event) use ($logger) {
+            $provider->subscribeTo(RequestFailureEvent::class, function (RequestFailureEvent $event) use ($logger) {
                 $logger->error((string) $event);
             });
 
-            $provider->listen(AddEvent::class, function (AddEvent $event) use ($logger, $container) {
+            $provider->subscribeTo(AddEvent::class, function (AddEvent $event) use ($logger, $container) {
                 $result = (new Add($container->get(MessageBrokerInterface::class), strtolower(getenv('QUEUE_FORCED')) === 'true'))(
                     $event->getPresenter(),
                     $event->getParams()
@@ -437,7 +456,7 @@ return [
                 $logger->debug((string) $event);
             });
 
-            $provider->listen(UpdateEvent::class, function (UpdateEvent $event) use ($logger, $container) {
+            $provider->subscribeTo(UpdateEvent::class, function (UpdateEvent $event) use ($logger, $container) {
                 $result = (new Update($container->get(MessageBrokerInterface::class), strtolower(getenv('QUEUE_FORCED')) === 'true'))(
                     $event->getPresenter(),
                     $event->getParams()
@@ -445,7 +464,7 @@ return [
                 $logger->debug((string) $event);
             });
 
-            $provider->listen(DeleteEvent::class, function (DeleteEvent $event) use ($logger, $container) {
+            $provider->subscribeTo(DeleteEvent::class, function (DeleteEvent $event) use ($logger, $container) {
                 $result = (new Delete($container->get(MessageBrokerInterface::class), strtolower(getenv('QUEUE_FORCED')) === 'true'))(
                     $event->getPresenter(),
                     $event->getParams()
@@ -482,29 +501,6 @@ return [
             });
 
             return $logger;
-        },
-
-        StorageInterface::class => function (ContainerInterface $sm) {
-            switch (strtolower(getenv('CACHE_TYPE'))) {
-                case 'file':
-                    return (new Storage\Adapter\Filesystem())
-                        ->setOptions(
-                            (new Storage\Adapter\FilesystemOptions())->setCacheDir('./data/cache')
-                        );
-                    break;
-                case 'memory':
-                    $options = (new Storage\Adapter\RedisOptions())
-                        ->setTtl(60)
-                        ->setServer([
-                            'host' => getenv('CACHE_HOST') ?: 'localhost',
-                            'port' => getenv('CACHE_PORT') ?: 6379
-                        ]);
-                    return new Storage\Adapter\Redis($options);
-                    break;
-                default:
-                    return new Storage\Adapter\BlackHole();
-                    break;
-            }
         },
 
         MessageBrokerInterface::class => function (ContainerInterface $container) {

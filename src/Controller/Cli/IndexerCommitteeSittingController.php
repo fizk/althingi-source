@@ -28,7 +28,11 @@ class IndexerCommitteeSittingController implements ServiceCommitteeSittingAwareI
         $congressmanId = $request->getAttribute('congressman_id', null);
         $committeeId = $request->getAttribute('committee_id', null);
 
-        foreach ($this->committeeSittingService->fetchAllGenerator($assemblyId, $congressmanId, $committeeId) as $model) {
+        foreach ($this->committeeSittingService->fetchAllGenerator(
+            $assemblyId,
+            $congressmanId,
+            $committeeId
+        ) as $model) {
             $this->getEventDispatcher()->dispatch(
                 new AddEvent(new IndexableCommitteeSittingPresenter($model), ['rows' => 1]),
             );

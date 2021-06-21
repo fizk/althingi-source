@@ -10,7 +10,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - 8080:80
+      - 7070:80
       - 9003:9003
     volumes:
       - ./config/:/var/www/config
@@ -35,7 +35,10 @@ services:
 
       - CACHE_TYPE=none
 
-      - BROKER=none
+      - BROKER=amqp
+      - BROKER_HOST=host.docker.internal
+      - BROKER_USER=admin
+      - BROKER_PASSWORD=Admin@123
 
       - DOCUMENT_SERVER=${ENV_DOCUMENT_SERVER:-localhost:8080}
       - DOCUMENT_DEFINITION=${ENV_DOCUMENT_DEFINITION:-/openapi}
@@ -57,7 +60,7 @@ services:
       - ./composer.json/:/var/www/composer.json
       - ./composer.lock/:/var/www/composer.lock
       - ./config/:/var/www/config
-      - ./vendor/:/var/www/vendor
+    #   - ./vendor/:/var/www/vendor
       - ./src/:/var/www/src
       - ./public/:/var/www/public
       - ./tests/:/var/www/tests
@@ -95,8 +98,8 @@ services:
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=example
-    volumes:
-      - ./assets/:/home/
+    # volumes:
+    #   - ./assets/:/home/
 
   database-test:
       container_name: althingi-source-db-test

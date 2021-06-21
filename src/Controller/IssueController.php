@@ -36,7 +36,8 @@ class IssueController implements
         $issueId = $request->getAttribute('issue_id', 0);
         $category = strtoupper($request->getAttribute('category', 'a'));
 
-        $issue = $this->issueService->get($assemblyId, $issueId, $category);
+        $issue = $this->issueService->get($issueId, $assemblyId, $category);
+
         return $issue
             ? new JsonResponse($issue)
             : new EmptyResponse(404);
