@@ -31,7 +31,9 @@ use League\Event\{
     EventDispatcher,
     PrioritizedListenerRegistry
 };
-
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+use Monolog\Formatter\LineFormatter;
 
 return [
     'factories' => [
@@ -475,32 +477,11 @@ return [
             return new EventDispatcher($provider);
         },
 
-        LoggerInterface::class => function (ContainerInterface $sm) {
-            // return (new \Monolog\Logger('aggregator'))
-            //     ->pushHandler((new \Monolog\Handler\StreamHandler('php://stdout', \Monolog\Logger::DEBUG))
-            //     ->setFormatter(new \Monolog\Formatter\LineFormatter("[%datetime%] %level_name% %message%\n")));
-
-            $handlers = [];
-            $logger = (new \Monolog\Logger('althingi-api'))
-            ->pushProcessor(new \Monolog\Processor\MemoryPeakUsageProcessor(true, false))
-                ->pushProcessor(new \Monolog\Processor\MemoryUsageProcessor(true, false));
-
-            if (getenv('LOG_PATH') === false || strtolower(getenv('LOG_PATH')) === 'none') {
-                return $logger->setHandlers([new \Monolog\Handler\NullHandler()]);
-            } else {
-                $handlers[] = new \Monolog\Handler\StreamHandler(getenv('LOG_PATH'));
-            }
-
-            $formattedHandlers = array_map(function (\Monolog\Handler\HandlerInterface $handler) {
-                $handler->setFormatter(new \Monolog\Formatter\LineFormatter());
-                return $handler;
-            }, $handlers);
-
-            array_walk($formattedHandlers, function ($handler) use ($logger) {
-                $logger->pushHandler($handler);
-            });
-
-            return $logger;
+        Psr\Log\LoggerInterface::class => function (ContainerInterface $container, $requestedName) {
+            return (new Logger('source'))
+                ->pushHandler((new StreamHandler('php://stdout', Logger::DEBUG))
+                        ->setFormatter(new LineFormatter("[%datetime%] %level_name% %message%\n"))
+                );
         },
 
         MessageBrokerInterface::class => function (ContainerInterface $container) {

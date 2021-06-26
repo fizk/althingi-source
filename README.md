@@ -6,25 +6,22 @@ The API is configures with environment variables
 
 | name                | default                          | Options                               | description                   |
 |---------------------|----------------------------------|---------------------------------------|-------------------------------|
-| DB_HOST             | localhost                        | <string>                              |
-| DB_PORT             | 3306                             | <number>                              |
-| DB_NAME             | althingi                         | <string>                              |
-| DB_USER             | root                             | <string>                              |
-| DB_PASSWORD         |                                  | <string>                              |
+| DB_HOST             | localhost                        | <string>                              |                               |
+| DB_PORT             | 3306                             | <number>                              |                               |
+| DB_NAME             | althingi                         | <string>                              |                               |
+| DB_USER             | root                             | <string>                              |                               |
+| DB_PASSWORD         |                                  | <string>                              |                               |
 | LOG_PATH            |                                  | <string>                              | Save logs to disk or php://stdout
-| CACHE_TYPE          | none                             | file / memory / none                  |
-| CACHE_HOST          |                                  | <string>                              |
-| CACHE_PORT          |                                  | <number>                              |
-| BROKER              | none                             | amqp / none                           |
-| BROKER_HOST         | localhost                        | <string>                              |
-| BROKER_PORT         | 5672                             | <string>                              |
-| BROKER_USER         | guest                            | <string>                              |
-| BROKER_PASSWORD     | guest                            | <string>                              |
-| BROKER_VHOST        | /                                | <string>                              |
-| BROKER_FORCED       | false                            | true / false                          | if event should be sent to queue even though no update occurred
-| DOCUMENT_SERVER     |                                  | <string>                              |
-| DOCUMENT_DEFINITION |                                  | <string>                              |
-| INDEXER_STALL_TIME  | 150000                           | <int>                                 | How long the indexer sleeps between actions
+| BROKER              | none                             | amqp / none                           |                               |
+| BROKER_HOST         | localhost                        | <string>                              |                               |
+| BROKER_PORT         | 5672                             | <string>                              |                               |
+| BROKER_USER         | guest                            | <string>                              |                               |
+| BROKER_PASSWORD     | guest                            | <string>                              |                               |
+| BROKER_VHOST        | /                                | <string>                              |                               |
+| QUEUE_FORCED        | false                            | true / false                          | if event should be sent to queue even though no update
+| DOCUMENT_SERVER     |                                  | <string>                              |                               |
+| DOCUMENT_DEFINITION |                                  | <string>                              |                               |
+| INDEXER_STALL_TIME  | 150000                           | <int>                                 | How long the indexer sleeps between actions |
 
 ## Development
 This repo comes with a **Dockerfile**. It is based off of a Apache/PHP image and will install all needed PHP extensions and

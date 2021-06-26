@@ -20,10 +20,18 @@ class RequestSuccessEvent
 
     public function __toString()
     {
-        return implode(' ', [
-            $this->request->getMethod(),
-            $this->request->getUri()->__toString(),
-            $this->response->getStatusCode()
+        return json_encode([
+            'section_name' => 'request',
+            'request_method' => count($this->request->getHeader('X-HTTP-Method-Override')) > 0
+                ? $this->request->getHeader('X-HTTP-Method-Override')[0]
+                : $this->request->getMethod(),
+            'request_headers' => $this->request->getHeaders(),
+            'request_uri' => $this->request->getUri()->__toString(),
+            'response_status' => $this->response->getStatusCode(),
+            'response_headers' => $this->response->getHeaders(),
+            'error_file' => null,
+            'error_message' => null,
+            'error_trace' => null,
         ]);
     }
 }

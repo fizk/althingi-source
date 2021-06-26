@@ -55,12 +55,21 @@ class DeleteEvent implements EventInterface, IndexablePresenterAwareInterface
 
     public function __toString()
     {
-        return implode(' ', [
-            'DeleteEvent',
-            $this->presenter->getIndex(),
-            $this->presenter->getIdentifier(),
-            $this->presenter->getType(),
-            get_class($this->presenter->getModel()),
+        return json_encode([
+            'section_name' => 'query',
+            'request_method' => 'DeleteEvent',
+            'request_headers' => [],
+            'request_uri' => implode('/', [
+                get_class($this->presenter->getModel()),
+                $this->presenter->getType(),
+                $this->presenter->getIndex(),
+                $this->presenter->getIdentifier(),
+            ]),
+            'response_status' => 200,
+            'response_headers' => [],
+            'error_file' => null,
+            'error_message' => null,
+            'error_trace' => null,
         ]);
     }
 }
