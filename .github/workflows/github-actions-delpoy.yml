@@ -29,10 +29,19 @@ jobs:
         with:
           push: true
           build-args: ENV=production
-          tags: ${{ secrets.DOCKER_USERNAME }}/althingi-source:${{ github.sha }}, ${{ secrets.DOCKER_USERNAME }}/althingi-source:latest
+          labels: |
+            git_sha=${{ github.sha }}
+            github_run_id=${{ github.run_id }}
+            github_run_number=${{ github.run_number }}
+            docker_digest=${{ steps.docker_build.outputs.digest }}
+          tags: ${{ secrets.DOCKER_USERNAME }}/althingi-source:${{ github.run_id }}, ${{ secrets.DOCKER_USERNAME }}/althingi-source:latest
       -
-        name: Image digest
-        run: echo ${{ steps.docker_build.outputs.digest }}
+        name: Build versioning
+        run: |
+            echo outputs.digest: ${{ steps.docker_build.outputs.digest }}
+            echo github.sha: ${{ github.sha }}
+            echo github.run_number ${{ github.run_number }}
+            echo github.run_id: ${{ github.run_id }}
       -
         name: Deploy container to server
         uses: appleboy/ssh-action@master
