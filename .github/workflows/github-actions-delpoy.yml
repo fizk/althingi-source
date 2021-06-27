@@ -30,16 +30,15 @@ jobs:
           push: true
           build-args: ENV=production
           labels: |
-            git_sha=${{ github.sha }}
+            git_commit=${{ github.sha }}
             github_run_id=${{ github.run_id }}
             github_run_number=${{ github.run_number }}
-            docker_digest=${{ steps.docker_build.outputs.digest }}
           tags: ${{ secrets.DOCKER_USERNAME }}/althingi-source:${{ github.run_id }}, ${{ secrets.DOCKER_USERNAME }}/althingi-source:latest
       -
         name: Build versioning
         run: |
             echo outputs.digest: ${{ steps.docker_build.outputs.digest }}
-            echo github.sha: ${{ github.sha }}
+            echo github.commit: ${{ github.sha }}
             echo github.run_number ${{ github.run_number }}
             echo github.run_id: ${{ github.run_id }}
       -

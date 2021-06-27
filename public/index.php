@@ -57,7 +57,7 @@ try {
         500,
         0,
         $error->getMessage(),
-        "{$error->getFile()}:{$error->getLine()} ",
+        "{$error->getFile()}:{$error->getLine()}",
         $error->getTrace(),
     ], 500));
 

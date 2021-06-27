@@ -25,9 +25,9 @@ class RequestFailureEvent
                 : $this->request->getMethod(),
             'request_headers' => $this->request->getHeaders(),
             'request_uri' => $this->request->getUri()->__toString(),
-            'response_status' => 0,
+            'response_status' => 500,
             'response_headers' => [],
-            'error_file' => "{$this->exception->getFile()}:{$this->error->getLine()}",
+            'error_file' => "{$this->exception->getFile()}:{$this->exception->getLine()}",
             'error_message' => $this->exception->getMessage(),
             'error_trace' => $this->exception->getTrace(),
         ]);
