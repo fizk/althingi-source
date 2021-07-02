@@ -7,7 +7,7 @@ use Psr\Http\Message\{
     ServerRequestInterface
 };
 
-class RequestSuccessEvent
+class RequestUnsuccessEvent
 {
     private ServerRequestInterface $request;
     private ResponseInterface $response;
@@ -30,8 +30,8 @@ class RequestSuccessEvent
             'response_status' => $this->response->getStatusCode(),
             'response_headers' => $this->response->getHeaders(),
             'error_file' => null,
-            'error_message' => null,
-            'error_trace' => null,
+            'error_message' => "{$this->request->getUri()->__toString()}:{$this->response->getStatusCode()}",
+            'error_trace' => json_decode($this->response->getBody()->__toString()),
         ];
     }
 

@@ -16,9 +16,9 @@ class RequestFailureEvent
         $this->exception = $exception;
     }
 
-    public function __toString()
+    public function toJSON()
     {
-        return json_encode([
+        return [
             'section_name' => 'request',
             'request_method' => count($this->request->getHeader('X-HTTP-Method-Override')) > 0
                 ? $this->request->getHeader('X-HTTP-Method-Override')[0]
@@ -30,6 +30,11 @@ class RequestFailureEvent
             'error_file' => "{$this->exception->getFile()}:{$this->exception->getLine()}",
             'error_message' => $this->exception->getMessage(),
             'error_trace' => $this->exception->getTrace(),
-        ]);
+        ];
+    }
+
+    public function __toString()
+    {
+        return json_encode($this->toJSON());
     }
 }

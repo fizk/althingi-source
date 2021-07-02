@@ -14,7 +14,8 @@ use Althingi\QueueActions\{
 };
 use Althingi\Events\{
     RequestSuccessEvent,
-    RequestFailureEvent
+    RequestFailureEvent,
+    RequestUnsuccessEvent
 };
 use Althingi\Router\Http\TreeRouteStack;
 use Althingi\Router\RouteInterface;
@@ -446,6 +447,10 @@ return [
             $provider->subscribeTo(RequestSuccessEvent::class, function (RequestSuccessEvent $event) use ($logger) {
                 $logger->debug((string) $event);
             });
+            $provider->subscribeTo(RequestUnsuccessEvent::class, function (RequestUnsuccessEvent $event) use ($logger) {
+                $logger->error((string) $event);
+            });
+
             $provider->subscribeTo(RequestFailureEvent::class, function (RequestFailureEvent $event) use ($logger) {
                 $logger->error((string) $event);
             });

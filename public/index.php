@@ -5,12 +5,13 @@ include __DIR__ . '/../vendor/autoload.php';
 
 set_error_handler('exception_error_handler');
 
-use Althingi\Events\{RequestSuccessEvent, RequestFailureEvent};
+use Althingi\Events\{RequestSuccessEvent, RequestFailureEvent, RequestUnsuccessEvent};
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\ServiceManager\ServiceManager;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use Althingi\Router\RouteInterface;
 use Althingi\Utils\ConsoleRequest;
+use Laminas\Diactoros\Response\EmptyResponse;
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\Diactoros\Uri;
 
@@ -31,38 +32,37 @@ $request = php_sapi_name() === 'cli'
         $_FILES
     );
 
+$emitter = new SapiEmitter();
 try {
-
-    $emitter = new SapiEmitter();
     $routeMatch = $router->match($request);
-    $request = $request->withAttribute('matched_route_name', $routeMatch->getMatchedRouteName());
-    $controller = $manager->get($routeMatch->getParam('controller'));
+    if ($routeMatch) {
+        $request = $request->withAttribute('matched_route_name', $routeMatch->getMatchedRouteName());
+        $controller = $manager->get($routeMatch->getParam('controller'));
 
-    $params = php_sapi_name() === 'cli'
-        ? extractCliParams(implode(' ', array_slice($argv, 1)))
-        : $routeMatch->getParams();
-    foreach($params as $key => $value) {
-        $request = $request->withAttribute($key, $value);
+        $params = php_sapi_name() === 'cli'
+            ? extractCliParams(implode(' ', array_slice($argv, 1)))
+            : $routeMatch->getParams();
+        foreach($params as $key => $value) {
+            $request = $request->withAttribute($key, $value);
+        }
+        $response = $controller->handle($request);
+    } else {
+        $response = new EmptyResponse(404);
     }
-    $response = $controller->handle($request);
+
     $emitter->emit($response);
     $manager->get(Psr\EventDispatcher\EventDispatcherInterface::class)
-        ->dispatch(new RequestSuccessEvent($request, $response));
+        ->dispatch(
+        $response->getStatusCode() >= 400
+            ? new RequestUnsuccessEvent($request, $response)
+            : new RequestSuccessEvent($request, $response)
+        );
 
 } catch (Throwable $error) {
-    $emitter->emit(new JsonResponse([
-        'PROVIDER',
-        $request->getMethod(),
-        $request->getUri()->__toString(),
-        500,
-        0,
-        $error->getMessage(),
-        "{$error->getFile()}:{$error->getLine()}",
-        $error->getTrace(),
-    ], 500));
-
+    $event = new RequestFailureEvent($request, $error);
+    $emitter->emit(new JsonResponse($event->toJSON(), 500));
     $manager->get(Psr\EventDispatcher\EventDispatcherInterface::class)
-        ->dispatch(new RequestFailureEvent($request, $error));
+        ->dispatch($event);
 }
 
 

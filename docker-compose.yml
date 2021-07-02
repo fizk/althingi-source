@@ -3,7 +3,7 @@ version: '3'
 services:
 
   run:
-    container_name: althingi-source
+    container_name: althingi-source-source-run
     build:
       args:
         - ENV=development
@@ -48,7 +48,7 @@ services:
       - database
 
   test:
-    container_name: althingi-source-test
+    container_name: althingi-source-source-test
     build:
       args:
         - ENV=development
@@ -92,7 +92,7 @@ services:
     command: bash -c "./wait-for.sh database:3306 -t 80 -- echo \"MySQL up\" &&  ./vendor/bin/phpunit && ./vendor/bin/phpcs --standard=./phpcs.xml ./src"
 
   database:
-    container_name: althingi-source-db
+    container_name: althingi-source-source-db
     image: einarvalur/althingi-source-db:25ee965
     command: --default-authentication-plugin=mysql_native_password
     restart: always
@@ -102,7 +102,7 @@ services:
     #   - ./assets/:/home/
 
   database-test:
-      container_name: althingi-source-db-test
+      container_name: althingi-source-source-db-test
       image: einarvalur/althingi-source-db:25ee965
       command: --default-authentication-plugin=mysql_native_password
       restart: always
