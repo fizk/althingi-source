@@ -166,7 +166,7 @@ class SpeechControllerTest extends TestCase
             ->setIteration('*')
             ->setAssemblyId(1)
             ->setIssueId(3)
-            ->setSpeechId(4)
+            ->setSpeechId('20210613T012100')
             ->setFrom(new \DateTime('2001-01-01 00:00:00'))
             ->setTo(new \DateTime('2001-01-01 00:00:00'))
             ->setType('t1')
@@ -183,16 +183,20 @@ class SpeechControllerTest extends TestCase
             ->once()
             ->getMock();
 
-        $this->dispatch('/loggjafarthing/1/thingmal/a/3/raedur/4', 'PUT', [
+        $this->dispatch('/loggjafarthing/1/thingmal/a/3/raedur/20210613T012100', 'PUT', [
+            'id' => '20210613T012100',
             'from' => '2001-01-01 00:00:00',
             'to' => '2001-01-01 00:00:00',
             'plenary_id' => 20,
+            'assembly_id' => 1,
+            'issue_id' => 3,
             'congressman_id' => 10,
             'congressman_type' => null,
             'iteration' => '*',
             'type' => 't1',
             'text' => 't2',
-            'validated' => 'false'
+            'category' =>' A',
+            'validated' => 'false',
         ]);
 
         $this->assertControllerName(Controller\SpeechController::class);

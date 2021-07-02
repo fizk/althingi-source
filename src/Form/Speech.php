@@ -25,9 +25,6 @@ class Speech extends Form
                 'name' => 'speech_id',
                 'required' => true,
                 'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
             ],
             'to' => [
                 'name' => 'to',

@@ -34,12 +34,12 @@ RUN apt-get update; \
 
 RUN echo "memory_limit = 2048M \n \
     upload_max_filesize = 512M \n \
-    date.timezone = Atlantic/Reykjavik \n" > /usr/local/etc/php/conf.d/php.ini
+    date.timezone = Atlantic/Reykjavik \n" >> /usr/local/etc/php/conf.d/php.ini
 
 RUN if [ "$ENV" = "production" ] ; then \
     echo "opcache.enable=1 \n \
     opcache.jit_buffer_size=100M \n \
-    opcache.jit=1255 \n" > /usr/local/etc/php/conf.d/php.ini; \
+    opcache.jit=1255 \n" >> /usr/local/etc/php/conf.d/php.ini; \
     fi ;
 
 RUN echo "<VirtualHost *:80>\n \
@@ -51,7 +51,7 @@ RUN echo "<VirtualHost *:80>\n \
     RewriteCond %{REQUEST_FILENAME} !-f\n \
     RewriteCond %{REQUEST_FILENAME} !-d\n \
     RewriteRule . /index.php [L]\n \
-    </VirtualHost>\n" > /etc/apache2/sites-available/000-default.conf
+</VirtualHost>\n" > /etc/apache2/sites-available/000-default.conf
 
 RUN a2enmod rewrite && service apache2 restart;
 
