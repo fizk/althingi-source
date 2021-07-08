@@ -109,4 +109,3 @@ services:
 
 volumes:
     source-db-volume-development:
-        external: true
