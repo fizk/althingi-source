@@ -1,8 +1,7 @@
 # Loggjafarthing
+This is the single-source-of-truth system for `althingi.is` data. It is a PHP 8 API with a MySQL database.
 
-
-## Configuration:
-The API is configures with environment variables
+## Environment variables:
 
 | name                | default                          | Options                               | description                   |
 |---------------------|----------------------------------|---------------------------------------|-------------------------------|
@@ -28,104 +27,55 @@ This repo comes with a **Dockerfile**. It is based off of a Apache/PHP image and
 as well as all dependencies via [composer](https://getcomposer.org/). It can be configured at build-time for either
 **production** or **development** via [--build-arg](https://docs.docker.com/engine/reference/commandline/build/#set-build-time-variables---build-arg).
 
-| arg         | values       | description |
-| ----------- | ------------ | ----------- |
-| ENV         | production / development |  |
+| name     | default     |  options                 | description                            |
+| -------- | ----------- | ------------------------ | -------------------------------------- |
+| ENV      | development | production / development | xDebug is not included in _production_ |
 
 
-This repo also comes with **docker-compose** file that has some pre-configured environments.
+This repo contains a `docker-compose.yml` file that defines services for development as well as dependencies.
 
-host.docker.internal
+Use `run` for devlopment, it will mound the `src` directory (among others). It will install and attach a MySQL database as well.
 
-#### test
-The Docker Compose file has a `$ docker-compose run test` service. When run, it will spin up a MySQL instance.
+```sh
+docker compose up run
+```
+
+Use `test` to run all PHPUnit tests and linting. It will install and attach a MySQL database. This service is used in the CI/CD pipeline.
+
+```sh
+docker compose run test
+```
+
 
 ## Debugging.
 As stated previously, the `$ docker-compose up run` will install Xdebug and configure the _remote host_ to be the
 host system. The remote port will be `9003`.
 
+## Commandline
+This system can be forced to brodcast event the same way as it broadcasts events when it creates or updates entries.
 
-## Non Docker development
-The system can be run without Docker, but that requires a lot of manual configuration. Have a look at the Dockerfile for complete
-list of PHP extensions required.
+To get a list of all available commands, run:
+```sh
+docker compose run --rm run index console
+```
 
-Then run `$ composer i` to install dependencies.
-
-
-## CommandLine
+To index all assemblies, for example, run
+```sh
+docker compose run --rm run index console:assembly
+```
 
 
 ## Other useful commands
-All GET requests are cached, if you need to flush the cache, it can be done via
-```bash
-$ docker exec -it cache-api redis-cli FLUSHALL
-```
 
 To make a dump of the database, run
-```bash
-docker exec CONTAINER /usr/bin/mysqldump -u root --password=example althingi > backup.sql
-```
-## About developing with PHPStorm.
-PHPStorm is a good IDE than can run PHP inside a Docker Container and connect to its Xdebug server. A few steps need to be
-completed for this to work.
-
-Interpreter:
-A Docker image needs to be available that gets spun up each time the IDE want to run some PHP code. Create this container by calling
-```bash
-$ docker build -t althingi-source-runtime --build-arg ENV=development .
+```sh
+docker exec CONTAINER /usr/bin/mysqldump -u root --password=example althingi > path/to/backup.sql
 ```
 
-Dependencies:
-You also need running containers for MySQL and MongoDB
-```bash
-$ docker run --name dev_api_database -e MYSQL_ROOT_PASSWORD=example -d einarvalur/althingi-source-db
-$ docker run --name dev_api_store -d mongo:4.2.0-bionic
+To import dump into the database
+```sh
+docker exec -i CONTAINER mysql -u root --password=example althingi < path/to/backup.sql
 ```
-just make sure you run the containers from the project directory, so they end up in the same network.
-
-Now it's time to link this all together
-
-Go into Preferences > Languages & Frameworks > PHP
-under CLI Interpreter, click the ... where you are taken to a prompt to create a new Interpreter. Click the + sign on the left
-hand site and select From Docker, Vagrant Remote... Select Docker from the radio buttons and find the **dev_api:latest** docker image
-from the dropdown where it says Image name.
-
-Now you should have an PHP interpreter.
-
-From the original Preferences > Languages & Frameworks > PHP dialog, click the folder icon next to _Docker container_, here you can
-configure the docker container.
-
-The volume binding should be
-* /var/www/config	| <your host path to>/config
-* /var/www/module	| <your host path to>/module
-* /var/www/public	| <your host path to>/public
-* /var/www/phpunit.xml	| <your host path to>/phpunit.xml.dist
-
-Links should be
-* dev_api_store	    | store
-* dev_api_database	| database
-
-The env variables should be
-* WITH_XDEBUG             | true
-* APPLICATION_ENVIRONMENT | development
-* DB_HOST                 | dev_api_database
-* DB_PORT                 | 3306
-* DB_NAME                 | althingi
-* DB_USER                 | root
-* DB_PASSWORD             | example
-* CACHE_TYPE              | none
-* SEARCH                  | none
-* LOG_PATH                | none
-* QUEUE                   | none
-* QUEUE_FORCED            | false
-* STORAGE_HOST            | dev_api_store
-* STORAGE_DB              | althingi
-
-Lastly under Preferences > Languages & Frameworks > PHP > Test frameworks, make sure that the **althingi-source-runtime:latest** images
-has been selected
-and that _Use Composer autoloader_ is also selected, the path should be `/opt/project/vendor/autoload.php` and the default
-configuration file is `/opt/project/phpunit.xml.dist`
-
 
 
 ```

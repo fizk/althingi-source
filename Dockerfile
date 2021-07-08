@@ -1,6 +1,7 @@
-FROM php:8.0.5-apache-buster
+FROM php:8.0.8-apache-buster
 
 ARG ENV
+ENV PATH="/var/www:/var/www/bin:${PATH}"
 
 EXPOSE 80
 
@@ -30,33 +31,33 @@ RUN apt-get update; \
     docker-php-ext-install bcmath; \
     docker-php-ext-install sockets; \
     a2enmod rewrite; \
-    mv /var/www/html /var/www/public;
+    mv /var/www/html /var/www/public; \
+    mkdir -p /var/www/.composer; \
+    chown www-data /var/www/.composer; \
+    chown www-data /var/www;
 
-RUN echo "memory_limit = 2048M \n \
-    upload_max_filesize = 512M \n \
-    date.timezone = Atlantic/Reykjavik \n" >> /usr/local/etc/php/conf.d/php.ini
+RUN echo "[PHP]\n\
+memory_limit = 2048M \n\
+upload_max_filesize = 512M \n\
+date.timezone = Atlantic/Reykjavik \n" >> /usr/local/etc/php/conf.d/php.ini; \
+echo "<VirtualHost *:80>\n\
+    DocumentRoot /var/www/public\n\
+    ErrorLog \${APACHE_LOG_DIR}/error.log\n\
+    CustomLog \${APACHE_LOG_DIR}/access.log combined\n\
+    RewriteEngine On\n\
+    RewriteRule ^index\.php$ - [L]\n\
+    RewriteCond %{REQUEST_FILENAME} !-f\n\
+    RewriteCond %{REQUEST_FILENAME} !-d\n\
+    RewriteRule . /index.php [L]\n\
+</VirtualHost>\n" > /etc/apache2/sites-available/000-default.conf;
 
 RUN if [ "$ENV" = "production" ] ; then \
-    echo "opcache.enable=1 \n \
-    opcache.jit_buffer_size=100M \n \
-    opcache.jit=1255 \n" >> /usr/local/etc/php/conf.d/php.ini; \
+    echo "opcache.enable=1\n\
+opcache.jit_buffer_size=100M\n\
+opcache.jit=1255\n" >> /usr/local/etc/php/conf.d/php.ini; \
     fi ;
 
-RUN echo "<VirtualHost *:80>\n \
-    DocumentRoot /var/www/public\n \
-    ErrorLog \${APACHE_LOG_DIR}/error.log\n \
-    CustomLog \${APACHE_LOG_DIR}/access.log combined\n \
-    RewriteEngine On\n \
-    RewriteRule ^index\.php$ - [L]\n \
-    RewriteCond %{REQUEST_FILENAME} !-f\n \
-    RewriteCond %{REQUEST_FILENAME} !-d\n \
-    RewriteRule . /index.php [L]\n \
-</VirtualHost>\n" > /etc/apache2/sites-available/000-default.conf
-
 RUN a2enmod rewrite && service apache2 restart;
-
-RUN curl -sS https://getcomposer.org/installer \
-    | php -- --install-dir=/usr/local/bin --filename=composer
 
 RUN if [ "$ENV" != "production" ] ; then \
     pecl install xdebug; \
@@ -73,20 +74,24 @@ RUN if [ "$ENV" != "production" ] ; then \
     fi ;
 
 WORKDIR /var/www
+USER www-data
 
-COPY ./composer.json ./composer.json
-COPY ./composer.lock ./composer.lock
+COPY --chown=www-data:www-data ./composer.json ./composer.json
+COPY --chown=www-data:www-data ./composer.lock ./composer.lock
+
+RUN curl -sS https://getcomposer.org/installer \
+    | php -- --install-dir=/var/www --filename=composer --version=2.1.3
 
 RUN if [ "$ENV" != "production" ] ; then \
-    composer install --prefer-source --no-interaction \
+    composer install --prefer-source --no-interaction --no-cache \
     && composer dump-autoload; \
     fi ;
 
 RUN if [ "$ENV" = "production" ] ; then \
-    composer install --prefer-source --no-interaction --no-dev -o \
+    composer install --prefer-source --no-interaction --no-dev --no-cache -o \
     && composer dump-autoload -o; \
     fi ;
 
-COPY ./public ./public
-COPY ./src ./src
-COPY ./config ./config
+COPY --chown=www-data:www-data ./public ./public
+COPY --chown=www-data:www-data ./src ./src
+COPY --chown=www-data:www-data ./config ./config

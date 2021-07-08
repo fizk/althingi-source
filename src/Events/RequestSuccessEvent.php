@@ -22,7 +22,7 @@ class RequestSuccessEvent
     {
         return [
             'section_name' => 'request',
-            'request_method' => count($this->request->getHeader('X-HTTP-Method-Override')) > 0
+            'request_method' => count($this->request->getHeader('X-HTTP-Method-Override') ?? []) > 0
                 ? $this->request->getHeader('X-HTTP-Method-Override')[0]
                 : $this->request->getMethod(),
             'request_headers' => $this->request->getHeaders(),
