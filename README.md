@@ -11,12 +11,8 @@ This is the single-source-of-truth system for `althingi.is` data. It is a PHP 8 
 | DB_USER             | root                             | <string>                              |                               |
 | DB_PASSWORD         |                                  | <string>                              |                               |
 | LOG_PATH            |                                  | <string>                              | Save logs to disk or php://stdout
-| BROKER              | none                             | amqp / none                           |                               |
+| BROKER              | none                             | kafka / none                          |                               |
 | BROKER_HOST         | localhost                        | <string>                              |                               |
-| BROKER_PORT         | 5672                             | <string>                              |                               |
-| BROKER_USER         | guest                            | <string>                              |                               |
-| BROKER_PASSWORD     | guest                            | <string>                              |                               |
-| BROKER_VHOST        | /                                | <string>                              |                               |
 | QUEUE_FORCED        | false                            | true / false                          | if event should be sent to queue even though no update
 | DOCUMENT_SERVER     |                                  | <string>                              |                               |
 | DOCUMENT_DEFINITION |                                  | <string>                              |                               |

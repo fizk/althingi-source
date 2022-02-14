@@ -1,4 +1,4 @@
-FROM php:8.0.8-apache-buster
+FROM php:8.0.15-apache-bullseye
 
 ARG ENV
 ENV PATH="/var/www:/var/www/bin:${PATH}"
@@ -16,20 +16,20 @@ RUN apt-get update; \
         g++  \
         make  \
         openssl \
-        libssl-dev  \
+        librdkafka-dev \
         libcurl4-openssl-dev  \
         pkg-config  \
         libsasl2-dev  \
         libpcre3-dev; \
-    pecl install -o -f redis-4.3.0; \
+    pecl install -o -f rdkafka-6.0.0; \
     rm -rf /tmp/pear; \
     docker-php-ext-configure opcache --enable-opcache; \
     docker-php-ext-install opcache; \
-    docker-php-ext-enable redis; \
     docker-php-ext-install zip; \
     docker-php-ext-install pdo_mysql; \
     docker-php-ext-install bcmath; \
     docker-php-ext-install sockets; \
+    echo "extension=rdkafka.so" >> /usr/local/etc/php/conf.d/rdkafka.ini; \
     a2enmod rewrite; \
     mv /var/www/html /var/www/public; \
     mkdir -p /var/www/.composer; \
@@ -39,6 +39,7 @@ RUN apt-get update; \
 RUN echo "[PHP]\n\
 memory_limit = 2048M \n\
 upload_max_filesize = 512M \n\
+expose_php = Off \n\n\
 date.timezone = Atlantic/Reykjavik \n" >> /usr/local/etc/php/conf.d/php.ini; \
 echo "<VirtualHost *:80>\n\
     DocumentRoot /var/www/public\n\

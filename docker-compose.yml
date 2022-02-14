@@ -2,6 +2,20 @@ version: '3'
 
 services:
 
+  #
+  # Run a development server
+  #
+  # This 'service' runs a developments version of the system
+  #     It is close to the production service:
+  #     It spins up a
+  #         * Database
+  #         * Zookeeper
+  #         * Kafka
+  # The systems are in developments mode (xdebug enabled)
+  # Apache is mapped to port 7070
+  #
+  # $ docker compose up -d run
+  #
   run:
     container_name: althingi-source-source-run
     build:
@@ -11,7 +25,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - 7070:80
-      - 9003:9003
     volumes:
       - ./config/:/var/www/config
       - ./src/:/var/www/src
@@ -35,10 +48,8 @@ services:
 
       - CACHE_TYPE=none
 
-      - BROKER=amqp
-      - BROKER_HOST=host.docker.internal
-      - BROKER_USER=admin
-      - BROKER_PASSWORD=Admin@123
+      - BROKER=${ENV_BROKER:-kafka}
+      - BROKER_HOST=kafka:9092
 
       - DOCUMENT_SERVER=${ENV_DOCUMENT_SERVER:-localhost:8080}
       - DOCUMENT_DEFINITION=${ENV_DOCUMENT_DEFINITION:-/openapi}
@@ -46,7 +57,20 @@ services:
       - INDEXER_STALL_TIME=${ENV_INDEXER_STALL_TIME:-150000}
     depends_on:
       - database
+      - zookeeper
+      - kafka
 
+  #
+  # Run complete Test suite
+  #
+  # This 'service' is mostly meant for CI/CD. It will spin up
+  # a test-database and then run
+  #     * phpunit
+  #     * phpcs
+  # It does not spin up any Queues or Brokers.
+  #
+  # $ docker compose run --rm test
+  #
   test:
     container_name: althingi-source-source-test
     build:
@@ -58,7 +82,7 @@ services:
       - ./composer.json/:/var/www/composer.json
       - ./composer.lock/:/var/www/composer.lock
       - ./config/:/var/www/config
-    #   - ./vendor/:/var/www/vendor
+      - ./vendor/:/var/www/vendor
       - ./src/:/var/www/src
       - ./public/:/var/www/public
       - ./tests/:/var/www/tests
@@ -89,6 +113,15 @@ services:
       - database-test
     command: bash -c "./wait-for.sh database-test:3306 -t 80 -- echo \"MySQL up\" &&  ./vendor/bin/phpunit && ./vendor/bin/phpcs --standard=./phpcs.xml ./src"
 
+  #
+  # Additional sercvices used for devlopment.
+  #
+  # * A database for 'run' service
+  # * A Zookeper for 'run' service
+  # * A Kafka for 'run' service
+  #
+  # * A database for 'test' service
+  #
   database:
     container_name: althingi-source-source-db
     image: einarvalur/althingi-source-db:25ee965
@@ -106,6 +139,45 @@ services:
       restart: always
       environment:
           - MYSQL_ROOT_PASSWORD=example
+
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - "2181:2181"
+    restart: unless-stopped
+
+  kafka:
+    image: wurstmeister/kafka:2.13-2.8.1
+    ports:
+      - "9092"
+    environment:
+      DOCKER_API_VERSION: 1.22
+      KAFKA_ADVERTISED_HOST_NAME: host.docker.internal
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+
+  #
+  # A web-based UI to monitor Kafka/Zookeeper
+  #
+  # Handy tool in development to monitor Topics, Messages, etc
+  #
+  # This service is not in the dependency list of 'run', so it needs
+  # to be started separately
+  #
+  # Mapps to port 8080
+  #
+  # $ docker compose up -d kafka-ui
+  #
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    ports:
+        - 8080:8080
+    environment:
+        - KAFKA_CLUSTERS_0_NAME=local
+        - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+
 
 volumes:
     source-db-volume-development:

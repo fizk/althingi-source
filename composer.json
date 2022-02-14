@@ -15,7 +15,6 @@
     "ext-dom": "*",
     "league/html-to-markdown": "^5.0",
     "monolog/monolog": "^2.2",
-    "php-amqplib/php-amqplib": "^3.0",
     "zeptech/annotations": "^1.1",
     "laminas/laminas-diactoros": "^2.5",
     "laminas/laminas-httphandlerrunner": "^1.4",
