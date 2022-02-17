@@ -22,12 +22,13 @@ use Althingi\Router\RouteInterface;
 use Althingi\Utils\{
     MessageBrokerInterface,
     BlackHoleMessageBroker,
-    AmqpMessageBroker
+    KafkaMessageBroker
 };
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use PhpAmqpLib\Connection\AMQPStreamConnection;
+use RdKafka\Producer as KafkaProducer;
+use RdKafka\Conf as KafkaConfig;
 use League\Event\{
     EventDispatcher,
     PrioritizedListenerRegistry
@@ -491,9 +492,9 @@ return [
 
         MessageBrokerInterface::class => function (ContainerInterface $container) {
             switch(strtolower(getenv('BROKER'))) {
-                case 'amqp':
-                    return new AmqpMessageBroker(
-                        $container->get(AMQPStreamConnection::class)
+                case 'kafka':
+                    return new KafkaMessageBroker(
+                        $container->get(KafkaProducer::class)
                     );
                     break;
                 default:
@@ -504,18 +505,15 @@ return [
             }
         },
 
-        AMQPStreamConnection::class => function (ContainerInterface $sm) {
-            return AMQPStreamConnection::create_connection(
-                [
-                    [
-                        'host' => getenv('BROKER_HOST') ?: 'localhost',
-                        'port' => getenv('BROKER_PORT') ?: 5672,
-                        'user' => getenv('BROKER_USER') ?: 'guest',
-                        'password' => getenv('BROKER_PASSWORD') ?: 'guest',
-                        'vhost' => getenv('BROKER_VHOST') ?: '/'
-                    ]
-                ]
-            );
+        KafkaProducer::class => function (ContainerInterface $sm) {
+            $conf = new KafkaConfig();
+            $conf->set('log_level', (string) LOG_DEBUG);
+            $conf->set('metadata.broker.list', getenv('BROKER_HOST'));
+            $conf->set('bootstrap.servers', getenv('BROKER_HOST'));
+            $conf->set('debug', 'all');
+            $rk = new KafkaProducer($conf);
+            $rk->addBrokers(getenv('BROKER_HOST') ?: "127.0.01:9092");
+            return $rk;
         },
 
         Althingi\Utils\OpenAPI::class => function (ContainerInterface $sm) {
