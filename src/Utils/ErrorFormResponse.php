@@ -13,11 +13,14 @@ class ErrorFormResponse extends JsonResponse
 
     private function extractForm(Form $form): array
     {
-        return array_map(function ($value, $key) {
-            return [
-                'field' => $key,
-                'message' => array_values($value),
-            ];
-        }, $form->getMessages(), array_keys($form->getMessages()));
+        return [
+            'form' => $form->getData(),
+            'messages' => array_map(function ($value, $key) {
+                return [
+                    'field' => $key,
+                    'message' => array_values($value),
+                ];
+            }, $form->getMessages(), array_keys($form->getMessages()))
+        ];
     }
 }
