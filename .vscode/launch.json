@@ -13,7 +13,7 @@
             "pathMappings": {
                 "/var/www/config": "${workspaceFolder}/config",
                 "/var/www/src": "${workspaceFolder}/src",
-                "/var/www/test": "${workspaceFolder}/test",
+                "/var/www/tests": "${workspaceFolder}/tests",
                 "/var/www/public": "${workspaceFolder}/public",
                 "/var/www/vendor": "${workspaceFolder}/vendor",
                 "/var/www/bin": "${workspaceFolder}/bin",

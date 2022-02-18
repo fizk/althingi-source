@@ -5,6 +5,7 @@ namespace Althingi\Form;
 use Althingi\Hydrator;
 use Althingi\Model;
 use Althingi\Filter\ToInt;
+use Laminas\Filter\ToNull;
 use Laminas\Validator\{Digits, Date};
 
 class Plenary extends Form
@@ -44,28 +45,46 @@ class Plenary extends Form
             ],
             'name' => [
                 'name' => 'name',
-                'required' => true,
-                'allow_empty' => false,
+                'required' => false,
+                'allow_empty' => true,
+                'filters' => [
+                    [
+                        'name' => ToNull::class,
+                        'options' => ['type' => 'all']
+                    ]
+                ],
             ],
             'from' => [
                 'name' => 'from',
-                'required' => true,
-                'allow_empty' => false,
+                'required' => false,
+                'allow_empty' => true,
                 'validators' => [
                     [
                         'name' => Date::class,
                         'options' => ['step' => 'any', 'format' => 'Y-m-d H:i']
                     ]
                 ],
+                'filters' => [
+                    [
+                        'name' => ToNull::class,
+                        'options' => ['type' => 'all']
+                    ]
+                ],
             ],
             'to' => [
                 'name' => 'to',
-                'required' => true,
-                'allow_empty' => false,
+                'required' => false,
+                'allow_empty' => true,
                 'validators' => [
                     [
                         'name' => Date::class,
                         'options' => ['step' => 'any', 'format' => 'Y-m-d H:i']
+                    ]
+                ],
+                'filters' => [
+                    [
+                        'name' => ToNull::class,
+                        'options' => ['type' => 'all']
                     ]
                 ],
             ],
