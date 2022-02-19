@@ -122,6 +122,27 @@ class CommitteeControllerTest extends TestCase
         $this->assertActionName('put');
         $this->assertResponseStatusCode(201);
     }
+    public function testPutZeroId()
+    {
+        $this->getMockService(Service\Committee::class)
+            ->shouldReceive('save')
+            ->once()
+            ->andReturn(1)
+            ->getMock();
+
+        $this->dispatch('/nefndir/0', 'PUT', [
+            'first_assembly_id' => 1,
+            'last_assembly_id' => 1,
+            'name' => 'name',
+            'abbr_short' => 'n',
+            'abbr_long' => 'na',
+
+        ]);
+
+        $this->assertControllerName(CommitteeController::class);
+        $this->assertActionName('put');
+        $this->assertResponseStatusCode(201);
+    }
 
     /**
      * @covers ::put

@@ -152,6 +152,55 @@ class CommitteeTest extends TestCase
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
+    public function testSaveZeroId()
+    {
+        $expectedTable = $this->createArrayDataSet([
+            'Committee' => [
+                [
+                    'committee_id' => 0,
+                    'name' => null,
+                    'first_assembly_id' => 1,
+                    'last_assembly_id' => null,
+                    'abbr_long' => null,
+                    'abbr_short' => null
+                ],
+                [
+                    'committee_id' => 1,
+                    'name' => 'committee1',
+                    'first_assembly_id' => 1,
+                    'last_assembly_id' => 2,
+                    'abbr_long' => 'com1',
+                    'abbr_short' => 'c1'
+                ], [
+                    'committee_id' => 2,
+                    'name' => 'committee2',
+                    'first_assembly_id' => 1,
+                    'last_assembly_id' => 2,
+                    'abbr_long' => 'com2',
+                    'abbr_short' => 'c2'
+                ], [
+                    'committee_id' => 3,
+                    'name' => null,
+                    'first_assembly_id' => 1,
+                    'last_assembly_id' => null,
+                    'abbr_long' => null,
+                    'abbr_short' => null
+                ],
+            ],
+        ])->getTable('Committee');
+        $actualTable = $this->getConnection()->createQueryTable('Committee', 'SELECT * FROM Committee');
+
+        $committee = (new CommitteeModel())
+            ->setFirstAssemblyId(1)
+            ->setCommitteeId(0);
+
+        $service = new Committee();
+        $service->setDriver($this->pdo);
+        $service->save($committee);
+
+        $this->assertTablesEqual($expectedTable, $actualTable);
+    }
+
     public function testUpdate()
     {
         $expectedTable = $this->createArrayDataSet([
