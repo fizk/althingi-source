@@ -5,7 +5,7 @@ namespace Althingi\Form;
 use Althingi\Hydrator;
 use Althingi\Model;
 use Althingi\Filter\ToInt;
-use Laminas\Validator\Digits;
+use Althingi\Validator\SignedDigits;
 use Laminas\Filter\{Callback, ToNull};
 
 class Party extends Form
@@ -29,7 +29,7 @@ class Party extends Form
                     ['name' => ToInt::class,],
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'name' => [

@@ -4,7 +4,7 @@ namespace Althingi\Form;
 
 use Althingi\Hydrator;
 use Althingi\Model;
-use Laminas\Validator\Digits;
+use Althingi\Validator\SignedDigits;
 use Althingi\Filter\ToInt;
 
 class SuperCategory extends Form
@@ -28,7 +28,7 @@ class SuperCategory extends Form
                     ['name' => ToInt::class,],
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'title' => [

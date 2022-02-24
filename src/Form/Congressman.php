@@ -6,7 +6,8 @@ use Althingi\Hydrator;
 use Althingi\Model;
 use Althingi\Filter\ToInt;
 use Laminas\Filter\ToNull;
-use Laminas\Validator\{Digits, Date};
+use Laminas\Validator\{Date};
+use Althingi\Validator\SignedDigits;
 
 class Congressman extends Form
 {
@@ -38,7 +39,7 @@ class Congressman extends Form
                     ]
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'birth' => [

@@ -6,7 +6,7 @@ use Althingi\Hydrator;
 use Althingi\Model;
 use Laminas\Filter\ToNull;
 use Althingi\Filter\ToInt;
-use Laminas\Validator\Digits;
+use Althingi\Validator\SignedDigits;
 
 class CommitteeDocument extends Form
 {
@@ -26,7 +26,7 @@ class CommitteeDocument extends Form
                 'required' => false,
                 'allow_empty' => true,
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
                 'filters' => [
                     ['name' => ToInt::class,],
@@ -41,7 +41,7 @@ class CommitteeDocument extends Form
                 'required' => true,
                 'allow_empty' => false,
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
                 'filters' => [
                     ['name' => ToInt::class,]
@@ -52,7 +52,7 @@ class CommitteeDocument extends Form
                 'required' => true,
                 'allow_empty' => false,
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
                 'filters' => [
                     ['name' => ToInt::class,],
@@ -63,7 +63,7 @@ class CommitteeDocument extends Form
                 'required' => true,
                 'allow_empty' => false,
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
                 'filters' => [
                     ['name' => ToInt::class,]
@@ -79,7 +79,7 @@ class CommitteeDocument extends Form
                 'required' => true,
                 'allow_empty' => false,
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
                 'filters' => [
                     ['name' => ToInt::class,]

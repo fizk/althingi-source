@@ -68,6 +68,35 @@ class PlenaryControllerTest extends TestCase
         $this->assertResponseStatusCode(201);
     }
 
+    public function testPutNegativeSuccess()
+    {
+        $expectedData = (new \Althingi\Model\Plenary())
+            ->setAssemblyId(1)
+            ->setPlenaryId(-1)
+            ->setName('n1')
+            ->setFrom(new \DateTime('2001-01-01'))
+            ->setTo(new \DateTime('2001-01-01'))
+        ;
+        $this->getMockService(Plenary::class)
+            ->shouldReceive('save')
+            ->with(\Mockery::on(function ($actualData) use ($expectedData) {
+                return $expectedData == $actualData;
+            }))
+            ->andReturn(1)
+            ->once()
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/1/thingfundir/-1', 'PUT', [
+            'from' => '2001-01-01 00:00',
+            'to' => '2001-01-01 00:00',
+            'name' => 'n1'
+        ]);
+
+        $this->assertControllerName(PlenaryController::class);
+        $this->assertActionName('put');
+        $this->assertResponseStatusCode(201);
+    }
+
     /**
      * @covers ::patch
      */

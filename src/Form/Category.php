@@ -6,7 +6,8 @@ use Althingi\Model;
 use Althingi\Hydrator;
 use Laminas\Filter\ToNull;
 use Althingi\Filter\ToInt;
-use Laminas\Validator\Digits;
+use Laminas\Validator\Date;
+use Althingi\Validator\SignedDigits;
 
 class Category extends Form
 {
@@ -26,7 +27,7 @@ class Category extends Form
                 'required' => true,
                 'allow_empty' => false,
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
                 'filters' => [
                     ['name' => ToInt::class,]
@@ -37,7 +38,7 @@ class Category extends Form
                 'required' => true,
                 'allow_empty' => false,
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
                 'filters' => [
                     ['name' => ToInt::class,]

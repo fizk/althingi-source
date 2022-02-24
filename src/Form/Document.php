@@ -6,7 +6,8 @@ use Althingi\Hydrator;
 use Althingi\Model;
 use Althingi\Filter\ToInt;
 use Laminas\Filter\ToNull;
-use Laminas\Validator\{Digits, Date};
+use Laminas\Validator\Date;
+use Althingi\Validator\SignedDigits;
 
 class Document extends Form
 {
@@ -29,7 +30,7 @@ class Document extends Form
                     ['name' => ToInt::class,],
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'assembly_id' => [
@@ -40,7 +41,7 @@ class Document extends Form
                     ['name' => ToInt::class,],
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'document_id' => [
@@ -51,7 +52,7 @@ class Document extends Form
                     ['name' => ToInt::class,],
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'committee_id' => [
@@ -66,7 +67,7 @@ class Document extends Form
                     ]
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'date' => [

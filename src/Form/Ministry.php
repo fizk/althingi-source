@@ -5,6 +5,7 @@ namespace Althingi\Form;
 use Althingi\Hydrator;
 use Althingi\Model;
 use Althingi\Filter\ToInt;
+use Althingi\Validator\SignedDigits;
 use Laminas\Filter\ToNull;
 use Laminas\Validator\Digits;
 
@@ -29,7 +30,7 @@ class Ministry extends Form
                     ['name' => ToInt::class,],
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'name' => [

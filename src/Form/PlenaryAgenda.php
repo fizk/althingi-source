@@ -6,7 +6,7 @@ use Althingi\Hydrator;
 use Althingi\Model;
 use Althingi\Filter\ToInt;
 use Laminas\Filter\ToNull;
-use Laminas\Validator\Digits;
+use Althingi\Validator\SignedDigits;
 
 class PlenaryAgenda extends Form
 {
@@ -29,7 +29,7 @@ class PlenaryAgenda extends Form
                     ['name' => ToInt::class,],
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'plenary_id' => [
@@ -40,7 +40,7 @@ class PlenaryAgenda extends Form
                     ['name' => ToInt::class,],
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'issue_id' => [
@@ -51,7 +51,7 @@ class PlenaryAgenda extends Form
                     ['name' => ToInt::class,],
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'assembly_id' => [
@@ -62,7 +62,7 @@ class PlenaryAgenda extends Form
                     ['name' => ToInt::class,],
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'category' => [
@@ -136,7 +136,7 @@ class PlenaryAgenda extends Form
                     ]
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'posed' => [
@@ -161,7 +161,7 @@ class PlenaryAgenda extends Form
                     ]
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'answerer' => [
@@ -186,7 +186,7 @@ class PlenaryAgenda extends Form
                     ]
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'counter_answerer' => [
@@ -211,7 +211,7 @@ class PlenaryAgenda extends Form
                     ]
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'instigator' => [

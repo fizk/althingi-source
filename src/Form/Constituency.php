@@ -6,7 +6,7 @@ use Althingi\Hydrator;
 use Althingi\Model;
 use Althingi\Filter\{NullReplaceFilter, ToInt};
 use Laminas\Filter\ToNull;
-use Laminas\Validator\Digits;
+use Althingi\Validator\SignedDigits;
 
 class Constituency extends Form
 {
@@ -29,7 +29,7 @@ class Constituency extends Form
                     ['name' => ToInt::class,],
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'name' => [

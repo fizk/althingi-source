@@ -6,7 +6,7 @@ use Althingi\Hydrator;
 use Althingi\Model;
 use Althingi\Filter\ToInt;
 use Laminas\Filter\ToNull;
-use Laminas\Validator\Digits;
+use Althingi\Validator\SignedDigits;
 
 class VoteItem extends Form
 {
@@ -32,7 +32,7 @@ class VoteItem extends Form
                     ]
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'vote_id' => [
@@ -43,7 +43,7 @@ class VoteItem extends Form
                     ['name' => ToInt::class,],
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'congressman_id' => [
@@ -54,7 +54,7 @@ class VoteItem extends Form
                     ['name' => ToInt::class,],
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'vote' => [

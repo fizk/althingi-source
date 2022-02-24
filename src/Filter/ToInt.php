@@ -16,6 +16,6 @@ class ToInt extends AbstractFilter
             return null;
         }
 
-        return (int) $value;
+        return intval($value);
     }
 }

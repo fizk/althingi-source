@@ -6,7 +6,8 @@ use Althingi\Hydrator;
 use Althingi\Model;
 use Laminas\Filter\ToNull;
 use Althingi\Filter\ToInt;
-use Laminas\Validator\{Date, Digits};
+use Laminas\Validator\{Date};
+use Althingi\Validator\SignedDigits;
 
 class CommitteeSitting extends Form
 {
@@ -33,7 +34,7 @@ class CommitteeSitting extends Form
                     ]
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'congressman_id' => [
@@ -44,7 +45,7 @@ class CommitteeSitting extends Form
                     ['name' => ToInt::class,],
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'committee_id' => [
@@ -55,7 +56,7 @@ class CommitteeSitting extends Form
                     ['name' => ToInt::class,],
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'assembly_id' => [
@@ -66,7 +67,7 @@ class CommitteeSitting extends Form
                     ['name' => ToInt::class,],
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'order' => [

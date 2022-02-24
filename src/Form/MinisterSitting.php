@@ -6,7 +6,8 @@ use Althingi\Hydrator;
 use Althingi\Model;
 use Althingi\Filter\ToInt;
 use Laminas\Filter\ToNull;
-use Laminas\Validator\{Digits, Date};
+use Laminas\Validator\{Date};
+use Althingi\Validator\SignedDigits;
 
 class MinisterSitting extends Form
 {
@@ -32,6 +33,9 @@ class MinisterSitting extends Form
                         'options' => ['type' => 'all']
                     ]
                 ],
+                'validators' => [
+                    ['name' => SignedDigits::class]
+                ],
             ],
             'assembly_id' => [
                 'name' => 'assembly_id',
@@ -41,7 +45,7 @@ class MinisterSitting extends Form
                     ['name' => ToInt::class,],
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'ministry_id' => [
@@ -52,7 +56,7 @@ class MinisterSitting extends Form
                     ['name' => ToInt::class,],
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'congressman_id' => [
@@ -63,7 +67,7 @@ class MinisterSitting extends Form
                     ['name' => ToInt::class,],
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'party_id' => [
@@ -76,6 +80,9 @@ class MinisterSitting extends Form
                         'name' => ToNull::class,
                         'options' => ['type' => 'all']
                     ]
+                ],
+                'validators' => [
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'from' => [

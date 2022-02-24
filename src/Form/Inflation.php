@@ -5,7 +5,8 @@ namespace Althingi\Form;
 use Althingi\Hydrator;
 use Althingi\Model;
 use Althingi\Filter\ToInt;
-use Laminas\Validator\{Digits, Date};
+use Laminas\Validator\{Date, Digits};
+use Althingi\Validator\SignedDigits;
 
 class Inflation extends Form
 {
@@ -28,7 +29,7 @@ class Inflation extends Form
                     ['name' => ToInt::class,],
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'date' => [

@@ -6,7 +6,8 @@ use Althingi\Hydrator;
 use Althingi\Model;
 use Althingi\Filter\ToInt;
 use Laminas\Filter\{Boolean, ToNull};
-use Laminas\Validator\{Digits, Date};
+use Laminas\Validator\{Date};
+use Althingi\Validator\SignedDigits;
 
 class Speech extends Form
 {
@@ -56,7 +57,7 @@ class Speech extends Form
                     ['name' => ToInt::class,],
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'assembly_id' => [
@@ -67,7 +68,7 @@ class Speech extends Form
                     ['name' => ToInt::class,],
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'issue_id' => [
@@ -78,7 +79,7 @@ class Speech extends Form
                     ['name' => ToInt::class,],
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'category' => [
@@ -100,7 +101,7 @@ class Speech extends Form
                     ['name' => ToInt::class,],
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'congressman_type' => [

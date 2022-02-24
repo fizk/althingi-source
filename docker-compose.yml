@@ -124,7 +124,7 @@ services:
   #
   database:
     container_name: althingi-source-source-db
-    image: einarvalur/althingi-source-db:25ee965
+    image: einarvalur/althingi-source-db:latest
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     environment:
@@ -134,7 +134,7 @@ services:
 
   database-test:
       container_name: althingi-source-source-db-test
-      image: einarvalur/althingi-source-db:25ee965
+      image: einarvalur/althingi-source-db:latest
       command: --default-authentication-plugin=mysql_native_password
       restart: always
       environment:

@@ -4,7 +4,7 @@ namespace Althingi\Form;
 
 use Althingi\Hydrator;
 use Althingi\Model;
-use Laminas\Validator\Digits;
+use Althingi\Validator\SignedDigits;
 use Althingi\Filter\ToInt;
 
 class IssueCategory extends Form
@@ -28,7 +28,7 @@ class IssueCategory extends Form
                     ['name' => ToInt::class,],
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'assembly_id' => [
@@ -39,7 +39,7 @@ class IssueCategory extends Form
                     ['name' => ToInt::class,],
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'category_id' => [
@@ -50,7 +50,7 @@ class IssueCategory extends Form
                     ['name' => ToInt::class,],
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'category' => [

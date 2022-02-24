@@ -6,7 +6,7 @@ use Althingi\Hydrator;
 use Althingi\Model;
 use Althingi\Filter\ToInt;
 use Laminas\Filter\ToNull;
-use Laminas\Validator\Digits;
+use Althingi\Validator\SignedDigits;
 
 class IssueLink extends Form
 {
@@ -29,7 +29,7 @@ class IssueLink extends Form
                     ['name' => ToInt::class,],
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'from_issue_id' => [
@@ -40,7 +40,7 @@ class IssueLink extends Form
                     ['name' => ToInt::class,],
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'from_category' => [
@@ -56,7 +56,7 @@ class IssueLink extends Form
                     ['name' => ToInt::class,],
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'issue_id' => [
@@ -67,7 +67,7 @@ class IssueLink extends Form
                     ['name' => ToInt::class,],
                 ],
                 'validators' => [
-                    ['name' => Digits::class]
+                    ['name' => SignedDigits::class]
                 ],
             ],
             'category' => [

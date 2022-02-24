@@ -21,4 +21,18 @@ class PlenaryTest extends TestCase
         $this->assertTrue($isValid);
     }
 
+    public function testNegativeValue()
+    {
+        $form = new Plenary();
+        $isValid = $form->setData([
+            'plenary_id' => '-1',
+            'assembly_id' => '2',
+            'name' => '',
+            'from' => '',
+            'to' => '',
+        ])->isValid();
+
+        $this->assertTrue($isValid);
+    }
+
 }
