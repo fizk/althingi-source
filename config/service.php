@@ -88,6 +88,7 @@ return [
         Controller\PlenaryAgendaController::class => function (ContainerInterface $container) {
             return (new Controller\PlenaryAgendaController())
                 ->setPlenaryAgendaService($container->get(Service\PlenaryAgenda::class))
+                ->setIssueService($container->get(Service\Issue::class))
                 ;
         },
         Controller\IssueController::class => function (ContainerInterface $container) {

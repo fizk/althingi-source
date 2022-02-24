@@ -54,6 +54,18 @@ class PlenaryAgenda extends Form
                     ['name' => SignedDigits::class]
                 ],
             ],
+            'issue_name' => [
+                'name' => 'issue_name',
+                'required' => false,
+            ],
+            'issue_type' => [
+                'name' => 'issue_type',
+                'required' => false,
+            ],
+            'issue_typename' => [
+                'name' => 'issue_typename',
+                'required' => false,
+            ],
             'assembly_id' => [
                 'name' => 'assembly_id',
                 'required' => true,

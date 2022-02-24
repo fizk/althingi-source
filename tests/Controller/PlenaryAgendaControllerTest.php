@@ -12,7 +12,7 @@ use Althingi\Service\PlenaryAgenda;
 use Althingi\ServiceHelper;
 use Laminas\ServiceManager\ServiceManager;
 use PHPUnit\Framework\TestCase;
-
+use PDOException;
 /**
  * Class PlenaryControllerTest
  * @package Althingi\Controller
@@ -92,6 +92,45 @@ class PlenaryAgendaControllerTest extends TestCase
         $this->dispatch('/loggjafarthing/1/thingfundir/2/lidir/1', 'PUT', [
             'issue_id' => 1,
             'category' => 'B',
+        ]);
+
+        $this->assertControllerName(PlenaryAgendaController::class);
+        $this->assertActionName('put');
+        $this->assertResponseStatusCode(201);
+    }
+
+    /**
+     * @covers ::put
+     */
+    public function testPutIssueNotFound()
+    {
+        $expectedData = (new \Althingi\Model\PlenaryAgenda())
+            ->setAssemblyId(1)
+            ->setPlenaryId(2)
+            ->setCategory('B')
+            ->setIssueId(1)
+            ->setItemId(1)
+        ;
+        $this->getMockService(PlenaryAgenda::class)
+            ->shouldReceive('save')
+            ->once()
+            ->andThrow(new PDOException('e_id`, `assembly_id`, `category`) REFERENCES `Issue` (`issue_id`', 23000))
+            ->shouldReceive('save')
+            ->once()
+            ->andReturn(1)
+            ->getMock();
+
+        $this->getMockService(Issue::class)
+            ->shouldReceive('create')
+            ->andReturns(1)
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/1/thingfundir/2/lidir/1', 'PUT', [
+            'issue_id' => 1,
+            'category' => 'B',
+            'issue_name' => '',
+            'issue_type' => '',
+            'issue_typename' => '',
         ]);
 
         $this->assertControllerName(PlenaryAgendaController::class);
