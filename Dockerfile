@@ -96,3 +96,4 @@ RUN if [ "$ENV" = "production" ] ; then \
 COPY --chown=www-data:www-data ./public ./public
 COPY --chown=www-data:www-data ./src ./src
 COPY --chown=www-data:www-data ./config ./config
+COPY --chown=www-data:www-data ./bin ./bin

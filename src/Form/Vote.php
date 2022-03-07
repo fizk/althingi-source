@@ -101,8 +101,14 @@ class Vote extends Form
             ],
             'method' => [
                 'name' => 'method',
-                'required' => true,
-                'allow_empty' => false,
+                'required' => false,
+                'allow_empty' => true,
+                'filters' => [
+                    [
+                        'name' => ToNull::class,
+                        'options' => ['type' => 'all']
+                    ]
+                ],
             ],
             'yes' => [
                 'name' => 'yes',

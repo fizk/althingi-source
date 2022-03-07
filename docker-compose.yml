@@ -17,7 +17,7 @@ services:
   # $ docker compose up -d run
   #
   run:
-    container_name: althingi-source-source-run
+    container_name: local-althingi-source-run
     build:
       args:
         - ENV=development
@@ -72,7 +72,7 @@ services:
   # $ docker compose run --rm test
   #
   test:
-    container_name: althingi-source-source-test
+    container_name: local-althingi-source-test
     build:
       args:
         - ENV=development
@@ -82,7 +82,7 @@ services:
       - ./composer.json/:/var/www/composer.json
       - ./composer.lock/:/var/www/composer.lock
       - ./config/:/var/www/config
-    #   - ./vendor/:/var/www/vendor
+      #- ./vendor/:/var/www/vendor
       - ./src/:/var/www/src
       - ./public/:/var/www/public
       - ./tests/:/var/www/tests
@@ -114,7 +114,7 @@ services:
     command: bash -c "./wait-for.sh database-test:3306 -t 80 -- echo \"MySQL up\" &&  ./vendor/bin/phpunit && ./vendor/bin/phpcs --standard=./phpcs.xml ./src"
 
   #
-  # Additional sercvices used for devlopment.
+  # Additional services used for development.
   #
   # * A database for 'run' service
   # * A Zookeper for 'run' service
@@ -123,7 +123,7 @@ services:
   # * A database for 'test' service
   #
   database:
-    container_name: althingi-source-source-db
+    container_name: local-althingi-source-db
     image: einarvalur/althingi-source-db:latest
     command: --default-authentication-plugin=mysql_native_password
     restart: always
@@ -133,20 +133,22 @@ services:
       - source-db-volume-development:/var/lib/mysql
 
   database-test:
-      container_name: althingi-source-source-db-test
-      image: einarvalur/althingi-source-db:latest
-      command: --default-authentication-plugin=mysql_native_password
-      restart: always
-      environment:
-          - MYSQL_ROOT_PASSWORD=example
+    container_name: local-althingi-source-db-test
+    image: einarvalur/althingi-source-db:latest
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=example
 
   zookeeper:
+    container_name: local-althingi-source-zookeeper
     image: wurstmeister/zookeeper
     ports:
       - "2181:2181"
     restart: unless-stopped
 
   kafka:
+    container_name: local-althingi-source-kafka
     image: wurstmeister/kafka:2.13-2.8.1
     ports:
       - "9092"
@@ -171,6 +173,7 @@ services:
   # $ docker compose up -d kafka-ui
   #
   kafka-ui:
+    container_name: local-althingi-source-kafka-ui
     image: provectuslabs/kafka-ui:latest
     ports:
         - 8080:8080
