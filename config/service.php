@@ -526,14 +526,15 @@ return [
         },
 
         KafkaProducer::class => function (ContainerInterface $sm) {
-            $conf = new KafkaConfig();
-            $conf->set('log_level', (string) LOG_DEBUG);
-            $conf->set('metadata.broker.list', getenv('BROKER_HOST'));
-            $conf->set('bootstrap.servers', getenv('BROKER_HOST'));
-            $conf->set('debug', 'all');
-            $rk = new KafkaProducer($conf);
-            $rk->addBrokers(getenv('BROKER_HOST') ?: "127.0.01:9092");
-            return $rk;
+            $config = new KafkaConfig();
+            $config->set('log_level', (string) LOG_DEBUG);
+            $config->set('metadata.broker.list', getenv('BROKER_HOST'));
+            $config->set('bootstrap.servers', getenv('BROKER_HOST'));
+            $config->set('debug', 'all');
+
+            $producer = new KafkaProducer($config);
+            $producer->addBrokers(getenv('BROKER_HOST') ?: "127.0.01:9092");
+            return $producer;
         },
 
         Althingi\Utils\OpenAPI::class => function (ContainerInterface $sm) {
