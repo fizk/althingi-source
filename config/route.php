@@ -497,6 +497,15 @@ return [
                         ],
                     ],
                 ],
+                'inflation' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route'    => ':inflation',
+                        'defaults' => [
+                            'controller' => Controller\Cli\IndexerInflationController::class,
+                        ],
+                    ],
+                ],
                 'cabinet' => [
                     'type' => Literal::class,
                     'options' => [

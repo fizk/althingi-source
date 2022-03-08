@@ -7,6 +7,7 @@ use Althingi\Hydrator;
 use Althingi\Injector\DatabaseAwareInterface;
 use PDO;
 use DateTime;
+use Generator;
 
 /**
  * Class Inflation
@@ -55,6 +56,20 @@ class Inflation implements DatabaseAwareInterface
         return array_map(function ($object) {
             return (new Hydrator\Inflation)->hydrate($object, new Model\Inflation());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
+    }
+
+    public function fetchAllGenerator(): Generator
+    {
+        $statement = $this->getDriver()
+            ->prepare('select * from `Inflation` order by `date`');
+        $statement->execute();
+
+
+        while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
+            yield (new Hydrator\Inflation)->hydrate($object, new Model\Inflation());
+        }
+        $statement->closeCursor();
+        return null;
     }
 
     public function get(int $id): ? Model\Inflation

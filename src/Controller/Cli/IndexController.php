@@ -24,6 +24,7 @@ class IndexController
                 "\e[1;32mconsole:cabinet\e[0m",
                 "\e[1;32mconsole:category\e[0m",
                 "\e[1;32mconsole:ministry\e[0m",
+                "\e[1;32mconsole:inflation\e[0m",
                 "\e[1;32mconsole:committee-sitting \e[1;35m\n".
                     "\t--assembly_id \n".
                     "\t--congressman_id \n".

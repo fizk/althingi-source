@@ -48,6 +48,27 @@ class InflationTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
+    public function testFetchAllGenerator()
+    {
+        $inflationService = new Inflation();
+        $inflationService->setDriver($this->pdo);
+
+        $expectedData = [
+            (new InflationModel())->setId(1)->setDate(new DateTime('2000-01-01'))->setValue(1),
+            (new InflationModel())->setId(2)->setDate(new DateTime('2000-01-02'))->setValue(2),
+            (new InflationModel())->setId(3)->setDate(new DateTime('2000-01-03'))->setValue(3),
+            (new InflationModel())->setId(4)->setDate(new DateTime('2000-01-04'))->setValue(4),
+            (new InflationModel())->setId(5)->setDate(new DateTime('2000-01-05'))->setValue(5),
+        ];
+
+        $actualData = [];
+        foreach ($inflationService->fetchAllGenerator() as $inflation) {
+            $actualData[] = $inflation;
+        }
+
+        $this->assertEquals($expectedData, $actualData);
+    }
+
     public function testFetchAllFrom()
     {
         $inflationService = new Inflation();

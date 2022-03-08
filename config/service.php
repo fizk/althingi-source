@@ -280,6 +280,12 @@ return [
                 ->setEventDispatcher($container->get(EventDispatcherInterface::class))
                 ;
         },
+        Controller\Cli\IndexerInflationController::class => function (ContainerInterface $container) {
+            return (new Controller\Cli\IndexerInflationController())
+                ->setInflationService($container->get(Service\Inflation::class))
+                ->setEventDispatcher($container->get(EventDispatcherInterface::class))
+                ;
+        },
         Controller\Cli\IndexController::class => function (ContainerInterface $container) {
             return (new Controller\Cli\IndexController())
                 ;
