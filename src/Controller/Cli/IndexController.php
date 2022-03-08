@@ -23,28 +23,28 @@ class IndexController
                 "\e[1;32mconsole:assembly\e[0m",
                 "\e[1;32mconsole:cabinet\e[0m",
                 "\e[1;32mconsole:category\e[0m",
-                "\e[1;32mconsole:ministry\e[0m",
-                "\e[1;32mconsole:inflation\e[0m",
-                "\e[1;32mconsole:committee-sitting \e[1;35m\n".
-                    "\t--assembly_id \n".
-                    "\t--congressman_id \n".
+                "\e[1;32mconsole:constituency\e[0m",
+                "\e[1;32mconsole:committee\e[0m",
+                "\e[1;32mconsole:committee-sitting \e[1;35m\n" .
+                    "\t--assembly_id \n" .
+                    "\t--congressman_id \n" .
                     "\t--committee_id\e[0m",
-                "\e[1;32mconsole:congressman \e[1;35m\n".
+                "\e[1;32mconsole:congressman \e[1;35m\n" .
                     "\t--assembly_id\e[0m",
-                "\e[1;32mconsole:congressman-document \e[1;35m\n".
-                    "\t--assembly_id \n".
-                    "\t--congressman_id \n".
+                "\e[1;32mconsole:congressman-document \e[1;35m\n" .
+                    "\t--assembly_id \n" .
+                    "\t--congressman_id \n" .
                     "\t--issue_id\e[0m",
+                "\e[1;32mconsole:inflation\e[0m",
+                "\e[1;32mconsole:ministry\e[0m",
+                "\e[1;32mconsole:party\e[0m",
+                "\e[1;32mconsole:plenary \e[1;35m\n" .
+                    "\t--assembly_id\e[0m",
+                "\e[1;32mconsole:plenary-agenda \e[1;35m\n".
+                    "\t--assembly_id\e[0m",
                 "\e[1;32mconsole:session \e[1;35m\n".
                     "\t--assembly_id \n".
                     "\t--congressman_id\e[0m",
-                "\e[1;32mconsole:party\e[0m",
-                "\e[1;32mconsole:constituency\e[0m",
-                "\e[1;32mconsole:committee\e[0m",
-                "\e[1;32mconsole:plenary \e[1;35m\n".
-                    "\t--assembly_id\e[0m",
-                "\e[1;32mconsole:plenary-agenda \e[1;35m\n"
-                    ."\t--assembly_id\e[0m",
             ])
         ));
     }
