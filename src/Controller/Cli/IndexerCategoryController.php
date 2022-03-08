@@ -18,7 +18,10 @@ use Psr\Http\Message\{
 
 use Althingi\Service\EventService;
 
-class IndexerCategoryController implements ServiceCategoryAwareInterface, ServiceSuperCategoryAwareInterface, EventsAwareInterface
+class IndexerCategoryController implements
+    ServiceCategoryAwareInterface,
+    ServiceSuperCategoryAwareInterface,
+    EventsAwareInterface
 {
     use EventService;
     private Category $categoryService;
