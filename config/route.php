@@ -506,6 +506,15 @@ return [
                         ],
                     ],
                 ],
+                'ministry' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route'    => ':ministry',
+                        'defaults' => [
+                            'controller' => Controller\Cli\IndexerMinistryController::class,
+                        ],
+                    ],
+                ],
                 'congressman' => [
                     'type' => Literal::class,
                     'options' => [

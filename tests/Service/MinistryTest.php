@@ -68,6 +68,35 @@ class MinistryTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
+    public function testFetchAllGenerator()
+    {
+        $ministryService = new Ministry();
+        $ministryService->setDriver($this->pdo);
+
+        $expectedData = [
+            (new Model\Ministry())
+                ->setMinistryId(1)
+                ->setName('name 1')
+                ->setAbbrShort('abbr_short1')
+                ->setAbbrLong('abbr_long1')
+                ->setFirst(1)
+                ->setLast(3),
+            (new Model\Ministry())
+                ->setMinistryId(2)
+                ->setName('name 2')
+                ->setAbbrShort('abbr_short2')
+                ->setAbbrLong('abbr_long2')
+                ->setFirst(1)
+                ->setLast(null)
+        ];
+        $actualData = [];
+        foreach ($ministryService->fetchAllGenerator() as $ministry) {
+            $actualData[] = $ministry;
+        }
+
+        $this->assertEquals($expectedData, $actualData);
+    }
+
     public function testCreate()
     {
         $ministry = (new Model\Ministry())

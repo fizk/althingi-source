@@ -267,6 +267,12 @@ return [
                 ->setEventDispatcher($container->get(EventDispatcherInterface::class))
                 ;
         },
+        Controller\Cli\IndexerMinistryController::class => function (ContainerInterface $container) {
+            return (new Controller\Cli\IndexerMinistryController())
+                ->setMinistryService($container->get(Service\Ministry::class))
+                ->setEventDispatcher($container->get(EventDispatcherInterface::class))
+                ;
+        },
         Controller\Cli\IndexController::class => function (ContainerInterface $container) {
             return (new Controller\Cli\IndexController())
                 ;

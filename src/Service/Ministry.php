@@ -7,6 +7,7 @@ use Althingi\Hydrator;
 use Althingi\Events\{UpdateEvent, AddEvent};
 use Althingi\Presenters\IndexableMinistryPresenter;
 use Althingi\Injector\{EventsAwareInterface, DatabaseAwareInterface};
+use Generator;
 use PDO;
 
 class Ministry implements DatabaseAwareInterface, EventsAwareInterface
@@ -36,6 +37,20 @@ class Ministry implements DatabaseAwareInterface, EventsAwareInterface
         return array_map(function ($assembly) {
             return (new Hydrator\Ministry)->hydrate($assembly, new Model\Ministry());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
+    }
+
+    public function fetchAllGenerator(): Generator
+    {
+        $statement = $this->getDriver()
+            ->prepare('select * from `Ministry` order by `ministry_id`');
+        $statement->execute();
+
+
+        while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
+            yield (new Hydrator\Ministry)->hydrate($object, new Model\Ministry());
+        }
+        $statement->closeCursor();
+        return null;
     }
 
     /**
