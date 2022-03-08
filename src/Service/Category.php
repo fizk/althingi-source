@@ -5,6 +5,7 @@ namespace Althingi\Service;
 use Althingi\Model;
 use Althingi\Hydrator;
 use Althingi\Injector\DatabaseAwareInterface;
+use Generator;
 use PDO;
 
 class Category implements DatabaseAwareInterface
@@ -35,6 +36,19 @@ class Category implements DatabaseAwareInterface
         return array_map(function ($object) {
             return (new Hydrator\Category())->hydrate($object, new Model\Category());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
+    }
+
+    public function fetchAllGenerator(): Generator
+    {
+        $statement = $this->getDriver()
+            ->prepare('select * from `Category` order by `category_id`');
+        $statement->execute();
+
+        while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
+            yield (new Hydrator\Category)->hydrate($object, new Model\Category());
+        }
+        $statement->closeCursor();
+        return null;
     }
 
     /**

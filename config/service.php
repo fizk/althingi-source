@@ -273,6 +273,13 @@ return [
                 ->setEventDispatcher($container->get(EventDispatcherInterface::class))
                 ;
         },
+        Controller\Cli\IndexerCategoryController::class => function (ContainerInterface $container) {
+            return (new Controller\Cli\IndexerCategoryController())
+                ->setCategoryService($container->get(Service\Category::class))
+                ->setSuperCategoryService($container->get(Service\SuperCategory::class))
+                ->setEventDispatcher($container->get(EventDispatcherInterface::class))
+                ;
+        },
         Controller\Cli\IndexController::class => function (ContainerInterface $container) {
             return (new Controller\Cli\IndexController())
                 ;

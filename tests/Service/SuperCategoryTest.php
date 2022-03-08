@@ -27,6 +27,21 @@ class SuperCategoryTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
+    public function testFetchAllGenerator()
+    {
+        $service = new SuperCategory();
+        $service->setDriver($this->pdo);
+
+        $actualData = [];
+        foreach ($service->fetchAllGenerator() as $category) {
+            $actualData[] = $category;
+        }
+
+
+        $this->assertCount(3, $actualData);
+        $this->assertInstanceOf(SuperCategoryModel::class, $actualData[0]);
+    }
+
     public function testCreate()
     {
         $superCategory = (new SuperCategoryModel())

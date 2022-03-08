@@ -488,6 +488,24 @@ return [
                         ],
                     ],
                 ],
+                'category' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route'    => ':category',
+                        'defaults' => [
+                            'controller' => Controller\Cli\IndexerCategoryController::class,
+                        ],
+                    ],
+                ],
+                'cabinet' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route'    => ':cabinet',
+                        'defaults' => [
+                            'controller' => Controller\Cli\IndexerCabinetController::class,
+                        ],
+                    ],
+                ],
                 'party' => [
                     'type' => Literal::class,
                     'options' => [

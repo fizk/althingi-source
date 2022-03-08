@@ -2,7 +2,6 @@
 
 namespace Althingi\Service;
 
-use Althingi\Service\Category;
 use Althingi\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\Category as CategoryModel;
@@ -29,6 +28,20 @@ class CategoryTest extends TestCase
         $actualData = $service->get(1);
         $this->assertEquals($expectedData, $actualData);
         $this->assertInstanceOf(CategoryModel::class, $actualData);
+    }
+
+    public function testFetchAllGenerator()
+    {
+        $service = new Category();
+        $service->setDriver($this->pdo);
+
+        $categories = [];
+        foreach ($service->fetchAllGenerator() as $category) {
+            $categories[] = $category;
+        }
+
+        $this->assertCount(3, $categories);
+        $this->assertInstanceOf(CategoryModel::class, $categories[0]);
     }
 
     public function testFetchByAssembly()

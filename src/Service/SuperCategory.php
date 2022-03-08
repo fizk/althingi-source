@@ -5,6 +5,7 @@ namespace Althingi\Service;
 use Althingi\Model;
 use Althingi\Hydrator;
 use Althingi\Injector\DatabaseAwareInterface;
+use Generator;
 use PDO;
 
 class SuperCategory implements DatabaseAwareInterface
@@ -37,6 +38,19 @@ class SuperCategory implements DatabaseAwareInterface
         return array_map(function ($object) {
             return (new Hydrator\SuperCategory())->hydrate($object, new Model\SuperCategory());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
+    }
+
+    public function fetchAllGenerator(): Generator
+    {
+        $statement = $this->getDriver()
+            ->prepare('select * from `SuperCategory` order by `super_category_id`');
+        $statement->execute();
+
+        while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
+            yield (new Hydrator\SuperCategory)->hydrate($object, new Model\SuperCategory());
+        }
+        $statement->closeCursor();
+        return null;
     }
 
     /**
