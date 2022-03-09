@@ -2,16 +2,20 @@
 
 namespace Althingi\Service;
 
+use Althingi\Events\AddEvent;
+use Althingi\Events\UpdateEvent;
 use Althingi\Model;
 use Althingi\Hydrator;
-use Althingi\Injector\DatabaseAwareInterface;
+use Althingi\Injector\{DatabaseAwareInterface, EventsAwareInterface};
+use Althingi\Presenters\IndexableConstituencyPresenter;
 use PDO;
 use DateTime;
 use Generator;
 
-class Constituency implements DatabaseAwareInterface
+class Constituency implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
+    use EventService;
 
     public function get(int $id): ? Model\Constituency
     {
@@ -168,6 +172,10 @@ class Constituency implements DatabaseAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
+        $this->getEventDispatcher()->dispatch(
+            new AddEvent(new IndexableConstituencyPresenter($data), ['rows' => $statement->rowCount()])
+        );
+
         return $this->getDriver()->lastInsertId();
     }
 
@@ -178,6 +186,20 @@ class Constituency implements DatabaseAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
+        switch ($statement->rowCount()) {
+            case 1:
+                $this->getEventDispatcher()->dispatch(
+                    new AddEvent(new IndexableConstituencyPresenter($data), ['rows' => $statement->rowCount()])
+                );
+                break;
+            case 0:
+            case 2:
+                $this->getEventDispatcher()->dispatch(
+                    new UpdateEvent(new IndexableConstituencyPresenter($data), ['rows' => $statement->rowCount()])
+                );
+                break;
+        }
+
         return $statement->rowCount();
     }
 
@@ -187,6 +209,10 @@ class Constituency implements DatabaseAwareInterface
             $this->toUpdateString('Constituency', $data, "constituency_id={$data->getConstituencyId()}")
         );
         $statement->execute($this->toSqlValues($data));
+
+        $this->getEventDispatcher()->dispatch(
+            new UpdateEvent(new IndexableConstituencyPresenter($data), ['rows' => $statement->rowCount()])
+        );
 
         return $statement->rowCount();
     }

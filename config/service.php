@@ -337,7 +337,9 @@ return [
         },
         Service\Constituency::class => function (ContainerInterface $sm) {
             return (new Service\Constituency())
-                ->setDriver($sm->get(PDO::class));
+                ->setDriver($sm->get(PDO::class))
+                ->setEventDispatcher($sm->get(EventDispatcherInterface::class))
+                ;
         },
         Service\Category::class => function (ContainerInterface $sm) {
             return (new Service\Category())

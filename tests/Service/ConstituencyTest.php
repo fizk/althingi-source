@@ -6,6 +6,8 @@ use Althingi\Service\Constituency;
 use Althingi\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\Constituency as ConstituencyModel;
+use Althingi\Events\{UpdateEvent, AddEvent};
+use Mockery;
 use PDO;
 
 class ConstituencyTest extends TestCase
@@ -32,6 +34,14 @@ class ConstituencyTest extends TestCase
 
     public function testCreate()
     {
+        $eventDispatcher = Mockery::mock(\Psr\EventDispatcher\EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->with(Mockery::on(function ($arg) {
+                return $arg instanceof AddEvent;
+            }))
+            ->times(1)
+            ->getMock();
+
         $constituency = (new ConstituencyModel())
             ->setName('name')
             ->setConstituencyId(2);
@@ -55,15 +65,24 @@ class ConstituencyTest extends TestCase
         ])->getTable('Constituency');
         $actualTable = $this->getConnection()->createQueryTable('Constituency', 'SELECT * FROM Constituency');
 
-        $constituencyService = new Constituency();
-        $constituencyService->setDriver($this->pdo);
-        $constituencyService->create($constituency);
+        (new Constituency())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->create($constituency);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
     public function testSave()
     {
+        $eventDispatcher = Mockery::mock(\Psr\EventDispatcher\EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->with(Mockery::on(function ($arg) {
+                return $arg instanceof AddEvent;
+            }))
+            ->times(1)
+            ->getMock();
+
         $constituency = (new ConstituencyModel())
             ->setName('name')
             ->setConstituencyId(2);
@@ -87,15 +106,24 @@ class ConstituencyTest extends TestCase
         ])->getTable('Constituency');
         $actualTable = $this->getConnection()->createQueryTable('Constituency', 'SELECT * FROM Constituency');
 
-        $constituencyService = new Constituency();
-        $constituencyService->setDriver($this->pdo);
-        $constituencyService->save($constituency);
+        (new Constituency())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->save($constituency);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
     public function testUpdate()
     {
+        $eventDispatcher = Mockery::mock(\Psr\EventDispatcher\EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->with(Mockery::on(function ($arg) {
+                return $arg instanceof UpdateEvent;
+            }))
+            ->times(1)
+            ->getMock();
+
         $constituency = (new ConstituencyModel())
             ->setConstituencyId(1)
             ->setName('another-place');
@@ -113,9 +141,10 @@ class ConstituencyTest extends TestCase
         ])->getTable('Constituency');
         $actualTable = $this->getConnection()->createQueryTable('Constituency', 'SELECT * FROM Constituency');
 
-        $constituencyService = new Constituency();
-        $constituencyService->setDriver($this->pdo);
-        $constituencyService->update($constituency);
+        (new Constituency())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->update($constituency);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
@@ -133,5 +162,10 @@ class ConstituencyTest extends TestCase
                 ]
             ],
         ]);
+    }
+
+    public function tearDown(): void
+    {
+        Mockery::close();
     }
 }
