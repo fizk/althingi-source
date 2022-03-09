@@ -4,13 +4,16 @@ namespace Althingi\Service;
 
 use Althingi\Model;
 use Althingi\Hydrator;
-use Althingi\Injector\DatabaseAwareInterface;
+use Althingi\Events\{UpdateEvent, AddEvent};
+use Althingi\Injector\{DatabaseAwareInterface, EventsAwareInterface};
+use Althingi\Presenters\IndexableCommitteePresenter;
 use Generator;
 use PDO;
 
-class Committee implements DatabaseAwareInterface
+class Committee implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
+    use EventService;
 
     public function get(int $id): ? Model\Committee
     {
@@ -82,6 +85,10 @@ class Committee implements DatabaseAwareInterface
         $statement = $this->getDriver()->prepare($this->toInsertString('Committee', $data));
         $statement->execute($this->toSqlValues($data));
 
+        $this->getEventDispatcher()->dispatch(
+            new AddEvent(new IndexableCommitteePresenter($data), ['rows' => $statement->rowCount()])
+        );
+
         return $this->getDriver()->lastInsertId();
     }
 
@@ -90,6 +97,19 @@ class Committee implements DatabaseAwareInterface
         $statement = $this->getDriver()->prepare($this->toSaveString('Committee', $data));
         $statement->execute($this->toSqlValues($data));
 
+        switch ($statement->rowCount()) {
+            case 1:
+                $this->getEventDispatcher()->dispatch(
+                    new AddEvent(new IndexableCommitteePresenter($data), ['rows' => $statement->rowCount()])
+                );
+                break;
+            case 0:
+            case 2:
+                $this->getEventDispatcher()->dispatch(
+                    new UpdateEvent(new IndexableCommitteePresenter($data), ['rows' => $statement->rowCount()])
+                );
+                break;
+        }
         return $statement->rowCount();
     }
 
@@ -99,6 +119,10 @@ class Committee implements DatabaseAwareInterface
             $this->toUpdateString('Committee', $data, "committee_id={$data->getCommitteeId()}")
         );
         $statement->execute($this->toSqlValues($data));
+
+        $this->getEventDispatcher()->dispatch(
+            new UpdateEvent(new IndexableCommitteePresenter($data), ['rows' => $statement->rowCount()])
+        );
 
         return $statement->rowCount();
     }

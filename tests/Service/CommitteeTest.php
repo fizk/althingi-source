@@ -5,6 +5,8 @@ namespace Althingi\Service;
 use Althingi\Model\Committee as CommitteeModel;
 use Althingi\Service\Committee;
 use Althingi\DatabaseConnection;
+use Althingi\Events\{UpdateEvent, AddEvent};
+use Mockery;
 use PHPUnit\Framework\TestCase;
 use PDO;
 class CommitteeTest extends TestCase
@@ -58,6 +60,11 @@ class CommitteeTest extends TestCase
 
     public function testCreate()
     {
+        $eventDispatcher = Mockery::mock(\Psr\EventDispatcher\EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->times(1)
+            ->getMock();
+
         $expectedTable = $this->createArrayDataSet([
             'Committee' => [
                 [
@@ -97,9 +104,10 @@ class CommitteeTest extends TestCase
             ->setFirstAssemblyId(1)
             ->setCommitteeId(4);
 
-        $service = new Committee();
-        $service->setDriver($this->pdo);
-        $service->create($committee);
+        (new Committee())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->create($committee);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
@@ -155,6 +163,14 @@ class CommitteeTest extends TestCase
 
     public function testSave()
     {
+        $eventDispatcher = Mockery::mock(\Psr\EventDispatcher\EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->with(Mockery::on(function ($arg) {
+                return $arg instanceof AddEvent;
+            }))
+            ->times(1)
+            ->getMock();
+
         $expectedTable = $this->createArrayDataSet([
             'Committee' => [
                 [
@@ -194,9 +210,10 @@ class CommitteeTest extends TestCase
             ->setFirstAssemblyId(1)
             ->setCommitteeId(4);
 
-        $service = new Committee();
-        $service->setDriver($this->pdo);
-        $service->save($committee);
+        (new Committee())
+            ->setEventDispatcher($eventDispatcher)
+            ->setDriver($this->pdo)
+            ->save($committee);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
@@ -301,6 +318,14 @@ class CommitteeTest extends TestCase
 
     public function testUpdate()
     {
+        $eventDispatcher = Mockery::mock(\Psr\EventDispatcher\EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->with(Mockery::on(function ($arg) {
+                return $arg instanceof UpdateEvent;
+            }))
+            ->times(1)
+            ->getMock();
+
         $expectedTable = $this->createArrayDataSet([
             'Committee' => [
                 [
@@ -337,9 +362,10 @@ class CommitteeTest extends TestCase
             ->setAbbrLong('com1')
             ->setAbbrShort('c1');
 
-        $service = new Committee();
-        $service->setDriver($this->pdo);
-        $service->update($committee);
+        $service = (new Committee())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->update($committee);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
@@ -378,5 +404,10 @@ class CommitteeTest extends TestCase
                 ],
             ]
         ]);
+    }
+
+    public function tearDown(): void
+    {
+        Mockery::close();
     }
 }

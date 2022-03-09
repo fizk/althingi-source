@@ -305,7 +305,9 @@ return [
         },
         Service\Committee::class => function (ContainerInterface $sm) {
             return (new Service\Committee())
-                ->setDriver($sm->get(PDO::class));
+                ->setDriver($sm->get(PDO::class))
+                ->setEventDispatcher($sm->get(EventDispatcherInterface::class))
+                ;
         },
         Service\CommitteeMeeting::class => function (ContainerInterface $sm) {
             return (new Service\CommitteeMeeting())
@@ -530,6 +532,7 @@ return [
             $config->set('log_level', (string) LOG_DEBUG);
             $config->set('metadata.broker.list', getenv('BROKER_HOST'));
             $config->set('bootstrap.servers', getenv('BROKER_HOST'));
+            $config->set('enable.idempotence', 'true');
             $config->set('debug', 'all');
 
             $producer = new KafkaProducer($config);
