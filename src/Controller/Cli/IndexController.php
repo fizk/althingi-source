@@ -44,6 +44,8 @@ class IndexController
                     "\t--assembly_id\e[0m",
                 "\e[1;32mconsole:plenary-agenda \e[1;35m\n".
                     "\t--assembly_id\e[0m",
+                "\e[1;32mconsole:president-sitting \e[1;35m\n".
+                    "\t--assembly_id\e[0m",
                 "\e[1;32mconsole:session \e[1;35m\n".
                     "\t--assembly_id \n".
                     "\t--congressman_id\e[0m",

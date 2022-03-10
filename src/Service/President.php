@@ -9,6 +9,7 @@ use Althingi\Presenters\IndexablePresidentPresenter;
 use Althingi\Injector\{DatabaseAwareInterface, EventsAwareInterface};
 use PDO;
 use DateTime;
+use Generator;
 
 class President implements DatabaseAwareInterface, EventsAwareInterface
 {
@@ -42,6 +43,25 @@ class President implements DatabaseAwareInterface, EventsAwareInterface
         return array_map(function ($object) {
             return (new Hydrator\President())->hydrate($object, new Model\President());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
+    }
+
+    public function fetchAllGenerator(?int $assembly = null): Generator
+    {
+        if ($assembly) {
+            $statement = $this->getDriver()
+                ->prepare('select * from `President` where assembly_id = :assembly_id order by `president_id`');
+            $statement->execute(['assembly_id' => $assembly]);
+        } else {
+            $statement = $this->getDriver()
+                ->prepare('select * from `President` order by `president_id`');
+            $statement->execute();
+        }
+
+        while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
+            yield (new Hydrator\President)->hydrate($object, new Model\President());
+        }
+        $statement->closeCursor();
+        return null;
     }
 
     public function getWithCongressman(int $id): ? Model\PresidentCongressman

@@ -292,6 +292,12 @@ return [
                 ->setEventDispatcher($container->get(EventDispatcherInterface::class))
                 ;
         },
+        Controller\Cli\IndexerPresidentController::class => function (ContainerInterface $container) {
+            return (new Controller\Cli\IndexerPresidentController())
+                ->setPresidentService($container->get(Service\President::class))
+                ->setEventDispatcher($container->get(EventDispatcherInterface::class))
+                ;
+        },
         Controller\Cli\IndexController::class => function (ContainerInterface $container) {
             return (new Controller\Cli\IndexController())
                 ;

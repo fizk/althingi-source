@@ -88,6 +88,58 @@ class PresidentTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
+    public function testFetchAllGeneratorAll()
+    {
+        $presidentService = new PresidentService();
+        $presidentService->setDriver($this->pdo);
+        $expectedData = [(new President())
+            ->setPresidentId(1)
+            ->setCongressmanId(1)
+            ->setAssemblyId(1)
+            ->setFrom(new DateTime('2000-01-01'))
+            ->setTitle('t')];
+
+        $actualData = [];
+        foreach($presidentService->fetchAllGenerator() as $item) {
+            $actualData[] = $item;
+        }
+
+        $this->assertEquals($expectedData, $actualData);
+    }
+
+    public function testFetchAllGeneratorByAssembly()
+    {
+        $presidentService = new PresidentService();
+        $presidentService->setDriver($this->pdo);
+        $expectedData = [(new President())
+            ->setPresidentId(1)
+            ->setCongressmanId(1)
+            ->setAssemblyId(1)
+            ->setFrom(new DateTime('2000-01-01'))
+            ->setTitle('t')];
+
+        $actualData = [];
+        foreach($presidentService->fetchAllGenerator(1) as $item) {
+            $actualData[] = $item;
+        }
+
+        $this->assertEquals($expectedData, $actualData);
+    }
+
+    public function testFetchAllGeneratorNotFound()
+    {
+        $presidentService = new PresidentService();
+        $presidentService->setDriver($this->pdo);
+        $expectedData = [];
+
+        $actualData = [];
+        foreach($presidentService->fetchAllGenerator(2) as $item) {
+            $actualData[] = $item;
+        }
+
+        $this->assertEquals($expectedData, $actualData);
+    }
+
     public function testCreate()
     {
         $president = (new President())

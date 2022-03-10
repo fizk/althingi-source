@@ -605,6 +605,15 @@ return [
                         ],
                     ],
                 ],
+                'president-sitting' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route'    => ':president-sitting',
+                        'defaults' => [
+                            'controller' => Controller\Cli\IndexerPresidentController::class,
+                        ],
+                    ],
+                ],
                 'session' => [
                     'type' => Literal::class,
                     'options' => [
