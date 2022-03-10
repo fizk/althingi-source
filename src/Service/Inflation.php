@@ -2,9 +2,12 @@
 
 namespace Althingi\Service;
 
+use Althingi\Events\AddEvent;
+use Althingi\Events\UpdateEvent;
 use Althingi\Model;
 use Althingi\Hydrator;
-use Althingi\Injector\DatabaseAwareInterface;
+use Althingi\Injector\{EventsAwareInterface, DatabaseAwareInterface};
+use Althingi\Presenters\IndexableInflationPresenter;
 use PDO;
 use DateTime;
 use Generator;
@@ -13,9 +16,10 @@ use Generator;
  * Class Inflation
  * @package Althingi\Service
  */
-class Inflation implements DatabaseAwareInterface
+class Inflation implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
+    use EventService;
 
     /**
      * @return \Althingi\Model\Inflation[]
@@ -90,6 +94,20 @@ class Inflation implements DatabaseAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
+        switch ($statement->rowCount()) {
+            case 1:
+                $this->getEventDispatcher()->dispatch(
+                    new AddEvent(new IndexableInflationPresenter($data), ['rows' => $statement->rowCount()])
+                );
+                break;
+            case 0:
+            case 2:
+                $this->getEventDispatcher()->dispatch(
+                    new UpdateEvent(new IndexableInflationPresenter($data), ['rows' => $statement->rowCount()])
+                );
+                break;
+        }
+
         return $statement->rowCount();
     }
 
@@ -99,6 +117,10 @@ class Inflation implements DatabaseAwareInterface
             $this->toUpdateString('Inflation', $data, "id={$data->getId()}")
         );
         $statement->execute($this->toSqlValues($data));
+
+        $this->getEventDispatcher()->dispatch(
+            new UpdateEvent(new IndexableInflationPresenter($data), ['rows' => $statement->rowCount()])
+        );
 
         return $statement->rowCount();
     }

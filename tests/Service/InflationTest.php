@@ -4,8 +4,12 @@ namespace Althingi\Service;
 
 use Althingi\Service\Inflation;
 use Althingi\DatabaseConnection;
-use PHPUnit\Framework\TestCase;
+use Althingi\Events\AddEvent;
+use Althingi\Events\UpdateEvent;
 use Althingi\Model\Inflation as InflationModel;
+use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use Mockery;
 use DateTime;
 use PDO;
 
@@ -119,6 +123,14 @@ class InflationTest extends TestCase
 
     public function testSaveUpdate()
     {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function ($args) {
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
         $inflation = (new InflationModel())
             ->setId(2)
             ->setDate(new DateTime('2000-01-02'))
@@ -135,9 +147,10 @@ class InflationTest extends TestCase
         ])->getTable('Inflation');
         $actualTable = $this->getConnection()->createQueryTable('Inflation', 'SELECT * FROM Inflation');
 
-        $assemblyService = new Inflation();
-        $assemblyService->setDriver($this->pdo);
-        $affectedRows = $assemblyService->save($inflation);
+        $affectedRows = (new Inflation())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->save($inflation);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
         $this->assertEquals(2, $affectedRows);
@@ -145,6 +158,14 @@ class InflationTest extends TestCase
 
     public function testSaveCreate()
     {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function ($args) {
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
         $inflation = (new InflationModel())
             ->setId(6)
             ->setDate(new DateTime('2000-01-06'))
@@ -162,9 +183,10 @@ class InflationTest extends TestCase
         ])->getTable('Inflation');
         $actualTable = $this->getConnection()->createQueryTable('Inflation', 'SELECT * FROM Inflation');
 
-        $assemblyService = new Inflation();
-        $assemblyService->setDriver($this->pdo);
-        $affectedRows = $assemblyService->save($inflation);
+        $affectedRows = (new Inflation())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->save($inflation);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
         $this->assertEquals(1, $affectedRows);
@@ -172,6 +194,14 @@ class InflationTest extends TestCase
 
     public function testUpdate()
     {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function ($args) {
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
         $inflation = (new InflationModel())
             ->setId(2)
             ->setDate(new DateTime('2000-01-02'))
@@ -188,9 +218,10 @@ class InflationTest extends TestCase
         ])->getTable('Inflation');
         $actualTable = $this->getConnection()->createQueryTable('Inflation', 'SELECT * FROM Inflation');
 
-        $assemblyService = new Inflation();
-        $assemblyService->setDriver($this->pdo);
-        $affectedRows = $assemblyService->update($inflation);
+        $affectedRows = (new Inflation())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->update($inflation);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
         $this->assertEquals(1, $affectedRows);
@@ -207,5 +238,10 @@ class InflationTest extends TestCase
                 ['id' => 5, 'date' => '2000-01-05', 'value' => 5],
             ],
         ]);
+    }
+
+    public function tearDown(): void
+    {
+        Mockery::close();
     }
 }

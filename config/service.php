@@ -441,7 +441,9 @@ return [
         },
         Service\Inflation::class => function (ContainerInterface $sm) {
             return (new Service\Inflation())
-                ->setDriver($sm->get(PDO::class));
+                ->setDriver($sm->get(PDO::class))
+                ->setEventDispatcher($sm->get(EventDispatcherInterface::class))
+                ;
         },
 
         PDO::class => function (ContainerInterface $sm) {
