@@ -32,6 +32,66 @@ class MinisterSittingTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
+    public function testFetchAllGeneratorAll()
+    {
+        $ministerSittingService = new MinisterSitting();
+        $ministerSittingService->setDriver($this->pdo);
+
+        $expectedData = [(new Model\MinisterSitting())
+            ->setAssemblyId(1)
+            ->setMinisterSittingId(1)
+            ->setMinistryId(1)
+            ->setCongressmanId(1)
+            ->setPartyId(1)
+            ->setFrom(new \DateTime('2001-01-01'))]
+        ;
+
+        $actualData = [];
+        foreach ($ministerSittingService->fetchAllGenerator() as $item) {
+            $actualData[] = $item;
+        }
+
+        $this->assertEquals($expectedData, $actualData);
+    }
+
+    public function testFetchAllGeneratorByAssemblyFound()
+    {
+        $ministerSittingService = new MinisterSitting();
+        $ministerSittingService->setDriver($this->pdo);
+
+        $expectedData = [(new Model\MinisterSitting())
+            ->setAssemblyId(1)
+            ->setMinisterSittingId(1)
+            ->setMinistryId(1)
+            ->setCongressmanId(1)
+            ->setPartyId(1)
+            ->setFrom(new \DateTime('2001-01-01'))]
+        ;
+
+        $actualData = [];
+        foreach ($ministerSittingService->fetchAllGenerator(1) as $item) {
+            $actualData[] = $item;
+        }
+
+        $this->assertEquals($expectedData, $actualData);
+    }
+
+    public function testFetchAllGeneratorByAssemblyNotFound()
+    {
+        $ministerSittingService = new MinisterSitting();
+        $ministerSittingService->setDriver($this->pdo);
+
+        $expectedData = []
+        ;
+
+        $actualData = [];
+        foreach ($ministerSittingService->fetchAllGenerator(2) as $item) {
+            $actualData[] = $item;
+        }
+
+        $this->assertEquals($expectedData, $actualData);
+    }
+
     public function testCreate()
     {
         $ministrySitting = (new Model\MinisterSitting())

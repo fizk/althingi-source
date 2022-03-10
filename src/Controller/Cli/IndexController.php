@@ -37,6 +37,8 @@ class IndexController
                     "\t--issue_id\e[0m",
                 "\e[1;32mconsole:inflation\e[0m",
                 "\e[1;32mconsole:ministry\e[0m",
+                "\e[1;32mconsole:minister-sitting \e[1;35m\n" .
+                    "\t--assembly_id\e[0m",
                 "\e[1;32mconsole:party\e[0m",
                 "\e[1;32mconsole:plenary \e[1;35m\n" .
                     "\t--assembly_id\e[0m",

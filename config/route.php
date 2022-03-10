@@ -542,6 +542,15 @@ return [
                         ],
                     ],
                 ],
+                'minister-sitting' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route'    => ':minister-sitting',
+                        'defaults' => [
+                            'controller' => Controller\Cli\IndexerMinisterSittingController::class,
+                        ],
+                    ],
+                ],
                 'congressman' => [
                     'type' => Literal::class,
                     'options' => [

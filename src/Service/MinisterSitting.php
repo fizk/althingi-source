@@ -9,6 +9,7 @@ use Althingi\Presenters\IndexableMinisterSittingPresenter;
 use Althingi\Injector\{EventsAwareInterface, DatabaseAwareInterface};
 use PDO;
 use DateTime;
+use Generator;
 
 class MinisterSitting implements DatabaseAwareInterface, EventsAwareInterface
 {
@@ -60,6 +61,27 @@ class MinisterSitting implements DatabaseAwareInterface, EventsAwareInterface
         return array_map(function ($object) {
             return (new Hydrator\MinisterSitting())->hydrate($object, new Model\MinisterSitting());
         }, $sittings);
+    }
+
+    public function fetchAllGenerator(?int $assemblyId = null): Generator
+    {
+        if ($assemblyId) {
+            $statement = $this->getDriver()
+                ->prepare(
+                    'select * from MinisterSitting where assembly_id = :assembly_id order by `minister_sitting_id`'
+                );
+            $statement->execute(['assembly_id' => $assemblyId]);
+        } else {
+            $statement = $this->getDriver()
+                ->prepare('select * from MinisterSitting order by `minister_sitting_id`');
+            $statement->execute();
+        }
+
+        while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
+            yield (new Hydrator\MinisterSitting)->hydrate($object, new Model\MinisterSitting());
+        }
+        $statement->closeCursor();
+        return null;
     }
 
     public function create(Model\MinisterSitting $data): int
