@@ -254,7 +254,7 @@ class Segment implements RouteInterface
         $regex = $this->regex;
 
         if ($pathOffset !== null) {
-            $result = preg_match('(\G' . $regex . ')', $path, $matches, null, $pathOffset);
+            $result = preg_match('(\G' . $regex . ')', $path, $matches, 0/*null*/, $pathOffset);
         } else {
             $result = preg_match('(^' . $regex . '$)', $path, $matches);
         }

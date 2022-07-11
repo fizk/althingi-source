@@ -1,4 +1,4 @@
-FROM php:8.0.15-apache-bullseye
+FROM php:8.1.8-apache-bullseye
 
 ARG ENV
 ENV PATH="/var/www:/var/www/bin:${PATH}"
@@ -81,7 +81,7 @@ COPY --chown=www-data:www-data ./composer.json ./composer.json
 COPY --chown=www-data:www-data ./composer.lock ./composer.lock
 
 RUN curl -sS https://getcomposer.org/installer \
-    | php -- --install-dir=/var/www --filename=composer --version=2.1.3
+    | php -- --install-dir=/var/www --filename=composer --version=2.3.9
 
 RUN if [ "$ENV" != "production" ] ; then \
     composer install --prefer-source --no-interaction --no-cache \

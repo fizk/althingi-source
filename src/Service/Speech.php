@@ -345,7 +345,7 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
 
     public function create(Model\Speech $data): string
     {
-        $data->setWordCount(str_word_count($data->getText()));
+        $data->setWordCount($data->getText() ? str_word_count($data->getText()) : 0);
         $statement = $this->getDriver()->prepare(
             $this->toInsertString('Speech', $data)
         );
@@ -360,7 +360,7 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
 
     public function save(Model\Speech $data): int
     {
-        $data->setWordCount(str_word_count($data->getText()));
+        $data->setWordCount($data->getText() ? str_word_count($data->getText()) : 0);
         $statement = $this->getDriver()->prepare($this->toSaveString('Speech', $data));
         $statement->execute($this->toSqlValues($data));
 
@@ -382,7 +382,7 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
 
     public function update(Model\Speech $data): int
     {
-        $data->setWordCount(str_word_count($data->getText()));
+        $data->setWordCount($data->getText() ? str_word_count($data->getText()) : 0);
         $statement = $this->getDriver()->prepare(
             $this->toUpdateString('Speech', $data, "speech_id='{$data->getSpeechId()}'")
         );

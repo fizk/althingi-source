@@ -37,7 +37,7 @@ class VoteItemAndCongressman implements ModelInterface
         );
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): array
     {
         return $this->toArray();
     }
