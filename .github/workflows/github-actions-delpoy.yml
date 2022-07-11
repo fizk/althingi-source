@@ -41,14 +41,14 @@ jobs:
             echo github.commit: ${{ github.sha }}
             echo github.run_number ${{ github.run_number }}
             echo github.run_id: ${{ github.run_id }}
-      -
-        name: Deploy container to server
-        uses: appleboy/ssh-action@master
-        with:
-          script: /var/app/bin/source
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          key: ${{ secrets.SSH_KEY }}
+      # -
+      #   name: Deploy container to server
+      #   uses: appleboy/ssh-action@master
+      #   with:
+      #     script: /var/app/bin/source
+      #     host: ${{ secrets.SSH_HOST }}
+      #     username: ${{ secrets.SSH_USER }}
+      #     passphrase: ${{ secrets.SSH_PASSPHRASE }}
+      #     key: ${{ secrets.SSH_KEY }}
 
 
