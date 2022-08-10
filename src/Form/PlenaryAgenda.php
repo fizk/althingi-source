@@ -142,6 +142,7 @@ class PlenaryAgenda extends Form
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
+                    ['name' => ToInt::class,],
                     [
                         'name' => ToNull::class,
                         'options' => ['type' => 'all']
@@ -167,6 +168,7 @@ class PlenaryAgenda extends Form
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
+                    ['name' => ToInt::class,],
                     [
                         'name' => ToNull::class,
                         'options' => ['type' => 'all']
@@ -192,6 +194,7 @@ class PlenaryAgenda extends Form
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
+                    ['name' => ToInt::class,],
                     [
                         'name' => ToNull::class,
                         'options' => ['type' => 'all']
@@ -217,6 +220,7 @@ class PlenaryAgenda extends Form
                 'required' => false,
                 'allow_empty' => true,
                 'filters' => [
+                    ['name' => ToInt::class,],
                     [
                         'name' => ToNull::class,
                         'options' => ['type' => 'all']
