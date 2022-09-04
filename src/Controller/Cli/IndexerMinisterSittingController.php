@@ -26,6 +26,7 @@ class IndexerMinisterSittingController implements ServiceMinisterSittingAwareInt
     {
         $assemblyId = $request->getAttribute('assembly_id', null);
 
+        /** @var \Althingi\Model\MinisterSitting $model */
         foreach ($this->ministerSittingService->fetchAllGenerator($assemblyId) as $model) {
             $this->getEventDispatcher()->dispatch(
                 new AddEvent(new IndexableMinisterSittingPresenter($model), ['rows' => 1]),

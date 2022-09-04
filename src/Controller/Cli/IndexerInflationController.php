@@ -24,6 +24,7 @@ class IndexerInflationController implements ServiceInflationAwareInterface, Even
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        /** @var \Althingi\Model\Inflation $model */
         foreach ($this->inflationService->fetchAllGenerator() as $model) {
             $this->getEventDispatcher()->dispatch(
                 new AddEvent(new IndexableInflationPresenter($model), ['rows' => 1]),

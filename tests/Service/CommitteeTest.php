@@ -2,12 +2,12 @@
 
 namespace Althingi\Service;
 
+use PHPUnit\Framework\TestCase;
 use Althingi\Model\Committee as CommitteeModel;
 use Althingi\Service\Committee;
 use Althingi\DatabaseConnection;
 use Althingi\Events\{UpdateEvent, AddEvent};
 use Mockery;
-use PHPUnit\Framework\TestCase;
 use PDO;
 class CommitteeTest extends TestCase
 {

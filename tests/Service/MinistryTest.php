@@ -4,9 +4,13 @@ namespace Althingi\Service;
 
 use Althingi\Service\Ministry;
 use Althingi\DatabaseConnection;
+use Althingi\Events\AddEvent;
+use Althingi\Events\UpdateEvent;
 use Althingi\Model;
+use Mockery;
 use PHPUnit\Framework\TestCase;
 use PDO;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class MinistryTest extends TestCase
 {
@@ -276,6 +280,149 @@ class MinistryTest extends TestCase
         $ministryService->setDriver($this->pdo);
 
         $this->assertEquals(2, $ministryService->count());
+    }
+
+    public function testCreateFireEventCreateResource()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (AddEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
+        $ministry = (new Model\Ministry())
+            ->setMinistryId(3)
+            ->setName('name 3')
+            ->setAbbrShort('abbr_short3')
+            ->setAbbrLong('abbr_long3');
+
+        (new Ministry())
+            ->setEventDispatcher($eventDispatcher)
+            ->setDriver($this->pdo)
+            ->create($ministry);
+
+    }
+
+    public function testUpdateFireEventResourceFoundUpdateRequired()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $ministry = (new Model\Ministry())
+            ->setMinistryId(2)
+            ->setName('name 2')
+            ->setAbbrShort('abbr_short2-update')
+            ->setAbbrLong('abbr_long2');
+
+        (new Ministry())
+            ->setEventDispatcher($eventDispatcher)
+            ->setDriver($this->pdo)
+            ->update($ministry);
+    }
+
+    public function testUpdateFireEventResourceFoundNoUpdateNeeded()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(0, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $ministry = (new Model\Ministry())
+            ->setMinistryId(2)
+            ->setName('name 2')
+            ->setAbbrShort('abbr_short2')
+            ->setAbbrLong('abbr_long2')
+            ->setFirst(1);
+
+        (new Ministry())
+            ->setEventDispatcher($eventDispatcher)
+            ->setDriver($this->pdo)
+            ->update($ministry);
+    }
+
+    public function testSaveFireEventResourceCreated()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (AddEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
+        $ministry = (new Model\Ministry())
+            ->setMinistryId(3)
+            ->setName('name 3')
+            ->setAbbrShort('abbr_short3')
+            ->setAbbrLong('abbr_long3')
+            ->setFirst(1);
+
+        (new Ministry())
+            ->setEventDispatcher($eventDispatcher)
+            ->setDriver($this->pdo)
+            ->save($ministry);
+    }
+
+    public function testSaveFireEventResourceFoundNoUpdateNeeded()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(0, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $ministry = (new Model\Ministry())
+            ->setMinistryId(2)
+            ->setName('name 2')
+            ->setAbbrShort('abbr_short2')
+            ->setAbbrLong('abbr_long2')
+            ->setFirst(1);
+
+        (new Ministry())
+            ->setEventDispatcher($eventDispatcher)
+            ->setDriver($this->pdo)
+            ->save($ministry);
+    }
+
+    public function testSaveFireEventResourceFoundUpdateRequired()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(2, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $ministry = (new Model\Ministry())
+            ->setMinistryId(2)
+            ->setName('name 2')
+            ->setAbbrShort('abbr_short2-update')
+            ->setAbbrLong('abbr_long2')
+            ->setFirst(1);
+
+        (new Ministry())
+            ->setEventDispatcher($eventDispatcher)
+            ->setDriver($this->pdo)
+            ->save($ministry);
     }
 
     protected function getDataSet()

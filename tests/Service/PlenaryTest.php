@@ -4,8 +4,13 @@ namespace Althingi\Service;
 
 use Althingi\Service\Plenary;
 use Althingi\DatabaseConnection;
+use Althingi\Events\AddEvent;
+use Althingi\Events\UpdateEvent;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\Plenary as PlenaryModel;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use DateTime;
+use Mockery;
 use PDO;
 
 class PlenaryTest extends TestCase
@@ -282,6 +287,143 @@ class PlenaryTest extends TestCase
         $queryTable = $this->getConnection()->createQueryTable('Plenary', 'SELECT * FROM Plenary');
 
         $this->assertTablesEqual($expectedTable, $queryTable);
+    }
+
+    public function testCreateFireEventResourceCreated()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (AddEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
+        $plenary = (new PlenaryModel())
+            ->setAssemblyId(1)
+            ->setPlenaryId(5);
+
+        (new Plenary())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher(($eventDispatcher))
+            ->create($plenary)
+        ;
+    }
+
+    public function testUpdateFireEventResourceFoundNoNeedForAnUpdate()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(0, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $plenary = (new PlenaryModel())
+            ->setAssemblyId(1)
+            ->setPlenaryId(1)
+            ->setFrom(new DateTime('2000-01-01'));
+
+        (new Plenary())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher(($eventDispatcher))
+            ->update($plenary)
+        ;
+    }
+
+    public function testUpdateFireEventResourceFoundUpdateRequired()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $plenary = (new PlenaryModel())
+            ->setAssemblyId(1)
+            ->setPlenaryId(1)
+            ->setFrom(new DateTime('2001-01-01'));
+
+        (new Plenary())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher(($eventDispatcher))
+            ->update($plenary)
+        ;
+    }
+
+    public function testSaveFireEventResourceCreated()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (AddEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
+        $plenary = (new PlenaryModel())
+            ->setAssemblyId(1)
+            ->setPlenaryId(10)
+            ->setFrom(new DateTime('2001-01-01'));
+
+        (new Plenary())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher(($eventDispatcher))
+            ->save($plenary)
+        ;
+    }
+
+    public function testSaveFireEventResourceFoundNoUpdate()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(0, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $plenary = (new PlenaryModel())
+            ->setAssemblyId(1)
+            ->setPlenaryId(1)
+            ->setFrom(new DateTime('2000-01-01'));
+
+        (new Plenary())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher(($eventDispatcher))
+            ->save($plenary)
+        ;
+    }
+
+    public function testSaveFireEventResourceFoundUpdateRequired()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(2, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $plenary = (new PlenaryModel())
+            ->setAssemblyId(1)
+            ->setPlenaryId(1)
+            ->setFrom(new DateTime('2010-01-01'));
+
+        (new Plenary())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher(($eventDispatcher))
+            ->save($plenary)
+        ;
     }
 
     protected function getDataSet()

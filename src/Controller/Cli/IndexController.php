@@ -18,39 +18,39 @@ class IndexController
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        return (new ConsoleResponse(
-            implode("\n", [
-                "\e[1;32mconsole:assembly\e[0m",
-                "\e[1;32mconsole:cabinet\e[0m",
-                "\e[1;32mconsole:category\e[0m",
-                "\e[1;32mconsole:constituency\e[0m",
-                "\e[1;32mconsole:committee\e[0m",
-                "\e[1;32mconsole:committee-sitting \e[1;35m\n" .
-                    "\t--assembly_id \n" .
-                    "\t--congressman_id \n" .
-                    "\t--committee_id\e[0m",
-                "\e[1;32mconsole:congressman \e[1;35m\n" .
-                    "\t--assembly_id\e[0m",
-                "\e[1;32mconsole:congressman-document \e[1;35m\n" .
-                    "\t--assembly_id \n" .
-                    "\t--congressman_id \n" .
-                    "\t--issue_id\e[0m",
-                "\e[1;32mconsole:inflation\e[0m",
-                "\e[1;32mconsole:ministry\e[0m",
-                "\e[1;32mconsole:minister-sitting \e[1;35m\n" .
-                    "\t--assembly_id\e[0m",
-                "\e[1;32mconsole:party\e[0m",
-                "\e[1;32mconsole:plenary \e[1;35m\n" .
-                    "\t--assembly_id\e[0m",
-                "\e[1;32mconsole:plenary-agenda \e[1;35m\n".
-                    "\t--assembly_id\e[0m",
-                "\e[1;32mconsole:president-sitting \e[1;35m\n".
-                    "\t--assembly_id\e[0m",
-                "\e[1;32mconsole:session \e[1;35m\n".
-                    "\t--assembly_id \n".
-                    "\t--congressman_id\e[0m",
-            ])
-        ));
+        $options = [
+            ['assembly',            []],
+            ['cabinet',             []],
+            ['category',            []],
+            ['constituency',        []],
+            ['committee',           []],
+            ['party',               []],
+            ['ministry',            []],
+            ['inflation',           []],
+            ['committee-sitting',   ['assembly_id', 'congressman_id', 'committee_id']],
+            ['congressman',         ['assembly_id']],
+            ['congressman-document',['assembly_id', 'congressman_id', 'issue_id']],
+            ['issue',               ['assembly_id']],
+            ['issue-category',      ['assembly_id']],
+            ['document',            ['assembly_id', 'issue_id']],
+            ['committee-document',  ['assembly_id', 'issue_id', 'document_id']],
+            ['vote',                ['assembly_id', 'issue_id', 'document_id']],
+            ['vote-item',           ['assembly_id', 'issue_id', 'document_id']],
+            ['minister-sitting',    ['assembly_id']],
+            ['plenary',             ['assembly_id']],
+            ['plenary-agenda',      ['assembly_id']],
+            ['president-sitting',   ['assembly_id']],
+            ['session',             ['assembly_id', 'congressman_id']],
+            ['speech',              ['assembly_id', 'issue_id']],
+        ];
+
+        usort($options, fn ($a, $b) => ($a[0] < $b[0]) ? -1 : 1);
+
+        $result = array_reduce($options, function (mixed $carry, mixed $item) {
+            $params = array_reduce($item[1], fn (mixed $c, mixed $i) => $c . ("\t--{$i} \n"));
+            return $carry . ("\e[1;32mconsole:{$item[0]}\e[1;35m\n{$params}\e[0m");
+        });
+        return (new ConsoleResponse($result));
     }
 
     public function setAssemblyService(Assembly $assembly): self

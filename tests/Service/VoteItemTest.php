@@ -6,8 +6,12 @@ use Althingi\Model\VoteItem as VoteItemModel;
 use Althingi\Model\VoteItemAndAssemblyIssue as VoteItemAndAssemblyIssueModel;
 use Althingi\Service\VoteItem;
 use Althingi\DatabaseConnection;
+use Althingi\Events\AddEvent;
+use Althingi\Events\UpdateEvent;
+use Mockery;
 use PHPUnit\Framework\TestCase;
 use PDO;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class VoteItemTest extends TestCase
 {
@@ -157,6 +161,144 @@ class VoteItemTest extends TestCase
         $voteItemService->update($voteItem);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
+    }
+
+    public function testCreateFireEventResourceCreated()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (AddEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
+        $voteItem = (new VoteItemModel())
+            ->setVoteId(1)
+            ->setCongressmanId(3)
+            ->setVoteItemId(5)
+            ->setVote('ja');
+
+        (new VoteItem())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->create($voteItem);
+    }
+
+    public function testUpdateFireEventResourceFoundNoUpdateRequired()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(0, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $voteItem = (new VoteItemModel())
+            ->setVoteId(1)
+            ->setCongressmanId(1)
+            ->setVoteItemId(1)
+            ->setVote('ja');
+
+        (new VoteItem())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->update($voteItem);
+    }
+
+    public function testUpdateFireEventResourceFoundUpdateRequired()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $voteItem = (new VoteItemModel())
+            ->setVoteId(1)
+            ->setCongressmanId(3)
+            ->setVoteItemId(1)
+            ->setVote('nei');
+
+        (new VoteItem())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->update($voteItem);
+    }
+
+    public function testSaveFireEventResourceCreated()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (AddEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
+        $voteItem = (new VoteItemModel())
+            ->setVoteId(1)
+            ->setCongressmanId(3)
+            ->setVoteItemId(5)
+            ->setVote('nei');
+
+        (new VoteItem())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->save($voteItem);
+    }
+
+    public function testSaveFireEventResourceFoundNoUpdateRequired()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(0, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $voteItem = (new VoteItemModel())
+            ->setVoteId(1)
+            ->setCongressmanId(1)
+            ->setVoteItemId(1)
+            ->setVote('ja');
+
+        (new VoteItem())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->save($voteItem);
+    }
+
+    public function testSaveFireEventResourceFoundUpdateNeeded()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(2, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $voteItem = (new VoteItemModel())
+            ->setVoteId(1)
+            ->setCongressmanId(1)
+            ->setVoteItemId(1)
+            ->setVote('nei');
+
+        (new VoteItem())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->save($voteItem);
     }
 
     protected function getDataSet()

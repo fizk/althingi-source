@@ -2,9 +2,14 @@
 
 namespace Althingi\Service;
 
+use Althingi\Events\AddEvent;
+use Althingi\Events\UpdateEvent;
 use Althingi\Model;
 use Althingi\Hydrator;
 use Althingi\Injector\{DatabaseAwareInterface, EventsAwareInterface};
+use Althingi\Presenters\IndexableCommitteeDocumentPresenter;
+use Exception;
+use Generator;
 use PDO;
 
 class CommitteeDocument implements DatabaseAwareInterface, EventsAwareInterface
@@ -24,6 +29,61 @@ class CommitteeDocument implements DatabaseAwareInterface, EventsAwareInterface
         return $object
             ? (new Hydrator\CommitteeDocument())->hydrate($object, new Model\CommitteeDocument())
             : null;
+    }
+
+    public function fetchAllGenerator(?int $assemblyId = null, ?int $issueId = null, ?int $documentId = null): Generator
+    {
+        if ($assemblyId === null) {
+            $statement = $this->getDriver()
+                ->prepare('select * from `Document_has_Committee`');
+            $statement->execute();
+        } elseif ($assemblyId !== null &&  $issueId === null) {
+            $statement = $this->getDriver()
+                ->prepare('
+                    select * from `Document_has_Committee` where
+                    `assembly_id` = :assembly_id
+                ');
+            $statement->execute([
+                'assembly_id' => $assemblyId
+            ]);
+        } elseif ($assemblyId !== null &&  $issueId !== null && $documentId === null) {
+            $statement = $this->getDriver()
+                ->prepare('
+                    select * from `Document_has_Committee` where
+                    `assembly_id` = :assembly_id and
+                    `issue_id` = :issue_id
+                ');
+            $statement->execute([
+                'assembly_id' => $assemblyId,
+                'issue_id' => $issueId
+            ]);
+        } elseif ($assemblyId !== null &&  $issueId !== null && $documentId !== null) {
+            $statement = $this->getDriver()
+                ->prepare('
+                    select * from `Document_has_Committee` where
+                    `assembly_id` = :assembly_id and
+                    `issue_id` = :issue_id and
+                    `document_id` = :document_id
+                ');
+            $statement->execute([
+                'assembly_id' => $assemblyId,
+                'issue_id' => $issueId,
+                'document_id' => $documentId,
+            ]);
+        } else {
+            throw new Exception('Parameter missing');
+        }
+
+        $statement = $this->getDriver()
+            ->prepare('select * from `Document_has_Committee`');
+        $statement->execute();
+
+
+        while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
+            yield (new Hydrator\CommitteeDocument)->hydrate($object, new Model\CommitteeDocument());
+        }
+        $statement->closeCursor();
+        return null;
     }
 
     /**
@@ -60,6 +120,10 @@ class CommitteeDocument implements DatabaseAwareInterface, EventsAwareInterface
         $id = $this->getDriver()->lastInsertId();
         $data->setDocumentCommitteeId($id);
 
+        $this->getEventDispatcher()->dispatch(
+            new AddEvent(new IndexableCommitteeDocumentPresenter($data), ['rows' => $statement->rowCount()])
+        );
+
         return $id;
     }
 
@@ -73,6 +137,10 @@ class CommitteeDocument implements DatabaseAwareInterface, EventsAwareInterface
             )
         );
         $statement->execute($this->toSqlValues($data));
+
+        $this->getEventDispatcher()->dispatch(
+            new UpdateEvent(new IndexableCommitteeDocumentPresenter($data), ['rows' => $statement->rowCount()])
+        );
 
         return $statement->rowCount();
     }

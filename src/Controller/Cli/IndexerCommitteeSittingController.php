@@ -28,6 +28,7 @@ class IndexerCommitteeSittingController implements ServiceCommitteeSittingAwareI
         $congressmanId = $request->getAttribute('congressman_id', null);
         $committeeId = $request->getAttribute('committee_id', null);
 
+        /** @var \Althingi\Model\CommitteeSitting $model */
         foreach ($this->committeeSittingService->fetchAllGenerator(
             $assemblyId,
             $congressmanId,

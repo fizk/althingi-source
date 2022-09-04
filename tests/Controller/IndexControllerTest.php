@@ -23,7 +23,7 @@ class IndexControllerTest extends TestCase
     }
 
     /**
-     * @covers ::indexAction
+     * @covers ::handle
      */
     public function testIndex()
     {

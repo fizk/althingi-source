@@ -170,7 +170,7 @@ class CommitteeDocumentController implements
         return new EmptyResponse(404);
     }
 
-    public function setCommitteeDocument(Service\CommitteeDocument $committeeDocument): self
+    public function setCommitteeDocumentService(Service\CommitteeDocument $committeeDocument): self
     {
         $this->committeeDocumentService = $committeeDocument;
         return $this;

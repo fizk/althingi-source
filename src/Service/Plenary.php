@@ -2,15 +2,20 @@
 
 namespace Althingi\Service;
 
+use Althingi\Events\AddEvent;
+use Althingi\Events\UpdateEvent;
 use Althingi\Model;
 use Althingi\Hydrator;
 use Althingi\Injector\DatabaseAwareInterface;
+use Althingi\Injector\EventsAwareInterface;
+use Althingi\Presenters\IndexablePlenaryPresenter;
 use Generator;
 use PDO;
 
-class Plenary implements DatabaseAwareInterface
+class Plenary implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
+    use EventService;
 
     public function get(int $assemblyId, int $plenaryId): ? Model\Plenary
     {
@@ -84,6 +89,10 @@ class Plenary implements DatabaseAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
+        $this->getEventDispatcher()->dispatch(
+            new AddEvent(new IndexablePlenaryPresenter($data), ['rows' => $statement->rowCount()])
+        );
+
         return $this->getDriver()->lastInsertId();
     }
 
@@ -94,6 +103,19 @@ class Plenary implements DatabaseAwareInterface
         );
         $statement->execute($this->toSqlValues($data));
 
+        switch ($statement->rowCount()) {
+            case 1:
+                $this->getEventDispatcher()->dispatch(
+                    new AddEvent(new IndexablePlenaryPresenter($data), ['rows' => $statement->rowCount()])
+                );
+                break;
+            case 0:
+            case 2:
+                $this->getEventDispatcher()->dispatch(
+                    new UpdateEvent(new IndexablePlenaryPresenter($data), ['rows' => $statement->rowCount()])
+                );
+                break;
+        }
         return $statement->rowCount();
     }
 
@@ -107,6 +129,10 @@ class Plenary implements DatabaseAwareInterface
             )
         );
         $statement->execute($this->toSqlValues($data));
+
+        $this->getEventDispatcher()->dispatch(
+            new UpdateEvent(new IndexablePlenaryPresenter($data), ['rows' => $statement->rowCount()])
+        );
 
         return $statement->rowCount();
     }

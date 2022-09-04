@@ -5,8 +5,8 @@ namespace Althingi\Model;
 class VoteItem implements ModelInterface
 {
     private ?int $vote_id = null;
-    private int $congressman_id;
-    private string $vote;
+    private ?int $congressman_id = null;
+    private ?string $vote = null;
     private ?int $vote_item_id = null;
 
     public function getVoteId(): ?int
@@ -63,7 +63,7 @@ class VoteItem implements ModelInterface
         ];
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         return $this->toArray();
     }

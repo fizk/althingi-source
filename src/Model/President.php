@@ -91,7 +91,7 @@ class President implements ModelInterface
         return $this;
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         return $this->toArray();
     }

@@ -17,8 +17,6 @@ use DateTime;
  * @coversDefaultClass \Althingi\Controller\PresidentController
  *
  * @covers \Althingi\Controller\PresidentController::setPresidentService
- * @covers \Althingi\Controller\PresidentController::setPartyService
- * @covers \Althingi\Controller\PresidentController::setCongressmanService
  */
 class PresidentControllerTest extends TestCase
 {

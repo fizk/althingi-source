@@ -4,10 +4,14 @@ namespace Althingi\Service;
 
 use Althingi\Service\Party;
 use Althingi\DatabaseConnection;
+use Althingi\Events\AddEvent;
+use Althingi\Events\UpdateEvent;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\Party as PartyModel;
 use Althingi\Model\PartyAndTime as PartyAndTimeModel;
+use Mockery;
 use PDO;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class PartyTest extends TestCase
 {
@@ -192,6 +196,138 @@ class PartyTest extends TestCase
         $partyService->update($party);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
+    }
+
+    public function testCreateFireEventResourceCreated()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (AddEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
+        $party = (new PartyModel())
+            ->setPartyId(4)
+            ->setName('p4')
+            ->setColor('000000');
+
+        (new Party())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher(($eventDispatcher))
+            ->create($party);
+    }
+
+    public function testUpdateFireEventResourceFoundNoUpdatedRequired()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(0, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $party = (new PartyModel())
+            ->setPartyId(3)
+            ->setName('p3')
+            ->setColor('ffffff');
+
+        (new Party())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher(($eventDispatcher))
+            ->update($party);
+    }
+
+    public function testUpdateFireEventResourceFoundUpdateRequired()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $party = (new PartyModel())
+            ->setPartyId(3)
+            ->setName('p3')
+            ->setColor('000000');
+
+        (new Party())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher(($eventDispatcher))
+            ->update($party);
+    }
+
+    public function testSaveFireEventResourceCreate()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (AddEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
+        $party = (new PartyModel())
+            ->setPartyId(4)
+            ->setName('p4')
+            ->setColor('000000');
+
+        (new Party())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher(($eventDispatcher))
+            ->save($party);
+    }
+
+    public function testSaveFireEventResourceFoundNoUpdateNeeded()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(0, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $party = (new PartyModel())
+            ->setPartyId(3)
+            ->setName('p3')
+            ->setColor('ffffff');
+
+        (new Party())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher(($eventDispatcher))
+            ->save($party);
+    }
+
+    public function testSaveFireEventResourceFoundUpdateNeeded()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(2, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $party = (new PartyModel())
+            ->setPartyId(3)
+            ->setName('p3')
+            ->setColor('123456');
+
+        (new Party())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher(($eventDispatcher))
+            ->save($party);
     }
 
     protected function getDataSet()

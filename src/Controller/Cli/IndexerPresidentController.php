@@ -25,6 +25,7 @@ class IndexerPresidentController implements ServicePresidentAwareInterface, Even
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        /** @var \Althingi\Model\President $model */
         foreach ($this->presidentService->fetchAllGenerator() as $model) {
             $this->getEventDispatcher()->dispatch(
                 new AddEvent(new IndexablePresidentPresenter($model), ['rows' => 1]),

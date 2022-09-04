@@ -102,7 +102,7 @@ class IssueLink implements ModelInterface
         ];
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->toArray();
     }

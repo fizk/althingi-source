@@ -2,7 +2,7 @@
 
 namespace Althingi\Utils;
 
-use Psr\Log\LoggerAwareInterface;
+use Althingi\Injector\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 
 class BlackHoleMessageBroker implements MessageBrokerInterface, LoggerAwareInterface
@@ -16,9 +16,14 @@ class BlackHoleMessageBroker implements MessageBrokerInterface, LoggerAwareInter
         }
     }
 
-    public function setLogger(LoggerInterface $logger)
+    public function setLogger(LoggerInterface $logger): self
     {
         $this->logger = $logger;
         return $this;
+    }
+
+    public function getLogger(): LoggerInterface
+    {
+        return $this->logger;
     }
 }

@@ -4,9 +4,13 @@ namespace Althingi\Service;
 
 use Althingi\Service\Session;
 use Althingi\DatabaseConnection;
+use Althingi\Events\AddEvent;
+use Althingi\Events\UpdateEvent;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\Session as SessionModel;
+use Mockery;
 use PDO;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class SessionTest extends TestCase
 {
@@ -376,6 +380,84 @@ class SessionTest extends TestCase
 
         $this->assertTablesEqual($expectedTable, $actualTable);
         $this->assertEquals(1, $affectedRowCound);
+    }
+
+    public function testCreateFireEventResourceCreated()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (AddEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
+        $session = (new SessionModel())
+            ->setCongressmanId(1)
+            ->setConstituencyId(1)
+            ->setAssemblyId(2)
+            ->setFrom(new \DateTime('2021-01-01'))
+            ->setType('þingmaður')
+            ->setPartyId(1);
+
+        (new Session())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher(($eventDispatcher))
+            ->create($session);
+    }
+
+    public function testUpdateFireEventResourceFoundNoUpdatedNeeded()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(0, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $session = (new SessionModel())
+            ->setSessionId(1)
+            ->setCongressmanId(1)
+            ->setConstituencyId(1)
+            ->setAssemblyId(1)
+            ->setFrom(new \DateTime('2000-01-01'))
+            ->setType('þingmaður')
+            ->setPartyId(1);
+
+        (new Session())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher(($eventDispatcher))
+            ->update($session);
+    }
+
+    public function testUpdateFireEventResourceFoundUpdateNeeded()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $session = (new SessionModel())
+            ->setSessionId(1)
+            ->setCongressmanId(1)
+            ->setConstituencyId(1)
+            ->setAssemblyId(1)
+            ->setFrom(new \DateTime('2000-01-01'))
+            ->setTo(new \DateTime('2000-01-01'))
+            ->setType('þingmaður')
+            ->setPartyId(1);
+
+        (new Session())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher(($eventDispatcher))
+            ->update($session);
     }
 
     protected function getDataSet()

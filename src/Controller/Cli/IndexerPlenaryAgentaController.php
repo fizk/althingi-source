@@ -26,6 +26,7 @@ class IndexerPlenaryAgentaController implements ServicePlenaryAgendaAwareInterfa
     {
         $assemblyId = $request->getAttribute('assembly_id', null);
 
+        /** @var \Althingi\Model\PlenaryAgenda $model */
         foreach ($this->plenaryAgendaService->fetchAllGenerator($assemblyId) as $model) {
             $this->getEventDispatcher()->dispatch(
                 new AddEvent(new IndexablePlenaryAgendaPresenter($model), ['rows' => 1]),

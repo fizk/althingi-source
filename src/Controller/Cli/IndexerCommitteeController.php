@@ -24,6 +24,7 @@ class IndexerCommitteeController implements ServiceCommitteeAwareInterface, Even
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        /** @var \Althingi\Model\Committee $model */
         foreach ($this->committeeService->fetchAllGenerator() as $model) {
             $this->getEventDispatcher()->dispatch(
                 new AddEvent(new IndexableCommitteePresenter($model), ['rows' => 1]),

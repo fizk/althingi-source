@@ -5,10 +5,14 @@ namespace Althingi\Service;
 use Althingi\Model\IssueTypeStatus;
 use Althingi\Service\Issue;
 use Althingi\DatabaseConnection;
+use Althingi\Events\AddEvent;
+use Althingi\Events\UpdateEvent;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\Issue as IssueModel;
 use Althingi\Model\IssueAndDate as IssueAndDateModel;
+use Mockery;
 use PDO;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class IssueTest extends TestCase
 {
@@ -109,14 +113,14 @@ class IssueTest extends TestCase
     /**
      * @todo this needs a bit more work
      */
-    public function testFetchByCongressmanAndAssembly()
-    {
-        $service = new Issue();
-        $service->setDriver($this->pdo);
+    // public function testFetchByCongressmanAndAssembly()
+    // {
+    //     $service = new Issue();
+    //     $service->setDriver($this->pdo);
 
-        $issues = $service->fetchByAssemblyAndCongressman(1, 1);
-        $this->assertCount(0, $issues);
-    }
+    //     $issues = $service->fetchByAssemblyAndCongressman(1, 1);
+    //     $this->assertCount(0, $issues);
+    // }
 
     //@todo fixme
 //    public function testFetchStateByAssembly()
@@ -274,6 +278,163 @@ class IssueTest extends TestCase
         );
 
         $this->assertTablesEqual($expectedTable, $queryTable);
+    }
+
+    public function testCreateFireEventResourceCreated()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (AddEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
+        $issue = (new IssueModel())
+            ->setAssemblyId(1)
+            ->setIssueId(4)
+            ->setCategory('A');
+
+        (new Issue())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->create($issue);
+    }
+
+    public function testUpdateFireEventResourceFoundButNoUpdateRequired()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(0, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $issue = (new IssueModel())
+            ->setAssemblyId(1)
+            ->setIssueId(1)
+            ->setCategory('A')
+            ->setCongressmanId(1)
+            ->setType('l')
+            ->setStatus('some')
+            ->setTypeSubname('something')
+        ;
+
+        (new Issue())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->update($issue);
+    }
+
+    public function testUpdateFireEventResourceFoundAndUpdateIsNeeded()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $issue = (new IssueModel())
+            ->setAssemblyId(1)
+            ->setIssueId(1)
+            ->setCategory('A')
+            ->setCongressmanId(1)
+            ->setType('l')
+            ->setStatus('some')
+            ->setTypeSubname('something-update')
+        ;
+
+        (new Issue())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->update($issue);
+    }
+
+    public function testSaveFireEventResourceCreated()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (AddEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
+        $issue = (new IssueModel())
+            ->setAssemblyId(1)
+            ->setIssueId(4)
+            ->setCategory('A')
+            ->setCongressmanId(1)
+            ->setType('l')
+            ->setStatus('some')
+            ->setTypeSubname('something-update')
+        ;
+
+        (new Issue())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->save($issue);
+    }
+
+    public function testSaveFireEventResourceFoundNoUpdateRequired()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(0, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $issue = (new IssueModel())
+            ->setAssemblyId(1)
+            ->setIssueId(1)
+            ->setCategory('A')
+            ->setCongressmanId(1)
+            ->setType('l')
+            ->setStatus('some')
+            ->setTypeSubname('something')
+        ;
+
+        (new Issue())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->save($issue);
+    }
+
+    public function testSaveFireEventResourceFoundUpdateNeeded()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(2, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $issue = (new IssueModel())
+            ->setAssemblyId(1)
+            ->setIssueId(1)
+            ->setCategory('A')
+            ->setCongressmanId(1)
+            ->setType('l')
+            ->setStatus('some')
+            ->setTypeSubname('something-update')
+        ;
+
+        (new Issue())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->save($issue);
     }
 
     protected function getDataSet()

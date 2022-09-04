@@ -9,6 +9,7 @@ use Althingi\Events\{UpdateEvent, AddEvent};
 use Althingi\Presenters\IndexableCabinetPresenter;
 use PDO;
 use DateTime;
+use Generator;
 
 class Cabinet implements DatabaseAwareInterface, EventsAwareInterface
 {
@@ -56,7 +57,7 @@ class Cabinet implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    public function fetchAllGenerator()
+    public function fetchAllGenerator(): Generator
     {
         $statement = $this->getDriver()
             ->prepare('select * from `Cabinet` order by `cabinet_id`');

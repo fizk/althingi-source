@@ -2,8 +2,8 @@
 
 namespace Althingi\Service;
 
-use Althingi\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
+use Althingi\DatabaseConnection;
 use Althingi\Model\Category as CategoryModel;
 use Althingi\Model\CategoryAndCount as CategoryAndCountModel;
 use PDO;

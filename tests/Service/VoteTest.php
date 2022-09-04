@@ -6,9 +6,14 @@ use Althingi\Model\Vote as VoteModel;
 use Althingi\Model\VoteTypeAndCount;
 use Althingi\Service\Vote;
 use Althingi\DatabaseConnection;
+use Althingi\Events\AddEvent;
+use Althingi\Events\UpdateEvent;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\DateAndCount as DateAndCountModel;
+use DateTime;
+use Mockery;
 use PDO;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class VoteTest extends TestCase
 {
@@ -27,7 +32,7 @@ class VoteTest extends TestCase
             ->setCategory('A')
             ->setAssemblyId(1)
             ->setDocumentId(1)
-            ->setDate(new \DateTime('2000-01-01'));
+            ->setDate(new \DateTime('2000-01-01T00:01:00'));
         $actualData = $service->get(1);
 
         $this->assertEquals($expectedData, $actualData);
@@ -56,7 +61,7 @@ class VoteTest extends TestCase
                 ->setCategory('A')
                 ->setAssemblyId(1)
                 ->setDocumentId(1)
-                ->setDate(new \DateTime('2000-01-01')),
+                ->setDate(new \DateTime('2000-01-01T00:01:00')),
             (new VoteModel())
                 ->setVoteId(2)
                 ->setIssueId(1)
@@ -248,6 +253,176 @@ class VoteTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
+    public function testCreateFireEventResourceCreated()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (AddEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
+        $vote = (new VoteModel())
+            ->setVoteId(9)
+            ->setIssueId(2)
+            ->setAssemblyId(1)
+            ->setCategory('A')
+            ->setYes(0)
+            ->setNo(0)
+            ->setInaction(0)
+            ->setDocumentId(2);
+
+        (new Vote())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher(($eventDispatcher))
+            ->create($vote);
+    }
+
+    public function testUpdateFireEventResourceFoundNoUpdateNeeded()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(0, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $vote = (new VoteModel())
+            ->setVoteId(1)
+            ->setIssueId(1)
+            ->setAssemblyId(1)
+            ->setCategory('A')
+            ->setYes(0)
+            ->setNo(0)
+            ->setInaction(0)
+            ->setDocumentId(1)
+            ->setDate(new DateTime('2000-01-01T00:00:00'));
+
+        $statement = $this->pdo->prepare('select * from Vote');
+        $statement->execute();
+
+        (new Vote())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher(($eventDispatcher))
+            ->update($vote);
+    }
+
+    public function testUpdateFireEventResourceFoundUpdatedRequired()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $vote = (new VoteModel())
+            ->setVoteId(1)
+            ->setIssueId(1)
+            ->setAssemblyId(1)
+            ->setCategory('A')
+            ->setYes(0)
+            ->setNo(0)
+            ->setInaction(0)
+            ->setDocumentId(1)
+            ->setDate(new DateTime('2000-01-02T00:00:00'));
+
+        (new Vote())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher(($eventDispatcher))
+            ->update($vote);
+    }
+
+    public function testSaveFireEventResourceCreated()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (AddEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
+        $vote = (new VoteModel())
+            ->setVoteId(100)
+            ->setIssueId(1)
+            ->setAssemblyId(1)
+            ->setCategory('A')
+            ->setYes(0)
+            ->setNo(0)
+            ->setInaction(0)
+            ->setDocumentId(1)
+            ->setDate(new DateTime('2000-01-02T00:00:00'));
+
+        (new Vote())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher(($eventDispatcher))
+            ->save($vote);
+    }
+
+    public function testSaveFireEventResourceFoundNoUpdatedNeeded()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(0, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $vote = (new VoteModel())
+            ->setVoteId(1)
+            ->setIssueId(1)
+            ->setAssemblyId(1)
+            ->setCategory('A')
+            ->setYes(0)
+            ->setNo(0)
+            ->setInaction(0)
+            ->setDocumentId(1)
+            ->setDate(new DateTime('2000-01-01T00:00:00'));
+
+        (new Vote())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher(($eventDispatcher))
+            ->save($vote);
+    }
+
+    public function testSaveFireEventResourceFoundUpdateRequired()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(2, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $vote = (new VoteModel())
+            ->setVoteId(1)
+            ->setIssueId(1)
+            ->setAssemblyId(1)
+            ->setCategory('A')
+            ->setYes(0)
+            ->setNo(0)
+            ->setInaction(0)
+            ->setDocumentId(1)
+            ->setDate(new DateTime('2000-01-02T00:00:00'));
+
+        (new Vote())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher(($eventDispatcher))
+            ->save($vote);
+    }
+
     protected function getDataSet()
     {
         return $this->createArrayDataSet([
@@ -310,7 +485,7 @@ class VoteTest extends TestCase
                     'category' => 'A',
                     'assembly_id' => 1,
                     'document_id' => 1,
-                    'date' => '2000-01-01'
+                    'date' => '2000-01-01T00:01:00'
                 ], [
                     'vote_id' => 2,
                     'issue_id' => 1,

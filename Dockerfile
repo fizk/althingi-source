@@ -72,6 +72,8 @@ RUN if [ "$ENV" != "production" ] ; then \
     echo "xdebug.client_port=9003" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
     echo "xdebug.idekey=myKey" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
     echo "xdebug.remote_handler=dbgp" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
+    echo 'alias cover="XDEBUG_MODE=coverage /var/www/vendor/bin/phpunit --coverage-html=/var/www/tests/docs"\n' >> ~/.bashrc; \
+    echo 'alias phpunit="/var/www/vendor/bin/phpunit"\n' >> ~/.bashrc; \
     fi ;
 
 WORKDIR /var/www

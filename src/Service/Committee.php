@@ -27,6 +27,20 @@ class Committee implements DatabaseAwareInterface, EventsAwareInterface
             : null;
     }
 
+    public function getByName(string $name): ? Model\Committee
+    {
+        $statement = $this->getDriver()->prepare('
+            select * from `Committee` C where C.`name` = :name;
+        ');
+        $statement->execute(['name' => $name]);
+
+        $object = $statement->fetch(PDO::FETCH_ASSOC);
+
+        return $object
+            ? (new Hydrator\Committee())->hydrate($object, new Model\Committee())
+            : null;
+    }
+
     /**
      * @return \Althingi\Model\Committee[]
      */

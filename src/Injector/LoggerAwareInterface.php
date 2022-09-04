@@ -10,7 +10,7 @@ interface LoggerAwareInterface
      * @param LoggerInterface $logger
      * @return mixed
      */
-    public function setLogger(LoggerInterface $logger);
+    public function setLogger(LoggerInterface $logger): self;
 
     /**
      * @return LoggerInterface

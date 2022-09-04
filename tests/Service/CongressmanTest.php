@@ -309,6 +309,137 @@ class CongressmanTest extends TestCase
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
+    public function testCreateFireEventOneEntryCreated()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (AddEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
+        $congressman = (new CongressmanModel())
+            ->setName('name5')
+            ->setBirth(new \DateTime('2000-01-01'));
+
+        (new Congressman())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->create($congressman);
+    }
+
+    public function testUpdateFireEventZeroNoUpdate()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(0, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $congressman = (new CongressmanModel())
+            ->setCongressmanId(1)
+            ->setName('name1')
+            ->setBirth(new \DateTime('2000-01-01'));
+
+        (new Congressman())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->update($congressman);
+    }
+
+    public function testUpdateFireEventOneDidAnUpdate()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $congressman = (new CongressmanModel())
+            ->setCongressmanId(1)
+            ->setName('name1-update')
+            ->setBirth(new \DateTime('2000-01-01'));
+
+        (new Congressman())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->update($congressman);
+    }
+
+    public function testSaveFireEventZeroFoundAnEntryButNoUpdatedRequired()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(0, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $congressman = (new CongressmanModel())
+            ->setCongressmanId(1)
+            ->setName('name1')
+            ->setBirth(new \DateTime('2000-01-01'));
+
+        (new Congressman())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->save($congressman);
+    }
+
+    public function testSaveFireEventOneCreatedNewEntry()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (AddEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
+        $congressman = (new CongressmanModel())
+            ->setCongressmanId(5)
+            ->setName('name1')
+            ->setBirth(new \DateTime('2000-01-01'));
+
+        (new Congressman())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->save($congressman);
+    }
+
+    public function testSaveFireEventTwoFoundEntryAndUpdatedIt()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(2, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $congressman = (new CongressmanModel())
+            ->setCongressmanId(1)
+            ->setName('name1-update')
+            ->setBirth(new \DateTime('2000-01-01'));
+
+        (new Congressman())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->save($congressman);
+    }
+
     protected function getDataSet()
     {
         return $this->createArrayDataSet([

@@ -142,7 +142,7 @@ return [
         },
         Controller\CommitteeDocumentController::class => function (ContainerInterface $container) {
             return (new Controller\CommitteeDocumentController)
-                ->setCommitteeDocument($container->get(Service\CommitteeDocument::class))
+                ->setCommitteeDocumentService($container->get(Service\CommitteeDocument::class))
                 ->setRouter($container->get(RouteInterface::class))
                 ;
         },
@@ -298,10 +298,53 @@ return [
                 ->setEventDispatcher($container->get(EventDispatcherInterface::class))
                 ;
         },
+        Controller\Cli\IndexerIssueController::class => function (ContainerInterface $container) {
+            return (new Controller\Cli\IndexerIssueController())
+                ->setIssueService($container->get(Service\Issue::class))
+                ->setEventDispatcher($container->get(EventDispatcherInterface::class))
+                ;
+        },
+        Controller\Cli\IndexerIssueCategoryController::class => function (ContainerInterface $container) {
+            return (new Controller\Cli\IndexerIssueCategoryController())
+                ->setIssueCategoryService($container->get(Service\IssueCategory::class))
+                ->setEventDispatcher($container->get(EventDispatcherInterface::class))
+                ;
+        },
+        Controller\Cli\IndexerSpeechController::class => function (ContainerInterface $container) {
+            return (new Controller\Cli\IndexerSpeechController())
+                ->setSpeechService($container->get(Service\Speech::class))
+                ->setEventDispatcher($container->get(EventDispatcherInterface::class))
+            ;
+        },
+        Controller\Cli\IndexerDocumentController::class => function (ContainerInterface $container) {
+            return (new Controller\Cli\IndexerDocumentController())
+                ->setDocumentService($container->get(Service\Document::class))
+                ->setEventDispatcher($container->get(EventDispatcherInterface::class))
+            ;
+        },
+        Controller\Cli\IndexerDocumentVoteController::class => function (ContainerInterface $container) {
+            return (new Controller\Cli\IndexerDocumentVoteController())
+                ->setVoteService($container->get(Service\Vote::class))
+                ->setEventDispatcher($container->get(EventDispatcherInterface::class))
+            ;
+        },
+        Controller\Cli\IndexerDocumentVoteItemController::class => function (ContainerInterface $container) {
+            return (new Controller\Cli\IndexerDocumentVoteItemController())
+                ->setVoteItemService($container->get(Service\VoteItem::class))
+                ->setEventDispatcher($container->get(EventDispatcherInterface::class))
+            ;
+        },
+        Controller\Cli\IndexerCommitteeDocumentController::class => function (ContainerInterface $container) {
+            return (new Controller\Cli\IndexerCommitteeDocumentController())
+                ->setCommitteeDocumentService($container->get(Service\CommitteeDocument::class))
+                ->setEventDispatcher($container->get(EventDispatcherInterface::class))
+            ;
+        },
         Controller\Cli\IndexController::class => function (ContainerInterface $container) {
             return (new Controller\Cli\IndexController())
                 ;
         },
+
 
         Service\Assembly::class => function (ContainerInterface $sm) {
             return (new Service\Assembly())
@@ -405,7 +448,9 @@ return [
         },
         Service\Plenary::class => function (ContainerInterface $sm) {
             return (new Service\Plenary())
-                ->setDriver($sm->get(PDO::class));
+                ->setDriver($sm->get(PDO::class))
+                ->setEventDispatcher($sm->get(EventDispatcherInterface::class))
+                ;
         },
         Service\Ministry::class => function (ContainerInterface $sm) {
             return (new Service\Ministry())

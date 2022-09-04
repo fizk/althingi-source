@@ -24,6 +24,7 @@ class IndexerConstituencyController implements ServiceConstituencyAwareInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        /** @var \Althingi\Model\Constituency $model */
         foreach ($this->constituencyService->fetchAllGenerator() as $model) {
             $this->getEventDispatcher()->dispatch(
                 new AddEvent(new IndexableConstituencyPresenter($model), ['rows' => 1]),

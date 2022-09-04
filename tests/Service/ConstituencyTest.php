@@ -149,6 +149,152 @@ class ConstituencyTest extends TestCase
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
+    public function testCreateFireEventOneCreatedNewEntry()
+    {
+        $eventDispatcher = Mockery::mock(\Psr\EventDispatcher\EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->with(Mockery::on(function (AddEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof AddEvent;
+            }))
+            ->times(1)
+            ->getMock();
+
+        $constituency = (new ConstituencyModel())
+            ->setName('name')
+            ->setConstituencyId(2);
+
+        (new Constituency())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->create($constituency);
+    }
+
+    public function testUpdateFireEventZeroFoundEntryButNoUpdateRequired()
+    {
+        $eventDispatcher = Mockery::mock(\Psr\EventDispatcher\EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->with(Mockery::on(function (UpdateEvent $args) {
+                $this->assertEquals(0, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            }))
+            ->times(1)
+            ->getMock();
+
+        $constituency = (new ConstituencyModel())
+            ->setConstituencyId(1)
+            ->setName('some-place')
+            ->setAbbrShort('s-p')
+            ->setAbbrLong('so-pl')
+            ->setDescription('none')
+            ;
+
+        (new Constituency())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->update($constituency);
+    }
+
+    public function testUpdateFireEventOneFoundEntryAndUpdated()
+    {
+        $eventDispatcher = Mockery::mock(\Psr\EventDispatcher\EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->with(Mockery::on(function (UpdateEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            }))
+            ->times(1)
+            ->getMock();
+
+        $constituency = (new ConstituencyModel())
+            ->setConstituencyId(1)
+            ->setName('some-place-update')
+            ->setAbbrShort('s-p')
+            ->setAbbrLong('so-pl')
+            ->setDescription('none')
+            ;
+
+        (new Constituency())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->update($constituency);
+    }
+
+    public function testSaveFireEventZeroFoundButNoUpdate()
+    {
+        $eventDispatcher = Mockery::mock(\Psr\EventDispatcher\EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->with(Mockery::on(function (UpdateEvent $args) {
+                $this->assertEquals(0, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            }))
+            ->times(1)
+            ->getMock();
+
+        $constituency = (new ConstituencyModel())
+            ->setConstituencyId(1)
+            ->setName('some-place')
+            ->setAbbrShort('s-p')
+            ->setAbbrLong('so-pl')
+            ->setDescription('none')
+            ;
+
+        (new Constituency())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->save($constituency);
+    }
+
+    public function testSaveFireEventOneCreatedNewentry()
+    {
+        $eventDispatcher = Mockery::mock(\Psr\EventDispatcher\EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->with(Mockery::on(function (AddEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof AddEvent;
+            }))
+            ->times(1)
+            ->getMock();
+
+        $constituency = (new ConstituencyModel())
+            ->setConstituencyId(2)
+            ->setName('some-place')
+            ->setAbbrShort('s-p')
+            ->setAbbrLong('so-pl')
+            ->setDescription('none')
+            ;
+
+        (new Constituency())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->save($constituency);
+    }
+
+    public function testSaveFireEventTwoEntryFoundAndUpdated()
+    {
+        $eventDispatcher = Mockery::mock(\Psr\EventDispatcher\EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->with(Mockery::on(function (UpdateEvent $args) {
+                $this->assertEquals(2, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            }))
+            ->times(1)
+            ->getMock();
+
+        $constituency = (new ConstituencyModel())
+            ->setConstituencyId(1)
+            ->setName('some-place-update')
+            ->setAbbrShort('s-p')
+            ->setAbbrLong('so-pl')
+            ->setDescription('none')
+            ;
+
+        (new Constituency())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->save($constituency);
+    }
+
     protected function getDataSet()
     {
         return $this->createArrayDataSet([

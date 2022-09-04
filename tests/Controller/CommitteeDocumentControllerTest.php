@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\CommitteeDocumentController
  *
- * @covers \Althingi\Controller\CommitteeDocumentController::setCommitteeDocument
+ * @covers \Althingi\Controller\CommitteeDocumentController::setCommitteeDocumentService
  */
 class CommitteeDocumentControllerTest extends TestCase
 {

@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
  * @package Althingi\Controller
  * @coversDefaultClass \Althingi\Controller\PresidentAssemblyController
  *
- * @covers \Althingi\Controller\PresidentAssemblyController::setPartyService
  * @covers \Althingi\Controller\PresidentAssemblyController::setCongressmanService
  */
 class PresidentAssemblyControllerTest extends TestCase

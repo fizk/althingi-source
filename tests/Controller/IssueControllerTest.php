@@ -16,10 +16,6 @@ use Mockery;
  * @coversDefaultClass \Althingi\Controller\IssueController
  *
  * @covers \Althingi\Controller\IssueController::setIssueService
- * @covers \Althingi\Controller\IssueController::setIssueStore
- * @covers \Althingi\Controller\IssueController::setAssemblyService
- * @covers \Althingi\Controller\IssueController::setCategoryService
- * @covers \Althingi\Controller\IssueController::setCategoryStore
  */
 class IssueControllerTest extends TestCase
 {

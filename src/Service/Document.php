@@ -7,6 +7,8 @@ use Althingi\Hydrator;
 use Althingi\Events\{UpdateEvent, AddEvent};
 use Althingi\Presenters\IndexableDocumentPresenter;
 use Althingi\Injector\{DatabaseAwareInterface, EventsAwareInterface};
+use Exception;
+use Generator;
 use PDO;
 
 class Document implements DatabaseAwareInterface, EventsAwareInterface
@@ -30,6 +32,66 @@ class Document implements DatabaseAwareInterface, EventsAwareInterface
         return $object
             ? (new Hydrator\Document())->hydrate($object, new Model\Document())
             : null ;
+    }
+
+    public function getPrimaryDocument(int $assemblyId, int $issueId)
+    {
+        $statement = $this->getDriver()->prepare("
+            select * from `Document` where
+            `assembly_id` = :assembly_id  and
+            `issue_id` = :issue_id and
+            `category` = 'A'
+            order by `date`
+            limit 0, 1
+        ");
+        $statement->execute([
+            'assembly_id' => $assemblyId,
+            'issue_id' => $issueId,
+        ]);
+
+        $object = $statement->fetch(PDO::FETCH_ASSOC);
+        return $object
+            ? (new Hydrator\Document())->hydrate($object, new Model\Document())
+            : null;
+    }
+
+    public function fetchAllGenerator(?int $assemblyId = null, ?int $issueId = null): Generator
+    {
+        if ($assemblyId === null) {
+            $statement = $this->getDriver()
+                ->prepare('select * from `Document` order by `date`');
+            $statement->execute();
+        } elseif ($assemblyId !== null && $issueId === null) {
+            $statement = $this->getDriver()
+                ->prepare('
+                    select * from `Document` where
+                        `assembly_id` = :assembly_id
+                    order by `date`
+                ');
+            $statement->execute([
+                'assembly_id' => $assemblyId
+            ]);
+        } elseif ($assemblyId !== null && $issueId !== null) {
+            $statement = $this->getDriver()
+                ->prepare('
+                    select * from `Document` where
+                        `assembly_id` = :assembly_id and
+                        `issue_id` = :issue_id
+                    order by `date`
+                ');
+            $statement->execute([
+                'assembly_id' => $assemblyId,
+                'issue_id' => $issueId
+            ]);
+        } else {
+            throw new Exception('Invalid parameters');
+        }
+
+        while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
+            yield (new Hydrator\Document)->hydrate($object, new Model\Document());
+        }
+        $statement->closeCursor();
+        return null;
     }
 
     /**

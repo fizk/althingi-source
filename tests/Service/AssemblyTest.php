@@ -2,12 +2,11 @@
 
 namespace Althingi\Service;
 
+use PHPUnit\Framework\TestCase;
 use Althingi\DatabaseConnection;
-use Althingi\Service\Assembly;
-use Althingi\Service\President;
+use Althingi\Service\{President, Assembly};
 use Althingi\Model\Assembly as AssemblyModel;
 use Althingi\Events\{UpdateEvent, AddEvent};
-use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Mockery;
 use PDO;
@@ -284,6 +283,137 @@ class AssemblyTest extends TestCase
         $assemblyService->setDriver($this->pdo);
 
         $this->assertEquals(9, $assemblyService->count());
+    }
+
+    public function testCreateEventFiredRowsOne()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (AddEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
+        $assembly = (new AssemblyModel())
+            ->setAssemblyId(10)
+            ->setFrom(new \DateTime('2000-01-01'))
+            ->setTo(null);
+
+
+        $assemblyService = new Assembly();
+        $assemblyService->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher);
+        $assemblyService->create($assembly);
+    }
+
+    public function testUpdateFireEventRowsOne()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $assembly = (new AssemblyModel())
+            ->setAssemblyId(1)
+            ->setFrom(new \DateTime('2000-01-01'))
+            ->setTo(new \DateTime('2000-01-01'));
+
+        $assemblyService = new Assembly();
+        $assemblyService->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher);
+        $assemblyService->update($assembly);
+    }
+    public function testUpdateFireEventRowsZero()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(0, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $assembly = (new AssemblyModel())
+            ->setAssemblyId(1)
+            ->setFrom(new \DateTime('2000-01-01'))
+            ->setTo(null);
+
+        $assemblyService = new Assembly();
+        $assemblyService->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher);
+        $assemblyService->update($assembly);
+    }
+
+    public function testSaveFireAddEventOne()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (AddEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
+        $assembly = (new AssemblyModel())
+            ->setAssemblyId(10)
+            ->setFrom(new \DateTime('2000-01-01'));
+
+        $assemblyService = new Assembly();
+        $assemblyService->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher);
+        $assemblyService->save($assembly);
+    }
+
+    public function testSaveFireUpdateEventTwo()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(2, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $assembly = (new AssemblyModel())
+            ->setAssemblyId(1)
+            ->setFrom(new \DateTime('2000-01-01'))
+            ->setTo(new \DateTime('2000-01-01'));
+
+        $assemblyService = new Assembly();
+        $assemblyService->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher);
+        $assemblyService->save($assembly);
+    }
+
+    public function testSaveFireUpdateEventZero()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(0, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $assembly = (new AssemblyModel())
+            ->setAssemblyId(1)
+            ->setFrom(new \DateTime('2000-01-01'))
+            ->setTo(null);
+
+        $assemblyService = new Assembly();
+        $assemblyService->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher);
+        $assemblyService->save($assembly);
     }
 
     protected function getDataSet()

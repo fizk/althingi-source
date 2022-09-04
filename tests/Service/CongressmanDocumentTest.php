@@ -2,10 +2,14 @@
 
 namespace Althingi\Service;
 
+use PHPUnit\Framework\TestCase;
 use Althingi\Model\CongressmanDocument as CongressmanDocumentModel;
 use Althingi\Service\CongressmanDocument;
 use Althingi\DatabaseConnection;
-use PHPUnit\Framework\TestCase;
+use Althingi\Events\AddEvent;
+use Althingi\Events\UpdateEvent;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use Mockery;
 use PDO;
 class CongressmanDocumentTest extends TestCase
 {
@@ -119,6 +123,158 @@ class CongressmanDocumentTest extends TestCase
         $congressmanService->update($congressman);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
+    }
+
+    public function testCreateFireEventOne()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (AddEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
+        $congressman = (new CongressmanDocumentModel())
+            ->setDocumentId(1)
+            ->setIssueId(1)
+            ->setCategory('A')
+            ->setAssemblyId(1)
+            ->setCongressmanId(2)
+            ->setOrder(2);
+
+        (new CongressmanDocument())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->create($congressman);
+
+    }
+
+    public function testUpdateFireEventOne()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $congressman = (new CongressmanDocumentModel())
+            ->setDocumentId(1)
+            ->setIssueId(1)
+            ->setCategory('A')
+            ->setAssemblyId(1)
+            ->setCongressmanId(1)
+            ->setOrder(2);
+
+        (new CongressmanDocument())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->update($congressman);
+
+    }
+    public function testUpdateFireEventZero()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(0, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $congressman = (new CongressmanDocumentModel())
+            ->setDocumentId(1)
+            ->setIssueId(1)
+            ->setCategory('A')
+            ->setAssemblyId(1)
+            ->setCongressmanId(1)
+            ->setOrder(1);
+
+        (new CongressmanDocument())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->update($congressman);
+
+    }
+
+    public function testSaveFireEventZero()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(0, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $congressman = (new CongressmanDocumentModel())
+            ->setDocumentId(1)
+            ->setIssueId(1)
+            ->setCategory('A')
+            ->setAssemblyId(1)
+            ->setCongressmanId(1)
+            ->setOrder(1);
+
+        (new CongressmanDocument())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->save($congressman);
+    }
+
+    public function testSaveFireEventOne()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(2, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $congressman = (new CongressmanDocumentModel())
+            ->setDocumentId(1)
+            ->setIssueId(1)
+            ->setCategory('A')
+            ->setAssemblyId(1)
+            ->setCongressmanId(1)
+            ->setOrder(2);
+
+        (new CongressmanDocument())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->save($congressman);
+    }
+
+    public function testSaveFireEventTwo()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (AddEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
+        $congressman = (new CongressmanDocumentModel())
+            ->setDocumentId(1)
+            ->setIssueId(1)
+            ->setCategory('A')
+            ->setAssemblyId(1)
+            ->setCongressmanId(2)
+            ->setOrder(1);
+
+        (new CongressmanDocument())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->save($congressman);
     }
 
     protected function getDataSet()

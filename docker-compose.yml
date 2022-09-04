@@ -48,8 +48,9 @@ services:
 
       - CACHE_TYPE=none
 
-      - BROKER=${ENV_BROKER:-kafka}
-      - BROKER_HOST=kafka:9092
+    #   - BROKER=${ENV_BROKER:-kafka}
+      - BROKER=kafka
+      - BROKER_HOST=host.docker.internal:9092
 
       - DOCUMENT_SERVER=${ENV_DOCUMENT_SERVER:-localhost:8080}
       - DOCUMENT_DEFINITION=${ENV_DOCUMENT_DEFINITION:-/openapi}
@@ -57,8 +58,8 @@ services:
       - INDEXER_STALL_TIME=${ENV_INDEXER_STALL_TIME:-150000}
     depends_on:
       - database
-      - zookeeper
-      - kafka
+      # - zookeeper
+      # - kafka
 
   #
   # Run complete Test suite
@@ -111,26 +112,24 @@ services:
       - INDEXER_STALL_TIME=${ENV_INDEXER_STALL_TIME:-150000}
     depends_on:
       - database-test
-    command: bash -c "./wait-for.sh database-test:3306 -t 80 -- echo \"MySQL up\" &&  ./vendor/bin/phpunit && ./vendor/bin/phpcs --standard=./phpcs.xml ./src"
+    command: bash -c "./wait-for.sh database-test:3306 -t 80 -- echo \"MySQL up\" &&  ./vendor/bin/phpunit ./tests && ./vendor/bin/phpcs --standard=./phpcs.xml ./src"
 
   #
   # Additional services used for development.
   #
   # * A database for 'run' service
-  # * A Zookeper for 'run' service
-  # * A Kafka for 'run' service
-  #
-  # * A database for 'test' service
   #
   database:
     container_name: local-althingi-source-db
     image: einarvalur/althingi-source-db:latest
     command: --default-authentication-plugin=mysql_native_password
     restart: always
+    ports:
+        - 3306:3306
     environment:
       - MYSQL_ROOT_PASSWORD=example
     volumes:
-      - source-db-volume-development:/var/lib/mysql
+      - local-source-db-volume:/var/lib/mysql
 
   database-test:
     container_name: local-althingi-source-db-test
@@ -140,47 +139,5 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=example
 
-  zookeeper:
-    container_name: local-althingi-source-zookeeper
-    image: wurstmeister/zookeeper
-    ports:
-      - "2181:2181"
-    restart: unless-stopped
-
-  kafka:
-    container_name: local-althingi-source-kafka
-    image: wurstmeister/kafka:2.13-2.8.1
-    ports:
-      - "9092"
-    environment:
-      DOCKER_API_VERSION: 1.22
-      KAFKA_ADVERTISED_HOST_NAME: host.docker.internal
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    restart: unless-stopped
-
-  #
-  # A web-based UI to monitor Kafka/Zookeeper
-  #
-  # Handy tool in development to monitor Topics, Messages, etc
-  #
-  # This service is not in the dependency list of 'run', so it needs
-  # to be started separately
-  #
-  # Mapps to port 8080
-  #
-  # $ docker compose up -d kafka-ui
-  #
-  kafka-ui:
-    container_name: local-althingi-source-kafka-ui
-    image: provectuslabs/kafka-ui:latest
-    ports:
-        - 8080:8080
-    environment:
-        - KAFKA_CLUSTERS_0_NAME=local
-        - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
-
-
 volumes:
-    source-db-volume-development:
+    local-source-db-volume:

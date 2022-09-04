@@ -7,6 +7,7 @@ use Althingi\Model;
 use Althingi\Events\{UpdateEvent, AddEvent};
 use Althingi\Presenters\IndexableSpeechPresenter;
 use Althingi\Injector\{EventsAwareInterface, DatabaseAwareInterface};
+use Generator;
 use PDO;
 
 class Speech implements DatabaseAwareInterface, EventsAwareInterface
@@ -245,6 +246,32 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
         $statement->closeCursor();
 
         return;
+    }
+
+    public function fetchAllGenerator(?int $assemblyId = null, ?int $issueId = null): Generator
+    {
+        if ($assemblyId !== null && $issueId === null) {
+            $statement = $this->getDriver()
+                ->prepare('select * from `Speech` where assembly_id = :assembly_id');
+            $statement->execute(['assembly_id' => $assemblyId]);
+        } elseif ($assemblyId !== null && $issueId !== null) {
+            $statement = $this->getDriver()
+                ->prepare('select * from `Speech` where assembly_id = :assembly_id and issue_id = :issue_id');
+            $statement->execute([
+                'assembly_id' => $assemblyId,
+                'issue_id' => $issueId,
+            ]);
+        } else {
+            $statement = $this->getDriver()
+                ->prepare('select * from `Speech` order by `assembly_id`');
+            $statement->execute();
+        }
+
+        while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
+            yield (new Hydrator\Speech)->hydrate($object, new Model\Speech());
+        }
+        $statement->closeCursor();
+        return null;
     }
 
     public function countByIssue(int $assemblyId, int $issueId, ?string $category = 'A'): int

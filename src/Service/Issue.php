@@ -7,6 +7,7 @@ use Althingi\Hydrator;
 use Althingi\Events\{UpdateEvent, AddEvent};
 use Althingi\Presenters\IndexableIssuePresenter;
 use Althingi\Injector\{EventsAwareInterface, DatabaseAwareInterface};
+use Generator;
 use InvalidArgumentException;
 use PDO;
 
@@ -19,16 +20,12 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
     use DatabaseService;
     use EventService;
 
-    const ALLOWED_TYPES = ['n', 'b', 'l', 'm', 'q', 's', 'v', 'a', 'f', 'ff', 'ft', 'um', 'ud', 'uu'];
+    const ALLOWED_TYPES = [
+        'a',  'f',  's',  'b',  'm',  'q',  'v',  'l', 'n', // A
+        'mi', 'fh', 'dr', 'sr', 'st', 'ra', 'uu', 'þi', 'um',  // B
+        'ff', 'ft', 'ko', 'ud'
+    ];
     const ALLOWED_ORDER = ['asc', 'desc'];
-    const MAX_ROW_COUNT = '18446744073709551615';
-
-    const STATUS_WAITING_ONE    = 'Bíður 1. umræðu';
-    const STATUS_WAITING_TWO    = 'Bíður 2. umræðu';
-    const STATUS_WAITING_THREE  = 'Bíður 3. umræðu';
-    const STATUS_COMMITTEE_ONE  = 'Í nefnd eftir 1. umræðu';
-    const STATUS_APPROVED       = 'Samþykkt sem lög frá Alþingi';
-    const STATUS_TO_GOVERNMENT  = 'Vísað til ríkisstjórnar';
 
     public function get(int $issue_id, int $assembly_id, $category = 'A'): ? Model\Issue
     {
@@ -72,6 +69,22 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
         $statement->closeCursor();
 
         return;
+    }
+
+    public function fetchAllGenerator(?int $assemblyId = null): Generator
+    {
+        $statement = $this->getDriver()
+            ->prepare($assemblyId
+                ? "select * from `Issue` where `assembly_id` = {$assemblyId}"
+                : 'select * from `Issue` order by `assembly_id`');
+        $statement->execute();
+
+
+        while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
+            yield (new Hydrator\Issue)->hydrate($object, new Model\Issue());
+        }
+        $statement->closeCursor();
+        return null;
     }
 
     /**
@@ -589,7 +602,9 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
             $this->toUpdateString(
                 'Issue',
                 $data,
-                "issue_id = {$data->getIssueId()} and assembly_id = {$data->getAssemblyId()}"
+                "issue_id = {$data->getIssueId()} and ".
+                "assembly_id = {$data->getAssemblyId()} and ".
+                "category = '{$data->getCategory()}'"
             )
         );
         $statement->execute($this->toSqlValues($data));

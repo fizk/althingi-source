@@ -4,9 +4,13 @@ namespace Althingi\Service;
 
 use Althingi\Service\Document;
 use Althingi\DatabaseConnection;
+use Althingi\Events\AddEvent;
+use Althingi\Events\UpdateEvent;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\Document as DocumentModel;
+use Mockery;
 use PDO;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class DocumentTest extends TestCase
 {
@@ -159,6 +163,162 @@ class DocumentTest extends TestCase
         $queryTable = $this->getConnection()->createQueryTable('Document', 'SELECT * FROM Document');
 
         $this->assertTablesEqual($expectedTable, $queryTable);
+    }
+
+    public function testCreateFireEventResourceCreated()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (AddEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
+        $document = (new DocumentModel())
+            ->setAssemblyId(1)
+            ->setDocumentId(5)
+            ->setIssueId(1)
+            ->setCategory('A')
+            ->setDate(new \DateTime('2000-01-01'))
+            ->setType('type')
+            ->setUrl('http://url.com');
+
+        (new Document())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->create($document);
+    }
+
+    public function testUpdateFireEventZeroResourceFoundButNoUpdateRequired()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(0, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $document = (new DocumentModel())
+            ->setAssemblyId(1)
+            ->setDocumentId(1)
+            ->setIssueId(1)
+            ->setCategory('A')
+            ->setDate(new \DateTime('2000-01-01'))
+            ->setType('type')
+            ->setUrl('http://url.com');
+
+        (new Document())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->update($document);
+    }
+
+    public function testUpdateFireEventOneResourceFoundAndAnUpdateRequired()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $document = (new DocumentModel())
+            ->setAssemblyId(1)
+            ->setDocumentId(1)
+            ->setIssueId(1)
+            ->setCategory('A')
+            ->setDate(new \DateTime('2000-01-01'))
+            ->setType('type')
+            ->setUrl('http://url.com/add-to-url');
+
+        (new Document())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->update($document);
+    }
+
+    public function testSaveFireEventZeroResourceFoundButNoUpdateRequired()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(0, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $document = (new DocumentModel())
+            ->setAssemblyId(1)
+            ->setDocumentId(1)
+            ->setIssueId(1)
+            ->setCategory('A')
+            ->setDate(new \DateTime('2000-01-01'))
+            ->setType('type')
+            ->setUrl('http://url.com');
+
+        (new Document())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->save($document);
+    }
+
+    public function testSaveFireEventOneNeedsToBeCreated()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (AddEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
+        $document = (new DocumentModel())
+            ->setAssemblyId(1)
+            ->setDocumentId(5)
+            ->setIssueId(1)
+            ->setCategory('A')
+            ->setDate(new \DateTime('2000-01-01'))
+            ->setType('type')
+            ->setUrl('http://url.com');
+
+        (new Document())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->save($document);
+    }
+
+    public function testSaveFireEventTwoCresourceFoundAndNeedsToBeUpdated()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(2, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $document = (new DocumentModel())
+            ->setAssemblyId(1)
+            ->setDocumentId(1)
+            ->setIssueId(1)
+            ->setCategory('A')
+            ->setDate(new \DateTime('2000-01-01'))
+            ->setType('type')
+            ->setUrl('http://url.com/update');
+
+        (new Document())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->save($document);
     }
 
     protected function getDataSet()

@@ -4,11 +4,15 @@ namespace Althingi\Service;
 
 use Althingi\Service\Speech;
 use Althingi\DatabaseConnection;
+use Althingi\Events\AddEvent;
+use Althingi\Events\UpdateEvent;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\Speech as SpeechModel;
 use Althingi\Model\SpeechAndPosition as SpeechAndPositionModel;
 use Althingi\Model\DateAndCount as DateAndCountModel;
+use Mockery;
 use PDO;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class SpeechTest extends TestCase
 {
@@ -309,6 +313,167 @@ class SpeechTest extends TestCase
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
+    public function testCreateFireEventResourceCreated()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (AddEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
+        $speech = (new SpeechModel())
+            ->setSpeechId('unique-id')
+            ->setPlenaryId(1)
+            ->setAssemblyId(3)
+            ->setIssueId(1)
+            ->setCategory('A')
+            ->setCongressmanId(1);
+
+        (new Speech())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->create($speech)
+        ;
+    }
+
+    public function testUpdateFireEventResourceFoundNoUpdate()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(0, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $speech = (new SpeechModel())
+            ->setSpeechId('id--00001')
+            ->setPlenaryId(1)
+            ->setAssemblyId(1)
+            ->setIssueId(1)
+            ->setCategory('A')
+            ->setCongressmanId(1)
+            ->setValidated(true);
+
+        (new Speech())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->update($speech)
+        ;
+    }
+
+    public function testUpdateFireEventResourceFoundUpdateNeeded()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $speech = (new SpeechModel())
+            ->setSpeechId('id--00001')
+            ->setPlenaryId(1)
+            ->setAssemblyId(1)
+            ->setIssueId(1)
+            ->setCategory('A')
+            ->setCongressmanId(1)
+            ->setValidated(false);
+
+        (new Speech())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->update($speech)
+        ;
+    }
+
+    public function testSaveFireEventResourceCreated()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (AddEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
+        $speech = (new SpeechModel())
+            ->setSpeechId('unique-id')
+            ->setPlenaryId(1)
+            ->setAssemblyId(1)
+            ->setIssueId(1)
+            ->setCategory('A')
+            ->setCongressmanId(1)
+            ->setValidated(false);
+
+        (new Speech())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->save($speech)
+        ;
+    }
+
+    public function testSaveFireEventResourceFoundNoUpdateNeeded()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(0, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $speech = (new SpeechModel())
+            ->setSpeechId('id--00001')
+            ->setPlenaryId(1)
+            ->setAssemblyId(1)
+            ->setIssueId(1)
+            ->setCategory('A')
+            ->setCongressmanId(1)
+            ->setValidated(true);
+
+        (new Speech())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->save($speech)
+        ;
+    }
+
+    public function testSaveFireEventResourceFoundUpdateRequired()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(2, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $speech = (new SpeechModel())
+            ->setSpeechId('id--00001')
+            ->setPlenaryId(1)
+            ->setAssemblyId(1)
+            ->setIssueId(1)
+            ->setCategory('A')
+            ->setCongressmanId(1)
+            ->setValidated(false);
+
+        (new Speech())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->save($speech)
+        ;
+    }
+
     protected function getDataSet()
     {
         return $this->createArrayDataSet([
@@ -349,6 +514,7 @@ class SpeechTest extends TestCase
                     'from' => null,
                     'to' => null,
                     'validated' => true,
+                    'word_count' => 0,
                 ],[
                     'speech_id' => 'id--00002',
                     'plenary_id' => 1,
@@ -359,6 +525,7 @@ class SpeechTest extends TestCase
                     'from' => null,
                     'to' => null,
                     'validated' => true,
+                    'word_count' => 0,
                 ],[
                     'speech_id' => 'id--00003',
                     'plenary_id' => 1,
@@ -369,6 +536,7 @@ class SpeechTest extends TestCase
                     'from' => null,
                     'to' => null,
                     'validated' => true,
+                    'word_count' => 0,
                 ],[
                     'speech_id' => 'id--00004',
                     'plenary_id' => 1,
@@ -379,6 +547,7 @@ class SpeechTest extends TestCase
                     'from' => null,
                     'to' => null,
                     'validated' => true,
+                    'word_count' => 0,
                 ],[
                     'speech_id' => 'id--10001',
                     'plenary_id' => 1,
@@ -389,6 +558,7 @@ class SpeechTest extends TestCase
                     'from' => null,
                     'to' => null,
                     'validated' => true,
+                    'word_count' => 0,
                 ],[
                     'speech_id' => 'id--10002',
                     'plenary_id' => 1,
@@ -399,6 +569,7 @@ class SpeechTest extends TestCase
                     'from' => '2000-01-01 00:00:00',
                     'to' => '2000-01-01 00:01:00',
                     'validated' => true,
+                    'word_count' => 0,
                 ],[
                     'speech_id' => 'id--10003',
                     'plenary_id' => 1,
@@ -409,6 +580,7 @@ class SpeechTest extends TestCase
                     'from' => '2000-02-01 00:00:00',
                     'to' => '2000-02-01 00:01:00',
                     'validated' => true,
+                    'word_count' => 0,
                 ],[
                     'speech_id' => 'id--10004',
                     'plenary_id' => 1,
@@ -419,6 +591,7 @@ class SpeechTest extends TestCase
                     'from' => '2000-03-01 00:00:00',
                     'to' => '2000-03-01 00:01:00',
                     'validated' => true,
+                    'word_count' => 0,
                 ]
             ],
 

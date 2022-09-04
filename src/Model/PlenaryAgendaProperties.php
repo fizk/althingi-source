@@ -5,10 +5,10 @@ class PlenaryAgendaProperties implements ModelInterface
 {
     private PlenaryAgenda $plenaryAgenda;
     private Issue $issue;
-    private CongressmanPartyProperties $posedCongressman = null;
-    private CongressmanPartyProperties $answererCongressman = null;
-    private CongressmanPartyProperties $counterAnswererCongressman = null;
-    private CongressmanPartyProperties $instigatorCongressman = null;
+    private ?CongressmanPartyProperties $posedCongressman = null;
+    private ?CongressmanPartyProperties $answererCongressman = null;
+    private ?CongressmanPartyProperties $counterAnswererCongressman = null;
+    private ?CongressmanPartyProperties $instigatorCongressman = null;
 
     public function getPlenaryAgenda(): PlenaryAgenda
     {
@@ -32,46 +32,46 @@ class PlenaryAgendaProperties implements ModelInterface
         return $this;
     }
 
-    public function getPosedCongressman(): CongressmanPartyProperties
+    public function getPosedCongressman(): ?CongressmanPartyProperties
     {
         return $this->posedCongressman;
     }
 
-    public function setPosedCongressman(CongressmanPartyProperties $posedCongressman): self
+    public function setPosedCongressman(?CongressmanPartyProperties $posedCongressman): self
     {
         $this->posedCongressman = $posedCongressman;
         return $this;
     }
 
-    public function getAnswererCongressman(): CongressmanPartyProperties
+    public function getAnswererCongressman(): ?CongressmanPartyProperties
     {
         return $this->answererCongressman;
     }
 
-    public function setAnswererCongressman(CongressmanPartyProperties $answererCongressman): self
+    public function setAnswererCongressman(?CongressmanPartyProperties $answererCongressman): self
     {
         $this->answererCongressman = $answererCongressman;
         return $this;
     }
 
-    public function getCounterAnswererCongressman(): CongressmanPartyProperties
+    public function getCounterAnswererCongressman(): ?CongressmanPartyProperties
     {
         return $this->counterAnswererCongressman;
     }
 
     public function setCounterAnswererCongressman(
-        CongressmanPartyProperties $counterAnswererCongressman
+        ?CongressmanPartyProperties $counterAnswererCongressman
     ): self {
         $this->counterAnswererCongressman = $counterAnswererCongressman;
         return $this;
     }
 
-    public function getInstigatorCongressman(): CongressmanPartyProperties
+    public function getInstigatorCongressman(): ?CongressmanPartyProperties
     {
         return $this->instigatorCongressman;
     }
 
-    public function setInstigatorCongressman(CongressmanPartyProperties $instigatorCongressman): self
+    public function setInstigatorCongressman(?CongressmanPartyProperties $instigatorCongressman): self
     {
         $this->instigatorCongressman = $instigatorCongressman;
         return $this;
@@ -88,7 +88,7 @@ class PlenaryAgendaProperties implements ModelInterface
         ]);
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->toArray();
     }

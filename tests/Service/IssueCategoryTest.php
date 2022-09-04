@@ -6,8 +6,12 @@ use Althingi\Model\IssueCategory as IssueCategoryModel;
 use Althingi\Model\IssueCategoryAndTime;
 use Althingi\Service\IssueCategory;
 use Althingi\DatabaseConnection;
+use Althingi\Events\AddEvent;
+use Althingi\Events\UpdateEvent;
+use Mockery;
 use PHPUnit\Framework\TestCase;
 use PDO;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class IssueCategoryTest extends TestCase
 {
@@ -92,6 +96,102 @@ class IssueCategoryTest extends TestCase
 
         $actualData = $service->fetchFrequencyByAssemblyAndCongressman(145, 1);
         $this->assertEquals($expectedData, $actualData);
+    }
+
+    public function testCreateFireEventResourceCreated()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (AddEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
+        $issueCategory = (new IssueCategoryModel())
+            ->setAssemblyId(145)
+            ->setIssueId(1)
+            ->setCategory('A')
+            ->setCategoryId(2);
+
+        (new IssueCategory())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->create($issueCategory)
+        ;
+    }
+
+    public function testUpdateFireEventResourceFoundButNoUpdateRequired()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(0, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $issueCategory = (new IssueCategoryModel())
+            ->setAssemblyId(145)
+            ->setIssueId(1)
+            ->setCategory('A')
+            ->setCategoryId(1);
+
+        (new IssueCategory())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->update($issueCategory)
+        ;
+    }
+
+    public function testSaveFireEventResourceAdded()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (AddEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
+        $issueCategory = (new IssueCategoryModel())
+            ->setAssemblyId(145)
+            ->setIssueId(1)
+            ->setCategory('A')
+            ->setCategoryId(2);
+
+        (new IssueCategory())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->save($issueCategory)
+        ;
+    }
+
+    public function testSaveFireEventResourceFoundButNoNeedForAnUpdate()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(0, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $issueCategory = (new IssueCategoryModel())
+            ->setAssemblyId(145)
+            ->setIssueId(1)
+            ->setCategory('A')
+            ->setCategoryId(1);
+
+        (new IssueCategory())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->save($issueCategory)
+        ;
     }
 
     protected function getDataSet()

@@ -187,13 +187,26 @@ return [
                             ],
                             'may_terminate' => true,
                         ],
+                        'frumskjal' => [
+                            'type' => Literal::class,
+                            'options' => [
+                                'route'    => '/frumskjal',
+                                'defaults' => [
+                                    'controller' => Controller\DocumentController::class,
+                                    'action' => 'primary-document',
+                                ],
+                            ],
+                        ],
                         'thingskjal' => [
                             'type' => Segment::class,
                             'options' => [
                                 'route'    => '/thingskjal[/:document_id]',
                                 'defaults' => [
                                     'controller' => Controller\DocumentController::class,
-                                    'identifier' => 'document_id'
+                                    'identifier' => 'document_id',
+                                    'constraints' => [
+                                        'document_id' => '[0-9]*'
+                                    ],
                                 ],
                             ],
                             'may_terminate' => true,
@@ -479,6 +492,24 @@ return [
                         ],
                     ],
                 ],
+                'issue' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route'    => ':issue',
+                        'defaults' => [
+                            'controller' => Controller\Cli\IndexerIssueController::class,
+                        ],
+                    ],
+                ],
+                'issue-category' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route'    => ':issue-category',
+                        'defaults' => [
+                            'controller' => Controller\Cli\IndexerIssueCategoryController::class,
+                        ],
+                    ],
+                ],
                 'cabinet' => [
                     'type' => Literal::class,
                     'options' => [
@@ -620,6 +651,51 @@ return [
                         'route'    => ':session',
                         'defaults' => [
                             'controller' => Controller\Cli\IndexerSessionController::class,
+                        ],
+                    ],
+                ],
+                'speech' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route'    => ':speech',
+                        'defaults' => [
+                            'controller' => Controller\Cli\IndexerSpeechController::class,
+                        ],
+                    ],
+                ],
+                'document' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route'    => ':document',
+                        'defaults' => [
+                            'controller' => Controller\Cli\IndexerDocumentController::class,
+                        ],
+                    ],
+                ],
+                'committee-document' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route'    => ':committee-document',
+                        'defaults' => [
+                            'controller' => Controller\Cli\IndexerCommitteeDocumentController::class,
+                        ],
+                    ],
+                ],
+                'vote' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route'    => ':vote',
+                        'defaults' => [
+                            'controller' => Controller\Cli\IndexerDocumentVoteController::class,
+                        ],
+                    ],
+                ],
+                'vote-item' => [
+                    'type' => Literal::class,
+                    'options' => [
+                        'route'    => ':vote-item',
+                        'defaults' => [
+                            'controller' => Controller\Cli\IndexerDocumentVoteItemController::class,
                         ],
                     ],
                 ],

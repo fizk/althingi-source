@@ -15,7 +15,11 @@ class Assembly implements DatabaseAwareInterface, EventsAwareInterface
     use DatabaseService;
     use EventService;
 
-    const ALLOWED_TYPES = ['a', 'b', 'l', 'm', 'q', 's'];
+    const ALLOWED_TYPES = [
+        'a',  'f',  's',  'b',  'm',  'q',  'v',  'l', 'n', // A
+        'mi', 'fh', 'dr', 'sr', 'st', 'ra', 'uu', 'þi', 'um',  // B
+        'ff', 'ft', 'ko', 'ud'
+    ];
     const MAX_ROW_COUNT = '18446744073709551615';
 
     public function get(int $id): ? Model\Assembly

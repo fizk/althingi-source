@@ -7,6 +7,7 @@ use Althingi\Hydrator;
 use Althingi\Events\{UpdateEvent, AddEvent};
 use Althingi\Presenters\IndexableVoteItemPresenter;
 use Althingi\Injector\{EventsAwareInterface, DatabaseAwareInterface};
+use Generator;
 use PDO;
 
 class VoteItem implements DatabaseAwareInterface, EventsAwareInterface
@@ -25,6 +26,58 @@ class VoteItem implements DatabaseAwareInterface, EventsAwareInterface
         return $object
             ? (new Hydrator\VoteItem())->hydrate($object, new Model\VoteItem())
             : null;
+    }
+
+    public function fetchAllGenerator(?int $assemblyId = null, ?int $issueId = null, ?int $documentId = null): Generator
+    {
+        if ($assemblyId === null) {
+            $statement = $this->getDriver()
+                ->prepare('select * from `VoteItem` order by `vote_item_id`');
+            $statement->execute();
+        } elseif ($assemblyId !== null && $issueId === null) {
+            $statement = $this->getDriver()
+                ->prepare('
+                    select VI.*, V.assembly_id, V.issue_id, V.document_id from VoteItem VI
+	                join Vote V on (VI.vote_id = V.vote_id)
+                    where V.assembly_id = :assembly_id
+                ');
+            $statement->execute([
+                'assembly_id' => $assemblyId
+            ]);
+        } elseif ($assemblyId !== null && $issueId !== null && $documentId === null) {
+            $statement = $this->getDriver()
+                ->prepare('
+                    select VI.*, V.assembly_id, V.issue_id, V.document_id from VoteItem VI
+	                join Vote V on (VI.vote_id = V.vote_id)
+                    where V.assembly_id = :assembly_id and
+                    V.issue_id = :issue_id
+                ');
+            $statement->execute([
+                'assembly_id' => $assemblyId,
+                'issue_id' => $issueId,
+            ]);
+        } elseif ($assemblyId !== null && $issueId !== null && $documentId !== null) {
+            $statement = $this->getDriver()
+                ->prepare('
+                    select VI.*, V.assembly_id, V.issue_id, V.document_id from VoteItem VI
+	                join Vote V on (VI.vote_id = V.vote_id)
+                    where V.assembly_id = :assembly_id and
+                    V.issue_id = :issue_id and
+                    V.document_id = :document_id
+                ');
+            $statement->execute([
+                'assembly_id' => $assemblyId,
+                'issue_id' => $issueId,
+                'document_id' => $documentId,
+            ]);
+        }
+
+        while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
+            yield (new Hydrator\VoteItem)->hydrate($object, new Model\VoteItem());
+        }
+        $statement->closeCursor();
+
+        return null;
     }
 
     /**

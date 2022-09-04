@@ -6,6 +6,7 @@ use Althingi\Hydrator;
 use Althingi\Events\{UpdateEvent, AddEvent};
 use Althingi\Presenters\IndexableIssueCategoryPresenter;
 use Althingi\Injector\{EventsAwareInterface, DatabaseAwareInterface};
+use Generator;
 use PDO;
 
 class IssueCategory implements DatabaseAwareInterface, EventsAwareInterface
@@ -50,6 +51,28 @@ class IssueCategory implements DatabaseAwareInterface, EventsAwareInterface
         return array_map(function ($object) {
             return (new Hydrator\IssueCategory())->hydrate($object, new Model\IssueCategory());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
+    }
+
+    public function fetchAllGenerator(?int $assemblyId = null): Generator
+    {
+        if ($assemblyId) {
+            $statement = $this->getDriver()
+                ->prepare('select * from `Category_has_Issue` where `assembly_id` = :assembly_id');
+            $statement->execute([
+                'assembly_id' => $assemblyId
+            ]);
+        } else {
+            $statement = $this->getDriver()
+                ->prepare('select * from `Category_has_Issue` order by `assembly_id`');
+            $statement->execute();
+        }
+
+
+        while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
+            yield (new Hydrator\IssueCategory)->hydrate($object, new Model\IssueCategory());
+        }
+        $statement->closeCursor();
+        return null;
     }
 
     public function create(Model\IssueCategory $data): int

@@ -78,7 +78,7 @@ class Plenary implements ModelInterface
         ];
     }
 
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         return $this->toArray();
     }

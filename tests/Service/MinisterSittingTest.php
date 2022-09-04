@@ -4,9 +4,13 @@ namespace Althingi\Service;
 
 use Althingi\Service\MinisterSitting;
 use Althingi\DatabaseConnection;
+use Althingi\Events\AddEvent;
+use Althingi\Events\UpdateEvent;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model;
+use Mockery;
 use PDO;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class MinisterSittingTest extends TestCase
 {
@@ -307,6 +311,163 @@ class MinisterSittingTest extends TestCase
         );
 
         $this->assertEquals(false, $actualData);
+    }
+
+    public function testCreateFireEventResourceCreated()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (AddEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
+        $ministrySitting = (new Model\MinisterSitting())
+            ->setAssemblyId(1)
+            ->setMinistryId(2)
+            ->setCongressmanId(1)
+            ->setPartyId(1)
+            ->setFrom(new \DateTime('2001-01-01'));
+
+        (new MinisterSitting())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->create($ministrySitting);
+    }
+
+    public function testUpdateFireEventResourceFoundNoUpdateRequired()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(0, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $ministrySitting = (new Model\MinisterSitting())
+            ->setAssemblyId(1)
+            ->setMinisterSittingId(1)
+            ->setMinistryId(1)
+            ->setCongressmanId(1)
+            ->setPartyId(1)
+            ->setFrom(new \DateTime('2001-01-01'));
+
+        (new MinisterSitting())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->update($ministrySitting);
+    }
+
+    public function testUpdateFireEventResourceFoundUpdateNeeded()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $ministrySitting = (new Model\MinisterSitting())
+            ->setAssemblyId(1)
+            ->setMinisterSittingId(1)
+            ->setMinistryId(1)
+            ->setCongressmanId(1)
+            ->setPartyId(1)
+            ->setFrom(new \DateTime('2001-01-01'))
+            ->setTo(new \DateTime('2001-01-01'))
+        ;
+
+        (new MinisterSitting())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->update($ministrySitting);
+    }
+
+    public function testSaveFireEventResourceCreated()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (AddEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof AddEvent;
+                return true;
+            })
+            ->getMock();
+
+        $ministrySitting = (new Model\MinisterSitting())
+            ->setAssemblyId(1)
+            ->setMinistryId(1)
+            ->setCongressmanId(1)
+            ->setPartyId(1)
+            ->setFrom(new \DateTime('2022-01-01'))
+        ;
+
+        (new MinisterSitting())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->save($ministrySitting);
+    }
+
+    public function testSaveFireEventResourceFoundNoNeedForUpdate()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(0, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+                return true;
+            })
+            ->getMock();
+
+        $ministrySitting = (new Model\MinisterSitting())
+            ->setMinisterSittingId(1)
+            ->setAssemblyId(1)
+            ->setMinistryId(1)
+            ->setCongressmanId(1)
+            ->setPartyId(1)
+            ->setFrom(new \DateTime('2001-01-01'))
+        ;
+
+        (new MinisterSitting())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->save($ministrySitting);
+    }
+
+    public function testSaveFireEventResourceFoundUpdateNeeded()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(2, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+                return true;
+            })
+            ->getMock();
+
+        $ministrySitting = (new Model\MinisterSitting())
+            ->setMinisterSittingId(1)
+            ->setAssemblyId(1)
+            ->setMinistryId(1)
+            ->setCongressmanId(1)
+            ->setPartyId(1)
+            ->setFrom(new \DateTime('2001-01-01'))
+            ->setTo(new \DateTime('2001-01-01'))
+        ;
+
+        (new MinisterSitting())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->save($ministrySitting);
     }
 
     protected function getDataSet()

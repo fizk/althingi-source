@@ -7,8 +7,12 @@ use Althingi\Model\President;
 use Althingi\Model\PresidentCongressman as PresidentCongressmanModel;
 use Althingi\Service\President as PresidentService;
 use Althingi\DatabaseConnection;
+use Althingi\Events\AddEvent;
+use Althingi\Events\UpdateEvent;
+use Mockery;
 use PHPUnit\Framework\TestCase;
 use PDO;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class PresidentTest extends TestCase
 {
@@ -224,6 +228,80 @@ class PresidentTest extends TestCase
         $presidentService->update($president);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
+    }
+
+    public function testCreateFireEventResourceCreated()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (AddEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
+        $president = (new President())
+            ->setCongressmanId(1)
+            ->setAssemblyId(1)
+            ->setTitle('t')
+            ->setFrom(new \DateTime('2001-01-01'));
+
+        (new PresidentService())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->create($president)
+        ;
+    }
+
+    public function testUpdateFireEventResourceFoundNoUpdateNeeded()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(0, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $president = (new President())
+            ->setPresidentId(1)
+            ->setCongressmanId(1)
+            ->setAssemblyId(1)
+            ->setTitle('t')
+            ->setFrom(new \DateTime('2000-01-01'));
+
+        (new PresidentService())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->update($president)
+        ;
+    }
+
+    public function testUpdateFireEventResourceFoundUpdateNeeded()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $president = (new President())
+            ->setPresidentId(1)
+            ->setCongressmanId(1)
+            ->setAssemblyId(1)
+            ->setTitle('t')
+            ->setFrom(new \DateTime('2022-01-01'));
+
+        (new PresidentService())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->update($president)
+        ;
     }
 
     protected function getDataSet()

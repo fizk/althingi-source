@@ -2,9 +2,9 @@
 
 namespace Althingi\Service;
 
-use Althingi\DatabaseConnection;
 use PHPUnit\Framework\TestCase;
-use Althingi\Service;
+use Althingi\DatabaseConnection;
+use Althingi\Service\CommitteeSitting;
 use Althingi\Model;
 use Althingi\Events\{UpdateEvent, AddEvent};
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -19,7 +19,7 @@ class CommitteeSittingTest extends TestCase
 
     public function testGet()
     {
-        $committeeSitting = new Service\CommitteeSitting();
+        $committeeSitting = new CommitteeSitting();
         $committeeSitting->setDriver($this->pdo);
 
         $expectedData = (new Model\CommitteeSitting())
@@ -39,7 +39,7 @@ class CommitteeSittingTest extends TestCase
 
     public function testFetchByCongressman()
     {
-        $committeeSitting = new Service\CommitteeSitting();
+        $committeeSitting = new CommitteeSitting();
         $committeeSitting->setDriver($this->pdo);
 
         $expectedData = [
@@ -62,7 +62,7 @@ class CommitteeSittingTest extends TestCase
 
     public function testFetchByCongressmanNotFound()
     {
-        $committeeSitting = new Service\CommitteeSitting();
+        $committeeSitting = new CommitteeSitting();
         $committeeSitting->setDriver($this->pdo);
 
         $expectedData = [];
@@ -120,7 +120,7 @@ class CommitteeSittingTest extends TestCase
             'SELECT * FROM CommitteeSitting'
         );
 
-        $committeeSitting = new Service\CommitteeSitting();
+        $committeeSitting = new CommitteeSitting();
         $committeeSitting->setDriver($this->pdo)
             ->setEventDispatcher($eventDispatcher);
         $committeeSitting->create($sitting);
@@ -167,12 +167,94 @@ class CommitteeSittingTest extends TestCase
             'SELECT * FROM CommitteeSitting'
         );
 
-        $committeeSitting = new Service\CommitteeSitting();
+        $committeeSitting = new CommitteeSitting();
         $committeeSitting->setDriver($this->pdo)
             ->setEventDispatcher($eventDispatcher);
         $committeeSitting->update($sitting);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
+    }
+
+    public function testCreateFireEventOne()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (AddEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
+        $sitting = (new Model\CommitteeSitting())
+            ->setAssemblyId(4)
+            ->setCongressmanId(2)
+            ->setCommitteeId(3)
+            ->setRole('role')
+            ->setOrder(5)
+            ->setFrom(new \DateTime('2001-01-02'))
+            ->setTo(new \DateTime('2001-01-01'));
+
+
+        $committeeSitting = new CommitteeSitting();
+        $committeeSitting->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher);
+        $committeeSitting->create($sitting);
+    }
+    public function testUpdateFireEventZero()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(0, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $sitting = (new Model\CommitteeSitting())
+            ->setCommitteeSittingId(1)
+            ->setAssemblyId(4)
+            ->setCongressmanId(2)
+            ->setCommitteeId(3)
+            ->setRole('role')
+            ->setOrder(5)
+            ->setFrom(new \DateTime('2001-01-01'))
+            ->setTo(new \DateTime('2001-01-01'))
+        ;
+
+        $committeeSitting = new CommitteeSitting();
+        $committeeSitting->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher);
+        $committeeSitting->update($sitting);
+    }
+
+    public function testUpdateFireEventOne()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $sitting = (new Model\CommitteeSitting())
+            ->setCommitteeSittingId(1)
+            ->setAssemblyId(4)
+            ->setCongressmanId(2)
+            ->setCommitteeId(3)
+            ->setRole('role')
+            ->setOrder(5)
+            ->setFrom(new \DateTime('2001-01-01'))
+            ->setTo(new \DateTime('2002-01-01'))
+        ;
+
+        $committeeSitting = new CommitteeSitting();
+        $committeeSitting->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher);
+        $committeeSitting->update($sitting);
     }
 
     protected function getDataSet()

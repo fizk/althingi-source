@@ -29,12 +29,14 @@ class IndexerCategoryController implements
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        /** @var \Althingi\Model\SuperCategory $model */
         foreach ($this->superCategory->fetchAllGenerator() as $model) {
             $this->getEventDispatcher()->dispatch(
                 new AddEvent(new IndexableSuperCategoryPresenter($model), ['rows' => 1]),
             );
         }
 
+        /** @var \Althingi\Model\Category $model */
         foreach ($this->categoryService->fetchAllGenerator() as $model) {
             $this->getEventDispatcher()->dispatch(
                 new AddEvent(new IndexableCategoryPresenter($model), ['rows' => 1]),

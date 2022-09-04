@@ -2,9 +2,9 @@
 
 namespace Althingi\Service;
 
+use PHPUnit\Framework\TestCase;
 use Althingi\Service\CommitteeMeeting;
 use Althingi\DatabaseConnection;
-use PHPUnit\Framework\TestCase;
 use Althingi\Model\CommitteeMeeting as CommitteeMeetingModel;
 use PDO;
 

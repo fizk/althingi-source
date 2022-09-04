@@ -105,7 +105,7 @@ class CongressmanDocument implements ModelInterface
     /**
      * @return array
      */
-    public function jsonSerialize(): array
+    public function jsonSerialize(): mixed
     {
         return $this->toArray();
     }

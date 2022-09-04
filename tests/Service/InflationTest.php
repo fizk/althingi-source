@@ -227,6 +227,116 @@ class InflationTest extends TestCase
         $this->assertEquals(1, $affectedRows);
     }
 
+    public function testUpdateFireEventsEntryFoundButNoUpdatesRequired()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(0, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $inflation = (new InflationModel())
+            ->setId(1)
+            ->setDate(new DateTime('2000-01-01'))
+            ->setValue(1);
+
+        (new Inflation())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->update($inflation);
+    }
+
+    public function testUpdateFireEventsEntryFoundAndUpdateIsRequired()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $inflation = (new InflationModel())
+            ->setId(1)
+            ->setDate(new DateTime('2000-01-01'))
+            ->setValue(2);
+
+        (new Inflation())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->update($inflation);
+    }
+
+    public function testSaveFireEventsEntryCreated()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (AddEvent $args) {
+                $this->assertEquals(1, $args->getParams()['rows']);
+                return $args instanceof AddEvent;
+            })
+            ->getMock();
+
+        $inflation = (new InflationModel())
+            ->setId(6)
+            ->setDate(new DateTime('2000-01-01'))
+            ->setValue(2);
+
+        (new Inflation())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->save($inflation);
+    }
+
+    public function testSaveFireEventsEntryFoundButNoUpdateNeeded()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(0, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $inflation = (new InflationModel())
+            ->setId(1)
+            ->setDate(new DateTime('2000-01-01'))
+            ->setValue(1);
+
+        (new Inflation())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->save($inflation);
+    }
+
+    public function testSaveFireEventsEntryFoundAndAnUpdateRequied()
+    {
+        $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
+            ->shouldReceive('dispatch')
+            ->once()
+            ->withArgs(function (UpdateEvent $args) {
+                $this->assertEquals(2, $args->getParams()['rows']);
+                return $args instanceof UpdateEvent;
+            })
+            ->getMock();
+
+        $inflation = (new InflationModel())
+            ->setId(1)
+            ->setDate(new DateTime('2000-01-01'))
+            ->setValue(2);
+
+        (new Inflation())
+            ->setDriver($this->pdo)
+            ->setEventDispatcher($eventDispatcher)
+            ->save($inflation);
+    }
+
     protected function getDataSet()
     {
         return $this->createArrayDataSet([

@@ -24,6 +24,7 @@ class IndexerMinistryController implements ServiceMinistryAwareInterface, Events
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        /** @var \Althingi\Model\Ministry $model */
         foreach ($this->ministryService->fetchAllGenerator() as $model) {
             $this->getEventDispatcher()->dispatch(
                 new AddEvent(new IndexableMinistryPresenter($model), ['rows' => 1]),

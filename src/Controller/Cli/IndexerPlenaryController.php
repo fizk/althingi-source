@@ -26,6 +26,7 @@ class IndexerPlenaryController implements ServicePlenaryAwareInterface, EventsAw
     {
         $assemblyId = $request->getAttribute('assembly_id', null);
 
+        /** @var \Althingi\Model\Plenary $model */
         foreach ($this->plenaryService->fetchAllGenerator($assemblyId) as $model) {
             $this->getEventDispatcher()->dispatch(
                 new AddEvent(new IndexablePlenaryPresenter($model), ['rows' => 1]),
