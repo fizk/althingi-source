@@ -594,7 +594,9 @@ return [
             $config->set('metadata.broker.list', getenv('BROKER_HOST'));
             $config->set('bootstrap.servers', getenv('BROKER_HOST'));
             $config->set('enable.idempotence', 'true');
-            $config->set('debug', 'all');
+            if (!empty(getenv('BROKER_CONFIG'))) {
+                $config->set('debug', getenv('BROKER_CONFIG'));
+            }
 
             $producer = new KafkaProducer($config);
             $producer->addBrokers(getenv('BROKER_HOST') ?: "127.0.01:9092");
@@ -606,10 +608,6 @@ return [
                 ->setHost(getenv('DOCUMENT_SERVER') ?: 'loggjafarthing.einarvalur.co/api')
                 ->setDefinition(getenv('DOCUMENT_DEFINITION') ?: '/api/openapi')
                 ->setSchema(['http']);
-        },
-
-        Althingi\Injector\StallingAwareInterface::class => function () {
-            return getenv('INDEXER_STALL_TIME') ?: 50000;
         },
         RouteInterface::class => function () {
             return TreeRouteStack::factory(require __DIR__ . '/route.php');

@@ -1,10 +1,12 @@
 FROM php:8.1.8-apache-bullseye
 
 ARG ENV
-ENV PATH="/var/www:/var/www/bin:${PATH}"
+ENV PATH="/var/www/alias:/var/www/bin:${PATH}"
 
 EXPOSE 80
 
+# Configures the operating system and installs
+# extensions for the PHP environment.
 RUN apt-get update; \
     apt-get install -y \
         zip  \
@@ -36,6 +38,8 @@ RUN apt-get update; \
     chown www-data /var/www/.composer; \
     chown www-data /var/www;
 
+# Configures the PHP environment as well as
+# the Apache HTTP server.
 RUN echo "[PHP]\n\
 memory_limit = 2048M \n\
 upload_max_filesize = 512M \n\
@@ -52,14 +56,20 @@ echo "<VirtualHost *:80>\n\
     RewriteRule . /index.php [L]\n\
 </VirtualHost>\n" > /etc/apache2/sites-available/000-default.conf;
 
+# If Production, configures PHP's JIT
+# environment and sets a resonable buffer size and memory.
 RUN if [ "$ENV" = "production" ] ; then \
     echo "opcache.enable=1\n\
 opcache.jit_buffer_size=100M\n\
 opcache.jit=1255\n" >> /usr/local/etc/php/conf.d/php.ini; \
     fi ;
 
+# Restarts Apache for configuration to take effect
 RUN a2enmod rewrite && service apache2 restart;
 
+# If not Production, sets up Xdebug and configures it
+# so that the host system can listen to the debugger on
+# the host's localhost.
 RUN if [ "$ENV" != "production" ] ; then \
     pecl install xdebug; \
     docker-php-ext-enable xdebug; \
@@ -72,13 +82,26 @@ RUN if [ "$ENV" != "production" ] ; then \
     echo "xdebug.client_port=9003" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
     echo "xdebug.idekey=myKey" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
     echo "xdebug.remote_handler=dbgp" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini; \
-    echo 'alias cover="XDEBUG_MODE=coverage /var/www/vendor/bin/phpunit --coverage-html=/var/www/tests/docs"\n' >> ~/.bashrc; \
-    echo 'alias phpunit="/var/www/vendor/bin/phpunit"\n' >> ~/.bashrc; \
     fi ;
 
+# Sets the working directory and the user to www-data.
+# That is the user that is already configured to run Apache
 WORKDIR /var/www
 USER www-data
 
+# If not Production, add scripts to run `phpunit` and `cover`
+RUN if [ "$ENV" != "production" ] ; then \
+    mkdir -p /var/www/alias; \
+    echo "#!/bin/bash\n/var/www/vendor/bin/phpunit \$@" >> /var/www/alias/phpunit; \
+    chmod u+x /var/www/alias/phpunit; \
+    echo "#!/bin/bash\nXDEBUG_MODE=coverage /var/www/vendor/bin/phpunit --coverage-html=/var/www/tests/docs" >> /var/www/alias/cover; \
+    chmod u+x /var/www/alias/cover; \
+    fi ;
+
+
+# Copy dependenices for Composer into container
+# Install Composer and then install Coposer dependencies
+# based off of it the mode is Production or Development
 COPY --chown=www-data:www-data ./composer.json ./composer.json
 COPY --chown=www-data:www-data ./composer.lock ./composer.lock
 
@@ -86,15 +109,17 @@ RUN curl -sS https://getcomposer.org/installer \
     | php -- --install-dir=/var/www --filename=composer --version=2.3.9
 
 RUN if [ "$ENV" != "production" ] ; then \
-    composer install --prefer-source --no-interaction --no-cache \
-    && composer dump-autoload; \
+    ./composer install --prefer-source --no-interaction --no-cache \
+    && ./composer dump-autoload; \
     fi ;
 
 RUN if [ "$ENV" = "production" ] ; then \
-    composer install --prefer-source --no-interaction --no-dev --no-cache -o \
-    && composer dump-autoload -o; \
+    ./composer install --prefer-source --no-interaction --no-dev --no-cache -o \
+    && ./composer dump-autoload -o; \
     fi ;
 
+# Copy source-code into container
+# as www-data user
 COPY --chown=www-data:www-data ./public ./public
 COPY --chown=www-data:www-data ./src ./src
 COPY --chown=www-data:www-data ./config ./config
