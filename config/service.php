@@ -38,7 +38,7 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Formatter\LineFormatter;
 
 return [
-    'factories' => [
+    'controller' => [
         Controller\IndexController::class => function (ContainerInterface $container) {
             return (new Controller\IndexController())
                 ->setOpenApi($container->get(\Althingi\Utils\OpenAPI::class));
@@ -344,6 +344,8 @@ return [
             return (new Controller\Cli\IndexController())
                 ;
         },
+    ],
+    'service' => [
 
 
         Service\Assembly::class => function (ContainerInterface $sm) {
@@ -502,6 +504,8 @@ return [
                 ->setEventDispatcher($sm->get(EventDispatcherInterface::class))
                 ;
         },
+    ],
+    'utils' => [
 
         PDO::class => function (ContainerInterface $sm) {
             $dbHost = getenv('DB_HOST') ?: 'localhost';

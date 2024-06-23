@@ -7,7 +7,7 @@ use Althingi\Model\President;
 use Althingi\Service\Congressman;
 use Althingi\Service\Party;
 use Althingi\ServiceHelper;
-use Laminas\ServiceManager\ServiceManager;
+use Library\Container\Container;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -24,7 +24,7 @@ class PresidentAssemblyControllerTest extends TestCase
     public function setUp(): void
     {
         $this->setServiceManager(
-            new ServiceManager(require __DIR__ . '/../../config/service.php')
+            new Container(require __DIR__ . '/../../config/service.php')
         );
         $this->buildServices([
             Party::class,

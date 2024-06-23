@@ -3,10 +3,10 @@
 namespace Althingi\Controller;
 
 use Althingi\Controller\AssemblyCommitteeController;
-use Althingi\ServiceHelper;
-use Althingi\Service\Committee;
 use Althingi\Model\Committee as CommitteeModel;
-use Laminas\ServiceManager\ServiceManager;
+use Althingi\Service\Committee;
+use Althingi\ServiceHelper;
+use Library\Container\Container;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
@@ -24,7 +24,7 @@ class AssemblyCommitteeControllerTest extends TestCase
     public function setUp(): void
     {
         $this->setServiceManager(
-            new ServiceManager(require __DIR__ . '/../../config/service.php')
+            new Container(require __DIR__ . '/../../config/service.php')
         );
 
         $this->buildServices([

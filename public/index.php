@@ -7,15 +7,15 @@ set_error_handler('exception_error_handler');
 
 use Althingi\Events\{RequestSuccessEvent, RequestFailureEvent, RequestUnsuccessEvent};
 use Laminas\Diactoros\Response\JsonResponse;
-use Laminas\ServiceManager\ServiceManager;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use Althingi\Router\RouteInterface;
 use Althingi\Utils\ConsoleRequest;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\Diactoros\Uri;
+use Library\Container\Container;
 
-$manager = new ServiceManager(require_once './config/service.php');
+$manager = new Container(require_once './config/service.php');
 $router = $manager->get(RouteInterface::class);
 
 $path = isset($argv[1]) ? $argv[1] : '/';

@@ -2,20 +2,20 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Service;
-use Althingi\Model;
 use Althingi\Controller\VoteItemController;
+use Althingi\Model;
 use Althingi\Model\VoteItemAndAssemblyIssue;
+use Althingi\Service;
 use Althingi\Service\Congressman;
 use Althingi\Service\Constituency;
 use Althingi\Service\Party;
 use Althingi\Service\Vote;
 use Althingi\Service\VoteItem;
 use Althingi\ServiceHelper;
-use Laminas\ServiceManager\ServiceManager;
-use PHPUnit\Framework\TestCase;
-use Mockery;
 use DateTime;
+use Library\Container\Container;
+use Mockery;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class VoteItemControllerTest
@@ -35,7 +35,7 @@ class VoteItemControllerTest extends TestCase
     public function setUp(): void
     {
         $this->setServiceManager(
-            new ServiceManager(require __DIR__ . '/../../config/service.php')
+            new Container(require __DIR__ . '/../../config/service.php')
         );
         $this->buildServices([
             VoteItem::class,

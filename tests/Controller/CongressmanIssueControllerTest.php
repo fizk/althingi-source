@@ -3,10 +3,10 @@
 namespace Althingi\Controller;
 
 use Althingi\Controller\CongressmanIssueController;
-use Althingi\Service\Issue;
 use Althingi\Model;
+use Althingi\Service\Issue;
 use Althingi\ServiceHelper;
-use Laminas\ServiceManager\ServiceManager;
+use Library\Container\Container;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -23,7 +23,7 @@ class CongressmanIssueControllerTest extends TestCase
     public function setUp(): void
     {
         $this->setServiceManager(
-            new ServiceManager(require __DIR__ . '/../../config/service.php')
+            new Container(require __DIR__ . '/../../config/service.php')
         );
         $this->buildServices([
             Issue::class,

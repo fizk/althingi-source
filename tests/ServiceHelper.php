@@ -4,8 +4,9 @@ namespace Althingi;
 
 use Psr\Http\Message\ResponseInterface;
 use Mockery\MockInterface;
-use Laminas\Http\Request;
-use Laminas\ServiceManager\ServiceManager;
+use Laminas\Diactoros\Request;
+use Psr\Container\ContainerInterface;
+use Library\Container\Container;
 use Laminas\Diactoros\{
     Uri,
     ServerRequest
@@ -21,21 +22,19 @@ trait ServiceHelper
     private $controller;
     private Request $request;
     private ResponseInterface $response;
-    private ServiceManager $serviceManager;
+    private Container $serviceManager;
     private RouteInterface $router;
     private ?RouteMatch $routeMatch = null;
 
     private function buildServices(array $services = [])
     {
-        $this->serviceManager->setAllowOverride(true);
-
         foreach ($services as $service) {
             $this->services[$service] = \Mockery::mock($service);
-            $this->serviceManager->setService($service, $this->services[$service]);
+            $this->serviceManager->override($service, fn () => $this->services[$service]);
         }
     }
 
-    private function setServiceManager(ServiceManager $serviceManager)
+    private function setServiceManager(ContainerInterface $serviceManager)
     {
         $this->serviceManager = $serviceManager;
     }

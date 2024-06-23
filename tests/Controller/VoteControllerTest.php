@@ -5,9 +5,9 @@ namespace Althingi\Controller;
 use Althingi\Controller\VoteController;
 use Althingi\Service\Vote;
 use Althingi\ServiceHelper;
-use Laminas\ServiceManager\ServiceManager;
-use PHPUnit\Framework\TestCase;
+use Library\Container\Container;
 use Mockery;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class VoteControllerTest
@@ -23,7 +23,7 @@ class VoteControllerTest extends TestCase
     public function setUp(): void
     {
         $this->setServiceManager(
-            new ServiceManager(require __DIR__ . '/../../config/service.php')
+            new Container(require __DIR__ . '/../../config/service.php')
         );
         $this->buildServices([
             Vote::class,

@@ -4,12 +4,12 @@ namespace Althingi\Controller;
 
 use Althingi\Controller\PresidentController;
 use Althingi\Service\Congressman;
-use Althingi\Service\President;
 use Althingi\Service\Party;
+use Althingi\Service\President;
 use Althingi\ServiceHelper;
-use Laminas\ServiceManager\ServiceManager;
-use PHPUnit\Framework\TestCase;
 use DateTime;
+use Library\Container\Container;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class PresidentControllerTest
@@ -25,7 +25,7 @@ class PresidentControllerTest extends TestCase
     public function setUp(): void
     {
         $this->setServiceManager(
-            new ServiceManager(require __DIR__ . '/../../config/service.php')
+            new Container(require __DIR__ . '/../../config/service.php')
         );
         $this->buildServices([
             Party::class,
