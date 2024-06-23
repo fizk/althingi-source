@@ -63,13 +63,13 @@ class CongressmanController implements
      */
     public function put(ServerRequest $request): ResponseInterface
     {
-        $form = new Form\Congressman();
-        $form->setData(array_merge($request->getParsedBody(), [
-            'congressman_id' => $request->getAttribute('congressman_id')
-        ]));
+        $form = new Form\Congressman([
+            ...$request->getParsedBody(),
+            'congressman_id' => $request->getAttribute('congressman_id'),
+        ]);
 
         if ($form->isValid()) {
-            $affectedRows = $this->congressmanService->save($form->getObject());
+            $affectedRows = $this->congressmanService->save($form->getModel());
             return new EmptyResponse($affectedRows === 1 ? 201 : 205);
         }
 
@@ -89,12 +89,14 @@ class CongressmanController implements
         if (($congressman = $this->congressmanService->get(
             $request->getAttribute('congressman_id')
         )) != null) {
-            $form = (new Form\Congressman())
-                ->bind($congressman)
-                ->setData($request->getParsedBody());
+            $form = new Form\Congressman([
+                ...(new \Althingi\Hydrator\Congressman)->extract($congressman),
+                ...$request->getParsedBody(),
+                'congressman_id' => $request->getAttribute('congressman_id'),
+            ]);
 
             if ($form->isValid()) {
-                $this->congressmanService->update($form->getObject());
+                $this->congressmanService->update($form->getModel());
                 return new EmptyResponse(205);
             }
 

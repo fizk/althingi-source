@@ -9,31 +9,32 @@ class CongressmanTest extends TestCase
 {
     public function testEmptyToValue()
     {
-        $form = new Congressman();
-        $form->setData([
+        $form = new Congressman([
             'congressman_id' => 1,
             'name' => 'Gaur Jonsson',
             'birth' => '2001-01-01',
             'death' => '',
-        ])->isValid();
+
+        ]);
+        $form->isValid();
 
         /** @var \Althingi\Model\Congressman */
-        $model = $form->getObject();
+        $model = $form->getModel();
         $this->assertNull($model->getDeath());
     }
 
     public function testNonEmptyToValue()
     {
-        $form = new Congressman();
-        $form->setData([
+        $form = new Congressman([
             'congressman_id' => 1,
             'name' => 'Gaur Jonsson',
             'birth' => '2001-01-01',
             'death' => '2010-01-01',
-        ])->isValid();
+        ]);
+        $form->isValid();
 
         /** @var \Althingi\Model\Congressman */
-        $model = $form->getObject();
+        $model = $form->getModel();
         $this->assertNotNull($model->getDeath());
     }
 }

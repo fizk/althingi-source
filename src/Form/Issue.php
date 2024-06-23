@@ -8,189 +8,81 @@ use Althingi\Filter\ToInt;
 use Althingi\Filter\ItemStatusFilter;
 use Laminas\Filter\ToNull;
 use Althingi\Validator\SignedDigits;
+use Laminas\Validator\NotEmpty;
+use Library\Form\Form;
+use Library\Input\Input;
 
 class Issue extends Form
 {
-    public function __construct()
+    public function getModel(): Model\Issue
     {
-        parent::__construct(get_class($this));
-        $this
-            ->setHydrator(new Hydrator\Issue())
-            ->setObject(new Model\Issue());
+        return (new Hydrator\Issue())
+            ->hydrate(
+                $this->getInputChain()->getValues(),
+                new Model\Issue()
+            );
     }
 
-    public function getInputFilterSpecification(): array
+    public function getValidationConfig(): array
     {
         return [
-            'issue_id' => [
-                'name' => 'issue_id',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'assembly_id' => [
-                'name' => 'assembly_id',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'congressman_id' => [
-                'name' => 'congressman_id',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'name' => [
-                'name' => 'name',
-                'required' => true,
-                'allow_empty' => false,
-            ],
-            'sub_name' => [
-                'name' => 'sub_name',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-            'category' => [
-                'name' => 'category',
-                'required' => true,
-                'allow_empty' => false,
-            ],
-            'type' => [
-                'name' => 'type',
-                'required' => true,
-                'allow_empty' => false,
-            ],
-            'type_name' => [
-                'name' => 'type_name',
-                'required' => true,
-                'allow_empty' => false,
-            ],
-            'type_subname' => [
-                'name' => 'type_subname',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-            'status' => [
-                'name' => 'status',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    ['name' => ItemStatusFilter::class],
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ],
-                ],
-            ],
-            'question' => [
-                'name' => 'question',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-            'goal' => [
-                'name' => 'goal',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-            'major_changes' => [
-                'name' => 'major_changes',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-            'changes_in_law' => [
-                'name' => 'changes_in_law',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-            'costs_and_revenues' => [
-                'name' => 'costs_and_revenues',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-            'deliveries' => [
-                'name' => 'deliveries',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-            'additional_information' => [
-                'name' => 'additional_information',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-
+            (new Input('issue_id'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+            ,
+            (new Input('assembly_id'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+            ,
+            (new Input('congressman_id', true))
+                ->attachFilter(new ToInt())
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('name'))
+                ->attachValidator(new NotEmpty())
+            ,
+            (new Input('sub_name'))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('category'))
+                ->attachValidator(new NotEmpty())
+            ,
+            (new Input('type'))
+                ->attachValidator(new NotEmpty())
+            ,
+            (new Input('type_name'))
+                ->attachValidator(new NotEmpty())
+            ,
+            (new Input('type_subname', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('status', true))
+                ->attachFilter(new ItemStatusFilter())
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('question', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('goal', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('major_changes', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('changes_in_law', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('costs_and_revenues', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('deliveries'))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('additional_information'))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
         ];
     }
 }

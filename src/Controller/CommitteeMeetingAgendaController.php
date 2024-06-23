@@ -64,15 +64,15 @@ class CommitteeMeetingAgendaController implements
         $committeeMeetingId = $request->getAttribute('committee_meeting_id');
         $committeeMeetingAgendaId = $request->getAttribute('committee_meeting_agenda_id');
 
-        $form = new Form\CommitteeMeetingAgenda();
-        $form->setData(array_merge($request->getParsedBody(), [
+        $form = new Form\CommitteeMeetingAgenda([
+            ...$request->getParsedBody(),
             'committee_meeting_agenda_id' => $committeeMeetingAgendaId,
             'assembly_id' => $assemblyId,
-            'committee_meeting_id' => $committeeMeetingId
-        ]));
+            'committee_meeting_id' => $committeeMeetingId,
+        ]);
 
         if ($form->isValid()) {
-            $affectedRows = $this->committeeMeetingAgendaService->save($form->getObject());
+            $affectedRows = $this->committeeMeetingAgendaService->save($form->getModel());
             return new EmptyResponse($affectedRows === 1 ? 201 : 205);
         }
 
@@ -90,14 +90,17 @@ class CommitteeMeetingAgendaController implements
         $committeeMeetingId = $request->getAttribute('committee_meeting_id');
         $committeeMeetingAgendaId = $request->getAttribute('committee_meeting_agenda_id');
 
-        if (($agenda = $this->committeeMeetingAgendaService
+        if (($committeeMeetingAgenda = $this->committeeMeetingAgendaService
                 ->get($committeeMeetingId, $committeeMeetingAgendaId)) != null) {
-            $form = new Form\CommitteeMeetingAgenda();
-            $form->bind($agenda);
-            $form->setData($request->getParsedBody());
+            $form = new Form\CommitteeMeetingAgenda([
+                ...(new \Althingi\Hydrator\CommitteeMeetingAgenda())->extract($committeeMeetingAgenda),
+                ...$request->getParsedBody(),
+                'committee_meeting_id' => $request->getAttribute('committee_meeting_id'),
+                'committee_meeting_agenda_id' => $request->getAttribute('committee_meeting_agenda_id'),
+            ]);
 
             if ($form->isValid()) {
-                $this->committeeMeetingAgendaService->update($form->getObject());
+                $this->committeeMeetingAgendaService->update($form->getModel());
                 return new EmptyResponse(205);
             }
 

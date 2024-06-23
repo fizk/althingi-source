@@ -2,64 +2,44 @@
 
 namespace Althingi\Form;
 
-use Althingi\Model;
-use Althingi\Hydrator;
-use Laminas\Filter\ToNull;
 use Althingi\Filter\ToInt;
-use Laminas\Validator\Date;
+use Althingi\Hydrator;
+use Althingi\Model;
 use Althingi\Validator\SignedDigits;
+use Laminas\Filter\ToNull;
+use Laminas\Validator\NotEmpty;
+use Library\Form\Form;
+use Library\Input\Input;
 
 class Category extends Form
 {
-    public function __construct()
+    public function getModel(): Model\Category
     {
-        parent::__construct(get_class($this));
-        $this
-            ->setHydrator(new Hydrator\Category())
-            ->setObject(new Model\Category());
+        return (new Hydrator\Category())
+            ->hydrate(
+                $this->getInputChain()->getValues(),
+                new Model\Category()
+            );
     }
 
-    public function getInputFilterSpecification(): array
+    public function getValidationConfig(): array
     {
         return [
-            'super_category_id' => [
-                'name' => 'super_category_id',
-                'required' => true,
-                'allow_empty' => false,
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-                'filters' => [
-                    ['name' => ToInt::class,]
-                ],
-            ],
-            'category_id' => [
-                'name' => 'category_id',
-                'required' => true,
-                'allow_empty' => false,
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-                'filters' => [
-                    ['name' => ToInt::class,]
-                ],
-            ],
-            'title' => [
-                'name' => 'title',
-                'required' => true,
-                'allow_empty' => false,
-            ],
-            'description' => [
-                'name' => 'description',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
+            (new Input('super_category_id'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt()),
+
+            (new Input('category_id'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt()),
+
+            (new Input('title'))
+                ->attachValidator(new NotEmpty()),
+
+            (new Input('description', true))
+                ->attachFilter(new ToNull(['type' => 'all'])),
         ];
     }
 }

@@ -93,12 +93,14 @@ class CommitteeSittingController implements
         $statusCode = 201;
         $committeeSittingId = 0;
 
-        $form = new Form\CommitteeSitting();
-        $form->setData(array_merge($request->getParsedBody(), ['congressman_id' => $congressmanId]));
+        $form = new Form\CommitteeSitting([
+            ...$request->getParsedBody(),
+            'congressman_id' => $congressmanId,
+        ]);
 
         if ($form->isValid()) {
             /** @var \Althingi\Model\CommitteeSitting */
-            $committeeSitting = $form->getObject();
+            $committeeSitting = $form->getModel();
 
             try {
                 $committeeSittingId = $this->committeeSittingService->create($committeeSitting);
@@ -136,15 +138,17 @@ class CommitteeSittingController implements
      */
     public function patch(ServerRequest $request): ResponseInterface
     {
-        if (($session = $this->committeeSittingService->get(
+        if (($committeeSitting = $this->committeeSittingService->get(
             $request->getAttribute('committee_sitting_id')
         )) != null) {
-            $form = new Form\CommitteeSitting();
-            $form->bind($session);
-            $form->setData($request->getParsedBody());
+            $form = new Form\CommitteeSitting([
+                ...(new \Althingi\Hydrator\CommitteeSitting)->extract($committeeSitting),
+                ...$request->getParsedBody(),
+                'committee_sitting_id' =>$request->getAttribute('committee_sitting_id'),
+            ]);
 
             if ($form->isValid()) {
-                $this->committeeSittingService->update($form->getObject());
+                $this->committeeSittingService->update($form->getModel());
                 return new EmptyResponse(205);
             }
 

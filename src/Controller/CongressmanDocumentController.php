@@ -34,20 +34,17 @@ class CongressmanDocumentController implements
         $documentId = $request->getAttribute('document_id');
         $congressmanId = $request->getAttribute('congressman_id');
 
-        $form = (new Form\CongressmanDocument())
-            ->setData(array_merge(
-                $request->getParsedBody(),
-                [
-                    'assembly_id' => $assemblyId,
-                    'issue_id' => $issueId,
-                    'document_id' => $documentId,
-                    'congressman_id' => $congressmanId,
-                    'category' => 'A',
-                ]
-            ));
+        $form = new Form\CongressmanDocument([
+            ...$request->getParsedBody(),
+            'assembly_id' => $assemblyId,
+            'issue_id' => $issueId,
+            'document_id' => $documentId,
+            'congressman_id' => $congressmanId,
+            'category' => 'A',
+        ]);
 
         if ($form->isValid()) {
-            $affectedRows = $this->congressmanDocumentService->save($form->getObject());
+            $affectedRows = $this->congressmanDocumentService->save($form->getModel());
             return new EmptyResponse($affectedRows === 1 ? 201 : 205);
         }
 
@@ -67,14 +64,19 @@ class CongressmanDocumentController implements
         $documentId = $request->getAttribute('document_id');
         $congressmanId = $request->getAttribute('congressman_id');
 
-        if (($proponent = $this->congressmanDocumentService
+        if (($congressmanDocument = $this->congressmanDocumentService
                 ->get($assemblyId, $issueId, $documentId, $congressmanId)) != null) {
-            $form = new Form\CongressmanDocument();
-            $form->bind($proponent);
-            $form->setData($request->getParsedBody());
+            $form = new Form\CongressmanDocument([
+                ...(new \Althingi\Hydrator\CongressmanDocument())->extract($congressmanDocument),
+                ...$request->getParsedBody(),
+                'id' => $request->getAttribute('id'),
+                'issue_id' => $request->getAttribute('issue_id'),
+                'document_id' => $request->getAttribute('document_id'),
+                'congressman_id' => $request->getAttribute('congressman_id'),
+            ]);
 
             if ($form->isValid()) {
-                $this->congressmanDocumentService->update($form->getObject());
+                $this->congressmanDocumentService->update($form->getModel());
                 return new EmptyResponse(205);
             }
 

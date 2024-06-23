@@ -110,13 +110,13 @@ class InflationController implements
     public function put(ServerRequest $request): ResponseInterface
     {
 
-        $form = new Form\Inflation();
-        $form->setData(array_merge($request->getParsedBody(), ['id' =>
-            $request->getAttribute('id')
-        ]));
+        $form = new Form\Inflation([
+            ...$request->getParsedBody(),
+            'id' => $request->getAttribute('id')
+        ]);
 
         if ($form->isValid()) {
-            $affectedRows = $this->inflationService->save($form->getObject());
+            $affectedRows = $this->inflationService->save($form->getModel());
             return new EmptyResponse($affectedRows === 1 ? 201 : 205);
         }
 
@@ -134,12 +134,14 @@ class InflationController implements
         if (($committee = $this->inflationService->get(
             $request->getAttribute('id')
         )) != null) {
-            $form = new Form\Inflation();
-            $form->bind($committee);
-            $form->setData($request->getParsedBody());
+            $form = new Form\Inflation([
+                ...(new \Althingi\Hydrator\Inflation())->extract($committee),
+                ...$request->getParsedBody(),
+                'id' => $request->getAttribute('id'),
+            ]);
 
             if ($form->isValid()) {
-                $this->inflationService->update($form->getObject());
+                $this->inflationService->update($form->getModel());
                 return new EmptyResponse(205);
             }
 

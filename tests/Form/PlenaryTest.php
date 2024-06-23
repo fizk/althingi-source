@@ -9,28 +9,29 @@ class PlenaryTest extends TestCase
 {
     public function testEmptyToValue()
     {
-        $form = new Plenary();
-        $isValid = $form->setData([
+        $form = new Plenary([
             'plenary_id' => '1',
             'assembly_id' => '2',
             'name' => '',
             'from' => '',
             'to' => '',
-        ])->isValid();
+
+        ]);
+        $isValid = $form->isValid();
 
         $this->assertTrue($isValid);
     }
 
     public function testNegativeValue()
     {
-        $form = new Plenary();
-        $isValid = $form->setData([
+        $form = new Plenary([
             'plenary_id' => '-1',
             'assembly_id' => '2',
             'name' => '',
             'from' => '',
             'to' => '',
-        ])->isValid();
+        ]);
+        $isValid = $form->isValid();
 
         $this->assertTrue($isValid);
     }

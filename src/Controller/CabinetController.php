@@ -57,8 +57,8 @@ class CabinetController implements
         $to = $request->getQueryParams('til');
 
         $cabinetCollection = $this->cabinetService->fetchAll(
-            $from ? new DateTime($from) : null,
-            $to ? new DateTime($to) : null
+            count($from) ? new DateTime($from[0]) : null,
+            count($to) ? new DateTime($to[0]) : null
         );
 
         return new JsonResponse($cabinetCollection, 206);
@@ -74,11 +74,13 @@ class CabinetController implements
      */
     public function put(ServerRequest $request): ResponseInterface
     {
-        $form = new Form\Cabinet();
-        $form->setData(array_merge($request->getParsedBody(), ['cabinet_id' => $request->getAttribute('id')]));
+        $form = new Form\Cabinet([
+            ...$request->getParsedBody(),
+            'cabinet_id' => $request->getAttribute('id'),
+        ]);
 
         if ($form->isValid()) {
-            $affectedRows = $this->cabinetService->save($form->getObject());
+            $affectedRows = $this->cabinetService->save($form->getModel());
             return new EmptyResponse($affectedRows === 1 ? 201 : 205);
         }
 
@@ -94,12 +96,14 @@ class CabinetController implements
     public function patch(ServerRequest $request): ResponseInterface
     {
         if (($committee = $this->cabinetService->get($request->getAttribute('id'))) != null) {
-            $form = new Form\Cabinet();
-            $form->bind($committee);
-            $form->setData($request->getParsedBody());
+            $form = new Form\Cabinet([
+                ...(new \Althingi\Hydrator\Cabinet)->extract($committee),
+                ...$request->getParsedBody(),
+                'cabinet_id' => $request->getAttribute('id'),
+            ]);
 
             if ($form->isValid()) {
-                $this->cabinetService->update($form->getObject());
+                $this->cabinetService->update($form->getModel());
                 return (new EmptyResponse(205));
             }
 

@@ -49,15 +49,15 @@ class IssueLinkController implements
         $issueId = $request->getAttribute('issue_id', 0);
         $category = $request->getAttribute('category', 'A');
 
-        $form = new Form\IssueLink();
-        $form->setData(array_merge($request->getParsedBody(), [
+        $form = new Form\IssueLink([
+            ...$request->getParsedBody(),
             'from_assembly_id' => $assemblyId,
             'from_issue_id' => $issueId,
             'from_category' => strtoupper($category),
-        ]));
+        ]);
 
         if ($form->isValid()) {
-            $object = $form->getObject();
+            $object = $form->getModel();
             $affectedRows = $this->issueLinkService->save($object);
             return new EmptyResponse($affectedRows === 1 ? 201 : 205);
         }

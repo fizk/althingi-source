@@ -78,14 +78,13 @@ class MinistryController implements
      */
     public function put(ServerRequest $request): ResponseInterface
     {
-        $form = new Form\Ministry();
-        $form->setData(array_merge(
-            $request->getParsedBody(),
-            ['ministry_id' => $request->getAttribute('id')]
-        ));
+        $form = new Form\Ministry([
+            ...$request->getParsedBody(),
+            'ministry_id' => $request->getAttribute('id'),
+        ]);
 
         if ($form->isValid()) {
-            $object = $form->getObject();
+            $object = $form->getModel();
             $affectedRows = $this->ministryService->save($object);
             return new EmptyResponse($affectedRows === 1 ? 201 : 205);
         }
@@ -100,15 +99,17 @@ class MinistryController implements
      */
     public function patch(ServerRequest $request): ResponseInterface
     {
-        if (($assembly = $this->ministryService->get(
+        if (($ministry = $this->ministryService->get(
             $request->getAttribute('id')
         )) !== null) {
-            $form = new Form\Ministry();
-            $form->bind($assembly);
-            $form->setData($request->getParsedBody());
+            $form = new Form\Ministry([
+                ...(new \Althingi\Hydrator\Ministry())->extract($ministry),
+                ...$request->getParsedBody(),
+                'ministry_id' => $request->getAttribute('id'),
+            ]);
 
             if ($form->isValid()) {
-                $this->ministryService->update($form->getObject());
+                $this->ministryService->update($form->getModel());
                 return new EmptyResponse(205);
             }
 

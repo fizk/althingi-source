@@ -99,17 +99,17 @@ class CommitteeDocumentController implements
         $statusCode = 201;
         $committeeDocumentId = 0;
 
-        $form = new Form\CommitteeDocument();
-        $form->setData(array_merge($request->getParsedBody(), [
+        $form = new Form\CommitteeDocument([
+            ...$request->getParsedBody(),
             'assembly_id' => $assemblyId,
             'issue_id' => $issueId,
             'category' => 'A',
             'document_id' => $documentId,
-        ]));
+        ]);
 
         if ($form->isValid()) {
             /** @var \Althingi\Model\CommitteeDocument */
-            $committeeDocument = $form->getObject();
+            $committeeDocument = $form->getModel();
 
             try {
                 $committeeDocumentId = $this->committeeDocumentService->create($committeeDocument);
@@ -152,15 +152,17 @@ class CommitteeDocumentController implements
      */
     public function patch(ServerRequest $request): ResponseInterface
     {
-        if (($session = $this->committeeDocumentService->get(
+        if (($committeeDocument = $this->committeeDocumentService->get(
             $request->getAttribute('document_committee_id')
         )) != null) {
-            $form = new Form\CommitteeDocument();
-            $form->bind($session);
-            $form->setData($request->getParsedBody());
+            $form = new Form\CommitteeDocument([
+                ...(new \Althingi\Hydrator\CommitteeDocument)->extract($committeeDocument),
+                ...$request->getParsedBody(),
+                'document_committee_id' => $request->getAttribute('document_committee_id'),
+            ]);
 
             if ($form->isValid()) {
-                $this->committeeDocumentService->update($form->getObject());
+                $this->committeeDocumentService->update($form->getModel());
                 return new EmptyResponse(205);
             }
 

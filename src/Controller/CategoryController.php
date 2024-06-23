@@ -59,16 +59,14 @@ class CategoryController implements
      */
     public function put(ServerRequest $request): ResponseInterface
     {
-        $superCategoryId = $request->getAttribute('super_category_id');
-        $categoryId = $request->getAttribute('category_id');
+        $form = new Form\Category([
+            ...$request->getParsedBody(),
+            'super_category_id' => $request->getAttribute('super_category_id'),
+            'category_id' => $request->getAttribute('category_id')
+        ]);
 
-        $form = new Form\Category();
-        $form->setData(array_merge($request->getParsedBody(), [
-            'super_category_id' => $superCategoryId,
-            'category_id' => $categoryId
-        ]));
         if ($form->isValid()) {
-            $affectedRows = $this->categoryService->save($form->getObject());
+            $affectedRows = $this->categoryService->save($form->getModel());
             return new EmptyResponse($affectedRows === 1 ? 201 : 205);
         }
 
@@ -84,12 +82,15 @@ class CategoryController implements
     public function patch(ServerRequest $request): ResponseInterface
     {
         if (($category = $this->categoryService->get($request->getAttribute('category_id'))) != null) {
-            $form = new Form\Category();
-            $form->bind($category);
-            $form->setData($request->getParsedBody());
+            $form = new Form\Category([
+                ...(new \Althingi\Hydrator\Category)->extract($category),
+                ...$request->getParsedBody(),
+                'super_category_id' => $request->getAttribute('super_category_id'),
+                'category_id' => $request->getAttribute('category_id')
+            ]);
 
             if ($form->isValid()) {
-                $this->categoryService->update($form->getObject());
+                $this->categoryService->update($form->getModel());
                 return new EmptyResponse(205);
             }
 

@@ -199,3 +199,5 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/osx,phpunit,phpstorm,composer,windows,visualstudiocode
 
 tests/docs
+.composer
+.bash_history

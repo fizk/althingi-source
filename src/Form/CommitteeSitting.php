@@ -2,124 +2,63 @@
 
 namespace Althingi\Form;
 
+use Althingi\Filter\ToInt;
 use Althingi\Hydrator;
 use Althingi\Model;
-use Laminas\Filter\ToNull;
-use Althingi\Filter\ToInt;
-use Laminas\Validator\{Date};
 use Althingi\Validator\SignedDigits;
+use Laminas\Filter\ToNull;
+use Laminas\Validator\{Date, NotEmpty};
+use Library\Form\Form;
+use Library\Input\Input;
 
 class CommitteeSitting extends Form
 {
-    public function __construct()
+    public function getModel(): Model\CommitteeSitting
     {
-        parent::__construct(get_class($this));
-        $this
-            ->setHydrator(new Hydrator\CommitteeSitting())
-            ->setObject(new Model\CommitteeSitting());
+        return (new Hydrator\CommitteeSitting())
+            ->hydrate(
+                $this->getInputChain()->getValues(),
+                new Model\CommitteeSitting()
+            );
     }
 
-    public function getInputFilterSpecification(): array
+    public function getValidationConfig(): array
     {
         return [
-            'committee_sitting_id' => [
-                'name' => 'committee_sitting_id',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'congressman_id' => [
-                'name' => 'congressman_id',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'committee_id' => [
-                'name' => 'committee_id',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'assembly_id' => [
-                'name' => 'assembly_id',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'order' => [
-                'name' => 'order',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-            'role' => [
-                'name' => 'role',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-            'from' => [
-                'name' => 'from',
-                'required' => true,
-                'allow_empty' => false,
-                'validators' => [
-                    [
-                        'name' => Date::class,
-                        'options' => ['step' => 'any', 'format' => 'Y-m-d']
-                    ]
-                ],
-            ],
-            'to' => [
-                'name' => 'to',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-                'validators' => [
-                    [
-                        'name' => Date::class,
-                        'options' => ['step' => 'any', 'format' => 'Y-m-d']
-                    ]
-                ],
-            ],
+            (new Input('committee_sitting_id', true))
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('congressman_id'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+            ,
+            (new Input('committee_id'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+            ,
+            (new Input('assembly_id'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+            ,
+            (new Input('order', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('role', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('from'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new Date(['step' => 'any', 'format' => 'Y-m-d']))
+            ,
+            (new Input('to', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+                ->attachValidator(new Date(['step' => 'any', 'format' => 'Y-m-d']))
+            ,
         ];
     }
 }

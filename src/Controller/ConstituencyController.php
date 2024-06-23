@@ -48,10 +48,12 @@ class ConstituencyController implements
      */
     public function put(ServerRequest $request): ResponseInterface
     {
-        $form = new Form\Constituency();
-        $form->setData(array_merge($request->getParsedBody(), ['constituency_id' => $request->getAttribute('id')]));
+        $form = new Form\Constituency([
+            ...$request->getParsedBody(),
+            'constituency_id' => $request->getAttribute('id'),
+        ]);
         if ($form->isValid()) {
-            $affectedRows = $this->constituencyService->save($form->getObject());
+            $affectedRows = $this->constituencyService->save($form->getModel());
             return new EmptyResponse($affectedRows === 1 ? 201 : 205);
         }
 
@@ -69,12 +71,14 @@ class ConstituencyController implements
         if (($constituency = $this->constituencyService->get(
             $request->getAttribute('id')
         )) !== null) {
-            $form = new Form\Constituency();
-            $form->bind($constituency);
-            $form->setData($request->getParsedBody());
+            $form = new Form\Constituency([
+                ...(new \Althingi\Hydrator\Constituency())->extract($constituency),
+                ...$request->getParsedBody(),
+                'constituency_id' => $request->getAttribute('id')
+            ]);
 
             if ($form->isValid()) {
-                $this->constituencyService->update($form->getObject());
+                $this->constituencyService->update($form->getModel());
                 return new EmptyResponse(205);
             }
 

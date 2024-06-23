@@ -9,8 +9,7 @@ class PlenaryAgendaTest extends TestCase
 {
     public function testWithIDsAreNumbers()
     {
-        $form = new PlenaryAgenda();
-        $isValid = $form->setData([
+        $form = new PlenaryAgenda([
             'assembly_id' => 141,
             'category' => 'B',
             'counter_answerer' => 'velferu00f0arru00e1u00f0herra',
@@ -24,15 +23,16 @@ class PlenaryAgendaTest extends TestCase
             'item_id' => 2,
             'iteration_type' => '*',
             'plenary_id' => 8
-        ])->isValid();
+
+        ]);
+        $isValid = $form->isValid();
 
         $this->assertTrue($isValid);
     }
 
     public function testWithEverythingIsAString()
     {
-        $form = new PlenaryAgenda();
-        $isValid = $form->setData([
+        $form = new PlenaryAgenda([
             'assembly_id' => '141',
             'category' => 'B',
             'counter_answerer' => 'velferu00f0arru00e1u00f0herra',
@@ -55,15 +55,15 @@ class PlenaryAgendaTest extends TestCase
             'posed' => '',
             'answerer_id' => '2',
             'answerer' => '',
-        ])->isValid();
+        ]);
+        $isValid = $form->isValid();
 
         $this->assertTrue($isValid);
     }
 
     public function testWithEmptyStringsAsIDs()
     {
-        $form = new PlenaryAgenda();
-        $isValid = $form->setData([
+        $form = new PlenaryAgenda([
             'assembly_id' => '141',
             'category' => 'B',
             'counter_answerer' => 'velferu00f0arru00e1u00f0herra',
@@ -86,7 +86,8 @@ class PlenaryAgendaTest extends TestCase
             'posed' => '',
             'answerer_id' => '',
             'answerer' => '',
-        ])->isValid();
+        ]);
+        $isValid = $form->isValid();
 
         $this->assertTrue($isValid);
     }

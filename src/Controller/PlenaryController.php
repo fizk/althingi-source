@@ -66,19 +66,14 @@ class PlenaryController implements
      */
     public function put(ServerRequest $request): ResponseInterface
     {
-        $form = (new Form\Plenary())
-            ->setData(
-                array_merge(
-                    $request->getParsedBody(),
-                    [
-                        'assembly_id' => $request->getAttribute('id'),
-                        'plenary_id' => $request->getAttribute('plenary_id')
-                    ]
-                )
-            );
+        $form = new Form\Plenary([
+            ...$request->getParsedBody(),
+            'assembly_id' => $request->getAttribute('id'),
+            'plenary_id' => $request->getAttribute('plenary_id'),
+        ]);
 
         if ($form->isValid()) {
-            $affectedRows = $this->plenaryService->save($form->getObject());
+            $affectedRows = $this->plenaryService->save($form->getModel());
             return new EmptyResponse($affectedRows === 1 ? 201 : 205);
         }
 
@@ -95,13 +90,16 @@ class PlenaryController implements
         $assemblyId = $request->getAttribute('id');
         $plenaryId = $request->getAttribute('plenary_id');
 
-        if (($assembly = $this->plenaryService->get($assemblyId, $plenaryId)) != null) {
-            $form = new Form\Plenary();
-            $form->bind($assembly);
-            $form->setData($request->getParsedBody());
+        if (($plenary = $this->plenaryService->get($assemblyId, $plenaryId)) != null) {
+            $form = new Form\Plenary([
+                ...(new \Althingi\Hydrator\Plenary)->extract($plenary),
+                ...$request->getParsedBody(),
+                'assembly_id' => $request->getAttribute('id'),
+                'plenary_id' => $request->getAttribute('plenary_id'),
+            ]);
 
             if ($form->isValid()) {
-                $this->plenaryService->update($form->getObject());
+                $this->plenaryService->update($form->getModel());
                 return new EmptyResponse(205);
             }
 

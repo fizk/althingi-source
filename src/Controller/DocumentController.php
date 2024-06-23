@@ -66,19 +66,16 @@ class DocumentController implements
         $issueId = $request->getAttribute('issue_id');
         $documentId = $request->getAttribute('document_id');
 
-        $form = new Form\Document();
-        $form->setData(array_merge(
-            $request->getParsedBody(),
-            [
-                'assembly_id' => $assemblyId,
-                'issue_id' => $issueId,
-                'document_id' => $documentId,
-                'category' => 'A',
-            ]
-        ));
+        $form = new Form\Document([
+            ...$request->getParsedBody(),
+            'assembly_id' => $assemblyId,
+            'issue_id' => $issueId,
+            'document_id' => $documentId,
+            'category' => 'A',
+        ]);
 
         if ($form->isValid()) {
-            $affectedRows = $this->documentService->save($form->getObject());
+            $affectedRows = $this->documentService->save($form->getModel());
             return new EmptyResponse($affectedRows === 1 ? 201 : 205);
         }
 
@@ -97,13 +94,17 @@ class DocumentController implements
         $issueId = $request->getAttribute('issue_id');
         $documentId = $request->getAttribute('document_id');
 
-        if (($assembly = $this->documentService->get($assemblyId, $issueId, $documentId)) != null) {
-            $form = new Form\Document();
-            $form->bind($assembly);
-            $form->setData($request->getParsedBody());
+        if (($document = $this->documentService->get($assemblyId, $issueId, $documentId)) != null) {
+            $form = new Form\Document([
+                ...(new \Althingi\Hydrator\Document())->extract($document),
+                ...$request->getParsedBody(),
+                'id' => $request->getAttribute('id'),
+                'issue_id' => $request->getAttribute('issue_id'),
+                'document_id' => $request->getAttribute('document_id'),
+            ]);
 
             if ($form->isValid()) {
-                $this->documentService->update($form->getObject());
+                $this->documentService->update($form->getModel());
                 return new EmptyResponse(205);
             }
 

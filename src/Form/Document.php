@@ -2,123 +2,67 @@
 
 namespace Althingi\Form;
 
+use Althingi\Filter\ToInt;
 use Althingi\Hydrator;
 use Althingi\Model;
-use Althingi\Filter\ToInt;
+use Althingi\Validator\SignedDigits;
 use Laminas\Filter\ToNull;
 use Laminas\Validator\Date;
-use Althingi\Validator\SignedDigits;
+use Laminas\Validator\NotEmpty;
+use Library\Form\Form;
+use Library\Input\Input;
 
 class Document extends Form
 {
-    public function __construct()
+    public function getModel(): Model\Document
     {
-        parent::__construct(get_class($this));
-        $this
-            ->setHydrator(new Hydrator\Document())
-            ->setObject(new Model\Document());
+        return (new Hydrator\Document())
+            ->hydrate(
+                $this->getInputChain()->getValues(),
+                new Model\Document()
+            );
     }
 
-    public function getInputFilterSpecification(): array
+    public function getValidationConfig(): array
     {
         return [
-            'issue_id' => [
-                'name' => 'issue_id',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'assembly_id' => [
-                'name' => 'assembly_id',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'document_id' => [
-                'name' => 'document_id',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'committee_id' => [
-                'name' => 'committee_id',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'date' => [
-                'name' => 'date',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-                'validators' => [
-                    [
-                        'name' => Date::class,
-                        'options' => ['step' => 'any', 'format' => 'Y-m-d H:i']
-                    ]
-                ],
-            ],
-            'url' => [
-                'name' => 'url',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-            'type' => [
-                'name' => 'type',
-                'required' => true,
-                'allow_empty' => false,
-            ],
-            'category' => [
-                'name' => 'category',
-                'required' => true,
-                'allow_empty' => false,
-            ],
-            'note' => [
-                'name' => 'note',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
+            (new Input('issue_id'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+            ,
+            (new Input('assembly_id'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+            ,
+            (new Input('document_id'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+            ,
+            (new Input('committee_id', true))
+                ->attachFilter(new ToInt())
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('date'))
+                ->attachValidator(new NotEmpty())
+                ->attachFilter(new ToNull(['type' => 'all']))
+                ->attachValidator(new Date(['step' => 'any', 'format' => 'Y-m-d H:i']))
+            ,
+            (new Input('url', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('type'))
+                ->attachValidator(new NotEmpty())
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('category'))
+                ->attachValidator(new NotEmpty())
+            ,
+            (new Input('note', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
         ];
     }
 }

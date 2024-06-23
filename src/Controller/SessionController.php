@@ -102,12 +102,14 @@ class SessionController implements
         $statusCode = 201;
         $sessionId = 0;
 
-        $form = new Form\Session();
-        $form->setData(array_merge($request->getParsedBody(), ['congressman_id' => $congressmanId]));
+        $form = new Form\Session([
+            ...$request->getParsedBody(),
+            'congressman_id' => $congressmanId,
+        ]);
 
         if ($form->isValid()) {
             /** @var \Althingi\Model\Session */
-            $sessionObject = $form->getObject();
+            $sessionObject = $form->getModel();
 
             try {
                 $sessionId = $this->sessionService->create($sessionObject);
@@ -147,12 +149,14 @@ class SessionController implements
         if (($session = $this->sessionService->get(
             $request->getAttribute('session_id')
         )) !== null) {
-            $form = new Form\Session();
-            $form->bind($session);
-            $form->setData($request->getParsedBody());
+            $form = new Form\Session([
+                ...(new \Althingi\Hydrator\Session())->extract($session),
+                ...$request->getParsedBody(),
+                'session_id' => $request->getAttribute('session_id')
+            ]);
 
             if ($form->isValid()) {
-                $this->sessionService->update($form->getObject());
+                $this->sessionService->update($form->getModel());
                 return new EmptyResponse(205);
             }
 

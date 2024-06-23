@@ -2,109 +2,57 @@
 
 namespace Althingi\Form;
 
+use Althingi\Filter\ToInt;
 use Althingi\Hydrator;
 use Althingi\Model;
-use Laminas\Filter\ToNull;
-use Althingi\Filter\ToInt;
-use Laminas\Validator\Date;
 use Althingi\Validator\SignedDigits;
+use Laminas\Filter\ToNull;
+use Laminas\Validator\Date;
+use Laminas\Validator\NotEmpty;
+use Library\Form\Form;
+use Library\Input\Input;
 
 class CommitteeMeeting extends Form
 {
-    public function __construct()
+    public function getModel(): Model\CommitteeMeeting
     {
-        parent::__construct(get_class($this));
-        $this
-            ->setHydrator(new Hydrator\CommitteeMeeting())
-            ->setObject(new Model\CommitteeMeeting());
-        ;
+        return (new Hydrator\CommitteeMeeting())
+            ->hydrate(
+                $this->getInputChain()->getValues(),
+                new Model\CommitteeMeeting()
+            );
     }
 
-    public function getInputFilterSpecification(): array
+    public function getValidationConfig(): array
     {
         return [
-            'committee_meeting_id' => [
-                'name' => 'committee_meeting_id',
-                'required' => false,
-                'allow_empty' => true,
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-                'filters' => [
-                    ['name' => ToInt::class,],
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-            'assembly_id' => [
-                'name' => 'assembly_id',
-                'required' => true,
-                'allow_empty' => false,
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-            ],
-            'committee_id' => [
-                'name' => 'committee_id',
-                'required' => true,
-                'allow_empty' => false,
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-            ],
-            'from' => [
-                'name' => 'from',
-                'required' => false,
-                'allow_empty' => true,
-                'validators' => [
-                    [
-                        'name' => Date::class,
-                        'options' => ['step' => 'any', 'format' => 'Y-m-d H:i:s']
-                    ]
-                ],
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-            'to' => [
-                'name' => 'to',
-                'required' => false,
-                'allow_empty' => true,
-                'validators' => [
-                    [
-                        'name' => Date::class,
-                        'options' => ['step' => 'any', 'format' => 'Y-m-d H:i:s']
-                    ]
-                ],
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-            'description' => [
-                'name' => 'description',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
+            (new Input('committee_meeting_id', true))
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('assembly_id'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+            ,
+            (new Input('committee_id'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+            ,
+            (new Input('from'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new Date(['step' => 'any', 'format' => 'Y-m-d H:i:s']))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('to', true))
+                ->attachValidator(new Date(['step' => 'any', 'format' => 'Y-m-d H:i:s']))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('description', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
         ];
     }
 }

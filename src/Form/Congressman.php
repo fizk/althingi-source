@@ -2,85 +2,48 @@
 
 namespace Althingi\Form;
 
+use Althingi\Filter\ToInt;
 use Althingi\Hydrator;
 use Althingi\Model;
-use Althingi\Filter\ToInt;
-use Laminas\Filter\ToNull;
-use Laminas\Validator\{Date};
 use Althingi\Validator\SignedDigits;
+use Laminas\Filter\ToNull;
+use Laminas\Validator\{Date, NotEmpty};
+use Library\Form\Form;
+use Library\Input\Input;
 
 class Congressman extends Form
 {
-    public function __construct()
+    public function getModel(): Model\Congressman
     {
-        parent::__construct(get_class($this));
-        $this
-            ->setHydrator(new Hydrator\Congressman())
-            ->setObject(new Model\Congressman());
+        return (new Hydrator\Congressman())
+            ->hydrate(
+                $this->getInputChain()->getValues(),
+                new Model\Congressman()
+            );
     }
 
-    public function getInputFilterSpecification(): array
+    public function getValidationConfig(): array
     {
         return [
-            'name' => [
-                'name' => 'name',
-                'required' => true,
-                'allow_empty' => false,
-            ],
-            'congressman_id' => [
-                'name' => 'congressman_id',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'birth' => [
-                'name' => 'birth',
-                'required' => true,
-                'allow_empty' => false,
-                'validators' => [
-                    [
-                        'name' => Date::class,
-                        'options' => ['step' => 'any', 'format' => 'Y-m-d']
-                    ]
-                ],
-            ],
-            'abbreviation' => [
-                'name' => 'abbreviation',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-            'death' => [
-                'name' => 'death',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-                'validators' => [
-                    [
-                        'name' => Date::class,
-                        'options' => ['step' => 'any', 'format' => 'Y-m-d']
-                    ]
-                ],
-            ],
+            (new Input('name'))
+                ->attachValidator(new NotEmpty())
+            ,
+            (new Input('congressman_id'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+            ,
+            (new Input('birth'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new Date(['step' => 'any', 'format' => 'Y-m-d']))
+            ,
+            (new Input('abbreviation', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('death', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+                ->attachValidator(new Date(['step' => 'any', 'format' => 'Y-m-d']))
+            ,
         ];
     }
 }

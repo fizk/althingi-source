@@ -2,93 +2,51 @@
 
 namespace Althingi\Form;
 
+use Althingi\Filter\ToInt;
 use Althingi\Hydrator;
 use Althingi\Model;
-use Althingi\Filter\ToInt;
+use Althingi\Validator\SignedDigits;
 use Laminas\Filter\ToNull;
 use Laminas\Validator\Date;
-use Althingi\Validator\SignedDigits;
+use Laminas\Validator\NotEmpty;
+use Library\Form\Form;
+use Library\Input\Input;
 
 class Plenary extends Form
 {
-    public function __construct()
+    public function getModel(): Model\Plenary
     {
-        parent::__construct(get_class($this));
-        $this
-            ->setHydrator(new Hydrator\Plenary())
-            ->setObject(new Model\Plenary());
+        return (new Hydrator\Plenary())
+            ->hydrate(
+                $this->getInputChain()->getValues(),
+                new Model\Plenary()
+            );
     }
 
-    public function getInputFilterSpecification(): array
+    public function getValidationConfig(): array
     {
         return [
-            'plenary_id' => [
-                'name' => 'plenary_id',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'assembly_id' => [
-                'name' => 'assembly_id',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'name' => [
-                'name' => 'name',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-            'from' => [
-                'name' => 'from',
-                'required' => false,
-                'allow_empty' => true,
-                'validators' => [
-                    [
-                        'name' => Date::class,
-                        'options' => ['step' => 'any', 'format' => 'Y-m-d H:i']
-                    ]
-                ],
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-            'to' => [
-                'name' => 'to',
-                'required' => false,
-                'allow_empty' => true,
-                'validators' => [
-                    [
-                        'name' => Date::class,
-                        'options' => ['step' => 'any', 'format' => 'Y-m-d H:i']
-                    ]
-                ],
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
+            (new Input('plenary_id'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+            ,
+            (new Input('assembly_id'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+            ,
+            (new Input('name', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('from', true))
+                ->attachValidator(new Date(['step' => 'any', 'format' => 'Y-m-d H:i']))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('to', true))
+                ->attachValidator(new Date(['step' => 'any', 'format' => 'Y-m-d H:i']))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
         ];
     }
 }
