@@ -3,12 +3,13 @@
 namespace Althingi\Filter;
 
 use Althingi\Filter\ItemStatusFilter;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class ItemStatusFilterTest extends TestCase
 {
 
-    public function filterStringProvider()
+    public static function filterStringProvider()
     {
         return [
             ['', null],
@@ -67,11 +68,7 @@ class ItemStatusFilterTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider filterStringProvider
-     * @param string $provided
-     * @param string $expected
-     */
+    #[DataProvider('filterStringProvider')]
     public function testFilter($provided, $expected)
     {
         $this->assertEquals($expected, (new ItemStatusFilter())->filter($provided));

@@ -9,25 +9,23 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "require": {
-    "php": ">=8.1",
-    "ext-pdo": "*",
-    "ext-json": "*",
-    "ext-dom": "*",
     "league/html-to-markdown": "^5.1",
-    "monolog/monolog": "^3.1",
+    "monolog/monolog": "^3.6",
     "zeptech/annotations": "^1.2",
-    "laminas/laminas-diactoros": "^2.13",
-    "laminas/laminas-httphandlerrunner": "^2.1",
-    "laminas/laminas-inputfilter": "^2.18",
-    "laminas/laminas-hydrator": "^4.3",
+    "laminas/laminas-diactoros": "^3.3",
+    "laminas/laminas-httphandlerrunner": "^2.10",
+    "laminas/laminas-inputfilter": "^2.30",
+    "laminas/laminas-hydrator": "^4.15",
     "league/event": "^3.0",
-    "laminas/laminas-stdlib": "3.10.1"
+    "laminas/laminas-stdlib": "^3.19",
+    "laminas/laminas-servicemanager": "3.21",
+    "fizk/library": "0.1"
   },
-  "require-dev": {
-    "phpunit/phpunit": "^9.5",
-    "mockery/mockery": "^1.5",
-    "squizlabs/php_codesniffer": "^3.7",
-    "kornrunner/dbunit": "^6.0"
+  "scripts": {
+    "sniff": "./vendor/bin/phpcs --standard=PSR12 ./config ./src ./tests",
+    "fix": "./vendor/bin/phpcbf --standard=PSR12 ./config ./src ./tests",
+    "test": "./vendor/bin/phpunit --colors=always ./tests",
+    "cover": "XDEBUG_MODE=coverage ./vendor/bin/phpunit --coverage-html=coverage --coverage-filter=./src --coverage-filter=./tests"
   },
   "autoload": {
     "psr-4": {
@@ -38,5 +36,11 @@
     "psr-4": {
       "Althingi\\": "tests/"
     }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^10.5",
+    "mockery/mockery": "^1.6",
+    "squizlabs/php_codesniffer": "^3.10",
+    "kornrunner/dbunit": "^9.0"
   }
 }

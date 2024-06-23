@@ -11,15 +11,16 @@ class InflationTest extends TestCase
 {
     public function testOne()
     {
-        $form = new Inflation();
-        $form->setData([
+        $form = new Inflation([
             'id' => 1,
             'date' => '2001-02-01',
             'value' => '1.2',
-        ])->isValid();
+
+        ]);
+        $form->isValid();
 
         /** @var \Althingi\Model\Assembly */
-        $actual = $form->getObject();
+        $actual = $form->getModel();
         $expected = (new ModelInflation())
             ->setDate(new DateTime('2001-02-01'))
             ->setId(1)
@@ -29,15 +30,16 @@ class InflationTest extends TestCase
 
     public function testTwo()
     {
-        $form = new Inflation();
-        $form->setData([
+        $form = new Inflation([
             'id' => 1,
             'date' => '2001-02-01',
             'value' => 1.2,
-        ])->isValid();
+
+        ]);
+        $form->isValid();
 
         /** @var \Althingi\Model\Assembly */
-        $actual = $form->getObject();
+        $actual = $form->getModel();
         $expected = (new ModelInflation())
             ->setDate(new DateTime('2001-02-01'))
             ->setId(1)
@@ -47,15 +49,15 @@ class InflationTest extends TestCase
 
     public function testThree()
     {
-        $form = new Inflation();
-        $form->setData([
+        $form = new Inflation([
             'id' => 1,
             'date' => '2001-02-01',
             'value' => 1,
-        ])->isValid();
+        ]);
+        $form->isValid();
 
         /** @var \Althingi\Model\Assembly */
-        $actual = $form->getObject();
+        $actual = $form->getModel();
         $expected = (new ModelInflation())
             ->setDate(new DateTime('2001-02-01'))
             ->setId(1)
@@ -65,15 +67,15 @@ class InflationTest extends TestCase
 
     public function testFour()
     {
-        $form = new Inflation();
-        $form->setData([
+        $form = new Inflation([
             'id' => 1,
             'date' => '2001-02-01',
             'value' => '1',
-        ])->isValid();
+        ]);
+        $form->isValid();
 
         /** @var \Althingi\Model\Assembly */
-        $actual = $form->getObject();
+        $actual = $form->getModel();
         $expected = (new ModelInflation())
             ->setDate(new DateTime('2001-02-01'))
             ->setId(1)

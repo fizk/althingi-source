@@ -2,245 +2,108 @@
 
 namespace Althingi\Form;
 
+use Althingi\Filter\ToInt;
 use Althingi\Hydrator;
 use Althingi\Model;
-use Althingi\Filter\ToInt;
-use Laminas\Filter\ToNull;
 use Althingi\Validator\SignedDigits;
+use Laminas\Filter\ToNull;
+use Laminas\Validator\NotEmpty;
+use Library\Form\Form;
+use Library\Input\Input;
 
 class PlenaryAgenda extends Form
 {
-    public function __construct()
+    public function getModel(): Model\PlenaryAgenda
     {
-        parent::__construct(get_class($this));
-        $this
-            ->setHydrator(new Hydrator\PlenaryAgenda())
-            ->setObject(new Model\PlenaryAgenda());
+        return (new Hydrator\PlenaryAgenda())
+            ->hydrate(
+                $this->getInputChain()->getValues(),
+                new Model\PlenaryAgenda()
+            );
     }
 
-    public function getInputFilterSpecification(): array
+    public function getValidationConfig(): array
     {
         return [
-            'item_id' => [
-                'name' => 'item_id',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'plenary_id' => [
-                'name' => 'plenary_id',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'issue_id' => [
-                'name' => 'issue_id',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'issue_name' => [
-                'name' => 'issue_name',
-                'required' => false,
-            ],
-            'issue_type' => [
-                'name' => 'issue_type',
-                'required' => false,
-            ],
-            'issue_typename' => [
-                'name' => 'issue_typename',
-                'required' => false,
-            ],
-            'assembly_id' => [
-                'name' => 'assembly_id',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'category' => [
-                'name' => 'category',
-                'required' => true,
-                'allow_empty' => false,
-            ],
-            'iteration_type' => [
-                'name' => 'iteration_type',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-            'iteration_continue' => [
-                'name' => 'iteration_continue',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-            'iteration_comment' => [
-                'name' => 'iteration_comment',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-            'comment' => [
-                'name' => 'comment',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-            'comment_type' => [
-                'name' => 'comment_type',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-            'posed_id' => [
-                'name' => 'posed_id',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'posed' => [
-                'name' => 'posed',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-            'answerer_id' => [
-                'name' => 'answerer_id',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'answerer' => [
-                'name' => 'answerer',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-            'counter_answerer_id' => [
-                'name' => 'counter_answerer_id',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'counter_answerer' => [
-                'name' => 'counter_answerer',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-            'instigator_id' => [
-                'name' => 'instigator_id',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'instigator' => [
-                'name' => 'instigator',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
+            (new Input('item_id'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+            ,
+            (new Input('plenary_id'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+            ,
+            (new Input('issue_id'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+            ,
+            (new Input('issue_name', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+                ,
+            (new Input('issue_type', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('issue_typename', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('assembly_id'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+            ,
+            (new Input('category'))
+                ->attachValidator(new NotEmpty())
+            ,
+            (new Input('iteration_type', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('iteration_continue', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('iteration_comment', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('comment', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('comment_type', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('posed_id', true))
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('posed', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('answerer_id', true))
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('answerer', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('counter_answerer_id', true))
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('counter_answerer', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('instigator_id', true))
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('instigator', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
         ];
     }
 }

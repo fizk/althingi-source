@@ -93,14 +93,15 @@ class IssueController implements
         $category = strtoupper($request->getAttribute('category', 'a'));
         $issueId = $request->getAttribute('issue_id');
 
-        $form = (new Form\Issue())
-            ->setData(array_merge(
-                $request->getParsedBody(),
-                ['assembly_id' => $assemblyId, 'issue_id' => $issueId, 'category' => $category]
-            ));
+        $form = new Form\Issue([
+            ...$request->getParsedBody(),
+            'assembly_id' => $assemblyId,
+            'issue_id' => $issueId,
+            'category' => $category
+        ]);
 
         if ($form->isValid()) {
-            $affectedRows = $this->issueService->save($form->getObject());
+            $affectedRows = $this->issueService->save($form->getModel());
             return new EmptyResponse($affectedRows === 1 ? 201 : 205);
         }
 
@@ -119,18 +120,25 @@ class IssueController implements
     {
         $assemblyId = $request->getAttribute('id');
         $category = strtoupper($request->getAttribute('category', 'a'));
-        $issue = $this->issueService->get($request->getAttribute('issue_id'), $assemblyId, $category);
+        $issue = $this->issueService->get(
+            $request->getAttribute('issue_id'),
+            $assemblyId,
+            $category
+        );
 
         if (! $issue) {
             return new EmptyResponse(404);
         }
 
-        $form = new Form\Issue();
-        $form->bind($issue);
-        $form->setData($request->getParsedBody());
+        $form = new Form\Issue([
+            ...(new \Althingi\Hydrator\Issue())->extract($issue),
+            ...$request->getParsedBody(),
+            'assembly_id' => $request->getAttribute('id'),
+            'issue_id' => $request->getAttribute('issue_id'),
+        ]);
 
         if ($form->isValid()) {
-            $this->issueService->update($form->getObject());
+            $this->issueService->update($form->getModel());
             return new EmptyResponse(205);
         }
 

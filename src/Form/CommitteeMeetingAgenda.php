@@ -7,94 +7,50 @@ use Althingi\Model;
 use Althingi\Filter\ToInt;
 use Laminas\Filter\ToNull;
 use Althingi\Validator\SignedDigits;
+use Laminas\Validator\NotEmpty;
+use Library\Form\Form;
+use Library\Input\Input;
 
 class CommitteeMeetingAgenda extends Form
 {
-    public function __construct()
+    public function getModel(): Model\CommitteeMeetingAgenda
     {
-        parent::__construct(get_class($this));
-        $this
-            ->setHydrator(new Hydrator\CommitteeMeetingAgenda())
-            ->setObject(new Model\CommitteeMeetingAgenda());
+        return (new Hydrator\CommitteeMeetingAgenda())
+            ->hydrate(
+                $this->getInputChain()->getValues(),
+                new Model\CommitteeMeetingAgenda()
+            );
     }
 
-    public function getInputFilterSpecification(): array
+    public function getValidationConfig(): array
     {
         return [
-            'committee_meeting_agenda_id' => [
-                'name' => 'committee_meeting_agenda_id',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'committee_meeting_id' => [
-                'name' => 'committee_meeting_id',
-                'required' => true,
-                'allow_empty' => false,
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-                'filters' => [
-                    ['name' => ToInt::class,]
-                ],
-            ],
-            'assembly_id' => [
-                'name' => 'assembly_id',
-                'required' => true,
-                'allow_empty' => false,
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-                'filters' => [
-                    ['name' => ToInt::class,]
-                ],
-            ],
-            'category' => [
-                'name' => 'category',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-            'issue_id' => [
-                'name' => 'issue_id',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'title' => [
-                'name' => 'title',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
+            (new Input('committee_meeting_agenda_id', true))
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('committee_meeting_id'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+            ,
+            (new Input('assembly_id'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+            ,
+            (new Input('category', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('issue_id', true))
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('title', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
         ];
     }
 }

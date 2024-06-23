@@ -2,125 +2,65 @@
 
 namespace Althingi\Form;
 
+use Althingi\Filter\ToInt;
 use Althingi\Hydrator;
 use Althingi\Model;
-use Laminas\Filter\ToNull;
-use Althingi\Filter\ToInt;
-use Laminas\Validator\Date;
 use Althingi\Validator\SignedDigits;
+use Laminas\Filter\ToNull;
+use Laminas\Validator\Date;
+use Laminas\Validator\NotEmpty;
+use Library\Form\Form;
+use Library\Input\Input;
 
 class Session extends Form
 {
-    public function __construct()
+    public function getModel(): Model\Session
     {
-        parent::__construct(get_class($this));
-        $this
-            ->setHydrator(new Hydrator\Session())
-            ->setObject(new Model\Session());
+        return (new Hydrator\Session())
+            ->hydrate(
+                $this->getInputChain()->getValues(),
+                new Model\Session()
+            );
     }
 
-    public function getInputFilterSpecification(): array
+    public function getValidationConfig(): array
     {
         return [
-            'session_id' => [
-                'name' => 'session_id',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-            'congressman_id' => [
-                'name' => 'congressman_id',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'constituency_id' => [
-                'name' => 'constituency_id',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'assembly_id' => [
-                'name' => 'assembly_id',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'from' => [
-                'name' => 'from',
-                'required' => true,
-                'allow_empty' => false,
-                'validators' => [
-                    [
-                        'name' => Date::class,
-                        'options' => ['step' => 'any', 'format' => 'Y-m-d']
-                    ]
-                ],
-            ],
-            'to' => [
-                'name' => 'to',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-                'validators' => [
-                    [
-                        'name' => Date::class,
-                        'options' => ['step' => 'any', 'format' => 'Y-m-d']
-                    ]
-                ],
-            ],
-            'type' => [
-                'name' => 'type',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-            'party_id' => [
-                'name' => 'party_id',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
+            (new Input('session_id', true))
+                ->attachFilter(new ToInt())
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('congressman_id'))
+                ->attachFilter(new ToInt())
+                ->attachValidator(new SignedDigits())
+                ->attachValidator(new NotEmpty())
+            ,
+            (new Input('constituency_id'))
+                ->attachFilter(new ToInt())
+                ->attachValidator(new SignedDigits())
+                ->attachValidator(new NotEmpty())
+            ,
+            (new Input('assembly_id'))
+                ->attachFilter(new ToInt())
+                ->attachValidator(new SignedDigits())
+                ->attachValidator(new NotEmpty())
+            ,
+            (new Input('from'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new Date(['step' => 'any', 'format' => 'Y-m-d']))
+            ,
+            (new Input('to', true))
+                ->attachValidator(new Date(['step' => 'any', 'format' => 'Y-m-d']))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('type', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('party_id', true))
+                ->attachFilter(new ToInt())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
         ];
     }
 }

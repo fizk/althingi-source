@@ -2,97 +2,60 @@
 
 namespace Althingi\Form;
 
+use Althingi\Filter\ToInt;
 use Althingi\Hydrator;
 use Althingi\Model;
-use Althingi\Filter\ToInt;
-use Laminas\Filter\ToNull;
-use Laminas\Validator\{Date};
 use Althingi\Validator\SignedDigits;
+use Laminas\Filter\ToNull;
+use Laminas\Validator\{Date, NotEmpty};
+use Library\Form\Form;
+use Library\Input\Input;
 
 class President extends Form
 {
-    public function __construct()
+    public function getModel(): Model\President
     {
-        parent::__construct(get_class($this));
-        $this
-            ->setObject(new Model\President())
-            ->setHydrator(new Hydrator\President());
+        return (new Hydrator\President())
+            ->hydrate(
+                $this->getInputChain()->getValues(),
+                new Model\President()
+            );
     }
 
-    public function getInputFilterSpecification(): array
+    public function getValidationConfig(): array
     {
         return [
-            'president_id' => [
-                'name' => 'president_id',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'assembly_id' => [
-                'name' => 'assembly_id',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'congressman_id' => [
-                'name' => 'congressman_id',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'title' => [
-                'name' => 'title',
-                'required' => false,
-                'allow_empty' => true,
-            ],
-            'abbr' => [
-                'name' => 'abbr',
-                'required' => false,
-                'allow_empty' => true,
-            ],
-            'from' => [
-                'name' => 'from',
-                'required' => true,
-                'allow_empty' => false,
-                'validators' => [
-                    [
-                        'name' => Date::class,
-                        'options' => ['step' => 'any', 'format' => 'Y-m-d']
-                    ]
-                ],
-            ],
-            'to' => [
-                'name' => 'to',
-                'required' => false,
-                'allow_empty' => true,
-                'validators' => [
-                    [
-                        'name' => Date::class,
-                        'options' => ['step' => 'any', 'format' => 'Y-m-d']
-                    ]
-                ],
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
+            (new Input('president_id', true))
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+            ,
+            (new Input('assembly_id'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+            ,
+            (new Input('congressman_id'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+            ,
+            (new Input('name', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('title', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('abbr', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('from'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new Date(['step' => 'any', 'format' => 'Y-m-d']))
+            ,
+            (new Input('to', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+                ->attachValidator(new Date(['step' => 'any', 'format' => 'Y-m-d']))
+            ,
         ];
     }
 }

@@ -2,149 +2,79 @@
 
 namespace Althingi\Form;
 
+use Althingi\Filter\ToInt;
 use Althingi\Hydrator;
 use Althingi\Model;
-use Althingi\Filter\ToInt;
-use Laminas\Filter\ToNull;
-use Laminas\Validator\{Digits, Date};
 use Althingi\Validator\SignedDigits;
+use Laminas\Filter\ToNull;
+use Laminas\Validator\{Date, NotEmpty};
+use Library\Form\Form;
+use Library\Input\Input;
 
 class Vote extends Form
 {
-    public function __construct()
+    public function getModel(): Model\Vote
     {
-        parent::__construct(get_class($this));
-        $this
-            ->setHydrator(new Hydrator\Vote())
-            ->setObject(new Model\Vote());
+        return (new Hydrator\Vote())
+            ->hydrate(
+                $this->getInputChain()->getValues(),
+                new Model\Vote()
+            );
     }
 
-    public function getInputFilterSpecification(): array
+    public function getValidationConfig(): array
     {
         return [
-            'issue_id' => [
-                'name' => 'issue_id',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'assembly_id' => [
-                'name' => 'assembly_id',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'category' => [
-                'name' => 'category',
-                'required' => true,
-                'allow_empty' => false,
-            ],
-            'document_id' => [
-                'name' => 'document_id',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-            'vote_id' => [
-                'name' => 'vote_id',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'date' => [
-                'name' => 'date',
-                'required' => true,
-                'allow_empty' => false,
-                'validators' => [
-                    [
-                        'name' => Date::class,
-                        'options' => ['step' => 'any', 'format' => 'Y-m-d H:i:s']
-                    ]
-                ],
-            ],
-            'type' => [
-                'name' => 'type',
-                'required' => true,
-                'allow_empty' => false,
-            ],
-            'outcome' => [
-                'name' => 'outcome',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-            'method' => [
-                'name' => 'method',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-            'yes' => [
-                'name' => 'yes',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-            ],
-            'no' => [
-                'name' => 'no',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-            ],
-            'inaction' => [
-                'name' => 'inaction',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-            ],
-            'committee_to' => [
-                'name' => 'committee_to',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
+            (new Input('issue_id'))
+                ->attachFilter(new ToInt())
+                ->attachValidator(new SignedDigits())
+                ->attachValidator(new NotEmpty())
+            ,
+            (new Input('assembly_id'))
+                ->attachFilter(new ToInt())
+                ->attachValidator(new SignedDigits())
+                ->attachValidator(new NotEmpty())
+            ,
+            (new Input('category'))
+                ->attachValidator(new NotEmpty())
+            ,
+            (new Input('document_id', true))
+                ->attachFilter(new ToInt())
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('vote_id'))
+                ->attachFilter(new ToInt())
+                ->attachValidator(new SignedDigits())
+                ->attachValidator(new NotEmpty())
+            ,
+            (new Input('date'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new Date(['step' => 'any', 'format' => 'Y-m-d H:i:s']))
+            ,
+            (new Input('type'))
+                ->attachValidator(new NotEmpty())
+            ,
+            (new Input('outcome', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('method', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('yes', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+                ->attachFilter(new ToInt())
+            ,
+            (new Input('no', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+                ->attachFilter(new ToInt())
+            ,
+            (new Input('inaction', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+                ->attachFilter(new ToInt())
+            ,
+            (new Input('committee_to', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
         ];
     }
 }

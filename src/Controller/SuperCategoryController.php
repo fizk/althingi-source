@@ -57,12 +57,12 @@ class SuperCategoryController implements
      */
     public function put(ServerRequest $request): ResponseInterface
     {
-        $form = new Form\SuperCategory();
-        $form->setData(array_merge($request->getParsedBody(), [
+        $form = new Form\SuperCategory([
+            ...$request->getParsedBody(),
             'super_category_id' => $request->getAttribute('super_category_id')
-        ]));
+        ]);
         if ($form->isValid()) {
-            $affectedRows = $this->superCategoryService->save($form->getObject());
+            $affectedRows = $this->superCategoryService->save($form->getModel());
             return new EmptyResponse($affectedRows === 1 ? 201 : 205);
         }
 
@@ -80,12 +80,13 @@ class SuperCategoryController implements
         if (($superCategory = $this->superCategoryService->get(
             $request->getAttribute('super_category_id')
         )) != null) {
-            $form = new Form\SuperCategory();
-            $form->bind($superCategory);
-            $form->setData($request->getParsedBody());
+            $form = new Form\SuperCategory([
+                ...(new \Althingi\Hydrator\SuperCategory())->extract($superCategory),
+                ...$request->getParsedBody(),
+            ]);
 
             if ($form->isValid()) {
-                $this->superCategoryService->update($form->getObject());
+                $this->superCategoryService->update($form->getModel());
                 return new EmptyResponse(205);
             }
 

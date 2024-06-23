@@ -68,15 +68,15 @@ class PlenaryAgendaController implements
     {
         $assemblyId = $request->getAttribute('id');
         $plenaryId  = $request->getAttribute('plenary_id');
-        $form = new Form\PlenaryAgenda();
-        $form->setData(array_merge($request->getParsedBody(), [
+        $form = new Form\PlenaryAgenda([
+            ...$request->getParsedBody(),
             'item_id' => $request->getAttribute('item_id'),
             'assembly_id' => $assemblyId,
             'plenary_id' => $plenaryId,
-        ]));
+        ]);
 
         if ($form->isValid()) {
-            $object = $form->getObject();
+            $object = $form->getModel();
             try {
                 $affectedRows = $this->plenaryAgendaService->save($object);
                 return new EmptyResponse($affectedRows === 1 ? 201 : 205);
@@ -91,15 +91,14 @@ class PlenaryAgendaController implements
             //  the Issue is created with minimum data and then the Agenda Item is re-tried
             } catch (PDOException $e) {
                 if (str_contains($e->getMessage(), 'REFERENCES `Issue`')) {
-                    $data = $form->getData();
+                    $data = $form->getModel();
                     $this->issueService->create((new IssueModel())
-                        ->setIssueId(isset($data['issue_id']) ? $data['issue_id'] : null)
-                        ->setAssemblyId(isset($data["assembly_id"]) ? $data["assembly_id"] : null)
-                        ->setCategory(isset($data["category"]) ? $data["category"] : null)
-                        ->setName(isset($data["issue_name"]) ? $data["issue_name"] : null)
-                        ->setType(isset($data["issue_type"]) ? $data["issue_type"] : null)
-                        ->setTypeName(isset($data["issue_typename"]) ? $data["issue_typename"] : null));
-
+                        ->setIssueId($data->getIssueId())
+                        ->setAssemblyId($data->getAssemblyId())
+                        ->setCategory($data->getCategory())
+                        ->setName(null)
+                        ->setType(null)
+                        ->setTypeName(null));
                     $affectedRows = $this->plenaryAgendaService->save($object);
                     return new EmptyResponse($affectedRows === 1 ? 201 : 205);
                 }

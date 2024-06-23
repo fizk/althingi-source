@@ -2,11 +2,12 @@
 
 namespace Althingi\Form;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class VoteTest extends TestCase
 {
-    public function providerFunction()
+    public static function providerFunction()
     {
         return [
             [["yes" => 48, "no" => 0, "inaction" => "0",], 48, 0 , 0],
@@ -17,10 +18,7 @@ class VoteTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider providerFunction
-     * @todo fixme
-     */
+    #[DataProvider('providerFunction')]
     public function testTrue($input, $yes, $no, $inaction)
     {
         $this->assertTrue(true);

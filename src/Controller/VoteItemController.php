@@ -63,12 +63,14 @@ class VoteItemController implements
     {
         $voteId = $request->getAttribute('vote_id');
 
-        $form = new Form\VoteItem();
-        $form->setData(array_merge($request->getParsedBody(), ['vote_id' => $voteId,]));
+        $form = new Form\VoteItem([
+            ...$request->getParsedBody(),
+            'vote_id' => $voteId,
+        ]);
 
         if ($form->isValid()) {
             /** @var \Althingi\Model\VoteItem */
-            $formData = $form->getObject();
+            $formData = $form->getModel();
 
             try {
                 $this->voteItemService->create($formData);
@@ -140,12 +142,13 @@ class VoteItemController implements
         $voteItemId = $request->getAttribute('vote_item_id');
 
         if (($voteItem = $this->voteItemService->get($voteItemId)) !== null) {
-            $form = new Form\VoteItem();
-            $form->bind($voteItem);
-            $form->setData($request->getParsedBody());
+            $form = new Form\VoteItem([
+                ...(new \Althingi\Hydrator\VoteItem())->extract($voteItem),
+                ...$request->getParsedBody(),
+            ]);
 
             if ($form->isValid()) {
-                $this->voteItemService->update($form->getObject());
+                $this->voteItemService->update($form->getModel());
                 return new EmptyResponse(205);
             }
 

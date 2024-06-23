@@ -83,14 +83,13 @@ class AssemblyController implements
      */
     public function put(ServerRequest $request): ResponseInterface
     {
-        $form = new Form\Assembly();
-        $form->setData(array_merge(
-            $request->getParsedBody(),
-            ['assembly_id' => $request->getAttribute('id')]
-        ));
+        $form = new Form\Assembly([
+            ...$request->getParsedBody(),
+            'assembly_id' => $request->getAttribute('id'),
+        ]);
 
         if ($form->isValid()) {
-            $object = $form->getObject();
+            $object = $form->getModel();
             $affectedRows = $this->assemblyService->save($object);
             return new EmptyResponse($affectedRows === 1 ? 201 : 205);
         }
@@ -109,12 +108,14 @@ class AssemblyController implements
     public function patch(ServerRequest $request): ResponseInterface
     {
         if (($assembly = $this->assemblyService->get($request->getAttribute('id'))) != null) {
-            $form = new Form\Assembly();
-            $form->bind($assembly);
-            $form->setData($request->getParsedBody());
+            $form = new Form\Assembly([
+                ...(new \Althingi\Hydrator\Assembly())->extract($assembly),
+                ...$request->getParsedBody(),
+                'assembly_id' => $request->getAttribute('id'),
+            ]);
 
             if ($form->isValid()) {
-                $this->assemblyService->update($form->getObject());
+                $this->assemblyService->update($form->getModel());
                 return new EmptyResponse(205);
             }
             return new EmptyResponse(400);

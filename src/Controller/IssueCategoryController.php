@@ -77,19 +77,16 @@ class IssueCategoryController implements
         $issueId = $request->getAttribute('issue_id');
         $categoryId = $request->getAttribute('category_id');
 
-        $form = (new Form\IssueCategory())
-            ->setData(array_merge(
-                $request->getParsedBody(),
-                [
-                    'assembly_id' => $assemblyId,
-                    'issue_id' => $issueId,
-                    'category_id' => $categoryId,
-                    'category' => 'A'
-                ]
-            ));
+        $form = (new Form\IssueCategory([
+            ...$request->getParsedBody(),
+            'assembly_id' => $assemblyId,
+            'issue_id' => $issueId,
+            'category_id' => $categoryId,
+            'category' => 'A'
+        ]));
 
         if ($form->isValid()) {
-            $affectedRows = $this->issueCategoryService->save($form->getObject());
+            $affectedRows = $this->issueCategoryService->save($form->getModel());
             return new EmptyResponse($affectedRows === 1 ? 201 : 205);
         }
 
@@ -109,12 +106,16 @@ class IssueCategoryController implements
         $categoryId = $request->getAttribute('category_id');
 
         if (($issueCategory = $this->issueCategoryService->get($assemblyId, $issueId, $categoryId)) != null) {
-            $form = new Form\IssueCategory();
-            $form->bind($issueCategory);
-            $form->setData($request->getParsedBody());
+            $form = new Form\IssueCategory([
+                ...(new \Althingi\Hydrator\IssueCategory())->extract($issueCategory),
+                ...$request->getParsedBody(),
+                'id' => $request->getAttribute('id'),
+                'issue_id' => $request->getAttribute('issue_id'),
+                'category_id' => $request->getAttribute('category_id'),
+            ]);
 
             if ($form->isValid()) {
-                $this->issueCategoryService->update($form->getObject());
+                $this->issueCategoryService->update($form->getModel());
                 return new EmptyResponse(205);
             }
 

@@ -2,59 +2,40 @@
 
 namespace Althingi\Form;
 
-use Althingi\Model;
-use Althingi\Hydrator;
-use Laminas\Filter\ToNull;
 use Althingi\Filter\ToInt;
-use Laminas\Validator\Date;
+use Althingi\Hydrator;
+use Althingi\Model;
 use Althingi\Validator\SignedDigits;
+use Laminas\Filter\ToNull;
+use Laminas\Validator\Date;
+use Laminas\Validator\NotEmpty;
+use Library\Form\Form;
+use Library\Input\Input;
 
 class Assembly extends Form
 {
-    public function __construct()
-    {
-        parent::__construct(get_class($this));
-        $this
-            ->setObject(new Model\Assembly())
-            ->setHydrator(new Hydrator\Assembly());
-    }
-
-    public function getInputFilterSpecification(): array
+    public function getValidationConfig(): array
     {
         return [
-            'assembly_id' => [
-                'name' => 'assembly_id',
-                'required' => true,
-                'allow_empty' => false,
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-                'filters' => [
-                    ['name' => ToInt::class,]
-                ],
-            ],
-            'from' => [
-                'name'  => 'from',
-                'required' => true,
-                'allow_empty' => false,
-                'validators' => [
-                    ['name' => Date::class]
-                ],
-            ],
-            'to' => [
-                'name' => 'to',
-                'required' => false,
-                'allow_empty' => true,
-                'validators' => [
-                    ['name' => Date::class]
-                ],
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
+            (new Input('assembly_id'))
+                ->attachFilter(new ToInt())
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits()),
+            (new Input('from'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new Date()),
+            (new Input('to', true))
+                ->attachValidator(new Date())
+                ->attachFilter(new ToNull(['type' => 'all']))
         ];
+    }
+
+    public function getModel(): Model\Assembly
+    {
+        return (new Hydrator\Assembly())
+            ->hydrate(
+                $this->getInputChain()->getValues(),
+                new Model\Assembly()
+            );
     }
 }

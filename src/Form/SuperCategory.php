@@ -2,40 +2,35 @@
 
 namespace Althingi\Form;
 
+use Althingi\Filter\ToInt;
 use Althingi\Hydrator;
 use Althingi\Model;
 use Althingi\Validator\SignedDigits;
-use Althingi\Filter\ToInt;
+use Laminas\Validator\NotEmpty;
+use Library\Form\Form;
+use Library\Input\Input;
 
 class SuperCategory extends Form
 {
-    public function __construct()
+    public function getModel(): Model\SuperCategory
     {
-        parent::__construct(get_class($this));
-        $this
-            ->setHydrator(new Hydrator\SuperCategory())
-            ->setObject(new Model\SuperCategory());
+        return (new Hydrator\SuperCategory())
+            ->hydrate(
+                $this->getInputChain()->getValues(),
+                new Model\SuperCategory()
+            );
     }
 
-    public function getInputFilterSpecification(): array
+    public function getValidationConfig(): array
     {
         return [
-            'super_category_id' => [
-                'name' => 'super_category_id',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'title' => [
-                'name' => 'title',
-                'required' => true,
-                'allow_empty' => false,
-            ],
+            (new Input('super_category_id'))
+                ->attachFilter(new ToInt())
+                ->attachValidator(new SignedDigits())
+            ,
+            (new Input('title'))
+                ->attachValidator(new NotEmpty())
+            ,
         ];
     }
 }

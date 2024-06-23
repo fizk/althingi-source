@@ -81,12 +81,13 @@ class MinisterSittingController implements
         $statusCode = 201;
         $ministerSittingId = 0;
 
-        $form = new Form\MinisterSitting();
-        $form->setData(array_merge($request->getParsedBody(), ['congressman_id' => $congressmanId]));
+        $form = new Form\MinisterSitting([
+            ...$request->getParsedBody(),
+            'congressman_id' => $congressmanId,
+        ]);
 
         if ($form->isValid()) {
-            /** @var \Althingi\Model\MinisterSitting */
-            $ministerSitting = $form->getObject();
+            $ministerSitting = $form->getModel();
 
             try {
                 $ministerSittingId = $this->ministerSittingService->create($ministerSitting);
@@ -124,15 +125,17 @@ class MinisterSittingController implements
      */
     public function patch(ServerRequest $request): ResponseInterface
     {
-        if (($session = $this->ministerSittingService->get(
+        if (($ministerSitting = $this->ministerSittingService->get(
             $request->getAttribute('ministry_sitting_id')
         )) != null) {
-            $form = new Form\MinisterSitting();
-            $form->bind($session);
-            $form->setData($request->getParsedBody());
+            $form = new Form\MinisterSitting([
+                ...(new \Althingi\Hydrator\MinisterSitting())->extract($ministerSitting),
+                ...$request->getParsedBody(),
+                'ministry_sitting_id' => $request->getAttribute('ministry_sitting_id'),
+            ]);
 
             if ($form->isValid()) {
-                $this->ministerSittingService->update($form->getObject());
+                $this->ministerSittingService->update($form->getModel());
                 return new EmptyResponse(205);
             }
 

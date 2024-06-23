@@ -64,16 +64,16 @@ class VoteController implements
         $issueId = $request->getAttribute('issue_id');
         $voteId = $request->getAttribute('vote_id');
 
-        $form = new Form\Vote();
-        $form->setData(array_merge($request->getParsedBody(), [
+        $form = new Form\Vote([
+            ...$request->getParsedBody(),
             'assembly_id' => $assemblyId,
             'issue_id' => $issueId,
             'vote_id' => $voteId,
             'category' => 'A'
-        ]));
+        ]);
 
         if ($form->isValid()) {
-            $affectedRows = $this->voteService->save($form->getObject());
+            $affectedRows = $this->voteService->save($form->getModel());
             return new EmptyResponse($affectedRows === 1 ? 201 : 205);
         }
 
@@ -93,16 +93,16 @@ class VoteController implements
         $voteId = $request->getAttribute('vote_id');
 
         if (($vote = $this->voteService->get($voteId)) != null) {
-            $form = new Form\Vote();
-            $form->bind($vote);
-            $form->setData(array_merge($request->getParsedBody(), [
+            $form = new Form\Vote([
+                ...(new \Althingi\Hydrator\Vote())->extract($vote),
+                ...$request->getParsedBody(),
                 'assembly_id' => $assemblyId,
                 'issue_id' => $issueId,
                 'vote_id' => $voteId,
-            ]));
+            ]);
 
             if ($form->isValid()) {
-                $this->voteService->update($form->getObject());
+                $this->voteService->update($form->getModel());
                 return new EmptyResponse(205);
             }
 

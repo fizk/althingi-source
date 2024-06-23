@@ -2,19 +2,20 @@
 namespace Althingi\Utils;
 
 use Althingi\Form\Form;
+use Library\Form\Form as LForm;
 use Laminas\Diactoros\Response\JsonResponse;
 
 class ErrorFormResponse extends JsonResponse
 {
-    public function __construct(Form $form)
+    public function __construct(Form|LForm $form)
     {
         parent::__construct($this->extractForm($form), 400);
     }
 
-    private function extractForm(Form $form): array
+    private function extractForm(Form|LForm $form): array
     {
         return [
-            'form' => $form->getData(),
+            'form' => method_exists($form, 'getData') ? $form->getData() : null,
             'messages' => array_map(function ($value, $key) {
                 return [
                     'field' => $key,

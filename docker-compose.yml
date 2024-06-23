@@ -74,7 +74,7 @@ services:
       - ./composer.json/:/var/www/composer.json
       - ./composer.lock/:/var/www/composer.lock
       - ./config/:/var/www/config
-    #   - ./vendor/:/var/www/vendor
+      - ./vendor/:/var/www/vendor
       - ./src/:/var/www/src
       - ./public/:/var/www/public
       - ./tests/:/var/www/tests

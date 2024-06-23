@@ -2,62 +2,42 @@
 
 namespace Althingi\Form;
 
+use Althingi\Filter\ToFloat;
+use Althingi\Filter\ToInt;
 use Althingi\Hydrator;
 use Althingi\Model;
-use Althingi\Filter\ToInt;
-use Althingi\Filter\ToFloat;
-use Laminas\Validator\{Date, Digits, Regex};
 use Althingi\Validator\SignedDigits;
+use Laminas\Validator\{Date, NotEmpty, Regex};
+use Library\Form\Form;
+use Library\Input\Input;
 
 class Inflation extends Form
 {
-    public function __construct()
+    public function getModel(): Model\Inflation
     {
-        parent::__construct(get_class($this));
-        $this
-            ->setObject(new Model\Inflation())
-            ->setHydrator(new Hydrator\Inflation());
+        return (new Hydrator\Inflation())
+            ->hydrate(
+                $this->getInputChain()->getValues(),
+                new Model\Inflation()
+            );
     }
 
-    public function getInputFilterSpecification(): array
+    public function getValidationConfig(): array
     {
         return [
-            'id' => [
-                'name' => 'id',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'date' => [
-                'name' => 'date',
-                'required' => true,
-                'allow_empty' => false,
-                'validators' => [
-                    [
-                        'name' => Date::class,
-                        'options' => ['step' => 'any', 'format' => 'Y-m-d']
-                    ]
-                ],
-            ],
-            'value' => [
-                'name' => 'value',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToFloat::class,],
-                ],
-                'validators' => [
-                    [
-                        'name' => Regex::class,
-                        'options' => ['pattern' => '/^[0-9]*(\.[0-9]*)?$/']
-                    ]
-                ],
-            ],
+            (new Input('id'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+            ,
+            (new Input('date'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new Date(['step' => 'any', 'format' => 'Y-m-d']))
+            ,
+            (new Input('value'))
+                ->attachFilter(new ToFloat())
+                ->attachValidator(new Regex(['pattern' => '/^[0-9]*(\.[0-9]*)?$/']))
+            ,
         ];
     }
 }

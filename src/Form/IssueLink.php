@@ -2,90 +2,58 @@
 
 namespace Althingi\Form;
 
+use Althingi\Filter\ToInt;
 use Althingi\Hydrator;
 use Althingi\Model;
-use Althingi\Filter\ToInt;
-use Laminas\Filter\ToNull;
 use Althingi\Validator\SignedDigits;
+use Laminas\Filter\ToNull;
+use Laminas\Validator\NotEmpty;
+use Library\Form\Form;
+use Library\Input\Input;
 
 class IssueLink extends Form
 {
-    public function __construct()
+    public function getModel(): Model\IssueLink
     {
-        parent::__construct(get_class($this));
-        $this
-            ->setHydrator(new Hydrator\IssueLink())
-            ->setObject(new Model\IssueLink());
+        return (new Hydrator\IssueLink())
+            ->hydrate(
+                $this->getInputChain()->getValues(),
+                new Model\IssueLink()
+            );
     }
 
-    public function getInputFilterSpecification(): array
+    public function getValidationConfig(): array
     {
         return [
-            'from_assembly_id' => [
-                'name' => 'from_assembly_id',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'from_issue_id' => [
-                'name' => 'from_issue_id',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'from_category' => [
-                'name' => 'from_category',
-                'required' => true,
-                'allow_empty' => false,
-            ],
-            'assembly_id' => [
-                'name' => 'assembly_id',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'issue_id' => [
-                'name' => 'issue_id',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'category' => [
-                'name' => 'category',
-                'required' => true,
-                'allow_empty' => false,
-            ],
-            'type' => [
-                'name' => 'type',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
+            (new Input('from_assembly_id'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+            ,
+            (new Input('from_issue_id'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+            ,
+            (new Input('from_category'))
+                ->attachValidator(new NotEmpty())
+            ,
+            (new Input('assembly_id'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+            ,
+            (new Input('issue_id'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+            ,
+            (new Input('category'))
+                ->attachValidator(new NotEmpty())
+            ,
+            (new Input('type', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
         ];
     }
 }

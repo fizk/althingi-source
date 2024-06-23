@@ -87,7 +87,6 @@ RUN if [ "$ENV" != "production" ] ; then \
 # Sets the working directory and the user to www-data.
 # That is the user that is already configured to run Apache
 WORKDIR /var/www
-USER www-data
 
 # If not Production, add scripts to run `phpunit` and `cover`
 RUN if [ "$ENV" != "production" ] ; then \
@@ -106,17 +105,19 @@ COPY --chown=www-data:www-data ./composer.json ./composer.json
 COPY --chown=www-data:www-data ./composer.lock ./composer.lock
 
 RUN curl -sS https://getcomposer.org/installer \
-    | php -- --install-dir=/var/www --filename=composer --version=2.3.9
+    | php -- --install-dir=/usr/local/bin --filename=composer --version=2.7.6
 
 RUN if [ "$ENV" != "production" ] ; then \
-    ./composer install --prefer-source --no-interaction --no-cache \
-    && ./composer dump-autoload; \
-    fi ;
+    composer install --no-interaction --no-cache \
+    && composer dump-autoload; \
+fi ;
 
 RUN if [ "$ENV" = "production" ] ; then \
-    ./composer install --prefer-source --no-interaction --no-dev --no-cache -o \
-    && ./composer dump-autoload -o; \
-    fi ;
+    composer install --no-interaction --no-dev --no-cache -o \
+    && composer dump-autoload -o; \
+fi ;
+
+USER www-data
 
 # Copy source-code into container
 # as www-data user

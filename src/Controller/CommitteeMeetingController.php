@@ -65,17 +65,16 @@ class CommitteeMeetingController implements
         $committeeId = $request->getAttribute('committee_id');
         $committeeMeetingId = $request->getAttribute('committee_meeting_id');
 
-        $form = new Form\CommitteeMeeting();
-        $form->setData(array_merge($request->getParsedBody(), [
+        $form = new Form\CommitteeMeeting([
+            ...$request->getParsedBody(),
             'committee_id' => $committeeId,
             'assembly_id' => $assemblyId,
-            'committee_meeting_id' => $committeeMeetingId
-        ]));
+            'committee_meeting_id' => $committeeMeetingId,
+        ]);
         if ($form->isValid()) {
-            $affectedRows = $this->committeeMeetingService->save($form->getObject());
+            $affectedRows = $this->committeeMeetingService->save($form->getModel());
             return new EmptyResponse($affectedRows === 1 ? 201 : 205);
         }
-        var_dump($form->getMessages());
 
         return new ErrorFormResponse($form);
     }
@@ -91,12 +90,14 @@ class CommitteeMeetingController implements
         $committeeMeetingId = $request->getAttribute('committee_meeting_id');
 
         if (($committeeMeeting = $this->committeeMeetingService->get($committeeMeetingId)) != null) {
-            $form = new Form\CommitteeMeeting();
-            $form->bind($committeeMeeting);
-            $form->setData($request->getParsedBody());
+            $form = new Form\CommitteeMeeting([
+                ...(new \Althingi\Hydrator\CommitteeMeeting())->extract($committeeMeeting),
+                ...$request->getParsedBody(),
+                'committee_meeting_id' => $request->getAttribute('committee_meeting_id'),
+            ]);
 
             if ($form->isValid()) {
-                $this->committeeMeetingService->update($form->getObject());
+                $this->committeeMeetingService->update($form->getModel());
                 return new EmptyResponse(205);
             }
 

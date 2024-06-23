@@ -2,66 +2,46 @@
 
 namespace Althingi\Form;
 
+use Althingi\Filter\ToInt;
 use Althingi\Hydrator;
 use Althingi\Model;
-use Althingi\Filter\ToInt;
-use Laminas\Filter\ToNull;
 use Althingi\Validator\SignedDigits;
+use Laminas\Filter\ToNull;
+use Laminas\Validator\NotEmpty;
+use Library\Form\Form;
+use Library\Input\Input;
 
 class VoteItem extends Form
 {
-    public function __construct()
+    public function getModel(): Model\VoteItem
     {
-        parent::__construct(get_class($this));
-        $this
-            ->setHydrator(new Hydrator\VoteItem())
-            ->setObject(new Model\VoteItem());
+        return (new Hydrator\VoteItem())
+            ->hydrate(
+                $this->getInputChain()->getValues(),
+                new Model\VoteItem()
+            );
     }
 
-    public function getInputFilterSpecification(): array
+    public function getValidationConfig(): array
     {
         return [
-            'vote_item_id' => [
-                'name' => 'vote_item_id',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'vote_id' => [
-                'name' => 'vote_id',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'congressman_id' => [
-                'name' => 'congressman_id',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'vote' => [
-                'name' => 'vote',
-                'required' => true,
-                'allow_empty' => false,
-            ],
+            (new Input('vote_item_id', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+                ->attachValidator(new SignedDigits())
+            ,
+            (new Input('vote_id'))
+                ->attachFilter(new ToInt())
+                ->attachValidator(new SignedDigits())
+                ->attachValidator(new NotEmpty())
+            ,
+            (new Input('congressman_id'))
+                ->attachFilter(new ToInt())
+                ->attachValidator(new SignedDigits())
+                ->attachValidator(new NotEmpty())
+            ,
+            (new Input('vote'))
+                ->attachValidator(new NotEmpty())
+            ,
         ];
     }
 }

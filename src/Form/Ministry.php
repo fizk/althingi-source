@@ -2,94 +2,54 @@
 
 namespace Althingi\Form;
 
+use Althingi\Filter\ToInt;
 use Althingi\Hydrator;
 use Althingi\Model;
-use Althingi\Filter\ToInt;
 use Althingi\Validator\SignedDigits;
 use Laminas\Filter\ToNull;
 use Laminas\Validator\Digits;
+use Laminas\Validator\NotEmpty;
+use Library\Form\Form;
+use Library\Input\Input;
 
 class Ministry extends Form
 {
-    public function __construct()
+    public function getModel(): Model\Ministry
     {
-        parent::__construct(get_class($this));
-        $this
-            ->setObject(new Model\Ministry())
-            ->setHydrator(new Hydrator\Ministry());
+        return (new Hydrator\Ministry())
+            ->hydrate(
+                $this->getInputChain()->getValues(),
+                new Model\Ministry()
+            );
     }
 
-    public function getInputFilterSpecification(): array
+    public function getValidationConfig(): array
     {
         return [
-            'ministry_id' => [
-                'name' => 'ministry_id',
-                'required' => true,
-                'allow_empty' => false,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                ],
-                'validators' => [
-                    ['name' => SignedDigits::class]
-                ],
-            ],
-            'name' => [
-                'name' => 'name',
-                'required' => true,
-                'allow_empty' => false,
-            ],
-            'abbr_short' => [
-                'name' => 'abbr_short',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-            'abbr_long' => [
-                'name' => 'abbr_long',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-            ],
-            'first' => [
-                'name' => 'first',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-                'validators' => [
-                    ['name' => Digits::class]
-                ],
-            ],
-            'last' => [
-                'name' => 'last',
-                'required' => false,
-                'allow_empty' => true,
-                'filters' => [
-                    ['name' => ToInt::class,],
-                    [
-                        'name' => ToNull::class,
-                        'options' => ['type' => 'all']
-                    ]
-                ],
-                'validators' => [
-                    ['name' => Digits::class]
-                ],
-            ],
+            (new Input('ministry_id'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+            ,
+            (new Input('name'))
+                ->attachValidator(new NotEmpty())
+            ,
+            (new Input('abbr_short', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('abbr_long', true))
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
+            (new Input('first', true))
+                ->attachFilter(new ToInt())
+                ->attachFilter(new ToNull(['type' => 'all']))
+                ->attachValidator(new Digits())
+            ,
+            (new Input('last', true))
+                ->attachFilter(new ToInt())
+                ->attachFilter(new ToNull(['type' => 'all']))
+                ->attachValidator(new Digits())
+            ,
         ];
     }
 }

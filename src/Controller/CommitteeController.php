@@ -60,17 +60,14 @@ class CommitteeController implements
      */
     public function put(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id');
-        $committeeId = $request->getAttribute('committee_id');
-
-        $form = new Form\Committee();
-        $form->setData(array_merge($request->getParsedBody(), [
-            'assembly_id' => $assemblyId,
-            'committee_id' => $committeeId
-        ]));
+        $form = new Form\Committee([
+            ...$request->getParsedBody(),
+            'assembly_id' => $request->getAttribute('id'),
+            'committee_id' => $request->getAttribute('committee_id'),
+        ]);
 
         if ($form->isValid()) {
-            $affectedRows = $this->committeeService->save($form->getObject());
+            $affectedRows = $this->committeeService->save($form->getModel());
             return new EmptyResponse($affectedRows === 1 ? 201 : 205);
         }
 
@@ -86,12 +83,15 @@ class CommitteeController implements
     public function patch(ServerRequest $request): ResponseInterface
     {
         if (($committee = $this->committeeService->get($request->getAttribute('committee_id'))) != null) {
-            $form = new Form\Committee();
-            $form->bind($committee);
-            $form->setData($request->getParsedBody());
+            $form = new Form\Committee([
+                ...(new \Althingi\Hydrator\Committee)->extract($committee),
+                ...$request->getParsedBody(),
+                'assembly_id' => $request->getAttribute('id'),
+                'committee_id' => $request->getAttribute('committee_id'),
+            ]);
 
             if ($form->isValid()) {
-                $this->committeeService->update($form->getObject());
+                $this->committeeService->update($form->getModel());
                 return new EmptyResponse(205);
             }
 

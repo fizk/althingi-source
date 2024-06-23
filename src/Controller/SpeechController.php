@@ -138,20 +138,17 @@ class SpeechController implements
         $issueId = $request->getAttribute('issue_id');
         $category = strtoupper($request->getAttribute('category', 'a'));
 
-        $form = new Form\Speech();
-        $form->setData(array_merge(
-            $request->getParsedBody(),
-            [
-                'speech_id' => $request->getAttribute('speech_id'),
-                'issue_id' => $issueId,
-                'assembly_id' => $assemblyId,
-                'category' => $category
-            ]
-        ));
+        $form = new Form\Speech([
+            ...$request->getParsedBody(),
+            'speech_id' => $request->getAttribute('speech_id'),
+            'issue_id' => $issueId,
+            'assembly_id' => $assemblyId,
+            'category' => $category,
+        ]);
 
         if ($form->isValid()) {
             try {
-                $affectedRows = $this->speechService->save($form->getObject());
+                $affectedRows = $this->speechService->save($form->getModel());
                 return new EmptyResponse($affectedRows === 1 ? 201 : 205);
             } catch (\PDOException $e) {
                 /**
@@ -164,7 +161,7 @@ class SpeechController implements
                  */
                 if ($e->errorInfo[1] === 1452) {
                     /** @var \althingi\Model\Speech */
-                    $speech = $form->getObject();
+                    $speech = $form->getModel();
                     $plenary = (new Model\Plenary())
                         ->setAssemblyId($speech->getAssemblyId())
                         ->setPlenaryId($speech->getPlenaryId())
@@ -202,13 +199,15 @@ class SpeechController implements
     {
         $speechId = $request->getAttribute('speech_id');
 
-        if (($speech = $this->speechService->get($speechId)) != null) {
-            $form = new Form\Speech();
-            $form->bind($speech);
-            $form->setData($request->getParsedBody());
+        if (($speech = $this->speechService->get($request->getAttribute('speech_id'))) != null) {
+            $form = new Form\Speech([
+                ...(new \Althingi\Hydrator\Speech())->extract($speech),
+                ...$request->getParsedBody(),
+                'speech_id' => $request->getAttribute('speech_id'),
+            ]);
 
             if ($form->isValid()) {
-                $this->speechService->update($form->getObject());
+                $this->speechService->update($form->getModel());
                 return new EmptyResponse(205);
             }
 

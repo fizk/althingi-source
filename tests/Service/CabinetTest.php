@@ -7,6 +7,7 @@ use Althingi\Service\Cabinet;
 use Althingi\DatabaseConnection;
 use Althingi\Model\Cabinet as CabinetModel;
 use PDO;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class CabinetTest extends TestCase
 {
@@ -14,7 +15,7 @@ class CabinetTest extends TestCase
 
     private PDO $pdo;
 
-    public function additionProvider()
+    public static function additionProvider()
     {
         return [
             [135, [['cabinet_id' => 20070524, 'title' => 'title', 'from' => '2007-05-24', 'to' => '2009-02-01']]],
@@ -39,11 +40,7 @@ class CabinetTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider additionProvider
-     * @param int $assembly
-     * @param array $cabinets
-     */
+    #[DataProvider('additionProvider')]
     public function testFetchByAssembly(int $assembly, array $cabinets)
     {
         $assemblyService = new Cabinet();
