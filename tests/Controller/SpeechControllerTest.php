@@ -2,15 +2,15 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Model;
-use Althingi\Service;
 use Althingi\Controller;
+use Althingi\Model;
 use Althingi\Model\Assembly;
+use Althingi\Service;
 use Althingi\ServiceHelper;
 use DateTime;
-use Laminas\ServiceManager\ServiceManager;
-use PHPUnit\Framework\TestCase;
+use Library\Container\Container;
 use Mockery;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class SpeechControllerTest
@@ -30,7 +30,7 @@ class SpeechControllerTest extends TestCase
     public function setUp(): void
     {
         $this->setServiceManager(
-            new ServiceManager(require __DIR__ . '/../../config/service.php')
+            new Container(require __DIR__ . '/../../config/service.php')
         );
         $this->buildServices([
             Service\Speech::class,

@@ -5,7 +5,7 @@ namespace Althingi\Controller;
 use Althingi\Controller\PlenaryController;
 use Althingi\Service\Plenary;
 use Althingi\ServiceHelper;
-use Laminas\ServiceManager\ServiceManager;
+use Library\Container\Container;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -22,7 +22,7 @@ class PlenaryControllerTest extends TestCase
     public function setUp(): void
     {
         $this->setServiceManager(
-            new ServiceManager(require __DIR__ . '/../../config/service.php')
+            new Container(require __DIR__ . '/../../config/service.php')
         );
 
         $this->buildServices([

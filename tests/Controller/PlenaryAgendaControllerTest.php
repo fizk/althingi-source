@@ -2,17 +2,18 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Model;
 use Althingi\Controller\PlenaryAgendaController;
+use Althingi\Model;
 use Althingi\Service\Congressman;
 use Althingi\Service\Issue;
 use Althingi\Service\Party;
 use Althingi\Service\Plenary;
 use Althingi\Service\PlenaryAgenda;
 use Althingi\ServiceHelper;
-use Laminas\ServiceManager\ServiceManager;
-use PHPUnit\Framework\TestCase;
+use Library\Container\Container;
 use PDOException;
+use PHPUnit\Framework\TestCase;
+
 /**
  * Class PlenaryControllerTest
  * @package Althingi\Controller
@@ -27,7 +28,7 @@ class PlenaryAgendaControllerTest extends TestCase
     public function setUp(): void
     {
         $this->setServiceManager(
-            new ServiceManager(require __DIR__ . '/../../config/service.php')
+            new Container(require __DIR__ . '/../../config/service.php')
         );
         $this->buildServices([
             PlenaryAgenda::class,

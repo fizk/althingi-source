@@ -3,15 +3,15 @@
 namespace Althingi\Controller;
 
 use Althingi\Controller\InflationController;
+use Althingi\Model\Inflation as InflationModel;
 use Althingi\Service\Assembly;
 use Althingi\Service\Cabinet;
-use Althingi\ServiceHelper;
 use Althingi\Service\Inflation;
-use Althingi\Model\Inflation as InflationModel;
-use Laminas\ServiceManager\ServiceManager;
-use PHPUnit\Framework\TestCase;
-use Mockery;
+use Althingi\ServiceHelper;
 use DateTime;
+use Library\Container\Container;
+use Mockery;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class InflationControllerTest
@@ -29,7 +29,7 @@ class InflationControllerTest extends TestCase
     public function setUp(): void
     {
         $this->setServiceManager(
-            new ServiceManager(require __DIR__ . '/../../config/service.php')
+            new Container(require __DIR__ . '/../../config/service.php')
         );
         $this->buildServices([
             Inflation::class,

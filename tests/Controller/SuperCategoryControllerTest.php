@@ -2,11 +2,11 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Model;
 use Althingi\Controller\SuperCategoryController;
+use Althingi\Model;
 use Althingi\Service\SuperCategory;
 use Althingi\ServiceHelper;
-use Laminas\ServiceManager\ServiceManager;
+use Library\Container\Container;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -23,7 +23,7 @@ class SuperCategoryControllerTest extends TestCase
     public function setUp(): void
     {
         $this->setServiceManager(
-            new ServiceManager(require __DIR__ . '/../../config/service.php')
+            new Container(require __DIR__ . '/../../config/service.php')
         );
         $this->buildServices([
             SuperCategory::class,

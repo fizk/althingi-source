@@ -8,9 +8,9 @@ use Althingi\Service\Cabinet;
 use Althingi\Service\Congressman;
 use Althingi\Service\Party;
 use Althingi\ServiceHelper;
-use Laminas\ServiceManager\ServiceManager;
-use PHPUnit\Framework\TestCase;
 use DateTime;
+use Library\Container\Container;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class CabinetControllerTest
@@ -27,7 +27,7 @@ class CabinetControllerTest extends TestCase
     public function setUp(): void
     {
         $this->setServiceManager(
-            new ServiceManager(require __DIR__ . '/../../config/service.php')
+            new Container(require __DIR__ . '/../../config/service.php')
         );
         $this->buildServices([
             Congressman::class,

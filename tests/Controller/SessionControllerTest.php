@@ -5,9 +5,9 @@ namespace Althingi\Controller;
 use Althingi\Controller\SessionController;
 use Althingi\Service\Session;
 use Althingi\ServiceHelper;
-use Laminas\ServiceManager\ServiceManager;
-use PHPUnit\Framework\TestCase;
 use DateTime;
+use Library\Container\Container;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class SessionControllerTest
@@ -23,7 +23,7 @@ class SessionControllerTest extends TestCase
     public function setUp(): void
     {
         $this->setServiceManager(
-            new ServiceManager(require __DIR__ . '/../../config/service.php')
+            new Container(require __DIR__ . '/../../config/service.php')
         );
         $this->buildServices([
             Session::class,
