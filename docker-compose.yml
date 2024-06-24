@@ -31,6 +31,7 @@ services:
       - ./tests/:/var/www/tests
       - ./public/:/var/www/public
       - ./bin/:/var/www/bin
+      - ./schema/:/var/www/schema
       - ./composer.json:/var/www/composer.json
       - ./composer.lock:/var/www/composer.lock
       - ./vendor/:/var/www/vendor
@@ -51,6 +52,7 @@ services:
       - DOCUMENT_DEFINITION=${ENV_DOCUMENT_DEFINITION:-/openapi}
     depends_on:
       - database
+    command: '/var/www/bin/wait-for-it.sh -h database -p 3306 -- /var/www/bin/start'
 
   #
   # Run complete Test suite
@@ -81,7 +83,6 @@ services:
       - ./bin/:/var/www/bin
       - ./phpcs.xml:/var/www/phpcs.xml
       - ./phpunit.xml.dist:/var/www/phpunit.xml
-      - ./auto/wait-for.sh:/var/www/wait-for.sh
     environment:
       - LOG_PATH=none
 
@@ -98,7 +99,7 @@ services:
 
     depends_on:
       - database-test
-    command: bash -c "./wait-for.sh database-test:3306 -t 80 -- echo \"MySQL up\" &&  ./vendor/bin/phpunit ./tests && ./vendor/bin/phpcs --standard=./phpcs.xml ./src"
+    command: '/var/www/bin/wait-for-it.sh -h database-test -p 3306 -- /var/www/bin/test'
 
   #
   # Additional services used for development.
@@ -107,23 +108,25 @@ services:
   #
   database:
     container_name: local-althingi-source-db
-    image: einarvalur/althingi-source-db:latest
-    command: --default-authentication-plugin=mysql_native_password
+    image: einarvalur/althingi-source-db:97bec3d2041832e170f4185167d515f0f0bcff4c
     restart: always
     ports:
         - 3306:3306
     environment:
-      - MYSQL_ROOT_PASSWORD=example
+      - MYSQL_ROOT_PASSWORD=${ENV_DB_PASSWORD:-example}
+      - MYSQL_DATABASE=${ENV_DB_NAME:-althingi}
+    command: --default-authentication-plugin=mysql_native_password
     volumes:
       - local-source-db-volume:/var/lib/mysql
 
   database-test:
     container_name: local-althingi-source-db-test
-    image: einarvalur/althingi-source-db:latest
-    command: --default-authentication-plugin=mysql_native_password
+    image: einarvalur/althingi-source-db:97bec3d2041832e170f4185167d515f0f0bcff4c
     restart: always
     environment:
+      - MYSQL_DATABASE=althingi
       - MYSQL_ROOT_PASSWORD=example
+    command: --default-authentication-plugin=mysql_native_password
 
 volumes:
     local-source-db-volume:

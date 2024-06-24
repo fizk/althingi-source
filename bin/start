@@ -1,0 +1,16 @@
+#!/bin/sh
+
+#
+# Script to migrate database and start HTTP
+#   This script runs a database migration script to make sure that
+#   the database is in the right state before the application runs.
+#
+#   After the database has been migrated, this script will start
+#   Apache HTTP server in the foreground
+#
+
+echo "Starting database migration";
+composer db-migrate -- /var/www/schema
+
+echo "Starting HTTPD";
+apache2-foreground

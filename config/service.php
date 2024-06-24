@@ -346,8 +346,6 @@ return [
         },
     ],
     'service' => [
-
-
         Service\Assembly::class => function (ContainerInterface $sm) {
             return (new Service\Assembly())
                 ->setDriver($sm->get(PDO::class))
@@ -506,7 +504,6 @@ return [
         },
     ],
     'utils' => [
-
         PDO::class => function (ContainerInterface $sm) {
             $dbHost = getenv('DB_HOST') ?: 'localhost';
             $dbPort = getenv('DB_PORT') ?: 3306;
@@ -528,7 +525,7 @@ return [
             );
         },
 
-        EventDispatcherInterface::class => function (ContainerInterface $container, $requestedName) {
+        EventDispatcherInterface::class => function (ContainerInterface $container) {
             $logger = $container->get(Psr\Log\LoggerInterface::class);
             $provider = new PrioritizedListenerRegistry();
 
@@ -570,7 +567,7 @@ return [
             return new EventDispatcher($provider);
         },
 
-        Psr\Log\LoggerInterface::class => function (ContainerInterface $container, $requestedName) {
+        Psr\Log\LoggerInterface::class => function (ContainerInterface $container) {
             return (new Logger('source'))
                 ->pushHandler((new StreamHandler('php://stdout', Logger::DEBUG))
                         ->setFormatter(new LineFormatter("[%datetime%] %level_name% %message%\n"))

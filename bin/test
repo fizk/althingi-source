@@ -1,0 +1,16 @@
+#!/bin/sh
+
+#
+# Script to migrate database and runs unit tests
+#   This script runs a database migration script to make sure that
+#   the database is in the right state before the application runs.
+#
+#   After the database has been migrated, this script will run
+#   PHP Unit tests as well as CodeSniffer test
+#
+
+echo "Starting database migration";
+composer db-migrate -- /var/www/schema;
+
+echo "Starting tests";
+composer test && composer sniff;

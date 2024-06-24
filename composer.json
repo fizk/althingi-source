@@ -25,7 +25,8 @@
     "sniff": "./vendor/bin/phpcs --standard=PSR12 ./config ./src ./tests",
     "fix": "./vendor/bin/phpcbf --standard=PSR12 ./config ./src ./tests",
     "test": "./vendor/bin/phpunit --colors=always ./tests",
-    "cover": "XDEBUG_MODE=coverage ./vendor/bin/phpunit --coverage-html=coverage --coverage-filter=./src --coverage-filter=./tests"
+    "cover": "XDEBUG_MODE=coverage ./vendor/bin/phpunit --coverage-html=coverage --coverage-filter=./src --coverage-filter=./tests",
+    "db-migrate": "./bin/database-migration.php"
   },
   "autoload": {
     "psr-4": {
