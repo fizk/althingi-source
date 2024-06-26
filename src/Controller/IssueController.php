@@ -176,7 +176,7 @@ class IssueController implements
      *
      * @return $this;
      */
-    public function setIssueService(Service\Issue $issue): self
+    public function setIssueService(Service\Issue $issue): static
     {
         $this->issueService = $issue;
         return $this;

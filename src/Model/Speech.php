@@ -26,7 +26,7 @@ class Speech implements ModelInterface
         return $this->speech_id;
     }
 
-    public function setSpeechId(string $speech_id): self
+    public function setSpeechId(string $speech_id): static
     {
         $this->speech_id = $speech_id;
         return $this;
@@ -37,7 +37,7 @@ class Speech implements ModelInterface
         return $this->plenary_id;
     }
 
-    public function setPlenaryId(int $plenary_id): self
+    public function setPlenaryId(int $plenary_id): static
     {
         $this->plenary_id = $plenary_id;
         return $this;
@@ -48,7 +48,7 @@ class Speech implements ModelInterface
         return $this->assembly_id;
     }
 
-    public function setAssemblyId(int $assembly_id): self
+    public function setAssemblyId(int $assembly_id): static
     {
         $this->assembly_id = $assembly_id;
         return $this;
@@ -59,7 +59,7 @@ class Speech implements ModelInterface
         return $this->issue_id;
     }
 
-    public function setIssueId(int $issue_id): self
+    public function setIssueId(int $issue_id): static
     {
         $this->issue_id = $issue_id;
         return $this;
@@ -70,7 +70,7 @@ class Speech implements ModelInterface
         return $this->kind;
     }
 
-    public function setKind(?KindEnum $kind): self
+    public function setKind(?KindEnum $kind): static
     {
         $this->kind = $kind;
 
@@ -82,7 +82,7 @@ class Speech implements ModelInterface
         return $this->congressman_id;
     }
 
-    public function setCongressmanId(int $congressman_id): self
+    public function setCongressmanId(int $congressman_id): static
     {
         $this->congressman_id = $congressman_id;
         return $this;
@@ -93,7 +93,7 @@ class Speech implements ModelInterface
         return $this->congressman_type;
     }
 
-    public function setCongressmanType(?string $congressman_type): self
+    public function setCongressmanType(?string $congressman_type): static
     {
         $this->congressman_type = $congressman_type;
         return $this;
@@ -104,7 +104,7 @@ class Speech implements ModelInterface
         return $this->from;
     }
 
-    public function setFrom(?DateTime $from): self
+    public function setFrom(?DateTime $from): static
     {
         $this->from = $from;
         return $this;
@@ -115,7 +115,7 @@ class Speech implements ModelInterface
         return $this->to;
     }
 
-    public function setTo(?DateTime $to): self
+    public function setTo(?DateTime $to): static
     {
         $this->to = $to;
         return $this;
@@ -126,7 +126,7 @@ class Speech implements ModelInterface
         return $this->text;
     }
 
-    public function setText(?string $text): self
+    public function setText(?string $text): static
     {
         $this->text = $text;
         return $this;
@@ -137,7 +137,7 @@ class Speech implements ModelInterface
         return $this->type;
     }
 
-    public function setType(?string $type): self
+    public function setType(?string $type): static
     {
         $this->type = $type;
         return $this;
@@ -148,7 +148,7 @@ class Speech implements ModelInterface
         return $this->iteration;
     }
 
-    public function setIteration(?string $iteration): self
+    public function setIteration(?string $iteration): static
     {
         $this->iteration = $iteration;
         return $this;
@@ -159,7 +159,7 @@ class Speech implements ModelInterface
         return $this->word_count;
     }
 
-    public function setWordCount(?int $word_count): self
+    public function setWordCount(?int $word_count): static
     {
         $this->word_count = $word_count ? : 0;
         return $this;
@@ -170,7 +170,7 @@ class Speech implements ModelInterface
         return $this->validated;
     }
 
-    public function setValidated(bool $validated = true): self
+    public function setValidated(bool $validated = true): static
     {
         $this->validated = $validated;
         return $this;

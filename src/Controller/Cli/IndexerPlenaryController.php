@@ -36,7 +36,7 @@ class IndexerPlenaryController implements ServicePlenaryAwareInterface, EventsAw
         return (new ConsoleResponse(__CLASS__));
     }
 
-    public function setPlenaryService(Plenary $plenary): self
+    public function setPlenaryService(Plenary $plenary): static
     {
         $this->plenaryService = $plenary;
         return $this;

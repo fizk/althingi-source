@@ -14,7 +14,7 @@ class Category implements ModelInterface
         return $this->category_id;
     }
 
-    public function setCategoryId(int $category_id): self
+    public function setCategoryId(int $category_id): static
     {
         $this->category_id = $category_id;
         return $this;
@@ -25,7 +25,7 @@ class Category implements ModelInterface
         return $this->super_category_id;
     }
 
-    public function setSuperCategoryId(int $super_category_id): self
+    public function setSuperCategoryId(int $super_category_id): static
     {
         $this->super_category_id = $super_category_id;
         return $this;
@@ -36,7 +36,7 @@ class Category implements ModelInterface
         return $this->title;
     }
 
-    public function setTitle(?string $title): self
+    public function setTitle(?string $title): static
     {
         $this->title = $title;
         return $this;
@@ -47,7 +47,7 @@ class Category implements ModelInterface
         return $this->description;
     }
 
-    public function setDescription(?string $description): self
+    public function setDescription(?string $description): static
     {
         $this->description = $description;
         return $this;

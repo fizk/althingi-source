@@ -90,7 +90,7 @@ class CongressmanDocumentController implements
         return new EmptyResponse(404);
     }
 
-    public function setCongressmanDocumentService(Service\CongressmanDocument $congressmanDocument): self
+    public function setCongressmanDocumentService(Service\CongressmanDocument $congressmanDocument): static
     {
         $this->congressmanDocumentService = $congressmanDocument;
         return $this;

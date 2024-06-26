@@ -36,7 +36,7 @@ class UpdateEvent implements EventInterface, IndexablePresenterAwareInterface
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(string $name): static
     {
         $this->name = $name;
         return $this;
@@ -47,7 +47,7 @@ class UpdateEvent implements EventInterface, IndexablePresenterAwareInterface
         return $this->params;
     }
 
-    public function setParams(array $params): self
+    public function setParams(array $params): static
     {
         $this->params = $params;
         return $this;

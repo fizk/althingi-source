@@ -6,5 +6,5 @@ use Althingi\Service\President;
 
 interface ServicePresidentAwareInterface
 {
-    public function setPresidentService(President $president): self;
+    public function setPresidentService(President $president): static;
 }

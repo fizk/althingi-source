@@ -15,7 +15,7 @@ class PartyAndElection extends Party
         return $this->results;
     }
 
-    public function setResults(?float $results): self
+    public function setResults(?float $results): static
     {
         $this->results = $results;
         return $this;
@@ -26,7 +26,7 @@ class PartyAndElection extends Party
         return $this->seat;
     }
 
-    public function setSeat(?int $seat): self
+    public function setSeat(?int $seat): static
     {
         $this->seat = $seat;
         return $this;
@@ -37,7 +37,7 @@ class PartyAndElection extends Party
         return $this->election_id;
     }
 
-    public function setElectionId(int $election_id): self
+    public function setElectionId(int $election_id): static
     {
         $this->election_id = $election_id;
         return $this;
@@ -48,7 +48,7 @@ class PartyAndElection extends Party
         return $this->election_result_id;
     }
 
-    public function setElectionResultId(int $election_result_id): self
+    public function setElectionResultId(int $election_result_id): static
     {
         $this->election_result_id = $election_result_id;
         return $this;
@@ -59,7 +59,7 @@ class PartyAndElection extends Party
         return $this->assembly_id;
     }
 
-    public function setAssemblyId(int $assembly_id): self
+    public function setAssemblyId(int $assembly_id): static
     {
         $this->assembly_id = $assembly_id;
         return $this;

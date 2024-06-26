@@ -13,7 +13,7 @@ trait RestControllerTrait
     protected RouteMatch $routeMatch;
     protected ?string $action = null;
 
-    public function setIdentifierName(string $name): self
+    public function setIdentifierName(string $name): static
     {
         $this->identifierName = (string) $name;
         return $this;
@@ -151,7 +151,7 @@ trait RestControllerTrait
         return $response;
     }
 
-    public function setRouteMatch(RouteMatch $routeMatch): self
+    public function setRouteMatch(RouteMatch $routeMatch): static
     {
         $this->routeMatch = $routeMatch;
         return $this;

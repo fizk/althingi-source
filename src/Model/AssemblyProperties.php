@@ -16,7 +16,7 @@ class AssemblyProperties implements ModelInterface
         return $this->assembly;
     }
 
-    public function setAssembly(Assembly $assembly): self
+    public function setAssembly(Assembly $assembly): static
     {
         $this->assembly = $assembly;
         return $this;
@@ -33,13 +33,13 @@ class AssemblyProperties implements ModelInterface
     /**
      * @param Party[] $majority
      */
-    public function setMajority(array $majority): self
+    public function setMajority(array $majority): static
     {
         $this->majority = $majority;
         return $this;
     }
 
-    public function addMajority(Party $majority): self
+    public function addMajority(Party $majority): static
     {
         $this->majority[] = $majority;
         return $this;
@@ -66,13 +66,13 @@ class AssemblyProperties implements ModelInterface
     /**
      * @param Party[] $minority
      */
-    public function setMinority(array $minority): self
+    public function setMinority(array $minority): static
     {
         $this->minority = $minority;
         return $this;
     }
 
-    public function addMinority(Party $minority): self
+    public function addMinority(Party $minority): static
     {
         $this->minority[] = $minority;
         return $this;
@@ -83,7 +83,7 @@ class AssemblyProperties implements ModelInterface
         return $this->cabinet;
     }
 
-    public function setCabinet(?Cabinet $cabinet): self
+    public function setCabinet(?Cabinet $cabinet): static
     {
         $this->cabinet = $cabinet;
         return $this;

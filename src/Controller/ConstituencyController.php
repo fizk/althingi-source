@@ -105,7 +105,7 @@ class ConstituencyController implements
         }
     }
 
-    public function setConstituencyService(Service\Constituency $constituency): self
+    public function setConstituencyService(Service\Constituency $constituency): static
     {
         $this->constituencyService = $constituency;
         return $this;

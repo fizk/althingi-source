@@ -6,5 +6,5 @@ use Althingi\Service\CommitteeMeetingAgenda;
 
 interface ServiceCommitteeMeetingAgendaAwareInterface
 {
-    public function setCommitteeMeetingAgendaService(CommitteeMeetingAgenda $committeeMeetingAgenda): self;
+    public function setCommitteeMeetingAgendaService(CommitteeMeetingAgenda $committeeMeetingAgenda): static;
 }

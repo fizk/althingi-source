@@ -16,7 +16,7 @@ class IssueTypeAndStatus implements ModelInterface
         return $this->type;
     }
 
-    public function setType(?string $type): self
+    public function setType(?string $type): static
     {
         $this->type = $type;
         return $this;
@@ -27,7 +27,7 @@ class IssueTypeAndStatus implements ModelInterface
         return $this->typeName;
     }
 
-    public function setTypeName(?string $typeName): self
+    public function setTypeName(?string $typeName): static
     {
         $this->typeName = $typeName;
         return $this;
@@ -38,7 +38,7 @@ class IssueTypeAndStatus implements ModelInterface
         return $this->typeSubName;
     }
 
-    public function setTypeSubName(?string $typeSubName): self
+    public function setTypeSubName(?string $typeSubName): static
     {
         $this->typeSubName = $typeSubName;
         return $this;
@@ -55,13 +55,13 @@ class IssueTypeAndStatus implements ModelInterface
     /**
      * @param IssueTypeStatus[] $status
      */
-    public function setStatus(array $status): self
+    public function setStatus(array $status): static
     {
         $this->status = $status;
         return $this;
     }
 
-    public function addStatus(IssueTypeStatus $status): self
+    public function addStatus(IssueTypeStatus $status): static
     {
         $this->status[] = $status;
         return $this;
@@ -72,13 +72,13 @@ class IssueTypeAndStatus implements ModelInterface
         return $this->count;
     }
 
-    public function setCount(int $count): self
+    public function setCount(int $count): static
     {
         $this->count = $count;
         return $this;
     }
 
-    public function addCount(int $count): self
+    public function addCount(int $count): static
     {
         $this->count += $count;
         return $this;

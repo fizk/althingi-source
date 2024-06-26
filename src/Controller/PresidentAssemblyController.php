@@ -45,7 +45,7 @@ class PresidentAssemblyController implements
         return new JsonResponse($residents, 206);
     }
 
-    public function setCongressmanService(Congressman $congressman): self
+    public function setCongressmanService(Congressman $congressman): static
     {
         $this->congressmanService = $congressman;
         return $this;

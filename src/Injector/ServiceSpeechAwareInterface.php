@@ -6,5 +6,5 @@ use Althingi\Service\Speech;
 
 interface ServiceSpeechAwareInterface
 {
-    public function setSpeechService(Speech $speech): self;
+    public function setSpeechService(Speech $speech): static;
 }

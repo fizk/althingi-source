@@ -122,7 +122,7 @@ class MinistryController implements
         return new EmptyResponse(404);
     }
 
-    public function setMinistryService(Service\Ministry $ministry): self
+    public function setMinistryService(Service\Ministry $ministry): static
     {
         $this->ministryService = $ministry;
         return $this;

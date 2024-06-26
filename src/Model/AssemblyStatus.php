@@ -16,7 +16,7 @@ class AssemblyStatus implements ModelInterface
         return $this->count;
     }
 
-    public function setCount(?int $count): self
+    public function setCount(?int $count): static
     {
         $this->count = $count;
         return $this;
@@ -27,7 +27,7 @@ class AssemblyStatus implements ModelInterface
         return $this->type;
     }
 
-    public function setType(?string $type): self
+    public function setType(?string $type): static
     {
         $this->type = $type;
         return $this;
@@ -38,7 +38,7 @@ class AssemblyStatus implements ModelInterface
         return $this->type_name;
     }
 
-    public function setTypeName(?string $type_name): self
+    public function setTypeName(?string $type_name): static
     {
         $this->type_name = $type_name;
         return $this;
@@ -49,7 +49,7 @@ class AssemblyStatus implements ModelInterface
         return $this->type_subname;
     }
 
-    public function setTypeSubname(?string $type_subname): self
+    public function setTypeSubname(?string $type_subname): static
     {
         $this->type_subname = $type_subname;
         return $this;
@@ -60,7 +60,7 @@ class AssemblyStatus implements ModelInterface
         return $this->status;
     }
 
-    public function setStatus(?string $status): self
+    public function setStatus(?string $status): static
     {
         $this->status = $status;
         return $this;
@@ -71,7 +71,7 @@ class AssemblyStatus implements ModelInterface
         return $this->category;
     }
 
-    public function setCategory(?string $category): self
+    public function setCategory(?string $category): static
     {
         $this->category = $category;
         return $this;

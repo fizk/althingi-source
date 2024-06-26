@@ -131,13 +131,13 @@ class CabinetController implements
         return new JsonResponse($cabinets, 206);
     }
 
-    public function setCabinetService(Cabinet $cabinet): self
+    public function setCabinetService(Cabinet $cabinet): static
     {
         $this->cabinetService = $cabinet;
         return $this;
     }
 
-    public function setAssemblyService(Assembly $assembly): self
+    public function setAssemblyService(Assembly $assembly): static
     {
         $this->assemblyService = $assembly;
         return $this;

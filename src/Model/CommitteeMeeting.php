@@ -18,7 +18,7 @@ class CommitteeMeeting implements ModelInterface
         return $this->committee_meeting_id;
     }
 
-    public function setCommitteeMeetingId(int $committee_meeting_id): self
+    public function setCommitteeMeetingId(int $committee_meeting_id): static
     {
         $this->committee_meeting_id = $committee_meeting_id;
         return $this;
@@ -29,7 +29,7 @@ class CommitteeMeeting implements ModelInterface
         return $this->committee_id;
     }
 
-    public function setCommitteeId(int $committee_id): self
+    public function setCommitteeId(int $committee_id): static
     {
         $this->committee_id = $committee_id;
         return $this;
@@ -40,7 +40,7 @@ class CommitteeMeeting implements ModelInterface
         return $this->assembly_id;
     }
 
-    public function setAssemblyId(int $assembly_id): self
+    public function setAssemblyId(int $assembly_id): static
     {
         $this->assembly_id = $assembly_id;
         return $this;
@@ -51,7 +51,7 @@ class CommitteeMeeting implements ModelInterface
         return $this->from;
     }
 
-    public function setFrom(?DateTime $from): self
+    public function setFrom(?DateTime $from): static
     {
         $this->from = $from;
         return $this;
@@ -62,7 +62,7 @@ class CommitteeMeeting implements ModelInterface
         return $this->to;
     }
 
-    public function setTo(?DateTime $to): self
+    public function setTo(?DateTime $to): static
     {
         $this->to = $to;
         return $this;
@@ -73,7 +73,7 @@ class CommitteeMeeting implements ModelInterface
         return $this->description;
     }
 
-    public function setDescription(?string $description): self
+    public function setDescription(?string $description): static
     {
         $this->description = $description;
         return $this;

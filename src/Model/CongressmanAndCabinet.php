@@ -14,7 +14,7 @@ class CongressmanAndCabinet extends Congressman
         return $this->title;
     }
 
-    public function setTitle(string $title): self
+    public function setTitle(string $title): static
     {
         $this->title = $title;
         return $this;
@@ -25,7 +25,7 @@ class CongressmanAndCabinet extends Congressman
         return $this->date;
     }
 
-    public function setDate(?DateTime $date): self
+    public function setDate(?DateTime $date): static
     {
         $this->date = $date;
         return $this;

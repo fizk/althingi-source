@@ -12,7 +12,7 @@ class ProponentPartyProperties extends CongressmanPartyProperties
         return $this->order;
     }
 
-    public function setOrder(int $order): self
+    public function setOrder(int $order): static
     {
         $this->order = $order;
         return $this;
@@ -23,7 +23,7 @@ class ProponentPartyProperties extends CongressmanPartyProperties
         return $this->minister;
     }
 
-    public function setMinister(?string $minister): self
+    public function setMinister(?string $minister): static
     {
         $this->minister = $minister;
         return $this;

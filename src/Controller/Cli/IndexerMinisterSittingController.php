@@ -36,7 +36,7 @@ class IndexerMinisterSittingController implements ServiceMinisterSittingAwareInt
         return (new ConsoleResponse(__CLASS__));
     }
 
-    public function setMinisterSittingService(MinisterSitting $ministerSitting): self
+    public function setMinisterSittingService(MinisterSitting $ministerSitting): static
     {
         $this->ministerSittingService = $ministerSitting;
         return $this;

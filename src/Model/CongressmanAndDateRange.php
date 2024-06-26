@@ -15,7 +15,7 @@ class CongressmanAndDateRange extends Congressman
         return $this->time;
     }
 
-    public function setTime(?int $time): self
+    public function setTime(?int $time): static
     {
         $this->time = $time;
         return $this;
@@ -26,7 +26,7 @@ class CongressmanAndDateRange extends Congressman
         return $this->begin;
     }
 
-    public function setBegin(?DateTime $begin): self
+    public function setBegin(?DateTime $begin): static
     {
         $this->begin = $begin;
         return $this;
@@ -37,7 +37,7 @@ class CongressmanAndDateRange extends Congressman
         return $this->end;
     }
 
-    public function setEnd(?DateTime $end): self
+    public function setEnd(?DateTime $end): static
     {
         $this->end = $end;
         return $this;

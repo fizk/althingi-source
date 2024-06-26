@@ -19,7 +19,7 @@ class SimpleRouteStack implements RouteStackInterface
     /**
      * @param  array|Traversable $options
      */
-    public static function factory($options = []): self
+    public static function factory($options = []): static
     {
         if ($options instanceof Traversable) {
             $options = ArrayUtils::iteratorToArray($options);
@@ -42,7 +42,7 @@ class SimpleRouteStack implements RouteStackInterface
         return $instance;
     }
 
-    public function addRoutes(/*array|\Traversable*/$routes): self
+    public function addRoutes(/*array|\Traversable*/$routes): static
     {
         if (! is_array($routes) && ! $routes instanceof Traversable) {
             throw new Exception\InvalidArgumentException('addRoutes expects an array or Traversable set of routes');
@@ -55,7 +55,7 @@ class SimpleRouteStack implements RouteStackInterface
         return $this;
     }
 
-    public function addRoute(string $name, /*mixed*/ $route, int $priority = null): self
+    public function addRoute(string $name, /*mixed*/ $route, int $priority = null): static
     {
         if (! $route instanceof RouteInterface) {
             $route = $this->routeFromArray($route);
@@ -70,13 +70,13 @@ class SimpleRouteStack implements RouteStackInterface
         return $this;
     }
 
-    public function removeRoute(string $name): self
+    public function removeRoute(string $name): static
     {
         $this->routes->remove($name);
         return $this;
     }
 
-    public function setRoutes(/*array|\Traversable*/$routes): self
+    public function setRoutes(/*array|\Traversable*/$routes): static
     {
         $this->routes->clear();
         $this->addRoutes($routes);
@@ -98,13 +98,13 @@ class SimpleRouteStack implements RouteStackInterface
         return $this->routes->get($name);
     }
 
-    public function setDefaultParams(array $params): self
+    public function setDefaultParams(array $params): static
     {
         $this->defaultParams = $params;
         return $this;
     }
 
-    public function setDefaultParam(string $name, /*mixed*/$value): self
+    public function setDefaultParam(string $name, /*mixed*/$value): static
     {
         $this->defaultParams[$name] = $value;
         return $this;

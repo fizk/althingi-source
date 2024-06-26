@@ -160,37 +160,37 @@ class VoteItemController implements
         return new EmptyResponse(404);
     }
 
-    public function setVoteItemService(VoteItem $voteItem): self
+    public function setVoteItemService(VoteItem $voteItem): static
     {
         $this->voteItemService = $voteItem;
         return $this;
     }
 
-    public function setVoteService(Vote $vote): self
+    public function setVoteService(Vote $vote): static
     {
         $this->voteService = $vote;
         return $this;
     }
 
-    public function setCongressmanService(Congressman $congressman): self
+    public function setCongressmanService(Congressman $congressman): static
     {
         $this->congressmanService = $congressman;
         return $this;
     }
 
-    public function setPartyService(Party $party): self
+    public function setPartyService(Party $party): static
     {
         $this->partyService = $party;
         return $this;
     }
 
-    public function setConstituencyService(Constituency $constituency): self
+    public function setConstituencyService(Constituency $constituency): static
     {
         $this->constituencyService = $constituency;
         return $this;
     }
 
-    public function setRouter(RouteInterface $router): self
+    public function setRouter(RouteInterface $router): static
     {
         $this->router = $router;
         return $this;

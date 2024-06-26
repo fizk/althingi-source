@@ -34,7 +34,7 @@ class IndexerMinistryController implements ServiceMinistryAwareInterface, Events
         return (new ConsoleResponse(__CLASS__));
     }
 
-    public function setMinistryService(Ministry $ministry): self
+    public function setMinistryService(Ministry $ministry): static
     {
         $this->ministryService = $ministry;
         return $this;

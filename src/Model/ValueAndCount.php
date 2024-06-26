@@ -12,7 +12,7 @@ class ValueAndCount implements ModelInterface
         return $this->count;
     }
 
-    public function setCount(int $count): self
+    public function setCount(int $count): static
     {
         $this->count = $count;
         return $this;
@@ -23,7 +23,7 @@ class ValueAndCount implements ModelInterface
         return $this->value;
     }
 
-    public function setValue(?string $value): self
+    public function setValue(?string $value): static
     {
         $this->value = $value;
         return $this;

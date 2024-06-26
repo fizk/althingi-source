@@ -34,7 +34,7 @@ class IndexerPartyController implements ServicePartyAwareInterface, EventsAwareI
         return (new ConsoleResponse(__CLASS__));
     }
 
-    public function setPartyService(Party $party): self
+    public function setPartyService(Party $party): static
     {
         $this->partyService = $party;
         return $this;

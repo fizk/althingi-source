@@ -133,13 +133,13 @@ class PresidentController implements
         return new EmptyResponse(404);
     }
 
-    public function setPresidentService(President $president): self
+    public function setPresidentService(President $president): static
     {
         $this->presidentService = $president;
         return $this;
     }
 
-    public function setRouter(RouteInterface $router): self
+    public function setRouter(RouteInterface $router): static
     {
         $this->router = $router;
         return $this;

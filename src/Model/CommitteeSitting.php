@@ -20,7 +20,7 @@ class CommitteeSitting implements ModelInterface
         return $this->committee_sitting_id;
     }
 
-    public function setCommitteeSittingId(?int $committee_sitting_id): self
+    public function setCommitteeSittingId(?int $committee_sitting_id): static
     {
         $this->committee_sitting_id = $committee_sitting_id;
         return $this;
@@ -31,7 +31,7 @@ class CommitteeSitting implements ModelInterface
         return $this->congressman_id;
     }
 
-    public function setCongressmanId(int $congressman_id): self
+    public function setCongressmanId(int $congressman_id): static
     {
         $this->congressman_id = $congressman_id;
         return $this;
@@ -42,7 +42,7 @@ class CommitteeSitting implements ModelInterface
         return $this->committee_id;
     }
 
-    public function setCommitteeId(int $committee_id): self
+    public function setCommitteeId(int $committee_id): static
     {
         $this->committee_id = $committee_id;
         return $this;
@@ -53,7 +53,7 @@ class CommitteeSitting implements ModelInterface
         return $this->assembly_id;
     }
 
-    public function setAssemblyId(int $assembly_id): self
+    public function setAssemblyId(int $assembly_id): static
     {
         $this->assembly_id = $assembly_id;
         return $this;
@@ -64,7 +64,7 @@ class CommitteeSitting implements ModelInterface
         return $this->order;
     }
 
-    public function setOrder(?int $order): self
+    public function setOrder(?int $order): static
     {
         $this->order = $order;
         return $this;
@@ -75,7 +75,7 @@ class CommitteeSitting implements ModelInterface
         return $this->role;
     }
 
-    public function setRole(?string $role): self
+    public function setRole(?string $role): static
     {
         $this->role = $role;
         return $this;
@@ -86,7 +86,7 @@ class CommitteeSitting implements ModelInterface
         return $this->from;
     }
 
-    public function setFrom(DateTime $from): self
+    public function setFrom(DateTime $from): static
     {
         $this->from = $from;
         return $this;
@@ -97,7 +97,7 @@ class CommitteeSitting implements ModelInterface
         return $this->to;
     }
 
-    public function setTo(?DateTime $to): self
+    public function setTo(?DateTime $to): static
     {
         $this->to = $to;
         return $this;

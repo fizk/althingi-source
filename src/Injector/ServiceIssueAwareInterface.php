@@ -6,5 +6,5 @@ use Althingi\Service\Issue;
 
 interface ServiceIssueAwareInterface
 {
-    public function setIssueService(Issue $issue): self;
+    public function setIssueService(Issue $issue): static;
 }

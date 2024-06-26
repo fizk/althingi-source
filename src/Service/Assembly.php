@@ -50,7 +50,7 @@ class Assembly implements DatabaseAwareInterface, EventsAwareInterface
     public function fetchAll(int $offset = 0, int $size = null, string $order = 'asc'): array
     {
         $order = in_array($order, ['asc', 'desc']) ? $order : 'desc';
-        $size = $size ? : self::MAX_ROW_COUNT;
+        $size = $size ? : static::MAX_ROW_COUNT;
 
         $statement = $this->getDriver()
             ->prepare("select * from `Assembly` A order by A.`from` {$order} limit {$offset}, {$size}");

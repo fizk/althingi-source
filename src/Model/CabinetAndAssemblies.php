@@ -13,7 +13,7 @@ class CabinetAndAssemblies implements ModelInterface
         return $this->cabinet;
     }
 
-    public function setCabinet(Cabinet $cabinet): self
+    public function setCabinet(Cabinet $cabinet): static
     {
         $this->cabinet = $cabinet;
         return $this;
@@ -30,7 +30,7 @@ class CabinetAndAssemblies implements ModelInterface
     /**
      * @param Assembly[] $assemblies
      */
-    public function setAssemblies(array $assemblies): self
+    public function setAssemblies(array $assemblies): static
     {
         $this->assemblies = $assemblies;
         return $this;

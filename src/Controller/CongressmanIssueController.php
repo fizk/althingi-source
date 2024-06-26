@@ -37,7 +37,7 @@ class CongressmanIssueController implements
         return new JsonResponse($issues, 206);
     }
 
-    public function setIssueService(Service\Issue $issue): self
+    public function setIssueService(Service\Issue $issue): static
     {
         $this->issueService = $issue;
         return $this;

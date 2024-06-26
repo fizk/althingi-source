@@ -6,5 +6,5 @@ use Althingi\Service\Election;
 
 interface ServiceElectionAwareInterface
 {
-    public function setElectionService(Election $election): self;
+    public function setElectionService(Election $election): static;
 }

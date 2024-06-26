@@ -6,5 +6,5 @@ use Althingi\Service\Category;
 
 interface ServiceCategoryAwareInterface
 {
-    public function setCategoryService(Category $category): self;
+    public function setCategoryService(Category $category): static;
 }

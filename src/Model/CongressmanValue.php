@@ -11,7 +11,7 @@ class CongressmanValue extends Congressman
         return $this->value;
     }
 
-    public function setValue(?int $value): self
+    public function setValue(?int $value): static
     {
         $this->value = $value;
         return $this;

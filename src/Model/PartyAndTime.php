@@ -11,7 +11,7 @@ class PartyAndTime extends Party
         return $this->total_time;
     }
 
-    public function setTotalTime(int $total_time = 0): self
+    public function setTotalTime(int $total_time = 0): static
     {
         $this->total_time = $total_time;
         return $this;

@@ -15,7 +15,7 @@ class RouteMatch extends BaseRouteMatch
         $this->length = $length;
     }
 
-    public function setMatchedRouteName(?string $name): self
+    public function setMatchedRouteName(?string $name): static
     {
         if ($this->matchedRouteName === null) {
             $this->matchedRouteName = $name;
@@ -26,7 +26,7 @@ class RouteMatch extends BaseRouteMatch
         return $this;
     }
 
-    public function merge(RouteMatch $match): self
+    public function merge(RouteMatch $match): static
     {
         $this->params  = array_merge($this->params, $match->getParams());
         $this->length += $match->getLength();

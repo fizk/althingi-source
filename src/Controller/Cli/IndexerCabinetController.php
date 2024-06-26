@@ -34,7 +34,7 @@ class IndexerCabinetController implements ServiceCabinetAwareInterface, EventsAw
         return (new ConsoleResponse(__CLASS__));
     }
 
-    public function setCabinetService(Cabinet $cabinet): self
+    public function setCabinetService(Cabinet $cabinet): static
     {
         $this->cabinetService = $cabinet;
         return $this;

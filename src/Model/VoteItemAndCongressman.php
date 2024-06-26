@@ -12,7 +12,7 @@ class VoteItemAndCongressman implements ModelInterface
         return $this->voteItem;
     }
 
-    public function setVoteItem(VoteItem $voteItem): self
+    public function setVoteItem(VoteItem $voteItem): static
     {
         $this->voteItem = $voteItem;
         return $this;
@@ -23,7 +23,7 @@ class VoteItemAndCongressman implements ModelInterface
         return $this->congressman;
     }
 
-    public function setCongressman(CongressmanPartyProperties $congressman): self
+    public function setCongressman(CongressmanPartyProperties $congressman): static
     {
         $this->congressman = $congressman;
         return $this;

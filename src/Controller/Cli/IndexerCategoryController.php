@@ -46,13 +46,13 @@ class IndexerCategoryController implements
         return (new ConsoleResponse(__CLASS__));
     }
 
-    public function setCategoryService(Category $category): self
+    public function setCategoryService(Category $category): static
     {
         $this->categoryService = $category;
         return $this;
     }
 
-    public function setSuperCategoryService(SuperCategory $superCategory): self
+    public function setSuperCategoryService(SuperCategory $superCategory): static
     {
         $this->superCategory = $superCategory;
         return $this;

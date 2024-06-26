@@ -15,7 +15,7 @@ class Inflation implements ModelInterface
         return $this->id;
     }
 
-    public function setId(int $id): self
+    public function setId(int $id): static
     {
         $this->id = $id;
         return $this;
@@ -26,7 +26,7 @@ class Inflation implements ModelInterface
         return $this->value;
     }
 
-    public function setValue(float $value): self
+    public function setValue(float $value): static
     {
         $this->value = $value;
         return $this;
@@ -37,7 +37,7 @@ class Inflation implements ModelInterface
         return $this->date;
     }
 
-    public function setDate(?\DateTime $date): self
+    public function setDate(?\DateTime $date): static
     {
         $this->date = $date;
         return $this;

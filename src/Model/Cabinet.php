@@ -17,7 +17,7 @@ class Cabinet implements ModelInterface
         return $this->cabinet_id;
     }
 
-    public function setCabinetId(int $cabinet_id): self
+    public function setCabinetId(int $cabinet_id): static
     {
         $this->cabinet_id = $cabinet_id;
         return $this;
@@ -28,7 +28,7 @@ class Cabinet implements ModelInterface
         return $this->title;
     }
 
-    public function setTitle(?string $title): self
+    public function setTitle(?string $title): static
     {
         $this->title = $title;
         return $this;
@@ -39,7 +39,7 @@ class Cabinet implements ModelInterface
         return $this->from;
     }
 
-    public function setFrom(?\DateTime $from): self
+    public function setFrom(?\DateTime $from): static
     {
         $this->from = $from;
         return $this;
@@ -50,7 +50,7 @@ class Cabinet implements ModelInterface
         return $this->to;
     }
 
-    public function setTo(?\DateTime $to): self
+    public function setTo(?\DateTime $to): static
     {
         $this->to = $to;
         return $this;
@@ -61,7 +61,7 @@ class Cabinet implements ModelInterface
         return $this->description;
     }
 
-    public function setDescription(?string $description): self
+    public function setDescription(?string $description): static
     {
         $this->description = $description;
         return $this;

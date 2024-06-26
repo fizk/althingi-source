@@ -38,7 +38,7 @@ class IndexerDocumentVoteItemController implements ServiceVoteItemAwareInterface
         return (new ConsoleResponse(__CLASS__));
     }
 
-    public function setVoteItemService(VoteItem $voteItem): self
+    public function setVoteItemService(VoteItem $voteItem): static
     {
         $this->voteItemService = $voteItem;
         return $this;

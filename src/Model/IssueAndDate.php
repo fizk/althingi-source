@@ -13,7 +13,7 @@ class IssueAndDate extends Issue
         return $this->date;
     }
 
-    public function setDate(?DateTime $date): self
+    public function setDate(?DateTime $date): static
     {
         $this->date = $date;
         return $this;

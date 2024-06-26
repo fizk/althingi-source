@@ -127,13 +127,13 @@ class IssueCategoryController implements
         return new EmptyResponse(404);
     }
 
-    public function setIssueCategoryService(Service\IssueCategory $issueCategory): self
+    public function setIssueCategoryService(Service\IssueCategory $issueCategory): static
     {
         $this->issueCategoryService = $issueCategory;
         return $this;
     }
 
-    public function setCategoryService(Service\Category $category): self
+    public function setCategoryService(Service\Category $category): static
     {
         $this->categoryService = $category;
         return $this;

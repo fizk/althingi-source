@@ -6,5 +6,5 @@ use Althingi\Service\Cabinet;
 
 interface ServiceCabinetAwareInterface
 {
-    public function setCabinetService(Cabinet $cabinet): self;
+    public function setCabinetService(Cabinet $cabinet): static;
 }

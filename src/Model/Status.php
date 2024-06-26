@@ -23,7 +23,7 @@ class Status implements ModelInterface
         return $this->assembly_id;
     }
 
-    public function setAssemblyId(int $assembly_id): self
+    public function setAssemblyId(int $assembly_id): static
     {
         $this->assembly_id = $assembly_id;
         return $this;
@@ -34,7 +34,7 @@ class Status implements ModelInterface
         return $this->issue_id;
     }
 
-    public function setIssueId(int $issue_id): self
+    public function setIssueId(int $issue_id): static
     {
         $this->issue_id = $issue_id;
         return $this;
@@ -45,7 +45,7 @@ class Status implements ModelInterface
         return $this->committee_id;
     }
 
-    public function setCommitteeId(?int $committee_id): self
+    public function setCommitteeId(?int $committee_id): static
     {
         $this->committee_id = $committee_id;
         return $this;
@@ -56,7 +56,7 @@ class Status implements ModelInterface
         return $this->speech_id;
     }
 
-    public function setSpeechId(?string $speech_id): self
+    public function setSpeechId(?string $speech_id): static
     {
         $this->speech_id = $speech_id;
         return $this;
@@ -67,7 +67,7 @@ class Status implements ModelInterface
         return $this->document_id;
     }
 
-    public function setDocumentId(?int $document_id): self
+    public function setDocumentId(?int $document_id): static
     {
         $this->document_id = $document_id;
         return $this;
@@ -78,7 +78,7 @@ class Status implements ModelInterface
         return $this->date;
     }
 
-    public function setDate(?DateTime $date): self
+    public function setDate(?DateTime $date): static
     {
         $this->date = $date;
         return $this;
@@ -89,7 +89,7 @@ class Status implements ModelInterface
         return $this->title;
     }
 
-    public function setTitle(?string $title): self
+    public function setTitle(?string $title): static
     {
         $this->title = $title;
         return $this;
@@ -100,7 +100,7 @@ class Status implements ModelInterface
         return $this->type;
     }
 
-    public function setType(string $type): self
+    public function setType(string $type): static
     {
         $this->type = $type;
         return $this;
@@ -111,7 +111,7 @@ class Status implements ModelInterface
         return $this->committee_name;
     }
 
-    public function setCommitteeName(?string $committee_name): self
+    public function setCommitteeName(?string $committee_name): static
     {
         $this->committee_name = $committee_name;
         return $this;
@@ -122,7 +122,7 @@ class Status implements ModelInterface
         return $this->value;
     }
 
-    public function setValue(?int $value): self
+    public function setValue(?int $value): static
     {
         $this->value = $value;
         return $this;
@@ -133,7 +133,7 @@ class Status implements ModelInterface
         return $this->completed;
     }
 
-    public function setCompleted(bool $complete): self
+    public function setCompleted(bool $complete): static
     {
         $this->completed = $complete;
         return $this;

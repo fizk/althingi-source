@@ -124,7 +124,7 @@ class AssemblyController implements
         return new EmptyResponse(404);
     }
 
-    public function setAssemblyService(Assembly $assembly): self
+    public function setAssemblyService(Assembly $assembly): static
     {
         $this->assemblyService = $assembly;
         return $this;

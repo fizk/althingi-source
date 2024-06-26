@@ -54,7 +54,7 @@ class AssemblyCommitteeController implements
         return new JsonResponse($committees, 206);
     }
 
-    public function setCommitteeService(Committee $committee): self
+    public function setCommitteeService(Committee $committee): static
     {
         $this->committeeService = $committee;
         return $this;

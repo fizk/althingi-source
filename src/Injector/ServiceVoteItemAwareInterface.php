@@ -6,5 +6,5 @@ use Althingi\Service\VoteItem;
 
 interface ServiceVoteItemAwareInterface
 {
-    public function setVoteItemService(VoteItem $voteItem): self;
+    public function setVoteItemService(VoteItem $voteItem): static;
 }

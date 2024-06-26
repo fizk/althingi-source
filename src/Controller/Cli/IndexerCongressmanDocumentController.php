@@ -38,7 +38,7 @@ class IndexerCongressmanDocumentController implements ServiceCongressmanDocument
         return (new ConsoleResponse(__CLASS__));
     }
 
-    public function setCongressmanDocumentService(CongressmanDocument $congressmanDocument): self
+    public function setCongressmanDocumentService(CongressmanDocument $congressmanDocument): static
     {
         $this->congressmanDocument = $congressmanDocument;
         return $this;

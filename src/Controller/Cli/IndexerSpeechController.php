@@ -38,7 +38,7 @@ class IndexerSpeechController implements ServiceSpeechAwareInterface, EventsAwar
         return (new ConsoleResponse(__CLASS__));
     }
 
-    public function setSpeechService(Speech $speech): self
+    public function setSpeechService(Speech $speech): static
     {
         $this->speechService = $speech;
         return $this;

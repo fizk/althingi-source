@@ -20,7 +20,7 @@ class CongressmanPartyProperties implements ModelInterface
         return $this->congressman;
     }
 
-    public function setCongressman(Congressman $congressman): self
+    public function setCongressman(Congressman $congressman): static
     {
         $this->congressman = $congressman;
         return $this;
@@ -31,7 +31,7 @@ class CongressmanPartyProperties implements ModelInterface
         return $this->party;
     }
 
-    public function setParty(?Party $party): self
+    public function setParty(?Party $party): static
     {
         $this->party = $party;
         return $this;
@@ -48,7 +48,7 @@ class CongressmanPartyProperties implements ModelInterface
     /**
      * @param Party[] $parties
      */
-    public function setParties(array $parties): self
+    public function setParties(array $parties): static
     {
         $this->parties = $parties;
         return $this;
@@ -59,7 +59,7 @@ class CongressmanPartyProperties implements ModelInterface
         return $this->assembly;
     }
 
-    public function setAssembly(?Assembly $assembly): self
+    public function setAssembly(?Assembly $assembly): static
     {
         $this->assembly = $assembly;
         return $this;
@@ -70,7 +70,7 @@ class CongressmanPartyProperties implements ModelInterface
         return $this->constituency;
     }
 
-    public function setConstituency(?Constituency $constituency): self
+    public function setConstituency(?Constituency $constituency): static
     {
         $this->constituency = $constituency;
         return $this;
@@ -87,7 +87,7 @@ class CongressmanPartyProperties implements ModelInterface
     /**
      * @param Ministry[] $ministries
      */
-    public function setMinistries(array $ministries): self
+    public function setMinistries(array $ministries): static
     {
         $this->ministries = $ministries;
         return $this;
@@ -104,7 +104,7 @@ class CongressmanPartyProperties implements ModelInterface
     /**
      * @param MinisterSitting[] $ministrySittings
      */
-    public function setMinistrySittings(array $ministrySittings): self
+    public function setMinistrySittings(array $ministrySittings): static
     {
         $this->ministrySittings = $ministrySittings;
         return $this;

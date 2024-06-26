@@ -6,5 +6,5 @@ use Althingi\Service\Ministry;
 
 interface ServiceMinistryAwareInterface
 {
-    public function setMinistryService(Ministry $ministry): self;
+    public function setMinistryService(Ministry $ministry): static;
 }

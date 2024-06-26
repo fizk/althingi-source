@@ -16,7 +16,7 @@ class Election implements ModelInterface
         return $this->election_id;
     }
 
-    public function setElectionId(int $election_id): self
+    public function setElectionId(int $election_id): static
     {
         $this->election_id = $election_id;
         return $this;
@@ -27,7 +27,7 @@ class Election implements ModelInterface
         return $this->date;
     }
 
-    public function setDate(DateTime $date): self
+    public function setDate(DateTime $date): static
     {
         $this->date = $date;
         return $this;
@@ -38,7 +38,7 @@ class Election implements ModelInterface
         return $this->title;
     }
 
-    public function setTitle(?string $title): self
+    public function setTitle(?string $title): static
     {
         $this->title = $title;
         return $this;
@@ -49,7 +49,7 @@ class Election implements ModelInterface
         return $this->description;
     }
 
-    public function setDescription(?string $description): self
+    public function setDescription(?string $description): static
     {
         $this->description = $description;
         return $this;

@@ -11,7 +11,7 @@ class VoteItemAndCount extends VoteItem
         return $this->count;
     }
 
-    public function setCount(int $count): self
+    public function setCount(int $count): static
     {
         $this->count = $count;
         return $this;

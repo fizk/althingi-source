@@ -34,7 +34,7 @@ class IndexerConstituencyController implements ServiceConstituencyAwareInterface
         return (new ConsoleResponse(__CLASS__));
     }
 
-    public function setConstituencyService(Constituency $constituency): self
+    public function setConstituencyService(Constituency $constituency): static
     {
         $this->constituencyService = $constituency;
         return $this;

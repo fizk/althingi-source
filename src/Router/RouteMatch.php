@@ -12,7 +12,7 @@ class RouteMatch
         $this->params = $params;
     }
 
-    public function setMatchedRouteName(?string $name): self
+    public function setMatchedRouteName(?string $name): static
     {
         $this->matchedRouteName = $name;
         return $this;
@@ -23,7 +23,7 @@ class RouteMatch
         return $this->matchedRouteName;
     }
 
-    public function setParam(string $name, string $value): self
+    public function setParam(string $name, string $value): static
     {
         $this->params[$name] = $value;
         return $this;

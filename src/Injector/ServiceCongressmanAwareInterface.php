@@ -6,5 +6,5 @@ use Althingi\Service\Congressman;
 
 interface ServiceCongressmanAwareInterface
 {
-    public function setCongressmanService(Congressman $congressman): self;
+    public function setCongressmanService(Congressman $congressman): static;
 }

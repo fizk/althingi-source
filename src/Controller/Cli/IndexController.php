@@ -53,7 +53,7 @@ class IndexController
         return (new ConsoleResponse($result));
     }
 
-    public function setAssemblyService(Assembly $assembly): self
+    public function setAssemblyService(Assembly $assembly): static
     {
         $this->assemblyService = $assembly;
         return $this;

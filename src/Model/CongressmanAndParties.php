@@ -13,7 +13,7 @@ class CongressmanAndParties implements ModelInterface
         return $this->congressman;
     }
 
-    public function setCongressman(Congressman $congressman): self
+    public function setCongressman(Congressman $congressman): static
     {
         $this->congressman = $congressman;
         return $this;
@@ -30,7 +30,7 @@ class CongressmanAndParties implements ModelInterface
     /**
      * @param \Althingi\Model\Party[] $parties
      */
-    public function setParties(array $parties = []): self
+    public function setParties(array $parties = []): static
     {
         $this->parties = $parties;
         return $this;

@@ -121,7 +121,7 @@ class PlenaryAgendaController implements
         return new EmptyResponse(202);
     }
 
-    public function setPlenaryAgendaService(Service\PlenaryAgenda $plenaryAgenda): self
+    public function setPlenaryAgendaService(Service\PlenaryAgenda $plenaryAgenda): static
     {
         $this->plenaryAgendaService = $plenaryAgenda;
         return $this;
@@ -131,7 +131,7 @@ class PlenaryAgendaController implements
      *
      * @return $this;
      */
-    public function setIssueService(Service\Issue $issue): self
+    public function setIssueService(Service\Issue $issue): static
     {
         $this->issueService = $issue;
         return $this;

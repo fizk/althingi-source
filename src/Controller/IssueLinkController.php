@@ -87,7 +87,7 @@ class IssueLinkController implements
         return new JsonResponse([], 206);
     }
 
-    public function setIssueLinkService(Service\IssueLink $issueLink): self
+    public function setIssueLinkService(Service\IssueLink $issueLink): static
     {
         $this->issueLinkService = $issueLink;
         return $this;

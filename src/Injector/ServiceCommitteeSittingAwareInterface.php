@@ -6,5 +6,5 @@ use Althingi\Service\CommitteeSitting;
 
 interface ServiceCommitteeSittingAwareInterface
 {
-    public function setCommitteeSitting(CommitteeSitting $committeeSitting): self;
+    public function setCommitteeSitting(CommitteeSitting $committeeSitting): static;
 }

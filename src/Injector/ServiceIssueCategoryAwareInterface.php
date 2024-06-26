@@ -6,5 +6,5 @@ use Althingi\Service\IssueCategory;
 
 interface ServiceIssueCategoryAwareInterface
 {
-    public function setIssueCategoryService(IssueCategory $issueCategory): self;
+    public function setIssueCategoryService(IssueCategory $issueCategory): static;
 }

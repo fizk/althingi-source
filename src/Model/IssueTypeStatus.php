@@ -12,7 +12,7 @@ class IssueTypeStatus implements ModelInterface
         return $this->count;
     }
 
-    public function setCount(?int $count): self
+    public function setCount(?int $count): static
     {
         $this->count = $count;
         return $this;
@@ -23,7 +23,7 @@ class IssueTypeStatus implements ModelInterface
         return $this->status;
     }
 
-    public function setStatus(?string $status): self
+    public function setStatus(?string $status): static
     {
         $this->status = $status;
         return $this;

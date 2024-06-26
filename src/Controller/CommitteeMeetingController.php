@@ -108,7 +108,7 @@ class CommitteeMeetingController implements
         return new EmptyResponse(404);
     }
 
-    public function setCommitteeMeetingService(Service\CommitteeMeeting $committeeMeeting): self
+    public function setCommitteeMeetingService(Service\CommitteeMeeting $committeeMeeting): static
     {
         $this->committeeMeetingService = $committeeMeeting;
         return $this;

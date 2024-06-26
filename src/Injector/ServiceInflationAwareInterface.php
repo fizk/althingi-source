@@ -6,5 +6,5 @@ use Althingi\Service\Inflation;
 
 interface ServiceInflationAwareInterface
 {
-    public function setInflationService(Inflation $inflation): self;
+    public function setInflationService(Inflation $inflation): static;
 }

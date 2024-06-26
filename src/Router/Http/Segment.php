@@ -53,7 +53,7 @@ class Segment implements RouteInterface
         $this->regex    = $this->buildRegex($this->parts, $constraints);
     }
 
-    public static function factory(/*array|Traversable*/$options = []): self
+    public static function factory(/*array|Traversable*/$options = []): static
     {
         if ($options instanceof Traversable) {
             $options = ArrayUtils::iteratorToArray($options);

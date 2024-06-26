@@ -118,7 +118,7 @@ class CommitteeController implements
         return new EmptyResponse(200, ['Allow' => 'GET, OPTIONS, PUT, PATCH']);
     }
 
-    public function setCommitteeService(Service\Committee $committee): self
+    public function setCommitteeService(Service\Committee $committee): static
     {
         $this->committeeService = $committee;
         return $this;

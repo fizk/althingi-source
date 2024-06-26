@@ -62,7 +62,7 @@ class MinisterController implements
         return new JsonResponse($ministries, 206);
     }
 
-    public function setMinistryService(Service\Ministry $ministry): self
+    public function setMinistryService(Service\Ministry $ministry): static
     {
         $this->ministryService = $ministry;
         return $this;

@@ -16,7 +16,7 @@ class PlenaryAgendaProperties implements ModelInterface
         return $this->plenaryAgenda;
     }
 
-    public function setPlenaryAgenda(PlenaryAgenda $plenaryAgenda): self
+    public function setPlenaryAgenda(PlenaryAgenda $plenaryAgenda): static
     {
         $this->plenaryAgenda = $plenaryAgenda;
         return $this;
@@ -27,7 +27,7 @@ class PlenaryAgendaProperties implements ModelInterface
         return $this->issue;
     }
 
-    public function setIssue(Issue $issue): self
+    public function setIssue(Issue $issue): static
     {
         $this->issue = $issue;
         return $this;
@@ -38,7 +38,7 @@ class PlenaryAgendaProperties implements ModelInterface
         return $this->posedCongressman;
     }
 
-    public function setPosedCongressman(?CongressmanPartyProperties $posedCongressman): self
+    public function setPosedCongressman(?CongressmanPartyProperties $posedCongressman): static
     {
         $this->posedCongressman = $posedCongressman;
         return $this;
@@ -49,7 +49,7 @@ class PlenaryAgendaProperties implements ModelInterface
         return $this->answererCongressman;
     }
 
-    public function setAnswererCongressman(?CongressmanPartyProperties $answererCongressman): self
+    public function setAnswererCongressman(?CongressmanPartyProperties $answererCongressman): static
     {
         $this->answererCongressman = $answererCongressman;
         return $this;
@@ -62,7 +62,7 @@ class PlenaryAgendaProperties implements ModelInterface
 
     public function setCounterAnswererCongressman(
         ?CongressmanPartyProperties $counterAnswererCongressman
-    ): self {
+    ): static {
         $this->counterAnswererCongressman = $counterAnswererCongressman;
         return $this;
     }
@@ -72,7 +72,7 @@ class PlenaryAgendaProperties implements ModelInterface
         return $this->instigatorCongressman;
     }
 
-    public function setInstigatorCongressman(?CongressmanPartyProperties $instigatorCongressman): self
+    public function setInstigatorCongressman(?CongressmanPartyProperties $instigatorCongressman): static
     {
         $this->instigatorCongressman = $instigatorCongressman;
         return $this;

@@ -6,5 +6,5 @@ use Althingi\Service\IssueLink;
 
 interface ServiceIssueLinkAwareInterface
 {
-    public function setIssueLinkService(IssueLink $issueLink): self;
+    public function setIssueLinkService(IssueLink $issueLink): static;
 }

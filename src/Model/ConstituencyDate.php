@@ -13,7 +13,7 @@ class ConstituencyDate extends Constituency
         return $this->date;
     }
 
-    public function setDate(?DateTime $date): self
+    public function setDate(?DateTime $date): static
     {
         $this->date = $date;
         return $this;

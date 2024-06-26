@@ -6,5 +6,5 @@ use Althingi\Service\SuperCategory;
 
 interface ServiceSuperCategoryAwareInterface
 {
-    public function setSuperCategoryService(SuperCategory $superCategory): self;
+    public function setSuperCategoryService(SuperCategory $superCategory): static;
 }

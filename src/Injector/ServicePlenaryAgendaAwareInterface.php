@@ -6,5 +6,5 @@ use Althingi\Service\PlenaryAgenda;
 
 interface ServicePlenaryAgendaAwareInterface
 {
-    public function setPlenaryAgendaService(PlenaryAgenda $plenaryAgenda): self;
+    public function setPlenaryAgendaService(PlenaryAgenda $plenaryAgenda): static;
 }

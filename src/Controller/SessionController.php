@@ -169,13 +169,13 @@ class SessionController implements
         return new EmptyResponse(404);
     }
 
-    public function setSessionService(Session $session): self
+    public function setSessionService(Session $session): static
     {
         $this->sessionService = $session;
         return $this;
     }
 
-    public function setRouter(RouteInterface $router): self
+    public function setRouter(RouteInterface $router): static
     {
         $this->router = $router;
         return $this;

@@ -6,5 +6,5 @@ use Althingi\Service\Session;
 
 interface ServiceSessionAwareInterface
 {
-    public function setSessionService(Session $session): self;
+    public function setSessionService(Session $session): static;
 }

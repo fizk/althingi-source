@@ -111,7 +111,7 @@ class PlenaryController implements
         return new EmptyResponse(404);
     }
 
-    public function setPlenaryService(Plenary $plenary): self
+    public function setPlenaryService(Plenary $plenary): static
     {
         $this->plenaryService = $plenary;
         return $this;

@@ -113,7 +113,7 @@ class CommitteeMeetingAgendaController implements
         return new EmptyResponse(404);
     }
 
-    public function setCommitteeMeetingAgendaService(Service\CommitteeMeetingAgenda $committeeMeetingAgenda): self
+    public function setCommitteeMeetingAgendaService(Service\CommitteeMeetingAgenda $committeeMeetingAgenda): static
     {
         $this->committeeMeetingAgendaService = $committeeMeetingAgenda;
         return $this;

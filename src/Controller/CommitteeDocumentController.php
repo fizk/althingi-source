@@ -176,13 +176,13 @@ class CommitteeDocumentController implements
         return new EmptyResponse(404);
     }
 
-    public function setCommitteeDocumentService(Service\CommitteeDocument $committeeDocument): self
+    public function setCommitteeDocumentService(Service\CommitteeDocument $committeeDocument): static
     {
         $this->committeeDocumentService = $committeeDocument;
         return $this;
     }
 
-    public function setRouter(RouteInterface $router): self
+    public function setRouter(RouteInterface $router): static
     {
         $this->router = $router;
         return $this;

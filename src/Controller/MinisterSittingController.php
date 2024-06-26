@@ -161,13 +161,13 @@ class MinisterSittingController implements
         return new JsonResponse($sittings, 206);
     }
 
-    public function setMinisterSittingService(Service\MinisterSitting $ministerSitting): self
+    public function setMinisterSittingService(Service\MinisterSitting $ministerSitting): static
     {
         $this->ministerSittingService = $ministerSitting;
         return $this;
     }
 
-    public function setRouter(RouteInterface $router): self
+    public function setRouter(RouteInterface $router): static
     {
         $this->router = $router;
         return $this;

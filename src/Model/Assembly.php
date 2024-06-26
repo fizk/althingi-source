@@ -15,7 +15,7 @@ class Assembly implements ModelInterface
         return $this->assembly_id;
     }
 
-    public function setAssemblyId(int $assembly_id): self
+    public function setAssemblyId(int $assembly_id): static
     {
         $this->assembly_id = $assembly_id;
         return $this;
@@ -26,7 +26,7 @@ class Assembly implements ModelInterface
         return $this->from;
     }
 
-    public function setFrom(DateTime $from): self
+    public function setFrom(DateTime $from): static
     {
         $this->from = $from;
         return $this;
@@ -37,7 +37,7 @@ class Assembly implements ModelInterface
         return $this->to;
     }
 
-    public function setTo(?DateTime $to): self
+    public function setTo(?DateTime $to): static
     {
         $this->to = $to;
         return $this;

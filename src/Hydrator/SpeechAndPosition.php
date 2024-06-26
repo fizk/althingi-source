@@ -14,6 +14,8 @@ class SpeechAndPosition extends Speech
     public function hydrate(array $data, $object)
     {
         return parent::hydrate($data, $object)
-            ->setPosition($data['position']);
+            // FIXME this method doesn't exist
+            // ->setPosition($data['position'])
+        ;
     }
 }

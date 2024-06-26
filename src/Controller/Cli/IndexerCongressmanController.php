@@ -36,7 +36,7 @@ class IndexerCongressmanController implements ServiceCongressmanAwareInterface, 
         return (new ConsoleResponse(__CLASS__));
     }
 
-    public function setCongressmanService(Congressman $congressman): self
+    public function setCongressmanService(Congressman $congressman): static
     {
         $this->congressman = $congressman;
         return $this;

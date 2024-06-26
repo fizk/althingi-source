@@ -154,19 +154,19 @@ class InflationController implements
         return new EmptyResponse(404);
     }
 
-    public function setInflationService(Service\Inflation $inflation): self
+    public function setInflationService(Service\Inflation $inflation): static
     {
         $this->inflationService = $inflation;
         return $this;
     }
 
-    public function setCabinetService(Service\Cabinet $cabinet): self
+    public function setCabinetService(Service\Cabinet $cabinet): static
     {
         $this->cabinetService = $cabinet;
         return $this;
     }
 
-    public function setAssemblyService(Service\Assembly $assembly): self
+    public function setAssemblyService(Service\Assembly $assembly): static
     {
         $this->assemblyService = $assembly;
         return $this;

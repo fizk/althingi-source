@@ -44,7 +44,7 @@ class IndexerCommitteeSittingController implements ServiceCommitteeSittingAwareI
         return (new ConsoleResponse(__CLASS__));
     }
 
-    public function setCommitteeSitting(CommitteeSitting $committeeSitting): self
+    public function setCommitteeSitting(CommitteeSitting $committeeSitting): static
     {
         $this->committeeSittingService = $committeeSitting;
         return $this;

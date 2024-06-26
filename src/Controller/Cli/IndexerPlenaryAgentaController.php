@@ -36,7 +36,7 @@ class IndexerPlenaryAgentaController implements ServicePlenaryAgendaAwareInterfa
         return (new ConsoleResponse(__CLASS__));
     }
 
-    public function setPlenaryAgendaService(PlenaryAgenda $plenaryAgenda): self
+    public function setPlenaryAgendaService(PlenaryAgenda $plenaryAgenda): static
     {
         $this->plenaryAgendaService = $plenaryAgenda;
         return $this;

@@ -13,7 +13,7 @@ class IssueSuperCategoryAndTime implements ModelInterface
         return $this->super_category_id;
     }
 
-    public function setSuperCategoryId(int $super_category_id): self
+    public function setSuperCategoryId(int $super_category_id): static
     {
         $this->super_category_id = $super_category_id;
         return $this;
@@ -24,7 +24,7 @@ class IssueSuperCategoryAndTime implements ModelInterface
         return $this->title;
     }
 
-    public function setTitle(string $title): self
+    public function setTitle(string $title): static
     {
         $this->title = $title;
         return $this;
@@ -35,7 +35,7 @@ class IssueSuperCategoryAndTime implements ModelInterface
         return $this->time;
     }
 
-    public function setTime(int $time): self
+    public function setTime(int $time): static
     {
         $this->time = $time;
         return $this;

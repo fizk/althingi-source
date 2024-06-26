@@ -25,7 +25,7 @@ class TreeRouteStack extends SimpleRouteStack
         parent::__construct();
     }
 
-    public static function factory(/*array|Traversable*/$options = []): self
+    public static function factory(/*array|Traversable*/$options = []): static
     {
         if ($options instanceof Traversable) {
             $options = ArrayUtils::iteratorToArray($options);
@@ -41,7 +41,7 @@ class TreeRouteStack extends SimpleRouteStack
         return parent::factory($options);
     }
 
-    public function addRoute(string $name, /*mixed*/$route, int $priority = null): self
+    public function addRoute(string $name, /*mixed*/$route, int $priority = null): static
     {
         if (!$route instanceof RouteInterface) {
             $route = $this->routeFromArray($route);
@@ -110,7 +110,7 @@ class TreeRouteStack extends SimpleRouteStack
         return $route;
     }
 
-    public function addPrototypes(Traversable $routes): self
+    public function addPrototypes(Traversable $routes): static
     {
         if (!is_array($routes) && !$routes instanceof Traversable) {
             throw new Exception\InvalidArgumentException('addPrototypes expects an array or Traversable set of routes');
@@ -123,7 +123,7 @@ class TreeRouteStack extends SimpleRouteStack
         return $this;
     }
 
-    public function addPrototype(string $name, /*mixed*/$route): self
+    public function addPrototype(string $name, /*mixed*/$route): static
     {
         if (!$route instanceof RouteInterface) {
             $route = $this->routeFromArray($route);
@@ -288,7 +288,7 @@ class TreeRouteStack extends SimpleRouteStack
         return $path;
     }
 
-    public function setBaseUrl(string $baseUrl): self
+    public function setBaseUrl(string $baseUrl): static
     {
         $this->baseUrl = rtrim($baseUrl, '/');
         return $this;
@@ -299,7 +299,7 @@ class TreeRouteStack extends SimpleRouteStack
         return $this->baseUrl;
     }
 
-    public function setRequestUri(Uri $uri): self
+    public function setRequestUri(Uri $uri): static
     {
         $this->requestUri = $uri;
         return $this;

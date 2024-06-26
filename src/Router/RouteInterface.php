@@ -9,7 +9,7 @@ use Psr\Http\Message\RequestInterface;
  */
 interface RouteInterface
 {
-    public static function factory(/*array|Traversable*/$options = []): self;
+    public static function factory(/*array|Traversable*/$options = []): static;
 
     public function match(RequestInterface $request, $pathOffset = null, array $options = []);
 

@@ -34,7 +34,7 @@ class IndexerAssemblyController implements ServiceAssemblyAwareInterface, Events
         return (new ConsoleResponse(__CLASS__));
     }
 
-    public function setAssemblyService(Assembly $assembly): self
+    public function setAssemblyService(Assembly $assembly): static
     {
         $this->assemblyService = $assembly;
         return $this;

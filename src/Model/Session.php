@@ -21,7 +21,7 @@ class Session implements ModelInterface
         return $this->session_id;
     }
 
-    public function setSessionId(?int $session_id): self
+    public function setSessionId(?int $session_id): static
     {
         $this->session_id = $session_id;
         return $this;
@@ -32,7 +32,7 @@ class Session implements ModelInterface
         return $this->congressman_id;
     }
 
-    public function setCongressmanId(int $congressman_id): self
+    public function setCongressmanId(int $congressman_id): static
     {
         $this->congressman_id = $congressman_id;
         return $this;
@@ -43,7 +43,7 @@ class Session implements ModelInterface
         return $this->constituency_id;
     }
 
-    public function setConstituencyId(int $constituency_id): self
+    public function setConstituencyId(int $constituency_id): static
     {
         $this->constituency_id = $constituency_id;
         return $this;
@@ -54,7 +54,7 @@ class Session implements ModelInterface
         return $this->assembly_id;
     }
 
-    public function setAssemblyId(int $assembly_id): self
+    public function setAssemblyId(int $assembly_id): static
     {
         $this->assembly_id = $assembly_id;
         return $this;
@@ -65,7 +65,7 @@ class Session implements ModelInterface
         return $this->party_id;
     }
 
-    public function setPartyId(?int $party_id): self
+    public function setPartyId(?int $party_id): static
     {
         $this->party_id = $party_id;
         return $this;
@@ -76,7 +76,7 @@ class Session implements ModelInterface
         return $this->from;
     }
 
-    public function setFrom(?DateTime $from): self
+    public function setFrom(?DateTime $from): static
     {
         $this->from = $from;
         return $this;
@@ -87,7 +87,7 @@ class Session implements ModelInterface
         return $this->to;
     }
 
-    public function setTo(?DateTime $to): self
+    public function setTo(?DateTime $to): static
     {
         $this->to = $to;
         return $this;
@@ -98,7 +98,7 @@ class Session implements ModelInterface
         return $this->type;
     }
 
-    public function setType(?string $type): self
+    public function setType(?string $type): static
     {
         $this->type = $type;
         return $this;
@@ -109,7 +109,7 @@ class Session implements ModelInterface
         return $this->abbr;
     }
 
-    public function setAbbr(?string $abbr): self
+    public function setAbbr(?string $abbr): static
     {
         $this->abbr = $abbr;
         return $this;

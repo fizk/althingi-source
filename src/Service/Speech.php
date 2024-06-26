@@ -144,7 +144,7 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
         ?int $size = null,
         ?int $words = 1500
     ): array {
-        $resultSize = $size !== null ? $size : self::MAX_ROW_COUNT;
+        $resultSize = $size !== null ? $size : static::MAX_ROW_COUNT;
 
         $statement = $this->getDriver()->prepare("
           select *, timestampdiff(SECOND, `from`, `to`) as `time`

@@ -44,7 +44,7 @@ class IndexableIssuePresenter implements IndexablePresenter
 
     public function getIdentifier(): string
     {
-        return "{$this->model->getAssemblyId()}-{$this->model->getIssueId()}-{$this->model->getCategory()}";
+        return "{$this->model->getAssemblyId()}-{$this->model->getIssueId()}-{$this->model->getKind()->value}";
     }
 
     public function getType(): string

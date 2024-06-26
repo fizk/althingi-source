@@ -18,7 +18,7 @@ class PresidentCongressman extends Congressman
         return $this->president_id;
     }
 
-    public function setPresidentId(int $president_id): self
+    public function setPresidentId(int $president_id): static
     {
         $this->president_id = $president_id;
         return $this;
@@ -29,7 +29,7 @@ class PresidentCongressman extends Congressman
         return $this->assembly_id;
     }
 
-    public function setAssemblyId(int $assembly_id): self
+    public function setAssemblyId(int $assembly_id): static
     {
         $this->assembly_id = $assembly_id;
         return $this;
@@ -40,7 +40,7 @@ class PresidentCongressman extends Congressman
         return $this->from;
     }
 
-    public function setFrom(DateTime $from): self
+    public function setFrom(DateTime $from): static
     {
         $this->from = $from;
         return $this;
@@ -51,7 +51,7 @@ class PresidentCongressman extends Congressman
         return $this->to;
     }
 
-    public function setTo(?DateTime $to): self
+    public function setTo(?DateTime $to): static
     {
         $this->to = $to;
         return $this;
@@ -62,7 +62,7 @@ class PresidentCongressman extends Congressman
         return $this->title;
     }
 
-    public function setTitle(string $title): self
+    public function setTitle(string $title): static
     {
         $this->title = $title;
         return $this;
@@ -73,7 +73,7 @@ class PresidentCongressman extends Congressman
         return $this->abbr;
     }
 
-    public function setAbbr(?string $abbr): self
+    public function setAbbr(?string $abbr): static
     {
         $this->abbr = $abbr;
         return $this;

@@ -14,7 +14,7 @@ class VoteItem implements ModelInterface
         return $this->vote_id;
     }
 
-    public function setVoteId(?int $vote_id): self
+    public function setVoteId(?int $vote_id): static
     {
         $this->vote_id = $vote_id;
         return $this;
@@ -25,7 +25,7 @@ class VoteItem implements ModelInterface
         return $this->congressman_id;
     }
 
-    public function setCongressmanId(int $congressman_id): self
+    public function setCongressmanId(int $congressman_id): static
     {
         $this->congressman_id = $congressman_id;
         return $this;
@@ -36,7 +36,7 @@ class VoteItem implements ModelInterface
         return $this->vote;
     }
 
-    public function setVote(string $vote): self
+    public function setVote(string $vote): static
     {
         $this->vote = $vote;
         return $this;
@@ -47,7 +47,7 @@ class VoteItem implements ModelInterface
         return $this->vote_item_id;
     }
 
-    public function setVoteItemId(?int $vote_item_id): self
+    public function setVoteItemId(?int $vote_item_id): static
     {
         $this->vote_item_id = $vote_item_id;
         return $this;

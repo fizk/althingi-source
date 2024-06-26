@@ -99,7 +99,7 @@ class SuperCategoryController implements
         return new EmptyResponse(404);
     }
 
-    public function setSuperCategoryService(SuperCategory $superCategory): self
+    public function setSuperCategoryService(SuperCategory $superCategory): static
     {
         $this->superCategoryService = $superCategory;
         return $this;

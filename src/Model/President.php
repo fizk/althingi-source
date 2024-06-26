@@ -19,7 +19,7 @@ class President implements ModelInterface
         return $this->president_id;
     }
 
-    public function setPresidentId(?int $president_id): self
+    public function setPresidentId(?int $president_id): static
     {
         $this->president_id = $president_id;
         return $this;
@@ -30,7 +30,7 @@ class President implements ModelInterface
         return $this->congressman_id;
     }
 
-    public function setCongressmanId(int $congressman_id): self
+    public function setCongressmanId(int $congressman_id): static
     {
         $this->congressman_id = $congressman_id;
         return $this;
@@ -41,7 +41,7 @@ class President implements ModelInterface
         return $this->assembly_id;
     }
 
-    public function setAssemblyId(int $assembly_id): self
+    public function setAssemblyId(int $assembly_id): static
     {
         $this->assembly_id = $assembly_id;
         return $this;
@@ -52,7 +52,7 @@ class President implements ModelInterface
         return $this->from;
     }
 
-    public function setFrom(DateTime $from): self
+    public function setFrom(DateTime $from): static
     {
         $this->from = $from;
         return $this;
@@ -63,7 +63,7 @@ class President implements ModelInterface
         return $this->to;
     }
 
-    public function setTo(?DateTime $to): self
+    public function setTo(?DateTime $to): static
     {
         $this->to = $to;
         return $this;
@@ -74,7 +74,7 @@ class President implements ModelInterface
         return $this->title;
     }
 
-    public function setTitle(string $title): self
+    public function setTitle(string $title): static
     {
         $this->title = $title;
         return $this;
@@ -85,7 +85,7 @@ class President implements ModelInterface
         return $this->abbr;
     }
 
-    public function setAbbr(?string $abbr): self
+    public function setAbbr(?string $abbr): static
     {
         $this->abbr = $abbr;
         return $this;

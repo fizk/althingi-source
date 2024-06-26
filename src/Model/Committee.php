@@ -16,7 +16,7 @@ class Committee implements ModelInterface
         return $this->committee_id;
     }
 
-    public function setCommitteeId(int $committee_id): self
+    public function setCommitteeId(int $committee_id): static
     {
         $this->committee_id = $committee_id;
         return $this;
@@ -27,7 +27,7 @@ class Committee implements ModelInterface
         return $this->name;
     }
 
-    public function setName(?string $name): self
+    public function setName(?string $name): static
     {
         $this->name = $name;
         return $this;
@@ -38,7 +38,7 @@ class Committee implements ModelInterface
         return $this->first_assembly_id;
     }
 
-    public function setFirstAssemblyId(int $first_assembly_id): self
+    public function setFirstAssemblyId(int $first_assembly_id): static
     {
         $this->first_assembly_id = $first_assembly_id;
         return $this;
@@ -49,7 +49,7 @@ class Committee implements ModelInterface
         return $this->last_assembly_id;
     }
 
-    public function setLastAssemblyId(?int $last_assembly_id): self
+    public function setLastAssemblyId(?int $last_assembly_id): static
     {
         $this->last_assembly_id = $last_assembly_id;
         return $this;
@@ -60,7 +60,7 @@ class Committee implements ModelInterface
         return $this->abbr_long;
     }
 
-    public function setAbbrLong(?string $abbr_long): self
+    public function setAbbrLong(?string $abbr_long): static
     {
         $this->abbr_long = $abbr_long;
         return $this;
@@ -71,7 +71,7 @@ class Committee implements ModelInterface
         return $this->abbr_short;
     }
 
-    public function setAbbrShort(?string $abbr_short): self
+    public function setAbbrShort(?string $abbr_short): static
     {
         $this->abbr_short = $abbr_short;
         return $this;

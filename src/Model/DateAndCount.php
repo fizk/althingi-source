@@ -14,7 +14,7 @@ class DateAndCount implements ModelInterface
         return $this->count;
     }
 
-    public function setCount(int $count = 0): self
+    public function setCount(int $count = 0): static
     {
         $this->count = $count;
         return $this;
@@ -25,7 +25,7 @@ class DateAndCount implements ModelInterface
         return $this->date;
     }
 
-    public function setDate(?DateTime $date): self
+    public function setDate(?DateTime $date): static
     {
         $this->date = $date;
         return $this;

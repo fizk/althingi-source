@@ -12,7 +12,7 @@ class VoteItemAndAssemblyIssue extends VoteItem
         return $this->issue_id;
     }
 
-    public function setIssueId(int $issue_id): self
+    public function setIssueId(int $issue_id): static
     {
         $this->issue_id = $issue_id;
         return $this;
@@ -23,7 +23,7 @@ class VoteItemAndAssemblyIssue extends VoteItem
         return $this->assembly_id;
     }
 
-    public function setAssemblyId(int $assembly_id): self
+    public function setAssemblyId(int $assembly_id): static
     {
         $this->assembly_id = $assembly_id;
         return $this;

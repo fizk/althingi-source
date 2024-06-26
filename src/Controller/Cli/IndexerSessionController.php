@@ -37,7 +37,7 @@ class IndexerSessionController implements ServiceSessionAwareInterface, EventsAw
         return (new ConsoleResponse(__CLASS__));
     }
 
-    public function setSessionService(Session $session): self
+    public function setSessionService(Session $session): static
     {
         $this->session = $session;
         return $this;

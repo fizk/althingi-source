@@ -34,7 +34,7 @@ class IndexerInflationController implements ServiceInflationAwareInterface, Even
         return (new ConsoleResponse(__CLASS__));
     }
 
-    public function setInflationService(Inflation $inflation): self
+    public function setInflationService(Inflation $inflation): static
     {
         $this->inflationService = $inflation;
         return $this;

@@ -17,7 +17,7 @@ class Congressman implements ModelInterface
         return $this->congressman_id;
     }
 
-    public function setCongressmanId(int $congressman_id): self
+    public function setCongressmanId(int $congressman_id): static
     {
         $this->congressman_id = $congressman_id;
         return $this;
@@ -28,7 +28,7 @@ class Congressman implements ModelInterface
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(string $name): static
     {
         $this->name = $name;
         return $this;
@@ -39,7 +39,7 @@ class Congressman implements ModelInterface
         return $this->birth;
     }
 
-    public function setBirth(?DateTime $birth): self
+    public function setBirth(?DateTime $birth): static
     {
         $this->birth = $birth;
         return $this;
@@ -50,7 +50,7 @@ class Congressman implements ModelInterface
         return $this->death;
     }
 
-    public function setDeath(?DateTime $death): self
+    public function setDeath(?DateTime $death): static
     {
         $this->death = $death;
         return $this;
@@ -61,7 +61,7 @@ class Congressman implements ModelInterface
         return $this->abbreviation;
     }
 
-    public function setAbbreviation(?string $abbreviation): self
+    public function setAbbreviation(?string $abbreviation): static
     {
         $this->abbreviation = $abbreviation;
         return $this;

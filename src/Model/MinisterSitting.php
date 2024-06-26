@@ -19,7 +19,7 @@ class MinisterSitting implements ModelInterface
         return $this->minister_sitting_id;
     }
 
-    public function setMinisterSittingId(?int $minister_sitting_id): self
+    public function setMinisterSittingId(?int $minister_sitting_id): static
     {
         $this->minister_sitting_id = $minister_sitting_id;
         return $this;
@@ -30,7 +30,7 @@ class MinisterSitting implements ModelInterface
         return $this->assembly_id;
     }
 
-    public function setAssemblyId(int $assembly_id): self
+    public function setAssemblyId(int $assembly_id): static
     {
         $this->assembly_id = $assembly_id;
         return $this;
@@ -41,7 +41,7 @@ class MinisterSitting implements ModelInterface
         return $this->ministry_id;
     }
 
-    public function setMinistryId(int $ministry_id): self
+    public function setMinistryId(int $ministry_id): static
     {
         $this->ministry_id = $ministry_id;
         return $this;
@@ -52,7 +52,7 @@ class MinisterSitting implements ModelInterface
         return $this->congressman_id;
     }
 
-    public function setCongressmanId(int $congressman_id): self
+    public function setCongressmanId(int $congressman_id): static
     {
         $this->congressman_id = $congressman_id;
         return $this;
@@ -63,7 +63,7 @@ class MinisterSitting implements ModelInterface
         return $this->party_id;
     }
 
-    public function setPartyId(?int $party_id): self
+    public function setPartyId(?int $party_id): static
     {
         $this->party_id = $party_id;
         return $this;
@@ -74,7 +74,7 @@ class MinisterSitting implements ModelInterface
         return $this->from;
     }
 
-    public function setFrom(?DateTime $from): self
+    public function setFrom(?DateTime $from): static
     {
         $this->from = $from;
         return $this;
@@ -85,7 +85,7 @@ class MinisterSitting implements ModelInterface
         return $this->to;
     }
 
-    public function setTo(?DateTime $to): self
+    public function setTo(?DateTime $to): static
     {
         $this->to = $to;
         return $this;

@@ -35,7 +35,7 @@ class IndexerPresidentController implements ServicePresidentAwareInterface, Even
         return (new ConsoleResponse(__CLASS__));
     }
 
-    public function setPresidentService(President $president): self
+    public function setPresidentService(President $president): static
     {
         $this->presidentService = $president;
         return $this;

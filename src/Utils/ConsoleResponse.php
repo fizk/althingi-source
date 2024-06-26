@@ -14,59 +14,59 @@ class ConsoleResponse implements ResponseInterface
     {
         $this->message = $message;
     }
-    public function getStatusCode()
+    public function getStatusCode(): int
     {
         return 200;
     }
-    public function withStatus($code, $reasonPhrase = '')
+    public function withStatus($code, $reasonPhrase = ''): static
     {
         return $this;
     }
-    public function getReasonPhrase()
+    public function getReasonPhrase(): string
     {
         return '';
     }
-    public function getProtocolVersion()
+    public function getProtocolVersion(): string
     {
         return '1.1';
     }
-    public function withProtocolVersion($version)
+    public function withProtocolVersion($version): static
     {
         return $this;
     }
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return [];
     }
-    public function hasHeader($name)
+    public function hasHeader($name): bool
     {
         return false;
     }
-    public function getHeader($name)
+    public function getHeader($name): array
     {
         return [];
     }
-    public function getHeaderLine($name)
+    public function getHeaderLine($name): string
     {
         return '';
     }
-    public function withHeader($name, $value)
+    public function withHeader($name, $value): static
     {
         return $this;
     }
-    public function withAddedHeader($name, $value)
+    public function withAddedHeader($name, $value): static
     {
         return $this;
     }
-    public function withoutHeader($name)
+    public function withoutHeader($name): static
     {
         return $this;
     }
-    public function getBody()
+    public function getBody(): StreamInterface
     {
         return (new StreamFactory())->createStream($this->message . "\n");
     }
-    public function withBody(StreamInterface $body)
+    public function withBody(StreamInterface $body): static
     {
         return $this;
     }

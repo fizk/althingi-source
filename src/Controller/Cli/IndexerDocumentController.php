@@ -37,7 +37,7 @@ class IndexerDocumentController implements ServiceDocumentAwareInterface, Events
         return (new ConsoleResponse(__CLASS__));
     }
 
-    public function setDocumentService(Document $document): self
+    public function setDocumentService(Document $document): static
     {
         $this->documentService = $document;
         return $this;

@@ -161,13 +161,13 @@ class CommitteeSittingController implements
         return new EmptyResponse(404);
     }
 
-    public function setCommitteeSitting(Service\CommitteeSitting $committeeSitting): self
+    public function setCommitteeSitting(Service\CommitteeSitting $committeeSitting): static
     {
         $this->committeeSittingService = $committeeSitting;
         return $this;
     }
 
-    public function setRouter(RouteInterface $router): self
+    public function setRouter(RouteInterface $router): static
     {
         $this->router = $router;
         return $this;

@@ -47,10 +47,10 @@ class IndexableIssueLinkPresenter implements IndexablePresenter
         return implode('-', [
             $this->model->getAssemblyId(),
             $this->model->getIssueId(),
-            $this->model->getCategory(),
+            $this->model->getKind()->value,
             $this->model->getFromAssemblyId(),
             $this->model->getFromIssueId(),
-            $this->model->getFromCategory(),
+            $this->model->getFromKind()->value,
         ]);
     }
 

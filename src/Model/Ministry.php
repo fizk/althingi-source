@@ -16,7 +16,7 @@ class Ministry implements ModelInterface
         return $this->ministry_id;
     }
 
-    public function setMinistryId(int $ministry_id): self
+    public function setMinistryId(int $ministry_id): static
     {
         $this->ministry_id = $ministry_id;
         return $this;
@@ -27,7 +27,7 @@ class Ministry implements ModelInterface
         return $this->name;
     }
 
-    public function setName(?string $name): self
+    public function setName(?string $name): static
     {
         $this->name = $name;
         return $this;
@@ -38,7 +38,7 @@ class Ministry implements ModelInterface
         return $this->abbr_short;
     }
 
-    public function setAbbrShort(?string $abbr_short): self
+    public function setAbbrShort(?string $abbr_short): static
     {
         $this->abbr_short = $abbr_short;
         return $this;
@@ -49,7 +49,7 @@ class Ministry implements ModelInterface
         return $this->abbr_long;
     }
 
-    public function setAbbrLong(?string $abbr_long): self
+    public function setAbbrLong(?string $abbr_long): static
     {
         $this->abbr_long = $abbr_long;
         return $this;
@@ -60,7 +60,7 @@ class Ministry implements ModelInterface
         return $this->first;
     }
 
-    public function setFirst(?int $first): self
+    public function setFirst(?int $first): static
     {
         $this->first = $first;
         return $this;
@@ -71,7 +71,7 @@ class Ministry implements ModelInterface
         return $this->last;
     }
 
-    public function setLast(?int $last): self
+    public function setLast(?int $last): static
     {
         $this->last = $last;
         return $this;

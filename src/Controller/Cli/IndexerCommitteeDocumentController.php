@@ -44,7 +44,7 @@ class IndexerCommitteeDocumentController implements ServiceCommitteeDocumentAwar
         return (new ConsoleResponse(__CLASS__));
     }
 
-    public function setCommitteeDocumentService(CommitteeDocument $committeeDocument): self
+    public function setCommitteeDocumentService(CommitteeDocument $committeeDocument): static
     {
         $this->serviceCommitteeDocument = $committeeDocument;
         return $this;

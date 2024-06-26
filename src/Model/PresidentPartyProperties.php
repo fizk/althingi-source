@@ -12,7 +12,7 @@ class PresidentPartyProperties implements ModelInterface
         return $this->president;
     }
 
-    public function setPresident(President $president): self
+    public function setPresident(President $president): static
     {
         $this->president = $president;
         return $this;
@@ -23,7 +23,7 @@ class PresidentPartyProperties implements ModelInterface
         return $this->party;
     }
 
-    public function setParty(?Party $party): self
+    public function setParty(?Party $party): static
     {
         $this->party = $party;
         return $this;

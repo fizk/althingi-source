@@ -11,7 +11,7 @@ class Proponent extends Congressman
         return $this->minister;
     }
 
-    public function setMinister(?string $minister): self
+    public function setMinister(?string $minister): static
     {
         $this->minister = $minister;
         return $this;

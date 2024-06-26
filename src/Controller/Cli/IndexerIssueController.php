@@ -35,7 +35,7 @@ class IndexerIssueController implements ServiceIssueAwareInterface, EventsAwareI
         return (new ConsoleResponse(__CLASS__));
     }
 
-    public function setIssueService(Issue $issue): self
+    public function setIssueService(Issue $issue): static
     {
         $this->issueService = $issue;
         return $this;

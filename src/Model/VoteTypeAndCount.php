@@ -12,7 +12,7 @@ class VoteTypeAndCount implements ModelInterface
         return $this->count;
     }
 
-    public function setCount(int $count): self
+    public function setCount(int $count): static
     {
         $this->count = $count;
         return $this;
@@ -23,7 +23,7 @@ class VoteTypeAndCount implements ModelInterface
         return $this->vote;
     }
 
-    public function setVote(string $vote): self
+    public function setVote(string $vote): static
     {
         $this->vote = $vote;
         return $this;

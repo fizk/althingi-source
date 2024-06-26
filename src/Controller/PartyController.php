@@ -121,7 +121,7 @@ class PartyController implements
     }
 
 
-    public function setPartyService(Service\Party $party): self
+    public function setPartyService(Service\Party $party): static
     {
         $this->partyService = $party;
         return $this;

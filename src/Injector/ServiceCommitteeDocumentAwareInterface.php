@@ -6,5 +6,5 @@ use Althingi\Service\CommitteeDocument;
 
 interface ServiceCommitteeDocumentAwareInterface
 {
-    public function setCommitteeDocumentService(CommitteeDocument $committeeDocument): self;
+    public function setCommitteeDocumentService(CommitteeDocument $committeeDocument): static;
 }

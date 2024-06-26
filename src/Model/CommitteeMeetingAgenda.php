@@ -16,7 +16,7 @@ class CommitteeMeetingAgenda implements ModelInterface
         return $this->committee_meeting_agenda_id;
     }
 
-    public function setCommitteeMeetingAgendaId(int $committee_meeting_agenda_id): self
+    public function setCommitteeMeetingAgendaId(int $committee_meeting_agenda_id): static
     {
         $this->committee_meeting_agenda_id = $committee_meeting_agenda_id;
         return $this;
@@ -27,7 +27,7 @@ class CommitteeMeetingAgenda implements ModelInterface
         return $this->committee_meeting_id;
     }
 
-    public function setCommitteeMeetingId(int $committee_meeting_id): self
+    public function setCommitteeMeetingId(int $committee_meeting_id): static
     {
         $this->committee_meeting_id = $committee_meeting_id;
         return $this;
@@ -38,7 +38,7 @@ class CommitteeMeetingAgenda implements ModelInterface
         return $this->issue_id;
     }
 
-    public function setIssueId(?int $issue_id): self
+    public function setIssueId(?int $issue_id): static
     {
         $this->issue_id = $issue_id;
         return $this;
@@ -49,7 +49,7 @@ class CommitteeMeetingAgenda implements ModelInterface
         return $this->assembly_id;
     }
 
-    public function setAssemblyId(int $assembly_id): self
+    public function setAssemblyId(int $assembly_id): static
     {
         $this->assembly_id = $assembly_id;
         return $this;
@@ -60,7 +60,7 @@ class CommitteeMeetingAgenda implements ModelInterface
         return $this->title;
     }
 
-    public function setTitle(?string $title): self
+    public function setTitle(?string $title): static
     {
         $this->title = $title;
         return $this;
@@ -71,7 +71,7 @@ class CommitteeMeetingAgenda implements ModelInterface
         return $this->kind;
     }
 
-    public function setKind(?KindEnum $kind): self
+    public function setKind(?KindEnum $kind): static
     {
         $this->kind = $kind;
 

@@ -113,7 +113,7 @@ class CategoryController implements
         return new JsonResponse($categorySummary, 206);
     }
 
-    public function setCategoryService(Service\Category $category): self
+    public function setCategoryService(Service\Category $category): static
     {
         $this->categoryService = $category;
         return $this;

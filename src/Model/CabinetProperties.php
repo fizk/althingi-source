@@ -13,7 +13,7 @@ class CabinetProperties implements ModelInterface
         return $this->cabinet;
     }
 
-    public function setCabinet(Cabinet $cabinet): self
+    public function setCabinet(Cabinet $cabinet): static
     {
         $this->cabinet = $cabinet;
         return $this;
@@ -30,7 +30,7 @@ class CabinetProperties implements ModelInterface
     /**
      * @param CongressmanPartyProperties[] $congressmen
      */
-    public function setCongressmen(array $congressmen): self
+    public function setCongressmen(array $congressmen): static
     {
         $this->congressmen = $congressmen;
         return $this;

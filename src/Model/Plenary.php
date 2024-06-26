@@ -17,7 +17,7 @@ class Plenary implements ModelInterface
         return $this->plenary_id;
     }
 
-    public function setPlenaryId(int $plenary_id): self
+    public function setPlenaryId(int $plenary_id): static
     {
         $this->plenary_id = $plenary_id;
         return $this;
@@ -28,7 +28,7 @@ class Plenary implements ModelInterface
         return $this->assembly_id;
     }
 
-    public function setAssemblyId(int $assembly_id): self
+    public function setAssemblyId(int $assembly_id): static
     {
         $this->assembly_id = $assembly_id;
         return $this;
@@ -39,7 +39,7 @@ class Plenary implements ModelInterface
         return $this->from;
     }
 
-    public function setFrom(?DateTime $from): self
+    public function setFrom(?DateTime $from): static
     {
         $this->from = $from;
         return $this;
@@ -50,7 +50,7 @@ class Plenary implements ModelInterface
         return $this->to;
     }
 
-    public function setTo(?DateTime $to): self
+    public function setTo(?DateTime $to): static
     {
         $this->to = $to;
         return $this;
@@ -61,7 +61,7 @@ class Plenary implements ModelInterface
         return $this->name;
     }
 
-    public function setName(?string $name): self
+    public function setName(?string $name): static
     {
         $this->name = $name;
         return $this;

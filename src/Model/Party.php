@@ -15,7 +15,7 @@ class Party implements ModelInterface
         return $this->party_id;
     }
 
-    public function setPartyId(?int $party_id): self
+    public function setPartyId(?int $party_id): static
     {
         $this->party_id = $party_id;
         return $this;
@@ -26,7 +26,7 @@ class Party implements ModelInterface
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(string $name): static
     {
         $this->name = $name;
         return $this;
@@ -37,7 +37,7 @@ class Party implements ModelInterface
         return $this->abbr_short;
     }
 
-    public function setAbbrShort(?string $abbr_short): self
+    public function setAbbrShort(?string $abbr_short): static
     {
         $this->abbr_short = $abbr_short;
         return $this;
@@ -48,7 +48,7 @@ class Party implements ModelInterface
         return $this->abbr_long;
     }
 
-    public function setAbbrLong(?string $abbr_long): self
+    public function setAbbrLong(?string $abbr_long): static
     {
         $this->abbr_long = $abbr_long;
         return $this;
@@ -59,7 +59,7 @@ class Party implements ModelInterface
         return $this->color;
     }
 
-    public function setColor(?string $color): self
+    public function setColor(?string $color): static
     {
         $this->color = $color;
         return $this;

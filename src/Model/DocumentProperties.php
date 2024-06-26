@@ -15,7 +15,7 @@ class DocumentProperties implements ModelInterface
         return $this->document;
     }
 
-    public function setDocument(Document $document): self
+    public function setDocument(Document $document): static
     {
         $this->document = $document;
         return $this;
@@ -32,7 +32,7 @@ class DocumentProperties implements ModelInterface
     /**
      * @param Vote[] $votes
      */
-    public function setVotes(array $votes): self
+    public function setVotes(array $votes): static
     {
         $this->votes = $votes;
         return $this;
@@ -49,7 +49,7 @@ class DocumentProperties implements ModelInterface
     /**
      * @param Proponent[] $proponents
      */
-    public function setProponents(array $proponents): self
+    public function setProponents(array $proponents): static
     {
         $this->proponents = $proponents;
         return $this;

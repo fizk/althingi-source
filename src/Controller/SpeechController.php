@@ -253,7 +253,7 @@ class SpeechController implements
      * @param \Althingi\Service\Congressman $congressman
      * @return $this
      */
-    public function setCongressmanService(Service\Congressman $congressman): self
+    public function setCongressmanService(Service\Congressman $congressman): static
     {
         $this->congressmanService = $congressman;
         return $this;
@@ -263,7 +263,7 @@ class SpeechController implements
      * @param \Althingi\Service\Party $party
      * @return $this
      */
-    public function setPartyService(Service\Party $party): self
+    public function setPartyService(Service\Party $party): static
     {
         $this->partyService = $party;
         return $this;
@@ -273,7 +273,7 @@ class SpeechController implements
      * @param \Althingi\Service\Speech $speech
      * @return $this
      */
-    public function setSpeechService(Service\Speech $speech): self
+    public function setSpeechService(Service\Speech $speech): static
     {
         $this->speechService = $speech;
         return $this;
@@ -283,7 +283,7 @@ class SpeechController implements
      * @param \Althingi\Service\Plenary $plenary
      * @return $this
      */
-    public function setPlenaryService(Service\Plenary $plenary): self
+    public function setPlenaryService(Service\Plenary $plenary): static
     {
         $this->plenaryService = $plenary;
         return $this;
@@ -293,7 +293,7 @@ class SpeechController implements
      * @param Constituency $constituency
      * @return $this
      */
-    public function setConstituencyService(Constituency $constituency): self
+    public function setConstituencyService(Constituency $constituency): static
     {
         $this->constituencyService = $constituency;
         return $this;

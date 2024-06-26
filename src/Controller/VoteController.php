@@ -130,7 +130,7 @@ class VoteController implements
         return new EmptyResponse(200, ['Allow' => 'OPTIONS, PUT, PATCH, GET']);
     }
 
-    public function setVoteService(Vote $vote): self
+    public function setVoteService(Vote $vote): static
     {
         $this->voteService = $vote;
         return $this;

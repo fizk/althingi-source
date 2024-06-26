@@ -16,7 +16,7 @@ class CongressmanIssue implements ModelInterface
         return $this->order;
     }
 
-    public function setOrder(?int $order): self
+    public function setOrder(?int $order): static
     {
         $this->order = $order;
         return $this;
@@ -27,7 +27,7 @@ class CongressmanIssue implements ModelInterface
         return $this->type;
     }
 
-    public function setType(?string $type): self
+    public function setType(?string $type): static
     {
         $this->type = $type;
         return $this;
@@ -38,7 +38,7 @@ class CongressmanIssue implements ModelInterface
         return $this->type_name;
     }
 
-    public function setTypeName(?string $type_name): self
+    public function setTypeName(?string $type_name): static
     {
         $this->type_name = $type_name;
         return $this;
@@ -49,7 +49,7 @@ class CongressmanIssue implements ModelInterface
         return $this->type_subname;
     }
 
-    public function setTypeSubname(?string $type_subname): self
+    public function setTypeSubname(?string $type_subname): static
     {
         $this->type_subname = $type_subname;
         return $this;
@@ -60,7 +60,7 @@ class CongressmanIssue implements ModelInterface
         return $this->document_type;
     }
 
-    public function setDocumentType(?string $document_type): self
+    public function setDocumentType(?string $document_type): static
     {
         $this->document_type = $document_type;
         return $this;
@@ -71,7 +71,7 @@ class CongressmanIssue implements ModelInterface
         return $this->count;
     }
 
-    public function setCount(?int $count): self
+    public function setCount(?int $count): static
     {
         $this->count = $count;
         return $this;

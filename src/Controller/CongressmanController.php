@@ -189,7 +189,7 @@ class CongressmanController implements
      * @param Congressman $congressman
      * @return $this
      */
-    public function setCongressmanService(Service\Congressman $congressman): self
+    public function setCongressmanService(Service\Congressman $congressman): static
     {
         $this->congressmanService = $congressman;
         return $this;

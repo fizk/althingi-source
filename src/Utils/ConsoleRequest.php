@@ -2,6 +2,7 @@
 
 namespace Althingi\Utils;
 
+use Laminas\Diactoros\Stream;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
@@ -16,37 +17,37 @@ class ConsoleRequest implements ServerRequestInterface
         $this->uri = $uri;
     }
 
-    public function getServerParams()
+    public function getServerParams(): array
     {
         return [];
     }
 
-    public function getCookieParams()
+    public function getCookieParams(): array
     {
         return [];
     }
 
-    public function withCookieParams(array $cookies)
+    public function withCookieParams(array $cookies): static
     {
         return $this;
     }
 
-    public function getQueryParams()
+    public function getQueryParams(): array
     {
         return [];
     }
 
-    public function withQueryParams(array $query)
+    public function withQueryParams(array $query): static
     {
         return $this;
     }
 
-    public function getUploadedFiles()
+    public function getUploadedFiles(): array
     {
         return [];
     }
 
-    public function withUploadedFiles(array $uploadedFiles)
+    public function withUploadedFiles(array $uploadedFiles): static
     {
         return $this;
     }
@@ -56,12 +57,12 @@ class ConsoleRequest implements ServerRequestInterface
         return null;
     }
 
-    public function withParsedBody($data)
+    public function withParsedBody($data): static
     {
         return $this;
     }
 
-    public function getAttributes()
+    public function getAttributes(): array
     {
         return $this->attributes;
     }
@@ -75,86 +76,86 @@ class ConsoleRequest implements ServerRequestInterface
         return $this->attributes[$attribute];
     }
 
-    public function withAttribute($attribute, $value)
+    public function withAttribute($attribute, $value): static
     {
         $new = clone $this;
         $new->attributes[$attribute] = $value;
         return $new;
     }
 
-    public function withoutAttribute($name)
+    public function withoutAttribute($name): static
     {
         return $this;
     }
 
-    public function getRequestTarget()
+    public function getRequestTarget(): string
     {
         return '/';
     }
 
-    public function withRequestTarget($requestTarget)
+    public function withRequestTarget($requestTarget): static
     {
         return $this;
     }
 
-    public function getMethod()
+    public function getMethod(): string
     {
         return 'GET';
     }
 
-    public function withMethod($method)
+    public function withMethod($method): static
     {
         return $this;
     }
 
-    public function getUri()
+    public function getUri(): UriInterface
     {
         return $this->uri;
     }
-    public function withUri(UriInterface $uri, $preserveHost = false)
+    public function withUri(UriInterface $uri, $preserveHost = false): static
     {
         $this->uri = $uri;
         return $this;
     }
-    public function getProtocolVersion()
+    public function getProtocolVersion(): string
     {
         return '';
     }
-    public function withProtocolVersion($version)
+    public function withProtocolVersion($version): static
     {
         return $this;
     }
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return [];
     }
-    public function hasHeader($name)
+    public function hasHeader($name): bool
     {
         return false;
     }
-    public function getHeader($name)
+    public function getHeader($name): array
     {
-        return null;
+        return [];
     }
-    public function getHeaderLine($name)
+    public function getHeaderLine($name): string
     {
         return '';
     }
-    public function withHeader($name, $value)
+    public function withHeader($name, $value): static
     {
         return $this;
     }
-    public function withAddedHeader($name, $value)
+    public function withAddedHeader($name, $value): static
     {
         return $this;
     }
-    public function withoutHeader($name)
+    public function withoutHeader($name): static
     {
         return $this;
     }
-    public function getBody()
+    public function getBody(): StreamInterface
     {
-        return null;
+        return new Stream('');
     }
 
     /**
@@ -170,7 +171,7 @@ class ConsoleRequest implements ServerRequestInterface
      * @return static
      * @throws \InvalidArgumentException When the body is not valid.
      */
-    public function withBody(StreamInterface $body)
+    public function withBody(StreamInterface $body): static
     {
         return $this;
     }

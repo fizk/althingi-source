@@ -26,7 +26,7 @@ class IssuesStatusProperties implements ModelInterface
     /**
      * @param IssueTypeStatus[] $bills
      */
-    public function setBills(array $bills): self
+    public function setBills(array $bills): static
     {
         $this->bills = $bills;
         return $this;
@@ -43,7 +43,7 @@ class IssuesStatusProperties implements ModelInterface
     /**
      * @param IssueTypeStatus[] $governmentBills
      */
-    public function setGovernmentBills(array $governmentBills): self
+    public function setGovernmentBills(array $governmentBills): static
     {
         $this->government_bills = $governmentBills;
         return $this;
@@ -60,7 +60,7 @@ class IssuesStatusProperties implements ModelInterface
     /**
      * @param AssemblyStatus[] $types
      */
-    public function setTypes(array $types): self
+    public function setTypes(array $types): static
     {
         $this->types = $types;
         return $this;
@@ -77,7 +77,7 @@ class IssuesStatusProperties implements ModelInterface
     /**
      * @param CategoryAndCount[] $categories
      */
-    public function setCategories(array $categories): self
+    public function setCategories(array $categories): static
     {
         $this->categories = $categories;
         return $this;
@@ -94,7 +94,7 @@ class IssuesStatusProperties implements ModelInterface
     /**
      * @param IssueTypeStatus[] $proposals
      */
-    public function setProposals(array $proposals): self
+    public function setProposals(array $proposals): static
     {
         $this->proposals = $proposals;
         return $this;

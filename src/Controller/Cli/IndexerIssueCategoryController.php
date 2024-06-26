@@ -36,7 +36,7 @@ class IndexerIssueCategoryController implements ServiceIssueCategoryAwareInterfa
         return (new ConsoleResponse(__CLASS__));
     }
 
-    public function setIssueCategoryService(IssueCategory $issueCategory): self
+    public function setIssueCategoryService(IssueCategory $issueCategory): static
     {
         $this->issueCategoryService = $issueCategory;
         return $this;

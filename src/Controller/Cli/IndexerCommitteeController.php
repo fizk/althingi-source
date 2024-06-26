@@ -34,7 +34,7 @@ class IndexerCommitteeController implements ServiceCommitteeAwareInterface, Even
         return (new ConsoleResponse(__CLASS__));
     }
 
-    public function setCommitteeService(Committee $committee): self
+    public function setCommitteeService(Committee $committee): static
     {
         $this->committeeService = $committee;
         return $this;

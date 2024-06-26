@@ -32,7 +32,7 @@ class IssueProperties implements ModelInterface
         return $this->issue;
     }
 
-    public function setIssue(Issue $issue): self
+    public function setIssue(Issue $issue): static
     {
         $this->issue = $issue;
         return $this;
@@ -50,7 +50,7 @@ class IssueProperties implements ModelInterface
      * @param CongressmanPartyProperties[] $proponents
      * @return IssueProperties
      */
-    public function setProponents(array $proponents): self
+    public function setProponents(array $proponents): static
     {
         $this->proponents = $proponents;
         return $this;
@@ -67,7 +67,7 @@ class IssueProperties implements ModelInterface
     /**
      * @param DateAndCount[] $voteRange
      */
-    public function setVoteRange(array $voteRange): self
+    public function setVoteRange(array $voteRange): static
     {
         $this->voteRange = $voteRange;
         return $this;
@@ -84,7 +84,7 @@ class IssueProperties implements ModelInterface
     /**
      * @param DateAndCount[] $speechRange
      */
-    public function setSpeechRange(array $speechRange): self
+    public function setSpeechRange(array $speechRange): static
     {
         $this->speechRange = $speechRange;
         return $this;
@@ -101,7 +101,7 @@ class IssueProperties implements ModelInterface
     /**
      * @param CongressmanAndDateRange[] $speakers
      */
-    public function setSpeakers(array $speakers): self
+    public function setSpeakers(array $speakers): static
     {
         $this->speakers = $speakers;
         return $this;
@@ -112,7 +112,7 @@ class IssueProperties implements ModelInterface
         return $this->date;
     }
 
-    public function setDate(?DateTime $date): self
+    public function setDate(?DateTime $date): static
     {
         $this->date = $date;
         return $this;
@@ -123,7 +123,7 @@ class IssueProperties implements ModelInterface
         return $this->governmentIssue;
     }
 
-    public function setGovernmentIssue(bool $governmentIssue): self
+    public function setGovernmentIssue(bool $governmentIssue): static
     {
         $this->governmentIssue = $governmentIssue;
         return $this;
@@ -134,7 +134,7 @@ class IssueProperties implements ModelInterface
         return $this->document_type;
     }
 
-    public function setDocumentType(?string $document_type): self
+    public function setDocumentType(?string $document_type): static
     {
         $this->document_type = $document_type;
         return $this;
@@ -145,7 +145,7 @@ class IssueProperties implements ModelInterface
         return $this->document_url;
     }
 
-    public function setDocumentUrl(?string $document_url): self
+    public function setDocumentUrl(?string $document_url): static
     {
         $this->document_url = $document_url;
         return $this;
@@ -162,7 +162,7 @@ class IssueProperties implements ModelInterface
     /**
      * @param Category[] $categories
      */
-    public function setCategories(array $categories): self
+    public function setCategories(array $categories): static
     {
         $this->categories = $categories;
         return $this;
@@ -179,7 +179,7 @@ class IssueProperties implements ModelInterface
     /**
      * @param SuperCategory[] $superCategory
      */
-    public function setSuperCategory(array $superCategory): self
+    public function setSuperCategory(array $superCategory): static
     {
         $this->superCategory = $superCategory;
         return $this;
@@ -190,7 +190,7 @@ class IssueProperties implements ModelInterface
         return $this->speech_time;
     }
 
-    public function setSpeechTime(?int $speech_time): self
+    public function setSpeechTime(?int $speech_time): static
     {
         $this->speech_time = $speech_time;
         return $this;
@@ -201,7 +201,7 @@ class IssueProperties implements ModelInterface
         return $this->speech_count;
     }
 
-    public function setSpeechCount(?int $speech_count): self
+    public function setSpeechCount(?int $speech_count): static
     {
         $this->speech_count = $speech_count;
         return $this;
@@ -218,7 +218,7 @@ class IssueProperties implements ModelInterface
     /**
      * @param Link[] $links
      */
-    public function setLinks(array $links): self
+    public function setLinks(array $links): static
     {
         $this->links = $links;
         return $this;

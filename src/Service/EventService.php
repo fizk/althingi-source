@@ -8,7 +8,7 @@ trait EventService
 {
     private ?EventDispatcherInterface $eventDispatcher = null;
 
-    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher): self
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher): static
     {
         $this->eventDispatcher = $eventDispatcher;
         return $this;

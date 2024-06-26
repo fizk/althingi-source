@@ -1,11 +1,5 @@
 <?php
 
-/**
- * @see       https://github.com/laminas/laminas-router for the canonical source repository
- * @copyright https://github.com/laminas/laminas-router/blob/master/COPYRIGHT.md
- * @license   https://github.com/laminas/laminas-router/blob/master/LICENSE.md New BSD License
- */
-
 namespace Althingi\Router\Http;
 
 use Althingi\Router\Exception;
@@ -53,7 +47,7 @@ class Scheme implements RouteInterface
      * @return Scheme
      * @throws Exception\InvalidArgumentException
      */
-    public static function factory($options = []): self
+    public static function factory($options = []): static
     {
         if ($options instanceof Traversable) {
             $options = ArrayUtils::iteratorToArray($options);

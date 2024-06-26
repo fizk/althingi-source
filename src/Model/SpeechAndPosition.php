@@ -11,7 +11,7 @@ class SpeechAndPosition extends Speech
         return $this->position;
     }
 
-    public function setPosition(int $position): self
+    public function setPosition(int $position): static
     {
         $this->position = $position;
         return $this;

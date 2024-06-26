@@ -13,7 +13,7 @@ class MinisterSittingProperties implements ModelInterface
         return $this->congressman;
     }
 
-    public function setCongressman(CongressmanPartyProperties $congressman): self
+    public function setCongressman(CongressmanPartyProperties $congressman): static
     {
         $this->congressman = $congressman;
         return $this;
@@ -24,7 +24,7 @@ class MinisterSittingProperties implements ModelInterface
         return $this->ministry;
     }
 
-    public function setMinistry(Ministry $ministry): self
+    public function setMinistry(Ministry $ministry): static
     {
         $this->ministry = $ministry;
         return $this;
@@ -35,7 +35,7 @@ class MinisterSittingProperties implements ModelInterface
         return $this->minister_sitting;
     }
 
-    public function setMinisterSitting(MinisterSitting $minister_sitting): self
+    public function setMinisterSitting(MinisterSitting $minister_sitting): static
     {
         $this->minister_sitting = $minister_sitting;
         return $this;

@@ -11,7 +11,7 @@ class CongressmanAndParty extends Congressman
         return $this->party_id;
     }
 
-    public function setPartyId(?int $party_id): self
+    public function setPartyId(?int $party_id): static
     {
         $this->party_id = $party_id;
         return $this;

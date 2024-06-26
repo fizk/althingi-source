@@ -12,7 +12,7 @@ class IssueWithSpeechProperties implements ModelInterface
         return $this->speech;
     }
 
-    public function setSpeech(SpeechCongressmanProperties $speech): self
+    public function setSpeech(SpeechCongressmanProperties $speech): static
     {
         $this->speech = $speech;
         return $this;
@@ -23,7 +23,7 @@ class IssueWithSpeechProperties implements ModelInterface
         return $this->issue;
     }
 
-    public function setIssue(IssueAndDate $issue): self
+    public function setIssue(IssueAndDate $issue): static
     {
         $this->issue = $issue;
         return $this;
