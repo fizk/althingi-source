@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Althingi\Service\CommitteeMeetingAgenda;
 use Althingi\DatabaseConnection;
 use Althingi\Model\CommitteeMeetingAgenda as CommitteeMeetingAgendaModel;
+use Althingi\Model\KindEnum;
 use PDO;
 
 class CommitteeMeetingAgendaTest extends TestCase
@@ -21,7 +22,7 @@ class CommitteeMeetingAgendaTest extends TestCase
             ->setAssemblyId(1)
             ->setCommitteeMeetingAgendaId(1)
             ->setIssueId(1)
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setTitle('title');
         $service = new CommitteeMeetingAgenda();
         $service->setDriver($this->pdo);
@@ -37,16 +38,16 @@ class CommitteeMeetingAgendaTest extends TestCase
             'CommitteeMeetingAgenda' => [
                 [
                     'committee_meeting_agenda_id' => 1, 'committee_meeting_id' => 1, 'issue_id' => 1,
-                    'category' => 'A', 'assembly_id' => 1, 'title' => 'title',
+                    'kind' => KindEnum::A->value, 'assembly_id' => 1, 'title' => 'title',
                 ], [
                     'committee_meeting_agenda_id' => 2, 'committee_meeting_id' => 1, 'issue_id' => null,
-                    'category' => 'A', 'assembly_id' => 1, 'title' => 'title',
+                    'kind' => KindEnum::A->value, 'assembly_id' => 1, 'title' => 'title',
                 ], [
                     'committee_meeting_agenda_id' => 3, 'committee_meeting_id' => 1, 'issue_id' => null,
-                    'category' => 'A', 'assembly_id' => 1, 'title' => null,
+                    'kind' => KindEnum::A->value, 'assembly_id' => 1, 'title' => null,
                 ], [
                     'committee_meeting_agenda_id' => 4, 'committee_meeting_id' => 1, 'issue_id' => 1,
-                    'category' => 'A', 'assembly_id' => 1, 'title' => 'thetitle',
+                    'kind' => KindEnum::A->value, 'assembly_id' => 1, 'title' => 'thetitle',
                 ],
             ],
         ])->getTable('CommitteeMeetingAgenda');
@@ -56,7 +57,7 @@ class CommitteeMeetingAgendaTest extends TestCase
         $committeeMeetingAgenda = (new CommitteeMeetingAgendaModel())
             ->setCommitteeMeetingId(1)
             ->setIssueId(1)
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setAssemblyId(1)
             ->setTitle('thetitle');
 
@@ -74,16 +75,16 @@ class CommitteeMeetingAgendaTest extends TestCase
             'CommitteeMeetingAgenda' => [
                 [
                     'committee_meeting_agenda_id' => 1, 'committee_meeting_id' => 1, 'issue_id' => 1,
-                    'category' => 'A', 'assembly_id' => 1, 'title' => 'title'
+                    'kind' => KindEnum::A->value, 'assembly_id' => 1, 'title' => 'title'
                 ], [
                     'committee_meeting_agenda_id' => 2, 'committee_meeting_id' => 1, 'issue_id' => null,
-                    'category' => 'A', 'assembly_id' => 1, 'title' => 'title'
+                    'kind' => KindEnum::A->value, 'assembly_id' => 1, 'title' => 'title'
                 ], [
                     'committee_meeting_agenda_id' => 3, 'committee_meeting_id' => 1, 'issue_id' => null,
-                    'category' => 'A', 'assembly_id' => 1, 'title' => null
+                    'kind' => KindEnum::A->value, 'assembly_id' => 1, 'title' => null
                 ], [
                     'committee_meeting_agenda_id' => 4, 'committee_meeting_id' => 1, 'issue_id' => 1,
-                    'category' => 'A', 'assembly_id' => 1, 'title' => 'thetitle'
+                    'kind' => KindEnum::A->value, 'assembly_id' => 1, 'title' => 'thetitle'
                 ],
             ],
         ])->getTable('CommitteeMeetingAgenda');
@@ -93,7 +94,7 @@ class CommitteeMeetingAgendaTest extends TestCase
         $committeeMeetingAgenda = (new CommitteeMeetingAgendaModel())
             ->setCommitteeMeetingId(1)
             ->setIssueId(1)
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setAssemblyId(1)
             ->setTitle('thetitle');
 
@@ -111,13 +112,13 @@ class CommitteeMeetingAgendaTest extends TestCase
             'CommitteeMeetingAgenda' => [
                 [
                     'committee_meeting_agenda_id' => 1, 'committee_meeting_id' => 1, 'issue_id' => 1,
-                    'category' => 'A', 'assembly_id' => 1, 'title' => 'thisismynewtitle'
+                    'kind' => KindEnum::A->value, 'assembly_id' => 1, 'title' => 'thisismynewtitle'
                 ], [
                     'committee_meeting_agenda_id' => 2, 'committee_meeting_id' => 1, 'issue_id' => null,
-                    'category' => 'A', 'assembly_id' => 1, 'title' => 'title'
+                    'kind' => KindEnum::A->value, 'assembly_id' => 1, 'title' => 'title'
                 ], [
                     'committee_meeting_agenda_id' => 3, 'committee_meeting_id' => 1, 'issue_id' => null,
-                    'category' => 'A', 'assembly_id' => 1, 'title' => null
+                    'kind' => KindEnum::A->value, 'assembly_id' => 1, 'title' => null
                 ],
             ],
         ])->getTable('CommitteeMeetingAgenda');
@@ -128,7 +129,7 @@ class CommitteeMeetingAgendaTest extends TestCase
             ->setCommitteeMeetingAgendaId(1)
             ->setCommitteeMeetingId(1)
             ->setIssueId(1)
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setAssemblyId(1)
             ->setTitle('thisismynewtitle');
 
@@ -148,7 +149,7 @@ class CommitteeMeetingAgendaTest extends TestCase
                 ['assembly_id' => 2, 'from' => '2000-01-01'],
             ],
             'Issue' => [
-                ['issue_id' => 1, 'assembly_id' => 1, 'category' => 'A'],
+                ['issue_id' => 1, 'assembly_id' => 1, 'kind' => KindEnum::A->value],
             ],
             'Committee' => [
                 ['committee_id' => 1, 'name' => 'committee1', 'first_assembly_id' => 1],
@@ -166,13 +167,13 @@ class CommitteeMeetingAgendaTest extends TestCase
             'CommitteeMeetingAgenda' => [
                 [
                     'committee_meeting_agenda_id' => 1, 'committee_meeting_id' => 1,
-                    'issue_id' => 1, 'assembly_id' => 1, 'title' => 'title', 'category' => 'A'
+                    'issue_id' => 1, 'assembly_id' => 1, 'title' => 'title', 'kind' => KindEnum::A->value
                 ], [
                     'committee_meeting_agenda_id' => 2, 'committee_meeting_id' => 1,
-                    'issue_id' => null, 'assembly_id' => 1, 'title' => 'title', 'category' => 'A'
+                    'issue_id' => null, 'assembly_id' => 1, 'title' => 'title', 'kind' => KindEnum::A->value
                 ], [
                     'committee_meeting_agenda_id' => 3, 'committee_meeting_id' => 1,
-                    'issue_id' => null, 'assembly_id' => 1, 'title' => null, 'category' => 'A'
+                    'issue_id' => null, 'assembly_id' => 1, 'title' => null, 'kind' => KindEnum::A->value
                 ],
             ],
         ]);

@@ -16,6 +16,7 @@ use PDO;
 use Mockery;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Althingi\Events\{UpdateEvent, AddEvent};
+use Althingi\Model\KindEnum;
 
 class CongressmanTest extends TestCase
 {
@@ -535,14 +536,14 @@ class CongressmanTest extends TestCase
                 ],
             ],
             'Issue' => [
-                ['issue_id' => 1, 'assembly_id' => 1, 'category' => 'A']
+                ['issue_id' => 1, 'assembly_id' => 1, 'kind' => KindEnum::A->value]
             ],
             'Document' => [
                 [
                     'document_id' => 1,
                     'issue_id' => 1,
                     'assembly_id' => 1,
-                    'category' => 'A',
+                    'kind' => KindEnum::A->value,
                     'date' => '2000-01-01',
                     'url' => '',
                     'type' => ''
@@ -553,7 +554,7 @@ class CongressmanTest extends TestCase
                     'document_id' => 1,
                     'issue_id' => 1,
                     'assembly_id' => 1,
-                    'category' => 'A',
+                    'kind' => KindEnum::A->value,
                     'congressman_id' => 1,
                     'order' => 1
                 ]
@@ -567,7 +568,7 @@ class CongressmanTest extends TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 1,
                     'issue_id' => 1,
-                    'category' => 'A',
+                    'kind' => KindEnum::A->value,
                     'congressman_id' => 1,
                     'from' => '2001-01-01 00:00:00',
                     'to' => '2001-01-01 00:01:00',

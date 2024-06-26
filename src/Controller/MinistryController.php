@@ -103,7 +103,7 @@ class MinistryController implements
             $request->getAttribute('id')
         )) !== null) {
             $form = new Form\Ministry([
-                ...(new \Althingi\Hydrator\Ministry())->extract($ministry),
+                ...$ministry->toArray(),
                 ...$request->getParsedBody(),
                 'ministry_id' => $request->getAttribute('id'),
             ]);

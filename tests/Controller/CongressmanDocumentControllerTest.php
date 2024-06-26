@@ -4,6 +4,7 @@ namespace Althingi\Controller;
 
 use Althingi\Controller\CongressmanDocumentController;
 use Althingi\Model\CongressmanDocument as CongressmanDocumentModel;
+use Althingi\Model\KindEnum;
 use Althingi\Service\CongressmanDocument;
 use Althingi\ServiceHelper;
 use Library\Container\Container;
@@ -70,7 +71,7 @@ class CongressmanDocumentControllerTest extends TestCase
                 (new CongressmanDocumentModel())
                     ->setAssemblyId(145)
                     ->setIssueId(2)
-                    ->setCategory('A')
+                    ->setKind(KindEnum::A)
                     ->setCongressmanId(637)
                     ->setDocumentId(1018)
                     ->setOrder(1)

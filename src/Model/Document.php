@@ -12,14 +12,14 @@ class Document implements ModelInterface
     private DateTime $date;
     private ?string $url = null;
     private string $type;
-    private string $category;
+    private KindEnum $kind;
 
     public function getDocumentId(): int
     {
         return $this->document_id;
     }
 
-    public function setDocumentId(int $document_id): self
+    public function setDocumentId(int $document_id): static
     {
         $this->document_id = $document_id;
         return $this;
@@ -30,7 +30,7 @@ class Document implements ModelInterface
         return $this->issue_id;
     }
 
-    public function setIssueId(int $issue_id): self
+    public function setIssueId(int $issue_id): static
     {
         $this->issue_id = $issue_id;
         return $this;
@@ -41,7 +41,7 @@ class Document implements ModelInterface
         return $this->assembly_id;
     }
 
-    public function setAssemblyId(int $assembly_id): self
+    public function setAssemblyId(int $assembly_id): static
     {
         $this->assembly_id = $assembly_id;
         return $this;
@@ -52,7 +52,7 @@ class Document implements ModelInterface
         return $this->date;
     }
 
-    public function setDate(DateTime $date): self
+    public function setDate(DateTime $date): static
     {
         $this->date = $date;
         return $this;
@@ -63,7 +63,7 @@ class Document implements ModelInterface
         return $this->url;
     }
 
-    public function setUrl(?string $url): self
+    public function setUrl(?string $url): static
     {
         $this->url = $url;
         return $this;
@@ -74,20 +74,21 @@ class Document implements ModelInterface
         return $this->type;
     }
 
-    public function setType(string $type): self
+    public function setType(string $type): static
     {
         $this->type = $type;
         return $this;
     }
 
-    public function getCategory(): string
+    public function getKind(): KindEnum
     {
-        return $this->category;
+        return $this->kind;
     }
 
-    public function setCategory(string $category)
+    public function setKind(KindEnum $kind): static
     {
-        $this->category = $category;
+        $this->kind = $kind;
+
         return $this;
     }
 
@@ -96,7 +97,7 @@ class Document implements ModelInterface
         return [
             'document_id' => $this->document_id,
             'issue_id' => $this->issue_id,
-            'category' => $this->category,
+            'kind' => $this->kind->value,
             'assembly_id' => $this->assembly_id,
             'date' => $this->date?->format('Y-m-d H:i:s'),
             'url' => $this->url,

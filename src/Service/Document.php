@@ -7,6 +7,7 @@ use Althingi\Hydrator;
 use Althingi\Events\{UpdateEvent, AddEvent};
 use Althingi\Presenters\IndexableDocumentPresenter;
 use Althingi\Injector\{DatabaseAwareInterface, EventsAwareInterface};
+use Althingi\Model\KindEnum;
 use Exception;
 use Generator;
 use PDO;
@@ -40,13 +41,14 @@ class Document implements DatabaseAwareInterface, EventsAwareInterface
             select * from `Document` where
             `assembly_id` = :assembly_id  and
             `issue_id` = :issue_id and
-            `category` = 'A'
+            `kind` = :kind
             order by `date`
             limit 0, 1
         ");
         $statement->execute([
             'assembly_id' => $assemblyId,
             'issue_id' => $issueId,
+            'kind' => KindEnum::A
         ]);
 
         $object = $statement->fetch(PDO::FETCH_ASSOC);

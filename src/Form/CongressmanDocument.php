@@ -5,6 +5,7 @@ namespace Althingi\Form;
 use Althingi\Filter\ToInt;
 use Althingi\Hydrator;
 use Althingi\Model;
+use Althingi\Validator\IssueKind;
 use Althingi\Validator\SignedDigits;
 use Laminas\Filter\ToNull;
 use Laminas\Validator\NotEmpty;
@@ -25,15 +26,19 @@ class CongressmanDocument extends Form
     public function getValidationConfig(): array
     {
         return [
+            (new Input('assembly_id'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+            ,
             (new Input('issue_id'))
                 ->attachValidator(new NotEmpty())
                 ->attachValidator(new SignedDigits())
                 ->attachFilter(new ToInt())
             ,
-            (new Input('assembly_id'))
+            (new Input('kind'))
                 ->attachValidator(new NotEmpty())
-                ->attachValidator(new SignedDigits())
-                ->attachFilter(new ToInt())
+                ->attachValidator(new IssueKind())
             ,
             (new Input('document_id'))
                 ->attachValidator(new NotEmpty())
@@ -44,9 +49,6 @@ class CongressmanDocument extends Form
                 ->attachValidator(new NotEmpty())
                 ->attachValidator(new SignedDigits())
                 ->attachFilter(new ToInt())
-            ,
-            (new Input('category'))
-                ->attachValidator(new NotEmpty())
             ,
             (new Input('order'))
                 ->attachValidator(new NotEmpty())

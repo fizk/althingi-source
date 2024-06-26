@@ -6,6 +6,7 @@ use PHPUnit\Framework\TestCase;
 use Althingi\DatabaseConnection;
 use Althingi\Model\Category as CategoryModel;
 use Althingi\Model\CategoryAndCount as CategoryAndCountModel;
+use Althingi\Model\KindEnum;
 use PDO;
 
 class CategoryTest extends TestCase
@@ -160,12 +161,12 @@ class CategoryTest extends TestCase
                 ['assembly_id' => 2, 'from' => '2000-01-01', 'to' => null],
             ],
             'Issue' => [
-                ['issue_id' => 1, 'assembly_id' => 1, 'category' => 'A'],
-                ['issue_id' => 2, 'assembly_id' => 1, 'category' => 'A'],
-                ['issue_id' => 3, 'assembly_id' => 1, 'category' => 'A'],
-                ['issue_id' => 4, 'assembly_id' => 1, 'category' => 'A'],
-                ['issue_id' => 5, 'assembly_id' => 2, 'category' => 'A'],
-                ['issue_id' => 6, 'assembly_id' => 2, 'category' => 'A'],
+                ['issue_id' => 1, 'assembly_id' => 1, 'kind' => KindEnum::A->value],
+                ['issue_id' => 2, 'assembly_id' => 1, 'kind' => KindEnum::A->value],
+                ['issue_id' => 3, 'assembly_id' => 1, 'kind' => KindEnum::A->value],
+                ['issue_id' => 4, 'assembly_id' => 1, 'kind' => KindEnum::A->value],
+                ['issue_id' => 5, 'assembly_id' => 2, 'kind' => KindEnum::A->value],
+                ['issue_id' => 6, 'assembly_id' => 2, 'kind' => KindEnum::A->value],
             ],
             'SuperCategory' => [
                ['super_category_id' => 1, 'title' => 'title'],
@@ -176,11 +177,11 @@ class CategoryTest extends TestCase
                 ['category_id' => 3, 'super_category_id' => 1, 'title' => 't2', 'description' => 'd2'],
             ],
             'Category_has_Issue' => [
-                ['category_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'category' => 'A'],
-                ['category_id' => 2, 'issue_id' => 2, 'assembly_id' => 1, 'category' => 'A'],
-                ['category_id' => 2, 'issue_id' => 3, 'assembly_id' => 1, 'category' => 'A'],
-                ['category_id' => 2, 'issue_id' => 4, 'assembly_id' => 1, 'category' => 'A'],
-                ['category_id' => 2, 'issue_id' => 5, 'assembly_id' => 2, 'category' => 'A'],
+                ['category_id' => 1, 'issue_id' => 1, 'assembly_id' => 1, 'kind' => KindEnum::A->value],
+                ['category_id' => 2, 'issue_id' => 2, 'assembly_id' => 1, 'kind' => KindEnum::A->value],
+                ['category_id' => 2, 'issue_id' => 3, 'assembly_id' => 1, 'kind' => KindEnum::A->value],
+                ['category_id' => 2, 'issue_id' => 4, 'assembly_id' => 1, 'kind' => KindEnum::A->value],
+                ['category_id' => 2, 'issue_id' => 5, 'assembly_id' => 2, 'kind' => KindEnum::A->value],
             ],
         ]);
     }

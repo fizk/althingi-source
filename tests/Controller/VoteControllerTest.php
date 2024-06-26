@@ -3,6 +3,7 @@
 namespace Althingi\Controller;
 
 use Althingi\Controller\VoteController;
+use Althingi\Model\KindEnum;
 use Althingi\Service\Vote;
 use Althingi\ServiceHelper;
 use Library\Container\Container;
@@ -45,7 +46,7 @@ class VoteControllerTest extends TestCase
         $this->getMockService(Vote::class)
             ->shouldReceive('get')
             ->with(3)
-            ->andReturn((new \Althingi\Model\Vote()))
+            ->andReturn((new \Althingi\Model\Vote())->setKind(KindEnum::A))
             ->once()
             ->getMock();
 
@@ -83,7 +84,7 @@ class VoteControllerTest extends TestCase
         $this->getMockService(Vote::class)
             ->shouldReceive('fetchByIssue')
             ->with(1, 2)
-            ->andReturn([(new \Althingi\Model\Vote())])
+            ->andReturn([(new \Althingi\Model\Vote())->setKind(KindEnum::A)])
             ->once()
             ->getMock()
         ;
@@ -149,14 +150,14 @@ class VoteControllerTest extends TestCase
             ->setAssemblyId(1)
             ->setDate(new \DateTime('2000-01-01 00:00:00'))
             ->setType('type')
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setMethod('method');
 
         $expectedData = (new \Althingi\Model\Vote())
             ->setVoteId(3)
             ->setIssueId(2)
             ->setAssemblyId(1)
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setDate(new \DateTime('2001-01-01 01:02:03'))
             ->setType('type')
             ->setMethod('method');

@@ -7,6 +7,7 @@ use Althingi\Hydrator;
 use Althingi\Events\{UpdateEvent, AddEvent};
 use Althingi\Presenters\IndexableIssueLinkPresenter;
 use Althingi\Injector\{EventsAwareInterface, DatabaseAwareInterface};
+use Althingi\Model\KindEnum;
 use PDO;
 
 class IssueLink implements DatabaseAwareInterface, EventsAwareInterface
@@ -17,7 +18,7 @@ class IssueLink implements DatabaseAwareInterface, EventsAwareInterface
     /**
      * @return \Althingi\Model\Issue
      */
-    public function fetchAll(int $assemblyId, int $issueId, string $category = 'A'): array
+    public function fetchAll(int $assemblyId, int $issueId, KindEnum $kind = KindEnum::A): array
     {
         $statement = $this->getDriver()
             ->prepare("
@@ -25,13 +26,13 @@ class IssueLink implements DatabaseAwareInterface, EventsAwareInterface
                     join Issue I on (
                           IL.to_assembly_id = I.assembly_id
                           and IL.to_issue_id = I.issue_id
-                          and IL.to_category = I.category
+                          and IL.to_kind = I.kind
                       )
                 where IL.from_assembly_id = :assembly_id
                   and IL.from_issue_id = :issue_id
-                  and IL.from_category = :category;
+                  and IL.from_kind = :kind;
             ");
-        $statement->execute(['assembly_id' => $assemblyId, 'issue_id' => $issueId, 'category' => $category]);
+        $statement->execute(['assembly_id' => $assemblyId, 'issue_id' => $issueId, 'kind' => $kind]);
 
         return array_map(function ($issue) {
             return (new Hydrator\Issue())->hydrate($issue, new Model\Issue());
@@ -83,10 +84,10 @@ class IssueLink implements DatabaseAwareInterface, EventsAwareInterface
                 $data,
                 "to_assembly_id={$data->getAssemblyId()} and" .
                 "to_issue_id={$data->getIssueId()} and" .
-                "to_category={$data->getCategory()} and" .
+                "to_kind={$data->getKind()->value} and" .
                 "from_assembly_id={$data->getFromAssemblyId()} and" .
                 "from_issue_id={$data->getFromIssueId()} and" .
-                "from_category={$data->getFromCategory()}"
+                "from_kind={$data->getFromKind()->value}"
             )
         );
         $statement->execute($this->toSqlValues($data));

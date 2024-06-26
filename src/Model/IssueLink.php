@@ -6,10 +6,10 @@ class IssueLink implements ModelInterface
 {
     private $from_assembly_id;
     private $from_issue_id;
-    private $from_category;
+    private KindEnum $from_kind;
     private $assembly_id;
     private $issue_id;
-    private $category;
+    private KindEnum $kind;
     private ?string $type = null;
 
     public function getFromAssemblyId(): int
@@ -17,7 +17,7 @@ class IssueLink implements ModelInterface
         return $this->from_assembly_id;
     }
 
-    public function setFromAssemblyId(int $from_assembly_id): self
+    public function setFromAssemblyId(int $from_assembly_id): static
     {
         $this->from_assembly_id = $from_assembly_id;
         return $this;
@@ -28,20 +28,21 @@ class IssueLink implements ModelInterface
         return $this->from_issue_id;
     }
 
-    public function setFromIssueId(int $from_issue_id): self
+    public function setFromIssueId(int $from_issue_id): static
     {
         $this->from_issue_id = $from_issue_id;
         return $this;
     }
 
-    public function getFromCategory(): string
+    public function getFromKind(): KindEnum
     {
-        return $this->from_category;
+        return $this->from_kind;
     }
 
-    public function setFromCategory(string $from_category): self
+    public function setFromKind(KindEnum $from_kind): static
     {
-        $this->from_category = $from_category;
+        $this->from_kind = $from_kind;
+
         return $this;
     }
 
@@ -50,7 +51,7 @@ class IssueLink implements ModelInterface
         return $this->assembly_id;
     }
 
-    public function setAssemblyId(int $assembly_id): self
+    public function setAssemblyId(int $assembly_id): static
     {
         $this->assembly_id = $assembly_id;
         return $this;
@@ -61,20 +62,21 @@ class IssueLink implements ModelInterface
         return $this->issue_id;
     }
 
-    public function setIssueId(int $issue_id): self
+    public function setIssueId(int $issue_id): static
     {
         $this->issue_id = $issue_id;
         return $this;
     }
 
-    public function getCategory(): string
+    public function getKind(): KindEnum
     {
-        return $this->category;
+        return $this->kind;
     }
 
-    public function setCategory(string $category): self
+    public function setKind(KindEnum $kind): static
     {
-        $this->category = $category;
+        $this->kind = $kind;
+
         return $this;
     }
 
@@ -83,7 +85,7 @@ class IssueLink implements ModelInterface
         return $this->type;
     }
 
-    public function setType(?string $type): self
+    public function setType(?string $type): static
     {
         $this->type = $type;
         return $this;
@@ -94,10 +96,10 @@ class IssueLink implements ModelInterface
         return [
             'to_assembly_id' => $this->assembly_id,
             'to_issue_id' => $this->issue_id,
-            'to_category' => $this->category,
+            'to_kind' => $this->kind->value,
             'from_assembly_id' => $this->from_assembly_id,
             'from_issue_id' => $this->from_issue_id,
-            'from_category' => $this->from_category,
+            'from_kind' => $this->from_kind->value,
             'type' => $this->type,
         ];
     }

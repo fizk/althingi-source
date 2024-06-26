@@ -109,7 +109,7 @@ class AssemblyController implements
     {
         if (($assembly = $this->assemblyService->get($request->getAttribute('id'))) != null) {
             $form = new Form\Assembly([
-                ...(new \Althingi\Hydrator\Assembly())->extract($assembly),
+                ...$assembly->toArray(),
                 ...$request->getParsedBody(),
                 'assembly_id' => $request->getAttribute('id'),
             ]);

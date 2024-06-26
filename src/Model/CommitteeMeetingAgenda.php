@@ -7,9 +7,9 @@ class CommitteeMeetingAgenda implements ModelInterface
     private $committee_meeting_agenda_id;
     private $committee_meeting_id;
     private ?int $issue_id = null;
-    private $assembly_id;
+    private int $assembly_id;
     private ?string $title = null;
-    private ?string $category;
+    private ?KindEnum $kind;
 
     public function getCommitteeMeetingAgendaId(): int
     {
@@ -66,14 +66,15 @@ class CommitteeMeetingAgenda implements ModelInterface
         return $this;
     }
 
-    public function getCategory(): ?string
+    public function getKind(): ?KindEnum
     {
-        return $this->category;
+        return $this->kind;
     }
 
-    public function setCategory(?string $category)
+    public function setKind(?KindEnum $kind): self
     {
-        $this->category = $category;
+        $this->kind = $kind;
+
         return $this;
     }
 
@@ -83,7 +84,7 @@ class CommitteeMeetingAgenda implements ModelInterface
             'committee_meeting_agenda_id' => $this->committee_meeting_agenda_id,
             'committee_meeting_id' => $this->committee_meeting_id,
             'issue_id' => $this->issue_id,
-            'category' => $this->category,
+            'kind' => $this->kind?->value ?? null,
             'assembly_id' => $this->assembly_id,
             'title' => $this->title,
         ];

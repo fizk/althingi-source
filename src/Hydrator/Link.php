@@ -2,6 +2,7 @@
 
 namespace Althingi\Hydrator;
 
+use Althingi\Model\KindEnum;
 use Laminas\Hydrator\HydratorInterface;
 
 class Link implements HydratorInterface
@@ -18,7 +19,7 @@ class Link implements HydratorInterface
         return $object
             ->setIssueId($data['issue_id'])
             ->setAssemblyId($data['assembly_id'])
-            ->setCategory($data['category'])
+            ->setKind(KindEnum::fromString($data['kind']))
             ->setType(array_key_exists('type', $data) ? $data['type'] : 'related')
             ;
     }

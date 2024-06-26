@@ -7,14 +7,14 @@ class IssueCategory implements ModelInterface
     private int $category_id;
     private int $issue_id;
     private int $assembly_id;
-    private string $category;
+    private KindEnum $kind;
 
     public function getCategoryId(): int
     {
         return $this->category_id;
     }
 
-    public function setCategoryId(int $category_id): self
+    public function setCategoryId(int $category_id): static
     {
         $this->category_id = $category_id;
         return $this;
@@ -25,7 +25,7 @@ class IssueCategory implements ModelInterface
         return $this->issue_id;
     }
 
-    public function setIssueId(int $issue_id): self
+    public function setIssueId(int $issue_id): static
     {
         $this->issue_id = $issue_id;
         return $this;
@@ -36,20 +36,21 @@ class IssueCategory implements ModelInterface
         return $this->assembly_id;
     }
 
-    public function setAssemblyId(int $assembly_id): self
+    public function setAssemblyId(int $assembly_id): static
     {
         $this->assembly_id = $assembly_id;
         return $this;
     }
 
-    public function getCategory(): string
+    public function getKind(): KindEnum
     {
-        return $this->category;
+        return $this->kind;
     }
 
-    public function setCategory(string $category)
+    public function setKind(KindEnum $kind): static
     {
-        $this->category = $category;
+        $this->kind = $kind;
+
         return $this;
     }
 
@@ -59,7 +60,7 @@ class IssueCategory implements ModelInterface
             'category_id' => $this->category_id,
             'issue_id' => $this->issue_id,
             'assembly_id' => $this->assembly_id,
-            'category' => $this->category,
+            'kind' => $this->kind->value,
         ];
     }
 

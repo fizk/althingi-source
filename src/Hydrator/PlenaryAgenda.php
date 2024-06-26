@@ -2,6 +2,7 @@
 
 namespace Althingi\Hydrator;
 
+use Althingi\Model\KindEnum;
 use Laminas\Hydrator\HydratorInterface;
 
 class PlenaryAgenda implements HydratorInterface
@@ -20,7 +21,7 @@ class PlenaryAgenda implements HydratorInterface
             ->setPlenaryId($data['plenary_id'])
             ->setIssueId($data['issue_id'])
             ->setAssemblyId($data['assembly_id'])
-            ->setCategory($data['category'])
+            ->setKind(KindEnum::fromString($data['kind']))
             ->setIterationType($data['iteration_type'])
             ->setIterationContinue($data['iteration_continue'])
             ->setIterationComment($data['iteration_comment'])

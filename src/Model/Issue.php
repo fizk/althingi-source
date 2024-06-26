@@ -7,7 +7,7 @@ class Issue implements ModelInterface
     private $issue_id;
     private $assembly_id;
     private ?int $congressman_id = null;
-    private $category;
+    private KindEnum $kind = KindEnum::A;
     private ?string $name = null;
     private ?string $sub_name = null;
     private ?string $type = null;
@@ -27,7 +27,7 @@ class Issue implements ModelInterface
         return $this->issue_id;
     }
 
-    public function setIssueId(int $issue_id): self
+    public function setIssueId(int $issue_id): static
     {
         $this->issue_id = $issue_id;
         return $this;
@@ -38,7 +38,7 @@ class Issue implements ModelInterface
         return $this->assembly_id;
     }
 
-    public function setAssemblyId(int $assembly_id): self
+    public function setAssemblyId(int $assembly_id): static
     {
         $this->assembly_id = $assembly_id;
         return $this;
@@ -49,20 +49,21 @@ class Issue implements ModelInterface
         return $this->congressman_id;
     }
 
-    public function setCongressmanId(?int $congressman_id): self
+    public function setCongressmanId(?int $congressman_id): static
     {
         $this->congressman_id = $congressman_id;
         return $this;
     }
 
-    public function getCategory(): string
+    public function getKind(): KindEnum
     {
-        return $this->category;
+        return $this->kind;
     }
 
-    public function setCategory(string $category): self
+    public function setKind(KindEnum $kind): static
     {
-        $this->category = $category;
+        $this->kind = $kind;
+
         return $this;
     }
 
@@ -71,7 +72,7 @@ class Issue implements ModelInterface
         return $this->name;
     }
 
-    public function setName(?string $name): self
+    public function setName(?string $name): static
     {
         $this->name = $name;
         return $this;
@@ -82,7 +83,7 @@ class Issue implements ModelInterface
         return $this->sub_name;
     }
 
-    public function setSubName(?string $sub_name): self
+    public function setSubName(?string $sub_name): static
     {
         $this->sub_name = $sub_name;
         return $this;
@@ -93,7 +94,7 @@ class Issue implements ModelInterface
         return $this->type;
     }
 
-    public function setType(?string $type): self
+    public function setType(?string $type): static
     {
         $this->type = $type;
         return $this;
@@ -104,7 +105,7 @@ class Issue implements ModelInterface
         return $this->type_name;
     }
 
-    public function setTypeName(?string $type_name): self
+    public function setTypeName(?string $type_name): static
     {
         $this->type_name = $type_name;
         return $this;
@@ -115,7 +116,7 @@ class Issue implements ModelInterface
         return $this->type_subname;
     }
 
-    public function setTypeSubname(?string $type_subname): self
+    public function setTypeSubname(?string $type_subname): static
     {
         $this->type_subname = $type_subname;
         return $this;
@@ -126,7 +127,7 @@ class Issue implements ModelInterface
         return $this->status;
     }
 
-    public function setStatus(?string $status): self
+    public function setStatus(?string $status): static
     {
         $this->status = $status;
         return $this;
@@ -137,7 +138,7 @@ class Issue implements ModelInterface
         return $this->question;
     }
 
-    public function setQuestion(?string $question): self
+    public function setQuestion(?string $question): static
     {
         $this->question = $question;
         return $this;
@@ -148,7 +149,7 @@ class Issue implements ModelInterface
         return $this->goal;
     }
 
-    public function setGoal(?string $goal): self
+    public function setGoal(?string $goal): static
     {
         $this->goal = $goal;
         return $this;
@@ -159,7 +160,7 @@ class Issue implements ModelInterface
         return $this->major_changes;
     }
 
-    public function setMajorChanges(?string $major_changes): self
+    public function setMajorChanges(?string $major_changes): static
     {
         $this->major_changes = $major_changes;
         return $this;
@@ -170,7 +171,7 @@ class Issue implements ModelInterface
         return $this->changes_in_law;
     }
 
-    public function setChangesInLaw(?string $changes_in_law): self
+    public function setChangesInLaw(?string $changes_in_law): static
     {
         $this->changes_in_law = $changes_in_law;
         return $this;
@@ -181,7 +182,7 @@ class Issue implements ModelInterface
         return $this->costs_and_revenues;
     }
 
-    public function setCostsAndRevenues(?string $costs_and_revenues): self
+    public function setCostsAndRevenues(?string $costs_and_revenues): static
     {
         $this->costs_and_revenues = $costs_and_revenues;
         return $this;
@@ -192,7 +193,7 @@ class Issue implements ModelInterface
         return $this->deliveries;
     }
 
-    public function setDeliveries(?string $deliveries): self
+    public function setDeliveries(?string $deliveries): static
     {
         $this->deliveries = $deliveries;
         return $this;
@@ -203,7 +204,7 @@ class Issue implements ModelInterface
         return $this->additional_information;
     }
 
-    public function setAdditionalInformation(?string $additional_information): self
+    public function setAdditionalInformation(?string $additional_information): static
     {
         $this->additional_information = $additional_information;
         return $this;
@@ -211,12 +212,12 @@ class Issue implements ModelInterface
 
     public function isA()
     {
-        return $this->category === 'A';
+        return $this->kind === KindEnum::A;
     }
 
     public function isB()
     {
-        return $this->category === 'B';
+        return $this->kind === KindEnum::B;
     }
 
     public function toArray(): array
@@ -225,7 +226,7 @@ class Issue implements ModelInterface
             'issue_id' => $this->issue_id,
             'assembly_id' => $this->assembly_id,
             'congressman_id' => $this->congressman_id,
-            'category' => $this->category,
+            'kind' => $this->kind,
             'name' => $this->name,
             'sub_name' => $this->sub_name,
             'type' => $this->type,

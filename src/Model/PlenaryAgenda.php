@@ -7,7 +7,7 @@ class PlenaryAgenda implements ModelInterface
     private int $plenaryId;
     private int $issueId;
     private int $assemblyId;
-    private string $category;
+    private KindEnum $kind;
     private ?string $iterationType = null;
     private ?string $iterationContinue = null;
     private ?string $iterationComment = null;
@@ -27,7 +27,7 @@ class PlenaryAgenda implements ModelInterface
         return $this->itemId;
     }
 
-    public function setItemId(int $itemId): self
+    public function setItemId(int $itemId): static
     {
         $this->itemId = $itemId;
         return $this;
@@ -38,7 +38,7 @@ class PlenaryAgenda implements ModelInterface
         return $this->plenaryId;
     }
 
-    public function setPlenaryId(int $plenaryId): self
+    public function setPlenaryId(int $plenaryId): static
     {
         $this->plenaryId = $plenaryId;
         return $this;
@@ -49,7 +49,7 @@ class PlenaryAgenda implements ModelInterface
         return $this->issueId;
     }
 
-    public function setIssueId(int $issueId): self
+    public function setIssueId(int $issueId): static
     {
         $this->issueId = $issueId;
         return $this;
@@ -60,20 +60,21 @@ class PlenaryAgenda implements ModelInterface
         return $this->assemblyId;
     }
 
-    public function setAssemblyId(int $assemblyId): self
+    public function setAssemblyId(int $assemblyId): static
     {
         $this->assemblyId = $assemblyId;
         return $this;
     }
 
-    public function getCategory(): string
+    public function getKind(): KindEnum
     {
-        return $this->category;
+        return $this->kind;
     }
 
-    public function setCategory(string $category): self
+    public function setKind(KindEnum $kind): static
     {
-        $this->category = $category;
+        $this->kind = $kind;
+
         return $this;
     }
 
@@ -82,7 +83,7 @@ class PlenaryAgenda implements ModelInterface
         return $this->iterationType;
     }
 
-    public function setIterationType(?string $iterationType): self
+    public function setIterationType(?string $iterationType): static
     {
         $this->iterationType = $iterationType;
         return $this;
@@ -93,7 +94,7 @@ class PlenaryAgenda implements ModelInterface
         return $this->iterationContinue;
     }
 
-    public function setIterationContinue(?string $iterationContinue): self
+    public function setIterationContinue(?string $iterationContinue): static
     {
         $this->iterationContinue = $iterationContinue;
         return $this;
@@ -104,7 +105,7 @@ class PlenaryAgenda implements ModelInterface
         return $this->iterationComment;
     }
 
-    public function setIterationComment(?string $iterationComment): self
+    public function setIterationComment(?string $iterationComment): static
     {
         $this->iterationComment = $iterationComment;
         return $this;
@@ -115,7 +116,7 @@ class PlenaryAgenda implements ModelInterface
         return $this->comment;
     }
 
-    public function setComment(?string $comment): self
+    public function setComment(?string $comment): static
     {
         $this->comment = $comment;
         return $this;
@@ -126,7 +127,7 @@ class PlenaryAgenda implements ModelInterface
         return $this->commentType;
     }
 
-    public function setCommentType(?string $commentType): self
+    public function setCommentType(?string $commentType): static
     {
         $this->commentType = $commentType;
         return $this;
@@ -137,7 +138,7 @@ class PlenaryAgenda implements ModelInterface
         return $this->posedId;
     }
 
-    public function setPosedId(?int $posedId): self
+    public function setPosedId(?int $posedId): static
     {
         $this->posedId = $posedId;
         return $this;
@@ -148,7 +149,7 @@ class PlenaryAgenda implements ModelInterface
         return $this->posed;
     }
 
-    public function setPosed(?string $posed): self
+    public function setPosed(?string $posed): static
     {
         $this->posed = $posed;
         return $this;
@@ -159,7 +160,7 @@ class PlenaryAgenda implements ModelInterface
         return $this->answererId;
     }
 
-    public function setAnswererId(?int $answererId): self
+    public function setAnswererId(?int $answererId): static
     {
         $this->answererId = $answererId;
         return $this;
@@ -170,7 +171,7 @@ class PlenaryAgenda implements ModelInterface
         return $this->answerer;
     }
 
-    public function setAnswerer(?string $answerer): self
+    public function setAnswerer(?string $answerer): static
     {
         $this->answerer = $answerer;
         return $this;
@@ -181,7 +182,7 @@ class PlenaryAgenda implements ModelInterface
         return $this->counterAnswererId;
     }
 
-    public function setCounterAnswererId(?int $counterAnswererId): self
+    public function setCounterAnswererId(?int $counterAnswererId): static
     {
         $this->counterAnswererId = $counterAnswererId;
         return $this;
@@ -192,7 +193,7 @@ class PlenaryAgenda implements ModelInterface
         return $this->counterAnswerer;
     }
 
-    public function setCounterAnswerer(?string $counterAnswerer): self
+    public function setCounterAnswerer(?string $counterAnswerer): static
     {
         $this->counterAnswerer = $counterAnswerer;
         return $this;
@@ -203,7 +204,7 @@ class PlenaryAgenda implements ModelInterface
         return $this->instigatorId;
     }
 
-    public function setInstigatorId(?int $instigatorId): self
+    public function setInstigatorId(?int $instigatorId): static
     {
         $this->instigatorId = $instigatorId;
         return $this;
@@ -214,7 +215,7 @@ class PlenaryAgenda implements ModelInterface
         return $this->instigator;
     }
 
-    public function setInstigator(?string $instigator): self
+    public function setInstigator(?string $instigator): static
     {
         $this->instigator = $instigator;
         return $this;
@@ -227,7 +228,7 @@ class PlenaryAgenda implements ModelInterface
             'plenary_id' => $this->plenaryId,
             'issue_id' => $this->issueId,
             'assembly_id' => $this->assemblyId,
-            'category' => $this->category,
+            'kind' => $this->kind,
             'iteration_type' => $this->iterationType,
             'iteration_continue' => $this->iterationContinue,
             'iteration_comment' => $this->iterationComment,

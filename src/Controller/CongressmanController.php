@@ -90,7 +90,7 @@ class CongressmanController implements
             $request->getAttribute('congressman_id')
         )) != null) {
             $form = new Form\Congressman([
-                ...(new \Althingi\Hydrator\Congressman)->extract($congressman),
+                ...$congressman->toArray(),
                 ...$request->getParsedBody(),
                 'congressman_id' => $request->getAttribute('congressman_id'),
             ]);

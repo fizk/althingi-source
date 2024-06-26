@@ -10,6 +10,7 @@ use Althingi\Events\UpdateEvent;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\Issue as IssueModel;
 use Althingi\Model\IssueAndDate as IssueAndDateModel;
+use Althingi\Model\KindEnum;
 use Mockery;
 use PDO;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -33,7 +34,7 @@ class IssueTest extends TestCase
             ->setType('l')
             ->setTypeSubname('something')
             ->setStatus('some')
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setDate(new \DateTime('2000-01-01'));
         $this->assertEquals($expectedDataWithDate, $actualDataWithDate);
     }
@@ -43,7 +44,7 @@ class IssueTest extends TestCase
         $service = new Issue();
         $service->setDriver($this->pdo);
 
-        $expectedDataWithDate = $service->getWithDate(1, 1, 'B');
+        $expectedDataWithDate = $service->getWithDate(1, 1, KindEnum::B);
         $actualDataWithDate = (new IssueAndDateModel())
             ->setIssueId(1)
             ->setAssemblyId(1)
@@ -51,7 +52,7 @@ class IssueTest extends TestCase
             ->setType(null)
             ->setTypeSubname(null)
             ->setStatus(null)
-            ->setCategory('B')
+            ->setKind(KindEnum::B)
             ->setDate(null);
         $this->assertEquals($expectedDataWithDate, $actualDataWithDate);
     }
@@ -83,7 +84,7 @@ class IssueTest extends TestCase
         $service = new Issue();
         $service->setDriver($this->pdo);
 
-        $issues = $service->fetchByAssembly(1, 0, 25, null, [], [], ['B']);
+        $issues = $service->fetchByAssembly(1, 0, 25, null, [], [], [KindEnum::B]);
 
         $this->assertCount(1, $issues);
         $this->assertInstanceOf(IssueAndDateModel::class, $issues[0]);
@@ -94,7 +95,7 @@ class IssueTest extends TestCase
         $service = new Issue();
         $service->setDriver($this->pdo);
 
-        $issues = $service->fetchByAssembly(1, 0, 25, null, [], [], ['A', 'B']);
+        $issues = $service->fetchByAssembly(1, 0, 25, null, [], [], [KindEnum::A, KindEnum::B]);
 
         $this->assertCount(4, $issues);
         $this->assertInstanceOf(IssueAndDateModel::class, $issues[0]);
@@ -183,7 +184,8 @@ class IssueTest extends TestCase
         $issue = (new IssueModel())
             ->setAssemblyId(1)
             ->setIssueId(4)
-            ->setCategory('A');
+            ->setKind(KindEnum::A)
+        ;
 
         $issueService = new Issue();
         $issueService->setDriver($this->pdo);
@@ -217,7 +219,8 @@ class IssueTest extends TestCase
             ->setAssemblyId(1)
             ->setIssueId(4)
             ->setType('ab')
-            ->setCategory('A');
+            ->setKind(KindEnum::A)
+        ;
 
         $issueService = new Issue();
         $issueService->setDriver($this->pdo);
@@ -250,7 +253,7 @@ class IssueTest extends TestCase
         $issue = (new IssueModel())
             ->setAssemblyId(1)
             ->setIssueId(3)
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setStatus('awesome');
 
         $issueService = new Issue();
@@ -266,13 +269,13 @@ class IssueTest extends TestCase
                     'type' => null,
                     'status' => 'awesome',
                     'type_subname' => null,
-                    'category' => 'A'
+                    'kind' => KindEnum::A->value
                 ],
             ],
         ])->getTable('Issue');
         $queryTable = $this->getConnection()->createQueryTable(
             'Issue',
-            'SELECT `issue_id`, `assembly_id`, `congressman_id`, `type`, `status`, `type_subname`, `category`
+            'SELECT `issue_id`, `assembly_id`, `congressman_id`, `type`, `status`, `type_subname`, `kind`
               FROM Issue
               WHERE issue_id = 3 AND assembly_id = 1'
         );
@@ -294,7 +297,8 @@ class IssueTest extends TestCase
         $issue = (new IssueModel())
             ->setAssemblyId(1)
             ->setIssueId(4)
-            ->setCategory('A');
+            ->setKind(KindEnum::A)
+        ;
 
         (new Issue())
             ->setDriver($this->pdo)
@@ -316,7 +320,7 @@ class IssueTest extends TestCase
         $issue = (new IssueModel())
             ->setAssemblyId(1)
             ->setIssueId(1)
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setCongressmanId(1)
             ->setType('l')
             ->setStatus('some')
@@ -343,7 +347,7 @@ class IssueTest extends TestCase
         $issue = (new IssueModel())
             ->setAssemblyId(1)
             ->setIssueId(1)
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setCongressmanId(1)
             ->setType('l')
             ->setStatus('some')
@@ -370,7 +374,7 @@ class IssueTest extends TestCase
         $issue = (new IssueModel())
             ->setAssemblyId(1)
             ->setIssueId(4)
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setCongressmanId(1)
             ->setType('l')
             ->setStatus('some')
@@ -397,7 +401,7 @@ class IssueTest extends TestCase
         $issue = (new IssueModel())
             ->setAssemblyId(1)
             ->setIssueId(1)
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setCongressmanId(1)
             ->setType('l')
             ->setStatus('some')
@@ -424,7 +428,7 @@ class IssueTest extends TestCase
         $issue = (new IssueModel())
             ->setAssemblyId(1)
             ->setIssueId(1)
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setCongressmanId(1)
             ->setType('l')
             ->setStatus('some')
@@ -452,7 +456,7 @@ class IssueTest extends TestCase
                 [
                     'issue_id' => 1,
                     'assembly_id' => 1,
-                    'category' => 'A',
+                    'kind' => KindEnum::A->value,
                     'congressman_id' => 1,
                     'type' => 'l',
                     'status' => 'some',
@@ -460,23 +464,23 @@ class IssueTest extends TestCase
                 ], [
                     'issue_id' => 2,
                     'assembly_id' => 1,
-                    'category' => 'A',
+                    'kind' => KindEnum::A->value,
                     'type' => 'l',
                     'status' => 'some',
                     'type_subname' => 'stjórnarfrumvarp'
                 ],
-                ['issue_id' => 3, 'assembly_id' => 1, 'category' => 'A'],
-                ['issue_id' => 1, 'assembly_id' => 2, 'category' => 'A'],
+                ['issue_id' => 3, 'assembly_id' => 1, 'kind' => KindEnum::A->value],
+                ['issue_id' => 1, 'assembly_id' => 2, 'kind' => KindEnum::A->value],
 
 
-                ['issue_id' => 1, 'assembly_id' => 1, 'category' => 'B'],
-                ['issue_id' => 1, 'assembly_id' => 2, 'category' => 'B'],
+                ['issue_id' => 1, 'assembly_id' => 1, 'kind' => KindEnum::B->value],
+                ['issue_id' => 1, 'assembly_id' => 2, 'kind' => KindEnum::B->value],
             ],
             'Document' => [
                 [
                     'document_id' => 1,
                     'issue_id' => 1,
-                    'category' => 'A',
+                    'kind' => KindEnum::A->value,
                     'assembly_id' => 1,
                     'date' => '2000-01-01',
                     'url' => '',
@@ -484,7 +488,7 @@ class IssueTest extends TestCase
                 ], [
                     'document_id' => 2,
                     'issue_id' => 1,
-                    'category' => 'A',
+                    'kind' => KindEnum::A->value,
                     'assembly_id' => 1,
                     'date' => '2000-01-02',
                     'url' => '',
@@ -492,7 +496,7 @@ class IssueTest extends TestCase
                 ], [
                     'document_id' => 3,
                     'issue_id' => 1,
-                    'category' => 'A',
+                    'kind' => KindEnum::A->value,
                     'assembly_id' => 1,
                     'date' => '2000-01-03',
                     'url' => '',

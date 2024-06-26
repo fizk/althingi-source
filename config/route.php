@@ -144,10 +144,10 @@ return [
                 'thingmal' => [
                     'type' => Segment::class,
                     'options' => [
-                        'route'    => '/thingmal[/:category[/:issue_id]]',
+                        'route'    => '/thingmal[/:kind[/:issue_id]]',
                         'constraints' => [
                             'issue_id' => '[0-9]+',
-                            'category' => '[abAB]',
+                            'kind' => '[abAB]',
                         ],
                         'defaults' => [
                             'controller' => Controller\IssueController::class,

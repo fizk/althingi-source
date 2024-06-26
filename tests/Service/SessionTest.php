@@ -6,6 +6,7 @@ use Althingi\Service\Session;
 use Althingi\DatabaseConnection;
 use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;
+use Althingi\Model\KindEnum;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\Session as SessionModel;
 use Mockery;
@@ -536,7 +537,7 @@ class SessionTest extends TestCase
                 ],
             ],
             'Issue' => [
-                ['issue_id' => 1, 'assembly_id' => 1, 'category' => 'A'],
+                ['issue_id' => 1, 'assembly_id' => 1, 'kind' => KindEnum::A->value],
             ],
             'Plenary' => [
                 ['plenary_id' => 1, 'assembly_id' => 1],

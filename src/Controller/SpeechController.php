@@ -20,6 +20,7 @@ use Althingi\Injector\{
     ServicePlenaryAwareInterface,
     ServiceSpeechAwareInterface
 };
+use Althingi\Model\KindEnum;
 use Althingi\Utils\{
     ErrorFormResponse,
     ErrorExceptionResponse
@@ -57,11 +58,11 @@ class SpeechController implements
     {
         $assemblyId = $request->getAttribute('id');
         $issueId = $request->getAttribute('issue_id');
-        $category = strtoupper($request->getAttribute('category', 'a'));
+        $kind = KindEnum::fromString($request->getAttribute('kind', 'a'));
         $speechId = $request->getAttribute('speech_id');
 
-        $count = $this->speechService->countByIssue($assemblyId, $issueId, $category);
-        $speeches = $this->speechService->fetch($speechId, $assemblyId, $issueId, 25, $category);
+        $count = $this->speechService->countByIssue($assemblyId, $issueId, $kind);
+        $speeches = $this->speechService->fetch($speechId, $assemblyId, $issueId, 25, $kind);
         $positionBegin = (count($speeches) > 0)
             ? $speeches[0]->getPosition()
             : 0 ;
@@ -109,12 +110,12 @@ class SpeechController implements
     {
         $assemblyId = $request->getAttribute('id');
         $issueId = $request->getAttribute('issue_id');
-        $category = strtoupper($request->getAttribute('category', 'a'));
+        $kind = KindEnum::fromString($request->getAttribute('kind', 'a'));
 
         $speechesAndProperties = $this->speechService->fetchAllByIssue(
             $assemblyId,
             $issueId,
-            $category,
+            $kind,
         );
 
         return new JsonResponse($speechesAndProperties, 206);
@@ -136,14 +137,14 @@ class SpeechController implements
     {
         $assemblyId = $request->getAttribute('id');
         $issueId = $request->getAttribute('issue_id');
-        $category = strtoupper($request->getAttribute('category', 'a'));
+        $kind = KindEnum::fromString($request->getAttribute('kind', 'a'));
 
         $form = new Form\Speech([
             ...$request->getParsedBody(),
             'speech_id' => $request->getAttribute('speech_id'),
             'issue_id' => $issueId,
             'assembly_id' => $assemblyId,
-            'category' => $category,
+            'category' => $kind,
         ]);
 
         if ($form->isValid()) {
@@ -201,7 +202,7 @@ class SpeechController implements
 
         if (($speech = $this->speechService->get($request->getAttribute('speech_id'))) != null) {
             $form = new Form\Speech([
-                ...(new \Althingi\Hydrator\Speech())->extract($speech),
+                ...$speech->toArray(),
                 ...$request->getParsedBody(),
                 'speech_id' => $request->getAttribute('speech_id'),
             ]);

@@ -11,6 +11,7 @@ use Laminas\Diactoros\Response\{
 use Althingi\Form;
 use Althingi\Service;
 use Althingi\Injector\ServiceCommitteeDocumentAwareInterface;
+use Althingi\Model\KindEnum;
 use Althingi\Router\{
     RestControllerInterface,
     RestControllerTrait,
@@ -103,7 +104,7 @@ class CommitteeDocumentController implements
             ...$request->getParsedBody(),
             'assembly_id' => $assemblyId,
             'issue_id' => $issueId,
-            'category' => 'A',
+            'kind' => KindEnum::A->value,
             'document_id' => $documentId,
         ]);
 
@@ -120,7 +121,7 @@ class CommitteeDocumentController implements
                         $committeeDocument->getDocumentId(),
                         $committeeDocument->getAssemblyId(),
                         $committeeDocument->getIssueId(),
-                        'A',
+                        KindEnum::A,
                         $committeeDocument->getCommitteeId(),
                         $committeeDocument->getPart()
                     );
@@ -134,7 +135,7 @@ class CommitteeDocumentController implements
                 'Location' => $this->router->assemble([
                     'id' => $assemblyId,
                     'issue_id' => $issueId,
-                    'category' => 'a',
+                    'kind' => KindEnum::A->value,
                     'document_id' => $documentId,
                     'document_committee_id' => $committeeDocumentId
                 ], ['name' => 'loggjafarthing/thingmal/thingskjal/nefndir'])
@@ -156,7 +157,7 @@ class CommitteeDocumentController implements
             $request->getAttribute('document_committee_id')
         )) != null) {
             $form = new Form\CommitteeDocument([
-                ...(new \Althingi\Hydrator\CommitteeDocument)->extract($committeeDocument),
+                ...$committeeDocument->toArray(),
                 ...$request->getParsedBody(),
                 'document_committee_id' => $request->getAttribute('document_committee_id'),
             ]);

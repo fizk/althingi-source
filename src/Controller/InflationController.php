@@ -135,7 +135,7 @@ class InflationController implements
             $request->getAttribute('id')
         )) != null) {
             $form = new Form\Inflation([
-                ...(new \Althingi\Hydrator\Inflation())->extract($committee),
+                ...$committee->toArray(),
                 ...$request->getParsedBody(),
                 'id' => $request->getAttribute('id'),
             ]);

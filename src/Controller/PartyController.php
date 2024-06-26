@@ -101,7 +101,7 @@ class PartyController implements
             $request->getAttribute('id')
         )) !== null) {
             $form = new Form\Party([
-                ...(new \Althingi\Hydrator\Party())->extract($party),
+                ...$party->toArray(),
                 ...$request->getParsedBody(),
                 'party_id' => $request->getAttribute('id'),
             ]);

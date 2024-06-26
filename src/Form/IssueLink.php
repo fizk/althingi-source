@@ -5,6 +5,7 @@ namespace Althingi\Form;
 use Althingi\Filter\ToInt;
 use Althingi\Hydrator;
 use Althingi\Model;
+use Althingi\Validator\IssueKind;
 use Althingi\Validator\SignedDigits;
 use Laminas\Filter\ToNull;
 use Laminas\Validator\NotEmpty;
@@ -48,8 +49,9 @@ class IssueLink extends Form
                 ->attachValidator(new SignedDigits())
                 ->attachFilter(new ToInt())
             ,
-            (new Input('category'))
+            (new Input('kind'))
                 ->attachValidator(new NotEmpty())
+                ->attachValidator(new IssueKind())
             ,
             (new Input('type', true))
                 ->attachFilter(new ToNull(['type' => 'all']))

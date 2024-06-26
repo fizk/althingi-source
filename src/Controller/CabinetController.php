@@ -97,7 +97,7 @@ class CabinetController implements
     {
         if (($committee = $this->cabinetService->get($request->getAttribute('id'))) != null) {
             $form = new Form\Cabinet([
-                ...(new \Althingi\Hydrator\Cabinet)->extract($committee),
+                ...$committee->toArray(),
                 ...$request->getParsedBody(),
                 'cabinet_id' => $request->getAttribute('id'),
             ]);

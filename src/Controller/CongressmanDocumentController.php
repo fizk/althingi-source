@@ -7,6 +7,7 @@ use Althingi\Form;
 use Althingi\Service;
 use Althingi\Utils\ErrorFormResponse;
 use Althingi\Injector\ServiceProponentAwareInterface;
+use Althingi\Model\KindEnum;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Laminas\Diactoros\ServerRequest;
 use Althingi\Router\{
@@ -40,7 +41,7 @@ class CongressmanDocumentController implements
             'issue_id' => $issueId,
             'document_id' => $documentId,
             'congressman_id' => $congressmanId,
-            'category' => 'A',
+            'kind' => KindEnum::A->value,
         ]);
 
         if ($form->isValid()) {
@@ -67,7 +68,7 @@ class CongressmanDocumentController implements
         if (($congressmanDocument = $this->congressmanDocumentService
                 ->get($assemblyId, $issueId, $documentId, $congressmanId)) != null) {
             $form = new Form\CongressmanDocument([
-                ...(new \Althingi\Hydrator\CongressmanDocument())->extract($congressmanDocument),
+                ...$congressmanDocument->toArray(),
                 ...$request->getParsedBody(),
                 'id' => $request->getAttribute('id'),
                 'issue_id' => $request->getAttribute('issue_id'),

@@ -2,6 +2,7 @@
 
 namespace Althingi\Hydrator;
 
+use Althingi\Model\KindEnum;
 use Laminas\Hydrator\HydratorInterface;
 use DateTime;
 
@@ -20,7 +21,7 @@ class IssueAndDate implements HydratorInterface
             ->setIssueId($data['issue_id'])
             ->setAssemblyId($data['assembly_id'])
             ->setCongressmanId($data['congressman_id'])
-            ->setCategory($data['category'])
+            ->setKind(KindEnum::fromString($data['kind']))
             ->setName($data['name'])
             ->setSubName($data['sub_name'])
             ->setType($data['type'])

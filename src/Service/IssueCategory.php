@@ -6,6 +6,7 @@ use Althingi\Hydrator;
 use Althingi\Events\{UpdateEvent, AddEvent};
 use Althingi\Presenters\IndexableIssueCategoryPresenter;
 use Althingi\Injector\{EventsAwareInterface, DatabaseAwareInterface};
+use Althingi\Model\KindEnum;
 use Generator;
 use PDO;
 
@@ -21,12 +22,13 @@ class IssueCategory implements DatabaseAwareInterface, EventsAwareInterface
             where C.`assembly_id` = :assembly_id
               and C.`issue_id` = :issue_id
               and C.`category_id` = :category_id
-              and C.category = \'A\'
+              and C.kind = :kind
         ');
         $statement->execute([
             'assembly_id' => $assemblyId,
             'issue_id' => $issueId,
-            'category_id' => $categoryId
+            'category_id' => $categoryId,
+            'kind' => KindEnum::A->value
         ]);
 
         $object = $statement->fetch(PDO::FETCH_ASSOC);
@@ -137,12 +139,12 @@ class IssueCategory implements DatabaseAwareInterface, EventsAwareInterface
     public function fetchFrequencyByAssemblyAndCongressman(
         int $assemblyId,
         int $congressmanId,
-        ?array $category = ['A']
+        ?array $kind = [KindEnum::A]
     ): array {
-        $categories = count($category) > 0
-            ? 'and SP.category in (' . implode(',', array_map(function ($c) {
-                return '"' . $c . '"';
-            }, $category)) . ')'
+        $categories = count($kind) > 0
+            ? 'and SP.kind in (' . implode(',', array_map(function (KindEnum $item) {
+                return '"' . $item->value . '"';
+            }, $kind)) . ')'
             : '';
 
         $statement = $this->getDriver()->prepare("

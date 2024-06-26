@@ -5,6 +5,7 @@ namespace Althingi\Controller;
 use Althingi\Controller\IssueCategoryController;
 use Althingi\Model\Category as CategoryModel;
 use Althingi\Model\IssueCategory as IssueCategoryModel;
+use Althingi\Model\KindEnum;
 use Althingi\Service\Category;
 use Althingi\Service\IssueCategory;
 use Althingi\ServiceHelper;
@@ -126,7 +127,7 @@ class IssueCategoryControllerTest extends TestCase
                     ->setAssemblyId(141)
                     ->setIssueId(131)
                     ->setCategoryId(21)
-                    ->setCategory('A')
+                    ->setKind(KindEnum::A)
             )
             ->getMock()
             ->shouldReceive('update')

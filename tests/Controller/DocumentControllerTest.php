@@ -4,6 +4,7 @@ namespace Althingi\Controller;
 
 use Althingi\Controller\DocumentController;
 use Althingi\Model;
+use Althingi\Model\KindEnum;
 use Althingi\Service;
 use Althingi\ServiceHelper;
 use Library\Container\Container;
@@ -49,7 +50,7 @@ class DocumentControllerTest extends TestCase
                 ->setDate(new \DateTime())
                 ->setDocumentId(2)
                 ->setIssueId(2)
-                ->setCategory('category')
+                ->setKind(KindEnum::A)
                 ->setAssemblyId(145)
                 ->setType('type')
             )
@@ -95,7 +96,7 @@ class DocumentControllerTest extends TestCase
                         ->setDate(new \DateTime())
                         ->setDocumentId(2)
                         ->setIssueId(2)
-                        ->setCategory('category')
+                        ->setKind(KindEnum::A)
                         ->setAssemblyId(145)
                         ->setType('type')
                 ),
@@ -104,7 +105,7 @@ class DocumentControllerTest extends TestCase
                         ->setDate(new \DateTime())
                         ->setDocumentId(2)
                         ->setIssueId(2)
-                        ->setCategory('category')
+                        ->setKind(KindEnum::A)
                         ->setAssemblyId(145)
                         ->setType('type')
 
@@ -174,7 +175,7 @@ class DocumentControllerTest extends TestCase
                     ->setAssemblyId(145)
                     ->setIssueId(2)
                     ->setDocumentId(2)
-                    ->setCategory('A')
+                    ->setKind(KindEnum::A)
                     ->setDate(new \DateTime())
                     ->setType('some-type')
             )
@@ -210,7 +211,7 @@ class DocumentControllerTest extends TestCase
                     ->setDocumentId(2)
                     ->setDate(new \DateTime())
                     ->setType('some-type')
-                    ->setCategory('category')
+                    ->setKind(KindEnum::A)
             )
             ->getMock()
 

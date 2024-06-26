@@ -6,6 +6,7 @@ use Althingi\Hydrator;
 use Althingi\Model;
 use Althingi\Filter\ToInt;
 use Althingi\Filter\ItemStatusFilter;
+use Althingi\Validator\IssueKind;
 use Laminas\Filter\ToNull;
 use Althingi\Validator\SignedDigits;
 use Laminas\Validator\NotEmpty;
@@ -26,15 +27,19 @@ class Issue extends Form
     public function getValidationConfig(): array
     {
         return [
+            (new Input('assembly_id'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+            ,
             (new Input('issue_id'))
                 ->attachValidator(new NotEmpty())
                 ->attachValidator(new SignedDigits())
                 ->attachFilter(new ToInt())
             ,
-            (new Input('assembly_id'))
+            (new Input('kind'))
                 ->attachValidator(new NotEmpty())
-                ->attachValidator(new SignedDigits())
-                ->attachFilter(new ToInt())
+                ->attachValidator(new IssueKind())
             ,
             (new Input('congressman_id', true))
                 ->attachFilter(new ToInt())
@@ -45,9 +50,6 @@ class Issue extends Form
             ,
             (new Input('sub_name'))
                 ->attachFilter(new ToNull(['type' => 'all']))
-            ,
-            (new Input('category'))
-                ->attachValidator(new NotEmpty())
             ,
             (new Input('type'))
                 ->attachValidator(new NotEmpty())

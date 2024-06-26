@@ -81,7 +81,7 @@ class SuperCategoryController implements
             $request->getAttribute('super_category_id')
         )) != null) {
             $form = new Form\SuperCategory([
-                ...(new \Althingi\Hydrator\SuperCategory())->extract($superCategory),
+                ...$superCategory->toArray(),
                 ...$request->getParsedBody(),
             ]);
 

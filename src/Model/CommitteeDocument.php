@@ -8,7 +8,7 @@ class CommitteeDocument implements ModelInterface
     private int $document_id;
     private int $assembly_id;
     private int $issue_id;
-    private string $category;
+    private KindEnum $kind;
     private int $committee_id;
     private ?string $part = null;
     private ?string $name = null;
@@ -18,7 +18,7 @@ class CommitteeDocument implements ModelInterface
         return $this->document_committee_id;
     }
 
-    public function setDocumentCommitteeId(?int $document_committee_id): self
+    public function setDocumentCommitteeId(?int $document_committee_id): static
     {
         $this->document_committee_id = $document_committee_id;
         return $this;
@@ -29,7 +29,7 @@ class CommitteeDocument implements ModelInterface
         return $this->document_id;
     }
 
-    public function setDocumentId(int $document_id): self
+    public function setDocumentId(int $document_id): static
     {
         $this->document_id = $document_id;
         return $this;
@@ -40,7 +40,7 @@ class CommitteeDocument implements ModelInterface
         return $this->assembly_id;
     }
 
-    public function setAssemblyId(int $assembly_id): self
+    public function setAssemblyId(int $assembly_id): static
     {
         $this->assembly_id = $assembly_id;
         return $this;
@@ -51,20 +51,21 @@ class CommitteeDocument implements ModelInterface
         return $this->issue_id;
     }
 
-    public function setIssueId(int $issue_id): self
+    public function setIssueId(int $issue_id): static
     {
         $this->issue_id = $issue_id;
         return $this;
     }
 
-    public function getCategory(): string
+    public function getKind(): KindEnum
     {
-        return $this->category;
+        return $this->kind;
     }
 
-    public function setCategory(string $category): self
+    public function setKind(KindEnum $kind): static
     {
-        $this->category = $category;
+        $this->kind = $kind;
+
         return $this;
     }
 
@@ -73,7 +74,7 @@ class CommitteeDocument implements ModelInterface
         return $this->committee_id;
     }
 
-    public function setCommitteeId(int $committee_id): self
+    public function setCommitteeId(int $committee_id): static
     {
         $this->committee_id = $committee_id;
         return $this;
@@ -84,7 +85,7 @@ class CommitteeDocument implements ModelInterface
         return $this->part;
     }
 
-    public function setPart(?string $part): self
+    public function setPart(?string $part): static
     {
         $this->part = $part;
         return $this;
@@ -95,7 +96,7 @@ class CommitteeDocument implements ModelInterface
         return $this->name;
     }
 
-    public function setName(?string $name): self
+    public function setName(?string $name): static
     {
         $this->name = $name;
         return $this;
@@ -113,7 +114,7 @@ class CommitteeDocument implements ModelInterface
             'document_id' => $this->document_id,
             'assembly_id' => $this->assembly_id,
             'issue_id' => $this->issue_id,
-            'category' => $this->category,
+            'kind' => $this->kind->value,
             'committee_id' => $this->committee_id,
             'part' => $this->part,
             'name' => $this->name,

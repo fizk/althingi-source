@@ -7,6 +7,7 @@ use Althingi\Hydrator;
 use Althingi\Events\{UpdateEvent, AddEvent};
 use Althingi\Presenters\IndexableVotePresenter;
 use Althingi\Injector\{EventsAwareInterface, DatabaseAwareInterface};
+use Althingi\Model\KindEnum;
 use PDO;
 use DateTime;
 use Exception;
@@ -53,11 +54,12 @@ class Vote implements DatabaseAwareInterface, EventsAwareInterface
                     select * from `Vote` where
                         assembly_id = :assembly_id and
                         issue_id = :issue_id and
-                        category = \'A\'
+                        kind = :kind
                 ');
             $statement->execute([
                 'assembly_id' => $assemblyId,
-                'issue_id' => $issueId
+                'issue_id' => $issueId,
+                'kind' => KindEnum::A->value,
             ]);
         } elseif ($assemblyId !== null && $issueId !== null && $documentId !== null) {
             $statement = $this->getDriver()
@@ -65,13 +67,14 @@ class Vote implements DatabaseAwareInterface, EventsAwareInterface
                     select * from `Vote` where
                         assembly_id = :assembly_id and
                         issue_id = :issue_id and
-                        category = \'A\' and
+                        kind = :kind and
                         document_id = :document_id
                 ');
             $statement->execute([
                 'assembly_id' => $assemblyId,
                 'issue_id' => $issueId,
-                'document_id' => $documentId
+                'document_id' => $documentId,
+                'kind' => KindEnum::A->value,
             ]);
         } else {
             throw new Exception('Paramters missing');

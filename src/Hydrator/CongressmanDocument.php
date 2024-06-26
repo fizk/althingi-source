@@ -2,6 +2,7 @@
 
 namespace Althingi\Hydrator;
 
+use Althingi\Model\KindEnum;
 use Laminas\Hydrator\HydratorInterface;
 
 class CongressmanDocument implements HydratorInterface
@@ -18,7 +19,7 @@ class CongressmanDocument implements HydratorInterface
         return $object
             ->setDocumentId($data['document_id'])
             ->setIssueId($data['issue_id'])
-            ->setCategory($data['category'])
+            ->setKind(KindEnum::fromString($data['kind']))
             ->setAssemblyId($data['assembly_id'])
             ->setCongressmanId($data['congressman_id'])
             ->setMinister(isset($data['minister']) ? $data['minister'] : null)

@@ -5,6 +5,7 @@ namespace Althingi\Form;
 use Althingi\Filter\ToInt;
 use Althingi\Hydrator;
 use Althingi\Model;
+use Althingi\Validator\IssueKind;
 use Althingi\Validator\SignedDigits;
 use Laminas\Filter\{Boolean, ToNull};
 use Laminas\Validator\{Date, NotEmpty};
@@ -50,8 +51,9 @@ class Speech extends Form
                 ->attachValidator(new SignedDigits())
                 ->attachValidator(new NotEmpty())
             ,
-            (new Input('category', true))
+            (new Input('kind', true))
                 ->attachFilter(new ToNull(['type' => 'all']))
+                ->attachValidator(new IssueKind())
             ,
             (new Input('congressman_id'))
                 ->attachFilter(new ToInt())

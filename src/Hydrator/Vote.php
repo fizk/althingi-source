@@ -2,6 +2,7 @@
 
 namespace Althingi\Hydrator;
 
+use Althingi\Model\KindEnum;
 use Laminas\Hydrator\HydratorInterface;
 
 class Vote implements HydratorInterface
@@ -20,7 +21,7 @@ class Vote implements HydratorInterface
         return $object
             ->setVoteId($data['vote_id'])
             ->setIssueId($data['issue_id'])
-            ->setCategory($data['category'])
+            ->setKind(KindEnum::fromString($data['kind']))
             ->setAssemblyId($data['assembly_id'])
             ->setDocumentId(isset($data['document_id']) ? $data['document_id'] : null)
             ->setDate(array_key_exists('date', $data) ? $this->hydrateDate($data['date']) : null)

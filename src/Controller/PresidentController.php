@@ -114,7 +114,7 @@ class PresidentController implements
             $request->getAttribute('id')
         )) != null) {
             $form = new Form\President([
-                ...(new \Althingi\Hydrator\President())->extract($president),
+                ...$president->toArray(),
                 ...$request->getParsedBody(),
                 // 'president_id' => $request->getAttribute('id'),
             ]);

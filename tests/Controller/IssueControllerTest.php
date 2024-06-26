@@ -4,6 +4,7 @@ namespace Althingi\Controller;
 
 use Althingi\Controller;
 use Althingi\Model;
+use Althingi\Model\KindEnum;
 use Althingi\Service;
 use Althingi\ServiceHelper;
 use Library\Container\Container;
@@ -46,7 +47,7 @@ class IssueControllerTest extends TestCase
     {
         $this->getMockService(Service\Issue::class)
             ->shouldReceive('get')
-            ->with(200, 100, 'A')
+            ->with(200, 100, KindEnum::A)
             ->andReturn(new Model\Issue())
             ->getMock();
 
@@ -64,7 +65,7 @@ class IssueControllerTest extends TestCase
     {
         $this->getMockService(Service\Issue::class)
             ->shouldReceive('get')
-            ->with(200, 100, 'B')
+            ->with(200, 100, KindEnum::B)
             ->andReturn(new Model\Issue())
             ->getMock();
 
@@ -82,7 +83,7 @@ class IssueControllerTest extends TestCase
     {
         $this->getMockService(Service\Issue::class)
             ->shouldReceive('get')
-            ->with(200, 100, 'A')
+            ->with(200, 100, KindEnum::A)
             ->andReturn(null)
             ->getMock();
 
@@ -121,7 +122,7 @@ class IssueControllerTest extends TestCase
         $expectedObject = (new Model\Issue())
             ->setIssueId(200)
             ->setAssemblyId(100)
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setName('n1')
             ->setType('1')
             ->setTypeName('tn')
@@ -140,7 +141,7 @@ class IssueControllerTest extends TestCase
 
         $this->dispatch('/loggjafarthing/100/thingmal/a/200', 'PUT', [
             'name' => 'n1',
-            'category' => 'c1',
+            'kind' => KindEnum::A->value,
             'type' => '1',
             'type_name' => 'tn',
             'type_subname' => 'tsn',
@@ -181,7 +182,7 @@ class IssueControllerTest extends TestCase
             ->setIssueId(200)
             ->setAssemblyId(100)
             ->setName('n1')
-            ->setCategory('c1')
+            ->setKind(KindEnum::A)
             ->setType('1')
             ->setTypeName('tn')
             ->setTypeSubname('tsn')
@@ -190,8 +191,8 @@ class IssueControllerTest extends TestCase
         $this->getMockService(Service\Issue::class)
             ->shouldReceive('get')
             ->once()
-            ->with(200, 100, 'A')
-            ->andReturn((new Model\Issue())->setIssueId(200)->setAssemblyId(100)->setCategory('A'))
+            ->with(200, 100, KindEnum::A)
+            ->andReturn((new Model\Issue())->setIssueId(200)->setAssemblyId(100)->setKind(KindEnum::A))
             ->getMock()
 
             ->shouldReceive('update')
@@ -205,7 +206,7 @@ class IssueControllerTest extends TestCase
 
         $this->dispatch('/loggjafarthing/100/thingmal/a/200', 'PATCH', [
             'name' => 'n1',
-            'category' => 'c1',
+            'kind' => 'A',
             'type' => '1',
             'type_name' => 'tn',
             'type_subname' => 'tsn',

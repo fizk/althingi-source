@@ -2,6 +2,7 @@
 
 namespace Althingi\Hydrator;
 
+use Althingi\Model\KindEnum;
 use Laminas\Hydrator\HydratorInterface;
 
 class Speech implements HydratorInterface
@@ -19,7 +20,7 @@ class Speech implements HydratorInterface
     {
         return $object
             ->setSpeechId($data['speech_id'])
-            ->setCategory(empty($data['category']) ? null : $data['category'])
+            ->setKind($data['kind'] ? KindEnum::fromString($data['kind']) : null)
             ->setPlenaryId($data['plenary_id'])
             ->setAssemblyId($data['assembly_id'])
             ->setIssueId($data['issue_id'])

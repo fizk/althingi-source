@@ -92,7 +92,7 @@ class PlenaryController implements
 
         if (($plenary = $this->plenaryService->get($assemblyId, $plenaryId)) != null) {
             $form = new Form\Plenary([
-                ...(new \Althingi\Hydrator\Plenary)->extract($plenary),
+                ...$plenary->toArray(),
                 ...$request->getParsedBody(),
                 'assembly_id' => $request->getAttribute('id'),
                 'plenary_id' => $request->getAttribute('plenary_id'),

@@ -141,7 +141,7 @@ class Constituency implements DatabaseAwareInterface, EventsAwareInterface
                         join Issue I on (
                             D.issue_id = I.issue_id and
                             D.assembly_id = I.assembly_id and
-                            D.category = I.category
+                            D.kind = I.kind
                         )
                     where D.assembly_id = :assembly_id and I.type = "l"
                     group by D.issue_id

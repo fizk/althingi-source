@@ -2,6 +2,7 @@
 
 namespace Althingi\Hydrator;
 
+use Althingi\Model\KindEnum;
 use Laminas\Hydrator\HydratorInterface;
 
 class IssueValue implements HydratorInterface
@@ -19,7 +20,7 @@ class IssueValue implements HydratorInterface
             ->setIssueId($data['issue_id'])
             ->setAssemblyId($data['assembly_id'])
             ->setCongressmanId($data['congressman_id'])
-            ->setCategory($data['category'])
+            ->setKind(KindEnum::fromString($data['kind']))
             ->setName($data['name'])
             ->setSubName($data['sub_name'])
             ->setType($data['type'])

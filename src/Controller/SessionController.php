@@ -150,7 +150,7 @@ class SessionController implements
             $request->getAttribute('session_id')
         )) !== null) {
             $form = new Form\Session([
-                ...(new \Althingi\Hydrator\Session())->extract($session),
+                ...$session->toArray(),
                 ...$request->getParsedBody(),
                 'session_id' => $request->getAttribute('session_id')
             ]);
