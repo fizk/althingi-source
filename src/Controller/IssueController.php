@@ -11,6 +11,7 @@ use Laminas\Diactoros\Response\{
 };
 use Althingi\Injector\ServiceIssueAwareInterface;
 use Althingi\Form;
+use Althingi\Model\KindEnum;
 use Althingi\Service;
 use Althingi\Router\RestControllerTrait;
 use Althingi\Utils\ErrorFormResponse;
@@ -34,9 +35,9 @@ class IssueController implements
     {
         $assemblyId = $request->getAttribute('id', 0);
         $issueId = $request->getAttribute('issue_id', 0);
-        $category = strtoupper($request->getAttribute('category', 'a'));
+        $kind = KindEnum::fromString($request->getAttribute('kind', 'a'));
 
-        $issue = $this->issueService->get($issueId, $assemblyId, $category);
+        $issue = $this->issueService->get($issueId, $assemblyId, $kind);
 
         return $issue
             ? new JsonResponse($issue)
@@ -90,14 +91,14 @@ class IssueController implements
     public function put(ServerRequest $request): ResponseInterface
     {
         $assemblyId = $request->getAttribute('id');
-        $category = strtoupper($request->getAttribute('category', 'a'));
+        $kind = KindEnum::fromString($request->getAttribute('kind', 'a'));
         $issueId = $request->getAttribute('issue_id');
 
         $form = new Form\Issue([
             ...$request->getParsedBody(),
             'assembly_id' => $assemblyId,
             'issue_id' => $issueId,
-            'category' => $category
+            'kind' => $kind->value,
         ]);
 
         if ($form->isValid()) {
@@ -119,11 +120,11 @@ class IssueController implements
     public function patch(ServerRequest $request): ResponseInterface
     {
         $assemblyId = $request->getAttribute('id');
-        $category = strtoupper($request->getAttribute('category', 'a'));
+        $kind = KindEnum::fromString($request->getAttribute('kind', 'a'));
         $issue = $this->issueService->get(
             $request->getAttribute('issue_id'),
             $assemblyId,
-            $category
+            $kind,
         );
 
         if (! $issue) {
@@ -131,7 +132,7 @@ class IssueController implements
         }
 
         $form = new Form\Issue([
-            ...(new \Althingi\Hydrator\Issue())->extract($issue),
+            ...$issue->toArray(),
             ...$request->getParsedBody(),
             'assembly_id' => $request->getAttribute('id'),
             'issue_id' => $request->getAttribute('issue_id'),

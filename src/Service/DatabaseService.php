@@ -126,6 +126,9 @@ trait DatabaseService
             if ($i instanceof DateTime) {
                 return $i->format('Y-m-d H:i:s');
             }
+            if (is_object($i) && enum_exists($i::class)) {
+                return $i->value;
+            }
             if (is_bool($i)) {
                 return (int) $i;
             }

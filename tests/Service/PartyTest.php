@@ -6,6 +6,7 @@ use Althingi\Service\Party;
 use Althingi\DatabaseConnection;
 use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;
+use Althingi\Model\KindEnum;
 use PHPUnit\Framework\TestCase;
 use Althingi\Model\Party as PartyModel;
 use Althingi\Model\PartyAndTime as PartyAndTimeModel;
@@ -416,7 +417,7 @@ class PartyTest extends TestCase
                 ['cabinet_id' => 1, 'congressman_id' => 1, 'title' => 'dude', 'from' => '2000-01-01']
             ],
             'Issue' => [
-                ['issue_id' => 1, 'assembly_id' => 1, 'category' => 'A'],
+                ['issue_id' => 1, 'assembly_id' => 1, 'kind' => KindEnum::A->value],
             ],
             'Plenary' => [
                 ['plenary_id' => 1, 'assembly_id' => 1],
@@ -427,7 +428,7 @@ class PartyTest extends TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 1,
                     'issue_id' => 1,
-                    'category' => 'A',
+                    'kind' => KindEnum::A->value,
                     'congressman_id' => 1,
                     'from' => '2001-01-01 01:00:00',
                     'to' => '2001-01-01 01:10:00'

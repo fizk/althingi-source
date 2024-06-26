@@ -3,8 +3,10 @@
 namespace Althingi\Form;
 
 use Althingi\Filter\ToInt;
+use Althingi\Filter\ToNoNullInt;
 use Althingi\Hydrator;
 use Althingi\Model;
+use Althingi\Validator\IssueKind;
 use Althingi\Validator\SignedDigits;
 use Laminas\Filter\ToNull;
 use Laminas\Validator\{Date, NotEmpty};
@@ -25,27 +27,28 @@ class Vote extends Form
     public function getValidationConfig(): array
     {
         return [
-            (new Input('issue_id'))
+            (new Input('vote_id'))
                 ->attachFilter(new ToInt())
                 ->attachValidator(new SignedDigits())
-                ->attachValidator(new NotEmpty())
-            ,
-            (new Input('assembly_id'))
-                ->attachFilter(new ToInt())
-                ->attachValidator(new SignedDigits())
-                ->attachValidator(new NotEmpty())
-            ,
-            (new Input('category'))
                 ->attachValidator(new NotEmpty())
             ,
             (new Input('document_id', true))
                 ->attachFilter(new ToInt())
                 ->attachFilter(new ToNull(['type' => 'all']))
             ,
-            (new Input('vote_id'))
+            (new Input('assembly_id'))
                 ->attachFilter(new ToInt())
                 ->attachValidator(new SignedDigits())
                 ->attachValidator(new NotEmpty())
+            ,
+            (new Input('issue_id'))
+                ->attachFilter(new ToInt())
+                ->attachValidator(new SignedDigits())
+                ->attachValidator(new NotEmpty())
+            ,
+            (new Input('kind'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new IssueKind())
             ,
             (new Input('date'))
                 ->attachValidator(new NotEmpty())
@@ -61,16 +64,13 @@ class Vote extends Form
                 ->attachFilter(new ToNull(['type' => 'all']))
             ,
             (new Input('yes', true))
-                ->attachFilter(new ToNull(['type' => 'all']))
-                ->attachFilter(new ToInt())
+                ->attachFilter(new ToNoNullInt())
             ,
             (new Input('no', true))
-                ->attachFilter(new ToNull(['type' => 'all']))
-                ->attachFilter(new ToInt())
+                ->attachFilter(new ToNoNullInt())
             ,
             (new Input('inaction', true))
-                ->attachFilter(new ToNull(['type' => 'all']))
-                ->attachFilter(new ToInt())
+                ->attachFilter(new ToNoNullInt())
             ,
             (new Input('committee_to', true))
                 ->attachFilter(new ToNull(['type' => 'all']))

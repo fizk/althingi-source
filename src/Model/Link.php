@@ -2,13 +2,11 @@
 
 namespace Althingi\Model;
 
-use DateTime;
-
 class Link implements ModelInterface
 {
     private int $assembly_id;
     private int $issue_id;
-    private string $category;
+    private KindEnum $kind;
     private string $type;
 
     public function getAssemblyId(): int
@@ -16,7 +14,7 @@ class Link implements ModelInterface
         return $this->assembly_id;
     }
 
-    public function setAssemblyId(int $assembly_id): self
+    public function setAssemblyId(int $assembly_id): static
     {
         $this->assembly_id = $assembly_id;
         return $this;
@@ -27,20 +25,21 @@ class Link implements ModelInterface
         return $this->issue_id;
     }
 
-    public function setIssueId(int $issue_id): self
+    public function setIssueId(int $issue_id): static
     {
         $this->issue_id = $issue_id;
         return $this;
     }
 
-    public function getCategory(): string
+    public function getKind(): KindEnum
     {
-        return $this->category;
+        return $this->kind;
     }
 
-    public function setCategory(string $category): self
+    public function setKind(KindEnum $kind): static
     {
-        $this->category = $category;
+        $this->kind = $kind;
+
         return $this;
     }
 
@@ -49,7 +48,7 @@ class Link implements ModelInterface
         return $this->type;
     }
 
-    public function setType(string $type): self
+    public function setType(string $type): static
     {
         $this->type = $type;
         return $this;
@@ -60,7 +59,7 @@ class Link implements ModelInterface
         return [
             'assembly_id' => $this->assembly_id,
             'issue_id' => $this->issue_id,
-            'category' => $this->category,
+            'kind' => $this->kind->value,
             'type' => $this->type,
         ];
     }

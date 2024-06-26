@@ -5,6 +5,7 @@ namespace Althingi\Form;
 use Althingi\Filter\ToInt;
 use Althingi\Hydrator;
 use Althingi\Model;
+use Althingi\Validator\IssueKind;
 use Althingi\Validator\SignedDigits;
 use Laminas\Validator\NotEmpty;
 use Library\Form\Form;
@@ -24,7 +25,7 @@ class IssueCategory extends Form
     public function getValidationConfig(): array
     {
         return [
-            (new Input('issue_id'))
+            (new Input('category_id'))
                 ->attachValidator(new NotEmpty())
                 ->attachValidator(new SignedDigits())
                 ->attachFilter(new ToInt())
@@ -34,13 +35,14 @@ class IssueCategory extends Form
                 ->attachValidator(new SignedDigits())
                 ->attachFilter(new ToInt())
             ,
-            (new Input('category_id'))
+            (new Input('issue_id'))
                 ->attachValidator(new NotEmpty())
                 ->attachValidator(new SignedDigits())
                 ->attachFilter(new ToInt())
             ,
-            (new Input('category'))
+            (new Input('kind'))
                 ->attachValidator(new NotEmpty())
+                ->attachValidator(new IssueKind())
             ,
         ];
     }

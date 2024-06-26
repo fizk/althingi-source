@@ -17,6 +17,7 @@ use Althingi\Injector\{
     ServiceVoteAwareInterface,
     ServiceVoteItemAwareInterface
 };
+use Althingi\Model\KindEnum;
 use Althingi\Service\{
     Constituency,
     Congressman,
@@ -88,7 +89,7 @@ class VoteItemController implements
                             'issue_id' => $voteObject->getIssueId(),
                             'vote_id' => $voteObject->getVoteId(),
                             'vote_item_id' => $voteObject->getVoteItemId(),
-                            'category' => 'a'
+                            'kind' => KindEnum::A->value
                         ], ['name' => 'loggjafarthing/thingmal/atkvaedagreidslur/atkvaedagreidsla'])
                     ]);
                 } else {
@@ -143,7 +144,7 @@ class VoteItemController implements
 
         if (($voteItem = $this->voteItemService->get($voteItemId)) !== null) {
             $form = new Form\VoteItem([
-                ...(new \Althingi\Hydrator\VoteItem())->extract($voteItem),
+                ...$voteItem->toArray(),
                 ...$request->getParsedBody(),
             ]);
 

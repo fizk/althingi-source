@@ -95,7 +95,7 @@ class PlenaryAgendaController implements
                     $this->issueService->create((new IssueModel())
                         ->setIssueId($data->getIssueId())
                         ->setAssemblyId($data->getAssemblyId())
-                        ->setCategory($data->getCategory())
+                        ->setKind($data->getKind())
                         ->setName(null)
                         ->setType(null)
                         ->setTypeName(null));

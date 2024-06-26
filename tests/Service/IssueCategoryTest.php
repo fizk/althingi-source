@@ -8,6 +8,7 @@ use Althingi\Service\IssueCategory;
 use Althingi\DatabaseConnection;
 use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;
+use Althingi\Model\KindEnum;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use PDO;
@@ -40,7 +41,7 @@ class IssueCategoryTest extends TestCase
         $issueCategory = (new IssueCategoryModel())
             ->setAssemblyId(145)
             ->setIssueId(2)
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setCategoryId(34);
 
         $service->create($issueCategory);
@@ -57,7 +58,7 @@ class IssueCategoryTest extends TestCase
         $issueCategory = (new IssueCategoryModel())
             ->setAssemblyId(145)
             ->setIssueId(2)
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setCategoryId(34);
 
         $service->save($issueCategory);
@@ -74,7 +75,7 @@ class IssueCategoryTest extends TestCase
         $issueCategory = (new IssueCategoryModel())
             ->setAssemblyId(145)
             ->setIssueId(1)
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setCategoryId(1);
 
         $service->update($issueCategory);
@@ -112,7 +113,7 @@ class IssueCategoryTest extends TestCase
         $issueCategory = (new IssueCategoryModel())
             ->setAssemblyId(145)
             ->setIssueId(1)
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setCategoryId(2);
 
         (new IssueCategory())
@@ -136,7 +137,7 @@ class IssueCategoryTest extends TestCase
         $issueCategory = (new IssueCategoryModel())
             ->setAssemblyId(145)
             ->setIssueId(1)
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setCategoryId(1);
 
         (new IssueCategory())
@@ -160,7 +161,7 @@ class IssueCategoryTest extends TestCase
         $issueCategory = (new IssueCategoryModel())
             ->setAssemblyId(145)
             ->setIssueId(1)
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setCategoryId(2);
 
         (new IssueCategory())
@@ -184,7 +185,7 @@ class IssueCategoryTest extends TestCase
         $issueCategory = (new IssueCategoryModel())
             ->setAssemblyId(145)
             ->setIssueId(1)
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setCategoryId(1);
 
         (new IssueCategory())
@@ -265,7 +266,7 @@ class IssueCategoryTest extends TestCase
                     'issue_id' => 1,
                     'assembly_id' => 145,
                     'congressman_id' => null,
-                    'category' => 'A',
+                    'kind' => KindEnum::A->value,
                     'name' => '',
                     'sub_name' => '',
                     'type' => '',
@@ -277,7 +278,7 @@ class IssueCategoryTest extends TestCase
                     'issue_id' => 2,
                     'assembly_id' => 145,
                     'congressman_id' => null,
-                    'category' => 'A',
+                    'kind' => KindEnum::A->value,
                     'name' => '',
                     'sub_name' => '',
                     'type' => '',
@@ -288,7 +289,7 @@ class IssueCategoryTest extends TestCase
                 ],
             ],
             'Category_has_Issue' => [
-                ['category_id' => 1, 'issue_id' => 1, 'assembly_id' => 145, 'category' => 'A'],
+                ['category_id' => 1, 'issue_id' => 1, 'assembly_id' => 145, 'kind' => KindEnum::A->value],
             ],
             'Speech' => [
                 [
@@ -296,7 +297,7 @@ class IssueCategoryTest extends TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 145,
                     'issue_id' => 1,
-                    'category' => 'A',
+                    'kind' => KindEnum::A->value,
                     'congressman_id' => 1,
                     'from' => '2000-01-01 00:00:00',
                     'to' => null,
@@ -305,7 +306,7 @@ class IssueCategoryTest extends TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 145,
                     'issue_id' => 1,
-                    'category' => 'A',
+                    'kind' => KindEnum::A->value,
                     'congressman_id' => 1,
                     'from' => null,
                     'to' => '2000-01-01 00:0:10',
@@ -314,7 +315,7 @@ class IssueCategoryTest extends TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 145,
                     'issue_id' => 1,
-                    'category' => 'A',
+                    'kind' => KindEnum::A->value,
                     'congressman_id' => 1,
                     'from' => '2000-01-01 00:00:00',
                     'to' => '2000-01-01 00:0:10',
@@ -323,7 +324,7 @@ class IssueCategoryTest extends TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 145,
                     'issue_id' => 1,
-                    'category' => 'A',
+                    'kind' => KindEnum::A->value,
                     'congressman_id' => 1,
                     'from' => '2000-01-01 00:00:00',
                     'to' => '2000-01-01 00:0:10',

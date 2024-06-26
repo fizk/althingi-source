@@ -4,6 +4,7 @@ namespace Althingi\Controller;
 
 use Althingi\Controller\PlenaryAgendaController;
 use Althingi\Model;
+use Althingi\Model\KindEnum;
 use Althingi\Service\Congressman;
 use Althingi\Service\Issue;
 use Althingi\Service\Party;
@@ -57,7 +58,7 @@ class PlenaryAgendaControllerTest extends TestCase
                 (new Model\PlenaryAgenda())
                     ->setIssueId(10)
                     ->setAssemblyId(1)
-                    ->setCategory('a')
+                    ->setKind(KindEnum::A)
                     ->setPlenaryId(2)
             ])
             ->once()
@@ -77,7 +78,7 @@ class PlenaryAgendaControllerTest extends TestCase
         $expectedData = (new \Althingi\Model\PlenaryAgenda())
             ->setAssemblyId(1)
             ->setPlenaryId(2)
-            ->setCategory('B')
+            ->setKind(KindEnum::B)
             ->setIssueId(1)
             ->setItemId(1)
         ;
@@ -92,7 +93,7 @@ class PlenaryAgendaControllerTest extends TestCase
 
         $this->dispatch('/loggjafarthing/1/thingfundir/2/lidir/1', 'PUT', [
             'issue_id' => 1,
-            'category' => 'B',
+            'kind' => 'B',
         ]);
 
         $this->assertControllerName(PlenaryAgendaController::class);
@@ -108,7 +109,7 @@ class PlenaryAgendaControllerTest extends TestCase
         $expectedData = (new \Althingi\Model\PlenaryAgenda())
             ->setAssemblyId(1)
             ->setPlenaryId(2)
-            ->setCategory('B')
+            ->setKind(KindEnum::B)
             ->setIssueId(1)
             ->setItemId(1)
         ;
@@ -128,7 +129,7 @@ class PlenaryAgendaControllerTest extends TestCase
 
         $this->dispatch('/loggjafarthing/1/thingfundir/2/lidir/1', 'PUT', [
             'issue_id' => 1,
-            'category' => 'B',
+            'kind' => 'B',
             'issue_name' => '',
             'issue_type' => '',
             'issue_typename' => '',

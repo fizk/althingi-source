@@ -4,6 +4,7 @@ namespace Althingi\Controller;
 
 use Althingi\Controller\CongressmanIssueController;
 use Althingi\Model;
+use Althingi\Model\KindEnum;
 use Althingi\Service\Issue;
 use Althingi\ServiceHelper;
 use Library\Container\Container;
@@ -46,7 +47,7 @@ class CongressmanIssueControllerTest extends TestCase
             ->shouldReceive('fetchByCongressman')
             ->with(123)
             ->once()
-            ->andReturn([new Model\Issue()])
+            ->andReturn([(new Model\Issue())->setKind(KindEnum::A)])
             ->getMock();
 
         $this->dispatch('/thingmenn/123/thingmal', 'GET');

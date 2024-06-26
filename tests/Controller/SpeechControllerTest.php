@@ -5,6 +5,7 @@ namespace Althingi\Controller;
 use Althingi\Controller;
 use Althingi\Model;
 use Althingi\Model\Assembly;
+use Althingi\Model\KindEnum;
 use Althingi\Service;
 use Althingi\ServiceHelper;
 use DateTime;
@@ -59,9 +60,10 @@ class SpeechControllerTest extends TestCase
             ->getMock()
 
             ->shouldReceive('fetch')
-            ->with(4, 1, 3, 25, 'A')
+            ->with(4, 1, 3, 25, KindEnum::A)
             ->andReturn([
                 (new Model\SpeechAndPosition())
+                    ->setKind(KindEnum::A)
                     ->setPosition(1)
                     ->setCongressmanId(1)
                     ->setFrom(new \DateTime())
@@ -115,6 +117,7 @@ class SpeechControllerTest extends TestCase
             ->shouldReceive('fetch')
             ->andReturn(array_map(function ($i) {
                 return  (new Model\SpeechAndPosition())
+                    ->setKind(KindEnum::A)
                     ->setCongressmanId(1)
                     ->setText('<?xml version="1.0" ?><root />')
                     ->setFrom(new \DateTime('2000-01-01'))
@@ -170,7 +173,7 @@ class SpeechControllerTest extends TestCase
             ->setTo(new \DateTime('2001-01-01 00:00:00'))
             ->setType('t1')
             ->setText('t2')
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setValidated(false);
 
         $this->getMockService(Service\Speech::class)
@@ -194,7 +197,7 @@ class SpeechControllerTest extends TestCase
             'iteration' => '*',
             'type' => 't1',
             'text' => 't2',
-            'category' =>' A',
+            'kind' => 'a',
             'validated' => 'false',
         ]);
 
@@ -306,11 +309,11 @@ class SpeechControllerTest extends TestCase
     {
         $this->getMockService(Service\Speech::class)
             ->shouldReceive('fetchAllByIssue')
-            ->with(144, 3, 'B')
+            ->with(144, 3, KindEnum::B)
             ->once()
             ->andReturn([
                 (new Model\SpeechCongressmanProperties())
-                        ->setSpeech(new Model\Speech())
+                        ->setSpeech((new Model\Speech())->setKind(KindEnum::A))
                         ->setCongressman((
                             (new Model\CongressmanPartyProperties())
                                 ->setAssembly((new Assembly())->setAssemblyId(1)->setFrom(new DateTime()))
@@ -341,7 +344,9 @@ class SpeechControllerTest extends TestCase
             ->setPlenaryId(1)
             ->setAssemblyId(145)
             ->setIssueId(1)
-            ->setCongressmanId(1);
+            ->setCongressmanId(1)
+            ->setKind(KindEnum::A)
+        ;
 
         $this->getMockService(Service\Speech::class)
             ->shouldReceive('get')
@@ -355,6 +360,7 @@ class SpeechControllerTest extends TestCase
                     ->setAssemblyId(145)
                     ->setIssueId(1)
                     ->setCongressmanId(1)
+                    ->setKind(KindEnum::A)
             )
             ->getMock()
 
@@ -379,7 +385,7 @@ class SpeechControllerTest extends TestCase
     {
         $this->getMockService(Service\Speech::class)
             ->shouldReceive('get')
-            ->andReturn(new Model\Speech())
+            ->andReturn((new Model\Speech())->setKind(KindEnum::A))
             ->getMock();
 
         $this->dispatch('/loggjafarthing/144/thingmal/a/3/raedur/4', 'PATCH', [

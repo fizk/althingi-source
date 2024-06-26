@@ -7,6 +7,7 @@ use Althingi\Events\UpdateEvent;
 use Althingi\Model;
 use Althingi\Hydrator;
 use Althingi\Injector\{DatabaseAwareInterface, EventsAwareInterface};
+use Althingi\Model\KindEnum;
 use Althingi\Presenters\IndexableCommitteeDocumentPresenter;
 use Exception;
 use Generator;
@@ -95,13 +96,13 @@ class CommitteeDocument implements DatabaseAwareInterface, EventsAwareInterface
             select * from `Document_has_Committee`
             where assembly_id = :assembly_id and
                 issue_id = :issue_id and
-                category = 'A' and
+                kind = :kind and
                 document_id = :document_id
         ");
         $statement->execute([
             'assembly_id' => $assemblyId,
             'issue_id' => $issueId,
-            'category' => 'A',
+            'kind' => KindEnum::A->value,
             'document_id' => $documentId,
         ]);
 
@@ -149,7 +150,7 @@ class CommitteeDocument implements DatabaseAwareInterface, EventsAwareInterface
         int $documentId,
         int $assemblyId,
         int $issueId,
-        string $category,
+        KindEnum $kind,
         int $committeeId,
         string $part
     ): int {
@@ -158,7 +159,7 @@ class CommitteeDocument implements DatabaseAwareInterface, EventsAwareInterface
             where `assembly_id` = :assembly_id and,
                 `document_id` = :document_id and,
                 `issue_id` = :issue_id and,
-                `category` = :category and,
+                `kind` = :kind and,
                 `committee_id` = :committee_id and,
                 `part` = :part
             ;
@@ -167,7 +168,7 @@ class CommitteeDocument implements DatabaseAwareInterface, EventsAwareInterface
             'document_id' => $documentId,
             'assembly_id' => $assemblyId,
             'issue_id' => $issueId,
-            'category' => $category,
+            'kind' => $kind->value,
             'committee_id' => $committeeId,
             'part' => $part,
         ]);

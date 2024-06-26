@@ -6,7 +6,7 @@ class CongressmanDocument implements ModelInterface
 {
     private int $document_id;
     private int $issue_id;
-    private string $category;
+    private KindEnum $kind;
     private int $assembly_id;
     private int $congressman_id;
     private ?string $minister = null;
@@ -17,7 +17,7 @@ class CongressmanDocument implements ModelInterface
         return $this->document_id;
     }
 
-    public function setDocumentId(int $document_id): self
+    public function setDocumentId(int $document_id): static
     {
         $this->document_id = $document_id;
         return $this;
@@ -28,20 +28,21 @@ class CongressmanDocument implements ModelInterface
         return $this->issue_id;
     }
 
-    public function setIssueId(int $issue_id): self
+    public function setIssueId(int $issue_id): static
     {
         $this->issue_id = $issue_id;
         return $this;
     }
 
-    public function getCategory(): string
+    public function getKind(): KindEnum
     {
-        return $this->category;
+        return $this->kind;
     }
 
-    public function setCategory(string $category)
+    public function setKind(KindEnum $kind): static
     {
-        $this->category = $category;
+        $this->kind = $kind;
+
         return $this;
     }
 
@@ -50,7 +51,7 @@ class CongressmanDocument implements ModelInterface
         return $this->assembly_id;
     }
 
-    public function setAssemblyId(int $assembly_id): self
+    public function setAssemblyId(int $assembly_id): static
     {
         $this->assembly_id = $assembly_id;
         return $this;
@@ -61,7 +62,7 @@ class CongressmanDocument implements ModelInterface
         return $this->congressman_id;
     }
 
-    public function setCongressmanId(int $congressman_id): self
+    public function setCongressmanId(int $congressman_id): static
     {
         $this->congressman_id = $congressman_id;
         return $this;
@@ -72,7 +73,7 @@ class CongressmanDocument implements ModelInterface
         return $this->minister;
     }
 
-    public function setMinister(?string $minister): self
+    public function setMinister(?string $minister): static
     {
         $this->minister = $minister;
         return $this;
@@ -83,7 +84,7 @@ class CongressmanDocument implements ModelInterface
         return $this->order;
     }
 
-    public function setOrder(int $order): self
+    public function setOrder(int $order): static
     {
         $this->order = $order;
         return $this;
@@ -94,7 +95,7 @@ class CongressmanDocument implements ModelInterface
         return [
             'document_id' => $this->document_id,
             'issue_id' => $this->issue_id,
-            'category' => $this->category,
+            'kind' => $this->kind->value,
             'assembly_id' => $this->assembly_id,
             'congressman_id' => $this->congressman_id,
             'minister' => $this->minister,

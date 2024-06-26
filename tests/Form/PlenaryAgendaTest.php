@@ -11,7 +11,7 @@ class PlenaryAgendaTest extends TestCase
     {
         $form = new PlenaryAgenda([
             'assembly_id' => 141,
-            'category' => 'B',
+            'kind' => 'B',
             'counter_answerer' => 'velferu00f0arru00e1u00f0herra',
             'counter_answerer_id' => 683,
             'instigator' => 'Ju00f3n Gunnarsson',
@@ -34,7 +34,7 @@ class PlenaryAgendaTest extends TestCase
     {
         $form = new PlenaryAgenda([
             'assembly_id' => '141',
-            'category' => 'B',
+            'kind' => 'B',
             'counter_answerer' => 'velferu00f0arru00e1u00f0herra',
             'counter_answerer_id' => '683',
             'instigator' => 'Ju00f3n Gunnarsson',
@@ -65,7 +65,7 @@ class PlenaryAgendaTest extends TestCase
     {
         $form = new PlenaryAgenda([
             'assembly_id' => '141',
-            'category' => 'B',
+            'kind' => 'B',
             'counter_answerer' => 'velferu00f0arru00e1u00f0herra',
             'counter_answerer_id' => '',
             'instigator' => 'Ju00f3n Gunnarsson',

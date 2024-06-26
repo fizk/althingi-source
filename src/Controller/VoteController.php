@@ -11,6 +11,7 @@ use Laminas\Diactoros\Response\{
 use Althingi\Form;
 use Althingi\Service\Vote;
 use Althingi\Injector\ServiceVoteAwareInterface;
+use Althingi\Model\KindEnum;
 use Althingi\Utils\ErrorFormResponse;
 use Althingi\Router\{
     RestControllerInterface,
@@ -69,7 +70,7 @@ class VoteController implements
             'assembly_id' => $assemblyId,
             'issue_id' => $issueId,
             'vote_id' => $voteId,
-            'category' => 'A'
+            'kind' => KindEnum::A->value
         ]);
 
         if ($form->isValid()) {
@@ -94,7 +95,7 @@ class VoteController implements
 
         if (($vote = $this->voteService->get($voteId)) != null) {
             $form = new Form\Vote([
-                ...(new \Althingi\Hydrator\Vote())->extract($vote),
+                ...$vote->toArray(),
                 ...$request->getParsedBody(),
                 'assembly_id' => $assemblyId,
                 'issue_id' => $issueId,

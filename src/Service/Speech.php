@@ -7,6 +7,7 @@ use Althingi\Model;
 use Althingi\Events\{UpdateEvent, AddEvent};
 use Althingi\Presenters\IndexableSpeechPresenter;
 use Althingi\Injector\{EventsAwareInterface, DatabaseAwareInterface};
+use Althingi\Model\KindEnum;
 use Generator;
 use PDO;
 
@@ -108,16 +109,20 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
         ];
     }
 
-    public function fetchAllByIssue(int $assemblyId, int $issueId, string $category = 'A')
+    public function fetchAllByIssue(int $assemblyId, int $issueId, KindEnum $kind = KindEnum::A)
     {
         $statement = $this->getDriver()->prepare("
             select *, timestampdiff(SECOND, `from`, `to`) as `time`
             from `Speech`
-            where assembly_id = :assembly_id and issue_id = :issue_id and `category` = :category
+            where assembly_id = :assembly_id and issue_id = :issue_id and `kind` = :kind
             order by `from`
         ");
 
-        $statement->execute(['assembly_id' => $assemblyId, 'issue_id' => $issueId, 'category' => $category]);
+        $statement->execute([
+            'assembly_id' => $assemblyId,
+            'issue_id' => $issueId,
+            'kind' => $kind->value
+        ]);
         $speeches = $statement->fetchAll(PDO::FETCH_ASSOC);
 
         return array_map(function ($object, $position) {
@@ -134,7 +139,7 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
     public function fetchByIssue(
         int $assemblyId,
         int $issueId,
-        ?string $category = 'A',
+        ?KindEnum $kind = KindEnum::A,
         ?int $offset = 0,
         ?int $size = null,
         ?int $words = 1500
@@ -144,11 +149,11 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
         $statement = $this->getDriver()->prepare("
           select *, timestampdiff(SECOND, `from`, `to`) as `time`
           from `Speech`
-          where assembly_id = :assembly_id and issue_id = :issue_id and `category` = :category
+          where assembly_id = :assembly_id and issue_id = :issue_id and `kind` = :kind
           order by `from`
           limit {$offset}, {$resultSize};
         ");
-        $statement->execute(['assembly_id' => $assemblyId, 'issue_id' => $issueId, 'category' => $category]);
+        $statement->execute(['assembly_id' => $assemblyId, 'issue_id' => $issueId, 'kind' => $kind->value]);
 
         if ($size) {
             $speeches = $statement->fetchAll(PDO::FETCH_ASSOC);
@@ -187,16 +192,16 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
      *
      * @return \Althingi\Model\SpeechAndPosition[]
      */
-    public function fetch(string $id, int $assemblyId, int $issueId, ?int $size = 25, ?string $category = 'A'): array
+    public function fetch(string $id, int $assemblyId, int $issueId, ?int $size = 25, ?KindEnum $kind = KindEnum::A): array
     {
         $pointer = 0;
         $hasResult = false;
         $statement = $this->getDriver()->prepare(
             'select * from `Speech` s
-            where s.`assembly_id` = :assembly_id and s.`issue_id` = :issue_id and s.category = :category
+            where s.`assembly_id` = :assembly_id and s.`issue_id` = :issue_id and s.kind = :kind
             order by s.`from`'
         );
-        $statement->execute(['assembly_id' => $assemblyId, ':issue_id' => $issueId, 'category' => $category]);
+        $statement->execute(['assembly_id' => $assemblyId, ':issue_id' => $issueId, 'kind' => $kind->value]);
 
         while ($row = $statement->fetch(PDO::FETCH_OBJ)) {
             if ($row->speech_id == $id) {
@@ -274,13 +279,13 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
         return null;
     }
 
-    public function countByIssue(int $assemblyId, int $issueId, ?string $category = 'A'): int
+    public function countByIssue(int $assemblyId, int $issueId, ?KindEnum $kind = KindEnum::A): int
     {
         $statement = $this->getDriver()->prepare("
           select count(*) from `Speech`
-          where assembly_id = :assembly_id and issue_id = :issue_id and category = :category
+          where assembly_id = :assembly_id and issue_id = :issue_id and kind = :kind
         ");
-        $statement->execute(['assembly_id' => $assemblyId, 'issue_id' => $issueId, 'category' => $category]);
+        $statement->execute(['assembly_id' => $assemblyId, 'issue_id' => $issueId, 'kind' => $kind->value]);
         return $statement->fetchColumn(0);
     }
 
@@ -290,13 +295,13 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
      *
      * @return \Althingi\Model\DateAndCount[]
      */
-    public function fetchFrequencyByIssue(int $assemblyId, int $issueId, ?string $category = 'A'): array
+    public function fetchFrequencyByIssue(int $assemblyId, int $issueId, ?KindEnum $kind = KindEnum::A): array
     {
         $statement = $this->getDriver()->prepare('
             select date_format(`from`, "%Y-%m-%d 00:00:00") as `date`,
             (sum(time_to_sec(timediff(`to`, `from`)))) as `count`
             from `Speech`
-            where assembly_id = :assembly_id and issue_id = :issue_id and category = :category
+            where assembly_id = :assembly_id and issue_id = :issue_id and kind = :kind
             group by date_format(`from`, "%Y-%m-%d")
             having `count` is not null
             order by `from`;
@@ -305,7 +310,7 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
         $statement->execute([
             'assembly_id' => $assemblyId,
             'issue_id' => $issueId,
-            'category' => $category
+            'kind' => $kind->value
         ]);
 
         return array_map(function ($speech) {
@@ -321,12 +326,12 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
      *
      * @return \Althingi\Model\DateAndCount[]
      */
-    public function fetchFrequencyByAssembly(int $assemblyId, ?array $category = ['A']): array
+    public function fetchFrequencyByAssembly(int $assemblyId, ?array $kind = [KindEnum::A]): array
     {
-        $categories = count($category) > 0
-            ? 'and `category` in (' . implode(',', array_map(function ($c) {
-                return '"' . $c . '"';
-            }, $category)) . ')'
+        $categories = count($kind) > 0
+            ? 'and `kind` in (' . implode(',', array_map(function (KindEnum $item) {
+                return '"' . $item->value . '"';
+            }, $kind)) . ')'
             : '';
 
         $statement = $this->getDriver()->prepare(
@@ -346,12 +351,12 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
     public function countTotalTimeByAssemblyAndCongressman(
         int $assemblyId,
         int $congressmanId,
-        ?array $category = ['A']
+        ?array $kind = [KindEnum::A]
     ): int {
-        $categories = count($category) > 0
-            ? 'and S.category in (' . implode(',', array_map(function ($c) {
-                return '"' . $c . '"';
-            }, $category)) . ')'
+        $categories = count($kind) > 0
+            ? 'and S.kind in (' . implode(',', array_map(function (KindEnum $item) {
+                return '"' . $item->value . '"';
+            }, $kind)) . ')'
             : '';
 
         $statement = $this->getDriver()->prepare("

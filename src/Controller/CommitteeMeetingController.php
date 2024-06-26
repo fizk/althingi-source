@@ -91,7 +91,7 @@ class CommitteeMeetingController implements
 
         if (($committeeMeeting = $this->committeeMeetingService->get($committeeMeetingId)) != null) {
             $form = new Form\CommitteeMeeting([
-                ...(new \Althingi\Hydrator\CommitteeMeeting())->extract($committeeMeeting),
+                ...$committeeMeeting->toArray(),
                 ...$request->getParsedBody(),
                 'committee_meeting_id' => $request->getAttribute('committee_meeting_id'),
             ]);

@@ -5,6 +5,7 @@ namespace Althingi\Form;
 use Althingi\Filter\ToInt;
 use Althingi\Hydrator;
 use Althingi\Model;
+use Althingi\Validator\IssueKind;
 use Althingi\Validator\SignedDigits;
 use Laminas\Filter\ToNull;
 use Laminas\Validator\NotEmpty;
@@ -35,10 +36,19 @@ class PlenaryAgenda extends Form
                 ->attachValidator(new SignedDigits())
                 ->attachFilter(new ToInt())
             ,
+            (new Input('assembly_id'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+            ,
             (new Input('issue_id'))
                 ->attachValidator(new NotEmpty())
                 ->attachValidator(new SignedDigits())
                 ->attachFilter(new ToInt())
+            ,
+            (new Input('kind'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new IssueKind())
             ,
             (new Input('issue_name', true))
                 ->attachFilter(new ToNull(['type' => 'all']))
@@ -48,14 +58,6 @@ class PlenaryAgenda extends Form
             ,
             (new Input('issue_typename', true))
                 ->attachFilter(new ToNull(['type' => 'all']))
-            ,
-            (new Input('assembly_id'))
-                ->attachValidator(new NotEmpty())
-                ->attachValidator(new SignedDigits())
-                ->attachFilter(new ToInt())
-            ,
-            (new Input('category'))
-                ->attachValidator(new NotEmpty())
             ,
             (new Input('iteration_type', true))
                 ->attachFilter(new ToNull(['type' => 'all']))

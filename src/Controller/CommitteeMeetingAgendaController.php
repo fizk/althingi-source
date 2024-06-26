@@ -93,7 +93,7 @@ class CommitteeMeetingAgendaController implements
         if (($committeeMeetingAgenda = $this->committeeMeetingAgendaService
                 ->get($committeeMeetingId, $committeeMeetingAgendaId)) != null) {
             $form = new Form\CommitteeMeetingAgenda([
-                ...(new \Althingi\Hydrator\CommitteeMeetingAgenda())->extract($committeeMeetingAgenda),
+                ...$committeeMeetingAgenda->toArray(),
                 ...$request->getParsedBody(),
                 'committee_meeting_id' => $request->getAttribute('committee_meeting_id'),
                 'committee_meeting_agenda_id' => $request->getAttribute('committee_meeting_agenda_id'),

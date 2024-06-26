@@ -10,7 +10,7 @@ class Speech implements ModelInterface
     private $plenary_id;
     private $assembly_id;
     private $issue_id;
-    private $category;
+    private ?KindEnum $kind;
     private $congressman_id;
     private ?string $congressman_type = null;
     private ?DateTime $from = null;
@@ -65,14 +65,15 @@ class Speech implements ModelInterface
         return $this;
     }
 
-    public function getCategory(): ?string
+    public function getKind(): ?KindEnum
     {
-        return $this->category;
+        return $this->kind;
     }
 
-    public function setCategory(?string $category): self
+    public function setKind(?KindEnum $kind): self
     {
-        $this->category = $category;
+        $this->kind = $kind;
+
         return $this;
     }
 
@@ -182,7 +183,7 @@ class Speech implements ModelInterface
             'plenary_id' => $this->plenary_id,
             'assembly_id' => $this->assembly_id,
             'issue_id' => $this->issue_id,
-            'category' => $this->category,
+            'kind' => $this->kind->value,
             'congressman_id' => $this->congressman_id,
             'congressman_type' => $this->congressman_type,
             'from' => $this->from?->format('Y-m-d H:i:s'),

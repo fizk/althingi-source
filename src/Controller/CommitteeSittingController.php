@@ -142,7 +142,7 @@ class CommitteeSittingController implements
             $request->getAttribute('committee_sitting_id')
         )) != null) {
             $form = new Form\CommitteeSitting([
-                ...(new \Althingi\Hydrator\CommitteeSitting)->extract($committeeSitting),
+                ...$committeeSitting->toArray(),
                 ...$request->getParsedBody(),
                 'committee_sitting_id' =>$request->getAttribute('committee_sitting_id'),
             ]);

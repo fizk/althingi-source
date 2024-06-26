@@ -2,6 +2,7 @@
 
 namespace Althingi\Hydrator;
 
+use Althingi\Model\KindEnum;
 use Laminas\Hydrator\HydratorInterface;
 
 class Document implements HydratorInterface
@@ -20,7 +21,7 @@ class Document implements HydratorInterface
         return $object
             ->setDocumentId($data['document_id'])
             ->setIssueId($data['issue_id'])
-            ->setCategory($data['category'])
+            ->setKind(KindEnum::fromString($data['kind']))
             ->setAssemblyId($data['assembly_id'])
             ->setDate(array_key_exists('date', $data) ? $this->hydrateDate($data['date']) : null)
             ->setUrl($data['url'])

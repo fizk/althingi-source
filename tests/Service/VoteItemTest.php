@@ -8,6 +8,7 @@ use Althingi\Service\VoteItem;
 use Althingi\DatabaseConnection;
 use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;
+use Althingi\Model\KindEnum;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 use PDO;
@@ -309,12 +310,12 @@ class VoteItemTest extends TestCase
                 ['assembly_id' => 2, 'from' => '2000-01-01', 'to' => null],
             ],
             'Issue' => [
-                ['assembly_id' => 1, 'issue_id' => 1, 'category' => 'A'],
-                ['assembly_id' => 1, 'issue_id' => 2, 'category' => 'A'],
-                ['assembly_id' => 1, 'issue_id' => 3, 'category' => 'A'],
-                ['assembly_id' => 2, 'issue_id' => 1, 'category' => 'A'],
-                ['assembly_id' => 2, 'issue_id' => 2, 'category' => 'A'],
-                ['assembly_id' => 2, 'issue_id' => 3, 'category' => 'A'],
+                ['assembly_id' => 1, 'issue_id' => 1, 'kind' => KindEnum::A->value],
+                ['assembly_id' => 1, 'issue_id' => 2, 'kind' => KindEnum::A->value],
+                ['assembly_id' => 1, 'issue_id' => 3, 'kind' => KindEnum::A->value],
+                ['assembly_id' => 2, 'issue_id' => 1, 'kind' => KindEnum::A->value],
+                ['assembly_id' => 2, 'issue_id' => 2, 'kind' => KindEnum::A->value],
+                ['assembly_id' => 2, 'issue_id' => 3, 'kind' => KindEnum::A->value],
             ],
             'Congressman' => [
                 ['congressman_id' => 1, 'name' => '', 'birth' => '2001-01-01'],
@@ -328,7 +329,7 @@ class VoteItemTest extends TestCase
                     'date' => '2000-01-01 00:00:00',
                     'url' => 'http://url.com',
                     'type' => 'type',
-                    'category' => 'A'
+                    'kind' => KindEnum::A->value
                 ], [
                     'document_id' => 2,
                     'issue_id' => 1,
@@ -336,7 +337,7 @@ class VoteItemTest extends TestCase
                     'date' => '2000-01-01 00:00:00',
                     'url' => 'http://url.com',
                     'type' => 'type',
-                    'category' => 'A'
+                    'kind' => KindEnum::A->value
                 ], [
                     'document_id' => 3,
                     'issue_id' => 1,
@@ -344,7 +345,7 @@ class VoteItemTest extends TestCase
                     'date' => '2000-01-01 00:00:00',
                     'url' => 'http://url.com',
                     'type' => 'type',
-                    'category' => 'A'
+                    'kind' => KindEnum::A->value
                 ], [
                     'document_id' => 4,
                     'issue_id' => 2,
@@ -352,7 +353,7 @@ class VoteItemTest extends TestCase
                     'date' => '2000-01-01 00:00:00',
                     'url' => 'http://url.com',
                     'type' => 'type',
-                    'category' => 'A'
+                    'kind' => KindEnum::A->value
                 ],
             ],
             'Vote' => [
@@ -362,14 +363,14 @@ class VoteItemTest extends TestCase
                     'assembly_id' => 1,
                     'document_id' => 1,
                     'date' => '2000-01-01',
-                    'category' => 'A'
+                    'kind' => KindEnum::A->value
                 ], [
                     'vote_id' => 2,
                     'issue_id' => 1,
                     'assembly_id' => 1,
                     'document_id' => 2,
                     'date' => '2000-02-01',
-                    'category' => 'A'
+                    'kind' => KindEnum::A->value
                 ],
             ],
             'VoteItem' => [

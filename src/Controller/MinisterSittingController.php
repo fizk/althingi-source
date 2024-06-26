@@ -129,7 +129,7 @@ class MinisterSittingController implements
             $request->getAttribute('ministry_sitting_id')
         )) != null) {
             $form = new Form\MinisterSitting([
-                ...(new \Althingi\Hydrator\MinisterSitting())->extract($ministerSitting),
+                ...$ministerSitting->toArray(),
                 ...$request->getParsedBody(),
                 'ministry_sitting_id' => $request->getAttribute('ministry_sitting_id'),
             ]);

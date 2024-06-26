@@ -5,6 +5,7 @@ namespace Althingi\Form;
 use Althingi\Filter\ToInt;
 use Althingi\Hydrator;
 use Althingi\Model;
+use Althingi\Validator\IssueKind;
 use Althingi\Validator\SignedDigits;
 use Laminas\Filter\ToNull;
 use Laminas\Validator\NotEmpty;
@@ -44,8 +45,9 @@ class CommitteeDocument extends Form
                 ->attachValidator(new SignedDigits())
                 ->attachFilter(new ToInt())
             ,
-            (new Input('category'))
+            (new Input('kind'))
                 ->attachValidator(new NotEmpty())
+                ->attachValidator(new IssueKind())
             ,
             (new Input('committee_id'))
                 ->attachValidator(new NotEmpty())

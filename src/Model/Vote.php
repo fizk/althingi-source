@@ -8,7 +8,7 @@ class Vote implements ModelInterface
 {
     private $vote_id;
     private $issue_id;
-    private $category;
+    private KindEnum $kind;
     private $assembly_id;
     private ?int $document_id = null;
     private ?DateTime $date = null;
@@ -25,7 +25,7 @@ class Vote implements ModelInterface
         return $this->vote_id;
     }
 
-    public function setVoteId(int $vote_id): self
+    public function setVoteId(int $vote_id): static
     {
         $this->vote_id = $vote_id;
         return $this;
@@ -36,7 +36,7 @@ class Vote implements ModelInterface
         return $this->issue_id;
     }
 
-    public function setIssueId(int $issue_id): self
+    public function setIssueId(int $issue_id): static
     {
         $this->issue_id = $issue_id;
         return $this;
@@ -47,7 +47,7 @@ class Vote implements ModelInterface
         return $this->assembly_id;
     }
 
-    public function setAssemblyId(int $assembly_id): self
+    public function setAssemblyId(int $assembly_id): static
     {
         $this->assembly_id = $assembly_id;
         return $this;
@@ -58,7 +58,7 @@ class Vote implements ModelInterface
         return $this->document_id;
     }
 
-    public function setDocumentId(?int $document_id): self
+    public function setDocumentId(?int $document_id): static
     {
         $this->document_id = $document_id;
         return $this;
@@ -69,7 +69,7 @@ class Vote implements ModelInterface
         return $this->date;
     }
 
-    public function setDate(?DateTime $date): self
+    public function setDate(?DateTime $date): static
     {
         $this->date = $date;
         return $this;
@@ -80,7 +80,7 @@ class Vote implements ModelInterface
         return $this->type;
     }
 
-    public function setType(?string $type): self
+    public function setType(?string $type): static
     {
         $this->type = $type;
         return $this;
@@ -91,7 +91,7 @@ class Vote implements ModelInterface
         return $this->outcome;
     }
 
-    public function setOutcome(?string $outcome): self
+    public function setOutcome(?string $outcome): static
     {
         $this->outcome = $outcome;
         return $this;
@@ -102,7 +102,7 @@ class Vote implements ModelInterface
         return $this->method;
     }
 
-    public function setMethod(?string $method): self
+    public function setMethod(?string $method): static
     {
         $this->method = $method;
         return $this;
@@ -113,7 +113,7 @@ class Vote implements ModelInterface
         return $this->yes;
     }
 
-    public function setYes(?int $yes): self
+    public function setYes(?int $yes): static
     {
         $this->yes = $yes;
         return $this;
@@ -124,7 +124,7 @@ class Vote implements ModelInterface
         return $this->no;
     }
 
-    public function setNo(?int $no): self
+    public function setNo(?int $no): static
     {
         $this->no = $no;
         return $this;
@@ -135,7 +135,7 @@ class Vote implements ModelInterface
         return $this->inaction;
     }
 
-    public function setInaction(?int $inaction): self
+    public function setInaction(?int $inaction): static
     {
         $this->inaction = $inaction;
         return $this;
@@ -146,20 +146,21 @@ class Vote implements ModelInterface
         return $this->committee_to;
     }
 
-    public function setCommitteeTo(?string $committee_to): self
+    public function setCommitteeTo(?string $committee_to): static
     {
         $this->committee_to = $committee_to;
         return $this;
     }
 
-    public function getCategory(): string
+    public function getKind(): KindEnum
     {
-        return $this->category;
+        return $this->kind;
     }
 
-    public function setCategory(string $category): self
+    public function setKind(KindEnum $kind): static
     {
-        $this->category = $category;
+        $this->kind = $kind;
+
         return $this;
     }
 
@@ -168,7 +169,7 @@ class Vote implements ModelInterface
         return [
             'vote_id' => $this->vote_id,
             'issue_id' => $this->issue_id,
-            'category' => $this->category,
+            'kind' => $this->kind->value,
             'assembly_id' => $this->assembly_id,
             'document_id' => $this->document_id,
             'date' => $this->date?->format('Y-m-d H:m:s'),

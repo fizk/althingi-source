@@ -14,6 +14,7 @@ use Althingi\Injector\{
     ServiceIssueCategoryAwareInterface,
     ServiceCategoryAwareInterface
 };
+use Althingi\Model\KindEnum;
 use Althingi\Utils\{
     ErrorFormResponse
 };
@@ -82,7 +83,7 @@ class IssueCategoryController implements
             'assembly_id' => $assemblyId,
             'issue_id' => $issueId,
             'category_id' => $categoryId,
-            'category' => 'A'
+            'kind' => KindEnum::A->value
         ]));
 
         if ($form->isValid()) {
@@ -107,7 +108,7 @@ class IssueCategoryController implements
 
         if (($issueCategory = $this->issueCategoryService->get($assemblyId, $issueId, $categoryId)) != null) {
             $form = new Form\IssueCategory([
-                ...(new \Althingi\Hydrator\IssueCategory())->extract($issueCategory),
+                ...$issueCategory->toArray(),
                 ...$request->getParsedBody(),
                 'id' => $request->getAttribute('id'),
                 'issue_id' => $request->getAttribute('issue_id'),

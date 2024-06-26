@@ -7,6 +7,7 @@ use Althingi\Hydrator;
 use Althingi\Events\{UpdateEvent, AddEvent};
 use Althingi\Presenters\IndexableIssuePresenter;
 use Althingi\Injector\{EventsAwareInterface, DatabaseAwareInterface};
+use Althingi\Model\KindEnum;
 use Generator;
 use InvalidArgumentException;
 use PDO;
@@ -27,18 +28,18 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
     ];
     const ALLOWED_ORDER = ['asc', 'desc'];
 
-    public function get(int $issue_id, int $assembly_id, $category = 'A'): ? Model\Issue
+    public function get(int $issue_id, int $assembly_id, $kind = KindEnum::A): ? Model\Issue
     {
         $issueStatement = $this->getDriver()->prepare('
             select * from `Issue` I
             where I.`assembly_id` = :assembly_id
             and I.`issue_id` = :issue_id
-            and I.`category` = :category
+            and I.`kind` = :kind
         ');
         $issueStatement->execute([
             'assembly_id' => $assembly_id,
             'issue_id' => $issue_id,
-            'category' => $category
+            'kind' => $kind->value
         ]);
 
         $object = $issueStatement->fetch(PDO::FETCH_ASSOC);
@@ -53,12 +54,12 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
      *
      * @return \Althingi\Model\Issue[] | void
      */
-    public function fetchAll(array $category = ['A'])
+    public function fetchAll(array $kind = [KindEnum::A])
     {
         $statement = $this->getDriver()->prepare(
-            'select * from `Issue` I where I.category in (' .  implode(', ', array_map(function ($c) {
-                return '"' . $c . '"';
-            }, $category)) . ');'
+            'select * from `Issue` I where I.kind in (' .  implode(', ', array_map(function (KindEnum $item) {
+                return '"' . $item->value . '"';
+            }, $kind)) . ');'
         );
         $statement->execute();
 
@@ -90,20 +91,24 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
     /**
      * Get one Issue along with some metadata.
      */
-    public function getWithDate(int $issue_id, int $assembly_id, $category = 'A'): ? Model\IssueAndDate
+    public function getWithDate(int $issue_id, int $assembly_id, $kind = KindEnum::A): ? Model\IssueAndDate
     {
         $issueStatement = $this->getDriver()->prepare(
             'select
                 *,  (select D.`date` from `Document` D
-                        where assembly_id = I.assembly_id and issue_id = I.issue_id and I.category = "A"
+                        where assembly_id = I.assembly_id and issue_id = I.issue_id and I.kind = "A"
                         order by date asc limit 0, 1)
                     as `date`
              from `Issue` I
               where I.assembly_id = :assembly_id
                 and I.issue_id = :issue_id
-                and I.category = :category'
+                and I.kind = :kind'
         );
-        $issueStatement->execute(['issue_id' => $issue_id, 'assembly_id' => $assembly_id, 'category' => $category]);
+        $issueStatement->execute([
+            'issue_id' => $issue_id,
+            'assembly_id' => $assembly_id,
+            'kind' => $kind->value
+        ]);
 
         $object = $issueStatement->fetch(PDO::FETCH_ASSOC);
 
@@ -134,12 +139,12 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
         ?string $order = 'asc',
         array $type = [],
         array $categoryType = [],
-        array $category = ['A']
+        array $kind = [KindEnum::A]
     ): array {
         $order = in_array($order, self::ALLOWED_ORDER) ? $order : 'asc';
         $typeFilterString = $this->typeFilterString($type);
         $categoryFilterString = $this->categoryTypeFilterString($categoryType);
-        $categoryString = $this->categoryString($category);
+        $kindString = $this->categoryString($kind);
         $size = $size ? : 25;
 
         if (empty($categoryFilterString)) {
@@ -149,13 +154,13 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
                         select D.`date` from `Document` D
                         where `assembly_id` = I.`assembly_id`
                         and `issue_id` = I.issue_id
-                        and D.`category` = I.`category`
+                        and D.`kind` = I.`kind`
                         order by `date` asc limit 0, 1
                     ) as `date`
                 from `Issue` I
                 where I.`assembly_id` = :id
                    {$typeFilterString}
-                   {$categoryString}
+                   {$kindString}
                 order by I.`issue_id` {$order}
                 limit {$offset}, {$size};
             ");
@@ -166,7 +171,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
                     select D.`date` from `Document` D
                     where `assembly_id` = I.`assembly_id`
                     and `issue_id` = I.issue_id
-                    and D.`category` = I.category
+                    and D.`kind` = I.kind
                     order by `date` asc limit 0, 1
                 ) as `date`
 
@@ -174,11 +179,11 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
                 left outer join `Category_has_Issue` CI on (
                     CI.`issue_id` = I.`issue_id`
                     and CI.`assembly_id` = I.assembly_id
-                    and (CI.`category` = I.category or CI.`category` is null)
+                    and (CI.`kind` = I.kind or CI.`kind` is null)
                 )
                 where I.assembly_id = :id
                     {$typeFilterString}
-                    {$categoryString}
+                    {$kindString}
                     {$categoryFilterString}
                 order by I.issue_id {$order}
                 limit {$offset}, {$size};
@@ -191,24 +196,24 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    public function countByAssembly(int $id, array $type = [], array $categoryTypes = [], ?array $category = ['A']): int
+    public function countByAssembly(int $id, array $type = [], array $categoryTypes = [], ?array $kind = [KindEnum::A]): int
     {
         $typeFilterString = $this->typeFilterString($type);
         $categoryFilterString = $this->categoryTypeFilterString($categoryTypes);
-        $categoryString = $this->categoryString($category);
+        $kindString = $this->categoryString($kind);
 
         if (empty($categoryFilterString)) {
             $statement = $this->getDriver()->prepare("
                 select count(*) from `Issue` I
-                where `assembly_id` = :id {$typeFilterString} {$categoryString}
+                where `assembly_id` = :id {$typeFilterString} {$kindString}
             ");
         } else {
             $statement = $this->getDriver()->prepare("
                 select count(*) from `Issue` I
                     join `Category_has_Issue` CI on (
-                      CI.issue_id = I.issue_id and CI.assembly_id = :id {$categoryString}
+                      CI.issue_id = I.issue_id and CI.assembly_id = :id {$kindString}
                     )
-                where I.assembly_id = :id {$typeFilterString} {$categoryFilterString} {$categoryString}
+                where I.assembly_id = :id {$typeFilterString} {$categoryFilterString} {$kindString}
             ");
         }
 
@@ -224,11 +229,14 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
         $statement = $this->getDriver()->prepare("
             select * from `Issue` I
               where I.`congressman_id` = :id
-              and I.category = 'A'
+              and I.kind = :kind
             order by I.`assembly_id` desc, I.`issue_id` asc;
         ");
 
-        $statement->execute(['id' => $id]);
+        $statement->execute([
+            'id' => $id,
+            'kind' => KindEnum::A->value
+        ]);
         return array_map(function ($object) {
             return (new Hydrator\Issue())->hydrate($object, new Model\Issue());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
@@ -243,7 +251,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
     {
         $statement = $this->getDriver()->prepare("
             select I.* from `Document_has_Congressman` D
-                join `Issue` I on (I.`issue_id` = D.`issue_id` and I.assembly_id = D.assembly_id and I.category = 'A')
+                join `Issue` I on (I.`issue_id` = D.`issue_id` and I.assembly_id = D.assembly_id and I.kind = :kind)
                 where D.assembly_id = :assembly_id
                   and D.congressman_id = :congressman_id
                   and D.`order` = 1
@@ -253,6 +261,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
         $statement->execute([
             'assembly_id' => $assemblyId,
             'congressman_id' => $congressmanId,
+            'kind' => KindEnum::A->value
         ]);
         return array_map(function ($object) {
             return (new Hydrator\Issue())->hydrate($object, new Model\Issue());
@@ -271,12 +280,12 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
                 join `Issue` I on (
                     D.issue_id = I.issue_id
                     and D.assembly_id = I.assembly_id
-                    and I.category = 'A'
+                    and I.kind = :kind
                 )
                 join `Document_has_Congressman` DC on (
                     D.document_id = DC.document_id
                     and D.assembly_id = DC.assembly_id
-                    and I.category = 'A'
+                    and I.kind = :kind
                 )
             where D.assembly_id = :assembly_id
               and DC.congressman_id = :congressman_id
@@ -287,6 +296,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
         $statement->execute([
             'assembly_id' => $assemblyId,
             'congressman_id' => $congressmanId,
+            'kind' => KindEnum::A->value
         ]);
         return array_map(function ($object) {
             return (new Hydrator\CongressmanIssue())->hydrate($object, new Model\CongressmanIssue());
@@ -300,18 +310,18 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
      *
      * @return \Althingi\Model\AssemblyStatus[]
      */
-    public function fetchCountByCategoryAndStatus(int $assemblyId, string $category = 'A'): array
+    public function fetchCountByCategoryAndStatus(int $assemblyId, string $kind = KindEnum::A): array
     {
         $statement = $this->getDriver()->prepare('
             select count(*) as `count`, I.`status`, I.`type`, I.`type_name`, I.`type_subname` from `Issue` I
                 where I.assembly_id = :assembly_id
-                 and I.category = :category
+                 and I.kind = :kind
                 group by I.`type`, I.`status` order by I.`type_name`
         ');
 
         $statement->execute([
             'assembly_id' => $assemblyId,
-            'category' => $category,
+            'kind' => $kind->value,
         ]);
 
         return array_map(function ($object) {
@@ -322,11 +332,11 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
     public function fetchCountByCategory(int $assemblyId)
     {
         $statement = $this->getDriver()->prepare('
-            select count(*) as `count`, category, type, type_name, type_subname
+            select count(*) as `count`, kind, type, type_name, type_subname
             from Issue
             where assembly_id = :assembly_id
                 group by type
-            order by category, type_name;
+            order by kind, type_name;
         ');
 
         $statement->execute([
@@ -347,13 +357,14 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
     {
         $statement = $this->getDriver()->prepare('
             select I.`status` as `value`, count(*) as `count` from Document D
-                join Issue I on (D.assembly_id = I.assembly_id and D.issue_id = I.issue_id and I.category = \'A\')
+                join Issue I on (D.assembly_id = I.assembly_id and D.issue_id = I.issue_id and I.kind = :kind)
             where D.assembly_id = :assembly_id and D.`type` = \'stjórnarfrumvarp\'
             group by I.`status`;
         ');
 
         $statement->execute([
             'assembly_id' => $assemblyId,
+            'kind' => KindEnum::A->value
         ]);
 
         return array_map(function ($object) {
@@ -371,11 +382,14 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
         $statement = $this->getDriver()->prepare(
             'select count(*) as `count`, I.`status` from `Issue` I
             where I.`type` = \'l\' and I.assembly_id = :assembly_id
-              and I.category = \'A\'
+              and I.kind = :kind
               group by `status`;'
         );
 
-        $statement->execute(['assembly_id' => $id]);
+        $statement->execute([
+            'assembly_id' => $id,
+            'kind' => KindEnum::A->value
+        ]);
 
         return array_map(function ($object) {
             return (new Hydrator\IssueTypeStatus())->hydrate($object, new Model\IssueTypeStatus());
@@ -392,11 +406,14 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
             where `type` = \'l\'
               and assembly_id = :assembly_id
               and `type_subname` != \'stjórnarfrumvarp\'
-              and I.category = \'A\'
+              and I.kind = :kind
             group by `status`;'
         );
 
-        $statement->execute(['assembly_id' => $id]);
+        $statement->execute([
+            'assembly_id' => $id,
+            'kind' => KindEnum::A->value
+        ]);
 
         return array_map(function ($object) {
             return (new Hydrator\IssueTypeStatus())->hydrate($object, new Model\IssueTypeStatus());
@@ -413,7 +430,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
     {
         $statement = $this->getDriver()->prepare('
             select count(*) as `count`, I.status from Document D
-                join Issue I on (I.assembly_id = D.assembly_id and I.issue_id = D.issue_id and I.category = D.category)
+                join Issue I on (I.assembly_id = D.assembly_id and I.issue_id = D.issue_id and I.kind = D.kind)
             where D.assembly_id = :assembly_id and D.type = \'stjórnarfrumvarp\'
             group by I.status;
         ');
@@ -428,7 +445,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
     /**
      * @return \Althingi\Model\Status[]
      */
-    public function fetchProgress(int $assemblyId, int $issueId, string $category = 'A'): array
+    public function fetchProgress(int $assemblyId, int $issueId, string $kind = KindEnum::A): array
     {
         $statement = $this->getDriver()->prepare('
             select count(*) as value,
@@ -444,7 +461,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
                 true as `completed`,
                 256 as `importance`
             from `Document` D
-            where D.`assembly_id` = :assembly_id and D.`issue_id` = :issue_id and `category` = :category
+            where D.`assembly_id` = :assembly_id and D.`issue_id` = :issue_id and `kind` = :kind
             group by date_format(D.date, "%Y-%m-%d")
             having min(D.date)
 
@@ -463,7 +480,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
                 true as `completed`,
                 128 as `importance`
             from Speech S
-            where S.assembly_id = :assembly_id and S.issue_id = :issue_id and S.`category` = :category
+            where S.assembly_id = :assembly_id and S.issue_id = :issue_id and S.`kind` = :kind
             group by date_format(S.`from`, "%Y-%m-%d")
             having min(`from`)
 
@@ -512,7 +529,11 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
             ;
         ');
 
-        $statement->execute(['assembly_id' => $assemblyId, 'issue_id' => $issueId, 'category' => $category]);
+        $statement->execute([
+            'assembly_id' => $assemblyId,
+            'issue_id' => $issueId,
+            'kind' => $kind->value
+        ]);
 
         return array_map(function ($object) {
             return (new Hydrator\Status())->hydrate($object, new Model\Status());
@@ -528,7 +549,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
         int $assemblyId,
         ?int $size = null,
         ?string $order = 'desc',
-        $categories = ['A']
+        $kind = [KindEnum::A]
     ): array {
         $limit = $size
             ? "limit 0, {$size}"
@@ -541,12 +562,12 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
                 join `Issue` I on (
                     I.`issue_id` = S.`issue_id`
                     and I.`assembly_id` = S.`assembly_id`
-                    and I.`category` = S.`category`
+                    and I.`kind` = S.`kind`
                 )
-            where S.`assembly_id` = :assembly and S.`category` in (" .
-                implode(', ', array_map(function ($c) {
-                    return '"' . $c . '"';
-                }, $categories))
+            where S.`assembly_id` = :assembly and S.`kind` in (" .
+                implode(', ', array_map(function (KindEnum $item) {
+                    return '"' . $item->value . '"';
+                }, $kind))
             . ")
                 group by S.`issue_id`
                 order by `value` {$order}
@@ -604,7 +625,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
                 $data,
                 "issue_id = {$data->getIssueId()} and ".
                 "assembly_id = {$data->getAssemblyId()} and ".
-                "category = '{$data->getCategory()}'"
+                "kind = '{$data->getKind()->value}'"
             )
         );
         $statement->execute($this->toSqlValues($data));
@@ -649,24 +670,16 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
         return ' and CI.`category_id` in (' . implode(',', $category) . ')';
     }
 
-    private function categoryString(?array $categories = [], $prefix = 'and')
+    private function categoryString(?array $kind = [], $prefix = 'and')
     {
-        $formattedCategories = array_map(function ($c) {
-            return strtoupper($c);
-        }, $categories ? : []);
-
-        $filteredCategories = array_filter($formattedCategories, function ($c) {
-            return $c === 'A' || $c === 'B';
-        });
-
-        if (empty($filteredCategories)) {
+        if (empty($kind)) {
             return '';
         }
 
-        $quotedCategories = array_map(function ($c) {
-            return "'" . $c . "'";
-        }, $filteredCategories);
+        $quotedCategories = array_map(function (KindEnum $item) {
+            return "'" . $item->value . "'";
+        }, $kind);
 
-        return " {$prefix} I.`category` in (" . implode(',', $quotedCategories) . ')';
+        return " {$prefix} I.`kind` in (" . implode(',', $quotedCategories) . ')';
     }
 }

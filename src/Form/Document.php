@@ -5,6 +5,7 @@ namespace Althingi\Form;
 use Althingi\Filter\ToInt;
 use Althingi\Hydrator;
 use Althingi\Model;
+use Althingi\Validator\IssueKind;
 use Althingi\Validator\SignedDigits;
 use Laminas\Filter\ToNull;
 use Laminas\Validator\Date;
@@ -26,7 +27,7 @@ class Document extends Form
     public function getValidationConfig(): array
     {
         return [
-            (new Input('issue_id'))
+            (new Input('document_id'))
                 ->attachValidator(new NotEmpty())
                 ->attachValidator(new SignedDigits())
                 ->attachFilter(new ToInt())
@@ -36,10 +37,14 @@ class Document extends Form
                 ->attachValidator(new SignedDigits())
                 ->attachFilter(new ToInt())
             ,
-            (new Input('document_id'))
+            (new Input('issue_id'))
                 ->attachValidator(new NotEmpty())
                 ->attachValidator(new SignedDigits())
                 ->attachFilter(new ToInt())
+            ,
+            (new Input('kind'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new IssueKind())
             ,
             (new Input('committee_id', true))
                 ->attachFilter(new ToInt())
@@ -56,9 +61,6 @@ class Document extends Form
             (new Input('type'))
                 ->attachValidator(new NotEmpty())
                 ->attachFilter(new ToNull(['type' => 'all']))
-            ,
-            (new Input('category'))
-                ->attachValidator(new NotEmpty())
             ,
             (new Input('note', true))
                 ->attachFilter(new ToNull(['type' => 'all']))

@@ -5,6 +5,7 @@ namespace Althingi\Service;
 use Althingi\Model;
 use Althingi\Hydrator;
 use Althingi\Injector\DatabaseAwareInterface;
+use Althingi\Model\KindEnum;
 use Generator;
 use PDO;
 
@@ -58,7 +59,7 @@ class Category implements DatabaseAwareInterface
     {
         $statement = $this->getDriver()->prepare('
             select count(*) as `count` , C.* from `Issue` I
-            join `Category_has_Issue` CI on (CI.`issue_id` = I.`issue_id` and CI.`category` = I.`category`)
+            join `Category_has_Issue` CI on (CI.`issue_id` = I.`issue_id` and CI.`kind` = I.`kind`)
             join `Category` C on (C.`category_id` = CI.`category_id` and CI.assembly_id = :assembly_id)
             where I.`assembly_id` = :assembly_id
             group by CI.`category_id`
@@ -81,11 +82,12 @@ class Category implements DatabaseAwareInterface
             join `Category` C on (C.`category_id` = CI.`category_id`)
             where CI.`assembly_id` = :assembly_id
               and CI.`issue_id` = :issue_id
-              and CI.category = \'A\';
+              and CI.kind = :kind;
         ');
         $statement->execute([
             'assembly_id' => $assemblyId,
             'issue_id' => $issueId,
+            'kind' => KindEnum::A->value
         ]);
         return array_map(function ($object) {
             return (new Hydrator\Category())->hydrate($object, new Model\Category());
@@ -100,12 +102,13 @@ class Category implements DatabaseAwareInterface
             where CI.`assembly_id` = :assembly_id
               and CI.`issue_id` = :issue_id
               and CI.`category_id` = :category_id
-              and CI.category = \'A\';
+              and CI.kind = :kind;
         ');
         $statement->execute([
             'assembly_id' => $assemblyId,
             'issue_id' => $issueId,
             'category_id' => $categoryId,
+            'kind' => KindEnum::A->value
         ]);
         $object = $statement->fetch(PDO::FETCH_ASSOC);
 

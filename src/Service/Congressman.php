@@ -7,6 +7,7 @@ use Althingi\Hydrator;
 use Althingi\Presenters\IndexableCongressmanPresenter;
 use Althingi\Injector\{EventsAwareInterface, DatabaseAwareInterface};
 use Althingi\Events\{UpdateEvent, AddEvent};
+use Althingi\Model\KindEnum;
 use PDO;
 use DateTime;
 use Generator;
@@ -127,16 +128,16 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
         int $assemblyId,
         ?int $size = null,
         ?string $order = 'desc',
-        ?array $category = ['A']
+        ?array $kind = [KindEnum::A]
     ): array {
         $limit = $size
             ? "limit 0, {$size}"
             : '';
 
-        $categories = count($category) > 0
-            ? 'and S.category in (' . implode(', ', array_map(function ($c) {
-                return '"' . $c . '"';
-            }, $category)) . ')'
+        $kinds = count($kind) > 0
+            ? 'and S.kind in (' . implode(', ', array_map(function (KindEnum $item) {
+                return '"' . $item->value . '"';
+            }, $kind)) . ')'
             : '';
 
         $statement = $this->getDriver()->prepare(
@@ -144,7 +145,7 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
                 (
                     select (sum(time_to_sec(timediff(`to`, `from`)))) as `count`
                     from `Speech` S
-                    where S.`assembly_id` = :assembly_id and S.`congressman_id` = C.congressman_id {$categories}
+                    where S.`assembly_id` = :assembly_id and S.`congressman_id` = C.congressman_id {$kinds}
                     group by `congressman_id`
                 ) as `value`
                 from `Session` S
@@ -189,7 +190,7 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
                         D.document_id = DhC.document_id and
                         D.issue_id = DhC.issue_id and
                         D.assembly_id = DhC.assembly_id and
-                        D.category = DhC.category
+                        D.kind = DhC.kind
                     )
                     where D.assembly_id = :assembly_id
                 group by D.issue_id
@@ -198,7 +199,7 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
                 join Issue I on (
                     A.issue_id = I.issue_id and
                     A.assembly_id = I.assembly_id and
-                    A.category = I.category
+                    A.kind = I.kind
                 )
                 join Congressman C on (A.congressman_id = C.congressman_id)
                 {$types}
@@ -235,13 +236,13 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
      * @return \Althingi\Model\CongressmanAndDateRange[]
      * @deprecated
      */
-    public function fetchAccumulatedTimeByIssue(int $assemblyId, int $issueId, ?string $category = 'A'): array
+    public function fetchAccumulatedTimeByIssue(int $assemblyId, int $issueId, ?KindEnum $kind = KindEnum::A): array
     {
         $statement = $this->getDriver()->prepare("
             select C.*, (sum(`diff`)) as `time`, date(`from`) as `begin`, null as `end` from (
                 select *, timediff(`to`, `from`) as `diff`
                 from `Speech` D
-                where D.assembly_id = :assembly_id and D.issue_id = :issue_id and D.category = :category
+                where D.assembly_id = :assembly_id and D.issue_id = :issue_id and D.kind = :kind
             ) S
             join `Congressman` C on (C.congressman_id = S.congressman_id)
             group by S.congressman_id
@@ -250,7 +251,7 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
         $statement->execute([
             'issue_id' => $issueId,
             'assembly_id' => $assemblyId,
-            'category' => $category
+            'kind' => $kind->value
         ]);
 
         return array_map(function ($object) {
@@ -295,7 +296,7 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
                     select D.`document_id` from `Document` D
                     where D.`assembly_id` = :assembly_id
                         and D.`issue_id` = :issue_id
-                        and D.`category` = \'A\'
+                        and D.`kind` = :kind
                     order by `date` asc limit 0, 1
                 )
                 order by DC.`order`;
@@ -303,7 +304,8 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
 
         $statement->execute([
             'assembly_id' => $assemblyId,
-            'issue_id' => $issueId
+            'issue_id' => $issueId,
+            'kind' => KindEnum::A->value
         ]);
 
         return array_map(function ($object) {

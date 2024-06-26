@@ -83,7 +83,7 @@ class CategoryController implements
     {
         if (($category = $this->categoryService->get($request->getAttribute('category_id'))) != null) {
             $form = new Form\Category([
-                ...(new \Althingi\Hydrator\Category)->extract($category),
+                ...$category->toArray(),
                 ...$request->getParsedBody(),
                 'super_category_id' => $request->getAttribute('super_category_id'),
                 'category_id' => $request->getAttribute('category_id')

@@ -7,6 +7,7 @@ use Althingi\Hydrator;
 use Althingi\Events\{UpdateEvent, AddEvent};
 use Althingi\Presenters\IndexablePartyPresenter;
 use Althingi\Injector\{DatabaseAwareInterface, EventsAwareInterface};
+use Althingi\Model\KindEnum;
 use PDO;
 use DateTime;
 use Generator;
@@ -108,12 +109,12 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
      * @return \Althingi\Model\PartyAndTime[]
      * @deprecated
      */
-    public function fetchTimeByAssembly(int $assemblyId, array $category = ['A']): array
+    public function fetchTimeByAssembly(int $assemblyId, array $kind = [KindEnum::A]): array
     {
-        $categories = count($category) > 0
-            ? 'and SP.category in (' . implode(',', array_map(function ($c) {
-                return '"' . $c . '"';
-            }, $category)) . ')'
+        $categories = count($kind) > 0
+            ? 'and SP.kind in (' . implode(',', array_map(function (KindEnum $item) {
+                return '"' . $item->value . '"';
+            }, $kind)) . ')'
             : '';
 
         $statement = $this->getDriver()->prepare("

@@ -72,7 +72,7 @@ class ConstituencyController implements
             $request->getAttribute('id')
         )) !== null) {
             $form = new Form\Constituency([
-                ...(new \Althingi\Hydrator\Constituency())->extract($constituency),
+                ...$constituency->toArray(),
                 ...$request->getParsedBody(),
                 'constituency_id' => $request->getAttribute('id')
             ]);

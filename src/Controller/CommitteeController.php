@@ -84,7 +84,7 @@ class CommitteeController implements
     {
         if (($committee = $this->committeeService->get($request->getAttribute('committee_id'))) != null) {
             $form = new Form\Committee([
-                ...(new \Althingi\Hydrator\Committee)->extract($committee),
+                ...$committee->toArray(),
                 ...$request->getParsedBody(),
                 'assembly_id' => $request->getAttribute('id'),
                 'committee_id' => $request->getAttribute('committee_id'),

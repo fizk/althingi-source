@@ -8,6 +8,7 @@ use Althingi\Service\CongressmanDocument;
 use Althingi\DatabaseConnection;
 use Althingi\Events\AddEvent;
 use Althingi\Events\UpdateEvent;
+use Althingi\Model\KindEnum;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Mockery;
 use PDO;
@@ -25,7 +26,7 @@ class CongressmanDocumentTest extends TestCase
         $expectedData = (new CongressmanDocumentModel())
             ->setDocumentId(1)
             ->setIssueId(1)
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setAssemblyId(1)
             ->setCongressmanId(1)
             ->setOrder(1);
@@ -39,7 +40,7 @@ class CongressmanDocumentTest extends TestCase
         $congressman = (new CongressmanDocumentModel())
             ->setDocumentId(1)
             ->setIssueId(1)
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setAssemblyId(1)
             ->setCongressmanId(2)
             ->setOrder(2);
@@ -47,10 +48,10 @@ class CongressmanDocumentTest extends TestCase
         $expectedTable = $this->createArrayDataSet([
             'Document_has_Congressman' => [
                 [
-                    'document_id' => 1, 'issue_id' => 1, 'category' => 'A',
+                    'document_id' => 1, 'issue_id' => 1, 'kind' => KindEnum::A->value,
                     'assembly_id' => 1, 'congressman_id' => 1, 'minister' => null, 'order' => 1
                 ], [
-                    'document_id' => 1, 'issue_id' => 1, 'category' => 'A',
+                    'document_id' => 1, 'issue_id' => 1, 'kind' => KindEnum::A->value,
                     'assembly_id' => 1, 'congressman_id' => 2, 'minister' => null, 'order' => 2
                 ],
             ],
@@ -70,7 +71,7 @@ class CongressmanDocumentTest extends TestCase
         $congressman = (new CongressmanDocumentModel())
             ->setDocumentId(1)
             ->setIssueId(1)
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setAssemblyId(1)
             ->setCongressmanId(2)
             ->setOrder(2);
@@ -78,10 +79,10 @@ class CongressmanDocumentTest extends TestCase
         $expectedTable = $this->createArrayDataSet([
             'Document_has_Congressman' => [
                 [
-                    'document_id' => 1, 'issue_id' => 1, 'category' => 'A', 'assembly_id' => 1,
+                    'document_id' => 1, 'issue_id' => 1, 'kind' => KindEnum::A->value, 'assembly_id' => 1,
                     'congressman_id' => 1, 'minister' => null, 'order' => 1
                 ], [
-                    'document_id' => 1, 'issue_id' => 1, 'category' => 'A', 'assembly_id' => 1,
+                    'document_id' => 1, 'issue_id' => 1, 'kind' => KindEnum::A->value, 'assembly_id' => 1,
                     'congressman_id' => 2, 'minister' => null, 'order' => 2
                 ],
             ],
@@ -101,7 +102,7 @@ class CongressmanDocumentTest extends TestCase
         $congressman = (new CongressmanDocumentModel())
             ->setDocumentId(1)
             ->setIssueId(1)
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setAssemblyId(1)
             ->setCongressmanId(1)
             ->setMinister('hello')
@@ -110,7 +111,7 @@ class CongressmanDocumentTest extends TestCase
         $expectedTable = $this->createArrayDataSet([
             'Document_has_Congressman' => [
                 [
-                    'document_id' => 1, 'issue_id' => 1, 'category' => 'A' ,'assembly_id' => 1,
+                    'document_id' => 1, 'issue_id' => 1, 'kind' => KindEnum::A->value ,'assembly_id' => 1,
                     'congressman_id' => 1, 'minister' => 'hello', 'order' => 2
                 ]
             ],
@@ -139,7 +140,7 @@ class CongressmanDocumentTest extends TestCase
         $congressman = (new CongressmanDocumentModel())
             ->setDocumentId(1)
             ->setIssueId(1)
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setAssemblyId(1)
             ->setCongressmanId(2)
             ->setOrder(2);
@@ -165,7 +166,7 @@ class CongressmanDocumentTest extends TestCase
         $congressman = (new CongressmanDocumentModel())
             ->setDocumentId(1)
             ->setIssueId(1)
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setAssemblyId(1)
             ->setCongressmanId(1)
             ->setOrder(2);
@@ -190,7 +191,7 @@ class CongressmanDocumentTest extends TestCase
         $congressman = (new CongressmanDocumentModel())
             ->setDocumentId(1)
             ->setIssueId(1)
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setAssemblyId(1)
             ->setCongressmanId(1)
             ->setOrder(1);
@@ -216,7 +217,7 @@ class CongressmanDocumentTest extends TestCase
         $congressman = (new CongressmanDocumentModel())
             ->setDocumentId(1)
             ->setIssueId(1)
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setAssemblyId(1)
             ->setCongressmanId(1)
             ->setOrder(1);
@@ -241,7 +242,7 @@ class CongressmanDocumentTest extends TestCase
         $congressman = (new CongressmanDocumentModel())
             ->setDocumentId(1)
             ->setIssueId(1)
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setAssemblyId(1)
             ->setCongressmanId(1)
             ->setOrder(2);
@@ -266,7 +267,7 @@ class CongressmanDocumentTest extends TestCase
         $congressman = (new CongressmanDocumentModel())
             ->setDocumentId(1)
             ->setIssueId(1)
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setAssemblyId(1)
             ->setCongressmanId(2)
             ->setOrder(1);
@@ -292,13 +293,13 @@ class CongressmanDocumentTest extends TestCase
                 ['congressman_id' => 4, 'name' => 'name4', 'birth' => '2000-01-01', 'death' => null],
             ],
             'Issue' => [
-                ['issue_id' => 1, 'assembly_id' => 1, 'category' => 'A']
+                ['issue_id' => 1, 'assembly_id' => 1, 'kind' => KindEnum::A->value]
             ],
             'Document' => [
                 [
                     'document_id' => 1,
                     'issue_id' => 1,
-                    'category' => 'A',
+                    'kind' => KindEnum::A->value,
                     'assembly_id' => 1,
                     'date' => '2000-01-01',
                     'url' => '',
@@ -309,7 +310,7 @@ class CongressmanDocumentTest extends TestCase
                 [
                     'document_id' => 1,
                     'issue_id' => 1,
-                    'category' => 'A',
+                    'kind' => KindEnum::A->value,
                     'assembly_id' => 1,
                     'congressman_id' => 1,
                     'order' => 1

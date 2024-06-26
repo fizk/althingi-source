@@ -4,6 +4,7 @@ namespace Althingi\Controller;
 
 use Althingi\Controller;
 use Althingi\Model;
+use Althingi\Model\KindEnum;
 use Althingi\Service;
 use Althingi\ServiceHelper;
 use Library\Container\Container;
@@ -45,7 +46,7 @@ class CommitteeDocumentControllerTest extends TestCase
             ->setDocumentId(4)
             ->setAssemblyId(1)
             ->setIssueId(2)
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setCommitteeId(3)
             ->setPart('part')
             ->setName('name');
@@ -132,7 +133,7 @@ class CommitteeDocumentControllerTest extends TestCase
             ->setDocumentId(4)
             ->setAssemblyId(1)
             ->setIssueId(2)
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setCommitteeId(3)
             ->setPart(null)
             ->setName(null);
@@ -142,7 +143,7 @@ class CommitteeDocumentControllerTest extends TestCase
             ->setDocumentId(4)
             ->setAssemblyId(1)
             ->setIssueId(2)
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setCommitteeId(3)
             ->setPart('part')
             ->setName('name');
@@ -182,7 +183,7 @@ class CommitteeDocumentControllerTest extends TestCase
             ->setDocumentId(4)
             ->setAssemblyId(1)
             ->setIssueId(2)
-            ->setCategory('A')
+            ->setKind(KindEnum::A)
             ->setCommitteeId(3)
             ->setPart(null)
             ->setName(null);
@@ -236,7 +237,7 @@ class CommitteeDocumentControllerTest extends TestCase
                     ->setDocumentId(4)
                     ->setAssemblyId(1)
                     ->setIssueId(1)
-                    ->setCategory('')
+                    ->setKind(KindEnum::A)
                     ->setCommitteeId(1)
             )
             ->getMock();
@@ -276,7 +277,7 @@ class CommitteeDocumentControllerTest extends TestCase
                     ->setDocumentId(4)
                     ->setAssemblyId(1)
                     ->setIssueId(1)
-                    ->setCategory('')
+                    ->setKind(KindEnum::A)
                     ->setCommitteeId(1)
             ])
             ->getMock();

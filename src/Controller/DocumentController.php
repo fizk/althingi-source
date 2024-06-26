@@ -11,6 +11,7 @@ use Laminas\Diactoros\Response\{
 use Althingi\Service;
 use Althingi\Form;
 use Althingi\Injector\ServiceDocumentAwareInterface;
+use Althingi\Model\KindEnum;
 use Althingi\Utils\ErrorFormResponse;
 use Althingi\Router\{
     RestControllerTrait,
@@ -71,7 +72,7 @@ class DocumentController implements
             'assembly_id' => $assemblyId,
             'issue_id' => $issueId,
             'document_id' => $documentId,
-            'category' => 'A',
+            'kind' => KindEnum::A->value,
         ]);
 
         if ($form->isValid()) {
@@ -96,7 +97,7 @@ class DocumentController implements
 
         if (($document = $this->documentService->get($assemblyId, $issueId, $documentId)) != null) {
             $form = new Form\Document([
-                ...(new \Althingi\Hydrator\Document())->extract($document),
+                ...$document->toArray(),
                 ...$request->getParsedBody(),
                 'id' => $request->getAttribute('id'),
                 'issue_id' => $request->getAttribute('issue_id'),
