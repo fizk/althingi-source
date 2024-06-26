@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "00b839f4e05415f689f50bdb2d1a9173",
+    "content-hash": "5a6799a5f0a159a251c10a289dbadf1a",
     "packages": [
         {
             "name": "fizk/library",
-            "version": "0.1.0",
+            "version": "0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/fizk/library.git",
-                "reference": "6674135f767b5c38ff7fe3c31a645dd2f6c50ab5"
+                "reference": "08e0e4a92279a5e33e770b97ccf8465627a33984"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/fizk/library/zipball/6674135f767b5c38ff7fe3c31a645dd2f6c50ab5",
-                "reference": "6674135f767b5c38ff7fe3c31a645dd2f6c50ab5",
+                "url": "https://api.github.com/repos/fizk/library/zipball/08e0e4a92279a5e33e770b97ccf8465627a33984",
+                "reference": "08e0e4a92279a5e33e770b97ccf8465627a33984",
                 "shasum": ""
             },
             "require": {
@@ -50,9 +50,9 @@
             "description": "A RESTfull API utility classes",
             "support": {
                 "issues": "https://github.com/fizk/library/issues",
-                "source": "https://github.com/fizk/library/tree/0.1.0"
+                "source": "https://github.com/fizk/library/tree/0.2.0"
             },
-            "time": "2024-06-18T16:49:04+00:00"
+            "time": "2024-06-26T13:40:46+00:00"
         },
         {
             "name": "laminas/laminas-diactoros",

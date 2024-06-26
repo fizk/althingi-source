@@ -19,7 +19,7 @@
     "league/event": "^3.0",
     "laminas/laminas-stdlib": "^3.19",
     "laminas/laminas-servicemanager": "3.21",
-    "fizk/library": "0.1"
+    "fizk/library": "^0.2"
   },
   "scripts": {
     "sniff": "./vendor/bin/phpcs --standard=PSR12 ./config ./src ./tests",
