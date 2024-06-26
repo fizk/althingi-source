@@ -22,6 +22,7 @@ class SuperCategoryController implements
     ServiceSuperCategoryAwareInterface
 {
     use RestControllerTrait;
+
     private SuperCategory $superCategoryService;
 
     /**
@@ -77,9 +78,11 @@ class SuperCategoryController implements
      */
     public function patch(ServerRequest $request): ResponseInterface
     {
-        if (($superCategory = $this->superCategoryService->get(
-            $request->getAttribute('super_category_id')
-        )) != null) {
+        if (
+            ($superCategory = $this->superCategoryService->get(
+                $request->getAttribute('super_category_id')
+            )) != null
+        ) {
             $form = new Form\SuperCategory([
                 ...$superCategory->toArray(),
                 ...$request->getParsedBody(),

@@ -23,6 +23,7 @@ class VoteController implements
     ServiceVoteAwareInterface
 {
     use RestControllerTrait;
+
     private Vote $voteService;
 
     /**

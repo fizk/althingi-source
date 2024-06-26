@@ -1,4 +1,5 @@
 <?php
+
 namespace Althingi\Presenters;
 
 use Althingi\Model\SuperCategory;
@@ -7,8 +8,8 @@ use Laminas\Hydrator\HydratorInterface;
 
 class IndexableSuperCategoryPresenter implements IndexablePresenter
 {
-    const INDEX = 'althingi_model_super-category';
-    const TYPE = 'super-category';
+    private const INDEX = 'althingi_model_super-category';
+    private const TYPE = 'super-category';
 
     private HydratorInterface $hydrator;
     private SuperCategory $model;

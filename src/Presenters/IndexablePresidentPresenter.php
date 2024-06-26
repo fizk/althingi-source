@@ -1,4 +1,5 @@
 <?php
+
 namespace Althingi\Presenters;
 
 use Althingi\Model\ModelInterface;
@@ -7,8 +8,8 @@ use Laminas\Hydrator\HydratorInterface;
 
 class IndexablePresidentPresenter implements IndexablePresenter
 {
-    const INDEX = 'althingi_model_president';
-    const TYPE = 'president';
+    private const INDEX = 'althingi_model_president';
+    private const TYPE = 'president';
 
     private HydratorInterface $hydrator;
     private President $model;

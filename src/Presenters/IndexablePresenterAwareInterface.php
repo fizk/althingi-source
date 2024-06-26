@@ -1,4 +1,5 @@
 <?php
+
 namespace Althingi\Presenters;
 
 interface IndexablePresenterAwareInterface

@@ -24,6 +24,7 @@ class MinisterController implements
     ServiceMinistryAwareInterface
 {
     use RestControllerTrait;
+
     private Service\Ministry $ministryService;
 
     /**

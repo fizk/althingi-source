@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Althingi\Utils;
 
 class OpenAPI

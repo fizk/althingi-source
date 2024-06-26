@@ -7,7 +7,6 @@ use DateTime;
 
 class Cabinet implements HydratorInterface
 {
-
     /**
      * Hydrate $object with the provided $data.
      *

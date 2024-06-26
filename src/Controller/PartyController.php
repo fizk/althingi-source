@@ -23,6 +23,7 @@ class PartyController implements
     ServicePartyAwareInterface
 {
     use RestControllerTrait;
+
     private Service\Party $partyService;
 
     /**
@@ -97,9 +98,11 @@ class PartyController implements
      */
     public function patch(ServerRequest $request): ResponseInterface
     {
-        if (($party = $this->partyService->get(
-            $request->getAttribute('id')
-        )) !== null) {
+        if (
+            ($party = $this->partyService->get(
+                $request->getAttribute('id')
+            )) !== null
+        ) {
             $form = new Form\Party([
                 ...$party->toArray(),
                 ...$request->getParsedBody(),

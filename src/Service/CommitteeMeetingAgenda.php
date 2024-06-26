@@ -11,7 +11,7 @@ class CommitteeMeetingAgenda implements DatabaseAwareInterface
 {
     use DatabaseService;
 
-    public function get(int $meetingId, int $agendaId): ? Model\CommitteeMeetingAgenda
+    public function get(int $meetingId, int $agendaId): ?Model\CommitteeMeetingAgenda
     {
         $statement = $this->getDriver()->prepare('
             select * from `CommitteeMeetingAgenda` C

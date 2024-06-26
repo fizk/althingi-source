@@ -58,7 +58,7 @@ class Inflation implements DatabaseAwareInterface, EventsAwareInterface
         }
 
         return array_map(function ($object) {
-            return (new Hydrator\Inflation)->hydrate($object, new Model\Inflation());
+            return (new Hydrator\Inflation())->hydrate($object, new Model\Inflation());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -70,13 +70,13 @@ class Inflation implements DatabaseAwareInterface, EventsAwareInterface
 
 
         while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
-            yield (new Hydrator\Inflation)->hydrate($object, new Model\Inflation());
+            yield (new Hydrator\Inflation())->hydrate($object, new Model\Inflation());
         }
         $statement->closeCursor();
         return null;
     }
 
-    public function get(int $id): ? Model\Inflation
+    public function get(int $id): ?Model\Inflation
     {
         $statement = $this->getDriver()->prepare("select * from `Inflation` where id = :id");
         $statement->execute(['id' => $id]);

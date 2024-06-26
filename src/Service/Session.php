@@ -16,7 +16,7 @@ class Session implements DatabaseAwareInterface, EventsAwareInterface
     use DatabaseService;
     use EventService;
 
-    public function get(int $id): ? Model\Session
+    public function get(int $id): ?Model\Session
     {
         $statement = $this->getDriver()->prepare(
             "select * from `Session` where session_id = :session_id"
@@ -46,7 +46,7 @@ class Session implements DatabaseAwareInterface, EventsAwareInterface
         $statement->execute($filteredParams);
 
         while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
-            yield (new Hydrator\Session)->hydrate($object, new Model\Session());
+            yield (new Hydrator\Session())->hydrate($object, new Model\Session());
         }
         $statement->closeCursor();
         return null;

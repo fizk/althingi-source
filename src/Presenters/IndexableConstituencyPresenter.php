@@ -1,4 +1,5 @@
 <?php
+
 namespace Althingi\Presenters;
 
 use Althingi\Model\Constituency;
@@ -7,8 +8,8 @@ use Laminas\Hydrator\HydratorInterface;
 
 class IndexableConstituencyPresenter implements IndexablePresenter
 {
-    const INDEX = 'althingi_model_constituency';
-    const TYPE = 'constituency';
+    private const INDEX = 'althingi_model_constituency';
+    private const TYPE = 'constituency';
 
     private HydratorInterface $hydrator;
     private Constituency $model;

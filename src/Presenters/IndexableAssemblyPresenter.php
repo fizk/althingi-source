@@ -1,4 +1,5 @@
 <?php
+
 namespace Althingi\Presenters;
 
 use Althingi\Model\Assembly;
@@ -7,8 +8,8 @@ use Laminas\Hydrator\HydratorInterface;
 
 class IndexableAssemblyPresenter implements IndexablePresenter
 {
-    const INDEX = 'althingi_model_assembly';
-    const TYPE = 'assembly';
+    private const INDEX = 'althingi_model_assembly';
+    private const TYPE = 'assembly';
 
     private HydratorInterface $hydrator;
     private Assembly $model;

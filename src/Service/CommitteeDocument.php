@@ -18,7 +18,7 @@ class CommitteeDocument implements DatabaseAwareInterface, EventsAwareInterface
     use DatabaseService;
     use EventService;
 
-    public function get(int $id): ? Model\CommitteeDocument
+    public function get(int $id): ?Model\CommitteeDocument
     {
         $statement = $this->getDriver()->prepare("
             select * from `Document_has_Committee`
@@ -81,7 +81,7 @@ class CommitteeDocument implements DatabaseAwareInterface, EventsAwareInterface
 
 
         while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
-            yield (new Hydrator\CommitteeDocument)->hydrate($object, new Model\CommitteeDocument());
+            yield (new Hydrator\CommitteeDocument())->hydrate($object, new Model\CommitteeDocument());
         }
         $statement->closeCursor();
         return null;

@@ -28,6 +28,7 @@ class PresidentController implements
     RouterAwareInterface
 {
     use RestControllerTrait;
+
     private RouteInterface $router;
     private President $presidentService;
 
@@ -110,9 +111,11 @@ class PresidentController implements
      */
     public function patch(ServerRequest $request): ResponseInterface
     {
-        if (($president = $this->presidentService->get(
-            $request->getAttribute('id')
-        )) != null) {
+        if (
+            ($president = $this->presidentService->get(
+                $request->getAttribute('id')
+            )) != null
+        ) {
             $form = new Form\President([
                 ...$president->toArray(),
                 ...$request->getParsedBody(),

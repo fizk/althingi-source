@@ -13,13 +13,13 @@ use Psr\Http\Message\{
     ServerRequestInterface,
     ResponseInterface
 };
-
 use Althingi\Service\EventService;
 use Althingi\Service\Session;
 
 class IndexerSessionController implements ServiceSessionAwareInterface, EventsAwareInterface
 {
     use EventService;
+
     private Session $session;
 
     public function handle(ServerRequestInterface $request): ResponseInterface

@@ -12,7 +12,7 @@ class SuperCategory implements DatabaseAwareInterface
 {
     use DatabaseService;
 
-    public function get(int $id): ? Model\SuperCategory
+    public function get(int $id): ?Model\SuperCategory
     {
         $statement = $this->getDriver()->prepare('
             select * from `SuperCategory` where super_category_id = :super_category_id
@@ -47,7 +47,7 @@ class SuperCategory implements DatabaseAwareInterface
         $statement->execute();
 
         while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
-            yield (new Hydrator\SuperCategory)->hydrate($object, new Model\SuperCategory());
+            yield (new Hydrator\SuperCategory())->hydrate($object, new Model\SuperCategory());
         }
         $statement->closeCursor();
         return null;
@@ -56,7 +56,7 @@ class SuperCategory implements DatabaseAwareInterface
     /**
      * @return \Althingi\Model\SuperCategory[]
      */
-    public function fetchByIssue(int $assemblyId, int $issueId, string$category = 'A'): array
+    public function fetchByIssue(int $assemblyId, int $issueId, string $category = 'A'): array
     {
         $statement = $this->getDriver()->prepare('
             select SC.* from Category_has_Issue CI

@@ -1,4 +1,5 @@
 <?php
+
 namespace Althingi\Model;
 
 use DateTime;

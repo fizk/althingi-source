@@ -22,6 +22,7 @@ class CommitteeController implements
     ServiceCommitteeAwareInterface
 {
     use RestControllerTrait;
+
     private Service\Committee $committeeService;
 
     /**
@@ -106,7 +107,7 @@ class CommitteeController implements
      */
     public function optionsList(ServerRequest $request): ResponseInterface
     {
-        return new EmptyResponse(200, ['Allow' =>'GET, OPTIONS']);
+        return new EmptyResponse(200, ['Allow' => 'GET, OPTIONS']);
     }
 
     /**

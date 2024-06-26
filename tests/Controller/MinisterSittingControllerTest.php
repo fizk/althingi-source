@@ -305,7 +305,7 @@ class MinisterSittingControllerTest extends TestCase
                     ->setAssemblyId(1)
                     ->setMinistryId(3)
                     ->setCongressmanId(2)
-                )
+            )
             ->getMock();
 
         $this->dispatch('/thingmenn/2/radherraseta/1', 'GET');

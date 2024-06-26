@@ -1,4 +1,5 @@
 <?php
+
 namespace Althingi\Presenters;
 
 use Althingi\Model\Inflation;
@@ -7,8 +8,8 @@ use Laminas\Hydrator\HydratorInterface;
 
 class IndexableInflationPresenter implements IndexablePresenter
 {
-    const INDEX = 'althingi_model_inflation';
-    const TYPE = 'inflation';
+    private const INDEX = 'althingi_model_inflation';
+    private const TYPE = 'inflation';
 
     private HydratorInterface $hydrator;
     private Inflation $model;

@@ -15,12 +15,12 @@ use Psr\Http\Message\{
     ServerRequestInterface,
     ResponseInterface
 };
-
 use Althingi\Service\EventService;
 
 class IndexerSpeechController implements ServiceSpeechAwareInterface, EventsAwareInterface
 {
     use EventService;
+
     private Speech $speechService;
 
     public function handle(ServerRequestInterface $request): ResponseInterface

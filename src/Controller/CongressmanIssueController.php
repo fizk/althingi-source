@@ -21,6 +21,7 @@ class CongressmanIssueController implements
     ServiceIssueAwareInterface
 {
     use RestControllerTrait;
+
     private Service\Issue $issueService;
 
     /**

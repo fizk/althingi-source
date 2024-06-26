@@ -1,4 +1,5 @@
 <?php
+
 namespace Althingi\Presenters;
 
 use Althingi\Model\Ministry;
@@ -7,8 +8,8 @@ use Laminas\Hydrator\HydratorInterface;
 
 class IndexableMinistryPresenter implements IndexablePresenter
 {
-    const INDEX = 'althingi_model_ministry';
-    const TYPE = 'ministry';
+    private const INDEX = 'althingi_model_ministry';
+    private const TYPE = 'ministry';
 
     private HydratorInterface $hydrator;
     private Ministry $model;

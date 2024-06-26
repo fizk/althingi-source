@@ -13,13 +13,13 @@ use Psr\Http\Message\{
     ServerRequestInterface,
     ResponseInterface
 };
-
 use Althingi\Service\EventService;
 use Althingi\Service\VoteItem;
 
 class IndexerDocumentVoteItemController implements ServiceVoteItemAwareInterface, EventsAwareInterface
 {
     use EventService;
+
     private VoteItem $voteItemService;
 
     public function handle(ServerRequestInterface $request): ResponseInterface

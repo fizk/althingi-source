@@ -22,6 +22,7 @@ class CongressmanController implements
     ServiceCongressmanAwareInterface
 {
     use RestControllerTrait;
+
     private Service\Congressman $congressmanService;
 
     /**
@@ -86,9 +87,11 @@ class CongressmanController implements
      */
     public function patch(ServerRequest $request): ResponseInterface
     {
-        if (($congressman = $this->congressmanService->get(
-            $request->getAttribute('congressman_id')
-        )) != null) {
+        if (
+            ($congressman = $this->congressmanService->get(
+                $request->getAttribute('congressman_id')
+            )) != null
+        ) {
             $form = new Form\Congressman([
                 ...$congressman->toArray(),
                 ...$request->getParsedBody(),

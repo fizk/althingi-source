@@ -16,7 +16,7 @@ class President implements DatabaseAwareInterface, EventsAwareInterface
     use DatabaseService;
     use EventService;
 
-    public function get(int $id): ? Model\President
+    public function get(int $id): ?Model\President
     {
         $statement = $this->getDriver()->prepare(
             "select *
@@ -58,13 +58,13 @@ class President implements DatabaseAwareInterface, EventsAwareInterface
         }
 
         while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
-            yield (new Hydrator\President)->hydrate($object, new Model\President());
+            yield (new Hydrator\President())->hydrate($object, new Model\President());
         }
         $statement->closeCursor();
         return null;
     }
 
-    public function getWithCongressman(int $id): ? Model\PresidentCongressman
+    public function getWithCongressman(int $id): ?Model\PresidentCongressman
     {
         $statement = $this->getDriver()->prepare(
             "select P.`president_id`, P.`assembly_id`, P.`from`, P.`to`, P.`title`, P.`abbr`, C.*
@@ -85,7 +85,7 @@ class President implements DatabaseAwareInterface, EventsAwareInterface
         int $congressmanId,
         DateTime $from,
         string $title
-    ): ? Model\PresidentCongressman {
+    ): ?Model\PresidentCongressman {
         $statement = $this->getDriver()->prepare("
             select P.`president_id`, P.`assembly_id`, P.`from`, P.`to`, P.`title`, P.`abbr`, C.*
             from `President` P

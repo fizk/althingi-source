@@ -11,7 +11,7 @@ class Election implements DatabaseAwareInterface
 {
     use DatabaseService;
 
-    public function get(int $id): ? Model\Election
+    public function get(int $id): ?Model\Election
     {
         $statement = $this->getDriver()->prepare("
             select * from `Election` where election_id = :election_id
@@ -24,7 +24,7 @@ class Election implements DatabaseAwareInterface
             : null;
     }
 
-    public function getByAssembly(int $assemblyId): ? Model\Election
+    public function getByAssembly(int $assemblyId): ?Model\Election
     {
         $statement = $this->getDriver()->prepare("
             select E.* from `Election` E

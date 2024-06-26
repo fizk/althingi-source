@@ -23,6 +23,7 @@ class ConstituencyController implements
     ServiceConstituencyAwareInterface
 {
     use RestControllerTrait;
+
     private Service\Constituency $constituencyService;
 
     /**
@@ -68,9 +69,11 @@ class ConstituencyController implements
      */
     public function patch(ServerRequest $request): ResponseInterface
     {
-        if (($constituency = $this->constituencyService->get(
-            $request->getAttribute('id')
-        )) !== null) {
+        if (
+            ($constituency = $this->constituencyService->get(
+                $request->getAttribute('id')
+            )) !== null
+        ) {
             $form = new Form\Constituency([
                 ...$constituency->toArray(),
                 ...$request->getParsedBody(),

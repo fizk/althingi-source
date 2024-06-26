@@ -23,6 +23,7 @@ class DocumentController implements
     ServiceDocumentAwareInterface
 {
     use RestControllerTrait;
+
     private Service\Document $documentService;
 
     /**

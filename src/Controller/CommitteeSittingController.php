@@ -32,6 +32,7 @@ class CommitteeSittingController implements
     RouterAwareInterface
 {
     use RestControllerTrait;
+
     private RouteInterface $router;
     private Service\CommitteeSitting $committeeSittingService;
 
@@ -138,13 +139,15 @@ class CommitteeSittingController implements
      */
     public function patch(ServerRequest $request): ResponseInterface
     {
-        if (($committeeSitting = $this->committeeSittingService->get(
-            $request->getAttribute('committee_sitting_id')
-        )) != null) {
+        if (
+            ($committeeSitting = $this->committeeSittingService->get(
+                $request->getAttribute('committee_sitting_id')
+            )) != null
+        ) {
             $form = new Form\CommitteeSitting([
                 ...$committeeSitting->toArray(),
                 ...$request->getParsedBody(),
-                'committee_sitting_id' =>$request->getAttribute('committee_sitting_id'),
+                'committee_sitting_id' => $request->getAttribute('committee_sitting_id'),
             ]);
 
             if ($form->isValid()) {

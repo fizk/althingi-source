@@ -49,8 +49,7 @@ class AssemblyControllerTest extends TestCase
             ->shouldReceive('get')
             ->andReturn((new Model\Assembly())
                 ->setAssemblyId(144)
-                ->setFrom(new DateTime())
-            )
+                ->setFrom(new DateTime()))
             ->once()
             ->getMock();
 
@@ -245,7 +244,7 @@ class AssemblyControllerTest extends TestCase
             ->getHeader('Allow');
         $actualMethods = array_map(function ($item) {
                 return trim($item);
-            }, explode(',', count($allow) ? $allow[0] : ''));
+        }, explode(',', count($allow) ? $allow[0] : ''));
 
         $this->assertCount(0, array_diff($expectedMethods, $actualMethods));
     }

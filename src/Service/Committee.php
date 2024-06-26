@@ -15,7 +15,7 @@ class Committee implements DatabaseAwareInterface, EventsAwareInterface
     use DatabaseService;
     use EventService;
 
-    public function get(int $id): ? Model\Committee
+    public function get(int $id): ?Model\Committee
     {
         $statement = $this->getDriver()->prepare('select * from `Committee` C where C.`committee_id` = :committee_id;');
         $statement->execute(['committee_id' => $id]);
@@ -27,7 +27,7 @@ class Committee implements DatabaseAwareInterface, EventsAwareInterface
             : null;
     }
 
-    public function getByName(string $name): ? Model\Committee
+    public function getByName(string $name): ?Model\Committee
     {
         $statement = $this->getDriver()->prepare('
             select * from `Committee` C where C.`name` = :name;
@@ -65,7 +65,7 @@ class Committee implements DatabaseAwareInterface, EventsAwareInterface
 
 
         while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
-            yield (new Hydrator\Committee)->hydrate($object, new Model\Committee());
+            yield (new Hydrator\Committee())->hydrate($object, new Model\Committee());
         }
         $statement->closeCursor();
         return null;

@@ -1,4 +1,5 @@
 <?php
+
 namespace Althingi\Presenters;
 
 use Althingi\Model\ModelInterface;
@@ -7,8 +8,8 @@ use Laminas\Hydrator\HydratorInterface;
 
 class IndexableVoteItemPresenter implements IndexablePresenter
 {
-    const INDEX = 'althingi_model_vote-item';
-    const TYPE = 'vote-item';
+    private const INDEX = 'althingi_model_vote-item';
+    private const TYPE = 'vote-item';
 
     private HydratorInterface $hydrator;
     private VoteItem $model;

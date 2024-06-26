@@ -24,6 +24,7 @@ class AssemblyController implements
     ServiceAssemblyAwareInterface
 {
     use RestControllerTrait;
+
     private Assembly $assemblyService;
 
     /**
@@ -59,7 +60,7 @@ class AssemblyController implements
     public function optionsList(ServerRequest $request): ResponseInterface
     {
         return new EmptyResponse(200, [
-            'Allow' =>'GET, OPTIONS'
+            'Allow' => 'GET, OPTIONS'
         ]);
     }
 

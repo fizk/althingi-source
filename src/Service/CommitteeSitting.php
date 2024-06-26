@@ -16,7 +16,7 @@ class CommitteeSitting implements DatabaseAwareInterface, EventsAwareInterface
     use DatabaseService;
     use EventService;
 
-    public function get(int $id): ? Model\CommitteeSitting
+    public function get(int $id): ?Model\CommitteeSitting
     {
         $statement = $this->getDriver()->prepare(
             "select * from `CommitteeSitting` where committee_sitting_id = :committee_sitting_id"
@@ -50,7 +50,7 @@ class CommitteeSitting implements DatabaseAwareInterface, EventsAwareInterface
         $statement->execute($filteredParams);
 
         while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
-            yield (new Hydrator\CommitteeSitting)->hydrate($object, new Model\CommitteeSitting());
+            yield (new Hydrator\CommitteeSitting())->hydrate($object, new Model\CommitteeSitting());
         }
         $statement->closeCursor();
         return null;

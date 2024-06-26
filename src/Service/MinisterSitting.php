@@ -16,14 +16,14 @@ class MinisterSitting implements DatabaseAwareInterface, EventsAwareInterface
     use DatabaseService;
     use EventService;
 
-    public function get(int $id): ? Model\MinisterSitting
+    public function get(int $id): ?Model\MinisterSitting
     {
         $statement = $this->getDriver()->prepare("select * from `MinisterSitting` where minister_sitting_id = :id");
         $statement->execute(['id' => $id]);
         $assembly = $statement->fetch(PDO::FETCH_ASSOC);
 
         return $assembly
-            ? (new Hydrator\MinisterSitting)->hydrate($assembly, new Model\MinisterSitting())
+            ? (new Hydrator\MinisterSitting())->hydrate($assembly, new Model\MinisterSitting())
             : null;
     }
 
@@ -78,7 +78,7 @@ class MinisterSitting implements DatabaseAwareInterface, EventsAwareInterface
         }
 
         while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
-            yield (new Hydrator\MinisterSitting)->hydrate($object, new Model\MinisterSitting());
+            yield (new Hydrator\MinisterSitting())->hydrate($object, new Model\MinisterSitting());
         }
         $statement->closeCursor();
         return null;

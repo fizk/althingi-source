@@ -38,13 +38,17 @@ class ItemStatusFilter implements FilterInterface
 
         $matches = [];
 
-        if (1 === preg_match('/(Bíður\s|Beið\s)([0-9]\.|fyrri|síðari)(\sumræðu)/', $value, $matches)
-            && 4 == count($matches)) {
+        if (
+            1 === preg_match('/(Bíður\s|Beið\s)([0-9]\.|fyrri|síðari)(\sumræðu)/', $value, $matches)
+            && 4 == count($matches)
+        ) {
             return sprintf('Bíður %s umræðu', $this->wordToNumber($matches[2]));
         }
 
-        if (1 === preg_match('/(nefnd eftir\s)([0-9]\.|fyrri|síðari)(\sumræðu)/', $value, $matches)
-            && 4 == count($matches)) {
+        if (
+            1 === preg_match('/(nefnd eftir\s)([0-9]\.|fyrri|síðari)(\sumræðu)/', $value, $matches)
+            && 4 == count($matches)
+        ) {
             return sprintf('Í nefnd eftir %s umræðu', $this->wordToNumber($matches[2]));
         }
 

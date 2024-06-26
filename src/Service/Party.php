@@ -17,7 +17,7 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
     use DatabaseService;
     use EventService;
 
-    public function get(int $id): ? Model\Party
+    public function get(int $id): ?Model\Party
     {
         $statement = $this->getDriver()->prepare('
             select * from `Party` where party_id = :party_id
@@ -53,13 +53,13 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
 
 
         while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
-            yield (new Hydrator\Party)->hydrate($object, new Model\Party());
+            yield (new Hydrator\Party())->hydrate($object, new Model\Party());
         }
         $statement->closeCursor();
         return null;
     }
 
-    public function getByCongressman(int $congressmanId, DateTime $date): ? Model\Party
+    public function getByCongressman(int $congressmanId, DateTime $date): ?Model\Party
     {
         $statement = $this->getDriver()->prepare('
             select P.* from Session S
@@ -84,7 +84,7 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
     /**
      * @deprecated
      */
-    public function getByCongressmanAndAssembly(int $congressmanId, int $assemblyId): ? Model\Party
+    public function getByCongressmanAndAssembly(int $congressmanId, int $assemblyId): ?Model\Party
     {
         $statement = $this->getDriver()->prepare('
             select P.*, S.`from` as `date` from Session S
@@ -182,7 +182,7 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
             $query = '
                 select P.* from `Session` S
                 join `Party` P on (P.`party_id` = S.`party_id`)
-                where S.`assembly_id` = :assembly_id and P.`party_id` not in ('.implode(',', $exclude).')
+                where S.`assembly_id` = :assembly_id and P.`party_id` not in (' . implode(',', $exclude) . ')
                 group by S.`party_id`;
             ';
         }

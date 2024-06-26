@@ -15,32 +15,32 @@ class Assembly implements DatabaseAwareInterface, EventsAwareInterface
     use DatabaseService;
     use EventService;
 
-    const ALLOWED_TYPES = [
+    private const ALLOWED_TYPES = [
         'a',  'f',  's',  'b',  'm',  'q',  'v',  'l', 'n', // A
         'mi', 'fh', 'dr', 'sr', 'st', 'ra', 'uu', 'þi', 'um',  // B
         'ff', 'ft', 'ko', 'ud'
     ];
-    const MAX_ROW_COUNT = '18446744073709551615';
+    private const MAX_ROW_COUNT = '18446744073709551615';
 
-    public function get(int $id): ? Model\Assembly
+    public function get(int $id): ?Model\Assembly
     {
         $statement = $this->getDriver()->prepare("select * from `Assembly` where assembly_id = :id");
         $statement->execute(['id' => $id]);
         $assembly = $statement->fetch(PDO::FETCH_ASSOC);
 
         return $assembly
-            ? (new Hydrator\Assembly)->hydrate($assembly, new Model\Assembly())
+            ? (new Hydrator\Assembly())->hydrate($assembly, new Model\Assembly())
             : null;
     }
 
-    public function getCurrent(): ? Model\Assembly
+    public function getCurrent(): ?Model\Assembly
     {
         $statement = $this->getDriver()->prepare("select * from `Assembly` order by `assembly_id` desc limit 0, 1");
         $statement->execute();
         $assembly = $statement->fetch(PDO::FETCH_ASSOC);
 
         return $assembly
-            ? (new Hydrator\Assembly)->hydrate($assembly, new Model\Assembly())
+            ? (new Hydrator\Assembly())->hydrate($assembly, new Model\Assembly())
             : null;
     }
 
@@ -57,7 +57,7 @@ class Assembly implements DatabaseAwareInterface, EventsAwareInterface
         $statement->execute();
 
         return array_map(function ($assembly) {
-            return (new Hydrator\Assembly)->hydrate($assembly, new Model\Assembly());
+            return (new Hydrator\Assembly())->hydrate($assembly, new Model\Assembly());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -69,7 +69,7 @@ class Assembly implements DatabaseAwareInterface, EventsAwareInterface
 
 
         while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
-            yield (new Hydrator\Assembly)->hydrate($object, new Model\Assembly());
+            yield (new Hydrator\Assembly())->hydrate($object, new Model\Assembly());
         }
         $statement->closeCursor();
         return null;
@@ -97,7 +97,7 @@ class Assembly implements DatabaseAwareInterface, EventsAwareInterface
         $statement->execute(['id' => $id]);
 
         return array_map(function ($assembly) {
-            return (new Hydrator\Assembly)->hydrate($assembly, new Model\Assembly());
+            return (new Hydrator\Assembly())->hydrate($assembly, new Model\Assembly());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 

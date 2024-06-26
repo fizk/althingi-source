@@ -1,4 +1,5 @@
 <?php
+
 namespace Althingi\Presenters;
 
 use Althingi\Model\Committee;
@@ -8,8 +9,8 @@ use Laminas\Hydrator\HydratorInterface;
 
 class IndexableCommitteePresenter implements IndexablePresenter
 {
-    const INDEX = 'althingi_model_committee';
-    const TYPE = 'committee';
+    private const INDEX = 'althingi_model_committee';
+    private const TYPE = 'committee';
 
     private HydratorInterface $hydrator;
 

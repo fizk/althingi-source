@@ -303,7 +303,6 @@ class MinistryTest extends TestCase
             ->setEventDispatcher($eventDispatcher)
             ->setDriver($this->pdo)
             ->create($ministry);
-
     }
 
     public function testUpdateFireEventResourceFoundUpdateRequired()

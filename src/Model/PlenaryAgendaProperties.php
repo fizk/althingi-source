@@ -1,4 +1,5 @@
 <?php
+
 namespace Althingi\Model;
 
 class PlenaryAgendaProperties implements ModelInterface

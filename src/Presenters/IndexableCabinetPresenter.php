@@ -1,4 +1,5 @@
 <?php
+
 namespace Althingi\Presenters;
 
 use Althingi\Model\Cabinet;
@@ -7,8 +8,8 @@ use Laminas\Hydrator\HydratorInterface;
 
 class IndexableCabinetPresenter implements IndexablePresenter
 {
-    const INDEX = 'althingi_model_cabinet';
-    const TYPE = 'cabinet';
+    private const INDEX = 'althingi_model_cabinet';
+    private const TYPE = 'cabinet';
 
     private HydratorInterface $hydrator;
     private Cabinet $model;

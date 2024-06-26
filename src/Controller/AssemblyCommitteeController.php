@@ -20,6 +20,7 @@ class AssemblyCommitteeController implements
     ServiceCommitteeAwareInterface
 {
     use RestControllerTrait;
+
     private Committee $committeeService;
 
     /**

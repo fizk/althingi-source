@@ -13,13 +13,13 @@ use Psr\Http\Message\{
     ServerRequestInterface,
     ResponseInterface
 };
-
 use Althingi\Service\EventService;
 use Althingi\Service\IssueCategory;
 
 class IndexerIssueCategoryController implements ServiceIssueCategoryAwareInterface, EventsAwareInterface
 {
     use EventService;
+
     private IssueCategory $issueCategoryService;
 
     public function handle(ServerRequestInterface $request): ResponseInterface

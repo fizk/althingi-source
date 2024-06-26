@@ -17,6 +17,7 @@ class PresidentAssemblyController implements
     ServiceCongressmanAwareInterface
 {
     use RestControllerTrait;
+
     private Congressman $congressmanService;
 
     /**

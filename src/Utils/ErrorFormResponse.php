@@ -1,4 +1,5 @@
 <?php
+
 namespace Althingi\Utils;
 
 use Althingi\Form\Form;

@@ -1,4 +1,5 @@
 <?php
+
 namespace Althingi\Controller;
 
 use Psr\Http\Message\ResponseInterface;
@@ -25,6 +26,7 @@ class PlenaryAgendaController implements
     ServiceIssueAwareInterface
 {
     use RestControllerTrait;
+
     private Service\PlenaryAgenda $plenaryAgendaService;
     private Service\Issue $issueService;
 

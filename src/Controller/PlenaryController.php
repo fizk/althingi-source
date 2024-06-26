@@ -16,11 +16,13 @@ use Laminas\Diactoros\Response\{
     JsonResponse,
     EmptyResponse
 };
+
 class PlenaryController implements
     RestControllerInterface,
     ServicePlenaryAwareInterface
 {
     use RestControllerTrait;
+
     private Plenary $plenaryService;
 
     /**

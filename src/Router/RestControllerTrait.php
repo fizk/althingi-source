@@ -159,7 +159,7 @@ trait RestControllerTrait
 
     public function url()
     {
-        return new class($this->router)
+        return new class ($this->router)
         {
             private SimpleRouteStack $r;
             public function __construct(SimpleRouteStack $router)

@@ -117,7 +117,7 @@ trait ServiceHelper
     {
         $this->assertEquals(
             $value,
-            count($this->response->getHeader($name)) ? $this->response->getHeader($name)[0]: null
+            count($this->response->getHeader($name)) ? $this->response->getHeader($name)[0] : null
         );
     }
 

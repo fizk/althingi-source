@@ -17,7 +17,7 @@ class Plenary implements DatabaseAwareInterface, EventsAwareInterface
     use DatabaseService;
     use EventService;
 
-    public function get(int $assemblyId, int $plenaryId): ? Model\Plenary
+    public function get(int $assemblyId, int $plenaryId): ?Model\Plenary
     {
         $statement = $this->getDriver()->prepare('
             select * from `Plenary` where assembly_id = :assembly_id and plenary_id = :plenary_id
@@ -67,7 +67,7 @@ class Plenary implements DatabaseAwareInterface, EventsAwareInterface
         $statement->execute($filteredParams);
 
         while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
-            yield (new Hydrator\Plenary)->hydrate($object, new Model\Plenary());
+            yield (new Hydrator\Plenary())->hydrate($object, new Model\Plenary());
         }
         $statement->closeCursor();
         return null;

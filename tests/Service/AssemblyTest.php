@@ -129,7 +129,7 @@ class AssemblyTest extends TestCase
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
-            ->withArgs(function($args) {
+            ->withArgs(function ($args) {
                 return $args instanceof AddEvent;
             })
             ->getMock();

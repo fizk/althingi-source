@@ -13,9 +13,9 @@ use Laminas\Validator\AbstractValidator;
 
 class SignedDigits extends AbstractValidator
 {
-    const NOT_DIGITS   = 'notDigits';
-    const STRING_EMPTY = 'digitsStringEmpty';
-    const INVALID      = 'digitsInvalid';
+    private const NOT_DIGITS   = 'notDigits';
+    private const STRING_EMPTY = 'digitsStringEmpty';
+    private const INVALID      = 'digitsInvalid';
 
     /**
      * Digits filter used for validation

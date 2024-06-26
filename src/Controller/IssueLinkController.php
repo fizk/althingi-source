@@ -22,6 +22,7 @@ class IssueLinkController implements
     ServiceIssueLinkAwareInterface
 {
     use RestControllerTrait;
+
     private Service\IssueLink $issueLinkService;
 
     /**

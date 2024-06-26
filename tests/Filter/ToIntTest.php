@@ -11,7 +11,7 @@ class ToIntTest extends TestCase
     public function testTrue($in, $out)
     {
 
-        $this->assertEquals((new ToInt)->filter($in), $out);
+        $this->assertEquals((new ToInt())->filter($in), $out);
     }
 
     public static function provider()

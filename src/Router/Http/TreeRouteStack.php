@@ -172,7 +172,8 @@ class TreeRouteStack extends SimpleRouteStack
         }
 
         foreach ($this->routes as $name => $route) {
-            if (($match = $route->match($request, $baseUrlLength, $options)) instanceof RouteMatch
+            if (
+                ($match = $route->match($request, $baseUrlLength, $options)) instanceof RouteMatch
                 && ($pathLength === null || $match->getLength() === $pathLength)
             ) {
                 $match->setMatchedRouteName($name);
@@ -248,7 +249,8 @@ class TreeRouteStack extends SimpleRouteStack
             $uri = $uri->withFragment($options['fragment']);
         }
 
-        if ((isset($options['force_canonical'])
+        if (
+            (isset($options['force_canonical'])
                 && $options['force_canonical'])
             || $uri->getHost() !== null
             || $uri->getScheme() !== null

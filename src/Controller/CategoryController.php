@@ -22,6 +22,7 @@ class CategoryController implements
     ServiceCategoryAwareInterface
 {
     use RestControllerTrait;
+
     private Service\Category $categoryService;
 
     /**

@@ -104,7 +104,7 @@ class PresidentTest extends TestCase
             ->setTitle('t')];
 
         $actualData = [];
-        foreach($presidentService->fetchAllGenerator() as $item) {
+        foreach ($presidentService->fetchAllGenerator() as $item) {
             $actualData[] = $item;
         }
 
@@ -123,7 +123,7 @@ class PresidentTest extends TestCase
             ->setTitle('t')];
 
         $actualData = [];
-        foreach($presidentService->fetchAllGenerator(1) as $item) {
+        foreach ($presidentService->fetchAllGenerator(1) as $item) {
             $actualData[] = $item;
         }
 
@@ -137,7 +137,7 @@ class PresidentTest extends TestCase
         $expectedData = [];
 
         $actualData = [];
-        foreach($presidentService->fetchAllGenerator(2) as $item) {
+        foreach ($presidentService->fetchAllGenerator(2) as $item) {
             $actualData[] = $item;
         }
 

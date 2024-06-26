@@ -29,6 +29,7 @@ class InflationController implements
     ServiceAssemblyAwareInterface
 {
     use RestControllerTrait;
+
     private Service\Inflation $inflationService;
     private Service\Cabinet $cabinetService;
     private Service\Assembly $assemblyService;
@@ -131,9 +132,11 @@ class InflationController implements
      */
     public function patch(ServerRequest $request): ResponseInterface
     {
-        if (($committee = $this->inflationService->get(
-            $request->getAttribute('id')
-        )) != null) {
+        if (
+            ($committee = $this->inflationService->get(
+                $request->getAttribute('id')
+            )) != null
+        ) {
             $form = new Form\Inflation([
                 ...$committee->toArray(),
                 ...$request->getParsedBody(),

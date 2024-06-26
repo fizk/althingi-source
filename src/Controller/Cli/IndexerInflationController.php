@@ -14,12 +14,12 @@ use Psr\Http\Message\{
     ServerRequestInterface,
     ResponseInterface
 };
-
 use Althingi\Service\EventService;
 
 class IndexerInflationController implements ServiceInflationAwareInterface, EventsAwareInterface
 {
     use EventService;
+
     private Inflation $inflationService;
 
     public function handle(ServerRequestInterface $request): ResponseInterface

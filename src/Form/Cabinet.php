@@ -29,19 +29,19 @@ class Cabinet extends Form
             (new Input('cabinet_id'))
                 ->attachFilter(new ToInt())
                 ->attachValidator(new NotEmpty())
-                ->attachValidator(new SignedDigits()),
-
+                ->attachValidator(new SignedDigits())
+            ,
             (new Input('from'))
                 ->attachValidator(new Date())
-                ->attachValidator(new NotEmpty()),
-
+                ->attachValidator(new NotEmpty())
+            ,
             (new Input('to', true))
                 ->attachValidator(new Date())
-                ->attachFilter(new ToNull(['type' => 'all'])),
-
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
             (new Input('title'))
-                ->attachValidator(new NotEmpty()),
-
+                ->attachValidator(new NotEmpty())
+            ,
             (new Input('description', true))
                 ->attachFilter(new ToNull(['type' => 'all'])),
         ];

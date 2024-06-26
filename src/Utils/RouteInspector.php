@@ -1,4 +1,5 @@
 <?php
+
 namespace Althingi\Utils;
 
 use ReflectionClass;
@@ -54,7 +55,8 @@ class RouteInspector
     {
         $map = [];
         foreach ($routes as $path => $value) {
-            if (array_key_exists('action', $value['options']['defaults']) &&
+            if (
+                array_key_exists('action', $value['options']['defaults']) &&
                 ! empty($value['options']['defaults']['action'])
             ) {
                 $action = str_replace(' ', '', ucwords(str_replace('-', ' ', $value['options']['defaults']['action'])));

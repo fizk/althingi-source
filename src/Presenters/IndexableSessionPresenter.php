@@ -1,4 +1,5 @@
 <?php
+
 namespace Althingi\Presenters;
 
 use Althingi\Model\ModelInterface;
@@ -7,8 +8,8 @@ use Laminas\Hydrator\HydratorInterface;
 
 class IndexableSessionPresenter implements IndexablePresenter
 {
-    const INDEX = 'althingi_model_session';
-    const TYPE = 'session';
+    private const INDEX = 'althingi_model_session';
+    private const TYPE = 'session';
 
     private HydratorInterface $hydrator;
     private Session $model;

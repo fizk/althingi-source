@@ -17,7 +17,7 @@ class Document implements DatabaseAwareInterface, EventsAwareInterface
     use DatabaseService;
     use EventService;
 
-    public function get(int $assemblyId, int $issueId, int $documentId): ? Model\Document
+    public function get(int $assemblyId, int $issueId, int $documentId): ?Model\Document
     {
         $statement = $this->getDriver()->prepare("
             select * from `Document` D
@@ -90,7 +90,7 @@ class Document implements DatabaseAwareInterface, EventsAwareInterface
         }
 
         while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
-            yield (new Hydrator\Document)->hydrate($object, new Model\Document());
+            yield (new Hydrator\Document())->hydrate($object, new Model\Document());
         }
         $statement->closeCursor();
         return null;

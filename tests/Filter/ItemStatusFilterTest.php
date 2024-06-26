@@ -8,7 +8,6 @@ use PHPUnit\Framework\TestCase;
 
 class ItemStatusFilterTest extends TestCase
 {
-
     public static function filterStringProvider()
     {
         return [

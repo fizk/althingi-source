@@ -1,4 +1,5 @@
 <?php
+
 namespace Althingi\Presenters;
 
 use Althingi\Model\Document;
@@ -7,8 +8,8 @@ use Laminas\Hydrator\HydratorInterface;
 
 class IndexableDocumentPresenter implements IndexablePresenter
 {
-    const INDEX = 'althingi_model_document';
-    const TYPE = 'document';
+    private const INDEX = 'althingi_model_document';
+    private const TYPE = 'document';
 
     private HydratorInterface $hydrator;
     private Document $model;

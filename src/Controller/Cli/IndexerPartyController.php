@@ -13,13 +13,13 @@ use Psr\Http\Message\{
     ServerRequestInterface,
     ResponseInterface
 };
-
 use Althingi\Service\EventService;
 use Althingi\Service\Party;
 
 class IndexerPartyController implements ServicePartyAwareInterface, EventsAwareInterface
 {
     use EventService;
+
     private Party $partyService;
 
     public function handle(ServerRequestInterface $request): ResponseInterface

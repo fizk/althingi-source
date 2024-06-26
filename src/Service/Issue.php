@@ -21,14 +21,14 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
     use DatabaseService;
     use EventService;
 
-    const ALLOWED_TYPES = [
+    private const ALLOWED_TYPES = [
         'a',  'f',  's',  'b',  'm',  'q',  'v',  'l', 'n', // A
         'mi', 'fh', 'dr', 'sr', 'st', 'ra', 'uu', 'þi', 'um',  // B
         'ff', 'ft', 'ko', 'ud'
     ];
-    const ALLOWED_ORDER = ['asc', 'desc'];
+    private const ALLOWED_ORDER = ['asc', 'desc'];
 
-    public function get(int $issue_id, int $assembly_id, $kind = KindEnum::A): ? Model\Issue
+    public function get(int $issue_id, int $assembly_id, $kind = KindEnum::A): ?Model\Issue
     {
         $issueStatement = $this->getDriver()->prepare('
             select * from `Issue` I
@@ -82,7 +82,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
 
 
         while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
-            yield (new Hydrator\Issue)->hydrate($object, new Model\Issue());
+            yield (new Hydrator\Issue())->hydrate($object, new Model\Issue());
         }
         $statement->closeCursor();
         return null;
@@ -91,7 +91,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
     /**
      * Get one Issue along with some metadata.
      */
-    public function getWithDate(int $issue_id, int $assembly_id, $kind = KindEnum::A): ? Model\IssueAndDate
+    public function getWithDate(int $issue_id, int $assembly_id, $kind = KindEnum::A): ?Model\IssueAndDate
     {
         $issueStatement = $this->getDriver()->prepare(
             'select
@@ -196,8 +196,12 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    public function countByAssembly(int $id, array $type = [], array $categoryTypes = [], ?array $kind = [KindEnum::A]): int
-    {
+    public function countByAssembly(
+        int $id,
+        array $type = [],
+        array $categoryTypes = [],
+        ?array $kind = [KindEnum::A]
+    ): int {
         $typeFilterString = $this->typeFilterString($type);
         $categoryFilterString = $this->categoryTypeFilterString($categoryTypes);
         $kindString = $this->categoryString($kind);
@@ -623,8 +627,8 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
             $this->toUpdateString(
                 'Issue',
                 $data,
-                "issue_id = {$data->getIssueId()} and ".
-                "assembly_id = {$data->getAssemblyId()} and ".
+                "issue_id = {$data->getIssueId()} and " .
+                "assembly_id = {$data->getAssemblyId()} and " .
                 "kind = '{$data->getKind()->value}'"
             )
         );
@@ -649,7 +653,7 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
             );
         }
 
-        return ' and I.`type` in (' .implode(
+        return ' and I.`type` in (' . implode(
             ',',
             array_map(function ($t) {
                 return "'" . $t . "'";

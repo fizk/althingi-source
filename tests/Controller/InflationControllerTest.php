@@ -58,7 +58,7 @@ class InflationControllerTest extends TestCase
                     ->setId(1)
                     ->setValue(1)
                     ->setDate(new \DateTime())
-                )
+            )
             ->once()
             ->getMock();
 

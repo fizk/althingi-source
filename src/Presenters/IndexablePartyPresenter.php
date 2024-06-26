@@ -1,4 +1,5 @@
 <?php
+
 namespace Althingi\Presenters;
 
 use Althingi\Model\ModelInterface;
@@ -7,8 +8,8 @@ use Laminas\Hydrator\HydratorInterface;
 
 class IndexablePartyPresenter implements IndexablePresenter
 {
-    const INDEX = 'althingi_model_party';
-    const TYPE = 'party';
+    private const INDEX = 'althingi_model_party';
+    private const TYPE = 'party';
 
     private HydratorInterface $hydrator;
     private Party $model;

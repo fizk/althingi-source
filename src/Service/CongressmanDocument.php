@@ -15,7 +15,7 @@ class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterfac
     use DatabaseService;
     use EventService;
 
-    public function get(int $assemblyId, int $issueId, int $documentId, int $congressmanId): ? Model\CongressmanDocument
+    public function get(int $assemblyId, int $issueId, int $documentId, int $congressmanId): ?Model\CongressmanDocument
     {
         $statement = $this->getDriver()->prepare("
             select * from `Document_has_Congressman` D
@@ -61,7 +61,7 @@ class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterfac
         $statement->execute($filteredParams);
 
         while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
-            yield (new Hydrator\CongressmanDocument)->hydrate($object, new Model\CongressmanDocument());
+            yield (new Hydrator\CongressmanDocument())->hydrate($object, new Model\CongressmanDocument());
         }
 
         $statement->closeCursor();
@@ -93,7 +93,7 @@ class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterfac
     /**
      * @deprecated
      */
-    public function countProponents(int $assemblyId, int $issueId, int $documentId): ? int
+    public function countProponents(int $assemblyId, int $issueId, int $documentId): ?int
     {
         $statement = $this->getDriver()->prepare("
             select count(*)
@@ -112,7 +112,7 @@ class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterfac
     /**
      * @deprecated
      */
-    public function fetchProponents($assemblyId, $issueId, $documentId): ? Model\CongressmanValue
+    public function fetchProponents($assemblyId, $issueId, $documentId): ?Model\CongressmanValue
     {
         $statement = $this->getDriver()->prepare("
             select C.*, DC.`order` as `value` from Document_has_Congressman DC

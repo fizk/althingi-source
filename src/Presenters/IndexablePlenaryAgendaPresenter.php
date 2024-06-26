@@ -1,4 +1,5 @@
 <?php
+
 namespace Althingi\Presenters;
 
 use Althingi\Model\ModelInterface;
@@ -7,8 +8,8 @@ use Laminas\Hydrator\HydratorInterface;
 
 class IndexablePlenaryAgendaPresenter implements IndexablePresenter
 {
-    const INDEX = 'althingi_model_plenary-agenda';
-    const TYPE = 'plenary-agenda';
+    private const INDEX = 'althingi_model_plenary-agenda';
+    private const TYPE = 'plenary-agenda';
 
     private HydratorInterface $hydrator;
     private PlenaryAgenda $model;

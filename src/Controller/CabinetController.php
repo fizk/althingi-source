@@ -28,6 +28,7 @@ class CabinetController implements
     ServiceAssemblyAwareInterface
 {
     use RestControllerTrait;
+
     private Cabinet $cabinetService;
     private Assembly $assemblyService;
 

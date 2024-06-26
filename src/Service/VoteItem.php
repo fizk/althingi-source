@@ -15,7 +15,7 @@ class VoteItem implements DatabaseAwareInterface, EventsAwareInterface
     use DatabaseService;
     use EventService;
 
-    public function get(int $id): ? Model\VoteItem
+    public function get(int $id): ?Model\VoteItem
     {
         $statement = $this->getDriver()->prepare(
             'select * from `VoteItem` where vote_item_id = :vote_item_id'
@@ -73,7 +73,7 @@ class VoteItem implements DatabaseAwareInterface, EventsAwareInterface
         }
 
         while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
-            yield (new Hydrator\VoteItem)->hydrate($object, new Model\VoteItem());
+            yield (new Hydrator\VoteItem())->hydrate($object, new Model\VoteItem());
         }
         $statement->closeCursor();
 
@@ -99,7 +99,7 @@ class VoteItem implements DatabaseAwareInterface, EventsAwareInterface
      * If you don't have the vote-item's unique ID, you can get an individual
      * vote-item by the vote-id and congressman-id, since that is unique.
      */
-    public function getByVote(int $voteId, int $congressmanId): ? Model\VoteItemAndAssemblyIssue
+    public function getByVote(int $voteId, int $congressmanId): ?Model\VoteItemAndAssemblyIssue
     {
         $statement = $this->getDriver()->prepare(
             'select vi.*, v.assembly_id, v.issue_id from `VoteItem` vi

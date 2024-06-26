@@ -8,12 +8,12 @@ use Psr\Http\Message\{
     ServerRequestInterface,
     ResponseInterface
 };
-
 use Althingi\Service\EventService;
 
 class IndexController
 {
     use EventService;
+
     private Assembly $assemblyService;
 
     public function handle(ServerRequestInterface $request): ResponseInterface

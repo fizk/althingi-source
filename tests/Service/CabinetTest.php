@@ -47,7 +47,7 @@ class CabinetTest extends TestCase
         $assemblyService->setDriver($this->pdo);
 
         $expectedData = array_map(function ($cabinet) {
-            return (new \Althingi\Hydrator\Cabinet())->hydrate($cabinet, new CabinetModel);
+            return (new \Althingi\Hydrator\Cabinet())->hydrate($cabinet, new CabinetModel());
         }, $cabinets);
 
         $actualData = $assemblyService->fetchByAssembly($assembly);

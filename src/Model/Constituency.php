@@ -5,7 +5,7 @@ namespace Althingi\Model;
 class Constituency implements ModelInterface
 {
     private int $constituency_id;
-    private ? string $name = null;
+    private ?string $name = null;
     private ?string $abbr_short = null;
     private ?string $abbr_long = null;
     private ?string $description = null;

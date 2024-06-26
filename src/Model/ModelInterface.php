@@ -1,4 +1,5 @@
 <?php
+
 namespace Althingi\Model;
 
 interface ModelInterface extends \JsonSerializable

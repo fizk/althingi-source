@@ -14,12 +14,12 @@ use Psr\Http\Message\{
     ServerRequestInterface,
     ResponseInterface
 };
-
 use Althingi\Service\EventService;
 
 class IndexerAssemblyController implements ServiceAssemblyAwareInterface, EventsAwareInterface
 {
     use EventService;
+
     private Assembly $assemblyService;
 
     public function handle(ServerRequestInterface $request): ResponseInterface

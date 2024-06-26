@@ -22,6 +22,7 @@ class MinistryController implements
     ServiceMinistryAwareInterface
 {
     use RestControllerTrait;
+
     private Service\Ministry $ministryService;
 
     /**
@@ -99,9 +100,11 @@ class MinistryController implements
      */
     public function patch(ServerRequest $request): ResponseInterface
     {
-        if (($ministry = $this->ministryService->get(
-            $request->getAttribute('id')
-        )) !== null) {
+        if (
+            ($ministry = $this->ministryService->get(
+                $request->getAttribute('id')
+            )) !== null
+        ) {
             $form = new Form\Ministry([
                 ...$ministry->toArray(),
                 ...$request->getParsedBody(),

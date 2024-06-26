@@ -1,4 +1,5 @@
 <?php
+
 namespace Althingi\Presenters;
 
 use Althingi\Model\Congressman;
@@ -7,8 +8,8 @@ use Laminas\Hydrator\HydratorInterface;
 
 class IndexableCongressmanPresenter implements IndexablePresenter
 {
-    const INDEX = 'althingi_model_congressman';
-    const TYPE = 'congressman';
+    private const INDEX = 'althingi_model_congressman';
+    private const TYPE = 'congressman';
 
     private HydratorInterface $hydrator;
     private Congressman $model;

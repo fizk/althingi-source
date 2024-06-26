@@ -39,6 +39,7 @@ class SpeechController implements
     ServiceConstituencyAwareInterface
 {
     use RestControllerTrait;
+
     private Service\Speech $speechService;
     private Service\Congressman $congressmanService;
     private Service\Party $partyService;

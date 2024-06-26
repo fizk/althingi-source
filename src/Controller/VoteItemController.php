@@ -46,6 +46,7 @@ class VoteItemController implements
     RouterAwareInterface
 {
     use RestControllerTrait;
+
     private RouteInterface $router;
     private VoteItem $voteItemService;
     private Vote $voteService;

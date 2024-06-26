@@ -14,12 +14,12 @@ use Psr\Http\Message\{
     ServerRequestInterface,
     ResponseInterface
 };
-
 use Althingi\Service\EventService;
 
 class IndexerCabinetController implements ServiceCabinetAwareInterface, EventsAwareInterface
 {
     use EventService;
+
     private Cabinet $cabinetService;
 
     public function handle(ServerRequestInterface $request): ResponseInterface

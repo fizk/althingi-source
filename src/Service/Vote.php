@@ -18,7 +18,7 @@ class Vote implements DatabaseAwareInterface, EventsAwareInterface
     use DatabaseService;
     use EventService;
 
-    public function get(int $id): ? Model\Vote
+    public function get(int $id): ?Model\Vote
     {
         $statement = $this->getDriver()->prepare('
             select * from `Vote` where vote_id = :vote_id
@@ -81,7 +81,7 @@ class Vote implements DatabaseAwareInterface, EventsAwareInterface
         }
 
         while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
-            yield (new Hydrator\Vote)->hydrate($object, new Model\Vote());
+            yield (new Hydrator\Vote())->hydrate($object, new Model\Vote());
         }
         $statement->closeCursor();
         return null;

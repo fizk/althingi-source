@@ -28,18 +28,19 @@ class Category extends Form
             (new Input('super_category_id'))
                 ->attachValidator(new NotEmpty())
                 ->attachValidator(new SignedDigits())
-                ->attachFilter(new ToInt()),
-
+                ->attachFilter(new ToInt())
+            ,
             (new Input('category_id'))
                 ->attachValidator(new NotEmpty())
                 ->attachValidator(new SignedDigits())
-                ->attachFilter(new ToInt()),
-
+                ->attachFilter(new ToInt())
+            ,
             (new Input('title'))
-                ->attachValidator(new NotEmpty()),
-
+                ->attachValidator(new NotEmpty())
+            ,
             (new Input('description', true))
-                ->attachFilter(new ToNull(['type' => 'all'])),
+                ->attachFilter(new ToNull(['type' => 'all']))
+            ,
         ];
     }
 }

@@ -97,13 +97,15 @@ class Segment implements RouteInterface
             }
 
             if ($matches['token'] === ':') {
-                if (! preg_match(
-                    '(\G(?P<name>[^:/{\[\]]+)(?:{(?P<delimiters>[^}]+)})?:?)',
-                    $def,
-                    $matches,
-                    0,
-                    $currentPos
-                )) {
+                if (
+                    ! preg_match(
+                        '(\G(?P<name>[^:/{\[\]]+)(?:{(?P<delimiters>[^}]+)})?:?)',
+                        $def,
+                        $matches,
+                        0,
+                        $currentPos
+                    )
+                ) {
                     throw new Exception\RuntimeException('Found empty parameter name');
                 }
 
@@ -210,7 +212,8 @@ class Segment implements RouteInterface
                         }
 
                         return '';
-                    } elseif (! $isOptional
+                    } elseif (
+                        ! $isOptional
                         || $hasChild
                         || ! isset($this->defaults[$part[1]])
                         || $this->defaults[$part[1]] !== $mergedParams[$part[1]]

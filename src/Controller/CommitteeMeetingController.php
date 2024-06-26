@@ -22,6 +22,7 @@ class CommitteeMeetingController implements
     ServiceCommitteeMeetingAwareInterface
 {
     use RestControllerTrait;
+
     private Service\CommitteeMeeting $committeeMeetingService;
 
     /**

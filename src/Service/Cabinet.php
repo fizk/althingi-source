@@ -53,7 +53,7 @@ class Cabinet implements DatabaseAwareInterface, EventsAwareInterface
         }
 
         return array_map(function ($object) {
-            return (new Hydrator\Cabinet)->hydrate($object, new Model\Cabinet());
+            return (new Hydrator\Cabinet())->hydrate($object, new Model\Cabinet());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -65,13 +65,13 @@ class Cabinet implements DatabaseAwareInterface, EventsAwareInterface
 
 
         while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
-            yield (new Hydrator\Cabinet)->hydrate($object, new Model\Cabinet());
+            yield (new Hydrator\Cabinet())->hydrate($object, new Model\Cabinet());
         }
         $statement->closeCursor();
         return null;
     }
 
-    public function get(int $id): ? Model\Cabinet
+    public function get(int $id): ?Model\Cabinet
     {
         $statement = $this->getDriver()->prepare("select * from `Cabinet` where cabinet_id = :id");
         $statement->execute(['id' => $id]);

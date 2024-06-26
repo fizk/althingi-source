@@ -2,7 +2,7 @@
 
 namespace Althingi\Injector;
 
-use \PDO;
+use PDO;
 
 interface DatabaseAwareInterface
 {

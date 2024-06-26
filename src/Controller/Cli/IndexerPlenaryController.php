@@ -13,13 +13,13 @@ use Psr\Http\Message\{
     ServerRequestInterface,
     ResponseInterface
 };
-
 use Althingi\Service\EventService;
 use Althingi\Service\Plenary;
 
 class IndexerPlenaryController implements ServicePlenaryAwareInterface, EventsAwareInterface
 {
     use EventService;
+
     private Plenary $plenaryService;
 
     public function handle(ServerRequestInterface $request): ResponseInterface

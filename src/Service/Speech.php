@@ -16,9 +16,9 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
     use DatabaseService;
     use EventService;
 
-    const MAX_ROW_COUNT = '18446744073709551615';
+    private const MAX_ROW_COUNT = '18446744073709551615';
 
-    public function get(string $id): ? Model\Speech
+    public function get(string $id): ?Model\Speech
     {
         $statement = $this->getDriver()->prepare(
             'select * from `Speech` where speech_id = :speech_id'
@@ -31,7 +31,7 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
             : null ;
     }
 
-    public function getLastActive(): ? Model\Speech
+    public function getLastActive(): ?Model\Speech
     {
         $statement = $this->getDriver()->prepare(
             'select * from `Speech` where `text` is not null order by `from` desc;'
@@ -192,8 +192,13 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
      *
      * @return \Althingi\Model\SpeechAndPosition[]
      */
-    public function fetch(string $id, int $assemblyId, int $issueId, ?int $size = 25, ?KindEnum $kind = KindEnum::A): array
-    {
+    public function fetch(
+        string $id,
+        int $assemblyId,
+        int $issueId,
+        ?int $size = 25,
+        ?KindEnum $kind = KindEnum::A
+    ): array {
         $pointer = 0;
         $hasResult = false;
         $statement = $this->getDriver()->prepare(
@@ -273,7 +278,7 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
         }
 
         while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
-            yield (new Hydrator\Speech)->hydrate($object, new Model\Speech());
+            yield (new Hydrator\Speech())->hydrate($object, new Model\Speech());
         }
         $statement->closeCursor();
         return null;

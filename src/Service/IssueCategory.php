@@ -1,4 +1,5 @@
 <?php
+
 namespace Althingi\Service;
 
 use Althingi\Model;
@@ -15,7 +16,7 @@ class IssueCategory implements DatabaseAwareInterface, EventsAwareInterface
     use DatabaseService;
     use EventService;
 
-    public function get(int $assemblyId, int $issueId, int $categoryId): ? Model\IssueCategory
+    public function get(int $assemblyId, int $issueId, int $categoryId): ?Model\IssueCategory
     {
         $statement = $this->getDriver()->prepare('
             select * from `Category_has_Issue` C
@@ -71,7 +72,7 @@ class IssueCategory implements DatabaseAwareInterface, EventsAwareInterface
 
 
         while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
-            yield (new Hydrator\IssueCategory)->hydrate($object, new Model\IssueCategory());
+            yield (new Hydrator\IssueCategory())->hydrate($object, new Model\IssueCategory());
         }
         $statement->closeCursor();
         return null;
@@ -119,8 +120,8 @@ class IssueCategory implements DatabaseAwareInterface, EventsAwareInterface
             $this->toUpdateString(
                 'Category_has_Issue',
                 $data,
-                "category_id={$data->getCategoryId()} ".
-                "and issue_id={$data->getIssueId()} ".
+                "category_id={$data->getCategoryId()} " .
+                "and issue_id={$data->getIssueId()} " .
                 "and assembly_id={$data->getAssemblyId()}"
             )
         );

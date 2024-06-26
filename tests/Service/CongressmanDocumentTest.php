@@ -12,6 +12,7 @@ use Althingi\Model\KindEnum;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Mockery;
 use PDO;
+
 class CongressmanDocumentTest extends TestCase
 {
     use DatabaseConnection;
@@ -149,7 +150,6 @@ class CongressmanDocumentTest extends TestCase
             ->setDriver($this->pdo)
             ->setEventDispatcher($eventDispatcher)
             ->create($congressman);
-
     }
 
     public function testUpdateFireEventOne()
@@ -175,7 +175,6 @@ class CongressmanDocumentTest extends TestCase
             ->setDriver($this->pdo)
             ->setEventDispatcher($eventDispatcher)
             ->update($congressman);
-
     }
     public function testUpdateFireEventZero()
     {
@@ -200,7 +199,6 @@ class CongressmanDocumentTest extends TestCase
             ->setDriver($this->pdo)
             ->setEventDispatcher($eventDispatcher)
             ->update($congressman);
-
     }
 
     public function testSaveFireEventZero()

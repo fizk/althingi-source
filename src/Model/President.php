@@ -11,7 +11,7 @@ class President implements ModelInterface
     private int $assembly_id;
     private string $title;
     private DateTime $from;
-    private ? DateTime $to = null;
+    private ?DateTime $to = null;
     private ?string $abbr = null;
 
     public function getPresidentId(): ?int

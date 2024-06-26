@@ -13,7 +13,7 @@ class Category implements DatabaseAwareInterface
 {
     use DatabaseService;
 
-    public function get(int $id): ? Model\Category
+    public function get(int $id): ?Model\Category
     {
         $statement = $this->getDriver()->prepare('
             select * from `Category` where category_id = :category_id
@@ -27,7 +27,7 @@ class Category implements DatabaseAwareInterface
             : null;
     }
 
-    public function fetch(int $superId): ? array
+    public function fetch(int $superId): ?array
     {
         $statement = $this->getDriver()->prepare('
             select * from `Category` where super_category_id = :super_category_id
@@ -46,7 +46,7 @@ class Category implements DatabaseAwareInterface
         $statement->execute();
 
         while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
-            yield (new Hydrator\Category)->hydrate($object, new Model\Category());
+            yield (new Hydrator\Category())->hydrate($object, new Model\Category());
         }
         $statement->closeCursor();
         return null;
@@ -94,7 +94,7 @@ class Category implements DatabaseAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    public function fetchByAssemblyIssueAndCategory(int $assemblyId, int $issueId, int $categoryId): ? Model\Category
+    public function fetchByAssemblyIssueAndCategory(int $assemblyId, int $issueId, int $categoryId): ?Model\Category
     {
         $statement = $this->getDriver()->prepare('
             select C.* from `Category_has_Issue` CI

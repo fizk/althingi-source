@@ -1,4 +1,5 @@
 <?php
+
 namespace Althingi\Presenters;
 
 use Althingi\Model\ModelInterface;
@@ -7,8 +8,8 @@ use Laminas\Hydrator\HydratorInterface;
 
 class IndexableIssueCategoryPresenter implements IndexablePresenter
 {
-    const INDEX = 'althingi_model_issue-category';
-    const TYPE = 'issue-category';
+    private const INDEX = 'althingi_model_issue-category';
+    private const TYPE = 'issue-category';
 
     private HydratorInterface $hydrator;
     private IssueCategory $model;

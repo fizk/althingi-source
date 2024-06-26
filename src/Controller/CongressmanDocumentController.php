@@ -20,6 +20,7 @@ class CongressmanDocumentController implements
     ServiceProponentAwareInterface
 {
     use RestControllerTrait;
+
     private Service\CongressmanDocument $congressmanDocumentService;
 
     /**
@@ -65,8 +66,10 @@ class CongressmanDocumentController implements
         $documentId = $request->getAttribute('document_id');
         $congressmanId = $request->getAttribute('congressman_id');
 
-        if (($congressmanDocument = $this->congressmanDocumentService
-                ->get($assemblyId, $issueId, $documentId, $congressmanId)) != null) {
+        if (
+            ($congressmanDocument = $this->congressmanDocumentService
+                ->get($assemblyId, $issueId, $documentId, $congressmanId)) != null
+        ) {
             $form = new Form\CongressmanDocument([
                 ...$congressmanDocument->toArray(),
                 ...$request->getParsedBody(),

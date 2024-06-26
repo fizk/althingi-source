@@ -1,4 +1,5 @@
 <?php
+
 namespace Althingi\Hydrator;
 
 use DateTime;

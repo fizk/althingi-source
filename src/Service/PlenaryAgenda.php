@@ -11,7 +11,8 @@ use PDO;
 class PlenaryAgenda implements DatabaseAwareInterface
 {
     use DatabaseService;
-    public function get(int $assemblyId, int $plenaryId, int $itemId): ? Model\PlenaryAgenda
+
+    public function get(int $assemblyId, int $plenaryId, int $itemId): ?Model\PlenaryAgenda
     {
         $statement = $this->getDriver()->prepare("
           select * from `PlenaryAgenda`
@@ -27,14 +28,14 @@ class PlenaryAgenda implements DatabaseAwareInterface
         $assembly = $statement->fetch(PDO::FETCH_ASSOC);
 
         return $assembly
-            ? (new Hydrator\PlenaryAgenda)->hydrate($assembly, new Model\PlenaryAgenda())
+            ? (new Hydrator\PlenaryAgenda())->hydrate($assembly, new Model\PlenaryAgenda())
             : null;
     }
 
     /**
      * @return Model\PlenaryAgenda[]
      */
-    public function fetch(int $assemblyId, int $plenaryId): ? array
+    public function fetch(int $assemblyId, int $plenaryId): ?array
     {
         $statement = $this->getDriver()->prepare("
           select * from PlenaryAgenda PA
@@ -48,7 +49,7 @@ class PlenaryAgenda implements DatabaseAwareInterface
         ]);
 
         return array_map(function ($item) {
-            return (new Hydrator\PlenaryAgenda)->hydrate($item, new Model\PlenaryAgenda());
+            return (new Hydrator\PlenaryAgenda())->hydrate($item, new Model\PlenaryAgenda());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -68,7 +69,7 @@ class PlenaryAgenda implements DatabaseAwareInterface
         $statement->execute($filteredParams);
 
         while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
-            yield (new Hydrator\PlenaryAgenda)->hydrate($object, new Model\PlenaryAgenda());
+            yield (new Hydrator\PlenaryAgenda())->hydrate($object, new Model\PlenaryAgenda());
         }
         $statement->closeCursor();
         return null;

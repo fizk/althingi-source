@@ -22,6 +22,7 @@ class CommitteeMeetingAgendaController implements
     ServiceCommitteeMeetingAgendaAwareInterface
 {
     use RestControllerTrait;
+
     private Service\CommitteeMeetingAgenda $committeeMeetingAgendaService;
 
     /**
@@ -90,8 +91,10 @@ class CommitteeMeetingAgendaController implements
         $committeeMeetingId = $request->getAttribute('committee_meeting_id');
         $committeeMeetingAgendaId = $request->getAttribute('committee_meeting_agenda_id');
 
-        if (($committeeMeetingAgenda = $this->committeeMeetingAgendaService
-                ->get($committeeMeetingId, $committeeMeetingAgendaId)) != null) {
+        if (
+            ($committeeMeetingAgenda = $this->committeeMeetingAgendaService
+                ->get($committeeMeetingId, $committeeMeetingAgendaId)) != null
+        ) {
             $form = new Form\CommitteeMeetingAgenda([
                 ...$committeeMeetingAgenda->toArray(),
                 ...$request->getParsedBody(),

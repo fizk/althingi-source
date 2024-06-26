@@ -14,12 +14,12 @@ use Psr\Http\Message\{
     ServerRequestInterface,
     ResponseInterface
 };
-
 use Althingi\Service\EventService;
 
 class IndexerCommitteeDocumentController implements ServiceCommitteeDocumentAwareInterface, EventsAwareInterface
 {
     use EventService;
+
     private CommitteeDocument $serviceCommitteeDocument;
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -29,11 +29,13 @@ class IndexerCommitteeDocumentController implements ServiceCommitteeDocumentAwar
         $documentId = $request->getAttribute('document_id', null);
 
         /** @var \Althingi\Model\CommitteeDocument $model */
-        foreach ($this->serviceCommitteeDocument->fetchAllGenerator(
-            $congressmanId,
-            $assemblyId,
-            $documentId
-        ) as $model) {
+        foreach (
+            $this->serviceCommitteeDocument->fetchAllGenerator(
+                $congressmanId,
+                $assemblyId,
+                $documentId
+            ) as $model
+        ) {
             $this->getEventDispatcher()->dispatch(
                 new AddEvent(new IndexableCommitteeDocumentPresenter($model), ['rows' => 1]),
             );

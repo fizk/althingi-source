@@ -14,14 +14,14 @@ use Generator;
 
 class Congressman implements DatabaseAwareInterface, EventsAwareInterface
 {
-    const CONGRESSMAN_TYPE_MP = 'parliamentarian';
-    const CONGRESSMAN_TYPE_SUBSTITUTE = 'substitute';
-    const CONGRESSMAN_TYPE_WITH_SUBSTITUTE = 'with-substitute';
-
     use DatabaseService;
     use EventService;
 
-    public function get(int $id): ? Model\Congressman
+    public const CONGRESSMAN_TYPE_MP = 'parliamentarian';
+    public const CONGRESSMAN_TYPE_SUBSTITUTE = 'substitute';
+    public const CONGRESSMAN_TYPE_WITH_SUBSTITUTE = 'with-substitute';
+
+    public function get(int $id): ?Model\Congressman
     {
         $statement = $this->getDriver()->prepare("select * from `Congressman` C where congressman_id = :id");
         $statement->execute(['id' => $id]);
@@ -70,7 +70,7 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
         }
 
         while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
-            yield (new Hydrator\Congressman)->hydrate($object, new Model\Congressman());
+            yield (new Hydrator\Congressman())->hydrate($object, new Model\Congressman());
         }
         $statement->closeCursor();
         return null;

@@ -17,7 +17,7 @@ class Constituency implements DatabaseAwareInterface, EventsAwareInterface
     use DatabaseService;
     use EventService;
 
-    public function get(int $id): ? Model\Constituency
+    public function get(int $id): ?Model\Constituency
     {
         $statement = $this->getDriver()->prepare(
             'select * from `Constituency`
@@ -38,13 +38,13 @@ class Constituency implements DatabaseAwareInterface, EventsAwareInterface
 
 
         while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
-            yield (new Hydrator\Constituency)->hydrate($object, new Model\Constituency());
+            yield (new Hydrator\Constituency())->hydrate($object, new Model\Constituency());
         }
         $statement->closeCursor();
         return null;
     }
 
-    public function getByCongressman(int $congressmanId, DateTime $date): ? Model\ConstituencyDate
+    public function getByCongressman(int $congressmanId, DateTime $date): ?Model\ConstituencyDate
     {
         $statement = $this->getDriver()->prepare('
             select C.*, S.`from` as `date` from Session S
@@ -68,7 +68,7 @@ class Constituency implements DatabaseAwareInterface, EventsAwareInterface
     /**
      * @deprecated
      */
-    public function getByCongressmanAndConstituency(int $congressmanId, int $assemblyId): ? Model\ConstituencyDate
+    public function getByCongressmanAndConstituency(int $congressmanId, int $assemblyId): ?Model\ConstituencyDate
     {
         $statement = $this->getDriver()->prepare('
             select C.*, S.`from` as `date` from Session S
@@ -88,7 +88,7 @@ class Constituency implements DatabaseAwareInterface, EventsAwareInterface
             : null ;
     }
 
-    public function getByAssemblyAndCongressman(int $congressmanId, int $assemblyId): ? Model\ConstituencyDate
+    public function getByAssemblyAndCongressman(int $congressmanId, int $assemblyId): ?Model\ConstituencyDate
     {
         $statement = $this->getDriver()->prepare('
             select C.*, S.`from` as `date` from Session S

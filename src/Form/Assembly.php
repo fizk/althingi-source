@@ -20,13 +20,16 @@ class Assembly extends Form
             (new Input('assembly_id'))
                 ->attachFilter(new ToInt())
                 ->attachValidator(new NotEmpty())
-                ->attachValidator(new SignedDigits()),
+                ->attachValidator(new SignedDigits())
+            ,
             (new Input('from'))
                 ->attachValidator(new NotEmpty())
-                ->attachValidator(new Date()),
+                ->attachValidator(new Date())
+            ,
             (new Input('to', true))
                 ->attachValidator(new Date())
                 ->attachFilter(new ToNull(['type' => 'all']))
+            ,
         ];
     }
 

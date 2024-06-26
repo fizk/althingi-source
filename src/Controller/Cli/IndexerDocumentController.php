@@ -13,13 +13,13 @@ use Psr\Http\Message\{
     ServerRequestInterface,
     ResponseInterface
 };
-
 use Althingi\Service\EventService;
 use Althingi\Service\Document;
 
 class IndexerDocumentController implements ServiceDocumentAwareInterface, EventsAwareInterface
 {
     use EventService;
+
     private Document $documentService;
 
     public function handle(ServerRequestInterface $request): ResponseInterface

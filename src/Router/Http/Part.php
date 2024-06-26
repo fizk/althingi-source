@@ -158,7 +158,8 @@ class Part extends TreeRouteStack implements RouteInterface
                 return $match;
             }
 
-            if (isset($options['translator'])
+            if (
+                isset($options['translator'])
                 && ! isset($options['locale'])
                 && null !== ($locale = $match->getParam('locale', null))
             ) {

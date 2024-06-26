@@ -32,6 +32,7 @@ class MinisterSittingController implements
     RouterAwareInterface
 {
     use RestControllerTrait;
+
     private RouteInterface $router;
     private Service\MinisterSitting $ministerSittingService;
 
@@ -125,9 +126,11 @@ class MinisterSittingController implements
      */
     public function patch(ServerRequest $request): ResponseInterface
     {
-        if (($ministerSitting = $this->ministerSittingService->get(
-            $request->getAttribute('ministry_sitting_id')
-        )) != null) {
+        if (
+            ($ministerSitting = $this->ministerSittingService->get(
+                $request->getAttribute('ministry_sitting_id')
+            )) != null
+        ) {
             $form = new Form\MinisterSitting([
                 ...$ministerSitting->toArray(),
                 ...$request->getParsedBody(),

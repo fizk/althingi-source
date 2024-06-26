@@ -21,7 +21,7 @@ class ConstituencyTest extends TestCase
         $service = new Constituency();
         $service->setDriver($this->pdo);
 
-        $expectedData = (new ConstituencyModel)
+        $expectedData = (new ConstituencyModel())
             ->setConstituencyId(1)
             ->setName('some-place')
             ->setAbbrShort('s-p')

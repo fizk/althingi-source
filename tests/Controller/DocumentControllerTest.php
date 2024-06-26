@@ -52,8 +52,7 @@ class DocumentControllerTest extends TestCase
                 ->setIssueId(2)
                 ->setKind(KindEnum::A)
                 ->setAssemblyId(145)
-                ->setType('type')
-            )
+                ->setType('type'))
             ->getMock();
 
         $this->dispatch('/loggjafarthing/145/thingmal/a/2/thingskjal/2', 'GET');
@@ -108,7 +107,6 @@ class DocumentControllerTest extends TestCase
                         ->setKind(KindEnum::A)
                         ->setAssemblyId(145)
                         ->setType('type')
-
                 ),
             ])
             ->once()

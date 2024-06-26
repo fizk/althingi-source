@@ -33,6 +33,7 @@ class CommitteeDocumentController implements
     RouterAwareInterface
 {
     use RestControllerTrait;
+
     private RouteInterface $router;
     private Service\CommitteeDocument $committeeDocumentService;
 
@@ -153,9 +154,11 @@ class CommitteeDocumentController implements
      */
     public function patch(ServerRequest $request): ResponseInterface
     {
-        if (($committeeDocument = $this->committeeDocumentService->get(
-            $request->getAttribute('document_committee_id')
-        )) != null) {
+        if (
+            ($committeeDocument = $this->committeeDocumentService->get(
+                $request->getAttribute('document_committee_id')
+            )) != null
+        ) {
             $form = new Form\CommitteeDocument([
                 ...$committeeDocument->toArray(),
                 ...$request->getParsedBody(),

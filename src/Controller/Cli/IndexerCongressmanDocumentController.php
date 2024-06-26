@@ -14,12 +14,12 @@ use Psr\Http\Message\{
     ServerRequestInterface,
     ResponseInterface
 };
-
 use Althingi\Service\EventService;
 
 class IndexerCongressmanDocumentController implements ServiceCongressmanDocumentAwareInterface, EventsAwareInterface
 {
     use EventService;
+
     private CongressmanDocument $congressmanDocument;
 
     public function handle(ServerRequestInterface $request): ResponseInterface

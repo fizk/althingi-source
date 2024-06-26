@@ -11,7 +11,7 @@ enum KindEnum: string
 
     public static function fromString(string $value)
     {
-        return match(strtolower($value)) {
+        return match (strtolower($value)) {
             'a' => self::A,
             'b' => self::B,
             default => throw new Exception("'$value' is not a valid string"),

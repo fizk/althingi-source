@@ -14,12 +14,12 @@ use Psr\Http\Message\{
     ServerRequestInterface,
     ResponseInterface
 };
-
 use Althingi\Service\EventService;
 
 class IndexerMinisterSittingController implements ServiceMinisterSittingAwareInterface, EventsAwareInterface
 {
     use EventService;
+
     private MinisterSitting $ministerSittingService;
 
     public function handle(ServerRequestInterface $request): ResponseInterface

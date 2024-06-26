@@ -33,6 +33,7 @@ class SessionController implements
     RouterAwareInterface
 {
     use RestControllerTrait;
+
     private RouteInterface $router;
     private Session $sessionService;
 
@@ -146,9 +147,11 @@ class SessionController implements
      */
     public function patch(ServerRequest $request): ResponseInterface
     {
-        if (($session = $this->sessionService->get(
-            $request->getAttribute('session_id')
-        )) !== null) {
+        if (
+            ($session = $this->sessionService->get(
+                $request->getAttribute('session_id')
+            )) !== null
+        ) {
             $form = new Form\Session([
                 ...$session->toArray(),
                 ...$request->getParsedBody(),

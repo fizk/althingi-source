@@ -29,6 +29,7 @@ class IssueCategoryController implements
     ServiceCategoryAwareInterface
 {
     use RestControllerTrait;
+
     private Service\IssueCategory $issueCategoryService;
     private Service\Category $categoryService;
 

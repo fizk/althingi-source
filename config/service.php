@@ -141,7 +141,7 @@ return [
                 ->setCommitteeService($container->get(Service\Committee::class));
         },
         Controller\CommitteeDocumentController::class => function (ContainerInterface $container) {
-            return (new Controller\CommitteeDocumentController)
+            return (new Controller\CommitteeDocumentController())
                 ->setCommitteeDocumentService($container->get(Service\CommitteeDocument::class))
                 ->setRouter($container->get(RouteInterface::class))
                 ;
@@ -518,7 +518,8 @@ return [
                 [
                     PDO::MYSQL_ATTR_INIT_COMMAND =>
                     "SET NAMES 'utf8', " .
-                    "sql_mode='STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION,NO_AUTO_VALUE_ON_ZERO';",
+                    "sql_mode='STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO," .
+                    "NO_ENGINE_SUBSTITUTION,NO_AUTO_VALUE_ON_ZERO';",
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
                 ]
@@ -541,7 +542,11 @@ return [
             });
 
             $provider->subscribeTo(AddEvent::class, function (AddEvent $event) use ($logger, $container) {
-                $result = (new Add($container->get(MessageBrokerInterface::class), strtolower(getenv('QUEUE_FORCED')) === 'true'))(
+                (new Add(
+                    $container->get(MessageBrokerInterface::class),
+                    strtolower(getenv('QUEUE_FORCED')) === 'true'
+                )
+                )(
                     $event->getPresenter(),
                     $event->getParams()
                 );
@@ -549,7 +554,11 @@ return [
             });
 
             $provider->subscribeTo(UpdateEvent::class, function (UpdateEvent $event) use ($logger, $container) {
-                $result = (new Update($container->get(MessageBrokerInterface::class), strtolower(getenv('QUEUE_FORCED')) === 'true'))(
+                (new Update(
+                    $container->get(MessageBrokerInterface::class),
+                    strtolower(getenv('QUEUE_FORCED')) === 'true'
+                )
+                )(
                     $event->getPresenter(),
                     $event->getParams()
                 );
@@ -557,7 +566,11 @@ return [
             });
 
             $provider->subscribeTo(DeleteEvent::class, function (DeleteEvent $event) use ($logger, $container) {
-                $result = (new Delete($container->get(MessageBrokerInterface::class), strtolower(getenv('QUEUE_FORCED')) === 'true'))(
+                (new Delete(
+                    $container->get(MessageBrokerInterface::class),
+                    strtolower(getenv('QUEUE_FORCED')) === 'true'
+                )
+                )(
                     $event->getPresenter(),
                     $event->getParams()
                 );
@@ -570,12 +583,11 @@ return [
         Psr\Log\LoggerInterface::class => function (ContainerInterface $container) {
             return (new Logger('source'))
                 ->pushHandler((new StreamHandler('php://stdout', Logger::DEBUG))
-                        ->setFormatter(new LineFormatter("[%datetime%] %level_name% %message%\n"))
-                );
+                        ->setFormatter(new LineFormatter("[%datetime%] %level_name% %message%\n")));
         },
 
         MessageBrokerInterface::class => function (ContainerInterface $container) {
-            switch(strtolower(getenv('BROKER'))) {
+            switch (strtolower(getenv('BROKER'))) {
                 case 'kafka':
                     return new KafkaMessageBroker(
                         $container->get(KafkaProducer::class)

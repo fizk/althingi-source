@@ -15,7 +15,6 @@ use Psr\Http\Message\{
     ServerRequestInterface,
     ResponseInterface
 };
-
 use Althingi\Service\EventService;
 
 class IndexerCategoryController implements
@@ -24,6 +23,7 @@ class IndexerCategoryController implements
     EventsAwareInterface
 {
     use EventService;
+
     private Category $categoryService;
     private SuperCategory $superCategory;
 

@@ -35,5 +35,4 @@ class PlenaryTest extends TestCase
 
         $this->assertTrue($isValid);
     }
-
 }

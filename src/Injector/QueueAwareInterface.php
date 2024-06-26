@@ -1,4 +1,5 @@
 <?php
+
 namespace Althingi\Injector;
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;

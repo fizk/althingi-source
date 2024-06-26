@@ -15,14 +15,14 @@ class Ministry implements DatabaseAwareInterface, EventsAwareInterface
     use DatabaseService;
     use EventService;
 
-    public function get(int $id): ? Model\Ministry
+    public function get(int $id): ?Model\Ministry
     {
         $statement = $this->getDriver()->prepare("select * from `Ministry` where ministry_id = :id");
         $statement->execute(['id' => $id]);
         $assembly = $statement->fetch(PDO::FETCH_ASSOC);
 
         return $assembly
-            ? (new Hydrator\Ministry)->hydrate($assembly, new Model\Ministry())
+            ? (new Hydrator\Ministry())->hydrate($assembly, new Model\Ministry())
             : null;
     }
 
@@ -35,7 +35,7 @@ class Ministry implements DatabaseAwareInterface, EventsAwareInterface
         $statement->execute();
 
         return array_map(function ($assembly) {
-            return (new Hydrator\Ministry)->hydrate($assembly, new Model\Ministry());
+            return (new Hydrator\Ministry())->hydrate($assembly, new Model\Ministry());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -47,7 +47,7 @@ class Ministry implements DatabaseAwareInterface, EventsAwareInterface
 
 
         while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
-            yield (new Hydrator\Ministry)->hydrate($object, new Model\Ministry());
+            yield (new Hydrator\Ministry())->hydrate($object, new Model\Ministry());
         }
         $statement->closeCursor();
         return null;
@@ -69,7 +69,7 @@ class Ministry implements DatabaseAwareInterface, EventsAwareInterface
         ]);
 
         return array_map(function ($assembly) {
-            return (new Hydrator\Ministry)->hydrate($assembly, new Model\Ministry());
+            return (new Hydrator\Ministry())->hydrate($assembly, new Model\Ministry());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -91,7 +91,7 @@ class Ministry implements DatabaseAwareInterface, EventsAwareInterface
         $object = $statement->fetch(PDO::FETCH_ASSOC);
 
         return $object
-            ? (new Hydrator\Ministry)->hydrate($object, new Model\Ministry())
+            ? (new Hydrator\Ministry())->hydrate($object, new Model\Ministry())
             : null;
     }
 
