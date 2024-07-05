@@ -121,10 +121,10 @@ return [
                 'thingfundir' => [
                     'type' => Segment::class,
                     'options' => [
-                        'route'    => '/thingfundir[/:plenary_id]',
+                        'route'    => '/thingfundir[/:parliamentary_session_id]',
                         'defaults' => [
-                            'controller' => Controller\PlenaryController::class,
-                            'identifier' => 'plenary_id'
+                            'controller' => Controller\ParliamentarySessionController::class,
+                            'identifier' => 'parliamentary_session_id'
                         ],
                     ],
                     'may_terminate' => true,
@@ -134,7 +134,7 @@ return [
                             'options' => [
                                 'route'    => '/lidir[/:item_id]',
                                 'defaults' => [
-                                    'controller' => Controller\PlenaryAgendaController::class,
+                                    'controller' => Controller\ParliamentarySessionAgendaController::class,
                                     'identifier' => 'item_id'
                                 ],
                             ],
@@ -618,21 +618,21 @@ return [
                         ],
                     ],
                 ],
-                'plenary' => [
+                'parliamentary-session' => [
                     'type' => Literal::class,
                     'options' => [
-                        'route'    => ':plenary',
+                        'route'    => ':parliamentary-session',
                         'defaults' => [
-                            'controller' => Controller\Cli\IndexerPlenaryController::class,
+                            'controller' => Controller\Cli\IndexerParliamentarySessionController::class,
                         ],
                     ],
                 ],
-                'plenary-agenda' => [
+                'parliamentary-session-agenda' => [
                     'type' => Literal::class,
                     'options' => [
-                        'route'    => ':plenary-agenda',
+                        'route'    => ':parliamentary-session-agenda',
                         'defaults' => [
-                            'controller' => Controller\Cli\IndexerPlenaryAgentaController::class,
+                            'controller' => Controller\Cli\IndexerParliamentarySessionAgentaController::class,
                         ],
                     ],
                 ],

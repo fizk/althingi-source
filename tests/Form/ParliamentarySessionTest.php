@@ -2,17 +2,17 @@
 
 namespace Althingi\Form;
 
-use Althingi\Form\Plenary;
+use Althingi\Form\ParliamentarySession;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-class PlenaryTest extends TestCase
+class ParliamentarySessionTest extends TestCase
 {
     #[Test]
     public function emptyValuesAreAllowed()
     {
-        $form = new Plenary([
-            'plenary_id' => '1',
+        $form = new ParliamentarySession([
+            'parliamentary_session_id' => '1',
             'assembly_id' => '2',
             'name' => '',
             'from' => '',
@@ -27,8 +27,8 @@ class PlenaryTest extends TestCase
     #[Test]
     public function IDisNegativeNumber()
     {
-        $form = new Plenary([
-            'plenary_id' => '-1',
+        $form = new ParliamentarySession([
+            'parliamentary_session_id' => '-1',
             'assembly_id' => '2',
             'name' => '',
             'from' => '',

@@ -8,46 +8,48 @@ use Althingi\Model;
 use Althingi\Hydrator;
 use Althingi\Injector\DatabaseAwareInterface;
 use Althingi\Injector\EventsAwareInterface;
-use Althingi\Presenters\IndexablePlenaryPresenter;
+use Althingi\Presenters\IndexableParliamentarySessionPresenter;
 use Generator;
 use PDO;
 
-class Plenary implements DatabaseAwareInterface, EventsAwareInterface
+class ParliamentarySession implements DatabaseAwareInterface, EventsAwareInterface
 {
     use DatabaseService;
     use EventService;
 
-    public function get(int $assemblyId, int $plenaryId): ?Model\Plenary
+    public function get(int $assemblyId, int $parliamentarySessionId): ?Model\ParliamentarySession
     {
         $statement = $this->getDriver()->prepare('
-            select * from `Plenary` where assembly_id = :assembly_id and plenary_id = :plenary_id
+            select * from `ParliamentarySession`
+            where assembly_id = :assembly_id
+                and parliamentary_session_id = :parliamentary_session_id
         ');
         $statement->execute([
             'assembly_id' => $assemblyId,
-            'plenary_id' => $plenaryId,
+            'parliamentary_session_id' => $parliamentarySessionId,
         ]);
 
         $object = $statement->fetch(PDO::FETCH_ASSOC);
         return $object
-            ? (new Hydrator\Plenary())->hydrate($object, new Model\Plenary())
+            ? (new Hydrator\ParliamentarySession())->hydrate($object, new Model\ParliamentarySession())
             : null;
     }
 
     /**
-     * @return \Althingi\Model\Plenary[]
+     * @return \Althingi\Model\ParliamentarySession[]
      */
     public function fetchByAssembly(int $id, int $offset, int $size = null, string $order = 'desc'): array
     {
         $order = in_array($order, ['asc', 'desc']) ? $order : 'desc';
         $statement = $this->getDriver()->prepare("
-            select * from `Plenary` P where assembly_id = :id
+            select * from `ParliamentarySession` P where assembly_id = :id
             order by P.`from` {$order}
             limit {$offset}, {$size}
         ");
         $statement->execute(['id' => $id]);
 
         return array_map(function ($object) {
-            return (new Hydrator\Plenary())->hydrate($object, new Model\Plenary());
+            return (new Hydrator\ParliamentarySession())->hydrate($object, new Model\ParliamentarySession());
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
@@ -62,12 +64,12 @@ class Plenary implements DatabaseAwareInterface, EventsAwareInterface
         });
 
         $statement = $this->getDriver()->prepare(
-            $this->toSelectString('Plenary', $filteredParams, 'plenary_id')
+            $this->toSelectString('ParliamentarySession', $filteredParams, 'parliamentary_session_id')
         );
         $statement->execute($filteredParams);
 
         while (($object = $statement->fetch(PDO::FETCH_ASSOC)) !== false) {
-            yield (new Hydrator\Plenary())->hydrate($object, new Model\Plenary());
+            yield (new Hydrator\ParliamentarySession())->hydrate($object, new Model\ParliamentarySession());
         }
         $statement->closeCursor();
         return null;
@@ -76,62 +78,69 @@ class Plenary implements DatabaseAwareInterface, EventsAwareInterface
     public function countByAssembly(int $id): int
     {
         $statement = $this->getDriver()->prepare("
-            select count(*) from `Plenary` P where assembly_id = :id
+            select count(*) from `ParliamentarySession` P where assembly_id = :id
         ");
         $statement->execute(['id' => $id]);
         return (int) $statement->fetchColumn(0);
     }
 
-    public function create(Model\Plenary $data)
+    public function create(Model\ParliamentarySession $data)
     {
         $statement = $this->getDriver()->prepare(
-            $this->toInsertString('Plenary', $data)
+            $this->toInsertString('ParliamentarySession', $data)
         );
         $statement->execute($this->toSqlValues($data));
 
         $this->getEventDispatcher()->dispatch(
-            new AddEvent(new IndexablePlenaryPresenter($data), ['rows' => $statement->rowCount()])
+            new AddEvent(new IndexableParliamentarySessionPresenter($data), ['rows' => $statement->rowCount()])
         );
 
         return $this->getDriver()->lastInsertId();
     }
 
-    public function save(Model\Plenary $data)
+    public function save(Model\ParliamentarySession $data)
     {
         $statement = $this->getDriver()->prepare(
-            $this->toSaveString('Plenary', $data)
+            $this->toSaveString('ParliamentarySession', $data)
         );
         $statement->execute($this->toSqlValues($data));
 
         switch ($statement->rowCount()) {
             case 1:
                 $this->getEventDispatcher()->dispatch(
-                    new AddEvent(new IndexablePlenaryPresenter($data), ['rows' => $statement->rowCount()])
+                    new AddEvent(
+                        new IndexableParliamentarySessionPresenter($data),
+                        ['rows' => $statement->rowCount()]
+                    )
                 );
                 break;
             case 0:
             case 2:
                 $this->getEventDispatcher()->dispatch(
-                    new UpdateEvent(new IndexablePlenaryPresenter($data), ['rows' => $statement->rowCount()])
+                    new UpdateEvent(
+                        new IndexableParliamentarySessionPresenter($data),
+                        ['rows' => $statement->rowCount()]
+                    )
                 );
                 break;
         }
         return $statement->rowCount();
     }
 
-    public function update(Model\Plenary $data): int
+    public function update(Model\ParliamentarySession $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toUpdateString(
-                'Plenary',
+                'ParliamentarySession',
                 $data,
-                "plenary_id = {$data->getPlenaryId()} and assembly_id = {$data->getAssemblyId()}"
+                "parliamentary_session_id = {$data->getParliamentarySessionId()}
+                and assembly_id = {$data->getAssemblyId()}"
             )
         );
         $statement->execute($this->toSqlValues($data));
 
         $this->getEventDispatcher()->dispatch(
-            new UpdateEvent(new IndexablePlenaryPresenter($data), ['rows' => $statement->rowCount()])
+            new UpdateEvent(new IndexableParliamentarySessionPresenter($data), ['rows' => $statement->rowCount()])
         );
 
         return $statement->rowCount();

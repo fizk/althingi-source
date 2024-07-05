@@ -17,7 +17,7 @@ use Althingi\Injector\{
     ServiceConstituencyAwareInterface,
     ServiceCongressmanAwareInterface,
     ServicePartyAwareInterface,
-    ServicePlenaryAwareInterface,
+    ServiceParliamentarySessionAwareInterface,
     ServiceSpeechAwareInterface
 };
 use Althingi\Model\KindEnum;
@@ -35,7 +35,7 @@ class SpeechController implements
     ServiceSpeechAwareInterface,
     ServiceCongressmanAwareInterface,
     ServicePartyAwareInterface,
-    ServicePlenaryAwareInterface,
+    ServiceParliamentarySessionAwareInterface,
     ServiceConstituencyAwareInterface
 {
     use RestControllerTrait;
@@ -43,7 +43,7 @@ class SpeechController implements
     private Service\Speech $speechService;
     private Service\Congressman $congressmanService;
     private Service\Party $partyService;
-    private Service\Plenary $plenaryService;
+    private Service\ParliamentarySession $parliamentarySessionService;
     private Service\Constituency $constituencyService;
 
     /**
@@ -146,24 +146,26 @@ class SpeechController implements
                 return new EmptyResponse($affectedRows === 1 ? 201 : 205);
             } catch (\PDOException $e) {
                 /**
-                 * @todo damn you althingi.is For some reason, the plenary list is empty for some assemblies
-                 *  but then there is a plenary id on the speech entry. So, sometimes a speech is trying to be saved
-                 *  but it can't be attached to a plenary as it doesn't exists
-                 *  Example: speeches here have a plenary id
-                 *  http://www.althingi.is/altext/xml/thingmalalisti/thingmal/?lthing=20&malnr=1 but the plenary list
-                 *  it self is empty http://www.althingi.is/altext/xml/thingfundir/?lthing=20
+                 * @todo damn you althingi.is For some reason, the ParliamentarySession list
+                 *  is empty for some assemblies but then there is a ParliamentarySession id
+                 *  on the speech entry. So, sometimes a speech is trying to be saved but it
+                 *  can't be attached to a ParliamentarySession as it doesn't exists
+                 *  Example: speeches here have a ParliamentarySession id
+                 *  http://www.althingi.is/altext/xml/thingmalalisti/thingmal/?lthing=20&malnr=1
+                 *  but the ParliamentarySession list it self is empty
+                 *  http://www.althingi.is/altext/xml/thingfundir/?lthing=20
                  */
                 if ($e->errorInfo[1] === 1452) {
                     /** @var \althingi\Model\Speech */
                     $speech = $form->getModel();
-                    $plenary = (new Model\Plenary())
+                    $parliamentarySession = (new Model\ParliamentarySession())
                         ->setAssemblyId($speech->getAssemblyId())
-                        ->setPlenaryId($speech->getPlenaryId())
+                        ->setParliamentarySessionId($speech->getParliamentarySessionId())
                         ->setFrom($speech->getFrom())
                         ->setTo($speech->getTo());
 
                     try {
-                        $this->plenaryService->save($plenary);
+                        $this->parliamentarySessionService->save($parliamentarySession);
                         $affectedRows = $this->speechService->save($speech);
 
                         return new EmptyResponse($affectedRows === 1 ? 201 : 205);
@@ -274,12 +276,12 @@ class SpeechController implements
     }
 
     /**
-     * @param \Althingi\Service\Plenary $plenary
+     * @param \Althingi\Service\ParliamentarySession $parliamentarySession
      * @return $this
      */
-    public function setPlenaryService(Service\Plenary $plenary): static
+    public function setParliamentarySession(Service\ParliamentarySession $parliamentarySession): static
     {
-        $this->plenaryService = $plenary;
+        $this->parliamentarySessionService = $parliamentarySession;
         return $this;
     }
 

@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 #[CoversMethod(SpeechController::class, 'setCongressmanService')]
 #[CoversMethod(SpeechController::class, 'setPartyService')]
 #[CoversMethod(SpeechController::class, 'setSpeechService')]
-#[CoversMethod(SpeechController::class, 'setPlenaryService')]
+#[CoversMethod(SpeechController::class, 'setParliamentarySessionService')]
 #[CoversMethod(SpeechController::class, 'setConstituencyService')]
 #[CoversMethod(SpeechController::class, 'get')]
 #[CoversMethod(SpeechController::class, 'getList')]
@@ -37,7 +37,7 @@ class SpeechControllerTest extends TestCase
             Service\Speech::class,
             Service\Congressman::class,
             Service\Party::class,
-            Service\Plenary::class,
+            Service\ParliamentarySession::class,
             Service\Constituency::class,
         ]);
     }
@@ -158,7 +158,7 @@ class SpeechControllerTest extends TestCase
     public function putSuccess()
     {
         $expectedData = (new Model\Speech())
-            ->setPlenaryId(20)
+            ->setParliamentarySessionId(20)
             ->setCongressmanId(10)
             ->setIteration('*')
             ->setAssemblyId(1)
@@ -184,7 +184,7 @@ class SpeechControllerTest extends TestCase
             'id' => '20210613T012100',
             'from' => '2001-01-01 00:00:00',
             'to' => '2001-01-01 00:00:00',
-            'plenary_id' => 20,
+            'parliamentary_session_id' => 20,
             'assembly_id' => 1,
             'issue_id' => 3,
             'congressman_id' => 10,
@@ -210,7 +210,7 @@ class SpeechControllerTest extends TestCase
             ->getMock();
 
         $this->dispatch('/loggjafarthing/1/thingmal/a/3/raedur/4', 'PUT', [
-            'plenary_id' => 20,
+            'parliamentary_session_id' => 20,
             'congressman_id' => 10,
             'congressman_type' => null,
             'iteration' => '*',
@@ -235,7 +235,7 @@ class SpeechControllerTest extends TestCase
             ->twice()
             ->getMock();
 
-        $this->getMockService(Service\Plenary::class)
+        $this->getMockService(Service\ParliamentarySession::class)
             ->shouldReceive('save')
             ->once()
             ->getMock();
@@ -243,7 +243,7 @@ class SpeechControllerTest extends TestCase
         $this->dispatch('/loggjafarthing/1/thingmal/a/3/raedur/4', 'PUT', [
             'from' => '2001-01-01 00:00:00',
             'to' => '2001-01-01 00:00:00',
-            'plenary_id' => 20,
+            'parliamentary_session_id' => 20,
             'congressman_id' => 10,
             'congressman_type' => null,
             'iteration' => '*',
@@ -269,7 +269,7 @@ class SpeechControllerTest extends TestCase
             ->once()
             ->getMock();
 
-        $this->getMockService(Service\Plenary::class)
+        $this->getMockService(Service\ParliamentarySession::class)
             ->shouldReceive('save')
             ->never()
             ->getMock();
@@ -277,7 +277,7 @@ class SpeechControllerTest extends TestCase
         $this->dispatch('/loggjafarthing/1/thingmal/a/3/raedur/4', 'PUT', [
             'from' => '2001-01-01 00:00:00',
             'to' => '2001-01-01 00:00:00',
-            'plenary_id' => 20,
+            'parliamentary_session_id' => 20,
             'congressman_id' => 10,
             'congressman_type' => null,
             'iteration' => '*',
@@ -326,7 +326,7 @@ class SpeechControllerTest extends TestCase
             ->setSpeechId(4)
             ->setTo(new \DateTime('2000-01-01 00:01:00'))
             ->setFrom(new \DateTime('2000-01-01 00:00:00'))
-            ->setPlenaryId(1)
+            ->setParliamentarySessionId(1)
             ->setAssemblyId(145)
             ->setIssueId(1)
             ->setCongressmanId(1)
@@ -341,7 +341,7 @@ class SpeechControllerTest extends TestCase
                     ->setSpeechId(4)
                     ->setTo(new \DateTime('2000-01-01 00:00:01'))
                     ->setFrom(new \DateTime('2000-01-01 00:00:00'))
-                    ->setPlenaryId(1)
+                    ->setParliamentarySessionId(1)
                     ->setAssemblyId(145)
                     ->setIssueId(1)
                     ->setCongressmanId(1)

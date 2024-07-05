@@ -552,8 +552,8 @@ class SessionTest extends TestCase
             'Issue' => [
                 ['issue_id' => 1, 'assembly_id' => 1, 'kind' => Model\KindEnum::A->value],
             ],
-            'Plenary' => [
-                ['plenary_id' => 1, 'assembly_id' => 1],
+            'ParliamentarySession' => [
+                ['parliamentary_session_id' => 1, 'assembly_id' => 1],
             ],
         ]);
     }

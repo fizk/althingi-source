@@ -37,7 +37,7 @@ class Speech extends Form
                 ->attachValidator(new NotEmpty())
                 ->attachValidator(new Date(['step' => 'any', 'format' => 'Y-m-d H:i:s']))
             ,
-            (new Input('plenary_id'))
+            (new Input('parliamentary_session_id'))
                 ->attachFilter(new ToInt())
                 ->attachValidator(new SignedDigits())
             ,

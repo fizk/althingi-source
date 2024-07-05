@@ -5,8 +5,8 @@ namespace Althingi\Controller;
 use Psr\Http\Message\ResponseInterface;
 use Laminas\Diactoros\ServerRequest;
 use Althingi\Form;
-use Althingi\Service\Plenary;
-use Althingi\Injector\ServicePlenaryAwareInterface;
+use Althingi\Service\ParliamentarySession;
+use Althingi\Injector\ServiceParliamentarySessionAwareInterface;
 use Althingi\Utils\ErrorFormResponse;
 use Althingi\Router\{
     RestControllerInterface,
@@ -17,41 +17,41 @@ use Laminas\Diactoros\Response\{
     EmptyResponse
 };
 
-class PlenaryController implements
+class ParliamentarySessionController implements
     RestControllerInterface,
-    ServicePlenaryAwareInterface
+    ServiceParliamentarySessionAwareInterface
 {
     use RestControllerTrait;
 
-    private Plenary $plenaryService;
+    private ParliamentarySession $parliamentarySessionService;
 
     /**
-     * @output \Althingi\Model\Plenary
+     * @output \Althingi\Model\ParliamentarySession
      * @200 Success
      * @404 Resource not found
      */
     public function get(ServerRequest $request): ResponseInterface
     {
-        $plenary = $this->plenaryService->get(
+        $parliamentarySession = $this->parliamentarySessionService->get(
             $request->getAttribute('id'),
-            $request->getAttribute('plenary_id')
+            $request->getAttribute('parliamentary_session_id')
         );
 
-        return $plenary
-            ? new JsonResponse($plenary, 200)
+        return $parliamentarySession
+            ? new JsonResponse($parliamentarySession, 200)
             : new EmptyResponse(404);
     }
 
     /**
-     * @output \Althingi\Model\Plenary[]
+     * @output \Althingi\Model\ParliamentarySession[]
      * @206 Success
      */
     public function getList(ServerRequest $request): ResponseInterface
     {
-        $plenaries = $this->plenaryService->fetchByAssembly(
+        $plenaries = $this->parliamentarySessionService->fetchByAssembly(
             $request->getAttribute('id', null),
             0, // $range->getFrom(),
-            $this->plenaryService->countByAssembly(
+            $this->parliamentarySessionService->countByAssembly(
                 $request->getAttribute('id', null)
             )
             //($range->getFrom()-$range->getTo())
@@ -60,21 +60,21 @@ class PlenaryController implements
     }
 
     /**
-     * @input \Althingi\Form\Plenary
+     * @input \Althingi\Form\ParliamentarySession
      * @201 Created
      * @205 Updated
      * @400 Invalid input
      */
     public function put(ServerRequest $request): ResponseInterface
     {
-        $form = new Form\Plenary([
+        $form = new Form\ParliamentarySession([
             ...$request->getParsedBody(),
             'assembly_id' => $request->getAttribute('id'),
-            'plenary_id' => $request->getAttribute('plenary_id'),
+            'parliamentary_session_id' => $request->getAttribute('parliamentary_session_id'),
         ]);
 
         if ($form->isValid()) {
-            $affectedRows = $this->plenaryService->save($form->getModel());
+            $affectedRows = $this->parliamentarySessionService->save($form->getModel());
             return new EmptyResponse($affectedRows === 1 ? 201 : 205);
         }
 
@@ -82,27 +82,27 @@ class PlenaryController implements
     }
 
     /**
-     * @input \Althingi\Form\Plenary
+     * @input \Althingi\Form\ParliamentarySession
      * @205 Updated
      * @400 Invalid input
      */
     public function patch(ServerRequest $request): ResponseInterface
     {
         if (
-            ($plenary = $this->plenaryService->get(
+            ($parliamentarySession = $this->parliamentarySessionService->get(
                 $request->getAttribute('id'),
-                $request->getAttribute('plenary_id')
+                $request->getAttribute('parliamentary_session_id')
             )) != null
         ) {
-            $form = new Form\Plenary([
-                ...$plenary->toArray(),
+            $form = new Form\ParliamentarySession([
+                ...$parliamentarySession->toArray(),
                 ...$request->getParsedBody(),
                 'assembly_id' => $request->getAttribute('id'),
-                'plenary_id' => $request->getAttribute('plenary_id'),
+                'parliamentary_session_id' => $request->getAttribute('parliamentary_session_id'),
             ]);
 
             if ($form->isValid()) {
-                $this->plenaryService->update($form->getModel());
+                $this->parliamentarySessionService->update($form->getModel());
                 return new EmptyResponse(205);
             }
 
@@ -112,9 +112,9 @@ class PlenaryController implements
         return new EmptyResponse(404);
     }
 
-    public function setPlenaryService(Plenary $plenary): static
+    public function setParliamentarySession(ParliamentarySession $parliamentarySession): static
     {
-        $this->plenaryService = $plenary;
+        $this->parliamentarySessionService = $parliamentarySession;
         return $this;
     }
 }

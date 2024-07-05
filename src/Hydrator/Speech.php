@@ -20,7 +20,7 @@ class Speech implements HydratorInterface
         return $object
             ->setSpeechId($data['speech_id'])
             ->setKind($data['kind'] ? KindEnum::fromString($data['kind']) : null)
-            ->setPlenaryId($data['plenary_id'])
+            ->setParliamentarySessionId($data['parliamentary_session_id'])
             ->setAssemblyId($data['assembly_id'])
             ->setIssueId($data['issue_id'])
             ->setCongressmanId($data['congressman_id'])

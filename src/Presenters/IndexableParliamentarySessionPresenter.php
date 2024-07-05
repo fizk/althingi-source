@@ -3,20 +3,20 @@
 namespace Althingi\Presenters;
 
 use Althingi\Model\ModelInterface;
-use Althingi\Model\Plenary;
+use Althingi\Model\ParliamentarySession;
 use Althingi\Utils\HydratorInterface;
 
-class IndexablePlenaryPresenter implements IndexablePresenter
+class IndexableParliamentarySessionPresenter implements IndexablePresenter
 {
-    private const INDEX = 'althingi_model_plenary';
-    private const TYPE = 'plenary';
+    private const INDEX = 'althingi_model_parliamentary-session';
+    private const TYPE = 'parliamentary-session';
 
     private HydratorInterface $hydrator;
-    private Plenary $model;
+    private ParliamentarySession $model;
 
-    public function __construct(Plenary $model)
+    public function __construct(ParliamentarySession $model)
     {
-        $this->setHydrator(new \Althingi\Hydrator\Plenary());
+        $this->setHydrator(new \Althingi\Hydrator\ParliamentarySession());
         $this->setModel($model);
     }
 

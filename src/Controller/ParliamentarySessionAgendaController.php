@@ -12,7 +12,7 @@ use Althingi\Router\{
     RestControllerTrait
 };
 use Althingi\Injector\ServiceIssueAwareInterface;
-use Althingi\Injector\ServicePlenaryAgendaAwareInterface;
+use Althingi\Injector\ServiceParliamentarySessionAgendaAwareInterface;
 use Althingi\Utils\ErrorFormResponse;
 use Laminas\Diactoros\Response\{
     JsonResponse,
@@ -20,25 +20,25 @@ use Laminas\Diactoros\Response\{
 };
 use PDOException;
 
-class PlenaryAgendaController implements
+class ParliamentarySessionAgendaController implements
     RestControllerInterface,
-    ServicePlenaryAgendaAwareInterface,
+    ServiceParliamentarySessionAgendaAwareInterface,
     ServiceIssueAwareInterface
 {
     use RestControllerTrait;
 
-    private Service\PlenaryAgenda $plenaryAgendaService;
+    private Service\ParliamentarySessionAgenda $parliamentarySessionAgendaService;
     private Service\Issue $issueService;
 
     /**
-     * @output \Althingi\Model\PlenaryAgendaProperties
+     * @output \Althingi\Model\ParliamentarySessionAgendaProperties
      * @200 Success
      */
     public function get(ServerRequest $request): ResponseInterface
     {
-        $item = $this->plenaryAgendaService->get(
+        $item = $this->parliamentarySessionAgendaService->get(
             $request->getAttribute('id'),
-            $request->getAttribute('plenary_id'),
+            $request->getAttribute('parliamentary_session_id'),
             $request->getAttribute('item_id')
         );
         return $item
@@ -47,42 +47,42 @@ class PlenaryAgendaController implements
     }
 
     /**
-     * @output \Althingi\Model\PlenaryAgenda[]
+     * @output \Althingi\Model\ParliamentarySessionAgenda[]
      * @206 Success
      */
     public function getList(ServerRequest $request): ResponseInterface
     {
-        $agenda = $this->plenaryAgendaService->fetch(
+        $agenda = $this->parliamentarySessionAgendaService->fetch(
             $request->getAttribute('id'),
-            $request->getAttribute('plenary_id')
+            $request->getAttribute('parliamentary_session_id')
         );
 
         return new JsonResponse($agenda, 206);
     }
 
     /**
-     * @input \Althingi\Form\PlenaryAgenda
+     * @input \Althingi\Form\ParliamentarySessionAgenda
      * @201 Created
      * @205 Updated
      * @400 Invalid input
      */
     public function put(ServerRequest $request): ResponseInterface
     {
-        $form = new Form\PlenaryAgenda([
+        $form = new Form\ParliamentarySessionAgenda([
             ...$request->getParsedBody(),
             'item_id' => $request->getAttribute('item_id'),
             'assembly_id' => $request->getAttribute('id'),
-            'plenary_id' => $request->getAttribute('plenary_id'),
+            'parliamentary_session_id' => $request->getAttribute('parliamentary_session_id'),
         ]);
 
         if ($form->isValid()) {
             $object = $form->getModel();
             try {
-                $affectedRows = $this->plenaryAgendaService->save($object);
+                $affectedRows = $this->parliamentarySessionAgendaService->save($object);
                 return new EmptyResponse($affectedRows === 1 ? 201 : 205);
 
             // @FIXME if you can
-            // Sometimes PlenaryAgenda items will contain (usually a B) issue that
+            // Sometimes ParliamentarySessionAgenda items will contain (usually a B) issue that
             //  doesn't exist. It's not in the list of Issues for this Assembly, but
             //  then shows up in the Agenda.
             // This results in ForeignKeyConstraint, where the Agenda Item can't be added
@@ -99,7 +99,7 @@ class PlenaryAgendaController implements
                         ->setName(null)
                         ->setType(null)
                         ->setTypeName(null));
-                    $affectedRows = $this->plenaryAgendaService->save($object);
+                    $affectedRows = $this->parliamentarySessionAgendaService->save($object);
                     return new EmptyResponse($affectedRows === 1 ? 201 : 205);
                 }
                 throw $e;
@@ -110,7 +110,7 @@ class PlenaryAgendaController implements
     }
 
     /**
-     * @input \Althingi\Form\PlenaryAgenda
+     * @input \Althingi\Form\ParliamentarySessionAgenda
      * @202 No update
      * @todo does this make sense
      */
@@ -119,9 +119,10 @@ class PlenaryAgendaController implements
         return new EmptyResponse(202);
     }
 
-    public function setPlenaryAgendaService(Service\PlenaryAgenda $plenaryAgenda): static
-    {
-        $this->plenaryAgendaService = $plenaryAgenda;
+    public function setParliamentarySessionAgendaService(
+        Service\ParliamentarySessionAgenda $parliamentarySessionAgenda
+    ): static {
+        $this->parliamentarySessionAgendaService = $parliamentarySessionAgenda;
         return $this;
     }
     /**

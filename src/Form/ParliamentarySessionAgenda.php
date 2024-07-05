@@ -12,14 +12,14 @@ use Laminas\Validator\NotEmpty;
 use Library\Form\Form;
 use Library\Input\Input;
 
-class PlenaryAgenda extends Form
+class ParliamentarySessionAgenda extends Form
 {
-    public function getModel(): Model\PlenaryAgenda
+    public function getModel(): Model\ParliamentarySessionAgenda
     {
-        return (new Hydrator\PlenaryAgenda())
+        return (new Hydrator\ParliamentarySessionAgenda())
             ->hydrate(
                 $this->getInputChain()->getValues(),
-                new Model\PlenaryAgenda()
+                new Model\ParliamentarySessionAgenda()
             );
     }
 
@@ -31,7 +31,7 @@ class PlenaryAgenda extends Form
                 ->attachValidator(new SignedDigits())
                 ->attachFilter(new ToInt())
             ,
-            (new Input('plenary_id'))
+            (new Input('parliamentary_session_id'))
                 ->attachValidator(new NotEmpty())
                 ->attachValidator(new SignedDigits())
                 ->attachFilter(new ToInt())

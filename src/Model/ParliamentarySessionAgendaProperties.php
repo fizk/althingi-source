@@ -2,23 +2,23 @@
 
 namespace Althingi\Model;
 
-class PlenaryAgendaProperties implements ModelInterface
+class ParliamentarySessionAgendaProperties implements ModelInterface
 {
-    private PlenaryAgenda $plenaryAgenda;
+    private ParliamentarySessionAgenda $parliamentarySessionAgenda;
     private Issue $issue;
     private ?CongressmanPartyProperties $posedCongressman = null;
     private ?CongressmanPartyProperties $answererCongressman = null;
     private ?CongressmanPartyProperties $counterAnswererCongressman = null;
     private ?CongressmanPartyProperties $instigatorCongressman = null;
 
-    public function getPlenaryAgenda(): PlenaryAgenda
+    public function getParliamentarySessionAgenda(): ParliamentarySessionAgenda
     {
-        return $this->plenaryAgenda;
+        return $this->parliamentarySessionAgenda;
     }
 
-    public function setPlenaryAgenda(PlenaryAgenda $plenaryAgenda): static
+    public function setParliamentarySessionAgenda(ParliamentarySessionAgenda $parliamentarySessionAgenda): static
     {
-        $this->plenaryAgenda = $plenaryAgenda;
+        $this->parliamentarySessionAgenda = $parliamentarySessionAgenda;
         return $this;
     }
 
@@ -80,7 +80,7 @@ class PlenaryAgendaProperties implements ModelInterface
 
     public function toArray(): array
     {
-        return array_merge($this->plenaryAgenda->toArray(), [
+        return array_merge($this->parliamentarySessionAgenda->toArray(), [
             'issue' => $this->issue,
             'posed_congressman' => $this->posedCongressman,
             'answerer_congressman' => $this->answererCongressman,

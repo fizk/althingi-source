@@ -7,7 +7,7 @@ use DateTime;
 class Speech implements ModelInterface
 {
     private $speech_id;
-    private $plenary_id;
+    private $parliamentarySessionId;
     private $assembly_id;
     private $issue_id;
     private ?KindEnum $kind;
@@ -32,14 +32,14 @@ class Speech implements ModelInterface
         return $this;
     }
 
-    public function getPlenaryId(): int
+    public function getParliamentarySessionId(): int
     {
-        return $this->plenary_id;
+        return $this->parliamentarySessionId;
     }
 
-    public function setPlenaryId(int $plenary_id): static
+    public function setParliamentarySessionId(int $parliamentarySessionId): static
     {
-        $this->plenary_id = $plenary_id;
+        $this->parliamentarySessionId = $parliamentarySessionId;
         return $this;
     }
 
@@ -180,7 +180,7 @@ class Speech implements ModelInterface
     {
         return [
             'speech_id' => $this->speech_id,
-            'plenary_id' => $this->plenary_id,
+            'parliamentary_session_id' => $this->parliamentarySessionId,
             'assembly_id' => $this->assembly_id,
             'issue_id' => $this->issue_id,
             'kind' => $this->kind->value,

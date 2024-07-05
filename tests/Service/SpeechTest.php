@@ -23,7 +23,7 @@ class SpeechTest extends TestCase
         $expectedData = (new Model\Speech())
             ->setSpeechId('id--00001')
             ->setAssemblyId(1)
-            ->setPlenaryId(1)
+            ->setParliamentarySessionId(1)
             ->setKind(Model\KindEnum::A)
             ->setIssueId(1)
             ->setCongressmanId(1);
@@ -56,7 +56,7 @@ class SpeechTest extends TestCase
             (new Model\SpeechAndPosition())
                 ->setSpeechId('id--00003')
                 ->setAssemblyId(1)
-                ->setPlenaryId(1)
+                ->setParliamentarySessionId(1)
                 ->setKind(Model\KindEnum::A)
                 ->setIssueId(1)
                 ->setCongressmanId(1)
@@ -65,7 +65,7 @@ class SpeechTest extends TestCase
             (new Model\SpeechAndPosition())
                 ->setSpeechId('id--00004')
                 ->setAssemblyId(1)
-                ->setPlenaryId(1)
+                ->setParliamentarySessionId(1)
                 ->setKind(Model\KindEnum::A)
                 ->setIssueId(1)
                 ->setCongressmanId(1)
@@ -100,7 +100,7 @@ class SpeechTest extends TestCase
             (new Model\SpeechAndPosition())
                 ->setSpeechId('id--00001')
                 ->setAssemblyId(1)
-                ->setPlenaryId(1)
+                ->setParliamentarySessionId(1)
                 ->setKind(Model\KindEnum::A)
                 ->setIssueId(1)
                 ->setCongressmanId(1)
@@ -109,7 +109,7 @@ class SpeechTest extends TestCase
             (new Model\SpeechAndPosition())
                 ->setSpeechId('id--00002')
                 ->setAssemblyId(1)
-                ->setPlenaryId(1)
+                ->setParliamentarySessionId(1)
                 ->setKind(Model\KindEnum::A)
                 ->setIssueId(1)
                 ->setCongressmanId(1)
@@ -182,7 +182,7 @@ class SpeechTest extends TestCase
     {
         $speech = (new Model\Speech())
             ->setSpeechId('id--20001')
-            ->setPlenaryId(1)
+            ->setParliamentarySessionId(1)
             ->setAssemblyId(3)
             ->setIssueId(1)
             ->setKind(Model\KindEnum::A)
@@ -192,7 +192,7 @@ class SpeechTest extends TestCase
             'Speech' => [
                 [
                     'speech_id' => 'id--20001',
-                    'plenary_id' => 1,
+                    'parliamentary_session_id' => 1,
                     'assembly_id' => 3,
                     'issue_id' => 1,
                     'kind' => Model\KindEnum::A->value,
@@ -223,7 +223,7 @@ class SpeechTest extends TestCase
     {
         $speech = (new Model\Speech())
             ->setSpeechId('id--20001')
-            ->setPlenaryId(1)
+            ->setParliamentarySessionId(1)
             ->setKind(Model\KindEnum::A)
             ->setAssemblyId(3)
             ->setIssueId(1)
@@ -233,7 +233,7 @@ class SpeechTest extends TestCase
             'Speech' => [
                 [
                     'speech_id' => 'id--20001',
-                    'plenary_id' => 1,
+                    'parliamentary_session_id' => 1,
                     'assembly_id' => 3,
                     'issue_id' => 1,
                     'kind' => Model\KindEnum::A->value,
@@ -260,11 +260,11 @@ class SpeechTest extends TestCase
     }
 
     #[Test]
-    public function savePlenaryDoesntExist()
+    public function saveParliamentarySessionDoesntExist()
     {
         $speech = (new Model\Speech())
             ->setSpeechId('id--20001')
-            ->setPlenaryId(10000)
+            ->setParliamentarySessionId(10000)
             ->setKind(Model\KindEnum::A)
             ->setAssemblyId(3)
             ->setIssueId(1)
@@ -284,7 +284,7 @@ class SpeechTest extends TestCase
     {
         $speech = (new Model\Speech())
             ->setSpeechId('id--00001')
-            ->setPlenaryId(1)
+            ->setParliamentarySessionId(1)
             ->setAssemblyId(1)
             ->setKind(Model\KindEnum::A)
             ->setIssueId(1)
@@ -294,7 +294,7 @@ class SpeechTest extends TestCase
             'Speech' => [
                 [
                     'speech_id' => 'id--00001',
-                    'plenary_id' => 1,
+                    'parliamentary_session_id' => 1,
                     'assembly_id' => 1,
                     'issue_id' => 1,
                     'kind' => Model\KindEnum::A->value,
@@ -335,7 +335,7 @@ class SpeechTest extends TestCase
 
         $speech = (new Model\Speech())
             ->setSpeechId('unique-id')
-            ->setPlenaryId(1)
+            ->setParliamentarySessionId(1)
             ->setAssemblyId(3)
             ->setIssueId(1)
             ->setKind(Model\KindEnum::A)
@@ -363,7 +363,7 @@ class SpeechTest extends TestCase
 
         $speech = (new Model\Speech())
             ->setSpeechId('id--00001')
-            ->setPlenaryId(1)
+            ->setParliamentarySessionId(1)
             ->setAssemblyId(1)
             ->setIssueId(1)
             ->setKind(Model\KindEnum::A)
@@ -392,7 +392,7 @@ class SpeechTest extends TestCase
 
         $speech = (new Model\Speech())
             ->setSpeechId('id--00001')
-            ->setPlenaryId(1)
+            ->setParliamentarySessionId(1)
             ->setAssemblyId(1)
             ->setIssueId(1)
             ->setKind(Model\KindEnum::A)
@@ -421,7 +421,7 @@ class SpeechTest extends TestCase
 
         $speech = (new Model\Speech())
             ->setSpeechId('unique-id')
-            ->setPlenaryId(1)
+            ->setParliamentarySessionId(1)
             ->setAssemblyId(1)
             ->setIssueId(1)
             ->setKind(Model\KindEnum::A)
@@ -450,7 +450,7 @@ class SpeechTest extends TestCase
 
         $speech = (new Model\Speech())
             ->setSpeechId('id--00001')
-            ->setPlenaryId(1)
+            ->setParliamentarySessionId(1)
             ->setAssemblyId(1)
             ->setIssueId(1)
             ->setKind(Model\KindEnum::A)
@@ -479,7 +479,7 @@ class SpeechTest extends TestCase
 
         $speech = (new Model\Speech())
             ->setSpeechId('id--00001')
-            ->setPlenaryId(1)
+            ->setParliamentarySessionId(1)
             ->setAssemblyId(1)
             ->setIssueId(1)
             ->setKind(Model\KindEnum::A)
@@ -516,16 +516,16 @@ class SpeechTest extends TestCase
                 ['congressman_id' => 2, 'name' => 'congressman 2', 'birth' => '2000-01-01'],
                 ['congressman_id' => 3, 'name' => 'congressman 3', 'birth' => '2000-01-01'],
             ],
-            'Plenary' => [
-                ['plenary_id' => 1, 'assembly_id' => 1],
-                ['plenary_id' => 2, 'assembly_id' => 1],
-                ['plenary_id' => 3, 'assembly_id' => 1],
-                ['plenary_id' => 1, 'assembly_id' => 3],
+            'ParliamentarySession' => [
+                ['parliamentary_session_id' => 1, 'assembly_id' => 1],
+                ['parliamentary_session_id' => 2, 'assembly_id' => 1],
+                ['parliamentary_session_id' => 3, 'assembly_id' => 1],
+                ['parliamentary_session_id' => 1, 'assembly_id' => 3],
             ],
             'Speech' => [
                 [
                     'speech_id' => 'id--00001',
-                    'plenary_id' => 1,
+                    'parliamentary_session_id' => 1,
                     'assembly_id' => 1,
                     'issue_id' => 1,
                     'kind' => Model\KindEnum::A->value,
@@ -536,7 +536,7 @@ class SpeechTest extends TestCase
                     'word_count' => 0,
                 ],[
                     'speech_id' => 'id--00002',
-                    'plenary_id' => 1,
+                    'parliamentary_session_id' => 1,
                     'assembly_id' => 1,
                     'issue_id' => 1,
                     'kind' => Model\KindEnum::A->value,
@@ -547,7 +547,7 @@ class SpeechTest extends TestCase
                     'word_count' => 0,
                 ],[
                     'speech_id' => 'id--00003',
-                    'plenary_id' => 1,
+                    'parliamentary_session_id' => 1,
                     'assembly_id' => 1,
                     'issue_id' => 1,
                     'kind' => Model\KindEnum::A->value,
@@ -558,7 +558,7 @@ class SpeechTest extends TestCase
                     'word_count' => 0,
                 ],[
                     'speech_id' => 'id--00004',
-                    'plenary_id' => 1,
+                    'parliamentary_session_id' => 1,
                     'assembly_id' => 1,
                     'issue_id' => 1,
                     'kind' => Model\KindEnum::A->value,
@@ -569,7 +569,7 @@ class SpeechTest extends TestCase
                     'word_count' => 0,
                 ],[
                     'speech_id' => 'id--10001',
-                    'plenary_id' => 1,
+                    'parliamentary_session_id' => 1,
                     'assembly_id' => 1,
                     'issue_id' => 2,
                     'kind' => Model\KindEnum::A->value,
@@ -580,7 +580,7 @@ class SpeechTest extends TestCase
                     'word_count' => 0,
                 ],[
                     'speech_id' => 'id--10002',
-                    'plenary_id' => 1,
+                    'parliamentary_session_id' => 1,
                     'assembly_id' => 1,
                     'issue_id' => 2,
                     'kind' => Model\KindEnum::A->value,
@@ -591,7 +591,7 @@ class SpeechTest extends TestCase
                     'word_count' => 0,
                 ],[
                     'speech_id' => 'id--10003',
-                    'plenary_id' => 1,
+                    'parliamentary_session_id' => 1,
                     'assembly_id' => 1,
                     'issue_id' => 2,
                     'kind' => Model\KindEnum::A->value,
@@ -602,7 +602,7 @@ class SpeechTest extends TestCase
                     'word_count' => 0,
                 ],[
                     'speech_id' => 'id--10004',
-                    'plenary_id' => 1,
+                    'parliamentary_session_id' => 1,
                     'assembly_id' => 1,
                     'issue_id' => 2,
                     'kind' => Model\KindEnum::A->value,

@@ -435,13 +435,13 @@ class PartyTest extends TestCase
             'Issue' => [
                 ['issue_id' => 1, 'assembly_id' => 1, 'kind' => Model\KindEnum::A->value],
             ],
-            'Plenary' => [
-                ['plenary_id' => 1, 'assembly_id' => 1],
+            'ParliamentarySession' => [
+                ['parliamentary_session_id' => 1, 'assembly_id' => 1],
             ],
             'Speech' => [
                 [
                     'speech_id' => 1,
-                    'plenary_id' => 1,
+                    'parliamentary_session_id' => 1,
                     'assembly_id' => 1,
                     'issue_id' => 1,
                     'kind' => Model\KindEnum::A->value,

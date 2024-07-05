@@ -261,8 +261,8 @@ class IssueCategoryTest extends TestCase
                 'from' => '2015-09-08',
                 'to' => null
             ]],
-            'Plenary' => [[
-                'plenary_id' => 1,
+            'ParliamentarySession' => [[
+                'parliamentary_session_id' => 1,
                 'assembly_id' => 145,
                 'from' => '2010-01-01',
                 'to' => '2010-01-02',
@@ -301,7 +301,7 @@ class IssueCategoryTest extends TestCase
             'Speech' => [
                 [
                     'speech_id' => 'speech-id-1',
-                    'plenary_id' => 1,
+                    'parliamentary_session_id' => 1,
                     'assembly_id' => 145,
                     'issue_id' => 1,
                     'kind' => Model\KindEnum::A->value,
@@ -310,7 +310,7 @@ class IssueCategoryTest extends TestCase
                     'to' => null,
                 ], [
                     'speech_id' => 'speech-id-2',
-                    'plenary_id' => 1,
+                    'parliamentary_session_id' => 1,
                     'assembly_id' => 145,
                     'issue_id' => 1,
                     'kind' => Model\KindEnum::A->value,
@@ -319,7 +319,7 @@ class IssueCategoryTest extends TestCase
                     'to' => '2000-01-01 00:0:10',
                 ], [
                     'speech_id' => 'speech-id-3',
-                    'plenary_id' => 1,
+                    'parliamentary_session_id' => 1,
                     'assembly_id' => 145,
                     'issue_id' => 1,
                     'kind' => Model\KindEnum::A->value,
@@ -328,7 +328,7 @@ class IssueCategoryTest extends TestCase
                     'to' => '2000-01-01 00:0:10',
                 ], [
                     'speech_id' => 'speech-id-4',
-                    'plenary_id' => 1,
+                    'parliamentary_session_id' => 1,
                     'assembly_id' => 145,
                     'issue_id' => 1,
                     'kind' => Model\KindEnum::A->value,

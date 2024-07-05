@@ -11,22 +11,22 @@ use PHPUnit\Framework\Attributes\{Test};
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
-class PlenaryTest extends TestCase
+class ParliamentarySessionTest extends TestCase
 {
     use DatabaseConnectionTrait;
 
     #[Test]
     public function getSuccess()
     {
-        $plenaryService = new Plenary();
-        $plenaryService->setDriver($this->getPDO());
+        $parliamentarySessionService = new ParliamentarySession();
+        $parliamentarySessionService->setDriver($this->getPDO());
 
-        $expectedData = (new Model\Plenary())
-            ->setPlenaryId(1)
+        $expectedData = (new Model\ParliamentarySession())
+            ->setParliamentarySessionId(1)
             ->setFrom(new \DateTime('2000-01-01 00:00:00'))
             ->setAssemblyId(1);
 
-        $actualData = $plenaryService->get(1, 1);
+        $actualData = $parliamentarySessionService->get(1, 1);
 
         $this->assertEquals($expectedData, $actualData);
     }
@@ -34,12 +34,12 @@ class PlenaryTest extends TestCase
     #[Test]
     public function getNotFound()
     {
-        $plenaryService = new Plenary();
-        $plenaryService->setDriver($this->getPDO());
+        $parliamentarySessionService = new ParliamentarySession();
+        $parliamentarySessionService->setDriver($this->getPDO());
 
         $expectedData = null;
 
-        $actualData = $plenaryService->get(1, 100);
+        $actualData = $parliamentarySessionService->get(1, 100);
 
         $this->assertEquals($expectedData, $actualData);
     }
@@ -47,23 +47,23 @@ class PlenaryTest extends TestCase
     #[Test]
     public function fetchByAssembly()
     {
-        $plenaryService = new Plenary();
-        $plenaryService->setDriver($this->getPDO());
+        $parliamentarySessionService = new ParliamentarySession();
+        $parliamentarySessionService->setDriver($this->getPDO());
 
         $expectedData = [
-            (new Model\Plenary())->setPlenaryId(1)->setAssemblyId(1)
+            (new Model\ParliamentarySession())->setParliamentarySessionId(1)->setAssemblyId(1)
                 ->setFrom(new \DateTime('2000-01-01')),
-            (new Model\Plenary())->setPlenaryId(2)->setAssemblyId(1)
+            (new Model\ParliamentarySession())->setParliamentarySessionId(2)->setAssemblyId(1)
                 ->setFrom(new \DateTime('2000-01-01')),
-            (new Model\Plenary())->setPlenaryId(3)
+            (new Model\ParliamentarySession())->setParliamentarySessionId(3)
                 ->setAssemblyId(1)->setFrom(new \DateTime('2000-01-01'))
                 ->setTo(new \DateTime('2001-01-01')),
-            (new Model\Plenary())->setPlenaryId(4)
+            (new Model\ParliamentarySession())->setParliamentarySessionId(4)
                 ->setAssemblyId(1)->setFrom(new \DateTime('2000-01-01'))
                 ->setTo(new \DateTime('2001-01-01'))->setName('p-name'),
         ];
 
-        $actualData = $plenaryService->fetchByAssembly(1, 0, 20);
+        $actualData = $parliamentarySessionService->fetchByAssembly(1, 0, 20);
 
         $this->assertEquals($expectedData, $actualData);
     }
@@ -71,12 +71,12 @@ class PlenaryTest extends TestCase
     #[Test]
     public function fetchByAssemblyNotFound()
     {
-        $plenaryService = new Plenary();
-        $plenaryService->setDriver($this->getPDO());
+        $parliamentarySessionService = new ParliamentarySession();
+        $parliamentarySessionService->setDriver($this->getPDO());
 
         $expectedData = [];
 
-        $actualData = $plenaryService->fetchByAssembly(100, 0, 20);
+        $actualData = $parliamentarySessionService->fetchByAssembly(100, 0, 20);
 
         $this->assertEquals($expectedData, $actualData);
     }
@@ -84,11 +84,11 @@ class PlenaryTest extends TestCase
     #[Test]
     public function countByAssembly()
     {
-        $plenaryService = new Plenary();
-        $plenaryService->setDriver($this->getPDO());
+        $parliamentarySessionService = new ParliamentarySession();
+        $parliamentarySessionService->setDriver($this->getPDO());
 
         $expectedData = 4;
-        $actualData = $plenaryService->countByAssembly(1);
+        $actualData = $parliamentarySessionService->countByAssembly(1);
 
         $this->assertEquals($expectedData, $actualData);
     }
@@ -96,11 +96,11 @@ class PlenaryTest extends TestCase
     #[Test]
     public function countByAssemblyNotFound()
     {
-        $plenaryService = new Plenary();
-        $plenaryService->setDriver($this->getPDO());
+        $parliamentarySessionService = new ParliamentarySession();
+        $parliamentarySessionService->setDriver($this->getPDO());
 
         $expectedData = 0;
-        $actualData = $plenaryService->countByAssembly(100);
+        $actualData = $parliamentarySessionService->countByAssembly(100);
 
         $this->assertEquals($expectedData, $actualData);
     }
@@ -108,35 +108,54 @@ class PlenaryTest extends TestCase
     #[Test]
     public function createSuccess()
     {
-        $plenary = (new Model\Plenary())
+        $parliamentarySession = (new Model\ParliamentarySession())
             ->setAssemblyId(1)
-            ->setPlenaryId(5);
+            ->setParliamentarySessionId(5);
 
-        $assemblyService = new Plenary();
+        $assemblyService = new ParliamentarySession();
         $assemblyService->setDriver($this->getPDO());
-        $assemblyService->create($plenary);
+        $assemblyService->create($parliamentarySession);
 
         $expectedTable = $this->createArrayDataSet([
-            'Plenary' => [
-                ['plenary_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => null, 'name' => null],
-                ['plenary_id' => 2, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => null, 'name' => null],
+            'ParliamentarySession' => [
                 [
-                    'plenary_id' => 3,
+                    'parliamentary_session_id' => 1,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => null,
+                    'name' => null
+                ],[
+                    'parliamentary_session_id' => 2,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => null,
+                    'name' => null
+                ],[
+                    'parliamentary_session_id' => 3,
                     'assembly_id' => 1,
                     'from' => '2000-01-01 00:00:00',
                     'to' => '2001-01-01 00:00:00',
                     'name' => null
                 ], [
-                    'plenary_id' => 4,
+                    'parliamentary_session_id' => 4,
                     'assembly_id' => 1,
                     'from' => '2000-01-01 00:00:00',
                     'to' => '2001-01-01 00:00:00',
                     'name' => 'p-name'
                 ],
-                ['plenary_id' => 5, 'assembly_id' => 1, 'from' => null, 'to' => null, 'name' => null],
+                [
+                    'parliamentary_session_id' => 5,
+                    'assembly_id' => 1,
+                    'from' => null,
+                    'to' => null,
+                    'name' => null
+                ],
             ],
-        ])->getTable('Plenary');
-        $queryTable = $this->getConnection()->createQueryTable('Plenary', 'SELECT * FROM Plenary');
+        ])->getTable('ParliamentarySession');
+        $queryTable = $this->getConnection()->createQueryTable(
+            'ParliamentarySession',
+            'SELECT * FROM ParliamentarySession'
+        );
 
         $this->assertTablesEqual($expectedTable, $queryTable);
     }
@@ -144,35 +163,51 @@ class PlenaryTest extends TestCase
     #[Test]
     public function createNegative()
     {
-        $plenary = (new Model\Plenary())
+        $parliamentarySession = (new Model\ParliamentarySession())
             ->setAssemblyId(1)
-            ->setPlenaryId(-5);
+            ->setParliamentarySessionId(-5);
 
-        $assemblyService = new Plenary();
+        $assemblyService = new ParliamentarySession();
         $assemblyService->setDriver($this->getPDO());
-        $assemblyService->create($plenary);
+        $assemblyService->create($parliamentarySession);
 
         $expectedTable = $this->createArrayDataSet([
-            'Plenary' => [
-                ['plenary_id' => -5, 'assembly_id' => 1, 'from' => null, 'to' => null, 'name' => null],
-                ['plenary_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => null, 'name' => null],
-                ['plenary_id' => 2, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => null, 'name' => null],
+            'ParliamentarySession' => [
                 [
-                    'plenary_id' => 3,
+                    'parliamentary_session_id' => -5,
+                    'assembly_id' => 1,
+                    'from' => null,
+                    'to' => null,
+                    'name' => null
+                ],[
+                    'parliamentary_session_id' => 1,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => null, 'name' => null
+                ],[
+                    'parliamentary_session_id' => 2,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => null, 'name' => null
+                ],[
+                    'parliamentary_session_id' => 3,
                     'assembly_id' => 1,
                     'from' => '2000-01-01 00:00:00',
                     'to' => '2001-01-01 00:00:00',
                     'name' => null
                 ], [
-                    'plenary_id' => 4,
+                    'parliamentary_session_id' => 4,
                     'assembly_id' => 1,
                     'from' => '2000-01-01 00:00:00',
                     'to' => '2001-01-01 00:00:00',
                     'name' => 'p-name'
                 ],
             ],
-        ])->getTable('Plenary');
-        $queryTable = $this->getConnection()->createQueryTable('Plenary', 'SELECT * FROM Plenary');
+        ])->getTable('ParliamentarySession');
+        $queryTable = $this->getConnection()->createQueryTable(
+            'ParliamentarySession',
+            'SELECT * FROM ParliamentarySession'
+        );
 
         $this->assertTablesEqual($expectedTable, $queryTable);
     }
@@ -180,35 +215,53 @@ class PlenaryTest extends TestCase
     #[Test]
     public function saveSuccess()
     {
-        $plenary = (new Model\Plenary())
+        $parliamentarySession = (new Model\ParliamentarySession())
             ->setAssemblyId(1)
-            ->setPlenaryId(5);
+            ->setParliamentarySessionId(5);
 
-        $assemblyService = new Plenary();
+        $assemblyService = new ParliamentarySession();
         $assemblyService->setDriver($this->getPDO());
-        $assemblyService->save($plenary);
+        $assemblyService->save($parliamentarySession);
 
         $expectedTable = $this->createArrayDataSet([
-            'Plenary' => [
-                ['plenary_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => null, 'name' => null],
-                ['plenary_id' => 2, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => null, 'name' => null],
+            'ParliamentarySession' => [
                 [
-                    'plenary_id' => 3,
+                    'parliamentary_session_id' => 1,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => null,
+                    'name' => null
+                ],[
+                    'parliamentary_session_id' => 2,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => null,
+                    'name' => null
+                ],[
+                    'parliamentary_session_id' => 3,
                     'assembly_id' => 1,
                     'from' => '2000-01-01 00:00:00',
                     'to' => '2001-01-01 00:00:00',
                     'name' => null
                 ], [
-                    'plenary_id' => 4,
+                    'parliamentary_session_id' => 4,
                     'assembly_id' => 1,
                     'from' => '2000-01-01 00:00:00',
                     'to' => '2001-01-01 00:00:00',
                     'name' => 'p-name'
+                ], [
+                    'parliamentary_session_id' => 5,
+                    'assembly_id' => 1,
+                    'from' => null,
+                    'to' => null,
+                    'name' => null
                 ],
-                ['plenary_id' => 5, 'assembly_id' => 1, 'from' => null, 'to' => null, 'name' => null],
             ],
-        ])->getTable('Plenary');
-        $queryTable = $this->getConnection()->createQueryTable('Plenary', 'SELECT * FROM Plenary');
+        ])->getTable('ParliamentarySession');
+        $queryTable = $this->getConnection()->createQueryTable(
+            'ParliamentarySession',
+            'SELECT * FROM ParliamentarySession'
+        );
 
         $this->assertTablesEqual($expectedTable, $queryTable);
     }
@@ -216,35 +269,51 @@ class PlenaryTest extends TestCase
     #[Test]
     public function saveNegative()
     {
-        $plenary = (new Model\Plenary())
+        $parliamentarySession = (new Model\ParliamentarySession())
             ->setAssemblyId(1)
-            ->setPlenaryId(-5);
+            ->setParliamentarySessionId(-5);
 
-        $assemblyService = new Plenary();
+        $assemblyService = new ParliamentarySession();
         $assemblyService->setDriver($this->getPDO());
-        $assemblyService->save($plenary);
+        $assemblyService->save($parliamentarySession);
 
         $expectedTable = $this->createArrayDataSet([
-            'Plenary' => [
-                ['plenary_id' => -5, 'assembly_id' => 1, 'from' => null, 'to' => null, 'name' => null],
-                ['plenary_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => null, 'name' => null],
-                ['plenary_id' => 2, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => null, 'name' => null],
+            'ParliamentarySession' => [
                 [
-                    'plenary_id' => 3,
+                    'parliamentary_session_id' => -5,
+                    'assembly_id' => 1,
+                    'from' => null,
+                    'to' => null,
+                    'name' => null
+                ],[
+                    'parliamentary_session_id' => 1,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => null, 'name' => null
+                ],[
+                    'parliamentary_session_id' => 2,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => null, 'name' => null
+                ],[
+                    'parliamentary_session_id' => 3,
                     'assembly_id' => 1,
                     'from' => '2000-01-01 00:00:00',
                     'to' => '2001-01-01 00:00:00',
                     'name' => null
                 ], [
-                    'plenary_id' => 4,
+                    'parliamentary_session_id' => 4,
                     'assembly_id' => 1,
                     'from' => '2000-01-01 00:00:00',
                     'to' => '2001-01-01 00:00:00',
                     'name' => 'p-name'
                 ],
             ],
-        ])->getTable('Plenary');
-        $queryTable = $this->getConnection()->createQueryTable('Plenary', 'SELECT * FROM Plenary');
+        ])->getTable('ParliamentarySession');
+        $queryTable = $this->getConnection()->createQueryTable(
+            'ParliamentarySession',
+            'SELECT * FROM ParliamentarySession'
+        );
 
         $this->assertTablesEqual($expectedTable, $queryTable);
     }
@@ -252,46 +321,49 @@ class PlenaryTest extends TestCase
     #[Test]
     public function updateSuccess()
     {
-        $plenary = (new Model\Plenary())
+        $parliamentarySession = (new Model\ParliamentarySession())
             ->setAssemblyId(1)
-            ->setPlenaryId(1)
+            ->setParliamentarySessionId(1)
             ->setFrom(new \DateTime('2000-01-01 00:00:00'))
             ->setName('NewName');
 
-        $assemblyService = new Plenary();
+        $assemblyService = new ParliamentarySession();
         $assemblyService->setDriver($this->getPDO());
-        $assemblyService->update($plenary);
+        $assemblyService->update($parliamentarySession);
 
         $expectedTable = $this->createArrayDataSet([
-            'Plenary' => [
+            'ParliamentarySession' => [
                 [
-                    'plenary_id' => 1,
+                    'parliamentary_session_id' => 1,
                     'assembly_id' => 1,
                     'from' => '2000-01-01 00:00:00',
                     'to' => null,
                     'name' => 'NewName'
                 ], [
-                    'plenary_id' => 2,
+                    'parliamentary_session_id' => 2,
                     'assembly_id' => 1,
                     'from' => '2000-01-01 00:00:00',
                     'to' => null,
                     'name' => null
                 ], [
-                    'plenary_id' => 3,
+                    'parliamentary_session_id' => 3,
                     'assembly_id' => 1,
                     'from' => '2000-01-01 00:00:00',
                     'to' => '2001-01-01 00:00:00',
                     'name' => null
                 ], [
-                    'plenary_id' => 4,
+                    'parliamentary_session_id' => 4,
                     'assembly_id' => 1,
                     'from' => '2000-01-01 00:00:00',
                     'to' => '2001-01-01 00:00:00',
                     'name' => 'p-name'
                 ],
             ],
-        ])->getTable('Plenary');
-        $queryTable = $this->getConnection()->createQueryTable('Plenary', 'SELECT * FROM Plenary');
+        ])->getTable('ParliamentarySession');
+        $queryTable = $this->getConnection()->createQueryTable(
+            'ParliamentarySession',
+            'SELECT * FROM ParliamentarySession'
+        );
 
         $this->assertTablesEqual($expectedTable, $queryTable);
     }
@@ -309,14 +381,14 @@ class PlenaryTest extends TestCase
             })
             ->getMock();
 
-        $plenary = (new Model\Plenary())
+        $parliamentarySession = (new Model\ParliamentarySession())
             ->setAssemblyId(1)
-            ->setPlenaryId(5);
+            ->setParliamentarySessionId(5);
 
-        (new Plenary())
+        (new ParliamentarySession())
             ->setDriver($this->getPDO())
             ->setEventDispatcher(($eventDispatcher))
-            ->create($plenary)
+            ->create($parliamentarySession)
         ;
     }
 
@@ -333,15 +405,15 @@ class PlenaryTest extends TestCase
             })
             ->getMock();
 
-        $plenary = (new Model\Plenary())
+        $parliamentarySession = (new Model\ParliamentarySession())
             ->setAssemblyId(1)
-            ->setPlenaryId(1)
+            ->setParliamentarySessionId(1)
             ->setFrom(new DateTime('2000-01-01'));
 
-        (new Plenary())
+        (new ParliamentarySession())
             ->setDriver($this->getPDO())
             ->setEventDispatcher(($eventDispatcher))
-            ->update($plenary)
+            ->update($parliamentarySession)
         ;
     }
 
@@ -358,15 +430,15 @@ class PlenaryTest extends TestCase
             })
             ->getMock();
 
-        $plenary = (new Model\Plenary())
+        $parliamentarySession = (new Model\ParliamentarySession())
             ->setAssemblyId(1)
-            ->setPlenaryId(1)
+            ->setParliamentarySessionId(1)
             ->setFrom(new DateTime('2001-01-01'));
 
-        (new Plenary())
+        (new ParliamentarySession())
             ->setDriver($this->getPDO())
             ->setEventDispatcher(($eventDispatcher))
-            ->update($plenary)
+            ->update($parliamentarySession)
         ;
     }
 
@@ -383,15 +455,15 @@ class PlenaryTest extends TestCase
             })
             ->getMock();
 
-        $plenary = (new Model\Plenary())
+        $parliamentarySession = (new Model\ParliamentarySession())
             ->setAssemblyId(1)
-            ->setPlenaryId(10)
+            ->setParliamentarySessionId(10)
             ->setFrom(new DateTime('2001-01-01'));
 
-        (new Plenary())
+        (new ParliamentarySession())
             ->setDriver($this->getPDO())
             ->setEventDispatcher(($eventDispatcher))
-            ->save($plenary)
+            ->save($parliamentarySession)
         ;
     }
 
@@ -408,15 +480,15 @@ class PlenaryTest extends TestCase
             })
             ->getMock();
 
-        $plenary = (new Model\Plenary())
+        $parliamentarySession = (new Model\ParliamentarySession())
             ->setAssemblyId(1)
-            ->setPlenaryId(1)
+            ->setParliamentarySessionId(1)
             ->setFrom(new DateTime('2000-01-01'));
 
-        (new Plenary())
+        (new ParliamentarySession())
             ->setDriver($this->getPDO())
             ->setEventDispatcher(($eventDispatcher))
-            ->save($plenary)
+            ->save($parliamentarySession)
         ;
     }
 
@@ -433,15 +505,15 @@ class PlenaryTest extends TestCase
             })
             ->getMock();
 
-        $plenary = (new Model\Plenary())
+        $parliamentarySession = (new Model\ParliamentarySession())
             ->setAssemblyId(1)
-            ->setPlenaryId(1)
+            ->setParliamentarySessionId(1)
             ->setFrom(new DateTime('2010-01-01'));
 
-        (new Plenary())
+        (new ParliamentarySession())
             ->setDriver($this->getPDO())
             ->setEventDispatcher(($eventDispatcher))
-            ->save($plenary)
+            ->save($parliamentarySession)
         ;
     }
 
@@ -451,17 +523,27 @@ class PlenaryTest extends TestCase
             'Assembly' => [
                 ['assembly_id' => 1, 'from' => '2000-01-01', 'to' => null]
             ],
-            'Plenary' => [
-                ['plenary_id' => 1, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => null, 'name' => null],
-                ['plenary_id' => 2, 'assembly_id' => 1, 'from' => '2000-01-01 00:00:00', 'to' => null, 'name' => null],
+            'ParliamentarySession' => [
                 [
-                    'plenary_id' => 3,
+                    'parliamentary_session_id' => 1,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => null,
+                    'name' => null
+                ],[
+                    'parliamentary_session_id' => 2,
+                    'assembly_id' => 1,
+                    'from' => '2000-01-01 00:00:00',
+                    'to' => null,
+                    'name' => null
+                ],[
+                    'parliamentary_session_id' => 3,
                     'assembly_id' => 1,
                     'from' => '2000-01-01 00:00:00',
                     'to' => '2001-01-01 00:00:00',
                     'name' => null
                 ], [
-                    'plenary_id' => 4,
+                    'parliamentary_session_id' => 4,
                     'assembly_id' => 1,
                     'from' => '2000-01-01 00:00:00',
                     'to' => '2001-01-01 00:00:00',

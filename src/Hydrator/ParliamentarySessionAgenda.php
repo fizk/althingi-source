@@ -5,19 +5,19 @@ namespace Althingi\Hydrator;
 use Althingi\Model\KindEnum;
 use Althingi\Utils\HydratorInterface;
 
-class PlenaryAgenda implements HydratorInterface
+class ParliamentarySessionAgenda implements HydratorInterface
 {
     /**
      *
      * @param array $data
-     * @param \Althingi\Model\PlenaryAgenda $object
-     * @return \Althingi\Model\PlenaryAgenda
+     * @param \Althingi\Model\ParliamentarySessionAgenda $object
+     * @return \Althingi\Model\ParliamentarySessionAgenda
      */
     public function hydrate(array $data, object $object): object
     {
         return $object
             ->setItemId($data['item_id'])
-            ->setPlenaryId($data['plenary_id'])
+            ->setParliamentarySessionId($data['parliamentary_session_id'])
             ->setIssueId($data['issue_id'])
             ->setAssemblyId($data['assembly_id'])
             ->setKind(KindEnum::fromString($data['kind']))
@@ -38,7 +38,7 @@ class PlenaryAgenda implements HydratorInterface
 
     /**
      *
-     * @param \Althingi\Model\PlenaryAgenda $object
+     * @param \Althingi\Model\ParliamentarySessionAgenda $object
      * @return array
      */
     public function extract(object $object): array

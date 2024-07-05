@@ -81,13 +81,13 @@ return [
             return (new Controller\ConstituencyController())
                 ->setConstituencyService($container->get(Service\Constituency::class));
         },
-        Controller\PlenaryController::class => function (ContainerInterface $container) {
-            return (new Controller\PlenaryController())
-                ->setPlenaryService($container->get(Service\Plenary::class));
+        Controller\ParliamentarySessionController::class => function (ContainerInterface $container) {
+            return (new Controller\ParliamentarySessionController())
+                ->setParliamentarySession($container->get(Service\ParliamentarySession::class));
         },
-        Controller\PlenaryAgendaController::class => function (ContainerInterface $container) {
-            return (new Controller\PlenaryAgendaController())
-                ->setPlenaryAgendaService($container->get(Service\PlenaryAgenda::class))
+        Controller\ParliamentarySessionAgendaController::class => function (ContainerInterface $container) {
+            return (new Controller\ParliamentarySessionAgendaController())
+                ->setParliamentarySessionAgendaService($container->get(Service\ParliamentarySessionAgenda::class))
                 ->setIssueService($container->get(Service\Issue::class))
                 ;
         },
@@ -105,7 +105,7 @@ return [
                 ->setSpeechService($container->get(Service\Speech::class))
                 ->setCongressmanService($container->get(Service\Congressman::class))
                 ->setPartyService($container->get(Service\Party::class))
-                ->setPlenaryService($container->get(Service\Plenary::class))
+                ->setParliamentarySession($container->get(Service\ParliamentarySession::class))
                 ->setConstituencyService($container->get(Service\Constituency::class))
                 ;
         },
@@ -255,15 +255,15 @@ return [
                 ->setEventDispatcher($container->get(EventDispatcherInterface::class))
                 ;
         },
-        Controller\Cli\IndexerPlenaryController::class => function (ContainerInterface $container) {
-            return (new Controller\Cli\IndexerPlenaryController())
-                ->setPlenaryService($container->get(Service\Plenary::class))
+        Controller\Cli\IndexerParliamentarySessionController::class => function (ContainerInterface $container) {
+            return (new Controller\Cli\IndexerParliamentarySessionController())
+                ->setParliamentarySession($container->get(Service\ParliamentarySession::class))
                 ->setEventDispatcher($container->get(EventDispatcherInterface::class))
                 ;
         },
-        Controller\Cli\IndexerPlenaryAgentaController::class => function (ContainerInterface $container) {
-            return (new Controller\Cli\IndexerPlenaryAgentaController())
-                ->setPlenaryAgendaService($container->get(Service\PlenaryAgenda::class))
+        Controller\Cli\IndexerParliamentarySessionAgentaController::class => function (ContainerInterface $container) {
+            return (new Controller\Cli\IndexerParliamentarySessionAgentaController())
+                ->setParliamentarySessionAgendaService($container->get(Service\ParliamentarySessionAgenda::class))
                 ->setEventDispatcher($container->get(EventDispatcherInterface::class))
                 ;
         },
@@ -446,8 +446,8 @@ return [
                 ->setEventDispatcher($sm->get(EventDispatcherInterface::class))
                 ;
         },
-        Service\Plenary::class => function (ContainerInterface $sm) {
-            return (new Service\Plenary())
+        Service\ParliamentarySession::class => function (ContainerInterface $sm) {
+            return (new Service\ParliamentarySession())
                 ->setDriver($sm->get(PDO::class))
                 ->setEventDispatcher($sm->get(EventDispatcherInterface::class))
                 ;
@@ -464,8 +464,8 @@ return [
                 ->setEventDispatcher($sm->get(EventDispatcherInterface::class))
                 ;
         },
-        Service\PlenaryAgenda::class => function (ContainerInterface $sm) {
-            return (new Service\PlenaryAgenda())
+        Service\ParliamentarySessionAgenda::class => function (ContainerInterface $sm) {
+            return (new Service\ParliamentarySessionAgenda())
                 ->setDriver($sm->get(PDO::class));
         },
         Service\Session::class => function (ContainerInterface $sm) {

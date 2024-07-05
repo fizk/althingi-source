@@ -2,10 +2,10 @@
 
 namespace Althingi\Model;
 
-class PlenaryAgenda implements ModelInterface
+class ParliamentarySessionAgenda implements ModelInterface
 {
     private $itemId;
-    private int $plenaryId;
+    private int $parliamentarySessionId;
     private int $issueId;
     private int $assemblyId;
     private KindEnum $kind;
@@ -34,14 +34,14 @@ class PlenaryAgenda implements ModelInterface
         return $this;
     }
 
-    public function getPlenaryId(): int
+    public function getParliamentarySessionId(): int
     {
-        return $this->plenaryId;
+        return $this->parliamentarySessionId;
     }
 
-    public function setPlenaryId(int $plenaryId): static
+    public function setParliamentarySessionId(int $parliamentarySessionId): static
     {
-        $this->plenaryId = $plenaryId;
+        $this->parliamentarySessionId = $parliamentarySessionId;
         return $this;
     }
 
@@ -226,7 +226,7 @@ class PlenaryAgenda implements ModelInterface
     {
         return [
             'item_id' => $this->itemId,
-            'plenary_id' => $this->plenaryId,
+            'parliamentary_session_id' => $this->parliamentarySessionId,
             'issue_id' => $this->issueId,
             'assembly_id' => $this->assemblyId,
             'kind' => $this->kind,

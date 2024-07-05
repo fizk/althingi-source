@@ -12,21 +12,21 @@ use Laminas\Validator\NotEmpty;
 use Library\Form\Form;
 use Library\Input\Input;
 
-class Plenary extends Form
+class ParliamentarySession extends Form
 {
-    public function getModel(): Model\Plenary
+    public function getModel(): Model\ParliamentarySession
     {
-        return (new Hydrator\Plenary())
+        return (new Hydrator\ParliamentarySession())
             ->hydrate(
                 $this->getInputChain()->getValues(),
-                new Model\Plenary()
+                new Model\ParliamentarySession()
             );
     }
 
     public function getValidationConfig(): array
     {
         return [
-            (new Input('plenary_id'))
+            (new Input('parliamentary_session_id'))
                 ->attachValidator(new NotEmpty())
                 ->attachValidator(new SignedDigits())
                 ->attachFilter(new ToInt())

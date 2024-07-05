@@ -4,22 +4,22 @@ namespace Althingi\Model;
 
 use DateTime;
 
-class Plenary implements ModelInterface
+class ParliamentarySession implements ModelInterface
 {
-    private $plenary_id;
+    private $parliamentary_session_id;
     private $assembly_id;
     private ?DateTime $from = null;
     private ?DateTime $to = null;
     private ?string $name = null;
 
-    public function getPlenaryId(): int
+    public function getParliamentarySessionId(): int
     {
-        return $this->plenary_id;
+        return $this->parliamentary_session_id;
     }
 
-    public function setPlenaryId(int $plenary_id): static
+    public function setParliamentarySessionId(int $parliamentary_session_id): static
     {
-        $this->plenary_id = $plenary_id;
+        $this->parliamentary_session_id = $parliamentary_session_id;
         return $this;
     }
 
@@ -70,7 +70,7 @@ class Plenary implements ModelInterface
     public function toArray(): array
     {
         return [
-            'plenary_id' => $this->plenary_id,
+            'parliamentary_session_id' => $this->parliamentary_session_id,
             'assembly_id' => $this->assembly_id,
             'from' => $this->from?->format('Y-m-d H:i'),
             'to' => $this->to?->format('Y-m-d H:i'),

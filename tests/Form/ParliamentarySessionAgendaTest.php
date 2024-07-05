@@ -2,16 +2,16 @@
 
 namespace Althingi\Form;
 
-use Althingi\Form\PlenaryAgenda;
+use Althingi\Form\ParliamentarySessionAgenda;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
-class PlenaryAgendaTest extends TestCase
+class ParliamentarySessionAgendaTest extends TestCase
 {
     #[Test]
     public function IDisNumber()
     {
-        $form = new PlenaryAgenda([
+        $form = new ParliamentarySessionAgenda([
             'assembly_id' => 141,
             'kind' => 'B',
             'counter_answerer' => 'velferu00f0arru00e1u00f0herra',
@@ -24,7 +24,7 @@ class PlenaryAgendaTest extends TestCase
             'issue_typename' => 'su00e9rstu00f6k umru00e6u00f0a',
             'item_id' => 2,
             'iteration_type' => '*',
-            'plenary_id' => 8
+            'parliamentary_session_id' => 8
 
         ]);
         $isValid = $form->isValid();
@@ -35,7 +35,7 @@ class PlenaryAgendaTest extends TestCase
     #[Test]
     public function IDisString()
     {
-        $form = new PlenaryAgenda([
+        $form = new ParliamentarySessionAgenda([
             'assembly_id' => '141',
             'kind' => 'B',
             'counter_answerer' => 'velferu00f0arru00e1u00f0herra',
@@ -48,7 +48,7 @@ class PlenaryAgendaTest extends TestCase
             'issue_typename' => 'su00e9rstu00f6k umru00e6u00f0a',
             'item_id' => '2',
             'iteration_type' => '*',
-            'plenary_id' => '8',
+            'parliamentary_session_id' => '8',
 
             'iteration_continue' => '',
             'iteration_comment' => '',
@@ -67,7 +67,7 @@ class PlenaryAgendaTest extends TestCase
     #[Test]
     public function IDisEmpty()
     {
-        $form = new PlenaryAgenda([
+        $form = new ParliamentarySessionAgenda([
             'assembly_id' => '141',
             'kind' => 'B',
             'counter_answerer' => 'velferu00f0arru00e1u00f0herra',
@@ -80,7 +80,7 @@ class PlenaryAgendaTest extends TestCase
             'issue_typename' => 'su00e9rstu00f6k umru00e6u00f0a',
             'item_id' => '2',
             'iteration_type' => '*',
-            'plenary_id' => '8',
+            'parliamentary_session_id' => '8',
 
             'iteration_continue' => '',
             'iteration_comment' => '',
