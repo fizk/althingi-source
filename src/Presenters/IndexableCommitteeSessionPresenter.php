@@ -2,24 +2,24 @@
 
 namespace Althingi\Presenters;
 
-use Althingi\Model\CommitteeSitting;
+use Althingi\Model\CommitteeSession;
 use Althingi\Hydrator;
 use Althingi\Model\ModelInterface;
 use Althingi\Utils\HydratorInterface;
 
-class IndexableCommitteeSittingPresenter implements IndexablePresenter
+class IndexableCommitteeSessionPresenter implements IndexablePresenter
 {
-    private const INDEX = 'althingi_model_committee-sitting';
-    private const TYPE = 'committee-sitting';
+    private const INDEX = 'althingi_model_committee-session';
+    private const TYPE = 'committee-session';
 
     private HydratorInterface $hydrator;
 
-    /** @var  \Althingi\Model\CommitteeSitting */
-    private CommitteeSitting $model;
+    /** @var  \Althingi\Model\CommitteeSession */
+    private CommitteeSession $model;
 
-    public function __construct(CommitteeSitting $model)
+    public function __construct(CommitteeSession $model)
     {
-        $this->setHydrator(new Hydrator\CommitteeSitting());
+        $this->setHydrator(new Hydrator\CommitteeSession());
         $this->setModel($model);
     }
 
@@ -40,14 +40,14 @@ class IndexableCommitteeSittingPresenter implements IndexablePresenter
         return $this;
     }
 
-    public function getModel(): CommitteeSitting
+    public function getModel(): CommitteeSession
     {
         return $this->model;
     }
 
     public function getIdentifier(): string
     {
-        return $this->model->getCommitteeSittingId();
+        return $this->model->getCommitteeSessionId();
     }
 
     public function getType(): string

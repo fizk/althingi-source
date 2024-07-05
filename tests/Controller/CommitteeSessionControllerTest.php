@@ -10,13 +10,13 @@ use Library\Container\Container;
 use PHPUnit\Framework\Attributes\{CoversMethod, CoversClass, Test, Before, After};
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(CommitteeSittingController::class)]
-#[CoversMethod(CommitteeSittingController::class, 'setCommitteeSitting')]
-#[CoversMethod(CommitteeSittingController::class, 'get')]
-#[CoversMethod(CommitteeSittingController::class, 'getList')]
-#[CoversMethod(CommitteeSittingController::class, 'patch')]
-#[CoversMethod(CommitteeSittingController::class, 'post')]
-class CommitteeSittingControllerTest extends TestCase
+#[CoversClass(CommitteeSessionController::class)]
+#[CoversMethod(CommitteeSessionController::class, 'setCommitteeSession')]
+#[CoversMethod(CommitteeSessionController::class, 'get')]
+#[CoversMethod(CommitteeSessionController::class, 'getList')]
+#[CoversMethod(CommitteeSessionController::class, 'patch')]
+#[CoversMethod(CommitteeSessionController::class, 'post')]
+class CommitteeSessionControllerTest extends TestCase
 {
     use ServiceHelper;
 
@@ -27,7 +27,7 @@ class CommitteeSittingControllerTest extends TestCase
             new Container(require __DIR__ . '/../../config/service.php')
         );
         $this->buildServices([
-            Service\CommitteeSitting::class,
+            Service\CommitteeSession::class,
         ]);
     }
 
@@ -41,7 +41,7 @@ class CommitteeSittingControllerTest extends TestCase
     #[Test]
     public function postCreateSuccess()
     {
-        $expectedObject = (new Model\CommitteeSitting())
+        $expectedObject = (new Model\CommitteeSession())
             ->setCommitteeId(2)
             ->setCongressmanId(3)
             ->setAssemblyId(4)
@@ -49,7 +49,7 @@ class CommitteeSittingControllerTest extends TestCase
             ->setRole('role')
             ->setFrom(new \DateTime('2001-01-01'));
 
-        $this->getMockService(Service\CommitteeSitting::class)
+        $this->getMockService(Service\CommitteeSession::class)
             ->shouldReceive('create')
             ->with(\Mockery::on(function ($actualData) use ($expectedObject) {
                 return $actualData == $expectedObject;
@@ -70,7 +70,7 @@ class CommitteeSittingControllerTest extends TestCase
 
         $this->assertResponseStatusCode(201);
         $this->assertResponseHeaderContains('Location', '/thingmenn/3/nefndaseta/10');
-        $this->assertControllerName(Controller\CommitteeSittingController::class);
+        $this->assertControllerName(Controller\CommitteeSessionController::class);
         $this->assertActionName('post');
     }
 
@@ -80,7 +80,7 @@ class CommitteeSittingControllerTest extends TestCase
         $exception = new \PDOException();
         $exception->errorInfo = ['', 1062, ''];
 
-        $this->getMockService(Service\CommitteeSitting::class)
+        $this->getMockService(Service\CommitteeSession::class)
             ->shouldReceive('create')
             ->andThrow($exception)
             ->once()
@@ -103,14 +103,14 @@ class CommitteeSittingControllerTest extends TestCase
 
         $this->assertResponseStatusCode(409);
         $this->assertResponseHeaderContains('Location', '/thingmenn/3/nefndaseta/54321');
-        $this->assertControllerName(Controller\CommitteeSittingController::class);
+        $this->assertControllerName(Controller\CommitteeSessionController::class);
         $this->assertActionName('post');
     }
 
     #[Test]
     public function postCreateInvalid()
     {
-        $this->getMockService(Service\CommitteeSitting::class)
+        $this->getMockService(Service\CommitteeSession::class)
             ->shouldReceive('create')
             ->andReturnNull()
             ->getMock();
@@ -126,15 +126,15 @@ class CommitteeSittingControllerTest extends TestCase
         ]);
 
         $this->assertResponseStatusCode(400);
-        $this->assertControllerName(Controller\CommitteeSittingController::class);
+        $this->assertControllerName(Controller\CommitteeSessionController::class);
         $this->assertActionName('post');
     }
 
     #[Test]
     public function patchSuccess()
     {
-        $serviceReturnedData = (new Model\CommitteeSitting())
-            ->setCommitteeSittingId(555)
+        $serviceReturnedData = (new Model\CommitteeSession())
+            ->setCommitteeSessionId(555)
             ->setCommitteeId(2)
             ->setCongressmanId(3)
             ->setAssemblyId(4)
@@ -142,8 +142,8 @@ class CommitteeSittingControllerTest extends TestCase
             ->setRole('role')
             ->setFrom(new \DateTime('2001-01-01'));
 
-        $expectedObject = (new Model\CommitteeSitting())
-            ->setCommitteeSittingId(555)
+        $expectedObject = (new Model\CommitteeSession())
+            ->setCommitteeSessionId(555)
             ->setCommitteeId(2)
             ->setCongressmanId(3)
             ->setAssemblyId(4)
@@ -152,7 +152,7 @@ class CommitteeSittingControllerTest extends TestCase
             ->setFrom(new \DateTime('2001-01-01'))
             ->setTo(new \DateTime('2001-01-01'));
 
-        $this->getMockService(Service\CommitteeSitting::class)
+        $this->getMockService(Service\CommitteeSession::class)
             ->shouldReceive('get')
             ->with(555)
             ->andReturn($serviceReturnedData)
@@ -172,15 +172,15 @@ class CommitteeSittingControllerTest extends TestCase
         ]);
 
         $this->assertResponseStatusCode(205);
-        $this->assertControllerName(Controller\CommitteeSittingController::class);
+        $this->assertControllerName(Controller\CommitteeSessionController::class);
         $this->assertActionName('patch');
     }
 
     #[Test]
     public function patchInvalidParams()
     {
-        $serviceReturnedData = (new Model\CommitteeSitting())
-            ->setCommitteeSittingId(555)
+        $serviceReturnedData = (new Model\CommitteeSession())
+            ->setCommitteeSessionId(555)
             ->setCommitteeId(2)
             ->setCongressmanId(3)
             ->setAssemblyId(4)
@@ -188,7 +188,7 @@ class CommitteeSittingControllerTest extends TestCase
             ->setRole('role')
             ->setFrom(new \DateTime('2001-01-01'));
 
-        $this->getMockService(Service\CommitteeSitting::class)
+        $this->getMockService(Service\CommitteeSession::class)
             ->shouldReceive('get')
             ->with(555)
             ->andReturn($serviceReturnedData)
@@ -204,14 +204,14 @@ class CommitteeSittingControllerTest extends TestCase
         ]);
 
         $this->assertResponseStatusCode(400);
-        $this->assertControllerName(Controller\CommitteeSittingController::class);
+        $this->assertControllerName(Controller\CommitteeSessionController::class);
         $this->assertActionName('patch');
     }
 
     #[Test]
     public function patchNotFound()
     {
-        $this->getMockService(Service\CommitteeSitting::class)
+        $this->getMockService(Service\CommitteeSession::class)
             ->shouldReceive('get')
             ->with(555)
             ->andReturn(null)
@@ -227,48 +227,48 @@ class CommitteeSittingControllerTest extends TestCase
         ]);
 
         $this->assertResponseStatusCode(404);
-        $this->assertControllerName(Controller\CommitteeSittingController::class);
+        $this->assertControllerName(Controller\CommitteeSessionController::class);
         $this->assertActionName('patch');
     }
 
     #[Test]
     public function getSuccessfull()
     {
-        $this->getMockService(Service\CommitteeSitting::class)
+        $this->getMockService(Service\CommitteeSession::class)
             ->shouldReceive('get')
-            ->andReturn((new Model\CommitteeSitting())->setFrom(new DateTime()))
+            ->andReturn((new Model\CommitteeSession())->setFrom(new DateTime()))
             ->getMock();
 
         $this->dispatch('/thingmenn/2/nefndaseta/1', 'GET');
         $this->assertResponseStatusCode(200);
-        $this->assertControllerName(Controller\CommitteeSittingController::class);
+        $this->assertControllerName(Controller\CommitteeSessionController::class);
         $this->assertActionName('get');
     }
 
     #[Test]
     public function getNotFound()
     {
-        $this->getMockService(Service\CommitteeSitting::class)
+        $this->getMockService(Service\CommitteeSession::class)
             ->shouldReceive('get')
             ->andReturn(null)
             ->getMock();
 
         $this->dispatch('/thingmenn/2/nefndaseta/1', 'GET');
         $this->assertResponseStatusCode(404);
-        $this->assertControllerName(Controller\CommitteeSittingController::class);
+        $this->assertControllerName(Controller\CommitteeSessionController::class);
         $this->assertActionName('get');
     }
 
     #[Test]
     public function getList()
     {
-        $this->getMockService(Service\CommitteeSitting::class)
+        $this->getMockService(Service\CommitteeSession::class)
             ->shouldReceive('fetchByCongressman')
             ->andReturn([])
             ->getMock();
 
         $this->dispatch('/thingmenn/2/nefndaseta', 'GET');
-        $this->assertControllerName(Controller\CommitteeSittingController::class);
+        $this->assertControllerName(Controller\CommitteeSessionController::class);
         $this->assertActionName('getList');
         $this->assertResponseStatusCode(206);
     }

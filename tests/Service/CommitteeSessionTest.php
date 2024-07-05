@@ -10,18 +10,18 @@ use PHPUnit\Framework\Attributes\{Test};
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
-class CommitteeSittingTest extends TestCase
+class CommitteeSessionTest extends TestCase
 {
     use DatabaseConnectionTrait;
 
     #[Test]
     public function getSuccess()
     {
-        $committeeSitting = new CommitteeSitting();
-        $committeeSitting->setDriver($this->getPDO());
+        $committeeSession = new CommitteeSession();
+        $committeeSession->setDriver($this->getPDO());
 
-        $expectedData = (new Model\CommitteeSitting())
-            ->setCommitteeSittingId(1)
+        $expectedData = (new Model\CommitteeSession())
+            ->setCommitteeSessionId(1)
             ->setAssemblyId(4)
             ->setCongressmanId(2)
             ->setCommitteeId(3)
@@ -30,7 +30,7 @@ class CommitteeSittingTest extends TestCase
             ->setFrom(new \DateTime('2001-01-01'))
             ->setTo(new \DateTime('2001-01-01'));
 
-        $actualData = $committeeSitting->get(1);
+        $actualData = $committeeSession->get(1);
 
         $this->assertEquals($expectedData, $actualData);
     }
@@ -38,12 +38,12 @@ class CommitteeSittingTest extends TestCase
     #[Test]
     public function fetchByCongressman()
     {
-        $committeeSitting = new CommitteeSitting();
-        $committeeSitting->setDriver($this->getPDO());
+        $committeeSession = new CommitteeSession();
+        $committeeSession->setDriver($this->getPDO());
 
         $expectedData = [
-            (new Model\CommitteeSitting())
-                ->setCommitteeSittingId(1)
+            (new Model\CommitteeSession())
+                ->setCommitteeSessionId(1)
                 ->setAssemblyId(4)
                 ->setCongressmanId(2)
                 ->setCommitteeId(3)
@@ -54,7 +54,7 @@ class CommitteeSittingTest extends TestCase
         ]
         ;
 
-        $actualData = $committeeSitting->fetchByCongressman(2);
+        $actualData = $committeeSession->fetchByCongressman(2);
 
         $this->assertEquals($expectedData, $actualData);
     }
@@ -62,12 +62,12 @@ class CommitteeSittingTest extends TestCase
     #[Test]
     public function fetchByCongressmanNotFound()
     {
-        $committeeSitting = new CommitteeSitting();
-        $committeeSitting->setDriver($this->getPDO());
+        $committeeSession = new CommitteeSession();
+        $committeeSession->setDriver($this->getPDO());
 
         $expectedData = [];
 
-        $actualData = $committeeSitting->fetchByCongressman(200);
+        $actualData = $committeeSession->fetchByCongressman(200);
 
         $this->assertEquals($expectedData, $actualData);
     }
@@ -84,7 +84,7 @@ class CommitteeSittingTest extends TestCase
             })
             ->getMock();
 
-        $sitting = (new Model\CommitteeSitting())
+        $sitting = (new Model\CommitteeSession())
             ->setAssemblyId(4)
             ->setCongressmanId(2)
             ->setCommitteeId(3)
@@ -94,9 +94,9 @@ class CommitteeSittingTest extends TestCase
             ->setTo(new \DateTime('2001-01-01'));
 
         $expectedTable = $this->createArrayDataSet([
-            'CommitteeSitting' => [
+            'CommitteeSession' => [
                 [
-                    'committee_sitting_id' => 1,
+                    'committee_session_id' => 1,
                     'congressman_id' => 2,
                     'committee_id' => 3,
                     'assembly_id' => 4,
@@ -106,7 +106,7 @@ class CommitteeSittingTest extends TestCase
                     'to' => '2001-01-01',
                 ],
                 [
-                    'committee_sitting_id' => 2,
+                    'committee_session_id' => 2,
                     'congressman_id' => 2,
                     'committee_id' => 3,
                     'assembly_id' => 4,
@@ -116,16 +116,16 @@ class CommitteeSittingTest extends TestCase
                     'to' => '2001-01-01',
                 ],
             ]
-        ])->getTable('CommitteeSitting');
+        ])->getTable('CommitteeSession');
         $actualTable = $this->getConnection()->createQueryTable(
-            'CommitteeSitting',
-            'SELECT * FROM CommitteeSitting'
+            'CommitteeSession',
+            'SELECT * FROM CommitteeSession'
         );
 
-        $committeeSitting = new CommitteeSitting();
-        $committeeSitting->setDriver($this->getPDO())
+        $committeeSession = new CommitteeSession();
+        $committeeSession->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher);
-        $committeeSitting->create($sitting);
+        $committeeSession->create($sitting);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
@@ -142,8 +142,8 @@ class CommitteeSittingTest extends TestCase
             })
             ->getMock();
 
-        $sitting = (new Model\CommitteeSitting())
-            ->setCommitteeSittingId(1)
+        $sitting = (new Model\CommitteeSession())
+            ->setCommitteeSessionId(1)
             ->setAssemblyId(4)
             ->setCongressmanId(2)
             ->setCommitteeId(3)
@@ -153,9 +153,9 @@ class CommitteeSittingTest extends TestCase
             ->setTo(new \DateTime('2011-01-01'));
 
         $expectedTable = $this->createArrayDataSet([
-            'CommitteeSitting' => [
+            'CommitteeSession' => [
                 [
-                    'committee_sitting_id' => 1,
+                    'committee_session_id' => 1,
                     'congressman_id' => 2,
                     'committee_id' => 3,
                     'assembly_id' => 4,
@@ -165,16 +165,16 @@ class CommitteeSittingTest extends TestCase
                     'to' => '2011-01-01',
                 ],
             ]
-        ])->getTable('CommitteeSitting');
+        ])->getTable('CommitteeSession');
         $actualTable = $this->getConnection()->createQueryTable(
-            'CommitteeSitting',
-            'SELECT * FROM CommitteeSitting'
+            'CommitteeSession',
+            'SELECT * FROM CommitteeSession'
         );
 
-        $committeeSitting = new CommitteeSitting();
-        $committeeSitting->setDriver($this->getPDO())
+        $committeeSession = new CommitteeSession();
+        $committeeSession->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher);
-        $committeeSitting->update($sitting);
+        $committeeSession->update($sitting);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
@@ -192,7 +192,7 @@ class CommitteeSittingTest extends TestCase
             })
             ->getMock();
 
-        $sitting = (new Model\CommitteeSitting())
+        $sitting = (new Model\CommitteeSession())
             ->setAssemblyId(4)
             ->setCongressmanId(2)
             ->setCommitteeId(3)
@@ -202,10 +202,10 @@ class CommitteeSittingTest extends TestCase
             ->setTo(new \DateTime('2001-01-01'));
 
 
-        $committeeSitting = new CommitteeSitting();
-        $committeeSitting->setDriver($this->getPDO())
+        $committeeSession = new CommitteeSession();
+        $committeeSession->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher);
-        $committeeSitting->create($sitting);
+        $committeeSession->create($sitting);
     }
 
     #[Test]
@@ -221,8 +221,8 @@ class CommitteeSittingTest extends TestCase
             })
             ->getMock();
 
-        $sitting = (new Model\CommitteeSitting())
-            ->setCommitteeSittingId(1)
+        $sitting = (new Model\CommitteeSession())
+            ->setCommitteeSessionId(1)
             ->setAssemblyId(4)
             ->setCongressmanId(2)
             ->setCommitteeId(3)
@@ -232,10 +232,10 @@ class CommitteeSittingTest extends TestCase
             ->setTo(new \DateTime('2001-01-01'))
         ;
 
-        $committeeSitting = new CommitteeSitting();
-        $committeeSitting->setDriver($this->getPDO())
+        $committeeSession = new CommitteeSession();
+        $committeeSession->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher);
-        $committeeSitting->update($sitting);
+        $committeeSession->update($sitting);
     }
 
     #[Test]
@@ -251,8 +251,8 @@ class CommitteeSittingTest extends TestCase
             })
             ->getMock();
 
-        $sitting = (new Model\CommitteeSitting())
-            ->setCommitteeSittingId(1)
+        $sitting = (new Model\CommitteeSession())
+            ->setCommitteeSessionId(1)
             ->setAssemblyId(4)
             ->setCongressmanId(2)
             ->setCommitteeId(3)
@@ -262,10 +262,10 @@ class CommitteeSittingTest extends TestCase
             ->setTo(new \DateTime('2002-01-01'))
         ;
 
-        $committeeSitting = new CommitteeSitting();
-        $committeeSitting->setDriver($this->getPDO())
+        $committeeSession = new CommitteeSession();
+        $committeeSession->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher);
-        $committeeSitting->update($sitting);
+        $committeeSession->update($sitting);
     }
 
     protected function getDataSet()
@@ -301,9 +301,9 @@ class CommitteeSittingTest extends TestCase
                     'abbr_short' => 'abbr_short'
                 ],
             ],
-            'CommitteeSitting' => [
+            'CommitteeSession' => [
                 [
-                    'committee_sitting_id' => 1,
+                    'committee_session_id' => 1,
                     'congressman_id' => 2,
                     'committee_id' => 3,
                     'assembly_id' => 4,

@@ -155,7 +155,7 @@ class CommitteeDocument implements DatabaseAwareInterface, EventsAwareInterface
         string $part
     ): int {
         $statement = $this->getDriver()->prepare('
-            select `committee_sitting_id` from `CommitteeSitting`
+            select `committee_session_id` from `CommitteeSession`
             where `assembly_id` = :assembly_id and,
                 `document_id` = :document_id and,
                 `issue_id` = :issue_id and,

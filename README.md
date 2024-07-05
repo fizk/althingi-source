@@ -74,42 +74,6 @@ docker exec -i CONTAINER mysql -u root --password=example althingi < path/to/bac
 ```
 
 
-```
-
-root
-├── Assembly
-│   ├── Plenary
-│   │   ├── PlenaryAgenda
-│   │   └──
-│   └── Issue
-│       ├── Speech
-│       ├── Vote
-│       │   └── VoteItem
-│       ├── Document
-│       └── CongressmanDocument
-├── Cabinet
-├── Category
-├── Super
-├── Committee
-│   ├── CommitteeMeeting
-│   ├── CommitteeMeetingAgenda
-│   ├── CommitteeSitting
-│   └── CommitteeDocument
-├── Congressman
-│   ├── MinisterSitting
-│   └── Session
-├── Constituency
-├── Election
-├── Inflation
-├── IssueCategory
-├── Ministry
-├── Party
-├── President
-└── (IssueLink)
-
-
-```
-
 
 ```sh
 docker build -t x-althingi-source --build-arg ENV=development .

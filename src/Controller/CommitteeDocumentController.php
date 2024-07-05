@@ -24,7 +24,7 @@ use Althingi\Utils\{
 };
 
 /**
- * Class CommitteeSittingController
+ * Class CommitteeDocumentController
  * @package Althingi\Controller
  */
 class CommitteeDocumentController implements
@@ -44,11 +44,11 @@ class CommitteeDocumentController implements
      */
     public function get(ServerRequest $request): ResponseInterface
     {
-        $committeeSitting = $this->committeeDocumentService->get(
+        $committeeDocument = $this->committeeDocumentService->get(
             $request->getAttribute('document_committee_id')
         );
-        return $committeeSitting
-            ? new JsonResponse($committeeSitting)
+        return $committeeDocument
+            ? new JsonResponse($committeeDocument)
             : new EmptyResponse(404);
     }
 

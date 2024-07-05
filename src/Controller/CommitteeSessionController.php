@@ -10,7 +10,7 @@ use Laminas\Diactoros\Response\{
 };
 use Althingi\Form;
 use Althingi\Service;
-use Althingi\Injector\ServiceCommitteeSittingAwareInterface;
+use Althingi\Injector\ServiceCommitteeSessionAwareInterface;
 use Althingi\Router\{
     RestControllerInterface,
     RestControllerTrait,
@@ -23,42 +23,42 @@ use Althingi\Utils\{
 };
 
 /**
- * Class CommitteeSittingController
+ * Class CommitteeSessionController
  * @package Althingi\Controller
  */
-class CommitteeSittingController implements
+class CommitteeSessionController implements
     RestControllerInterface,
-    ServiceCommitteeSittingAwareInterface,
+    ServiceCommitteeSessionAwareInterface,
     RouterAwareInterface
 {
     use RestControllerTrait;
 
     private RouteInterface $router;
-    private Service\CommitteeSitting $committeeSittingService;
+    private Service\CommitteeSession $committeeSessionService;
 
     /**
-     * @output \Althingi\Model\CommitteeSitting
+     * @output \Althingi\Model\CommitteeSession
      * @200 Success
      * @404 Resource not found
      */
     public function get(ServerRequest $request): ResponseInterface
     {
-        $committeeSitting = $this->committeeSittingService->get(
-            $request->getAttribute('committee_sitting_id')
+        $committeeSession = $this->committeeSessionService->get(
+            $request->getAttribute('committee_session_id')
         );
 
-        return $committeeSitting
-            ? new JsonResponse($committeeSitting)
+        return $committeeSession
+            ? new JsonResponse($committeeSession)
             : new EmptyResponse(404);
     }
 
     /**
-     * @output \Althingi\Model\CommitteeSitting[]
+     * @output \Althingi\Model\CommitteeSession[]
      * @206 Success
      */
     public function getList(ServerRequest $request): ResponseInterface
     {
-        $sessions = $this->committeeSittingService->fetchByCongressman(
+        $sessions = $this->committeeSessionService->fetchByCongressman(
             $request->getAttribute('congressman_id')
         );
 
@@ -68,7 +68,7 @@ class CommitteeSittingController implements
     /**
      * Create a new Congressman session.
      *
-     * @todo CommitteeSitting do not have IDs coming from althingi.is.
+     * @todo CommitteeSession do not have IDs coming from althingi.is.
      *  They are created on this server. To be able to update
      *  these entries, the server has to provide the client with
      *  the URI created on the server. This method will try to
@@ -78,13 +78,13 @@ class CommitteeSittingController implements
      *  well as issuing a 409 response code. The client can then
      *  try to do a PATCH request with the URI provided.
      *
-     *  If althingi.is will start to provide a CommitteeSittingIDs, then this will
+     *  If althingi.is will start to provide a CommitteeSessionIDs, then this will
      *  not be needed as the resource wil be stores via PUSH request.
      *
      *  To facilitate that, create a self::push() method and remove
-     *  \Althingi\Service\CommitteeSitting::getIdentifier()
+     *  \Althingi\Service\CommitteeSession::getIdentifier()
      *
-     * @input \Althingi\Form\CommitteeSitting
+     * @input \Althingi\Form\CommitteeSession
      * @201 Created
      * @409 Conflict
      * @400 Invalid input
@@ -93,27 +93,27 @@ class CommitteeSittingController implements
     {
         $congressmanId = $request->getAttribute('congressman_id');
         $statusCode = 201;
-        $committeeSittingId = 0;
+        $committeeSessionId = 0;
 
-        $form = new Form\CommitteeSitting([
+        $form = new Form\CommitteeSession([
             ...$request->getParsedBody(),
             'congressman_id' => $congressmanId,
         ]);
 
         if ($form->isValid()) {
-            /** @var \Althingi\Model\CommitteeSitting */
-            $committeeSitting = $form->getModel();
+            /** @var \Althingi\Model\CommitteeSession */
+            $committeeSession = $form->getModel();
 
             try {
-                $committeeSittingId = $this->committeeSittingService->create($committeeSitting);
+                $committeeSessionId = $this->committeeSessionService->create($committeeSession);
                 $statusCode = 201;
             } catch (\PDOException $e) {
                 if ($e->errorInfo[1] === 1062) {
-                    $committeeSittingId = $this->committeeSittingService->getIdentifier(
-                        $committeeSitting->getCongressmanId(),
-                        $committeeSitting->getCommitteeId(),
-                        $committeeSitting->getAssemblyId(),
-                        $committeeSitting->getFrom()
+                    $committeeSessionId = $this->committeeSessionService->getIdentifier(
+                        $committeeSession->getCongressmanId(),
+                        $committeeSession->getCommitteeId(),
+                        $committeeSession->getAssemblyId(),
+                        $committeeSession->getFrom()
                     );
                     $statusCode = 409;
                 } else {
@@ -124,7 +124,7 @@ class CommitteeSittingController implements
             return new EmptyResponse($statusCode, [
                 'Location' => $this->router->assemble([
                     'congressman_id' => $congressmanId,
-                    'committee_sitting_id' => $committeeSittingId
+                    'committee_session_id' => $committeeSessionId
                 ], ['name' => 'thingmenn/nefndaseta'])
             ]);
         }
@@ -141,18 +141,18 @@ class CommitteeSittingController implements
     public function patch(ServerRequest $request): ResponseInterface
     {
         if (
-            ($committeeSitting = $this->committeeSittingService->get(
-                $request->getAttribute('committee_sitting_id')
+            ($committeeSession = $this->committeeSessionService->get(
+                $request->getAttribute('committee_session_id')
             )) != null
         ) {
-            $form = new Form\CommitteeSitting([
-                ...$committeeSitting->toArray(),
+            $form = new Form\CommitteeSession([
+                ...$committeeSession->toArray(),
                 ...$request->getParsedBody(),
-                'committee_sitting_id' => $request->getAttribute('committee_sitting_id'),
+                'committee_session_id' => $request->getAttribute('committee_session_id'),
             ]);
 
             if ($form->isValid()) {
-                $this->committeeSittingService->update($form->getModel());
+                $this->committeeSessionService->update($form->getModel());
                 return new EmptyResponse(205);
             }
 
@@ -162,9 +162,9 @@ class CommitteeSittingController implements
         return new EmptyResponse(404);
     }
 
-    public function setCommitteeSitting(Service\CommitteeSitting $committeeSitting): static
+    public function setCommitteeSession(Service\CommitteeSession $committeeSession): static
     {
-        $this->committeeSittingService = $committeeSitting;
+        $this->committeeSessionService = $committeeSession;
         return $this;
     }
 

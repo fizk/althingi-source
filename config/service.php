@@ -183,9 +183,9 @@ return [
             return (new Controller\CommitteeMeetingAgendaController())
                 ->setCommitteeMeetingAgendaService($container->get(Service\CommitteeMeetingAgenda::class));
         },
-        Controller\CommitteeSittingController::class => function (ContainerInterface $container) {
-            return (new Controller\CommitteeSittingController())
-                ->setCommitteeSitting($container->get(Service\CommitteeSitting::class))
+        Controller\CommitteeSessionController::class => function (ContainerInterface $container) {
+            return (new Controller\CommitteeSessionController())
+                ->setCommitteeSession($container->get(Service\CommitteeSession::class))
                 ->setRouter($container->get(RouteInterface::class))
                 ;
         },
@@ -213,9 +213,9 @@ return [
                 ->setEventDispatcher($container->get(EventDispatcherInterface::class))
                 ;
         },
-        Controller\Cli\IndexerCommitteeSittingController::class => function (ContainerInterface $container) {
-            return (new Controller\Cli\IndexerCommitteeSittingController())
-                ->setCommitteeSitting($container->get(Service\CommitteeSitting::class))
+        Controller\Cli\IndexerCommitteeSessionController::class => function (ContainerInterface $container) {
+            return (new Controller\Cli\IndexerCommitteeSessionController())
+                ->setCommitteeSession($container->get(Service\CommitteeSession::class))
                 ->setEventDispatcher($container->get(EventDispatcherInterface::class))
                 ;
         },
@@ -372,8 +372,8 @@ return [
             return (new Service\CommitteeMeetingAgenda())
                 ->setDriver($sm->get(PDO::class));
         },
-        Service\CommitteeSitting::class => function (ContainerInterface $sm) {
-            return (new Service\CommitteeSitting())
+        Service\CommitteeSession::class => function (ContainerInterface $sm) {
+            return (new Service\CommitteeSession())
                 ->setDriver($sm->get(PDO::class))
                 ->setEventDispatcher($sm->get(EventDispatcherInterface::class))
                 ;

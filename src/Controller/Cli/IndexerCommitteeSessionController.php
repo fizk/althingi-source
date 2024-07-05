@@ -2,25 +2,25 @@
 
 namespace Althingi\Controller\Cli;
 
-use Althingi\Service\CommitteeSitting;
+use Althingi\Service\CommitteeSession;
 use Althingi\Events\AddEvent;
 use Althingi\Utils\ConsoleResponse;
 use Althingi\Injector\{
     EventsAwareInterface,
-    ServiceCommitteeSittingAwareInterface
+    ServiceCommitteeSessionAwareInterface
 };
-use Althingi\Presenters\IndexableCommitteeSittingPresenter;
+use Althingi\Presenters\IndexableCommitteeSessionPresenter;
 use Psr\Http\Message\{
     ServerRequestInterface,
     ResponseInterface
 };
 use Althingi\Service\EventService;
 
-class IndexerCommitteeSittingController implements ServiceCommitteeSittingAwareInterface, EventsAwareInterface
+class IndexerCommitteeSessionController implements ServiceCommitteeSessionAwareInterface, EventsAwareInterface
 {
     use EventService;
 
-    private CommitteeSitting $committeeSittingService;
+    private CommitteeSession $committeeSessionService;
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
@@ -28,25 +28,25 @@ class IndexerCommitteeSittingController implements ServiceCommitteeSittingAwareI
         $congressmanId = $request->getAttribute('congressman_id', null);
         $committeeId = $request->getAttribute('committee_id', null);
 
-        /** @var \Althingi\Model\CommitteeSitting $model */
+        /** @var \Althingi\Model\CommitteeSession $model */
         foreach (
-            $this->committeeSittingService->fetchAllGenerator(
+            $this->committeeSessionService->fetchAllGenerator(
                 $assemblyId,
                 $congressmanId,
                 $committeeId
             ) as $model
         ) {
             $this->getEventDispatcher()->dispatch(
-                new AddEvent(new IndexableCommitteeSittingPresenter($model), ['rows' => 1]),
+                new AddEvent(new IndexableCommitteeSessionPresenter($model), ['rows' => 1]),
             );
         }
 
         return (new ConsoleResponse(__CLASS__));
     }
 
-    public function setCommitteeSitting(CommitteeSitting $committeeSitting): static
+    public function setCommitteeSession(CommitteeSession $committeeSession): static
     {
-        $this->committeeSittingService = $committeeSitting;
+        $this->committeeSessionService = $committeeSession;
         return $this;
     }
 }

@@ -370,10 +370,10 @@ return [
                 'nefndaseta' => [
                     'type' => Segment::class,
                     'options' => [
-                        'route'    => '/nefndaseta[/:committee_sitting_id]',
+                        'route'    => '/nefndaseta[/:committee_session_id]',
                         'defaults' => [
-                            'controller' => Controller\CommitteeSittingController::class,
-                            'identifier' => 'committee_sitting_id'
+                            'controller' => Controller\CommitteeSessionController::class,
+                            'identifier' => 'committee_session_id'
                         ],
                     ],
                 ],
@@ -605,7 +605,7 @@ return [
                     'options' => [
                         'route'    => ':committee-sitting',
                         'defaults' => [
-                            'controller' => Controller\Cli\IndexerCommitteeSittingController::class,
+                            'controller' => Controller\Cli\IndexerCommitteeSessionController::class,
                         ],
                     ],
                 ],

@@ -4,9 +4,9 @@ namespace Althingi\Model;
 
 use DateTime;
 
-class CommitteeSitting implements ModelInterface
+class CommitteeSession implements ModelInterface
 {
-    private $committee_sitting_id;
+    private $committee_session_id;
     private $congressman_id;
     private $committee_id;
     private $assembly_id;
@@ -15,14 +15,14 @@ class CommitteeSitting implements ModelInterface
     private DateTime $from;
     private ?DateTime $to = null;
 
-    public function getCommitteeSittingId(): ?int
+    public function getCommitteeSessionId(): ?int
     {
-        return $this->committee_sitting_id;
+        return $this->committee_session_id;
     }
 
-    public function setCommitteeSittingId(?int $committee_sitting_id): static
+    public function setCommitteeSessionId(?int $committee_session_id): static
     {
-        $this->committee_sitting_id = $committee_sitting_id;
+        $this->committee_session_id = $committee_session_id;
         return $this;
     }
 
@@ -111,7 +111,7 @@ class CommitteeSitting implements ModelInterface
     public function toArray(): array
     {
         return [
-            'committee_sitting_id' => $this->committee_sitting_id,
+            'committee_session_id' => $this->committee_session_id,
             'congressman_id' => $this->congressman_id,
             'committee_id' => $this->committee_id,
             'assembly_id' => $this->assembly_id,

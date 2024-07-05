@@ -23,7 +23,7 @@ use Althingi\Router\{
 };
 
 /**
- * Class CommitteeSittingController
+ * Class MinisterSittingController
  * @package Althingi\Controller
  */
 class MinisterSittingController implements
@@ -37,7 +37,7 @@ class MinisterSittingController implements
     private Service\MinisterSitting $ministerSittingService;
 
     /**
-     * @output \Althingi\Model\CommitteeSitting
+     * @output \Althingi\Model\CommitteeSession
      * @200 Success
      * @404 Resource not found
      */
@@ -71,7 +71,7 @@ class MinisterSittingController implements
      *  To facilitate that, create a self::push() method and remove
      *  \Althingi\Service\MinisterSitting::getIdentifier()
      *
-     * @input \Althingi\Form\CommitteeSitting
+     * @input \Althingi\Form\CommitteeSession
      * @201 Created
      * @409 Conflict
      * @400 Invalid input
