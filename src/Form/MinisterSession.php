@@ -11,21 +11,21 @@ use Laminas\Validator\{Date, NotEmpty};
 use Library\Form\Form;
 use Library\Input\Input;
 
-class MinisterSitting extends Form
+class MinisterSession extends Form
 {
-    public function getModel(): Model\MinisterSitting
+    public function getModel(): Model\MinisterSession
     {
-        return (new Hydrator\MinisterSitting())
+        return (new Hydrator\MinisterSession())
             ->hydrate(
                 $this->getInputChain()->getValues(),
-                new Model\MinisterSitting()
+                new Model\MinisterSession()
             );
     }
 
     public function getValidationConfig(): array
     {
         return [
-            (new Input('minister_sitting_id', true))
+            (new Input('minister_session_id', true))
                 ->attachValidator(new SignedDigits())
                 ->attachFilter(new ToInt())
             ,

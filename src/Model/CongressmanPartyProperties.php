@@ -11,7 +11,7 @@ class CongressmanPartyProperties implements ModelInterface
     private ?Constituency $constituency = null;
     /** @var \Althingi\Model\Ministry[]  */
     private array $ministries = [];
-    /** @var \Althingi\Model\MinisterSitting[]  */
+    /** @var \Althingi\Model\MinisterSession[]  */
     private array $ministrySittings = [];
     private ?Assembly $assembly = null;
 
@@ -94,7 +94,7 @@ class CongressmanPartyProperties implements ModelInterface
     }
 
     /**
-     * @return MinisterSitting[]
+     * @return MinisterSession[]
      */
     public function getMinistrySittings(): array
     {
@@ -102,7 +102,7 @@ class CongressmanPartyProperties implements ModelInterface
     }
 
     /**
-     * @param MinisterSitting[] $ministrySittings
+     * @param MinisterSession[] $ministrySittings
      */
     public function setMinistrySittings(array $ministrySittings): static
     {

@@ -2,21 +2,21 @@
 
 namespace Althingi\Presenters;
 
-use Althingi\Model\MinisterSitting;
+use Althingi\Model\MinisterSession;
 use Althingi\Model\ModelInterface;
 use Althingi\Utils\HydratorInterface;
 
-class IndexableMinisterSittingPresenter implements IndexablePresenter
+class IndexableMinisterSessionPresenter implements IndexablePresenter
 {
-    private const INDEX = 'althingi_model_minister-sitting';
-    private const TYPE = 'minister-sitting';
+    private const INDEX = 'althingi_model_minister-session';
+    private const TYPE = 'minister-session';
 
     private HydratorInterface $hydrator;
-    private MinisterSitting $model;
+    private MinisterSession $model;
 
-    public function __construct(MinisterSitting $model)
+    public function __construct(MinisterSession $model)
     {
-        $this->setHydrator(new \Althingi\Hydrator\MinisterSitting());
+        $this->setHydrator(new \Althingi\Hydrator\MinisterSession());
         $this->setModel($model);
     }
 
@@ -44,7 +44,7 @@ class IndexableMinisterSittingPresenter implements IndexablePresenter
 
     public function getIdentifier(): string
     {
-        return (string) $this->model->getMinisterSittingId();
+        return (string) $this->model->getMinisterSessionId();
     }
 
     public function getType(): string

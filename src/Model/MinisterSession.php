@@ -4,9 +4,9 @@ namespace Althingi\Model;
 
 use DateTime;
 
-class MinisterSitting implements ModelInterface
+class MinisterSession implements ModelInterface
 {
-    private ?int $minister_sitting_id = null;
+    private ?int $minister_session_id = null;
     private int $assembly_id;
     private int $ministry_id;
     private int $congressman_id;
@@ -14,14 +14,14 @@ class MinisterSitting implements ModelInterface
     private $from = null;
     private ?DateTime $to = null;
 
-    public function getMinisterSittingId(): ?int
+    public function getMinisterSessionId(): ?int
     {
-        return $this->minister_sitting_id;
+        return $this->minister_session_id;
     }
 
-    public function setMinisterSittingId(?int $minister_sitting_id): static
+    public function setMinisterSessionId(?int $minister_session_id): static
     {
-        $this->minister_sitting_id = $minister_sitting_id;
+        $this->minister_session_id = $minister_session_id;
         return $this;
     }
 
@@ -94,7 +94,7 @@ class MinisterSitting implements ModelInterface
     public function toArray(): array
     {
         return [
-            'minister_sitting_id' => $this->minister_sitting_id,
+            'minister_session_id' => $this->minister_session_id,
             'assembly_id' => $this->assembly_id,
             'ministry_id' => $this->ministry_id,
             'congressman_id' => $this->congressman_id,

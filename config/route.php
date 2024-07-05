@@ -58,7 +58,7 @@ return [
                             'options' => [
                                 'route'    => '/radherraseta',
                                 'defaults' => [
-                                    'controller' => Controller\MinisterSittingController::class,
+                                    'controller' => Controller\MinisterSessionController::class,
                                     'action' => 'assembly-sessions'
                                 ],
                             ],
@@ -385,7 +385,7 @@ return [
                             'ministry_sitting_id' => '[0-9]+',
                         ],
                         'defaults' => [
-                            'controller' => Controller\MinisterSittingController::class,
+                            'controller' => Controller\MinisterSessionController::class,
                             'identifier' => 'ministry_sitting_id'
                         ],
                     ],
@@ -578,7 +578,7 @@ return [
                     'options' => [
                         'route'    => ':minister-sitting',
                         'defaults' => [
-                            'controller' => Controller\Cli\IndexerMinisterSittingController::class,
+                            'controller' => Controller\Cli\IndexerMinisterSessionController::class,
                         ],
                     ],
                 ],

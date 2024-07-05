@@ -2,11 +2,11 @@
 
 namespace Althingi\Model;
 
-class MinisterSittingProperties implements ModelInterface
+class MinisterSessionProperties implements ModelInterface
 {
     private CongressmanPartyProperties $congressman;
     private Ministry $ministry;
-    private MinisterSitting $minister_sitting;
+    private MinisterSession $minister_session;
 
     public function getCongressman(): CongressmanPartyProperties
     {
@@ -30,20 +30,20 @@ class MinisterSittingProperties implements ModelInterface
         return $this;
     }
 
-    public function getMinisterSitting(): MinisterSitting
+    public function getMinisterSession(): MinisterSession
     {
-        return $this->minister_sitting;
+        return $this->minister_session;
     }
 
-    public function setMinisterSitting(MinisterSitting $minister_sitting): static
+    public function setMinisterSession(MinisterSession $minister_session): static
     {
-        $this->minister_sitting = $minister_sitting;
+        $this->minister_session = $minister_session;
         return $this;
     }
 
     public function toArray(): array
     {
-        return array_merge($this->minister_sitting->toArray(), [
+        return array_merge($this->minister_session->toArray(), [
             'congressman' => $this->congressman,
             'ministry' => $this->ministry,
         ]);

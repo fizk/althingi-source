@@ -16,7 +16,7 @@ class IndexableMinistryPresenter implements IndexablePresenter
 
     public function __construct(Ministry $model)
     {
-        $this->setHydrator(new \Althingi\Hydrator\MinisterSitting());
+        $this->setHydrator(new \Althingi\Hydrator\MinisterSession());
         $this->setModel($model);
     }
 

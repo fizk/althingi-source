@@ -9,13 +9,13 @@ use Library\Container\Container;
 use PHPUnit\Framework\Attributes\{CoversMethod, CoversClass, Test, Before, After};
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(MinisterSittingController::class)]
-#[CoversMethod(MinisterSittingController::class, 'setMinisterSittingService')]
-#[CoversMethod(MinisterSittingController::class, 'assemblySessionsAction')]
-#[CoversMethod(MinisterSittingController::class, 'get')]
-#[CoversMethod(MinisterSittingController::class, 'patch')]
-#[CoversMethod(MinisterSittingController::class, 'post')]
-class MinisterSittingControllerTest extends TestCase
+#[CoversClass(MinisterSessionController::class)]
+#[CoversMethod(MinisterSessionController::class, 'setMinisterSessionService')]
+#[CoversMethod(MinisterSessionController::class, 'assemblySessionsAction')]
+#[CoversMethod(MinisterSessionController::class, 'get')]
+#[CoversMethod(MinisterSessionController::class, 'patch')]
+#[CoversMethod(MinisterSessionController::class, 'post')]
+class MinisterSessionControllerTest extends TestCase
 {
     use ServiceHelper;
 
@@ -26,7 +26,7 @@ class MinisterSittingControllerTest extends TestCase
             new Container(require __DIR__ . '/../../config/service.php')
         );
         $this->buildServices([
-            Service\MinisterSitting::class,
+            Service\MinisterSession::class,
             Service\Ministry::class,
             Service\Party::class,
             Service\Congressman::class,
@@ -43,14 +43,14 @@ class MinisterSittingControllerTest extends TestCase
     #[Test]
     public function createSuccess()
     {
-        $expectedObject = (new Model\MinisterSitting())
+        $expectedObject = (new Model\MinisterSession())
             ->setMinistryId(1)
             ->setCongressmanId(3)
             ->setPartyId(1)
             ->setAssemblyId(1)
             ->setFrom(new \DateTime('2001-01-01'));
 
-        $this->getMockService(Service\MinisterSitting::class)
+        $this->getMockService(Service\MinisterSession::class)
             ->shouldReceive('create')
             ->with(\Mockery::on(function ($actualData) use ($expectedObject) {
                 return $actualData == $expectedObject;
@@ -66,7 +66,7 @@ class MinisterSittingControllerTest extends TestCase
             'from' => '2001-01-01',
         ]);
 
-        $this->assertControllerName(Controller\MinisterSittingController::class);
+        $this->assertControllerName(Controller\MinisterSessionController::class);
         $this->assertResponseStatusCode(201);
         $this->assertResponseHeaderContains('Location', '/thingmenn/3/radherraseta/10');
         $this->assertActionName('post');
@@ -78,7 +78,7 @@ class MinisterSittingControllerTest extends TestCase
         $exception = new \PDOException();
         $exception->errorInfo = ['', 1062, ''];
 
-        $this->getMockService(Service\MinisterSitting::class)
+        $this->getMockService(Service\MinisterSession::class)
             ->shouldReceive('create')
             ->andThrow($exception)
             ->once()
@@ -99,7 +99,7 @@ class MinisterSittingControllerTest extends TestCase
 
         $this->assertResponseStatusCode(409);
         $this->assertResponseHeaderContains('Location', '/thingmenn/3/radherraseta/54321');
-        $this->assertControllerName(Controller\MinisterSittingController::class);
+        $this->assertControllerName(Controller\MinisterSessionController::class);
         $this->assertActionName('post');
     }
 
@@ -108,7 +108,7 @@ class MinisterSittingControllerTest extends TestCase
     {
         $exception = new \PDOException();
         $exception->errorInfo = ['', 1062, ''];
-        $this->getMockService(Service\MinisterSitting::class)
+        $this->getMockService(Service\MinisterSession::class)
             ->shouldReceive('create')
             ->andThrow($exception)
             ->once()
@@ -129,14 +129,14 @@ class MinisterSittingControllerTest extends TestCase
 
         $this->assertResponseStatusCode(409);
         $this->assertResponseHeaderContains('Location', '/thingmenn/3/radherraseta/54321');
-        $this->assertControllerName(Controller\MinisterSittingController::class);
+        $this->assertControllerName(Controller\MinisterSessionController::class);
         $this->assertActionName('post');
     }
 
     #[Test]
     public function createInvalid()
     {
-        $this->getMockService(Service\MinisterSitting::class)
+        $this->getMockService(Service\MinisterSession::class)
             ->shouldReceive('create')
             ->andReturnNull()
             ->getMock();
@@ -152,14 +152,14 @@ class MinisterSittingControllerTest extends TestCase
         ]);
 
         $this->assertResponseStatusCode(400);
-        $this->assertControllerName(Controller\MinisterSittingController::class);
+        $this->assertControllerName(Controller\MinisterSessionController::class);
         $this->assertActionName('post');
     }
 
     #[Test]
     public function createInvalidSteps()
     {
-        $this->getMockService(Service\MinisterSitting::class)
+        $this->getMockService(Service\MinisterSession::class)
             ->shouldReceive('create')
             ->andReturn(101010)
             ->getMock();
@@ -173,15 +173,15 @@ class MinisterSittingControllerTest extends TestCase
         ]);
 
         $this->assertResponseStatusCode(201);
-        $this->assertControllerName(Controller\MinisterSittingController::class);
+        $this->assertControllerName(Controller\MinisterSessionController::class);
         $this->assertActionName('post');
     }
 
     #[Test]
     public function patchSuccess()
     {
-        $serviceReturnedData = (new Model\MinisterSitting())
-            ->setMinisterSittingId(555)
+        $serviceReturnedData = (new Model\MinisterSession())
+            ->setMinisterSessionId(555)
             ->setMinistryId(1)
             ->setCongressmanId(3)
             ->setPartyId(1)
@@ -189,8 +189,8 @@ class MinisterSittingControllerTest extends TestCase
             ->setFrom(new \DateTime('2001-01-01'))
         ;
 
-        $expectedObject = (new Model\MinisterSitting())
-            ->setMinisterSittingId(555)
+        $expectedObject = (new Model\MinisterSession())
+            ->setMinisterSessionId(555)
             ->setMinistryId(1)
             ->setCongressmanId(3)
             ->setPartyId(1)
@@ -198,7 +198,7 @@ class MinisterSittingControllerTest extends TestCase
             ->setFrom(new \DateTime('2001-01-01'))
             ->setTo(new \DateTime('2001-01-01'));
 
-        $this->getMockService(Service\MinisterSitting::class)
+        $this->getMockService(Service\MinisterSession::class)
             ->shouldReceive('get')
             ->with(555)
             ->andReturn($serviceReturnedData)
@@ -218,15 +218,15 @@ class MinisterSittingControllerTest extends TestCase
         ]);
 
         $this->assertResponseStatusCode(205);
-        $this->assertControllerName(Controller\MinisterSittingController::class);
+        $this->assertControllerName(Controller\MinisterSessionController::class);
         $this->assertActionName('patch');
     }
 
     #[Test]
     public function patchInvalidParams()
     {
-        $serviceReturnedData = (new Model\MinisterSitting())
-            ->setMinisterSittingId(555)
+        $serviceReturnedData = (new Model\MinisterSession())
+            ->setMinisterSessionId(555)
             ->setMinistryId(1)
             ->setCongressmanId(3)
             ->setPartyId(1)
@@ -234,7 +234,7 @@ class MinisterSittingControllerTest extends TestCase
             ->setFrom(new \DateTime('2001-01-01'))
         ;
 
-        $this->getMockService(Service\MinisterSitting::class)
+        $this->getMockService(Service\MinisterSession::class)
             ->shouldReceive('get')
             ->with(555)
             ->andReturn($serviceReturnedData)
@@ -251,14 +251,14 @@ class MinisterSittingControllerTest extends TestCase
         ]);
 
         $this->assertResponseStatusCode(400);
-        $this->assertControllerName(Controller\MinisterSittingController::class);
+        $this->assertControllerName(Controller\MinisterSessionController::class);
         $this->assertActionName('patch');
     }
 
     #[Test]
     public function patchNotFound()
     {
-        $this->getMockService(Service\MinisterSitting::class)
+        $this->getMockService(Service\MinisterSession::class)
             ->shouldReceive('get')
             ->with(555)
             ->andReturn(null)
@@ -274,17 +274,17 @@ class MinisterSittingControllerTest extends TestCase
         ]);
 
         $this->assertResponseStatusCode(404);
-        $this->assertControllerName(Controller\MinisterSittingController::class);
+        $this->assertControllerName(Controller\MinisterSessionController::class);
         $this->assertActionName('patch');
     }
 
     #[Test]
     public function getSuccessful()
     {
-        $this->getMockService(Service\MinisterSitting::class)
+        $this->getMockService(Service\MinisterSession::class)
             ->shouldReceive('get')
             ->andReturn(
-                (new Model\MinisterSitting())
+                (new Model\MinisterSession())
                     ->setAssemblyId(1)
                     ->setMinistryId(3)
                     ->setCongressmanId(2)
@@ -293,32 +293,32 @@ class MinisterSittingControllerTest extends TestCase
 
         $this->dispatch('/thingmenn/2/radherraseta/1', 'GET');
         $this->assertResponseStatusCode(200);
-        $this->assertControllerName(Controller\MinisterSittingController::class);
+        $this->assertControllerName(Controller\MinisterSessionController::class);
         $this->assertActionName('get');
     }
 
     #[Test]
     public function getNotFound()
     {
-        $this->getMockService(Service\MinisterSitting::class)
+        $this->getMockService(Service\MinisterSession::class)
             ->shouldReceive('get')
             ->andReturn(null)
             ->getMock();
 
         $this->dispatch('/thingmenn/2/radherraseta/1', 'GET');
         $this->assertResponseStatusCode(404);
-        $this->assertControllerName(Controller\MinisterSittingController::class);
+        $this->assertControllerName(Controller\MinisterSessionController::class);
         $this->assertActionName('get');
     }
 
     #[Test]
     public function assemblySessionsAction()
     {
-        $this->getMockService(Service\MinisterSitting::class)
+        $this->getMockService(Service\MinisterSession::class)
             ->shouldReceive('fetchByCongressmanAssembly')
             ->with(123, 456)
             ->andReturn([
-                (new Model\MinisterSitting())
+                (new Model\MinisterSession())
                     ->setAssemblyId(1)
                     ->setMinistryId(3)
                     ->setCongressmanId(2)
@@ -328,7 +328,7 @@ class MinisterSittingControllerTest extends TestCase
 
         $this->dispatch('/loggjafarthing/123/thingmenn/456/radherraseta', 'GET');
 
-        $this->assertControllerName(Controller\MinisterSittingController::class);
+        $this->assertControllerName(Controller\MinisterSessionController::class);
         $this->assertActionName('assembly-sessions');
         $this->assertResponseStatusCode(206);
     }

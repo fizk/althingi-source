@@ -10,25 +10,25 @@ use PHPUnit\Framework\Attributes\{Test};
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
-class MinisterSittingTest extends TestCase
+class MinisterSessionTest extends TestCase
 {
     use DatabaseConnectionTrait;
 
     #[Test]
     public function getSuccess()
     {
-        $ministerSittingService = new MinisterSitting();
-        $ministerSittingService->setDriver($this->getPDO());
+        $ministerSessionService = new MinisterSession();
+        $ministerSessionService->setDriver($this->getPDO());
 
-        $expectedData = (new Model\MinisterSitting())
+        $expectedData = (new Model\MinisterSession())
             ->setAssemblyId(1)
-            ->setMinisterSittingId(1)
+            ->setMinisterSessionId(1)
             ->setMinistryId(1)
             ->setCongressmanId(1)
             ->setPartyId(1)
             ->setFrom(new \DateTime('2001-01-01'));
 
-        $actualData = $ministerSittingService->get(1);
+        $actualData = $ministerSessionService->get(1);
 
         $this->assertEquals($expectedData, $actualData);
     }
@@ -36,12 +36,12 @@ class MinisterSittingTest extends TestCase
     #[Test]
     public function fetchAllGeneratorAll()
     {
-        $ministerSittingService = new MinisterSitting();
-        $ministerSittingService->setDriver($this->getPDO());
+        $ministerSessionService = new MinisterSession();
+        $ministerSessionService->setDriver($this->getPDO());
 
-        $expectedData = [(new Model\MinisterSitting())
+        $expectedData = [(new Model\MinisterSession())
             ->setAssemblyId(1)
-            ->setMinisterSittingId(1)
+            ->setMinisterSessionId(1)
             ->setMinistryId(1)
             ->setCongressmanId(1)
             ->setPartyId(1)
@@ -49,7 +49,7 @@ class MinisterSittingTest extends TestCase
         ;
 
         $actualData = [];
-        foreach ($ministerSittingService->fetchAllGenerator() as $item) {
+        foreach ($ministerSessionService->fetchAllGenerator() as $item) {
             $actualData[] = $item;
         }
 
@@ -59,12 +59,12 @@ class MinisterSittingTest extends TestCase
     #[Test]
     public function fetchAllGeneratorByAssemblyFound()
     {
-        $ministerSittingService = new MinisterSitting();
-        $ministerSittingService->setDriver($this->getPDO());
+        $ministerSessionService = new MinisterSession();
+        $ministerSessionService->setDriver($this->getPDO());
 
-        $expectedData = [(new Model\MinisterSitting())
+        $expectedData = [(new Model\MinisterSession())
             ->setAssemblyId(1)
-            ->setMinisterSittingId(1)
+            ->setMinisterSessionId(1)
             ->setMinistryId(1)
             ->setCongressmanId(1)
             ->setPartyId(1)
@@ -72,7 +72,7 @@ class MinisterSittingTest extends TestCase
         ;
 
         $actualData = [];
-        foreach ($ministerSittingService->fetchAllGenerator(1) as $item) {
+        foreach ($ministerSessionService->fetchAllGenerator(1) as $item) {
             $actualData[] = $item;
         }
 
@@ -82,14 +82,14 @@ class MinisterSittingTest extends TestCase
     #[Test]
     public function fetchAllGeneratorByAssemblyNotFound()
     {
-        $ministerSittingService = new MinisterSitting();
-        $ministerSittingService->setDriver($this->getPDO());
+        $ministerSessionService = new MinisterSession();
+        $ministerSessionService->setDriver($this->getPDO());
 
         $expectedData = []
         ;
 
         $actualData = [];
-        foreach ($ministerSittingService->fetchAllGenerator(2) as $item) {
+        foreach ($ministerSessionService->fetchAllGenerator(2) as $item) {
             $actualData[] = $item;
         }
 
@@ -99,18 +99,18 @@ class MinisterSittingTest extends TestCase
     #[Test]
     public function createSuccess()
     {
-        $ministrySitting = (new Model\MinisterSitting())
+        $ministrySitting = (new Model\MinisterSession())
             ->setAssemblyId(1)
-            ->setMinisterSittingId(2)
+            ->setMinisterSessionId(2)
             ->setMinistryId(2)
             ->setCongressmanId(2)
             ->setPartyId(2)
             ->setFrom(new \DateTime('2001-01-01'));
 
         $expectedTable = $this->createArrayDataSet([
-            'MinisterSitting' => [
+            'MinisterSession' => [
                 [
-                    'minister_sitting_id' => 1,
+                    'minister_session_id' => 1,
                     'assembly_id' => 1,
                     'ministry_id' => 1,
                     'congressman_id' => 1,
@@ -119,7 +119,7 @@ class MinisterSittingTest extends TestCase
                     'to' => null,
                 ],
                 [
-                    'minister_sitting_id' => 2,
+                    'minister_session_id' => 2,
                     'assembly_id' => 1,
                     'ministry_id' => 2,
                     'congressman_id' => 2,
@@ -128,10 +128,10 @@ class MinisterSittingTest extends TestCase
                     'to' => null,
                 ]
             ],
-        ])->getTable('MinisterSitting');
-        $actualTable = $this->getConnection()->createQueryTable('MinisterSitting', 'SELECT * FROM MinisterSitting');
+        ])->getTable('MinisterSession');
+        $actualTable = $this->getConnection()->createQueryTable('MinisterSession', 'SELECT * FROM MinisterSession');
 
-        $ministrySittingService = new MinisterSitting();
+        $ministrySittingService = new MinisterSession();
         $ministrySittingService->setDriver($this->getPDO());
         $ministrySittingService->create($ministrySitting);
 
@@ -141,15 +141,15 @@ class MinisterSittingTest extends TestCase
     #[Test]
     public function createAlreadyExist()
     {
-        $ministrySitting = (new Model\MinisterSitting())
+        $ministrySitting = (new Model\MinisterSession())
             ->setAssemblyId(1)
-            ->setMinisterSittingId(2)
+            ->setMinisterSessionId(2)
             ->setMinistryId(1)
             ->setCongressmanId(1)
             ->setPartyId(2)
             ->setFrom(new \DateTime('2001-01-01'));
 
-        $ministrySittingService = new MinisterSitting();
+        $ministrySittingService = new MinisterSession();
         $ministrySittingService->setDriver($this->getPDO());
         try {
             $ministrySittingService->create($ministrySitting);
@@ -161,9 +161,9 @@ class MinisterSittingTest extends TestCase
     #[Test]
     public function saveUpdate()
     {
-        $ministrySitting = (new Model\MinisterSitting())
+        $ministrySitting = (new Model\MinisterSession())
             ->setAssemblyId(1)
-            ->setMinisterSittingId(1)
+            ->setMinisterSessionId(1)
             ->setMinistryId(1)
             ->setCongressmanId(1)
             ->setPartyId(1)
@@ -172,9 +172,9 @@ class MinisterSittingTest extends TestCase
         ;
 
         $expectedTable = $this->createArrayDataSet([
-            'MinisterSitting' => [
+            'MinisterSession' => [
                 [
-                    'minister_sitting_id' => 1,
+                    'minister_session_id' => 1,
                     'assembly_id' => 1,
                     'ministry_id' => 1,
                     'congressman_id' => 1,
@@ -183,10 +183,10 @@ class MinisterSittingTest extends TestCase
                     'to' => '2001-01-01',
                 ]
             ],
-        ])->getTable('MinisterSitting');
-        $actualTable = $this->getConnection()->createQueryTable('MinisterSitting', 'SELECT * FROM MinisterSitting');
+        ])->getTable('MinisterSession');
+        $actualTable = $this->getConnection()->createQueryTable('MinisterSession', 'SELECT * FROM MinisterSession');
 
-        $ministrySittingService = new MinisterSitting();
+        $ministrySittingService = new MinisterSession();
         $ministrySittingService->setDriver($this->getPDO());
         $affectedRows = $ministrySittingService->save($ministrySitting);
 
@@ -197,9 +197,9 @@ class MinisterSittingTest extends TestCase
     #[Test]
     public function saveCreate()
     {
-        $ministrySitting = (new Model\MinisterSitting())
+        $ministrySitting = (new Model\MinisterSession())
             ->setAssemblyId(2)
-            ->setMinisterSittingId(2)
+            ->setMinisterSessionId(2)
             ->setMinistryId(2)
             ->setCongressmanId(2)
             ->setPartyId(2)
@@ -208,9 +208,9 @@ class MinisterSittingTest extends TestCase
         ;
 
         $expectedTable = $this->createArrayDataSet([
-            'MinisterSitting' => [
+            'MinisterSession' => [
                 [
-                    'minister_sitting_id' => 1,
+                    'minister_session_id' => 1,
                     'assembly_id' => 1,
                     'ministry_id' => 1,
                     'congressman_id' => 1,
@@ -219,7 +219,7 @@ class MinisterSittingTest extends TestCase
                     'to' => null,
                 ],
                 [
-                    'minister_sitting_id' => 2,
+                    'minister_session_id' => 2,
                     'assembly_id' => 2,
                     'ministry_id' => 2,
                     'congressman_id' => 2,
@@ -228,10 +228,10 @@ class MinisterSittingTest extends TestCase
                     'to' => '2001-01-01',
                 ]
             ],
-        ])->getTable('MinisterSitting');
-        $actualTable = $this->getConnection()->createQueryTable('MinisterSitting', 'SELECT * FROM MinisterSitting');
+        ])->getTable('MinisterSession');
+        $actualTable = $this->getConnection()->createQueryTable('MinisterSession', 'SELECT * FROM MinisterSession');
 
-        $ministrySittingService = new MinisterSitting();
+        $ministrySittingService = new MinisterSession();
         $ministrySittingService->setDriver($this->getPDO());
         $affectedRows = $ministrySittingService->save($ministrySitting);
 
@@ -242,9 +242,9 @@ class MinisterSittingTest extends TestCase
     #[Test]
     public function updateSuccess()
     {
-        $ministrySitting = (new Model\MinisterSitting())
+        $ministrySitting = (new Model\MinisterSession())
             ->setAssemblyId(1)
-            ->setMinisterSittingId(1)
+            ->setMinisterSessionId(1)
             ->setMinistryId(1)
             ->setCongressmanId(1)
             ->setPartyId(1)
@@ -253,9 +253,9 @@ class MinisterSittingTest extends TestCase
         ;
 
         $expectedTable = $this->createArrayDataSet([
-            'MinisterSitting' => [
+            'MinisterSession' => [
                 [
-                    'minister_sitting_id' => 1,
+                    'minister_session_id' => 1,
                     'assembly_id' => 1,
                     'ministry_id' => 1,
                     'congressman_id' => 1,
@@ -264,10 +264,10 @@ class MinisterSittingTest extends TestCase
                     'to' => '2001-01-01',
                 ]
             ],
-        ])->getTable('MinisterSitting');
-        $actualTable = $this->getConnection()->createQueryTable('MinisterSitting', 'SELECT * FROM MinisterSitting');
+        ])->getTable('MinisterSession');
+        $actualTable = $this->getConnection()->createQueryTable('MinisterSession', 'SELECT * FROM MinisterSession');
 
-        $ministrySittingService = new MinisterSitting();
+        $ministrySittingService = new MinisterSession();
         $ministrySittingService->setDriver($this->getPDO());
         $ministrySittingService->update($ministrySitting);
 
@@ -277,17 +277,17 @@ class MinisterSittingTest extends TestCase
     #[Test]
     public function getIdentifier()
     {
-        $ministerSittingService = new MinisterSitting();
-        $ministerSittingService->setDriver($this->getPDO());
+        $ministerSessionService = new MinisterSession();
+        $ministerSessionService->setDriver($this->getPDO());
 
-        $expectedData = (new Model\MinisterSitting())
+        $expectedData = (new Model\MinisterSession())
             ->setAssemblyId(1)
             ->setMinistryId(1)
             ->setCongressmanId(1)
             ->setPartyId(1)
             ->setFrom(new \DateTime('2001-01-01'));
 
-        $actualData = $ministerSittingService->getIdentifier(
+        $actualData = $ministerSessionService->getIdentifier(
             $expectedData->getAssemblyId(),
             $expectedData->getMinistryId(),
             $expectedData->getCongressmanId(),
@@ -300,17 +300,17 @@ class MinisterSittingTest extends TestCase
     #[Test]
     public function getIdentifierNotFound()
     {
-        $ministerSittingService = new MinisterSitting();
-        $ministerSittingService->setDriver($this->getPDO());
+        $ministerSessionService = new MinisterSession();
+        $ministerSessionService->setDriver($this->getPDO());
 
-        $expectedData = (new Model\MinisterSitting())
+        $expectedData = (new Model\MinisterSession())
             ->setAssemblyId(100)
             ->setMinistryId(1)
             ->setCongressmanId(1)
             ->setPartyId(1)
             ->setFrom(new \DateTime('2001-01-01'));
 
-        $actualData = $ministerSittingService->getIdentifier(
+        $actualData = $ministerSessionService->getIdentifier(
             $expectedData->getAssemblyId(),
             $expectedData->getMinistryId(),
             $expectedData->getCongressmanId(),
@@ -333,14 +333,14 @@ class MinisterSittingTest extends TestCase
             })
             ->getMock();
 
-        $ministrySitting = (new Model\MinisterSitting())
+        $ministrySitting = (new Model\MinisterSession())
             ->setAssemblyId(1)
             ->setMinistryId(2)
             ->setCongressmanId(1)
             ->setPartyId(1)
             ->setFrom(new \DateTime('2001-01-01'));
 
-        (new MinisterSitting())
+        (new MinisterSession())
             ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->create($ministrySitting);
@@ -359,15 +359,15 @@ class MinisterSittingTest extends TestCase
             })
             ->getMock();
 
-        $ministrySitting = (new Model\MinisterSitting())
+        $ministrySitting = (new Model\MinisterSession())
             ->setAssemblyId(1)
-            ->setMinisterSittingId(1)
+            ->setMinisterSessionId(1)
             ->setMinistryId(1)
             ->setCongressmanId(1)
             ->setPartyId(1)
             ->setFrom(new \DateTime('2001-01-01'));
 
-        (new MinisterSitting())
+        (new MinisterSession())
             ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->update($ministrySitting);
@@ -386,9 +386,9 @@ class MinisterSittingTest extends TestCase
             })
             ->getMock();
 
-        $ministrySitting = (new Model\MinisterSitting())
+        $ministrySitting = (new Model\MinisterSession())
             ->setAssemblyId(1)
-            ->setMinisterSittingId(1)
+            ->setMinisterSessionId(1)
             ->setMinistryId(1)
             ->setCongressmanId(1)
             ->setPartyId(1)
@@ -396,7 +396,7 @@ class MinisterSittingTest extends TestCase
             ->setTo(new \DateTime('2001-01-01'))
         ;
 
-        (new MinisterSitting())
+        (new MinisterSession())
             ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->update($ministrySitting);
@@ -416,7 +416,7 @@ class MinisterSittingTest extends TestCase
             })
             ->getMock();
 
-        $ministrySitting = (new Model\MinisterSitting())
+        $ministrySitting = (new Model\MinisterSession())
             ->setAssemblyId(1)
             ->setMinistryId(1)
             ->setCongressmanId(1)
@@ -424,7 +424,7 @@ class MinisterSittingTest extends TestCase
             ->setFrom(new \DateTime('2022-01-01'))
         ;
 
-        (new MinisterSitting())
+        (new MinisterSession())
             ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->save($ministrySitting);
@@ -444,8 +444,8 @@ class MinisterSittingTest extends TestCase
             })
             ->getMock();
 
-        $ministrySitting = (new Model\MinisterSitting())
-            ->setMinisterSittingId(1)
+        $ministrySitting = (new Model\MinisterSession())
+            ->setMinisterSessionId(1)
             ->setAssemblyId(1)
             ->setMinistryId(1)
             ->setCongressmanId(1)
@@ -453,7 +453,7 @@ class MinisterSittingTest extends TestCase
             ->setFrom(new \DateTime('2001-01-01'))
         ;
 
-        (new MinisterSitting())
+        (new MinisterSession())
             ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->save($ministrySitting);
@@ -473,8 +473,8 @@ class MinisterSittingTest extends TestCase
             })
             ->getMock();
 
-        $ministrySitting = (new Model\MinisterSitting())
-            ->setMinisterSittingId(1)
+        $ministrySitting = (new Model\MinisterSession())
+            ->setMinisterSessionId(1)
             ->setAssemblyId(1)
             ->setMinistryId(1)
             ->setCongressmanId(1)
@@ -483,7 +483,7 @@ class MinisterSittingTest extends TestCase
             ->setTo(new \DateTime('2001-01-01'))
         ;
 
-        (new MinisterSitting())
+        (new MinisterSession())
             ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->save($ministrySitting);
@@ -525,9 +525,9 @@ class MinisterSittingTest extends TestCase
                     'last' => null,
                 ],
             ],
-            'MinisterSitting' => [
+            'MinisterSession' => [
                 [
-                    'minister_sitting_id' => 1,
+                    'minister_session_id' => 1,
                     'assembly_id' => 1,
                     'ministry_id' => 1,
                     'congressman_id' => 1,

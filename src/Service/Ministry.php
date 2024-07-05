@@ -59,7 +59,7 @@ class Ministry implements DatabaseAwareInterface, EventsAwareInterface
     public function fetchByCongressmanAssembly(int $assemblyId, int $congressmanId)
     {
         $statement = $this->getDriver()->prepare(
-            "select DISTINCT M.* from MinisterSitting MS
+            "select DISTINCT M.* from MinisterSession MS
                 join Ministry M on MS.ministry_id = M.ministry_id
             where assembly_id = :assembly_id and congressman_id = :congressman_id"
         );
@@ -76,7 +76,7 @@ class Ministry implements DatabaseAwareInterface, EventsAwareInterface
     public function getByCongressmanAssembly(int $assemblyId, int $congressmanId, int $ministryId): ?Model\Ministry
     {
         $statement = $this->getDriver()->prepare(
-            "select DISTINCT M.* from MinisterSitting MS
+            "select DISTINCT M.* from MinisterSession MS
                 join Ministry M on MS.ministry_id = M.ministry_id
                 where MS.assembly_id = :assembly_id
                     and MS.congressman_id = :congressman_id

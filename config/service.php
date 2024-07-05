@@ -56,9 +56,9 @@ return [
             return (new Controller\MinisterController())
                 ->setMinistryService($container->get(Service\Ministry::class));
         },
-        Controller\MinisterSittingController::class => function (ContainerInterface $container) {
-            return (new Controller\MinisterSittingController())
-                ->setMinisterSittingService($container->get(Service\MinisterSitting::class))
+        Controller\MinisterSessionController::class => function (ContainerInterface $container) {
+            return (new Controller\MinisterSessionController())
+                ->setMinisterSessionService($container->get(Service\MinisterSession::class))
                 ->setRouter($container->get(RouteInterface::class))
                 ;
         },
@@ -286,9 +286,9 @@ return [
                 ->setEventDispatcher($container->get(EventDispatcherInterface::class))
                 ;
         },
-        Controller\Cli\IndexerMinisterSittingController::class => function (ContainerInterface $container) {
-            return (new Controller\Cli\IndexerMinisterSittingController())
-                ->setMinisterSittingService($container->get(Service\MinisterSitting::class))
+        Controller\Cli\IndexerMinisterSessionController::class => function (ContainerInterface $container) {
+            return (new Controller\Cli\IndexerMinisterSessionController())
+                ->setMinisterSessionService($container->get(Service\MinisterSession::class))
                 ->setEventDispatcher($container->get(EventDispatcherInterface::class))
                 ;
         },
@@ -458,8 +458,8 @@ return [
                 ->setEventDispatcher($sm->get(EventDispatcherInterface::class))
                 ;
         },
-        Service\MinisterSitting::class => function (ContainerInterface $sm) {
-            return (new Service\MinisterSitting())
+        Service\MinisterSession::class => function (ContainerInterface $sm) {
+            return (new Service\MinisterSession())
                 ->setDriver($sm->get(PDO::class))
                 ->setEventDispatcher($sm->get(EventDispatcherInterface::class))
                 ;

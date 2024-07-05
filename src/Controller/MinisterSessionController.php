@@ -10,7 +10,7 @@ use Laminas\Diactoros\Response\{
 };
 use Althingi\Form;
 use Althingi\Service;
-use Althingi\Injector\ServiceMinisterSittingAwareInterface;
+use Althingi\Injector\ServiceMinisterSessionAwareInterface;
 use Althingi\Utils\{
     ErrorFormResponse,
     ErrorExceptionResponse
@@ -23,18 +23,18 @@ use Althingi\Router\{
 };
 
 /**
- * Class MinisterSittingController
+ * Class MinisterSessionController
  * @package Althingi\Controller
  */
-class MinisterSittingController implements
+class MinisterSessionController implements
     RestControllerInterface,
-    ServiceMinisterSittingAwareInterface,
+    ServiceMinisterSessionAwareInterface,
     RouterAwareInterface
 {
     use RestControllerTrait;
 
     private RouteInterface $router;
-    private Service\MinisterSitting $ministerSittingService;
+    private Service\MinisterSession $ministerSessionService;
 
     /**
      * @output \Althingi\Model\CommitteeSession
@@ -43,19 +43,19 @@ class MinisterSittingController implements
      */
     public function get(ServerRequest $request): ResponseInterface
     {
-        $ministerSitting = $this->ministerSittingService->get(
+        $ministerSession = $this->ministerSessionService->get(
             $request->getAttribute('ministry_sitting_id')
         );
 
-        return $ministerSitting
-            ? new JsonResponse($ministerSitting)
+        return $ministerSession
+            ? new JsonResponse($ministerSession)
             : new EmptyResponse(404);
     }
 
     /**
      * Create a new Congressman session.
      *
-     * @todo MinisterSitting do not have IDs coming from althingi.is.
+     * @todo MinisterSession do not have IDs coming from althingi.is.
      *  They are created on this server. To be able to update
      *  these entries, the server has to provide the client with
      *  the URI created on the server. This method will try to
@@ -65,11 +65,11 @@ class MinisterSittingController implements
      *  well as issuing a 409 response code. The client can then
      *  try to do a PATCH request with the URI provided.
      *
-     *  If althingi.is will start to provide a MinisterSittingIDs, then this will
+     *  If althingi.is will start to provide a MinisterSessionIDs, then this will
      *  not be needed as the resource wil be stores via PUSH request.
      *
      *  To facilitate that, create a self::push() method and remove
-     *  \Althingi\Service\MinisterSitting::getIdentifier()
+     *  \Althingi\Service\MinisterSession::getIdentifier()
      *
      * @input \Althingi\Form\CommitteeSession
      * @201 Created
@@ -80,26 +80,26 @@ class MinisterSittingController implements
     {
         $congressmanId = $request->getAttribute('congressman_id');
         $statusCode = 201;
-        $ministerSittingId = 0;
+        $ministerSessionId = 0;
 
-        $form = new Form\MinisterSitting([
+        $form = new Form\MinisterSession([
             ...$request->getParsedBody(),
             'congressman_id' => $congressmanId,
         ]);
 
         if ($form->isValid()) {
-            $ministerSitting = $form->getModel();
+            $ministerSession = $form->getModel();
 
             try {
-                $ministerSittingId = $this->ministerSittingService->create($ministerSitting);
+                $ministerSessionId = $this->ministerSessionService->create($ministerSession);
                 $statusCode = 201;
             } catch (\PDOException $e) {
                 if ($e->errorInfo[1] == 1062) {
-                    $ministerSittingId = $this->ministerSittingService->getIdentifier(
-                        $ministerSitting->getAssemblyId(),
-                        $ministerSitting->getMinistryId(),
-                        $ministerSitting->getCongressmanId(),
-                        $ministerSitting->getFrom()
+                    $ministerSessionId = $this->ministerSessionService->getIdentifier(
+                        $ministerSession->getAssemblyId(),
+                        $ministerSession->getMinistryId(),
+                        $ministerSession->getCongressmanId(),
+                        $ministerSession->getFrom()
                     );
                     $statusCode = 409;
                 } else {
@@ -110,7 +110,7 @@ class MinisterSittingController implements
             return new EmptyResponse($statusCode, [
                 'Location' => $this->router->assemble([
                     'congressman_id' => $congressmanId,
-                    'ministry_sitting_id' => $ministerSittingId
+                    'ministry_sitting_id' => $ministerSessionId
                 ], ['name' => 'thingmenn/radherraseta'])
             ]);
         }
@@ -127,18 +127,18 @@ class MinisterSittingController implements
     public function patch(ServerRequest $request): ResponseInterface
     {
         if (
-            ($ministerSitting = $this->ministerSittingService->get(
+            ($ministerSession = $this->ministerSessionService->get(
                 $request->getAttribute('ministry_sitting_id')
             )) != null
         ) {
-            $form = new Form\MinisterSitting([
-                ...$ministerSitting->toArray(),
+            $form = new Form\MinisterSession([
+                ...$ministerSession->toArray(),
                 ...$request->getParsedBody(),
                 'ministry_sitting_id' => $request->getAttribute('ministry_sitting_id'),
             ]);
 
             if ($form->isValid()) {
-                $this->ministerSittingService->update($form->getModel());
+                $this->ministerSessionService->update($form->getModel());
                 return new EmptyResponse(205);
             }
 
@@ -149,12 +149,12 @@ class MinisterSittingController implements
     }
 
     /**
-     * @output \Althingi\MinisterSittingProperties[]
+     * @output \Althingi\MinisterSessionProperties[]
      * @206 Success
      */
     public function assemblySessionsAction(ServerRequest $request): ResponseInterface
     {
-        $sittings = $this->ministerSittingService->fetchByCongressmanAssembly(
+        $sittings = $this->ministerSessionService->fetchByCongressmanAssembly(
             $request->getAttribute('id', 0),
             $request->getAttribute('congressman_id', 0)
         );
@@ -162,9 +162,9 @@ class MinisterSittingController implements
         return new JsonResponse($sittings, 206);
     }
 
-    public function setMinisterSittingService(Service\MinisterSitting $ministerSitting): static
+    public function setMinisterSessionService(Service\MinisterSession $ministerSession): static
     {
-        $this->ministerSittingService = $ministerSitting;
+        $this->ministerSessionService = $ministerSession;
         return $this;
     }
 

@@ -4,20 +4,20 @@ namespace Althingi\Hydrator;
 
 use Althingi\Utils\HydratorInterface;
 
-class MinisterSitting implements HydratorInterface
+class MinisterSession implements HydratorInterface
 {
     use HydrateDate;
 
     /**
      *
      * @param array $data
-     * @param \Althingi\Model\MinisterSitting $object
-     * @return \Althingi\Model\MinisterSitting
+     * @param \Althingi\Model\MinisterSession $object
+     * @return \Althingi\Model\MinisterSession
      */
     public function hydrate(array $data, object $object): object
     {
         return $object
-            ->setMinisterSittingId($data['minister_sitting_id'])
+            ->setMinisterSessionId($data['minister_session_id'])
             ->setAssemblyId($data['assembly_id'])
             ->setCongressmanId($data['congressman_id'])
             ->setMinistryId($data['ministry_id'])
@@ -29,7 +29,7 @@ class MinisterSitting implements HydratorInterface
 
     /**
      *
-     * @param \Althingi\Model\MinisterSitting $object
+     * @param \Althingi\Model\MinisterSession $object
      * @return array
      */
     public function extract(object $object): array
