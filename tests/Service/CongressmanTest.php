@@ -2,34 +2,31 @@
 
 namespace Althingi\Service;
 
-use Althingi\Service\Congressman;
-use Althingi\DatabaseConnection;
-use PHPUnit\Framework\TestCase;
-use Althingi\Model\CongressmanAndCabinet;
-use Althingi\Model\CongressmanAndParty;
-use Althingi\Model\CongressmanAndDateRange;
-use Althingi\Model\President;
-use Althingi\Model\Proponent;
-use Althingi\Model\Congressman as CongressmanModel;
-use Althingi\Model\CongressmanValue as CongressmanValueModel;
-use PDO;
-use Mockery;
-use Psr\EventDispatcher\EventDispatcherInterface;
+use Althingi\DatabaseConnectionTrait;
 use Althingi\Events\{UpdateEvent, AddEvent};
-use Althingi\Model\KindEnum;
+use Althingi\Model;
+use Mockery;
+use PHPUnit\Framework\Attributes\{Test, After};
+use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class CongressmanTest extends TestCase
 {
-    use DatabaseConnection;
+    use DatabaseConnectionTrait;
 
-    private PDO $pdo;
+    #[After]
+    public function down(): void
+    {
+        Mockery::close();
+    }
 
-    public function testGet()
+    #[Test]
+    public function getSuccess()
     {
         $congressmanService = new Congressman();
-        $congressmanService->setDriver($this->pdo);
+        $congressmanService->setDriver($this->getPDO());
 
-        $expectedData = (new CongressmanModel())
+        $expectedData = (new Model\Congressman())
             ->setCongressmanId(1)
             ->setName('name1')
             ->setBirth(new \DateTime('2000-01-01'));
@@ -39,10 +36,11 @@ class CongressmanTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testGetNotFound()
+    #[Test]
+    public function getNotFound()
     {
         $congressmanService = new Congressman();
-        $congressmanService->setDriver($this->pdo);
+        $congressmanService->setDriver($this->getPDO());
 
         $expectedData = null;
 
@@ -51,111 +49,121 @@ class CongressmanTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchAll()
+    #[Test]
+    public function fetchAll()
     {
         $congressmanService = new Congressman();
-        $congressmanService->setDriver($this->pdo);
+        $congressmanService->setDriver($this->getPDO());
 
         $this->assertCount(4, $congressmanService->fetchAll(0, 100));
     }
 
-    public function testCount()
+    #[Test]
+    public function countSuccess()
     {
         $congressmanService = new Congressman();
-        $congressmanService->setDriver($this->pdo);
+        $congressmanService->setDriver($this->getPDO());
 
         $this->assertEquals(4, $congressmanService->count());
     }
 
-    public function testFetchByAssembly()
+    #[Test]
+    public function fetchByAssembly()
     {
         $congressmanService = new Congressman();
-        $congressmanService->setDriver($this->pdo);
+        $congressmanService->setDriver($this->getPDO());
 
         $this->assertCount(2, $congressmanService->fetchByAssembly(1));
         $this->assertCount(2, $congressmanService->fetchByAssembly(1, Congressman::CONGRESSMAN_TYPE_MP));
         $this->assertCount(1, $congressmanService->fetchByAssembly(1, Congressman::CONGRESSMAN_TYPE_SUBSTITUTE));
         $this->assertCount(0, $congressmanService->fetchByAssembly(1, Congressman::CONGRESSMAN_TYPE_WITH_SUBSTITUTE));
-        $this->assertInstanceOf(CongressmanAndParty::class, ($congressmanService->fetchByAssembly(1))[0]);
+        $this->assertInstanceOf(Model\CongressmanAndParty::class, ($congressmanService->fetchByAssembly(1))[0]);
     }
 
-    public function testFetchByCabinet()
+    #[Test]
+    public function fetchByCabinet()
     {
         $congressmanService = new Congressman();
-        $congressmanService->setDriver($this->pdo);
+        $congressmanService->setDriver($this->getPDO());
         $congressmen = $congressmanService->fetchByCabinet(1);
 
         $this->assertCount(1, $congressmen);
-        $this->assertInstanceOf(CongressmanAndCabinet::class, $congressmen[0]);
+        $this->assertInstanceOf(Model\CongressmanAndCabinet::class, $congressmen[0]);
     }
 
-    public function testFetchPresidents()
+    #[Test]
+    public function fetchPresidents()
     {
         $congressmanService = new Congressman();
-        $congressmanService->setDriver($this->pdo);
+        $congressmanService->setDriver($this->getPDO());
 
         $presidents = $congressmanService->fetchPresidents();
 
         $this->assertCount(3, $presidents);
-        $this->assertInstanceOf(President::class, $presidents[0]);
+        $this->assertInstanceOf(Model\President::class, $presidents[0]);
     }
 
-    public function testFetchProponents()
+    #[Test]
+    public function fetchProponents()
     {
         $congressmanService = new Congressman();
-        $congressmanService->setDriver($this->pdo);
+        $congressmanService->setDriver($this->getPDO());
 
         $proponents = $congressmanService->fetchProponents(1, 1);
 
         $this->assertCount(1, $proponents);
-        $this->assertInstanceOf(Proponent::class, $proponents[0]);
+        $this->assertInstanceOf(Model\Proponent::class, $proponents[0]);
     }
 
-    public function testFetchProponentsByIssue()
+    #[Test]
+    public function fetchProponentsByIssue()
     {
         $congressmanService = new Congressman();
-        $congressmanService->setDriver($this->pdo);
+        $congressmanService->setDriver($this->getPDO());
 
         $proponents = $congressmanService->fetchProponentsByIssue(1, 1);
 
         $this->assertCount(1, $proponents);
-        $this->assertInstanceOf(Proponent::class, $proponents[0]);
+        $this->assertInstanceOf(Model\Proponent::class, $proponents[0]);
     }
 
-    public function testFetchAccumulatedTimeByIssue()
+    #[Test]
+    public function fetchAccumulatedTimeByIssue()
     {
         $congressmanService = new Congressman();
-        $congressmanService->setDriver($this->pdo);
+        $congressmanService->setDriver($this->getPDO());
 
         $issueTime = $congressmanService->fetchAccumulatedTimeByIssue(1, 1);
 
         $this->assertCount(1, $issueTime);
-        $this->assertInstanceOf(CongressmanAndDateRange::class, $issueTime[0]);
+        $this->assertInstanceOf(Model\CongressmanAndDateRange::class, $issueTime[0]);
     }
 
-    public function testFetchPresidentsByAssembly()
+    #[Test]
+    public function fetchPresidentsByAssembly()
     {
         $congressmanService = new Congressman();
-        $congressmanService->setDriver($this->pdo);
+        $congressmanService->setDriver($this->getPDO());
 
         $presidents = $congressmanService->fetchPresidentsByAssembly(1);
 
         $this->assertCount(1, $presidents);
-        $this->assertInstanceOf(President::class, $presidents[0]);
+        $this->assertInstanceOf(Model\President::class, $presidents[0]);
     }
 
-    public function testFetchTimeByAssembly()
+    #[Test]
+    public function fetchTimeByAssembly()
     {
         $congressmanService = new Congressman();
-        $congressmanService->setDriver($this->pdo);
+        $congressmanService->setDriver($this->getPDO());
 
         $expectedData = [
-            (new CongressmanValueModel())
+            (new Model\CongressmanValue())
                 ->setCongressmanId(1)
                 ->setName('name1')
                 ->setBirth(new \DateTime('2000-01-01'))
                 ->setValue(60),
-            (new CongressmanValueModel())
+            (new Model\CongressmanValue())
                 ->setCongressmanId(2)
                 ->setName('name2')
                 ->setBirth(new \DateTime('2000-01-01'))
@@ -167,8 +175,10 @@ class CongressmanTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testCreate()
+    #[Test]
+    public function createSuccess()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -177,7 +187,7 @@ class CongressmanTest extends TestCase
             })
             ->getMock();
 
-        $congressman = (new CongressmanModel())
+        $congressman = (new Model\Congressman())
             ->setName('name5')
             ->setBirth(new \DateTime('2000-01-01'));
 
@@ -198,15 +208,17 @@ class CongressmanTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('Congressman', 'SELECT * FROM Congressman');
 
         $congressmanService = new Congressman();
-        $congressmanService->setDriver($this->pdo)
+        $congressmanService->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher);
         $congressmanService->create($congressman);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testSave()
+    #[Test]
+    public function saveSuccess()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -215,7 +227,7 @@ class CongressmanTest extends TestCase
             })
             ->getMock();
 
-        $congressman = (new CongressmanModel())
+        $congressman = (new Model\Congressman())
             ->setName('name5')
             ->setBirth(new \DateTime('2000-01-01'));
 
@@ -236,15 +248,17 @@ class CongressmanTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('Congressman', 'SELECT * FROM Congressman');
 
         $congressmanService = new Congressman();
-        $congressmanService->setDriver($this->pdo)
+        $congressmanService->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher);
         $congressmanService->save($congressman);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testUpdate()
+    #[Test]
+    public function updateSuccess()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -253,7 +267,7 @@ class CongressmanTest extends TestCase
             })
             ->getMock();
 
-        $congressman = (new CongressmanModel())
+        $congressman = (new Model\Congressman())
             ->setCongressmanId(1)
             ->setName('hundur')
             ->setBirth(new \DateTime('2000-01-01'));
@@ -273,15 +287,17 @@ class CongressmanTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('Congressman', 'SELECT * FROM Congressman');
 
         $congressmanService = new Congressman();
-        $congressmanService->setDriver($this->pdo)
+        $congressmanService->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher);
         $congressmanService->update($congressman);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testDelete()
+    #[Test]
+    public function deleteSuccess()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->never()
@@ -303,15 +319,17 @@ class CongressmanTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('Congressman', 'SELECT * FROM Congressman');
 
         $congressmanService = new Congressman();
-        $congressmanService->setDriver($this->pdo)
+        $congressmanService->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher);
         $congressmanService->delete(1);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testCreateFireEventOneEntryCreated()
+    #[Test]
+    public function createFireEventOneEntryCreated()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -321,18 +339,20 @@ class CongressmanTest extends TestCase
             })
             ->getMock();
 
-        $congressman = (new CongressmanModel())
+        $congressman = (new Model\Congressman())
             ->setName('name5')
             ->setBirth(new \DateTime('2000-01-01'));
 
         (new Congressman())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->create($congressman);
     }
 
-    public function testUpdateFireEventZeroNoUpdate()
+    #[Test]
+    public function updateFireEventZeroNoUpdate()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -342,19 +362,21 @@ class CongressmanTest extends TestCase
             })
             ->getMock();
 
-        $congressman = (new CongressmanModel())
+        $congressman = (new Model\Congressman())
             ->setCongressmanId(1)
             ->setName('name1')
             ->setBirth(new \DateTime('2000-01-01'));
 
         (new Congressman())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->update($congressman);
     }
 
-    public function testUpdateFireEventOneDidAnUpdate()
+    #[Test]
+    public function updateFireEventOneDidAnUpdate()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -364,19 +386,21 @@ class CongressmanTest extends TestCase
             })
             ->getMock();
 
-        $congressman = (new CongressmanModel())
+        $congressman = (new Model\Congressman())
             ->setCongressmanId(1)
             ->setName('name1-update')
             ->setBirth(new \DateTime('2000-01-01'));
 
         (new Congressman())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->update($congressman);
     }
 
-    public function testSaveFireEventZeroFoundAnEntryButNoUpdatedRequired()
+    #[Test]
+    public function saveFireEventZeroFoundAnEntryButNoUpdatedRequired()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -386,19 +410,21 @@ class CongressmanTest extends TestCase
             })
             ->getMock();
 
-        $congressman = (new CongressmanModel())
+        $congressman = (new Model\Congressman())
             ->setCongressmanId(1)
             ->setName('name1')
             ->setBirth(new \DateTime('2000-01-01'));
 
         (new Congressman())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->save($congressman);
     }
 
-    public function testSaveFireEventOneCreatedNewEntry()
+    #[Test]
+    public function saveFireEventOneCreatedNewEntry()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -408,19 +434,21 @@ class CongressmanTest extends TestCase
             })
             ->getMock();
 
-        $congressman = (new CongressmanModel())
+        $congressman = (new Model\Congressman())
             ->setCongressmanId(5)
             ->setName('name1')
             ->setBirth(new \DateTime('2000-01-01'));
 
         (new Congressman())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->save($congressman);
     }
 
-    public function testSaveFireEventTwoFoundEntryAndUpdatedIt()
+    #[Test]
+    public function saveFireEventTwoFoundEntryAndUpdatedIt()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -430,13 +458,13 @@ class CongressmanTest extends TestCase
             })
             ->getMock();
 
-        $congressman = (new CongressmanModel())
+        $congressman = (new Model\Congressman())
             ->setCongressmanId(1)
             ->setName('name1-update')
             ->setBirth(new \DateTime('2000-01-01'));
 
         (new Congressman())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->save($congressman);
     }
@@ -536,14 +564,14 @@ class CongressmanTest extends TestCase
                 ],
             ],
             'Issue' => [
-                ['issue_id' => 1, 'assembly_id' => 1, 'kind' => KindEnum::A->value]
+                ['issue_id' => 1, 'assembly_id' => 1, 'kind' => Model\KindEnum::A->value]
             ],
             'Document' => [
                 [
                     'document_id' => 1,
                     'issue_id' => 1,
                     'assembly_id' => 1,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'date' => '2000-01-01',
                     'url' => '',
                     'type' => ''
@@ -554,7 +582,7 @@ class CongressmanTest extends TestCase
                     'document_id' => 1,
                     'issue_id' => 1,
                     'assembly_id' => 1,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'congressman_id' => 1,
                     'order' => 1
                 ]
@@ -568,17 +596,12 @@ class CongressmanTest extends TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 1,
                     'issue_id' => 1,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'congressman_id' => 1,
                     'from' => '2001-01-01 00:00:00',
                     'to' => '2001-01-01 00:01:00',
                 ]
             ]
         ]);
-    }
-
-    public function tearDown(): void
-    {
-        Mockery::close();
     }
 }

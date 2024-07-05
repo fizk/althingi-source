@@ -1,7 +1,6 @@
-FROM php:8.1.8-apache-bullseye
+FROM php:8.3.8-apache-bookworm
 
 ARG ENV
-ENV PATH="/var/www/alias:/var/www/bin:${PATH}"
 
 EXPOSE 80
 
@@ -44,17 +43,25 @@ RUN echo "[PHP]\n\
 memory_limit = 2048M \n\
 upload_max_filesize = 512M \n\
 expose_php = Off \n\n\
-date.timezone = Atlantic/Reykjavik \n" >> /usr/local/etc/php/conf.d/php.ini; \
-echo "<VirtualHost *:80>\n\
-    DocumentRoot /var/www/public\n\
-    ErrorLog \${APACHE_LOG_DIR}/error.log\n\
-    CustomLog \${APACHE_LOG_DIR}/access.log combined\n\
-    RewriteEngine On\n\
-    RewriteRule ^index\.php$ - [L]\n\
-    RewriteCond %{REQUEST_FILENAME} !-f\n\
-    RewriteCond %{REQUEST_FILENAME} !-d\n\
-    RewriteRule . /index.php [L]\n\
-</VirtualHost>\n" > /etc/apache2/sites-available/000-default.conf;
+date.timezone = Atlantic/Reykjavik \n" >> /usr/local/etc/php/conf.d/php.ini;
+
+RUN echo "<VirtualHost *:80> \n\
+    ServerAdmin webmaster@localhost \n\
+    DocumentRoot /var/www/public \n\
+    ErrorLog \${APACHE_LOG_DIR}/error.log \n\
+    CustomLog \${APACHE_LOG_DIR}/access.log combined \n\
+    <Directory /var/www/public/> \n\
+        Options Indexes FollowSymLinks \n\
+        AllowOverride None \n\
+        Require all granted \n\n\
+        \
+        RewriteEngine on \n\
+        RewriteCond %{REQUEST_FILENAME} !-d \n\
+        RewriteCond %{REQUEST_FILENAME} !-f \n\
+        RewriteRule . index.php [L] \n\
+    </Directory> \n\
+</VirtualHost>" > /etc/apache2/sites-available/000-default.conf;
+
 
 # If Production, configures PHP's JIT
 # environment and sets a resonable buffer size and memory.
@@ -87,16 +94,6 @@ RUN if [ "$ENV" != "production" ] ; then \
 # Sets the working directory and the user to www-data.
 # That is the user that is already configured to run Apache
 WORKDIR /var/www
-
-# If not Production, add scripts to run `phpunit` and `cover`
-RUN if [ "$ENV" != "production" ] ; then \
-    mkdir -p /var/www/alias; \
-    echo "#!/bin/bash\n/var/www/vendor/bin/phpunit \$@" >> /var/www/alias/phpunit; \
-    chmod u+x /var/www/alias/phpunit; \
-    echo "#!/bin/bash\nXDEBUG_MODE=coverage /var/www/vendor/bin/phpunit --coverage-html=/var/www/tests/docs" >> /var/www/alias/cover; \
-    chmod u+x /var/www/alias/cover; \
-    fi ;
-
 
 # Copy dependenices for Composer into container
 # Install Composer and then install Coposer dependencies

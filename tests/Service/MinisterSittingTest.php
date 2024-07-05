@@ -2,26 +2,23 @@
 
 namespace Althingi\Service;
 
-use Althingi\Service\MinisterSitting;
-use Althingi\DatabaseConnection;
-use Althingi\Events\AddEvent;
-use Althingi\Events\UpdateEvent;
-use PHPUnit\Framework\TestCase;
+use Althingi\DatabaseConnectionTrait;
+use Althingi\Events\{UpdateEvent, AddEvent};
 use Althingi\Model;
 use Mockery;
-use PDO;
+use PHPUnit\Framework\Attributes\{Test};
+use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
 class MinisterSittingTest extends TestCase
 {
-    use DatabaseConnection;
+    use DatabaseConnectionTrait;
 
-    private PDO $pdo;
-
-    public function testGet()
+    #[Test]
+    public function getSuccess()
     {
         $ministerSittingService = new MinisterSitting();
-        $ministerSittingService->setDriver($this->pdo);
+        $ministerSittingService->setDriver($this->getPDO());
 
         $expectedData = (new Model\MinisterSitting())
             ->setAssemblyId(1)
@@ -36,10 +33,11 @@ class MinisterSittingTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchAllGeneratorAll()
+    #[Test]
+    public function fetchAllGeneratorAll()
     {
         $ministerSittingService = new MinisterSitting();
-        $ministerSittingService->setDriver($this->pdo);
+        $ministerSittingService->setDriver($this->getPDO());
 
         $expectedData = [(new Model\MinisterSitting())
             ->setAssemblyId(1)
@@ -58,10 +56,11 @@ class MinisterSittingTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchAllGeneratorByAssemblyFound()
+    #[Test]
+    public function fetchAllGeneratorByAssemblyFound()
     {
         $ministerSittingService = new MinisterSitting();
-        $ministerSittingService->setDriver($this->pdo);
+        $ministerSittingService->setDriver($this->getPDO());
 
         $expectedData = [(new Model\MinisterSitting())
             ->setAssemblyId(1)
@@ -80,10 +79,11 @@ class MinisterSittingTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchAllGeneratorByAssemblyNotFound()
+    #[Test]
+    public function fetchAllGeneratorByAssemblyNotFound()
     {
         $ministerSittingService = new MinisterSitting();
-        $ministerSittingService->setDriver($this->pdo);
+        $ministerSittingService->setDriver($this->getPDO());
 
         $expectedData = []
         ;
@@ -96,7 +96,8 @@ class MinisterSittingTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testCreate()
+    #[Test]
+    public function createSuccess()
     {
         $ministrySitting = (new Model\MinisterSitting())
             ->setAssemblyId(1)
@@ -131,13 +132,14 @@ class MinisterSittingTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('MinisterSitting', 'SELECT * FROM MinisterSitting');
 
         $ministrySittingService = new MinisterSitting();
-        $ministrySittingService->setDriver($this->pdo);
+        $ministrySittingService->setDriver($this->getPDO());
         $ministrySittingService->create($ministrySitting);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testCreateAlreadyExist()
+    #[Test]
+    public function createAlreadyExist()
     {
         $ministrySitting = (new Model\MinisterSitting())
             ->setAssemblyId(1)
@@ -148,7 +150,7 @@ class MinisterSittingTest extends TestCase
             ->setFrom(new \DateTime('2001-01-01'));
 
         $ministrySittingService = new MinisterSitting();
-        $ministrySittingService->setDriver($this->pdo);
+        $ministrySittingService->setDriver($this->getPDO());
         try {
             $ministrySittingService->create($ministrySitting);
         } catch (\PDOException $e) {
@@ -156,7 +158,8 @@ class MinisterSittingTest extends TestCase
         }
     }
 
-    public function testSaveUpdate()
+    #[Test]
+    public function saveUpdate()
     {
         $ministrySitting = (new Model\MinisterSitting())
             ->setAssemblyId(1)
@@ -184,14 +187,15 @@ class MinisterSittingTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('MinisterSitting', 'SELECT * FROM MinisterSitting');
 
         $ministrySittingService = new MinisterSitting();
-        $ministrySittingService->setDriver($this->pdo);
+        $ministrySittingService->setDriver($this->getPDO());
         $affectedRows = $ministrySittingService->save($ministrySitting);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
         $this->assertEquals(2, $affectedRows);
     }
 
-    public function testSaveCreate()
+    #[Test]
+    public function saveCreate()
     {
         $ministrySitting = (new Model\MinisterSitting())
             ->setAssemblyId(2)
@@ -228,14 +232,15 @@ class MinisterSittingTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('MinisterSitting', 'SELECT * FROM MinisterSitting');
 
         $ministrySittingService = new MinisterSitting();
-        $ministrySittingService->setDriver($this->pdo);
+        $ministrySittingService->setDriver($this->getPDO());
         $affectedRows = $ministrySittingService->save($ministrySitting);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
         $this->assertEquals(1, $affectedRows);
     }
 
-    public function testUpdate()
+    #[Test]
+    public function updateSuccess()
     {
         $ministrySitting = (new Model\MinisterSitting())
             ->setAssemblyId(1)
@@ -263,16 +268,17 @@ class MinisterSittingTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('MinisterSitting', 'SELECT * FROM MinisterSitting');
 
         $ministrySittingService = new MinisterSitting();
-        $ministrySittingService->setDriver($this->pdo);
+        $ministrySittingService->setDriver($this->getPDO());
         $ministrySittingService->update($ministrySitting);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testGetIdentifier()
+    #[Test]
+    public function getIdentifier()
     {
         $ministerSittingService = new MinisterSitting();
-        $ministerSittingService->setDriver($this->pdo);
+        $ministerSittingService->setDriver($this->getPDO());
 
         $expectedData = (new Model\MinisterSitting())
             ->setAssemblyId(1)
@@ -291,10 +297,11 @@ class MinisterSittingTest extends TestCase
         $this->assertEquals(1, $actualData);
     }
 
-    public function testGetIdentifierNotFound()
+    #[Test]
+    public function getIdentifierNotFound()
     {
         $ministerSittingService = new MinisterSitting();
-        $ministerSittingService->setDriver($this->pdo);
+        $ministerSittingService->setDriver($this->getPDO());
 
         $expectedData = (new Model\MinisterSitting())
             ->setAssemblyId(100)
@@ -313,8 +320,10 @@ class MinisterSittingTest extends TestCase
         $this->assertEquals(false, $actualData);
     }
 
-    public function testCreateFireEventResourceCreated()
+    #[Test]
+    public function createFireEventResourceCreated()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -332,13 +341,15 @@ class MinisterSittingTest extends TestCase
             ->setFrom(new \DateTime('2001-01-01'));
 
         (new MinisterSitting())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->create($ministrySitting);
     }
 
-    public function testUpdateFireEventResourceFoundNoUpdateRequired()
+    #[Test]
+    public function updateFireEventResourceFoundNoUpdateRequired()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -357,13 +368,15 @@ class MinisterSittingTest extends TestCase
             ->setFrom(new \DateTime('2001-01-01'));
 
         (new MinisterSitting())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->update($ministrySitting);
     }
 
-    public function testUpdateFireEventResourceFoundUpdateNeeded()
+    #[Test]
+    public function updateFireEventResourceFoundUpdateNeeded()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -384,13 +397,15 @@ class MinisterSittingTest extends TestCase
         ;
 
         (new MinisterSitting())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->update($ministrySitting);
     }
 
-    public function testSaveFireEventResourceCreated()
+    #[Test]
+    public function saveFireEventResourceCreated()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -410,13 +425,15 @@ class MinisterSittingTest extends TestCase
         ;
 
         (new MinisterSitting())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->save($ministrySitting);
     }
 
-    public function testSaveFireEventResourceFoundNoNeedForUpdate()
+    #[Test]
+    public function saveFireEventResourceFoundNoNeedForUpdate()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -437,13 +454,15 @@ class MinisterSittingTest extends TestCase
         ;
 
         (new MinisterSitting())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->save($ministrySitting);
     }
 
-    public function testSaveFireEventResourceFoundUpdateNeeded()
+    #[Test]
+    public function saveFireEventResourceFoundUpdateNeeded()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -465,7 +484,7 @@ class MinisterSittingTest extends TestCase
         ;
 
         (new MinisterSitting())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->save($ministrySitting);
     }

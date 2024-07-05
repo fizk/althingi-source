@@ -2,25 +2,23 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Controller;
-use Althingi\Model;
-use Althingi\Service;
+use Althingi\{Model, Service};
+use Althingi\Controller\MinisterController;
 use Althingi\ServiceHelper;
 use Library\Container\Container;
+use PHPUnit\Framework\Attributes\{CoversMethod, CoversClass, Test, Before, After};
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class IssueControllerTest
- * @package Althingi\Controller
- * @coversDefaultClass \Althingi\Controller\MinisterController
- *
- * @covers \Althingi\Controller\MinisterController::setMinistryService
- */
+#[CoversClass(MinisterController::class)]
+#[CoversMethod(MinisterController::class, 'setMinistryService')]
+#[CoversMethod(MinisterController::class, 'get')]
+#[CoversMethod(MinisterController::class, 'getList')]
 class MinisterControllerTest extends TestCase
 {
     use ServiceHelper;
 
-    public function setUp(): void
+    #[Before]
+    public function up(): void
     {
         $this->setServiceManager(
             new Container(require __DIR__ . '/../../config/service.php')
@@ -30,17 +28,15 @@ class MinisterControllerTest extends TestCase
         ]);
     }
 
-    public function tearDown(): void
+    #[After]
+    public function down(): void
     {
         \Mockery::close();
         parent::tearDown();
     }
 
-    /**
-     * @covers ::get
-     * @throws \Exception
-     */
-    public function testGet()
+    #[Test]
+    public function getSuccessful()
     {
         $this->getMockService(Service\Ministry::class)
             ->shouldReceive('getByCongressmanAssembly')
@@ -51,16 +47,13 @@ class MinisterControllerTest extends TestCase
 
         $this->dispatch('/loggjafarthing/149/thingmenn/1335/radherra/321', 'GET');
 
-        $this->assertControllerName(Controller\MinisterController::class);
+        $this->assertControllerName(MinisterController::class);
         $this->assertActionName('get');
         $this->assertResponseStatusCode(200);
     }
 
-    /**
-     * @covers ::get
-     * @throws \Exception
-     */
-    public function testGetNotFound()
+    #[Test]
+    public function getNotFound()
     {
         $this->getMockService(Service\Ministry::class)
             ->shouldReceive('getByCongressmanAssembly')
@@ -71,16 +64,13 @@ class MinisterControllerTest extends TestCase
 
         $this->dispatch('/loggjafarthing/149/thingmenn/1335/radherra/321', 'GET');
 
-        $this->assertControllerName(Controller\MinisterController::class);
+        $this->assertControllerName(MinisterController::class);
         $this->assertActionName('get');
         $this->assertResponseStatusCode(404);
     }
 
-    /**
-     * @covers ::getList
-     * @throws \Exception
-     */
-    public function testGetList()
+    #[Test]
+    public function getList()
     {
         $this->getMockService(Service\Ministry::class)
             ->shouldReceive('fetchByCongressmanAssembly')
@@ -91,7 +81,7 @@ class MinisterControllerTest extends TestCase
 
         $this->dispatch('/loggjafarthing/149/thingmenn/1335/radherra', 'GET');
 
-        $this->assertControllerName(Controller\MinisterController::class);
+        $this->assertControllerName(MinisterController::class);
         $this->assertActionName('getList');
         $this->assertResponseStatusCode(206);
     }

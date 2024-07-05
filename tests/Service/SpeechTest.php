@@ -2,35 +2,29 @@
 
 namespace Althingi\Service;
 
-use Althingi\Service\Speech;
-use Althingi\DatabaseConnection;
-use Althingi\Events\AddEvent;
-use Althingi\Events\UpdateEvent;
-use PHPUnit\Framework\TestCase;
-use Althingi\Model\Speech as SpeechModel;
-use Althingi\Model\SpeechAndPosition as SpeechAndPositionModel;
-use Althingi\Model\DateAndCount as DateAndCountModel;
-use Althingi\Model\KindEnum;
+use Althingi\DatabaseConnectionTrait;
+use Althingi\Events\{UpdateEvent, AddEvent};
+use Althingi\Model;
 use Mockery;
-use PDO;
+use PHPUnit\Framework\Attributes\{Test};
+use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
 class SpeechTest extends TestCase
 {
-    use DatabaseConnection;
+    use DatabaseConnectionTrait;
 
-    private PDO $pdo;
-
-    public function testGetSpeech()
+    #[Test]
+    public function getSpeech()
     {
         $service = new Speech();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
-        $expectedData = (new SpeechModel())
+        $expectedData = (new Model\Speech())
             ->setSpeechId('id--00001')
             ->setAssemblyId(1)
             ->setPlenaryId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setIssueId(1)
             ->setCongressmanId(1);
 
@@ -39,10 +33,11 @@ class SpeechTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testGetSpeechNotFound()
+    #[Test]
+    public function getSpeechNotFound()
     {
         $service = new Speech();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
         $expectedData = null;
 
@@ -51,26 +46,27 @@ class SpeechTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetch()
+    #[Test]
+    public function fetchSuccess()
     {
         $service = new Speech();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
         $expectedData = [
-            (new SpeechAndPositionModel())
+            (new Model\SpeechAndPosition())
                 ->setSpeechId('id--00003')
                 ->setAssemblyId(1)
                 ->setPlenaryId(1)
-                ->setKind(KindEnum::A)
+                ->setKind(Model\KindEnum::A)
                 ->setIssueId(1)
                 ->setCongressmanId(1)
                 ->setPosition(2),
 
-            (new SpeechAndPositionModel())
+            (new Model\SpeechAndPosition())
                 ->setSpeechId('id--00004')
                 ->setAssemblyId(1)
                 ->setPlenaryId(1)
-                ->setKind(KindEnum::A)
+                ->setKind(Model\KindEnum::A)
                 ->setIssueId(1)
                 ->setCongressmanId(1)
                 ->setPosition(3),
@@ -81,10 +77,11 @@ class SpeechTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchNotFound()
+    #[Test]
+    public function fetchNotFound()
     {
         $service = new Speech();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
         $expectedData = [];
 
@@ -93,40 +90,42 @@ class SpeechTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchByIssue()
+    #[Test]
+    public function fetchByIssue()
     {
         $service = new Speech();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
         $expectedData = [
-            (new SpeechAndPositionModel())
+            (new Model\SpeechAndPosition())
                 ->setSpeechId('id--00001')
                 ->setAssemblyId(1)
                 ->setPlenaryId(1)
-                ->setKind(KindEnum::A)
+                ->setKind(Model\KindEnum::A)
                 ->setIssueId(1)
                 ->setCongressmanId(1)
                 ->setPosition(0),
 
-            (new SpeechAndPositionModel())
+            (new Model\SpeechAndPosition())
                 ->setSpeechId('id--00002')
                 ->setAssemblyId(1)
                 ->setPlenaryId(1)
-                ->setKind(KindEnum::A)
+                ->setKind(Model\KindEnum::A)
                 ->setIssueId(1)
                 ->setCongressmanId(1)
                 ->setPosition(1),
         ];
 
-        $actualData = $service->fetchByIssue(1, 1, KindEnum::A, 0, 2);
+        $actualData = $service->fetchByIssue(1, 1, Model\KindEnum::A, 0, 2);
 
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testCountByIssue()
+    #[Test]
+    public function countByIssue()
     {
         $service = new Speech();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
         $expectedData = 4;
         $actualData = $service->countByIssue(1, 1);
@@ -134,40 +133,43 @@ class SpeechTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchFrequencyByIssue()
+    #[Test]
+    public function fetchFrequencyByIssue()
     {
         $service = new Speech();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
         $expectedData = [
-            (new DateAndCountModel())->setCount(60)->setDate(new \DateTime('2000-01-01')),
-            (new DateAndCountModel())->setCount(60)->setDate(new \DateTime('2000-02-01')),
-            (new DateAndCountModel())->setCount(60)->setDate(new \DateTime('2000-03-01')),
+            (new Model\DateAndCount())->setCount(60)->setDate(new \DateTime('2000-01-01')),
+            (new Model\DateAndCount())->setCount(60)->setDate(new \DateTime('2000-02-01')),
+            (new Model\DateAndCount())->setCount(60)->setDate(new \DateTime('2000-03-01')),
         ];
         $actualData = $service->fetchFrequencyByIssue(1, 2);
 
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchFrequencyByAssembly()
+    #[Test]
+    public function fetchFrequencyByAssembly()
     {
         $service = new Speech();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
         $expectedData = [
-            (new DateAndCountModel())->setCount(60)->setDate(new \DateTime('2000-01-01')),
-            (new DateAndCountModel())->setCount(60)->setDate(new \DateTime('2000-02-01')),
-            (new DateAndCountModel())->setCount(60)->setDate(new \DateTime('2000-03-01')),
+            (new Model\DateAndCount())->setCount(60)->setDate(new \DateTime('2000-01-01')),
+            (new Model\DateAndCount())->setCount(60)->setDate(new \DateTime('2000-02-01')),
+            (new Model\DateAndCount())->setCount(60)->setDate(new \DateTime('2000-03-01')),
         ];
         $actualData = $service->fetchFrequencyByAssembly(1);
 
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testCountTotalTimeByAssemblyAndCongressman()
+    #[Test]
+    public function countTotalTimeByAssemblyAndCongressman()
     {
         $service = new Speech();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
         $expectedData = 120;
         $actualData = $service->countTotalTimeByAssemblyAndCongressman(1, 1);
@@ -175,14 +177,15 @@ class SpeechTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testCreate()
+    #[Test]
+    public function createSuccess()
     {
-        $speech = (new SpeechModel())
+        $speech = (new Model\Speech())
             ->setSpeechId('id--20001')
             ->setPlenaryId(1)
             ->setAssemblyId(3)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setCongressmanId(1);
 
         $expectedTable = $this->createArrayDataSet([
@@ -192,7 +195,7 @@ class SpeechTest extends TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 3,
                     'issue_id' => 1,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'congressman_id' => 1,
                     'congressman_type' => null,
                     'from' => null,
@@ -209,18 +212,19 @@ class SpeechTest extends TestCase
             ->createQueryTable('Speech', 'SELECT * FROM Speech where `assembly_id` = 3');
 
         $speechService = new Speech();
-        $speechService->setDriver($this->pdo);
+        $speechService->setDriver($this->getPDO());
         $speechService->create($speech);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testSave()
+    #[Test]
+    public function saveSuccess()
     {
-        $speech = (new SpeechModel())
+        $speech = (new Model\Speech())
             ->setSpeechId('id--20001')
             ->setPlenaryId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setAssemblyId(3)
             ->setIssueId(1)
             ->setCongressmanId(1);
@@ -232,7 +236,7 @@ class SpeechTest extends TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 3,
                     'issue_id' => 1,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'congressman_id' => 1,
                     'congressman_type' => null,
                     'from' => null,
@@ -249,24 +253,25 @@ class SpeechTest extends TestCase
             ->createQueryTable('Speech', 'SELECT * FROM Speech where `assembly_id` = 3');
 
         $speechService = new Speech();
-        $speechService->setDriver($this->pdo);
+        $speechService->setDriver($this->getPDO());
         $speechService->save($speech);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testSavePlenaryDoesntExist()
+    #[Test]
+    public function savePlenaryDoesntExist()
     {
-        $speech = (new SpeechModel())
+        $speech = (new Model\Speech())
             ->setSpeechId('id--20001')
             ->setPlenaryId(10000)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setAssemblyId(3)
             ->setIssueId(1)
             ->setCongressmanId(1);
 
         $speechService = new Speech();
-        $speechService->setDriver($this->pdo);
+        $speechService->setDriver($this->getPDO());
         try {
             $speechService->save($speech);
         } catch (\PDOException $e) {
@@ -274,13 +279,14 @@ class SpeechTest extends TestCase
         }
     }
 
-    public function testUpdate()
+    #[Test]
+    public function updateSuccess()
     {
-        $speech = (new SpeechModel())
+        $speech = (new Model\Speech())
             ->setSpeechId('id--00001')
             ->setPlenaryId(1)
             ->setAssemblyId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setIssueId(1)
             ->setCongressmanId(2);
 
@@ -291,7 +297,7 @@ class SpeechTest extends TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 1,
                     'issue_id' => 1,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'congressman_id' => 2,
                     'congressman_type' => null,
                     'from' => null,
@@ -308,14 +314,16 @@ class SpeechTest extends TestCase
             ->createQueryTable('Speech', 'SELECT * FROM Speech where `speech_id` = "id--00001"');
 
         $speechService = new Speech();
-        $speechService->setDriver($this->pdo);
+        $speechService->setDriver($this->getPDO());
         $speechService->update($speech);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testCreateFireEventResourceCreated()
+    #[Test]
+    public function createFireEventResourceCreated()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -325,23 +333,25 @@ class SpeechTest extends TestCase
             })
             ->getMock();
 
-        $speech = (new SpeechModel())
+        $speech = (new Model\Speech())
             ->setSpeechId('unique-id')
             ->setPlenaryId(1)
             ->setAssemblyId(3)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setCongressmanId(1);
 
         (new Speech())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->create($speech)
         ;
     }
 
-    public function testUpdateFireEventResourceFoundNoUpdate()
+    #[Test]
+    public function updateFireEventResourceFoundNoUpdate()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -351,24 +361,26 @@ class SpeechTest extends TestCase
             })
             ->getMock();
 
-        $speech = (new SpeechModel())
+        $speech = (new Model\Speech())
             ->setSpeechId('id--00001')
             ->setPlenaryId(1)
             ->setAssemblyId(1)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setCongressmanId(1)
             ->setValidated(true);
 
         (new Speech())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->update($speech)
         ;
     }
 
-    public function testUpdateFireEventResourceFoundUpdateNeeded()
+    #[Test]
+    public function updateFireEventResourceFoundUpdateNeeded()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -378,24 +390,26 @@ class SpeechTest extends TestCase
             })
             ->getMock();
 
-        $speech = (new SpeechModel())
+        $speech = (new Model\Speech())
             ->setSpeechId('id--00001')
             ->setPlenaryId(1)
             ->setAssemblyId(1)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setCongressmanId(1)
             ->setValidated(false);
 
         (new Speech())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->update($speech)
         ;
     }
 
-    public function testSaveFireEventResourceCreated()
+    #[Test]
+    public function saveFireEventResourceCreated()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -405,24 +419,26 @@ class SpeechTest extends TestCase
             })
             ->getMock();
 
-        $speech = (new SpeechModel())
+        $speech = (new Model\Speech())
             ->setSpeechId('unique-id')
             ->setPlenaryId(1)
             ->setAssemblyId(1)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setCongressmanId(1)
             ->setValidated(false);
 
         (new Speech())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->save($speech)
         ;
     }
 
-    public function testSaveFireEventResourceFoundNoUpdateNeeded()
+    #[Test]
+    public function saveFireEventResourceFoundNoUpdateNeeded()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -432,24 +448,26 @@ class SpeechTest extends TestCase
             })
             ->getMock();
 
-        $speech = (new SpeechModel())
+        $speech = (new Model\Speech())
             ->setSpeechId('id--00001')
             ->setPlenaryId(1)
             ->setAssemblyId(1)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setCongressmanId(1)
             ->setValidated(true);
 
         (new Speech())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->save($speech)
         ;
     }
 
-    public function testSaveFireEventResourceFoundUpdateRequired()
+    #[Test]
+    public function saveFireEventResourceFoundUpdateRequired()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -459,17 +477,17 @@ class SpeechTest extends TestCase
             })
             ->getMock();
 
-        $speech = (new SpeechModel())
+        $speech = (new Model\Speech())
             ->setSpeechId('id--00001')
             ->setPlenaryId(1)
             ->setAssemblyId(1)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setCongressmanId(1)
             ->setValidated(false);
 
         (new Speech())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->save($speech)
         ;
@@ -484,14 +502,14 @@ class SpeechTest extends TestCase
               ['assembly_id' => 3, 'from' => '2000-01-01'],
             ],
             'Issue' => [
-                ['assembly_id' => 1, 'issue_id' => 1, 'kind' => KindEnum::A->value,],
-                ['assembly_id' => 1, 'issue_id' => 2, 'kind' => KindEnum::A->value,],
-                ['assembly_id' => 1, 'issue_id' => 3, 'kind' => KindEnum::A->value,],
-                ['assembly_id' => 2, 'issue_id' => 1, 'kind' => KindEnum::A->value,],
-                ['assembly_id' => 2, 'issue_id' => 2, 'kind' => KindEnum::A->value,],
-                ['assembly_id' => 2, 'issue_id' => 3, 'kind' => KindEnum::A->value,],
+                ['assembly_id' => 1, 'issue_id' => 1, 'kind' => Model\KindEnum::A->value,],
+                ['assembly_id' => 1, 'issue_id' => 2, 'kind' => Model\KindEnum::A->value,],
+                ['assembly_id' => 1, 'issue_id' => 3, 'kind' => Model\KindEnum::A->value,],
+                ['assembly_id' => 2, 'issue_id' => 1, 'kind' => Model\KindEnum::A->value,],
+                ['assembly_id' => 2, 'issue_id' => 2, 'kind' => Model\KindEnum::A->value,],
+                ['assembly_id' => 2, 'issue_id' => 3, 'kind' => Model\KindEnum::A->value,],
 
-                ['assembly_id' => 3, 'issue_id' => 1, 'kind' => KindEnum::A->value,],
+                ['assembly_id' => 3, 'issue_id' => 1, 'kind' => Model\KindEnum::A->value,],
             ],
             'Congressman' => [
                 ['congressman_id' => 1, 'name' => 'congressman 1', 'birth' => '2000-01-01'],
@@ -510,7 +528,7 @@ class SpeechTest extends TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 1,
                     'issue_id' => 1,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'congressman_id' => 1,
                     'from' => null,
                     'to' => null,
@@ -521,7 +539,7 @@ class SpeechTest extends TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 1,
                     'issue_id' => 1,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'congressman_id' => 1,
                     'from' => null,
                     'to' => null,
@@ -532,7 +550,7 @@ class SpeechTest extends TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 1,
                     'issue_id' => 1,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'congressman_id' => 1,
                     'from' => null,
                     'to' => null,
@@ -543,7 +561,7 @@ class SpeechTest extends TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 1,
                     'issue_id' => 1,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'congressman_id' => 1,
                     'from' => null,
                     'to' => null,
@@ -554,7 +572,7 @@ class SpeechTest extends TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 1,
                     'issue_id' => 2,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'congressman_id' => 1,
                     'from' => null,
                     'to' => null,
@@ -565,7 +583,7 @@ class SpeechTest extends TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 1,
                     'issue_id' => 2,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'congressman_id' => 1,
                     'from' => '2000-01-01 00:00:00',
                     'to' => '2000-01-01 00:01:00',
@@ -576,7 +594,7 @@ class SpeechTest extends TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 1,
                     'issue_id' => 2,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'congressman_id' => 1,
                     'from' => '2000-02-01 00:00:00',
                     'to' => '2000-02-01 00:01:00',
@@ -587,7 +605,7 @@ class SpeechTest extends TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 1,
                     'issue_id' => 2,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'congressman_id' => 2,
                     'from' => '2000-03-01 00:00:00',
                     'to' => '2000-03-01 00:01:00',

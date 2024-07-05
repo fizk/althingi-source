@@ -58,12 +58,12 @@ class CommitteeDocumentController implements
      */
     public function getList(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id');
-        $issueId = $request->getAttribute('issue_id');
-        $documentId = $request->getAttribute('document_id');
-
         $committeeDocuments = $this->committeeDocumentService
-            ->fetchByDocument($assemblyId, $issueId, $documentId);
+            ->fetchByDocument(
+                $request->getAttribute('id'),
+                $request->getAttribute('issue_id'),
+                $request->getAttribute('document_id')
+            );
 
         return new JsonResponse($committeeDocuments, 206);
     }

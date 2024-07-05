@@ -2,20 +2,19 @@
 
 namespace Althingi\Hydrator;
 
-use Laminas\Hydrator\HydratorInterface;
+use Althingi\Utils\HydratorInterface;
 
 class DateAndCount implements HydratorInterface
 {
     use HydrateDate;
 
     /**
-     * Hydrate $object with the provided $data.
      *
-     * @param  array $data
-     * @param  \Althingi\Model\DateAndCount $object
+     * @param array $data
+     * @param \Althingi\Model\DateAndCount $object
      * @return \Althingi\Model\DateAndCount
      */
-    public function hydrate(array $data, $object)
+    public function hydrate(array $data, object $object): object
     {
         return $object
             ->setDate($data['date'] ? $this->hydrateDate($data['date']) : null)
@@ -23,12 +22,11 @@ class DateAndCount implements HydratorInterface
     }
 
     /**
-     * Extract values from an object
      *
-     * @param  \Althingi\Model\DateAndCount $object
+     * @param \Althingi\Model\DateAndCount $object
      * @return array
      */
-    public function extract($object): array
+    public function extract(object $object): array
     {
         return $object->toArray();
     }

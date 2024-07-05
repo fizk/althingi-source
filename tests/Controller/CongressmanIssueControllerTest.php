@@ -3,51 +3,46 @@
 namespace Althingi\Controller;
 
 use Althingi\Controller\CongressmanIssueController;
-use Althingi\Model;
-use Althingi\Model\KindEnum;
-use Althingi\Service\Issue;
+use Althingi\{Model, Service};
 use Althingi\ServiceHelper;
 use Library\Container\Container;
+use PHPUnit\Framework\Attributes\{CoversMethod, CoversClass, Test, Before, After};
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class CongressmanIssueControllerTest
- * @package Althingi\Controller
- * @coversDefaultClass \Althingi\Controller\CongressmanIssueController
- *
- * @covers \Althingi\Controller\CongressmanIssueController::setIssueService
- */
+#[CoversClass(CongressmanIssueController::class)]
+#[CoversMethod(CongressmanIssueController::class, 'setIssueService')]
+#[CoversMethod(CongressmanIssueController::class, 'getList')]
 class CongressmanIssueControllerTest extends TestCase
 {
     use ServiceHelper;
 
-    public function setUp(): void
+    #[Before]
+    public function up(): void
     {
         $this->setServiceManager(
             new Container(require __DIR__ . '/../../config/service.php')
         );
         $this->buildServices([
-            Issue::class,
+            Service\Issue::class,
 
         ]);
     }
 
-    public function tearDown(): void
+    #[After]
+    public function down(): void
     {
         \Mockery::close();
         parent::tearDown();
     }
 
-    /**
-     * @covers ::getList
-     */
-    public function testGetCongressmanIssueList()
+    #[Test]
+    public function getCongressmanIssueList()
     {
-        $this->getMockService(Issue::class)
+        $this->getMockService(Service\Issue::class)
             ->shouldReceive('fetchByCongressman')
             ->with(123)
             ->once()
-            ->andReturn([(new Model\Issue())->setKind(KindEnum::A)])
+            ->andReturn([(new Model\Issue())->setKind(Model\KindEnum::A)])
             ->getMock();
 
         $this->dispatch('/thingmenn/123/thingmal', 'GET');

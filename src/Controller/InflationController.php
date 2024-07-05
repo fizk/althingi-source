@@ -88,8 +88,12 @@ class InflationController implements
      */
     public function fetchAssemblyAction(ServerRequest $request): ResponseInterface
     {
-        $assembly = $this->assemblyService->get($request->getAttribute('id'));
-        $cabinet = $this->cabinetService->fetchByAssembly($assembly->getAssemblyId());
+        $assembly = $this->assemblyService->get(
+            $request->getAttribute('id')
+        );
+        $cabinet = $this->cabinetService->fetchByAssembly(
+            $assembly->getAssemblyId()
+        );
 
         if (count($cabinet) > 0) {
             $from = $assembly->getFrom() < $cabinet[0]->getFrom() ? $assembly->getFrom() : $cabinet[0]->getFrom();
@@ -110,7 +114,6 @@ class InflationController implements
      */
     public function put(ServerRequest $request): ResponseInterface
     {
-
         $form = new Form\Inflation([
             ...$request->getParsedBody(),
             'id' => $request->getAttribute('id')

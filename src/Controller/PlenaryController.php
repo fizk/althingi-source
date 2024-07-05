@@ -32,10 +32,10 @@ class PlenaryController implements
      */
     public function get(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id');
-        $plenaryId = $request->getAttribute('plenary_id');
-
-        $plenary = $this->plenaryService->get($assemblyId, $plenaryId);
+        $plenary = $this->plenaryService->get(
+            $request->getAttribute('id'),
+            $request->getAttribute('plenary_id')
+        );
 
         return $plenary
             ? new JsonResponse($plenary, 200)
@@ -48,13 +48,12 @@ class PlenaryController implements
      */
     public function getList(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id', null);
-        $count = $this->plenaryService->countByAssembly($assemblyId);
-
         $plenaries = $this->plenaryService->fetchByAssembly(
-            $assemblyId,
+            $request->getAttribute('id', null),
             0, // $range->getFrom(),
-            $count
+            $this->plenaryService->countByAssembly(
+                $request->getAttribute('id', null)
+            )
             //($range->getFrom()-$range->getTo())
         );
         return new JsonResponse($plenaries, 206);
@@ -89,10 +88,12 @@ class PlenaryController implements
      */
     public function patch(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id');
-        $plenaryId = $request->getAttribute('plenary_id');
-
-        if (($plenary = $this->plenaryService->get($assemblyId, $plenaryId)) != null) {
+        if (
+            ($plenary = $this->plenaryService->get(
+                $request->getAttribute('id'),
+                $request->getAttribute('plenary_id')
+            )) != null
+        ) {
             $form = new Form\Plenary([
                 ...$plenary->toArray(),
                 ...$request->getParsedBody(),

@@ -2,54 +2,50 @@
 
 namespace Althingi\Controller;
 
+use Althingi\{Model, Service};
 use Althingi\Controller\IssueCategoryController;
-use Althingi\Model\Category as CategoryModel;
-use Althingi\Model\IssueCategory as IssueCategoryModel;
-use Althingi\Model\KindEnum;
-use Althingi\Service\Category;
-use Althingi\Service\IssueCategory;
 use Althingi\ServiceHelper;
 use Library\Container\Container;
+use PHPUnit\Framework\Attributes\{CoversMethod, CoversClass, Test, Before, After};
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class IssueCategoryControllerTest
- * @package Althingi\Controller
- * @coversDefaultClass \Althingi\Controller\IssueCategoryController
- *
- * @covers \Althingi\Controller\IssueCategoryController::setIssueCategoryService
- * @covers \Althingi\Controller\IssueCategoryController::setCategoryService
- */
+#[CoversClass(IssueCategoryController::class)]
+#[CoversMethod(IssueCategoryController::class, 'setIssueCategoryService')]
+#[CoversMethod(IssueCategoryController::class, 'setCategoryService')]
+#[CoversMethod(IssueCategoryController::class, 'get')]
+#[CoversMethod(IssueCategoryController::class, 'getList')]
+#[CoversMethod(IssueCategoryController::class, 'patch')]
+#[CoversMethod(IssueCategoryController::class, 'put')]
 class IssueCategoryControllerTest extends TestCase
 {
     use ServiceHelper;
 
-    public function setUp(): void
+    #[Before]
+    public function up(): void
     {
         $this->setServiceManager(
             new Container(require __DIR__ . '/../../config/service.php')
         );
         $this->buildServices([
-            Category::class,
-            IssueCategory::class,
+            Service\Category::class,
+            Service\IssueCategory::class,
         ]);
     }
 
-    public function tearDown(): void
+    #[After]
+    public function down(): void
     {
         \Mockery::close();
         parent::tearDown();
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGet()
+    #[Test]
+    public function getSuccessful()
     {
-        $this->getMockService(Category::class)
+        $this->getMockService(Service\Category::class)
             ->shouldReceive('fetchByAssemblyIssueAndCategory')
             ->withArgs([141, 131, 21])
-            ->andReturn((new CategoryModel())->setCategoryId(21)->setSuperCategoryId(1))
+            ->andReturn((new Model\Category())->setCategoryId(21)->setSuperCategoryId(1))
             ->getMock();
 
         $this->dispatch('/loggjafarthing/141/thingmal/a/131/efnisflokkar/21', 'GET');
@@ -59,12 +55,10 @@ class IssueCategoryControllerTest extends TestCase
         $this->assertResponseStatusCode(200);
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGetNotFound()
+    #[Test]
+    public function getNotFound()
     {
-        $this->getMockService(Category::class)
+        $this->getMockService(Service\Category::class)
             ->shouldReceive('fetchByAssemblyIssueAndCategory')
             ->withArgs([141, 131, 21])
             ->andReturn(null)
@@ -77,16 +71,14 @@ class IssueCategoryControllerTest extends TestCase
         $this->assertResponseStatusCode(404);
     }
 
-    /**
-     * @covers ::getList
-     */
-    public function testList()
+    #[Test]
+    public function listSuccessful()
     {
-        $this->getMockService(Category::class)
+        $this->getMockService(Service\Category::class)
             ->shouldReceive('fetchByAssemblyAndIssue')
             ->withArgs([141, 131])
             ->andReturn([
-                (new CategoryModel())->setCategoryId(1)->setSuperCategoryId(2)
+                (new Model\Category())->setCategoryId(1)->setSuperCategoryId(2)
             ])
             ->getMock();
 
@@ -97,12 +89,10 @@ class IssueCategoryControllerTest extends TestCase
         $this->assertResponseStatusCode(206);
     }
 
-    /**
-     * @covers ::put
-     */
-    public function testPut()
+    #[Test]
+    public function putSuccessful()
     {
-        $this->getMockService(IssueCategory::class)
+        $this->getMockService(Service\IssueCategory::class)
             ->shouldReceive('save')
             ->andReturn(1)
             ->getMock();
@@ -114,20 +104,18 @@ class IssueCategoryControllerTest extends TestCase
         $this->assertResponseStatusCode(201);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatch()
+    #[Test]
+    public function patchSuccessful()
     {
-        $this->getMockService(IssueCategory::class)
+        $this->getMockService(Service\IssueCategory::class)
             ->shouldReceive('get')
             ->withArgs([141, 131, 21])
             ->andReturn(
-                (new IssueCategoryModel())
+                (new Model\IssueCategory())
                     ->setAssemblyId(141)
                     ->setIssueId(131)
                     ->setCategoryId(21)
-                    ->setKind(KindEnum::A)
+                    ->setKind(Model\KindEnum::A)
             )
             ->getMock()
             ->shouldReceive('update')
@@ -141,12 +129,10 @@ class IssueCategoryControllerTest extends TestCase
         $this->assertResponseStatusCode(205);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchNotFound()
+    #[Test]
+    public function patchNotFound()
     {
-        $this->getMockService(IssueCategory::class)
+        $this->getMockService(Service\IssueCategory::class)
             ->shouldReceive('get')
             ->withArgs([141, 131, 21])
             ->andReturn(null)

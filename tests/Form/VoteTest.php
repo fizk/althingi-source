@@ -3,7 +3,7 @@
 namespace Althingi\Form;
 
 use Althingi\Model\KindEnum;
-use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\{Test, DataProvider};
 use PHPUnit\Framework\TestCase;
 
 class VoteTest extends TestCase
@@ -23,8 +23,9 @@ class VoteTest extends TestCase
         ];
     }
 
+    #[Test]
     #[DataProvider('providerFunction')]
-    public function testTrue($input, $yes, $no, $inaction)
+    public function validatorsAndFilters($input, $yes, $no, $inaction)
     {
         $form = new Vote([
            "assembly_id" => 146,

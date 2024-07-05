@@ -2,44 +2,44 @@
 
 namespace Althingi\Service;
 
+use Althingi\DatabaseConnectionTrait;
+use Althingi\Model;
+use PHPUnit\Framework\Attributes\{Test};
 use PHPUnit\Framework\TestCase;
-use Althingi\Service\CommitteeMeeting;
-use Althingi\DatabaseConnection;
-use Althingi\Model\CommitteeMeeting as CommitteeMeetingModel;
-use PDO;
 
 class CommitteeMeetingTest extends TestCase
 {
-    use DatabaseConnection;
+    use DatabaseConnectionTrait;
 
-    private PDO $pdo;
-
-    public function testGet()
+    #[Test]
+    public function getSuccess()
     {
-        $expectedData = (new CommitteeMeetingModel())
+        $expectedData = (new Model\CommitteeMeeting())
             ->setCommitteeMeetingId(1)
             ->setCommitteeId(1)
             ->setAssemblyId(1)
             ->setFrom(new \DateTime('2000-01-01 00:00'));
 
         $service = new CommitteeMeeting();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
         $this->assertEquals($expectedData, $service->get(1));
     }
 
-    public function testFetch()
+    #[Test]
+    public function fetchSuccess()
     {
         $service = new CommitteeMeeting();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
         $committees = $service->fetchByAssembly(1, 1);
 
         $this->assertCount(3, $committees);
-        $this->assertInstanceOf(CommitteeMeetingModel::class, $committees[0]);
+        $this->assertInstanceOf(Model\CommitteeMeeting::class, $committees[0]);
     }
 
-    public function testCreate()
+    #[Test]
+    public function createSuccess()
     {
         $expectedTable = $this->createArrayDataSet([
             'CommitteeMeeting' => [
@@ -90,19 +90,20 @@ class CommitteeMeetingTest extends TestCase
         ])->getTable('CommitteeMeeting');
         $actualTable = $this->getConnection()->createQueryTable('CommitteeMeeting', 'SELECT * FROM CommitteeMeeting');
 
-        $committeeMeeting = (new CommitteeMeetingModel())
+        $committeeMeeting = (new Model\CommitteeMeeting())
             ->setCommitteeId(1)
             ->setAssemblyId(2)
             ->setCommitteeMeetingId(6);
 
         $service = new CommitteeMeeting();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
         $service->create($committeeMeeting);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testSave()
+    #[Test]
+    public function saveSuccess()
     {
         $expectedTable = $this->createArrayDataSet([
             'CommitteeMeeting' => [
@@ -153,19 +154,20 @@ class CommitteeMeetingTest extends TestCase
         ])->getTable('CommitteeMeeting');
         $actualTable = $this->getConnection()->createQueryTable('CommitteeMeeting', 'SELECT * FROM CommitteeMeeting');
 
-        $committeeMeeting = (new CommitteeMeetingModel())
+        $committeeMeeting = (new Model\CommitteeMeeting())
             ->setCommitteeId(1)
             ->setAssemblyId(2)
             ->setCommitteeMeetingId(6);
 
         $service = new CommitteeMeeting();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
         $service->save($committeeMeeting);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testUpdate()
+    #[Test]
+    public function updateSuccess()
     {
         $expectedTable = $this->createArrayDataSet([
             'CommitteeMeeting' => [
@@ -209,14 +211,14 @@ class CommitteeMeetingTest extends TestCase
         ])->getTable('CommitteeMeeting');
         $actualTable = $this->getConnection()->createQueryTable('CommitteeMeeting', 'SELECT * FROM CommitteeMeeting');
 
-        $committeeMeeting = (new CommitteeMeetingModel())
+        $committeeMeeting = (new Model\CommitteeMeeting())
             ->setCommitteeMeetingId(1)
             ->setCommitteeId(1)
             ->setAssemblyId(1)
             ->setDescription('description');
 
         $service = new CommitteeMeeting();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
         $service->update($committeeMeeting);
 
         $this->assertTablesEqual($expectedTable, $actualTable);

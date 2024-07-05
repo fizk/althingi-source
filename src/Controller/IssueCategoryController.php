@@ -40,12 +40,12 @@ class IssueCategoryController implements
      */
     public function get(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id');
-        $issueId = $request->getAttribute('issue_id');
-        $categoryId = $request->getAttribute('category_id');
-
         $category = $this->categoryService
-            ->fetchByAssemblyIssueAndCategory($assemblyId, $issueId, $categoryId);
+            ->fetchByAssemblyIssueAndCategory(
+                $request->getAttribute('id'),
+                $request->getAttribute('issue_id'),
+                $request->getAttribute('category_id')
+            );
 
         return $category
             ? new JsonResponse($category)
@@ -58,11 +58,11 @@ class IssueCategoryController implements
      */
     public function getList(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id');
-        $issueId = $request->getAttribute('issue_id');
-
         $categories = $this->categoryService
-            ->fetchByAssemblyAndIssue($assemblyId, $issueId);
+            ->fetchByAssemblyAndIssue(
+                $request->getAttribute('id'),
+                $request->getAttribute('issue_id')
+            );
 
         return new JsonResponse($categories, 206);
     }
@@ -75,15 +75,11 @@ class IssueCategoryController implements
      */
     public function put(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id');
-        $issueId = $request->getAttribute('issue_id');
-        $categoryId = $request->getAttribute('category_id');
-
         $form = (new Form\IssueCategory([
             ...$request->getParsedBody(),
-            'assembly_id' => $assemblyId,
-            'issue_id' => $issueId,
-            'category_id' => $categoryId,
+            'assembly_id' => $request->getAttribute('id'),
+            'issue_id' => $request->getAttribute('issue_id'),
+            'category_id' => $request->getAttribute('category_id'),
             'kind' => KindEnum::A->value
         ]));
 
@@ -103,11 +99,13 @@ class IssueCategoryController implements
      */
     public function patch(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id');
-        $issueId = $request->getAttribute('issue_id');
-        $categoryId = $request->getAttribute('category_id');
-
-        if (($issueCategory = $this->issueCategoryService->get($assemblyId, $issueId, $categoryId)) != null) {
+        if (
+            ($issueCategory = $this->issueCategoryService->get(
+                $request->getAttribute('id'),
+                $request->getAttribute('issue_id'),
+                $request->getAttribute('category_id')
+            )) != null
+        ) {
             $form = new Form\IssueCategory([
                 ...$issueCategory->toArray(),
                 ...$request->getParsedBody(),

@@ -2,27 +2,29 @@
 
 namespace Althingi\Controller;
 
+use Althingi\{Model, Service};
 use Althingi\Controller;
-use Althingi\Model;
 use Althingi\Model\KindEnum;
-use Althingi\Service;
 use Althingi\ServiceHelper;
 use Library\Container\Container;
 use Mockery;
+use PHPUnit\Framework\Attributes\{CoversMethod, CoversClass, Test, Before, After};
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class IssueControllerTest
- * @package Althingi\Controller
- * @coversDefaultClass \Althingi\Controller\IssueController
- *
- * @covers \Althingi\Controller\IssueController::setIssueService
- */
+#[CoversClass(IssueController::class)]
+#[CoversMethod(IssueController::class, 'setIssueService')]
+#[CoversMethod(IssueController::class, 'get')]
+#[CoversMethod(IssueController::class, 'getList')]
+#[CoversMethod(IssueController::class, 'options')]
+#[CoversMethod(IssueController::class, 'optionsList')]
+#[CoversMethod(IssueController::class, 'patch')]
+#[CoversMethod(IssueController::class, 'put')]
 class IssueControllerTest extends TestCase
 {
     use ServiceHelper;
 
-    public function setUp(): void
+    #[Before]
+    public function up(): void
     {
         $this->setServiceManager(
             new Container(require __DIR__ . '/../../config/service.php')
@@ -34,20 +36,19 @@ class IssueControllerTest extends TestCase
         ]);
     }
 
-    public function tearDown(): void
+    #[After]
+    public function down(): void
     {
         \Mockery::close();
         parent::tearDown();
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGetSuccessA()
+    #[Test]
+    public function getSuccessA()
     {
         $this->getMockService(Service\Issue::class)
             ->shouldReceive('get')
-            ->with(200, 100, KindEnum::A)
+            ->with(200, 100, Model\KindEnum::A)
             ->andReturn(new Model\Issue())
             ->getMock();
 
@@ -58,14 +59,12 @@ class IssueControllerTest extends TestCase
         $this->assertResponseStatusCode(200);
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGetSuccessB()
+    #[Test]
+    public function getSuccessB()
     {
         $this->getMockService(Service\Issue::class)
             ->shouldReceive('get')
-            ->with(200, 100, KindEnum::B)
+            ->with(200, 100, Model\KindEnum::B)
             ->andReturn(new Model\Issue())
             ->getMock();
 
@@ -76,14 +75,12 @@ class IssueControllerTest extends TestCase
         $this->assertResponseStatusCode(200);
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGetNotFound()
+    #[Test]
+    public function getNotFound()
     {
         $this->getMockService(Service\Issue::class)
             ->shouldReceive('get')
-            ->with(200, 100, KindEnum::A)
+            ->with(200, 100, Model\KindEnum::A)
             ->andReturn(null)
             ->getMock();
 
@@ -94,14 +91,12 @@ class IssueControllerTest extends TestCase
         $this->assertResponseStatusCode(404);
     }
 
-    /**
-     * @covers ::getList
-     */
-    public function testGetList()
+    #[Test]
+    public function getList()
     {
         $this->getMockService(Service\Issue::class)
             ->shouldReceive('fetchByAssembly')
-            ->with(100, 0, null, null, [], [], ['A', 'B'])
+            ->with(100, 0, null, null, [], [], [KindEnum::A, KindEnum::B])
             ->andReturn(array_map(function () {
                 return new Model\Issue();
             }, range(0, 24)))
@@ -114,15 +109,13 @@ class IssueControllerTest extends TestCase
         $this->assertResponseStatusCode(206);
     }
 
-    /**
-     * @covers ::put
-     */
-    public function testPutSuccess()
+    #[Test]
+    public function putSuccess()
     {
         $expectedObject = (new Model\Issue())
             ->setIssueId(200)
             ->setAssemblyId(100)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setName('n1')
             ->setType('1')
             ->setTypeName('tn')
@@ -141,7 +134,7 @@ class IssueControllerTest extends TestCase
 
         $this->dispatch('/loggjafarthing/100/thingmal/a/200', 'PUT', [
             'name' => 'n1',
-            'kind' => KindEnum::A->value,
+            'kind' => Model\KindEnum::A->value,
             'type' => '1',
             'type_name' => 'tn',
             'type_subname' => 'tsn',
@@ -152,10 +145,8 @@ class IssueControllerTest extends TestCase
         $this->assertResponseStatusCode(201);
     }
 
-    /**
-     * @covers ::put
-     */
-    public function testPutInvalidForm()
+    #[Test]
+    public function putInvalidForm()
     {
         $this->getMockService(Service\Issue::class)
             ->shouldReceive('create')
@@ -173,16 +164,14 @@ class IssueControllerTest extends TestCase
         $this->assertResponseStatusCode(400);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatch()
+    #[Test]
+    public function patchSuccessful()
     {
         $expectedObject = (new Model\Issue())
             ->setIssueId(200)
             ->setAssemblyId(100)
             ->setName('n1')
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setType('1')
             ->setTypeName('tn')
             ->setTypeSubname('tsn')
@@ -191,8 +180,8 @@ class IssueControllerTest extends TestCase
         $this->getMockService(Service\Issue::class)
             ->shouldReceive('get')
             ->once()
-            ->with(200, 100, KindEnum::A)
-            ->andReturn((new Model\Issue())->setIssueId(200)->setAssemblyId(100)->setKind(KindEnum::A))
+            ->with(200, 100, Model\KindEnum::A)
+            ->andReturn((new Model\Issue())->setIssueId(200)->setAssemblyId(100)->setKind(Model\KindEnum::A))
             ->getMock()
 
             ->shouldReceive('update')
@@ -217,10 +206,8 @@ class IssueControllerTest extends TestCase
         $this->assertResponseStatusCode(205);
     }
 
-    /**
-     * @covers ::optionsList
-     */
-    public function testOptionsList()
+    #[Test]
+    public function optionsList()
     {
         $this->dispatch('/loggjafarthing/100/thingmal', 'OPTIONS');
 
@@ -236,10 +223,8 @@ class IssueControllerTest extends TestCase
         $this->assertResponseStatusCode(200);
     }
 
-    /**
-     * @covers ::options
-     */
-    public function testOptions()
+    #[Test]
+    public function optionsSuccessful()
     {
         $this->dispatch('/loggjafarthing/100/thingmal/a/200', 'OPTIONS');
 

@@ -2,29 +2,25 @@
 
 namespace Althingi\Service;
 
+use Althingi\DatabaseConnectionTrait;
+use Althingi\Events\{UpdateEvent, AddEvent};
+use Althingi\Model;
 use DateTime;
-use Althingi\Model\President;
-use Althingi\Model\PresidentCongressman as PresidentCongressmanModel;
-use Althingi\Service\President as PresidentService;
-use Althingi\DatabaseConnection;
-use Althingi\Events\AddEvent;
-use Althingi\Events\UpdateEvent;
 use Mockery;
+use PHPUnit\Framework\Attributes\{Test};
 use PHPUnit\Framework\TestCase;
-use PDO;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
 class PresidentTest extends TestCase
 {
-    use DatabaseConnection;
+    use DatabaseConnectionTrait;
 
-    private PDO $pdo;
-
-    public function testGet()
+    #[Test]
+    public function getSuccess()
     {
-        $presidentService = new PresidentService();
-        $presidentService->setDriver($this->pdo);
-        $expectedData = (new President())
+        $presidentService = new President();
+        $presidentService->setDriver($this->getPDO());
+        $expectedData = (new Model\President())
             ->setPresidentId(1)
             ->setCongressmanId(1)
             ->setAssemblyId(1)
@@ -35,22 +31,24 @@ class PresidentTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testGetNotFound()
+    #[Test]
+    public function getNotFound()
     {
-        $presidentService = new PresidentService();
-        $presidentService->setDriver($this->pdo);
+        $presidentService = new President();
+        $presidentService->setDriver($this->getPDO());
         $expectedData = null;
         $actualData = $presidentService->get(10987655);
 
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testGetWithCongressman()
+    #[Test]
+    public function getWithCongressman()
     {
-        $presidentService = new PresidentService();
-        $presidentService->setDriver($this->pdo);
+        $presidentService = new President();
+        $presidentService->setDriver($this->getPDO());
 
-        $expectedData = (new PresidentCongressmanModel())
+        $expectedData = (new Model\PresidentCongressman())
             ->setPresidentId(1)
             ->setAssemblyId(1)
             ->setTitle('t')
@@ -63,10 +61,11 @@ class PresidentTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testGetWithCongressmanNotFound()
+    #[Test]
+    public function getWithCongressmanNotFound()
     {
-        $presidentService = new PresidentService();
-        $presidentService->setDriver($this->pdo);
+        $presidentService = new President();
+        $presidentService->setDriver($this->getPDO());
 
         $expectedData = null;
         $actualData = $presidentService->getWithCongressman(1000);
@@ -74,12 +73,13 @@ class PresidentTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testGetByUnique()
+    #[Test]
+    public function getByUnique()
     {
-        $presidentService = new PresidentService();
-        $presidentService->setDriver($this->pdo);
+        $presidentService = new President();
+        $presidentService->setDriver($this->getPDO());
 
-        $expectedData = (new PresidentCongressmanModel())
+        $expectedData = (new Model\PresidentCongressman())
             ->setPresidentId(1)
             ->setAssemblyId(1)
             ->setTitle('t')
@@ -92,11 +92,12 @@ class PresidentTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchAllGeneratorAll()
+    #[Test]
+    public function fetchAllGeneratorAll()
     {
-        $presidentService = new PresidentService();
-        $presidentService->setDriver($this->pdo);
-        $expectedData = [(new President())
+        $presidentService = new President();
+        $presidentService->setDriver($this->getPDO());
+        $expectedData = [(new Model\President())
             ->setPresidentId(1)
             ->setCongressmanId(1)
             ->setAssemblyId(1)
@@ -111,11 +112,12 @@ class PresidentTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchAllGeneratorByAssembly()
+    #[Test]
+    public function fetchAllGeneratorByAssembly()
     {
-        $presidentService = new PresidentService();
-        $presidentService->setDriver($this->pdo);
-        $expectedData = [(new President())
+        $presidentService = new President();
+        $presidentService->setDriver($this->getPDO());
+        $expectedData = [(new Model\President())
             ->setPresidentId(1)
             ->setCongressmanId(1)
             ->setAssemblyId(1)
@@ -130,10 +132,11 @@ class PresidentTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchAllGeneratorNotFound()
+    #[Test]
+    public function fetchAllGeneratorNotFound()
     {
-        $presidentService = new PresidentService();
-        $presidentService->setDriver($this->pdo);
+        $presidentService = new President();
+        $presidentService->setDriver($this->getPDO());
         $expectedData = [];
 
         $actualData = [];
@@ -144,9 +147,10 @@ class PresidentTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testCreate()
+    #[Test]
+    public function createSuccess()
     {
-        $president = (new President())
+        $president = (new Model\President())
             ->setCongressmanId(1)
             ->setAssemblyId(1)
             ->setTitle('t')
@@ -175,23 +179,24 @@ class PresidentTest extends TestCase
         ])->getTable('President');
         $actualTable = $this->getConnection()->createQueryTable('President', 'SELECT * FROM President');
 
-        $presidentService = new PresidentService();
-        $presidentService->setDriver($this->pdo);
+        $presidentService = new President();
+        $presidentService->setDriver($this->getPDO());
         $presidentService->create($president);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testCreateAlreadyExist()
+    #[Test]
+    public function createAlreadyExist()
     {
-        $president = (new President())
+        $president = (new Model\President())
             ->setCongressmanId(1)
             ->setAssemblyId(1)
             ->setTitle('t')
             ->setFrom(new \DateTime('2000-01-01'));
 
-        $presidentService = new PresidentService();
-        $presidentService->setDriver($this->pdo);
+        $presidentService = new President();
+        $presidentService->setDriver($this->getPDO());
         try {
             $presidentService->create($president);
         } catch (\PDOException $e) {
@@ -199,9 +204,10 @@ class PresidentTest extends TestCase
         }
     }
 
-    public function testUpdate()
+    #[Test]
+    public function updateSuccess()
     {
-        $president = (new President())
+        $president = (new Model\President())
             ->setPresidentId(1)
             ->setCongressmanId(1)
             ->setAssemblyId(1)
@@ -223,15 +229,17 @@ class PresidentTest extends TestCase
         ])->getTable('President');
         $actualTable = $this->getConnection()->createQueryTable('President', 'SELECT * FROM President');
 
-        $presidentService = new PresidentService();
-        $presidentService->setDriver($this->pdo);
+        $presidentService = new President();
+        $presidentService->setDriver($this->getPDO());
         $presidentService->update($president);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testCreateFireEventResourceCreated()
+    #[Test]
+    public function createFireEventResourceCreated()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -241,21 +249,23 @@ class PresidentTest extends TestCase
             })
             ->getMock();
 
-        $president = (new President())
+        $president = (new Model\President())
             ->setCongressmanId(1)
             ->setAssemblyId(1)
             ->setTitle('t')
             ->setFrom(new \DateTime('2001-01-01'));
 
-        (new PresidentService())
-            ->setDriver($this->pdo)
+        (new President())
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->create($president)
         ;
     }
 
-    public function testUpdateFireEventResourceFoundNoUpdateNeeded()
+    #[Test]
+    public function updateFireEventResourceFoundNoUpdateNeeded()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -265,22 +275,24 @@ class PresidentTest extends TestCase
             })
             ->getMock();
 
-        $president = (new President())
+        $president = (new Model\President())
             ->setPresidentId(1)
             ->setCongressmanId(1)
             ->setAssemblyId(1)
             ->setTitle('t')
             ->setFrom(new \DateTime('2000-01-01'));
 
-        (new PresidentService())
-            ->setDriver($this->pdo)
+        (new President())
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->update($president)
         ;
     }
 
-    public function testUpdateFireEventResourceFoundUpdateNeeded()
+    #[Test]
+    public function updateFireEventResourceFoundUpdateNeeded()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -290,15 +302,15 @@ class PresidentTest extends TestCase
             })
             ->getMock();
 
-        $president = (new President())
+        $president = (new Model\President())
             ->setPresidentId(1)
             ->setCongressmanId(1)
             ->setAssemblyId(1)
             ->setTitle('t')
             ->setFrom(new \DateTime('2022-01-01'));
 
-        (new PresidentService())
-            ->setDriver($this->pdo)
+        (new President())
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->update($president)
         ;

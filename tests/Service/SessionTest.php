@@ -2,29 +2,25 @@
 
 namespace Althingi\Service;
 
-use Althingi\Service\Session;
-use Althingi\DatabaseConnection;
-use Althingi\Events\AddEvent;
-use Althingi\Events\UpdateEvent;
-use Althingi\Model\KindEnum;
-use PHPUnit\Framework\TestCase;
-use Althingi\Model\Session as SessionModel;
+use Althingi\DatabaseConnectionTrait;
+use Althingi\Events\{UpdateEvent, AddEvent};
+use Althingi\Model;
 use Mockery;
-use PDO;
+use PHPUnit\Framework\Attributes\{Test};
+use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
 class SessionTest extends TestCase
 {
-    use DatabaseConnection;
+    use DatabaseConnectionTrait;
 
-    private PDO $pdo;
-
-    public function testGet()
+    #[Test]
+    public function getSuccess()
     {
         $sessionService = new Session();
-        $sessionService->setDriver($this->pdo);
+        $sessionService->setDriver($this->getPDO());
 
-        $expectedData = (new SessionModel())
+        $expectedData = (new Model\Session())
             ->setSessionId(1)
             ->setCongressmanId(1)
             ->setConstituencyId(1)
@@ -37,10 +33,11 @@ class SessionTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testGetNotFound()
+    #[Test]
+    public function getNotFound()
     {
         $sessionService = new Session();
-        $sessionService->setDriver($this->pdo);
+        $sessionService->setDriver($this->getPDO());
 
         $expectedData = null;
         $actualData = $sessionService->get(10000);
@@ -48,13 +45,14 @@ class SessionTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchByCongressman()
+    #[Test]
+    public function fetchByCongressman()
     {
         $sessionService = new Session();
-        $sessionService->setDriver($this->pdo);
+        $sessionService->setDriver($this->getPDO());
 
         $expectedData = [
-            (new SessionModel())
+            (new Model\Session())
                 ->setSessionId(2)
                 ->setCongressmanId(1)
                 ->setConstituencyId(1)
@@ -62,7 +60,7 @@ class SessionTest extends TestCase
                 ->setFrom(new \DateTime('2000-01-02'))
                 ->setType('þingmaður')
                 ->setPartyId(2),
-            (new SessionModel())
+            (new Model\Session())
                 ->setSessionId(1)
                 ->setCongressmanId(1)
                 ->setConstituencyId(1)
@@ -76,10 +74,11 @@ class SessionTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchByCongressmanNotFound()
+    #[Test]
+    public function fetchByCongressmanNotFound()
     {
         $sessionService = new Session();
-        $sessionService->setDriver($this->pdo);
+        $sessionService->setDriver($this->getPDO());
 
         $expectedData = [];
         $actualData = $sessionService->fetchByCongressman(10000);
@@ -87,13 +86,14 @@ class SessionTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchByAssemblyAndCongressman()
+    #[Test]
+    public function fetchByAssemblyAndCongressman()
     {
         $sessionService = new Session();
-        $sessionService->setDriver($this->pdo);
+        $sessionService->setDriver($this->getPDO());
 
         $expectedData = [
-            (new SessionModel())
+            (new Model\Session())
                 ->setSessionId(2)
                 ->setCongressmanId(1)
                 ->setConstituencyId(1)
@@ -101,7 +101,7 @@ class SessionTest extends TestCase
                 ->setFrom(new \DateTime('2000-01-02'))
                 ->setType('þingmaður')
                 ->setPartyId(2),
-            (new SessionModel())
+            (new Model\Session())
                 ->setSessionId(1)
                 ->setCongressmanId(1)
                 ->setConstituencyId(1)
@@ -115,10 +115,11 @@ class SessionTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchByAssemblyAndCongressmanNotFound()
+    #[Test]
+    public function fetchByAssemblyAndCongressmanNotFound()
     {
         $sessionService = new Session();
-        $sessionService->setDriver($this->pdo);
+        $sessionService->setDriver($this->getPDO());
 
         $expectedData = [];
         $actualData = $sessionService->fetchByAssemblyAndCongressman(1, 1000);
@@ -126,10 +127,11 @@ class SessionTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testGetIdentifier()
+    #[Test]
+    public function getIdentifier()
     {
         $sessionService = new Session();
-        $sessionService->setDriver($this->pdo);
+        $sessionService->setDriver($this->getPDO());
 
         $expectedData = 1;
         $actualData = $sessionService->getIdentifier(1, new \DateTime('2000-01-01'), 'þingmaður');
@@ -137,10 +139,11 @@ class SessionTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testGetIdentifierNotFound()
+    #[Test]
+    public function getIdentifierNotFound()
     {
         $sessionService = new Session();
-        $sessionService->setDriver($this->pdo);
+        $sessionService->setDriver($this->getPDO());
 
         $expectedData = null;
         $actualData = $sessionService->getIdentifier(10000, new \DateTime('2000-01-01'), 'þingmaður');
@@ -148,9 +151,10 @@ class SessionTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testCreate()
+    #[Test]
+    public function createSuccess()
     {
-        $session = (new SessionModel())
+        $session = (new Model\Session())
             ->setCongressmanId(1)
             ->setConstituencyId(1)
             ->setAssemblyId(2)
@@ -226,15 +230,16 @@ class SessionTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('Session', 'SELECT * FROM Session');
 
         $assemblyService = new Session();
-        $assemblyService->setDriver($this->pdo);
+        $assemblyService->setDriver($this->getPDO());
         $assemblyService->create($session);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testCreateAlreadyExist()
+    #[Test]
+    public function createAlreadyExist()
     {
-        $session = (new SessionModel())
+        $session = (new Model\Session())
             ->setCongressmanId(1)
             ->setConstituencyId(1)
             ->setAssemblyId(1)
@@ -243,7 +248,7 @@ class SessionTest extends TestCase
             ->setPartyId(1);
 
         $assemblyService = new Session();
-        $assemblyService->setDriver($this->pdo);
+        $assemblyService->setDriver($this->getPDO());
         try {
             $assemblyService->create($session);
         } catch (\PDOException $e) {
@@ -251,9 +256,10 @@ class SessionTest extends TestCase
         }
     }
 
-    public function testUpdate()
+    #[Test]
+    public function updateSuccess()
     {
-        $session = (new SessionModel())
+        $session = (new Model\Session())
             ->setSessionId(1)
             ->setCongressmanId(1)
             ->setConstituencyId(1)
@@ -320,13 +326,14 @@ class SessionTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('Session', 'SELECT * FROM Session');
 
         $assemblyService = new Session();
-        $assemblyService->setDriver($this->pdo);
+        $assemblyService->setDriver($this->getPDO());
         $assemblyService->update($session);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testDelete()
+    #[Test]
+    public function deleteSuccess()
     {
         $expectedTable = $this->createArrayDataSet([
             'Session' => [
@@ -376,15 +383,17 @@ class SessionTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('Session', 'SELECT * FROM Session');
 
         $assemblyService = new Session();
-        $assemblyService->setDriver($this->pdo);
+        $assemblyService->setDriver($this->getPDO());
         $affectedRowCound = $assemblyService->delete(1);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
         $this->assertEquals(1, $affectedRowCound);
     }
 
-    public function testCreateFireEventResourceCreated()
+    #[Test]
+    public function createFireEventResourceCreated()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -394,7 +403,7 @@ class SessionTest extends TestCase
             })
             ->getMock();
 
-        $session = (new SessionModel())
+        $session = (new Model\Session())
             ->setCongressmanId(1)
             ->setConstituencyId(1)
             ->setAssemblyId(2)
@@ -403,13 +412,15 @@ class SessionTest extends TestCase
             ->setPartyId(1);
 
         (new Session())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher(($eventDispatcher))
             ->create($session);
     }
 
-    public function testUpdateFireEventResourceFoundNoUpdatedNeeded()
+    #[Test]
+    public function updateFireEventResourceFoundNoUpdatedNeeded()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -419,7 +430,7 @@ class SessionTest extends TestCase
             })
             ->getMock();
 
-        $session = (new SessionModel())
+        $session = (new Model\Session())
             ->setSessionId(1)
             ->setCongressmanId(1)
             ->setConstituencyId(1)
@@ -429,13 +440,15 @@ class SessionTest extends TestCase
             ->setPartyId(1);
 
         (new Session())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher(($eventDispatcher))
             ->update($session);
     }
 
-    public function testUpdateFireEventResourceFoundUpdateNeeded()
+    #[Test]
+    public function updateFireEventResourceFoundUpdateNeeded()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -445,7 +458,7 @@ class SessionTest extends TestCase
             })
             ->getMock();
 
-        $session = (new SessionModel())
+        $session = (new Model\Session())
             ->setSessionId(1)
             ->setCongressmanId(1)
             ->setConstituencyId(1)
@@ -456,7 +469,7 @@ class SessionTest extends TestCase
             ->setPartyId(1);
 
         (new Session())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher(($eventDispatcher))
             ->update($session);
     }
@@ -537,7 +550,7 @@ class SessionTest extends TestCase
                 ],
             ],
             'Issue' => [
-                ['issue_id' => 1, 'assembly_id' => 1, 'kind' => KindEnum::A->value],
+                ['issue_id' => 1, 'assembly_id' => 1, 'kind' => Model\KindEnum::A->value],
             ],
             'Plenary' => [
                 ['plenary_id' => 1, 'assembly_id' => 1],

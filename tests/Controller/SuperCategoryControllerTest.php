@@ -2,47 +2,45 @@
 
 namespace Althingi\Controller;
 
+use Althingi\{Model, Service};
 use Althingi\Controller\SuperCategoryController;
-use Althingi\Model;
-use Althingi\Service\SuperCategory;
 use Althingi\ServiceHelper;
 use Library\Container\Container;
+use PHPUnit\Framework\Attributes\{CoversMethod, CoversClass, Test, Before, After};
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class SuperCategoryControllerTest
- * @package Althingi\Controller
- * @coversDefaultClass \Althingi\Controller\SuperCategoryController
- *
- * @covers \Althingi\Controller\SuperCategoryController::setSuperCategoryService
- */
+#[CoversClass(SuperCategoryController::class)]
+#[CoversMethod(SuperCategoryController::class, 'setSuperCategoryService')]
+#[CoversMethod(SuperCategoryController::class, 'get')]
+#[CoversMethod(SuperCategoryController::class, 'getList')]
+#[CoversMethod(SuperCategoryController::class, 'patch')]
+#[CoversMethod(SuperCategoryController::class, 'put')]
 class SuperCategoryControllerTest extends TestCase
 {
     use ServiceHelper;
 
-    public function setUp(): void
+    #[Before]
+    public function up(): void
     {
         $this->setServiceManager(
             new Container(require __DIR__ . '/../../config/service.php')
         );
         $this->buildServices([
-            SuperCategory::class,
+            Service\SuperCategory::class,
         ]);
     }
 
-    public function tearDown(): void
+    #[After]
+    public function down(): void
     {
         \Mockery::close();
         parent::tearDown();
     }
 
-    /**
-     * @covers ::get
-     * @throws \Exception
-     */
-    public function testGet()
+    #[Test]
+    public function getSuccessful()
     {
-        $this->getMockService(SuperCategory::class)
+        $this->getMockService(Service\SuperCategory::class)
             ->shouldReceive('get')
             ->with(1)
             ->andReturn((new Model\SuperCategory()))
@@ -56,13 +54,10 @@ class SuperCategoryControllerTest extends TestCase
         $this->assertResponseStatusCode(200);
     }
 
-    /**
-     * @covers ::getList
-     * @throws \Exception
-     */
-    public function testGetList()
+    #[Test]
+    public function getList()
     {
-        $this->getMockService(SuperCategory::class)
+        $this->getMockService(Service\SuperCategory::class)
             ->shouldReceive('fetch')
             ->with()
             ->andReturn([new Model\SuperCategory()])
@@ -76,13 +71,10 @@ class SuperCategoryControllerTest extends TestCase
         $this->assertResponseStatusCode(206);
     }
 
-    /**
-     * @covers ::get
-     * @throws \Exception
-     */
-    public function testGetNotFound()
+    #[Test]
+    public function getNotFound()
     {
-        $this->getMockService(SuperCategory::class)
+        $this->getMockService(Service\SuperCategory::class)
             ->shouldReceive('get')
             ->with(1)
             ->andReturn(null)
@@ -96,16 +88,14 @@ class SuperCategoryControllerTest extends TestCase
         $this->assertResponseStatusCode(404);
     }
 
-    /**
-     * @covers ::put
-     */
-    public function testPutSuccess()
+    #[Test]
+    public function putSuccess()
     {
-        $expectedData = (new \Althingi\Model\SuperCategory())
+        $expectedData = (new Model\SuperCategory())
             ->setSuperCategoryId(1)
             ->setTitle('n1');
 
-        $this->getMockService(SuperCategory::class)
+        $this->getMockService(Service\SuperCategory::class)
             ->shouldReceive('save')
             ->with(\Mockery::on(function ($actualDate) use ($expectedData) {
                 return $actualDate == $expectedData;
@@ -123,12 +113,10 @@ class SuperCategoryControllerTest extends TestCase
         $this->assertResponseStatusCode(201);
     }
 
-    /**
-     * @covers ::put
-     */
-    public function testPutSuccessStuff()
+    #[Test]
+    public function putSuccessStuff()
     {
-        $this->getMockService(SuperCategory::class)
+        $this->getMockService(Service\SuperCategory::class)
             ->shouldReceive('create')
             ->never()
             ->getMock();
@@ -142,20 +130,18 @@ class SuperCategoryControllerTest extends TestCase
         $this->assertResponseStatusCode(400);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchSuccess()
+    #[Test]
+    public function patchSuccess()
     {
-        $expectedData = (new \Althingi\Model\SuperCategory())
+        $expectedData = (new Model\SuperCategory())
             ->setSuperCategoryId(1)
             ->setTitle('n2');
 
-        $serverReturnedData = (new \Althingi\Model\SuperCategory())
+        $serverReturnedData = (new Model\SuperCategory())
             ->setSuperCategoryId(1)
             ->setTitle('n1');
 
-        $this->getMockService(SuperCategory::class)
+        $this->getMockService(Service\SuperCategory::class)
             ->shouldReceive('update')
             ->with(\Mockery::on(function ($actualData) use ($expectedData) {
                 return $actualData == $expectedData;
@@ -178,19 +164,17 @@ class SuperCategoryControllerTest extends TestCase
         $this->assertResponseStatusCode(205);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchInvalidArgs()
+    #[Test]
+    public function patchInvalidArgs()
     {
-        $this->getMockService(SuperCategory::class)
+        $this->getMockService(Service\SuperCategory::class)
             ->shouldReceive('update')
             ->never()
             ->getMock()
 
             ->shouldReceive('get')
             ->once()
-            ->andReturn(new \Althingi\Model\SuperCategory())
+            ->andReturn(new Model\SuperCategory())
             ->getMock();
 
         $this->dispatch('/thingmal/efnisflokkar/1', 'PATCH', [
@@ -202,12 +186,10 @@ class SuperCategoryControllerTest extends TestCase
         $this->assertResponseStatusCode(400);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchNotFound()
+    #[Test]
+    public function patchNotFound()
     {
-        $this->getMockService(SuperCategory::class)
+        $this->getMockService(Service\SuperCategory::class)
             ->shouldReceive('update')
             ->never()
             ->getMock()

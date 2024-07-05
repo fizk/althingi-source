@@ -3,20 +3,19 @@
 namespace Althingi\Hydrator;
 
 use Althingi\Model\KindEnum;
-use Laminas\Hydrator\HydratorInterface;
+use Althingi\Utils\HydratorInterface;
 
 class Document implements HydratorInterface
 {
     use HydrateDate;
 
     /**
-     * Hydrate $object with the provided $data.
      *
-     * @param  array $data
-     * @param  \Althingi\Model\Document $object
+     * @param array $data
+     * @param \Althingi\Model\Document $object
      * @return \Althingi\Model\Document
      */
-    public function hydrate(array $data, $object)
+    public function hydrate(array $data, object $object): object
     {
         return $object
             ->setDocumentId($data['document_id'])
@@ -29,12 +28,11 @@ class Document implements HydratorInterface
     }
 
     /**
-     * Extract values from an object
      *
-     * @param  \Althingi\Model\Document $object
+     * @param \Althingi\Model\Document $object
      * @return array
      */
-    public function extract($object): array
+    public function extract(object $object): array
     {
         return $object->toArray();
     }

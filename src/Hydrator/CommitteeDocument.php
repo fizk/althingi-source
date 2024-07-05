@@ -3,20 +3,19 @@
 namespace Althingi\Hydrator;
 
 use Althingi\Model\KindEnum;
-use Laminas\Hydrator\HydratorInterface;
+use Althingi\Utils\HydratorInterface;
 
 class CommitteeDocument implements HydratorInterface
 {
     use HydrateDate;
 
     /**
-     * Hydrate $object with the provided $data.
      *
-     * @param  array $data
-     * @param  \Althingi\Model\CommitteeDocument $object
+     * @param array $data
+     * @param \Althingi\Model\CommitteeDocument $object
      * @return \Althingi\Model\CommitteeDocument
      */
-    public function hydrate(array $data, $object)
+    public function hydrate(array $data, object $object): object
     {
         return $object
             ->setDocumentCommitteeId($data['document_committee_id'])
@@ -29,14 +28,12 @@ class CommitteeDocument implements HydratorInterface
             ->setName($data['name']);
     }
 
-
     /**
-     * Extract values from an object
      *
-     * @param  \Althingi\Model\CommitteeDocument $object
+     * @param \Althingi\Model\CommitteeDocument $object
      * @return array
      */
-    public function extract($object): array
+    public function extract(object $object): array
     {
         return $object->toArray();
     }

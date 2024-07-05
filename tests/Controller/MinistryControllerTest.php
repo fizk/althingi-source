@@ -2,25 +2,27 @@
 
 namespace Althingi\Controller;
 
+use Althingi\{Model, Service};
 use Althingi\Controller\MinistryController;
-use Althingi\Model;
-use Althingi\Service;
 use Althingi\ServiceHelper;
 use Library\Container\Container;
+use PHPUnit\Framework\Attributes\{CoversMethod, CoversClass, Test, Before, After};
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class AssemblyControllerTest
- * @package Althingi\Controller
- * @coversDefaultClass \Althingi\Controller\MinistryController
- *
- * @covers \Althingi\Controller\MinistryController::setMinistryService
- */
+#[CoversClass(MinistryController::class)]
+#[CoversMethod(MinistryController::class, 'setMinistryService')]
+#[CoversMethod(MinistryController::class, 'get')]
+#[CoversMethod(MinistryController::class, 'getList')]
+#[CoversMethod(MinistryController::class, 'options')]
+#[CoversMethod(MinistryController::class, 'optionsList')]
+#[CoversMethod(MinistryController::class, 'patch')]
+#[CoversMethod(MinistryController::class, 'put')]
 class MinistryControllerTest extends TestCase
 {
     use ServiceHelper;
 
-    public function setUp(): void
+    #[Before]
+    public function up(): void
     {
         $this->setServiceManager(
             new Container(require __DIR__ . '/../../config/service.php')
@@ -30,22 +32,21 @@ class MinistryControllerTest extends TestCase
         ]);
     }
 
-    public function tearDown(): void
+    #[After]
+    public function down(): void
     {
         $this->destroyServices();
         \Mockery::close();
         parent::tearDown();
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGet()
+    #[Test]
+    public function getSuccessful()
     {
         $this->getMockService(Service\Ministry::class)
             ->shouldReceive('get')
-            ->andReturn(new Model\Ministry())
             ->once()
+            ->andReturn(new Model\Ministry())
             ->getMock();
 
         $this->dispatch('/radherraembaetti/144', 'GET');
@@ -55,15 +56,13 @@ class MinistryControllerTest extends TestCase
         $this->assertResponseStatusCode(200);
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGetNotFound()
+    #[Test]
+    public function getNotFound()
     {
         $this->getMockService(Service\Ministry::class)
             ->shouldReceive('get')
-            ->andReturn(null)
             ->once()
+            ->andReturn(null)
             ->getMock();
 
         $this->dispatch('/radherraembaetti/144', 'GET');
@@ -73,19 +72,17 @@ class MinistryControllerTest extends TestCase
         $this->assertResponseStatusCode(404);
     }
 
-    /**
-     * @covers ::getList
-     */
-    public function testGetListAll()
+    #[Test]
+    public function getListAll()
     {
         $this->getMockService(Service\Ministry::class)
             ->shouldReceive('fetchAll')
+            ->once()
             ->andReturn([
                 new Model\Ministry(),
                 new Model\Ministry(),
                 new Model\Ministry(),
             ])
-            ->once()
             ->getMock();
 
         $this->dispatch('/radherraembaetti', 'GET');
@@ -95,15 +92,13 @@ class MinistryControllerTest extends TestCase
         $this->assertResponseStatusCode(206);
     }
 
-    /**
-     * @covers ::put
-     */
-    public function testPut()
+    #[Test]
+    public function putSuccessful()
     {
         $this->getMockService(Service\Ministry::class)
             ->shouldReceive('save')
-            ->andReturn(1)
             ->once()
+            ->andReturn(1)
             ->getMock();
 
         $this->dispatch('/radherraembaetti/144', 'PUT', [
@@ -120,7 +115,6 @@ class MinistryControllerTest extends TestCase
     }
 
     /**
-     * @covers ::put
      * @todo this shold work but currently: 'first' => 'thisissomething', is converted into NULL
      */
     // public function testPutInvalidParams()
@@ -144,10 +138,8 @@ class MinistryControllerTest extends TestCase
     //     $this->assertResponseStatusCode(400);
     // }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatch()
+    #[Test]
+    public function patchSuccessful()
     {
         $ministry = (new Model\Ministry())
             ->setMinistryId(144)
@@ -155,8 +147,8 @@ class MinistryControllerTest extends TestCase
 
         $this->getMockService(Service\Ministry::class)
             ->shouldReceive('get')
-            ->andReturn($ministry)
             ->once()
+            ->andReturn($ministry)
             ->getMock()
             ->shouldReceive('update')
             ->andReturn(1)
@@ -171,15 +163,13 @@ class MinistryControllerTest extends TestCase
         $this->assertResponseStatusCode(205);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchNotFound()
+    #[Test]
+    public function patchNotFound()
     {
         $this->getMockService(Service\Ministry::class)
             ->shouldReceive('get')
-            ->andReturn(null)
             ->once()
+            ->andReturn(null)
             ->getMock()
             ->shouldReceive('update')
             ->andReturn(1)
@@ -195,7 +185,6 @@ class MinistryControllerTest extends TestCase
     }
 
     /**
-     * @covers ::patch
      * @todo this shold work but currently: 'first' => 'thisissomething', is converted into NULL
      */
     // public function testPatchInvalidParams()
@@ -223,15 +212,13 @@ class MinistryControllerTest extends TestCase
     //     $this->assertResponseStatusCode(400);
     // }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchResourceNotFound()
+    #[Test]
+    public function patchResourceNotFound()
     {
         $this->getMockService(Service\Ministry::class)
             ->shouldReceive('get')
-            ->andReturn(null)
             ->once()
+            ->andReturn(null)
             ->getMock()
             ->shouldReceive('update')
             ->andReturn(1)
@@ -246,10 +233,8 @@ class MinistryControllerTest extends TestCase
         $this->assertResponseStatusCode(404);
     }
 
-    /**
-     * @covers ::options
-     */
-    public function testOptions()
+    #[Test]
+    public function optionsSuccessful()
     {
         $this->dispatch('/radherraembaetti/144', 'OPTIONS');
 
@@ -263,10 +248,8 @@ class MinistryControllerTest extends TestCase
         $this->assertCount(0, array_diff($expectedMethods, $actualMethods));
     }
 
-    /**
-     * @covers ::optionsList
-     */
-    public function testOptionsList()
+    #[Test]
+    public function optionsList()
     {
         $this->dispatch('/radherraembaetti', 'OPTIONS');
 

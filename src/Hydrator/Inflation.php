@@ -2,19 +2,18 @@
 
 namespace Althingi\Hydrator;
 
-use Laminas\Hydrator\HydratorInterface;
+use Althingi\Utils\HydratorInterface;
 use DateTime;
 
 class Inflation implements HydratorInterface
 {
     /**
-     * Hydrate $object with the provided $data.
      *
-     * @param  array $data
-     * @param  \Althingi\Model\Inflation $object
+     * @param array $data
+     * @param \Althingi\Model\Inflation $object
      * @return \Althingi\Model\Inflation
      */
-    public function hydrate(array $data, $object)
+    public function hydrate(array $data, object $object): object
     {
         return $object->setId((int) $data['id'])
             ->setValue((float) $data['value'])
@@ -22,12 +21,11 @@ class Inflation implements HydratorInterface
     }
 
     /**
-     * Extract values from an object
      *
-     * @param  \Althingi\Model\Inflation $object
+     * @param \Althingi\Model\Inflation $object
      * @return array
      */
-    public function extract($object): array
+    public function extract(object $object): array
     {
         return $object->toArray();
     }

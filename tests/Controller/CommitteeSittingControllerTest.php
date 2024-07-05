@@ -3,25 +3,25 @@
 namespace Althingi\Controller;
 
 use Althingi\Controller;
-use Althingi\Model;
-use Althingi\Service;
+use Althingi\{Model, Service};
 use Althingi\ServiceHelper;
 use DateTime;
 use Library\Container\Container;
+use PHPUnit\Framework\Attributes\{CoversMethod, CoversClass, Test, Before, After};
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class SessionControllerTest
- * @package Althingi\Controller
- * @coversDefaultClass \Althingi\Controller\CommitteeSittingController
- *
- * @covers \Althingi\Controller\CommitteeSittingController::setCommitteeSitting
- */
+#[CoversClass(CommitteeSittingController::class)]
+#[CoversMethod(CommitteeSittingController::class, 'setCommitteeSitting')]
+#[CoversMethod(CommitteeSittingController::class, 'get')]
+#[CoversMethod(CommitteeSittingController::class, 'getList')]
+#[CoversMethod(CommitteeSittingController::class, 'patch')]
+#[CoversMethod(CommitteeSittingController::class, 'post')]
 class CommitteeSittingControllerTest extends TestCase
 {
     use ServiceHelper;
 
-    public function setUp(): void
+    #[Before]
+    public function up(): void
     {
         $this->setServiceManager(
             new Container(require __DIR__ . '/../../config/service.php')
@@ -31,16 +31,15 @@ class CommitteeSittingControllerTest extends TestCase
         ]);
     }
 
-    public function tearDown(): void
+    #[After]
+    public function down(): void
     {
         \Mockery::close();
         parent::tearDown();
     }
 
-    /**
-     * @covers ::post
-     */
-    public function testCreateSuccess()
+    #[Test]
+    public function postCreateSuccess()
     {
         $expectedObject = (new Model\CommitteeSitting())
             ->setCommitteeId(2)
@@ -75,10 +74,8 @@ class CommitteeSittingControllerTest extends TestCase
         $this->assertActionName('post');
     }
 
-    /**
-     * @covers ::post
-     */
-    public function testCreateEntryAlreadyExists()
+    #[Test]
+    public function postCreateEntryAlreadyExists()
     {
         $exception = new \PDOException();
         $exception->errorInfo = ['', 1062, ''];
@@ -90,8 +87,8 @@ class CommitteeSittingControllerTest extends TestCase
             ->getMock()
 
             ->shouldReceive('getIdentifier')
-            ->andReturn(54321)
             ->once()
+            ->andReturn(54321)
         ;
 
         $this->dispatch('/thingmenn/3/nefndaseta', 'POST', [
@@ -110,10 +107,8 @@ class CommitteeSittingControllerTest extends TestCase
         $this->assertActionName('post');
     }
 
-    /**
-     * @covers ::post
-     */
-    public function testCreateInvalid()
+    #[Test]
+    public function postCreateInvalid()
     {
         $this->getMockService(Service\CommitteeSitting::class)
             ->shouldReceive('create')
@@ -135,10 +130,8 @@ class CommitteeSittingControllerTest extends TestCase
         $this->assertActionName('post');
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchSuccess()
+    #[Test]
+    public function patchSuccess()
     {
         $serviceReturnedData = (new Model\CommitteeSitting())
             ->setCommitteeSittingId(555)
@@ -183,10 +176,8 @@ class CommitteeSittingControllerTest extends TestCase
         $this->assertActionName('patch');
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchInvalidParams()
+    #[Test]
+    public function patchInvalidParams()
     {
         $serviceReturnedData = (new Model\CommitteeSitting())
             ->setCommitteeSittingId(555)
@@ -217,10 +208,8 @@ class CommitteeSittingControllerTest extends TestCase
         $this->assertActionName('patch');
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchNotFound()
+    #[Test]
+    public function patchNotFound()
     {
         $this->getMockService(Service\CommitteeSitting::class)
             ->shouldReceive('get')
@@ -242,10 +231,8 @@ class CommitteeSittingControllerTest extends TestCase
         $this->assertActionName('patch');
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGet()
+    #[Test]
+    public function getSuccessfull()
     {
         $this->getMockService(Service\CommitteeSitting::class)
             ->shouldReceive('get')
@@ -258,10 +245,8 @@ class CommitteeSittingControllerTest extends TestCase
         $this->assertActionName('get');
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGetNotFound()
+    #[Test]
+    public function getNotFound()
     {
         $this->getMockService(Service\CommitteeSitting::class)
             ->shouldReceive('get')
@@ -274,10 +259,8 @@ class CommitteeSittingControllerTest extends TestCase
         $this->assertActionName('get');
     }
 
-    /**
-     * @covers ::getList
-     */
-    public function testGetList()
+    #[Test]
+    public function getList()
     {
         $this->getMockService(Service\CommitteeSitting::class)
             ->shouldReceive('fetchByCongressman')

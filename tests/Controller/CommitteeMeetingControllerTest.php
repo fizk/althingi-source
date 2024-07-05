@@ -3,48 +3,47 @@
 namespace Althingi\Controller;
 
 use Althingi\Controller\CommitteeMeetingController;
-use Althingi\Model\CommitteeMeeting as CommitteeMeetingModel;
-use Althingi\Service\CommitteeMeeting;
+use Althingi\{Model, Service};
 use Althingi\ServiceHelper;
 use Library\Container\Container;
+use PHPUnit\Framework\Attributes\{CoversMethod, CoversClass, Test, Before, After};
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class CommitteeMeetingControllerTest
- * @package Althingi\Controller
- * @coversDefaultClass \Althingi\Controller\CommitteeMeetingController
- *
- * @covers \Althingi\Controller\CommitteeMeetingController::setCommitteeMeetingService
- */
+#[CoversClass(CommitteeMeetingController::class)]
+#[CoversMethod(CommitteeMeetingController::class, 'setCommitteeMeetingService')]
+#[CoversMethod(CommitteeMeetingController::class, 'get')]
+#[CoversMethod(CommitteeMeetingController::class, 'getList')]
+#[CoversMethod(CommitteeMeetingController::class, 'patch')]
+#[CoversMethod(CommitteeMeetingController::class, 'put')]
 class CommitteeMeetingControllerTest extends TestCase
 {
     use ServiceHelper;
 
-    public function setUp(): void
+    #[Before]
+    public function up(): void
     {
         $this->setServiceManager(
             new Container(require __DIR__ . '/../../config/service.php')
         );
         $this->buildServices([
-            CommitteeMeeting::class
+            Service\CommitteeMeeting::class
         ]);
     }
 
-    public function tearDown(): void
+    #[After]
+    public function down(): void
     {
         \Mockery::close();
         parent::tearDown();
     }
 
-    /**
-     * @covers ::put
-     */
-    public function testPutSuccess()
+    #[Test]
+    public function putMeetingSuccessfully()
     {
-        $this->getMockService(CommitteeMeeting::class)
+        $this->getMockService(Service\CommitteeMeeting::class)
             ->shouldReceive('save')
-            ->andReturn(1)
             ->once()
+            ->andReturn(1)
             ->getMock();
 
 
@@ -59,20 +58,18 @@ class CommitteeMeetingControllerTest extends TestCase
         $this->assertResponseStatusCode(201);
     }
 
-    /**
-     * @covers ::getList
-     */
-    public function testGetList()
+    #[Test]
+    public function getFetchMeetingsByGivenAssemblySuccessfully()
     {
-        $this->getMockService(CommitteeMeeting::class)
+        $this->getMockService(Service\CommitteeMeeting::class)
             ->shouldReceive('fetchByAssembly')
             ->with(145, 202)
             ->andReturn([
-                (new CommitteeMeetingModel())
+                (new Model\CommitteeMeeting())
                     ->setCommitteeId(202)
                     ->setCommitteeMeetingId(1646)
                     ->setAssemblyId(145),
-                (new CommitteeMeetingModel())
+                (new Model\CommitteeMeeting())
                     ->setCommitteeId(202)
                     ->setCommitteeMeetingId(1647)
                     ->setAssemblyId(145)
@@ -87,21 +84,22 @@ class CommitteeMeetingControllerTest extends TestCase
         $this->assertResponseStatusCode(206);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchSuccess()
+    #[Test]
+    public function patchUpdateMeetingSuccessfully()
     {
-        $this->getMockService(CommitteeMeeting::class)
+        $this->getMockService(Service\CommitteeMeeting::class)
             ->shouldReceive('get')
+            ->once()
             ->andReturn(
-                (new CommitteeMeetingModel())
+                (new Model\CommitteeMeeting())
                     ->setCommitteeId(202)
                     ->setCommitteeMeetingId(1646)
                     ->setAssemblyId(145)
-            )->once()->getMock()
+            )
+            ->getMock()
             ->shouldReceive('update')
-            ->andReturn(1)->once()
+            ->once()
+            ->andReturn(1)
             ->getMock();
 
         $this->dispatch('/loggjafarthing/145/nefndir/202/nefndarfundir/1646', 'PATCH', [
@@ -115,22 +113,22 @@ class CommitteeMeetingControllerTest extends TestCase
         $this->assertResponseStatusCode(205);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchInvalidDate()
+    #[Test]
+    public function patchMeetingWithInvalidDateError()
     {
-        $this->getMockService(CommitteeMeeting::class)
+        $this->getMockService(Service\CommitteeMeeting::class)
             ->shouldReceive('get')
+            ->once()
             ->andReturn(
-                (new CommitteeMeetingModel())
+                (new Model\CommitteeMeeting())
                     ->setCommitteeId(202)
                     ->setCommitteeMeetingId(1646)
                     ->setAssemblyId(145)
-            )->once()->getMock()
+            )
+            ->getMock()
             ->shouldReceive('update')
-            ->andReturn(1)
             ->never()
+            ->andReturn(1)
             ->getMock();
 
         $this->dispatch('/loggjafarthing/145/nefndir/202/nefndarfundir/1646', 'PATCH', [
@@ -144,12 +142,10 @@ class CommitteeMeetingControllerTest extends TestCase
         $this->assertResponseStatusCode(400);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchResourceNotFound()
+    #[Test]
+    public function patchUpdateMeetingButWasNotFoundError()
     {
-        $this->getMockService(CommitteeMeeting::class)
+        $this->getMockService(Service\CommitteeMeeting::class)
             ->shouldReceive('get')
             ->andReturn(null)->getMock()
             ->shouldReceive('update')
@@ -167,19 +163,18 @@ class CommitteeMeetingControllerTest extends TestCase
         $this->assertResponseStatusCode(404);
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGetSuccess()
+    #[Test]
+    public function getMeetingSuccessfully()
     {
-        $this->getMockService(CommitteeMeeting::class)
+        $this->getMockService(Service\CommitteeMeeting::class)
             ->shouldReceive('get')
+            ->once()
             ->andReturn(
-                (new CommitteeMeetingModel())
+                (new Model\CommitteeMeeting())
                     ->setCommitteeId(202)
                     ->setCommitteeMeetingId(1646)
                     ->setAssemblyId(145)
-            )->once()
+            )
             ->getMock();
 
         $this->dispatch('/loggjafarthing/145/nefndir/202/nefndarfundir/1646', 'GET');
@@ -189,15 +184,13 @@ class CommitteeMeetingControllerTest extends TestCase
         $this->assertResponseStatusCode(200);
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGetResourceNotFound()
+    #[Test]
+    public function getMeetingButNotFoundError()
     {
-        $this->getMockService(CommitteeMeeting::class)
+        $this->getMockService(Service\CommitteeMeeting::class)
             ->shouldReceive('get')
-            ->andReturn(null)
             ->once()
+            ->andReturn(null)
             ->getMock();
 
         $this->dispatch('/loggjafarthing/145/nefndir/202/nefndarfundir/1646', 'GET');

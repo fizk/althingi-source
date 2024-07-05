@@ -2,32 +2,28 @@
 
 namespace Althingi\Service;
 
-use PHPUnit\Framework\TestCase;
-use Althingi\Model\CongressmanDocument as CongressmanDocumentModel;
-use Althingi\Service\CongressmanDocument;
-use Althingi\DatabaseConnection;
-use Althingi\Events\AddEvent;
-use Althingi\Events\UpdateEvent;
-use Althingi\Model\KindEnum;
-use Psr\EventDispatcher\EventDispatcherInterface;
+use Althingi\DatabaseConnectionTrait;
+use Althingi\Events\{AddEvent, UpdateEvent};
+use Althingi\Model;
 use Mockery;
-use PDO;
+use PHPUnit\Framework\Attributes\{Test};
+use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class CongressmanDocumentTest extends TestCase
 {
-    use DatabaseConnection;
+    use DatabaseConnectionTrait;
 
-    private PDO $pdo;
-
-    public function testGet()
+    #[Test]
+    public function getSuccess()
     {
         $congressmanDocumentService = new CongressmanDocument();
-        $congressmanDocumentService->setDriver($this->pdo);
+        $congressmanDocumentService->setDriver($this->getPDO());
 
-        $expectedData = (new CongressmanDocumentModel())
+        $expectedData = (new Model\CongressmanDocument())
             ->setDocumentId(1)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setAssemblyId(1)
             ->setCongressmanId(1)
             ->setOrder(1);
@@ -36,12 +32,13 @@ class CongressmanDocumentTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testCreate()
+    #[Test]
+    public function createSuccess()
     {
-        $congressman = (new CongressmanDocumentModel())
+        $congressman = (new Model\CongressmanDocument())
             ->setDocumentId(1)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setAssemblyId(1)
             ->setCongressmanId(2)
             ->setOrder(2);
@@ -49,10 +46,10 @@ class CongressmanDocumentTest extends TestCase
         $expectedTable = $this->createArrayDataSet([
             'Document_has_Congressman' => [
                 [
-                    'document_id' => 1, 'issue_id' => 1, 'kind' => KindEnum::A->value,
+                    'document_id' => 1, 'issue_id' => 1, 'kind' => Model\KindEnum::A->value,
                     'assembly_id' => 1, 'congressman_id' => 1, 'minister' => null, 'order' => 1
                 ], [
-                    'document_id' => 1, 'issue_id' => 1, 'kind' => KindEnum::A->value,
+                    'document_id' => 1, 'issue_id' => 1, 'kind' => Model\KindEnum::A->value,
                     'assembly_id' => 1, 'congressman_id' => 2, 'minister' => null, 'order' => 2
                 ],
             ],
@@ -61,18 +58,19 @@ class CongressmanDocumentTest extends TestCase
             ->createQueryTable('Document_has_Congressman', 'SELECT * FROM Document_has_Congressman');
 
         $congressmanService = new CongressmanDocument();
-        $congressmanService->setDriver($this->pdo);
+        $congressmanService->setDriver($this->getPDO());
         $congressmanService->create($congressman);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testSave()
+    #[Test]
+    public function saveSuccess()
     {
-        $congressman = (new CongressmanDocumentModel())
+        $congressman = (new Model\CongressmanDocument())
             ->setDocumentId(1)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setAssemblyId(1)
             ->setCongressmanId(2)
             ->setOrder(2);
@@ -80,10 +78,10 @@ class CongressmanDocumentTest extends TestCase
         $expectedTable = $this->createArrayDataSet([
             'Document_has_Congressman' => [
                 [
-                    'document_id' => 1, 'issue_id' => 1, 'kind' => KindEnum::A->value, 'assembly_id' => 1,
+                    'document_id' => 1, 'issue_id' => 1, 'kind' => Model\KindEnum::A->value, 'assembly_id' => 1,
                     'congressman_id' => 1, 'minister' => null, 'order' => 1
                 ], [
-                    'document_id' => 1, 'issue_id' => 1, 'kind' => KindEnum::A->value, 'assembly_id' => 1,
+                    'document_id' => 1, 'issue_id' => 1, 'kind' => Model\KindEnum::A->value, 'assembly_id' => 1,
                     'congressman_id' => 2, 'minister' => null, 'order' => 2
                 ],
             ],
@@ -92,18 +90,19 @@ class CongressmanDocumentTest extends TestCase
             ->createQueryTable('Document_has_Congressman', 'SELECT * FROM Document_has_Congressman');
 
         $congressmanService = new CongressmanDocument();
-        $congressmanService->setDriver($this->pdo);
+        $congressmanService->setDriver($this->getPDO());
         $congressmanService->save($congressman);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testUpdate()
+    #[Test]
+    public function updateSuccess()
     {
-        $congressman = (new CongressmanDocumentModel())
+        $congressman = (new Model\CongressmanDocument())
             ->setDocumentId(1)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setAssemblyId(1)
             ->setCongressmanId(1)
             ->setMinister('hello')
@@ -112,7 +111,7 @@ class CongressmanDocumentTest extends TestCase
         $expectedTable = $this->createArrayDataSet([
             'Document_has_Congressman' => [
                 [
-                    'document_id' => 1, 'issue_id' => 1, 'kind' => KindEnum::A->value ,'assembly_id' => 1,
+                    'document_id' => 1, 'issue_id' => 1, 'kind' => Model\KindEnum::A->value ,'assembly_id' => 1,
                     'congressman_id' => 1, 'minister' => 'hello', 'order' => 2
                 ]
             ],
@@ -121,14 +120,16 @@ class CongressmanDocumentTest extends TestCase
             ->createQueryTable('Document_has_Congressman', 'SELECT * FROM Document_has_Congressman');
 
         $congressmanService = new CongressmanDocument();
-        $congressmanService->setDriver($this->pdo);
+        $congressmanService->setDriver($this->getPDO());
         $congressmanService->update($congressman);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testCreateFireEventOne()
+    #[Test]
+    public function createFireEventOne()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -138,22 +139,24 @@ class CongressmanDocumentTest extends TestCase
             })
             ->getMock();
 
-        $congressman = (new CongressmanDocumentModel())
+        $congressman = (new Model\CongressmanDocument())
             ->setDocumentId(1)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setAssemblyId(1)
             ->setCongressmanId(2)
             ->setOrder(2);
 
         (new CongressmanDocument())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->create($congressman);
     }
 
-    public function testUpdateFireEventOne()
+    #[Test]
+    public function updateFireEventOne()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -163,21 +166,24 @@ class CongressmanDocumentTest extends TestCase
             })
             ->getMock();
 
-        $congressman = (new CongressmanDocumentModel())
+        $congressman = (new Model\CongressmanDocument())
             ->setDocumentId(1)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setAssemblyId(1)
             ->setCongressmanId(1)
             ->setOrder(2);
 
         (new CongressmanDocument())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->update($congressman);
     }
-    public function testUpdateFireEventZero()
+
+    #[Test]
+    public function updateFireEventZero()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -187,22 +193,24 @@ class CongressmanDocumentTest extends TestCase
             })
             ->getMock();
 
-        $congressman = (new CongressmanDocumentModel())
+        $congressman = (new Model\CongressmanDocument())
             ->setDocumentId(1)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setAssemblyId(1)
             ->setCongressmanId(1)
             ->setOrder(1);
 
         (new CongressmanDocument())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->update($congressman);
     }
 
-    public function testSaveFireEventZero()
+    #[Test]
+    public function saveFireEventZero()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -212,22 +220,24 @@ class CongressmanDocumentTest extends TestCase
             })
             ->getMock();
 
-        $congressman = (new CongressmanDocumentModel())
+        $congressman = (new Model\CongressmanDocument())
             ->setDocumentId(1)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setAssemblyId(1)
             ->setCongressmanId(1)
             ->setOrder(1);
 
         (new CongressmanDocument())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->save($congressman);
     }
 
-    public function testSaveFireEventOne()
+    #[Test]
+    public function saveFireEventOne()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -237,22 +247,24 @@ class CongressmanDocumentTest extends TestCase
             })
             ->getMock();
 
-        $congressman = (new CongressmanDocumentModel())
+        $congressman = (new Model\CongressmanDocument())
             ->setDocumentId(1)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setAssemblyId(1)
             ->setCongressmanId(1)
             ->setOrder(2);
 
         (new CongressmanDocument())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->save($congressman);
     }
 
-    public function testSaveFireEventTwo()
+    #[Test]
+    public function saveFireEventTwo()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -262,16 +274,16 @@ class CongressmanDocumentTest extends TestCase
             })
             ->getMock();
 
-        $congressman = (new CongressmanDocumentModel())
+        $congressman = (new Model\CongressmanDocument())
             ->setDocumentId(1)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setAssemblyId(1)
             ->setCongressmanId(2)
             ->setOrder(1);
 
         (new CongressmanDocument())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->save($congressman);
     }
@@ -291,13 +303,13 @@ class CongressmanDocumentTest extends TestCase
                 ['congressman_id' => 4, 'name' => 'name4', 'birth' => '2000-01-01', 'death' => null],
             ],
             'Issue' => [
-                ['issue_id' => 1, 'assembly_id' => 1, 'kind' => KindEnum::A->value]
+                ['issue_id' => 1, 'assembly_id' => 1, 'kind' => Model\KindEnum::A->value]
             ],
             'Document' => [
                 [
                     'document_id' => 1,
                     'issue_id' => 1,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'assembly_id' => 1,
                     'date' => '2000-01-01',
                     'url' => '',
@@ -308,7 +320,7 @@ class CongressmanDocumentTest extends TestCase
                 [
                     'document_id' => 1,
                     'issue_id' => 1,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'assembly_id' => 1,
                     'congressman_id' => 1,
                     'order' => 1

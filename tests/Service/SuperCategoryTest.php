@@ -2,24 +2,22 @@
 
 namespace Althingi\Service;
 
-use Althingi\Model\SuperCategory as SuperCategoryModel;
-use Althingi\Service\SuperCategory;
-use Althingi\DatabaseConnection;
+use Althingi\DatabaseConnectionTrait;
+use Althingi\Model;
+use PHPUnit\Framework\Attributes\{Test};
 use PHPUnit\Framework\TestCase;
-use PDO;
 
 class SuperCategoryTest extends TestCase
 {
-    use DatabaseConnection;
+    use DatabaseConnectionTrait;
 
-    private PDO $pdo;
-
-    public function testGet()
+    #[Test]
+    public function getSuccess()
     {
         $service = new SuperCategory();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
-        $expectedData = (new SuperCategoryModel())
+        $expectedData = (new Model\SuperCategory())
             ->setSuperCategoryId(1)
             ->setTitle('title1');
         $actualData = $service->get(1);
@@ -27,10 +25,11 @@ class SuperCategoryTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchAllGenerator()
+    #[Test]
+    public function fetchAllGenerator()
     {
         $service = new SuperCategory();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
         $actualData = [];
         foreach ($service->fetchAllGenerator() as $category) {
@@ -39,12 +38,13 @@ class SuperCategoryTest extends TestCase
 
 
         $this->assertCount(3, $actualData);
-        $this->assertInstanceOf(SuperCategoryModel::class, $actualData[0]);
+        $this->assertInstanceOf(Model\SuperCategory::class, $actualData[0]);
     }
 
-    public function testCreate()
+    #[Test]
+    public function createSuccess()
     {
-        $superCategory = (new SuperCategoryModel())
+        $superCategory = (new Model\SuperCategory())
             ->setSuperCategoryId(10)
             ->setTitle('MyTitle');
 
@@ -57,15 +57,16 @@ class SuperCategoryTest extends TestCase
             ->createQueryTable('SuperCategory', 'SELECT * FROM SuperCategory where `super_category_id` = 10');
 
         $service = new SuperCategory();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
         $service->create($superCategory);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testSave()
+    #[Test]
+    public function saveSuccess()
     {
-        $superCategory = (new SuperCategoryModel())
+        $superCategory = (new Model\SuperCategory())
             ->setSuperCategoryId(10)
             ->setTitle('MyTitle');
 
@@ -78,15 +79,16 @@ class SuperCategoryTest extends TestCase
             ->createQueryTable('SuperCategory', 'SELECT * FROM SuperCategory where `super_category_id` = 10');
 
         $service = new SuperCategory();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
         $service->save($superCategory);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testUpdate()
+    #[Test]
+    public function updateSuccess()
     {
-        $superCategory = (new SuperCategoryModel())
+        $superCategory = (new Model\SuperCategory())
             ->setSuperCategoryId(1)
             ->setTitle('MyTitle');
 
@@ -99,7 +101,7 @@ class SuperCategoryTest extends TestCase
             ->createQueryTable('SuperCategory', 'SELECT * FROM SuperCategory where `super_category_id` = 1');
 
         $service = new SuperCategory();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
         $service->update($superCategory);
 
         $this->assertTablesEqual($expectedTable, $actualTable);

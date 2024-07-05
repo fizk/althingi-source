@@ -46,6 +46,7 @@ class CommitteeSittingController implements
         $committeeSitting = $this->committeeSittingService->get(
             $request->getAttribute('committee_sitting_id')
         );
+
         return $committeeSitting
             ? new JsonResponse($committeeSitting)
             : new EmptyResponse(404);
@@ -57,9 +58,9 @@ class CommitteeSittingController implements
      */
     public function getList(ServerRequest $request): ResponseInterface
     {
-        $congressmanId = $request->getAttribute('congressman_id');
-
-        $sessions = $this->committeeSittingService->fetchByCongressman($congressmanId);
+        $sessions = $this->committeeSittingService->fetchByCongressman(
+            $request->getAttribute('congressman_id')
+        );
 
         return new JsonResponse($sessions, 206);
     }

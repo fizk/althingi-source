@@ -2,26 +2,25 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Controller;
-use Althingi\Model;
-use Althingi\Model\KindEnum;
-use Althingi\Service;
+use Althingi\Controller\CommitteeDocumentController;
+use Althingi\{Model, Service};
 use Althingi\ServiceHelper;
 use Library\Container\Container;
+use PHPUnit\Framework\Attributes\{CoversMethod, CoversClass, Test, Before, After};
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class SessionControllerTest
- * @package Althingi\Controller
- * @coversDefaultClass \Althingi\Controller\CommitteeDocumentController
- *
- * @covers \Althingi\Controller\CommitteeDocumentController::setCommitteeDocumentService
- */
+#[CoversClass(CommitteeDocumentController::class)]
+#[CoversMethod(CommitteeDocumentController::class, 'setCommitteeDocumentService')]
+#[CoversMethod(CommitteeDocumentController::class, 'get')]
+#[CoversMethod(CommitteeDocumentController::class, 'getList')]
+#[CoversMethod(CommitteeDocumentController::class, 'patch')]
+#[CoversMethod(CommitteeDocumentController::class, 'post')]
 class CommitteeDocumentControllerTest extends TestCase
 {
     use ServiceHelper;
 
-    public function setUp(): void
+    #[Before]
+    public function up(): void
     {
         $this->setServiceManager(
             new Container(require __DIR__ . '/../../config/service.php')
@@ -31,22 +30,21 @@ class CommitteeDocumentControllerTest extends TestCase
         ]);
     }
 
-    public function tearDown(): void
+    #[After]
+    public function down(): void
     {
         \Mockery::close();
         parent::tearDown();
     }
 
-    /**
-     * @covers ::post
-     */
-    public function testCreateSuccess()
+    #[Test]
+    public function postCreateCommitteeDocumentSuccessfully()
     {
         $expectedObject = (new Model\CommitteeDocument())
             ->setDocumentId(4)
             ->setAssemblyId(1)
             ->setIssueId(2)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setCommitteeId(3)
             ->setPart('part')
             ->setName('name');
@@ -68,14 +66,12 @@ class CommitteeDocumentControllerTest extends TestCase
 
         $this->assertResponseStatusCode(201);
         $this->assertResponseHeaderContains('Location', '/loggjafarthing/1/thingmal/a/2/thingskjal/4/nefndir/10');
-        $this->assertControllerName(Controller\CommitteeDocumentController::class);
+        $this->assertControllerName(CommitteeDocumentController::class);
         $this->assertActionName('post');
     }
 
-    /**
-     * @covers ::post
-     */
-    public function testCreateEntryAlreadyExists()
+    #[Test]
+    public function postCreateCommitteDocumentButItAlreadyExistsError()
     {
         $exception = new \PDOException();
         $exception->errorInfo = ['', 1062, ''];
@@ -87,8 +83,8 @@ class CommitteeDocumentControllerTest extends TestCase
             ->getMock()
 
             ->shouldReceive('getIdentifier')
-            ->andReturn(54321)
             ->once()
+            ->andReturn(54321)
         ;
 
         $this->dispatch('/loggjafarthing/1/thingmal/a/2/thingskjal/4/nefndir', 'POST', [
@@ -99,14 +95,12 @@ class CommitteeDocumentControllerTest extends TestCase
 
         $this->assertResponseStatusCode(409);
         $this->assertResponseHeaderContains('Location', '/loggjafarthing/1/thingmal/a/2/thingskjal/4/nefndir/54321');
-        $this->assertControllerName(Controller\CommitteeDocumentController::class);
+        $this->assertControllerName(CommitteeDocumentController::class);
         $this->assertActionName('post');
     }
 
-    /**
-     * @covers ::post
-     */
-    public function testCreateInvalid()
+    #[Test]
+    public function postCreateCommitteeDocumentButParamsAreIncorrectError()
     {
         $this->getMockService(Service\CommitteeDocument::class)
             ->shouldReceive('create')
@@ -119,21 +113,19 @@ class CommitteeDocumentControllerTest extends TestCase
         ]);
 
         $this->assertResponseStatusCode(400);
-        $this->assertControllerName(Controller\CommitteeDocumentController::class);
+        $this->assertControllerName(CommitteeDocumentController::class);
         $this->assertActionName('post');
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchSuccess()
+    #[Test]
+    public function patchCommitteeDocumentSuccessfully()
     {
         $serviceReturnedData = (new Model\CommitteeDocument())
             ->setDocumentCommitteeId(555)
             ->setDocumentId(4)
             ->setAssemblyId(1)
             ->setIssueId(2)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setCommitteeId(3)
             ->setPart(null)
             ->setName(null);
@@ -143,7 +135,7 @@ class CommitteeDocumentControllerTest extends TestCase
             ->setDocumentId(4)
             ->setAssemblyId(1)
             ->setIssueId(2)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setCommitteeId(3)
             ->setPart('part')
             ->setName('name');
@@ -169,21 +161,19 @@ class CommitteeDocumentControllerTest extends TestCase
         ]);
 
         $this->assertResponseStatusCode(205);
-        $this->assertControllerName(Controller\CommitteeDocumentController::class);
+        $this->assertControllerName(CommitteeDocumentController::class);
         $this->assertActionName('patch');
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchInvalidParams()
+    #[Test]
+    public function patchCommitteeButParamsAreInvalidError()
     {
         $serviceReturnedData = (new Model\CommitteeDocument())
             ->setDocumentCommitteeId(555)
             ->setDocumentId(4)
             ->setAssemblyId(1)
             ->setIssueId(2)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setCommitteeId(3)
             ->setPart(null)
             ->setName(null);
@@ -200,14 +190,12 @@ class CommitteeDocumentControllerTest extends TestCase
         ]);
 
         $this->assertResponseStatusCode(400);
-        $this->assertControllerName(Controller\CommitteeDocumentController::class);
+        $this->assertControllerName(CommitteeDocumentController::class);
         $this->assertActionName('patch');
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchNotFound()
+    #[Test]
+    public function patchCommitteeDocumentButTheCommitteedocumentWasNotFoundError()
     {
         $this->getMockService(Service\CommitteeDocument::class)
             ->shouldReceive('get')
@@ -221,14 +209,12 @@ class CommitteeDocumentControllerTest extends TestCase
         ]);
 
         $this->assertResponseStatusCode(404);
-        $this->assertControllerName(Controller\CommitteeDocumentController::class);
+        $this->assertControllerName(CommitteeDocumentController::class);
         $this->assertActionName('patch');
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGet()
+    #[Test]
+    public function getCommitteeDocumentSuccessfully()
     {
         $this->getMockService(Service\CommitteeDocument::class)
             ->shouldReceive('get')
@@ -237,21 +223,19 @@ class CommitteeDocumentControllerTest extends TestCase
                     ->setDocumentId(4)
                     ->setAssemblyId(1)
                     ->setIssueId(1)
-                    ->setKind(KindEnum::A)
+                    ->setKind(Model\KindEnum::A)
                     ->setCommitteeId(1)
             )
             ->getMock();
 
         $this->dispatch('/loggjafarthing/1/thingmal/a/2/thingskjal/4/nefndir/555', 'GET');
         $this->assertResponseStatusCode(200);
-        $this->assertControllerName(Controller\CommitteeDocumentController::class);
+        $this->assertControllerName(CommitteeDocumentController::class);
         $this->assertActionName('get');
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGetNotFound()
+    #[Test]
+    public function getCommitteeUnsuccessfullyError()
     {
         $this->getMockService(Service\CommitteeDocument::class)
             ->shouldReceive('get')
@@ -260,14 +244,12 @@ class CommitteeDocumentControllerTest extends TestCase
 
         $this->dispatch('/loggjafarthing/1/thingmal/a/2/thingskjal/4/nefndir/555', 'GET');
         $this->assertResponseStatusCode(404);
-        $this->assertControllerName(Controller\CommitteeDocumentController::class);
+        $this->assertControllerName(CommitteeDocumentController::class);
         $this->assertActionName('get');
     }
 
-    /**
-     * @covers ::getList
-     */
-    public function testGetList()
+    #[Test]
+    public function fetchByDocumentDocumentSuccess()
     {
         $this->getMockService(Service\CommitteeDocument::class)
             ->shouldReceive('fetchByDocument')
@@ -277,14 +259,14 @@ class CommitteeDocumentControllerTest extends TestCase
                     ->setDocumentId(4)
                     ->setAssemblyId(1)
                     ->setIssueId(1)
-                    ->setKind(KindEnum::A)
+                    ->setKind(Model\KindEnum::A)
                     ->setCommitteeId(1)
             ])
             ->getMock();
 
         $this->dispatch('/loggjafarthing/1/thingmal/a/2/thingskjal/4/nefndir', 'GET');
         $this->assertResponseStatusCode(206);
-        $this->assertControllerName(Controller\CommitteeDocumentController::class);
+        $this->assertControllerName(CommitteeDocumentController::class);
         $this->assertActionName('getList');
     }
 }

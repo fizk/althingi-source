@@ -2,18 +2,17 @@
 
 namespace Althingi\Hydrator;
 
-use Laminas\Hydrator\HydratorInterface;
+use Althingi\Utils\HydratorInterface;
 
 class IssueTypeStatus implements HydratorInterface
 {
     /**
-     * Hydrate $object with the provided $data.
      *
-     * @param  array $data
-     * @param  \Althingi\Model\IssueTypeStatus $object
+     * @param array $data
+     * @param \Althingi\Model\IssueTypeStatus $object
      * @return \Althingi\Model\IssueTypeStatus
      */
-    public function hydrate(array $data, $object)
+    public function hydrate(array $data, object $object): object
     {
         return $object
             ->setCount($data['count'])
@@ -21,13 +20,13 @@ class IssueTypeStatus implements HydratorInterface
     }
 
     /**
-     * Extract values from an object
      *
-     * @param  \Althingi\Model\IssueTypeStatus $object
+     * @param \Althingi\Model\IssueTypeStatus $object
      * @return array
      */
-    public function extract($object): array
+    public function extract(object $object): array
     {
+        //FIXME what is this?
         unset($object->time);
 
         return $object->toArray();

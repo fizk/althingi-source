@@ -36,7 +36,9 @@ class AssemblyController implements
      */
     public function get(ServerRequest $request): ResponseInterface
     {
-        $assembly = $this->assemblyService->get($request->getAttribute('id'));
+        $assembly = $this->assemblyService->get(
+            $request->getAttribute('id')
+        );
         return $assembly
             ? new JsonResponse($assembly, 200)
             : new EmptyResponse(404);
@@ -108,7 +110,11 @@ class AssemblyController implements
      */
     public function patch(ServerRequest $request): ResponseInterface
     {
-        if (($assembly = $this->assemblyService->get($request->getAttribute('id'))) != null) {
+        if (
+            ($assembly = $this->assemblyService->get(
+                $request->getAttribute('id')
+            )) != null
+        ) {
             $form = new Form\Assembly([
                 ...$assembly->toArray(),
                 ...$request->getParsedBody(),

@@ -36,6 +36,7 @@ class ConstituencyController implements
         $constituency = $this->constituencyService->get(
             $request->getAttribute('id')
         );
+
         return $constituency
             ? new JsonResponse($constituency)
             : new EmptyResponse(404);

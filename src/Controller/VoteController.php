@@ -47,9 +47,10 @@ class VoteController implements
      */
     public function getList(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id');
-        $issueId = $request->getAttribute('issue_id');
-        $issues = $this->voteService->fetchByIssue($assemblyId, $issueId);
+        $issues = $this->voteService->fetchByIssue(
+            $request->getAttribute('id'),
+            $request->getAttribute('issue_id')
+        );
 
         return new JsonResponse($issues, 206);
     }
@@ -62,15 +63,11 @@ class VoteController implements
      */
     public function put(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id');
-        $issueId = $request->getAttribute('issue_id');
-        $voteId = $request->getAttribute('vote_id');
-
         $form = new Form\Vote([
             ...$request->getParsedBody(),
-            'assembly_id' => $assemblyId,
-            'issue_id' => $issueId,
-            'vote_id' => $voteId,
+            'assembly_id' => $request->getAttribute('id'),
+            'issue_id' => $request->getAttribute('issue_id'),
+            'vote_id' => $request->getAttribute('vote_id'),
             'kind' => KindEnum::A->value
         ]);
 
@@ -90,17 +87,17 @@ class VoteController implements
      */
     public function patch(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id');
-        $issueId = $request->getAttribute('issue_id');
-        $voteId = $request->getAttribute('vote_id');
-
-        if (($vote = $this->voteService->get($voteId)) != null) {
+        if (
+            ($vote = $this->voteService->get(
+                $request->getAttribute('vote_id')
+            )) != null
+        ) {
             $form = new Form\Vote([
                 ...$vote->toArray(),
                 ...$request->getParsedBody(),
-                'assembly_id' => $assemblyId,
-                'issue_id' => $issueId,
-                'vote_id' => $voteId,
+                'assembly_id' => $request->getAttribute('id'),
+                'issue_id' => $request->getAttribute('issue_id'),
+                'vote_id' => $request->getAttribute('vote_id'),
             ]);
 
             if ($form->isValid()) {

@@ -31,6 +31,7 @@ services:
       - ./tests/:/var/www/tests
       - ./public/:/var/www/public
       - ./bin/:/var/www/bin
+      - ./coverage/:/var/www/coverage
       - ./schema/:/var/www/schema
       - ./composer.json:/var/www/composer.json
       - ./composer.lock:/var/www/composer.lock
@@ -75,6 +76,7 @@ services:
     volumes:
       - ./composer.json/:/var/www/composer.json
       - ./composer.lock/:/var/www/composer.lock
+      - ./coverage/:/var/www/coverage
       - ./config/:/var/www/config
     #   - ./vendor/:/var/www/vendor
       - ./src/:/var/www/src

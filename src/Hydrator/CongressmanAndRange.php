@@ -2,19 +2,18 @@
 
 namespace Althingi\Hydrator;
 
-use Laminas\Hydrator\HydratorInterface;
+use Althingi\Utils\HydratorInterface;
 use DateTime;
 
 class CongressmanAndRange implements HydratorInterface
 {
     /**
-     * Hydrate $object with the provided $data.
      *
-     * @param  array $data
-     * @param  \Althingi\Model\CongressmanAndDateRange $object
+     * @param array $data
+     * @param \Althingi\Model\CongressmanAndDateRange $object
      * @return \Althingi\Model\CongressmanAndDateRange
      */
-    public function hydrate(array $data, $object)
+    public function hydrate(array $data, object $object): object
     {
         return $object
             ->setCongressmanId($data['congressman_id'])
@@ -27,14 +26,12 @@ class CongressmanAndRange implements HydratorInterface
             ->setEnd($data['end'] ? new DateTime($data['end']) : null);
     }
 
-
     /**
-     * Extract values from an object
      *
-     * @param  \Althingi\Model\CongressmanAndDateRange $object
+     * @param \Althingi\Model\CongressmanAndDateRange $object
      * @return array
      */
-    public function extract($object): array
+    public function extract(object $object): array
     {
         return $object->toArray();
     }

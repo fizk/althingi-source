@@ -58,18 +58,19 @@ class SessionController implements
      */
     public function getList(ServerRequest $request): ResponseInterface
     {
-        $congressmanId = $request->getAttribute('congressman_id');
-
-        $sessions = $this->sessionService->fetchByCongressman($congressmanId);
+        $sessions = $this->sessionService->fetchByCongressman(
+            $request->getAttribute('congressman_id')
+        );
 
         return new JsonResponse($sessions, 206);
     }
 
     public function assemblyCongressmanAction(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id');
-        $congressmanId = $request->getAttribute('congressman_id');
-        $sessions = $this->sessionService->fetchByAssemblyAndCongressman($assemblyId, $congressmanId);
+        $sessions = $this->sessionService->fetchByAssemblyAndCongressman(
+            $request->getAttribute('id'),
+            $request->getAttribute('congressman_id')
+        );
         return new JsonResponse($sessions, 206);
     }
 

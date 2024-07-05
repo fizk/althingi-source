@@ -34,12 +34,9 @@ class MinisterController implements
      */
     public function get(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id');
-        $congressmanId = $request->getAttribute('congressman_id');
-
         $ministry = $this->ministryService->getByCongressmanAssembly(
-            $assemblyId,
-            $congressmanId,
+            $request->getAttribute('id'),
+            $request->getAttribute('congressman_id'),
             $request->getAttribute('ministry_id')
         );
 
@@ -54,10 +51,10 @@ class MinisterController implements
      */
     public function getList(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id');
-        $congressmanId = $request->getAttribute('congressman_id');
-
-        $ministries = $this->ministryService->fetchByCongressmanAssembly($assemblyId, $congressmanId);
+        $ministries = $this->ministryService->fetchByCongressmanAssembly(
+            $request->getAttribute('id'),
+            $request->getAttribute('congressman_id')
+        );
 
         return new JsonResponse($ministries, 206);
     }

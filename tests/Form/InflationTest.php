@@ -2,16 +2,17 @@
 
 namespace Althingi\Form;
 
-use Althingi\Form\Inflation;
-use Althingi\Model\Inflation as ModelInflation;
+use Althingi\{Form, Model};
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use DateTime;
 
 class InflationTest extends TestCase
 {
-    public function testOne()
+    #[Test]
+    public function stringValueIsConvertedIntoFloadAndDateToObject()
     {
-        $form = new Inflation([
+        $form = new Form\Inflation([
             'id' => 1,
             'date' => '2001-02-01',
             'value' => '1.2',
@@ -19,18 +20,18 @@ class InflationTest extends TestCase
         ]);
         $form->isValid();
 
-        /** @var \Althingi\Model\Assembly */
         $actual = $form->getModel();
-        $expected = (new ModelInflation())
+        $expected = (new Model\Inflation())
             ->setDate(new DateTime('2001-02-01'))
             ->setId(1)
             ->setValue(1.2);
         $this->assertEquals($expected, $actual);
     }
 
-    public function testTwo()
+    #[Test]
+    public function floatValueIsLeftAloneAndDateIsConvertedIntoObject()
     {
-        $form = new Inflation([
+        $form = new Form\Inflation([
             'id' => 1,
             'date' => '2001-02-01',
             'value' => 1.2,
@@ -38,45 +39,44 @@ class InflationTest extends TestCase
         ]);
         $form->isValid();
 
-        /** @var \Althingi\Model\Assembly */
         $actual = $form->getModel();
-        $expected = (new ModelInflation())
+        $expected = (new Model\Inflation())
             ->setDate(new DateTime('2001-02-01'))
             ->setId(1)
             ->setValue(1.2);
         $this->assertEquals($expected, $actual);
     }
 
-    public function testThree()
+    #[Test]
+    public function intIsConvertedIntoFloadAndDateToObject()
     {
-        $form = new Inflation([
+        $form = new Form\Inflation([
             'id' => 1,
             'date' => '2001-02-01',
             'value' => 1,
         ]);
         $form->isValid();
 
-        /** @var \Althingi\Model\Assembly */
         $actual = $form->getModel();
-        $expected = (new ModelInflation())
+        $expected = (new Model\Inflation())
             ->setDate(new DateTime('2001-02-01'))
             ->setId(1)
             ->setValue(1.0);
         $this->assertEquals($expected, $actual);
     }
 
-    public function testFour()
+    #[Test]
+    public function intStringIsConvertedIntoFloadAndDateConvertedToObject()
     {
-        $form = new Inflation([
+        $form = new Form\Inflation([
             'id' => 1,
             'date' => '2001-02-01',
             'value' => '1',
         ]);
         $form->isValid();
 
-        /** @var \Althingi\Model\Assembly */
         $actual = $form->getModel();
-        $expected = (new ModelInflation())
+        $expected = (new Model\Inflation())
             ->setDate(new DateTime('2001-02-01'))
             ->setId(1)
             ->setValue(1.0);

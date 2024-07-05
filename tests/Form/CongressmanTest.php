@@ -4,10 +4,12 @@ namespace Althingi\Form;
 
 use Althingi\Form\Congressman;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 class CongressmanTest extends TestCase
 {
-    public function testEmptyToValue()
+    #[Test]
+    public function emptyValuesAreConvertedToNULL()
     {
         $form = new Congressman([
             'congressman_id' => 1,
@@ -18,12 +20,12 @@ class CongressmanTest extends TestCase
         ]);
         $form->isValid();
 
-        /** @var \Althingi\Model\Congressman */
         $model = $form->getModel();
         $this->assertNull($model->getDeath());
     }
 
-    public function testNonEmptyToValue()
+    #[Test]
+    public function nonEmptyValuesShouldNotBeConvertedToNULL()
     {
         $form = new Congressman([
             'congressman_id' => 1,
@@ -33,7 +35,6 @@ class CongressmanTest extends TestCase
         ]);
         $form->isValid();
 
-        /** @var \Althingi\Model\Congressman */
         $model = $form->getModel();
         $this->assertNotNull($model->getDeath());
     }

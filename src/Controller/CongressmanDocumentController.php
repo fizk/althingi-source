@@ -31,17 +31,12 @@ class CongressmanDocumentController implements
      */
     public function put(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id');
-        $issueId = $request->getAttribute('issue_id');
-        $documentId = $request->getAttribute('document_id');
-        $congressmanId = $request->getAttribute('congressman_id');
-
         $form = new Form\CongressmanDocument([
             ...$request->getParsedBody(),
-            'assembly_id' => $assemblyId,
-            'issue_id' => $issueId,
-            'document_id' => $documentId,
-            'congressman_id' => $congressmanId,
+            'assembly_id' => $request->getAttribute('id'),
+            'issue_id' => $request->getAttribute('issue_id'),
+            'document_id' => $request->getAttribute('document_id'),
+            'congressman_id' => $request->getAttribute('congressman_id'),
             'kind' => KindEnum::A->value,
         ]);
 
@@ -61,14 +56,13 @@ class CongressmanDocumentController implements
      */
     public function patch(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id');
-        $issueId = $request->getAttribute('issue_id');
-        $documentId = $request->getAttribute('document_id');
-        $congressmanId = $request->getAttribute('congressman_id');
-
         if (
-            ($congressmanDocument = $this->congressmanDocumentService
-                ->get($assemblyId, $issueId, $documentId, $congressmanId)) != null
+            ($congressmanDocument = $this->congressmanDocumentService->get(
+                $request->getAttribute('id'),
+                $request->getAttribute('issue_id'),
+                $request->getAttribute('document_id'),
+                $request->getAttribute('congressman_id'),
+            )) != null
         ) {
             $form = new Form\CongressmanDocument([
                 ...$congressmanDocument->toArray(),

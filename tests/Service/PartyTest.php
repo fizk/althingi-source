@@ -2,30 +2,25 @@
 
 namespace Althingi\Service;
 
-use Althingi\Service\Party;
-use Althingi\DatabaseConnection;
-use Althingi\Events\AddEvent;
-use Althingi\Events\UpdateEvent;
-use Althingi\Model\KindEnum;
-use PHPUnit\Framework\TestCase;
-use Althingi\Model\Party as PartyModel;
-use Althingi\Model\PartyAndTime as PartyAndTimeModel;
+use Althingi\DatabaseConnectionTrait;
+use Althingi\Events\{UpdateEvent, AddEvent};
+use Althingi\Model;
 use Mockery;
-use PDO;
+use PHPUnit\Framework\Attributes\{Test};
+use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
 class PartyTest extends TestCase
 {
-    use DatabaseConnection;
+    use DatabaseConnectionTrait;
 
-    private PDO $pdo;
-
-    public function testGet()
+    #[Test]
+    public function getSuccess()
     {
         $partyService = new Party();
-        $partyService->setDriver($this->pdo);
+        $partyService->setDriver($this->getPDO());
 
-        $expectedData = (new PartyModel())
+        $expectedData = (new Model\Party())
             ->setPartyId(1)
             ->setName('p1')
             ->setColor('ffffff');
@@ -35,12 +30,13 @@ class PartyTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testGetByCongressman()
+    #[Test]
+    public function getByCongressman()
     {
         $service = new Party();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
-        $expectedParty = (new PartyModel())
+        $expectedParty = (new Model\Party())
             ->setPartyId(1)
             ->setName('p1')
             ->setColor('ffffff');
@@ -50,20 +46,22 @@ class PartyTest extends TestCase
         $this->assertEquals($expectedParty, $actualParty);
     }
 
-    public function testFetchByAssembly()
+    #[Test]
+    public function fetchByAssembly()
     {
         $partyService = new Party();
-        $partyService->setDriver($this->pdo);
+        $partyService->setDriver($this->getPDO());
 
         $this->assertCount(2, $partyService->fetchByAssembly(1));
         $this->assertCount(1, $partyService->fetchByAssembly(1, [1]));
-        $this->assertInstanceOf(PartyModel::class, ($partyService->fetchByAssembly(1))[0]);
+        $this->assertInstanceOf(Model\Party::class, ($partyService->fetchByAssembly(1))[0]);
     }
 
-    public function testFetchElectedByAssembly()
+    #[Test]
+    public function fetchElectedByAssembly()
     {
         $partyService = new Party();
-        $partyService->setDriver($this->pdo);
+        $partyService->setDriver($this->getPDO());
         $expectedParties = [
             (new \Althingi\Model\PartyAndElection())
                 ->setResults(99.0)
@@ -87,25 +85,27 @@ class PartyTest extends TestCase
         $this->assertEquals($expectedParties, $actualParties);
     }
 
-    public function testFetchByCongressman()
+    #[Test]
+    public function fetchByCongressman()
     {
         $partyService = new Party();
-        $partyService->setDriver($this->pdo);
+        $partyService->setDriver($this->getPDO());
         $expectedParties = [
-            (new PartyModel())->setPartyId(1)->setName('p1')->setColor('ffffff'),
-            (new PartyModel())->setPartyId(2)->setName('p2')->setColor('ffffff'),
+            (new Model\Party())->setPartyId(1)->setName('p1')->setColor('ffffff'),
+            (new Model\Party())->setPartyId(2)->setName('p2')->setColor('ffffff'),
         ];
         $actualParties = $partyService->fetchByCongressman(1);
 
         $this->assertEquals($expectedParties, $actualParties);
     }
 
-    public function testFetchByCabinet()
+    #[Test]
+    public function fetchByCabinet()
     {
         $partyService = new Party();
-        $partyService->setDriver($this->pdo);
+        $partyService->setDriver($this->getPDO());
 
-        $expectedParties = [(new PartyModel())
+        $expectedParties = [(new Model\Party())
             ->setPartyId(1)
             ->setName('p1')
             ->setColor('ffffff')];
@@ -115,22 +115,24 @@ class PartyTest extends TestCase
         $this->assertEquals($expectedParties, $actualParties);
     }
 
-    public function testFetchTimeByAssembly()
+    #[Test]
+    public function fetchTimeByAssembly()
     {
         $partyService = new Party();
-        $partyService->setDriver($this->pdo);
+        $partyService->setDriver($this->getPDO());
         $expectedParties = [
-            (new PartyAndTimeModel())->setPartyId(2)->setName('p2')->setColor('ffffff')->setTotalTime(600),
-            (new PartyAndTimeModel())->setPartyId(1)->setName('p1')->setColor('ffffff')->setTotalTime(600),
+            (new Model\PartyAndTime())->setPartyId(2)->setName('p2')->setColor('ffffff')->setTotalTime(600),
+            (new Model\PartyAndTime())->setPartyId(1)->setName('p1')->setColor('ffffff')->setTotalTime(600),
         ];
         $actualParties = $partyService->fetchTimeByAssembly(1);
 
         $this->assertEquals($expectedParties, $actualParties);
     }
 
-    public function testCreate()
+    #[Test]
+    public function createSuccess()
     {
-        $party = (new PartyModel())
+        $party = (new Model\Party())
             ->setPartyId(4)
             ->setName('p4')
             ->setColor('000000');
@@ -146,15 +148,16 @@ class PartyTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('Party', 'SELECT * FROM Party');
 
         $partyService = new Party();
-        $partyService->setDriver($this->pdo);
+        $partyService->setDriver($this->getPDO());
         $partyService->create($party);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testSave()
+    #[Test]
+    public function saveSuccess()
     {
-        $party = (new PartyModel())
+        $party = (new Model\Party())
             ->setName('p4')
             ->setPartyId(4)
             ->setColor('000000');
@@ -170,15 +173,16 @@ class PartyTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('Party', 'SELECT * FROM Party');
 
         $partyService = new Party();
-        $partyService->setDriver($this->pdo);
+        $partyService->setDriver($this->getPDO());
         $partyService->save($party);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testUpdate()
+    #[Test]
+    public function updateSuccess()
     {
-        $party = (new PartyModel())
+        $party = (new Model\Party())
             ->setPartyId(1)
             ->setName('p1')
             ->setColor('000000');
@@ -193,14 +197,16 @@ class PartyTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('Party', 'SELECT * FROM Party');
 
         $partyService = new Party();
-        $partyService->setDriver($this->pdo);
+        $partyService->setDriver($this->getPDO());
         $partyService->update($party);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testCreateFireEventResourceCreated()
+    #[Test]
+    public function createFireEventResourceCreated()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -210,19 +216,21 @@ class PartyTest extends TestCase
             })
             ->getMock();
 
-        $party = (new PartyModel())
+        $party = (new Model\Party())
             ->setPartyId(4)
             ->setName('p4')
             ->setColor('000000');
 
         (new Party())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher(($eventDispatcher))
             ->create($party);
     }
 
-    public function testUpdateFireEventResourceFoundNoUpdatedRequired()
+    #[Test]
+    public function updateFireEventResourceFoundNoUpdatedRequired()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -232,19 +240,21 @@ class PartyTest extends TestCase
             })
             ->getMock();
 
-        $party = (new PartyModel())
+        $party = (new Model\Party())
             ->setPartyId(3)
             ->setName('p3')
             ->setColor('ffffff');
 
         (new Party())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher(($eventDispatcher))
             ->update($party);
     }
 
-    public function testUpdateFireEventResourceFoundUpdateRequired()
+    #[Test]
+    public function updateFireEventResourceFoundUpdateRequired()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -254,19 +264,21 @@ class PartyTest extends TestCase
             })
             ->getMock();
 
-        $party = (new PartyModel())
+        $party = (new Model\Party())
             ->setPartyId(3)
             ->setName('p3')
             ->setColor('000000');
 
         (new Party())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher(($eventDispatcher))
             ->update($party);
     }
 
-    public function testSaveFireEventResourceCreate()
+    #[Test]
+    public function saveFireEventResourceCreate()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -276,19 +288,21 @@ class PartyTest extends TestCase
             })
             ->getMock();
 
-        $party = (new PartyModel())
+        $party = (new Model\Party())
             ->setPartyId(4)
             ->setName('p4')
             ->setColor('000000');
 
         (new Party())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher(($eventDispatcher))
             ->save($party);
     }
 
-    public function testSaveFireEventResourceFoundNoUpdateNeeded()
+    #[Test]
+    public function saveFireEventResourceFoundNoUpdateNeeded()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -298,19 +312,21 @@ class PartyTest extends TestCase
             })
             ->getMock();
 
-        $party = (new PartyModel())
+        $party = (new Model\Party())
             ->setPartyId(3)
             ->setName('p3')
             ->setColor('ffffff');
 
         (new Party())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher(($eventDispatcher))
             ->save($party);
     }
 
-    public function testSaveFireEventResourceFoundUpdateNeeded()
+    #[Test]
+    public function saveFireEventResourceFoundUpdateNeeded()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -320,13 +336,13 @@ class PartyTest extends TestCase
             })
             ->getMock();
 
-        $party = (new PartyModel())
+        $party = (new Model\Party())
             ->setPartyId(3)
             ->setName('p3')
             ->setColor('123456');
 
         (new Party())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher(($eventDispatcher))
             ->save($party);
     }
@@ -417,7 +433,7 @@ class PartyTest extends TestCase
                 ['cabinet_id' => 1, 'congressman_id' => 1, 'title' => 'dude', 'from' => '2000-01-01']
             ],
             'Issue' => [
-                ['issue_id' => 1, 'assembly_id' => 1, 'kind' => KindEnum::A->value],
+                ['issue_id' => 1, 'assembly_id' => 1, 'kind' => Model\KindEnum::A->value],
             ],
             'Plenary' => [
                 ['plenary_id' => 1, 'assembly_id' => 1],
@@ -428,7 +444,7 @@ class PartyTest extends TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 1,
                     'issue_id' => 1,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'congressman_id' => 1,
                     'from' => '2001-01-01 01:00:00',
                     'to' => '2001-01-01 01:10:00'

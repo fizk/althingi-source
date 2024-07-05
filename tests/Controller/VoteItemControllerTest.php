@@ -2,62 +2,53 @@
 
 namespace Althingi\Controller;
 
+use Althingi\{Model, Service};
 use Althingi\Controller\VoteItemController;
-use Althingi\Model;
-use Althingi\Model\VoteItemAndAssemblyIssue;
-use Althingi\Service;
-use Althingi\Service\Congressman;
-use Althingi\Service\Constituency;
-use Althingi\Service\Party;
-use Althingi\Service\Vote;
-use Althingi\Service\VoteItem;
 use Althingi\ServiceHelper;
 use DateTime;
 use Library\Container\Container;
 use Mockery;
+use PHPUnit\Framework\Attributes\{CoversMethod, CoversClass, Test, Before, After};
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class VoteItemControllerTest
- * @package Althingi\Controller
- * @coversDefaultClass \Althingi\Controller\VoteItemController
- *
- * @covers \Althingi\Controller\VoteItemController::setVoteItemService
- * @covers \Althingi\Controller\VoteItemController::setVoteService
- * @covers \Althingi\Controller\VoteItemController::setCongressmanService
- * @covers \Althingi\Controller\VoteItemController::setPartyService
- * @covers \Althingi\Controller\VoteItemController::setConstituencyService
- */
+#[CoversClass(VoteItemController::class)]
+#[CoversMethod(VoteItemController::class, 'setVoteItemService')]
+#[CoversMethod(VoteItemController::class, 'setVoteService')]
+#[CoversMethod(VoteItemController::class, 'setCongressmanService')]
+#[CoversMethod(VoteItemController::class, 'setPartyService')]
+#[CoversMethod(VoteItemController::class, 'setConstituencyService')]
+#[CoversMethod(VoteItemController::class, 'getList')]
+#[CoversMethod(VoteItemController::class, 'patch')]
+#[CoversMethod(VoteItemController::class, 'post')]
 class VoteItemControllerTest extends TestCase
 {
     use ServiceHelper;
 
-    public function setUp(): void
+    #[Before]
+    public function up(): void
     {
         $this->setServiceManager(
             new Container(require __DIR__ . '/../../config/service.php')
         );
         $this->buildServices([
-            VoteItem::class,
-            Vote::class,
-            Constituency::class,
-            Congressman::class,
-            Party::class,
+            Service\VoteItem::class,
+            Service\Vote::class,
+            Service\Constituency::class,
+            Service\Congressman::class,
+            Service\Party::class,
         ]);
     }
 
-    public function tearDown(): void
+    #[After]
+    public function down(): void
     {
         $this->destroyServices();
         Mockery::close();
         parent::tearDown();
     }
 
-    /**
-     * @covers ::getList
-     * @throws \Exception
-     */
-    public function testGetList()
+    #[Test]
+    public function getList()
     {
         $this->getMockService(Service\Vote::class)
             ->shouldReceive('get')
@@ -93,21 +84,21 @@ class VoteItemControllerTest extends TestCase
 
         $this->getMockService(Service\Party::class)
             ->shouldReceive('getByCongressman')
+            ->once()
             ->andReturn(
                 (new Model\Party())
                     ->setPartyId(1)
                     ->setName('name')
             )
-            ->once()
             ->getMock();
 
         $this->getMockService(Service\Constituency::class)
             ->shouldReceive('getByCongressman')
+            ->once()
             ->andReturn(
                 (new Model\ConstituencyDate())
                     ->setConstituencyId(1)
             )
-            ->once()
             ->getMock();
 
         $this->dispatch('/loggjafarthing/1/thingmal/a/2/atkvaedagreidslur/3/atkvaedi');
@@ -116,16 +107,13 @@ class VoteItemControllerTest extends TestCase
         $this->assertResponseStatusCode(206);
     }
 
-
-    /**
-     * @covers ::post
-     */
-    public function testPostSuccess()
+    #[Test]
+    public function postSuccess()
     {
-        $this->getMockService(VoteItem::class)
+        $this->getMockService(Service\VoteItem::class)
             ->shouldReceive('create')
-            ->andReturn(1)
             ->once()
+            ->andReturn(1)
             ->getMock();
 
         $this->dispatch('/loggjafarthing/1/thingmal/a/2/atkvaedagreidslur/3/atkvaedi', 'POST', [
@@ -138,22 +126,20 @@ class VoteItemControllerTest extends TestCase
         $this->assertResponseStatusCode(201);
     }
 
-    /**
-     * @covers ::post
-     */
-    public function testPostUpdate()
+    #[Test]
+    public function postUpdate()
     {
         $exception = new \PDOException();
         $exception->errorInfo = ['', 1062, ''];
 
-        $this->getMockService(VoteItem::class)
+        $this->getMockService(Service\VoteItem::class)
             ->shouldReceive('create')
             ->andThrow($exception)
             ->once()
             ->getMock()
             ->shouldReceive('getByVote')
             ->with(3, 1)
-            ->andReturn((new VoteItemAndAssemblyIssue())->setAssemblyId(1)->setIssueId(2)->setVoteId(3))
+            ->andReturn((new Model\VoteItemAndAssemblyIssue())->setAssemblyId(1)->setIssueId(2)->setVoteId(3))
             ->once()
             ->getMock();
 
@@ -166,15 +152,14 @@ class VoteItemControllerTest extends TestCase
         $this->assertActionName('post');
         $this->assertResponseStatusCode(409);
     }
-    /**
-     * @covers ::post
-     */
-    public function testPostDifferentError()
+
+    #[Test]
+    public function postDifferentError()
     {
         $exception = new \PDOException();
         $exception->errorInfo = ['', 1234, ''];
 
-        $this->getMockService(VoteItem::class)
+        $this->getMockService(Service\VoteItem::class)
             ->shouldReceive('create')
             ->andThrow($exception)
             ->once()
@@ -193,12 +178,10 @@ class VoteItemControllerTest extends TestCase
         $this->assertResponseStatusCode(500);
     }
 
-    /**
-     * @covers ::post
-     */
-    public function testPostInvalidParams()
+    #[Test]
+    public function postInvalidParams()
     {
-        $this->getMockService(VoteItem::class)
+        $this->getMockService(Service\VoteItem::class)
             ->shouldReceive('create')
             ->never()
             ->getMock();
@@ -210,23 +193,21 @@ class VoteItemControllerTest extends TestCase
         $this->assertResponseStatusCode(400);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatch()
+    #[Test]
+    public function patchSuccessful()
     {
-        $expectedObject = (new \Althingi\Model\VoteItem())
+        $expectedObject = (new Model\VoteItem())
             ->setCongressmanId(1)
             ->setVote('no')
             ->setVoteId(3)
             ->setVoteItemId(30);
 
-        $this->getMockService(VoteItem::class)
+        $this->getMockService(Service\VoteItem::class)
             ->shouldReceive('get')
             ->with(30)
             ->once()
             ->andReturn(
-                (new \Althingi\Model\VoteItem())
+                (new Model\VoteItem())
                 ->setCongressmanId(1)
                 ->setVote('yes')
                 ->setVoteId(3)
@@ -250,15 +231,13 @@ class VoteItemControllerTest extends TestCase
         $this->assertResponseStatusCode(205);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchNotFound()
+    #[Test]
+    public function patchNotFound()
     {
-        $this->getMockService(VoteItem::class)
+        $this->getMockService(Service\VoteItem::class)
             ->shouldReceive('get')
-            ->andReturn(null)
             ->once()
+            ->andReturn(null)
             ->getMock();
 
         $this->dispatch('/loggjafarthing/1/thingmal/a/2/atkvaedagreidslur/3/atkvaedi/30', 'PATCH');

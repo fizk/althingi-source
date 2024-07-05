@@ -2,19 +2,18 @@
 
 namespace Althingi\Hydrator;
 
-use Laminas\Hydrator\HydratorInterface;
+use Althingi\Utils\HydratorInterface;
 use DateTime;
 
 class Congressman implements HydratorInterface
 {
     /**
-     * Hydrate $object with the provided $data.
      *
-     * @param  array $data
-     * @param  \Althingi\Model\Congressman $object
+     * @param array $data
+     * @param \Althingi\Model\Congressman $object
      * @return \Althingi\Model\Congressman
      */
-    public function hydrate(array $data, $object)
+    public function hydrate(array $data, object $object): object
     {
         return $object
             ->setCongressmanId($data['congressman_id'])
@@ -24,14 +23,12 @@ class Congressman implements HydratorInterface
             ->setAbbreviation(array_key_exists('abbreviation', $data) ? $data['abbreviation'] : null);
     }
 
-
     /**
-     * Extract values from an object
      *
-     * @param  \Althingi\Model\Congressman $object
+     * @param \Althingi\Model\Congressman $object
      * @return array
      */
-    public function extract($object): array
+    public function extract(object $object): array
     {
         return $object->toArray();
     }

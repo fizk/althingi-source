@@ -2,113 +2,113 @@
 
 namespace Althingi\Service;
 
-use Althingi\Model\IssueTypeStatus;
-use Althingi\Service\Issue;
-use Althingi\DatabaseConnection;
-use Althingi\Events\AddEvent;
-use Althingi\Events\UpdateEvent;
-use PHPUnit\Framework\TestCase;
-use Althingi\Model\Issue as IssueModel;
-use Althingi\Model\IssueAndDate as IssueAndDateModel;
-use Althingi\Model\KindEnum;
+use Althingi\DatabaseConnectionTrait;
+use Althingi\Events\{AddEvent, UpdateEvent};
+use Althingi\Model;
 use Mockery;
-use PDO;
+use PHPUnit\Framework\Attributes\{Test};
+use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
 class IssueTest extends TestCase
 {
-    use DatabaseConnection;
+    use DatabaseConnectionTrait;
 
-    private PDO $pdo;
-
-    public function testGet()
+    #[Test]
+    public function getSuccess()
     {
         $service = new Issue();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
         $expectedDataWithDate = $service->getWithDate(1, 1);
-        $actualDataWithDate = (new IssueAndDateModel())
+        $actualDataWithDate = (new Model\IssueAndDate())
             ->setIssueId(1)
             ->setAssemblyId(1)
             ->setCongressmanId(1)
             ->setType('l')
             ->setTypeSubname('something')
             ->setStatus('some')
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setDate(new \DateTime('2000-01-01'));
         $this->assertEquals($expectedDataWithDate, $actualDataWithDate);
     }
 
-    public function testGetB()
+    #[Test]
+    public function getB()
     {
         $service = new Issue();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
-        $expectedDataWithDate = $service->getWithDate(1, 1, KindEnum::B);
-        $actualDataWithDate = (new IssueAndDateModel())
+        $expectedDataWithDate = $service->getWithDate(1, 1, Model\KindEnum::B);
+        $actualDataWithDate = (new Model\IssueAndDate())
             ->setIssueId(1)
             ->setAssemblyId(1)
             ->setCongressmanId(null)
             ->setType(null)
             ->setTypeSubname(null)
             ->setStatus(null)
-            ->setKind(KindEnum::B)
+            ->setKind(Model\KindEnum::B)
             ->setDate(null);
         $this->assertEquals($expectedDataWithDate, $actualDataWithDate);
     }
 
-    public function testGetByAssembly()
+    #[Test]
+    public function getByAssembly()
     {
         $service = new Issue();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
         $issues = $service->fetchByAssembly(1, 0, 25);
 
         $this->assertCount(3, $issues);
-        $this->assertInstanceOf(IssueAndDateModel::class, $issues[0]);
+        $this->assertInstanceOf(Model\IssueAndDate::class, $issues[0]);
     }
 
-    public function testGetByAssemblyType()
+    #[Test]
+    public function getByAssemblyType()
     {
         $service = new Issue();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
         $issues = $service->fetchByAssembly(1, 0, 25, null, ['l']);
 
         $this->assertCount(2, $issues);
-        $this->assertInstanceOf(IssueAndDateModel::class, $issues[0]);
+        $this->assertInstanceOf(Model\IssueAndDate::class, $issues[0]);
     }
 
-    public function testGetByAssemblyB()
+    #[Test]
+    public function getByAssemblyB()
     {
         $service = new Issue();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
-        $issues = $service->fetchByAssembly(1, 0, 25, null, [], [], [KindEnum::B]);
+        $issues = $service->fetchByAssembly(1, 0, 25, null, [], [], [Model\KindEnum::B]);
 
         $this->assertCount(1, $issues);
-        $this->assertInstanceOf(IssueAndDateModel::class, $issues[0]);
+        $this->assertInstanceOf(Model\IssueAndDate::class, $issues[0]);
     }
 
-    public function testGetByAssemblyBandA()
+    #[Test]
+    public function getByAssemblyBandA()
     {
         $service = new Issue();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
-        $issues = $service->fetchByAssembly(1, 0, 25, null, [], [], [KindEnum::A, KindEnum::B]);
+        $issues = $service->fetchByAssembly(1, 0, 25, null, [], [], [Model\KindEnum::A, Model\KindEnum::B]);
 
         $this->assertCount(4, $issues);
-        $this->assertInstanceOf(IssueAndDateModel::class, $issues[0]);
+        $this->assertInstanceOf(Model\IssueAndDate::class, $issues[0]);
     }
 
-    public function testFetchByCongressman()
+    #[Test]
+    public function fetchByCongressman()
     {
         $service = new Issue();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
         $issues = $service->fetchByCongressman(1);
         $this->assertCount(1, $issues);
-        $this->assertInstanceOf(IssueModel::class, $issues[0]);
+        $this->assertInstanceOf(Model\Issue::class, $issues[0]);
     }
 
     /**
@@ -117,7 +117,7 @@ class IssueTest extends TestCase
     // public function testFetchByCongressmanAndAssembly()
     // {
     //     $service = new Issue();
-    //     $service->setDriver($this->pdo);
+    //     $service->setDriver($this->getPDO());
 
     //     $issues = $service->fetchByAssemblyAndCongressman(1, 1);
     //     $this->assertCount(0, $issues);
@@ -127,7 +127,7 @@ class IssueTest extends TestCase
 //    public function testFetchStateByAssembly()
 //    {
 //        $service = new Issue();
-//        $service->setDriver($this->pdo);
+//        $service->setDriver($this->getPDO());
 //        $statuses = $service->fetchStateByAssembly(1);
 //
 //        $this->assertCount(2, $statuses);
@@ -135,60 +135,65 @@ class IssueTest extends TestCase
 //        $this->assertInstanceOf(AssemblyStatus::class, $statuses[0]);
 //    }
 
-    public function testFetchBillStatisticsByAssembly()
+    #[Test]
+    public function fetchBillStatisticsByAssembly()
     {
         $service = new Issue();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
         $statuses = $service->fetchBillStatisticsByAssembly(1);
 
         $this->assertCount(1, $statuses);
         $this->assertEquals(2, $statuses[0]->getCount());
         $this->assertEquals('some', $statuses[0]->getStatus());
-        $this->assertInstanceOf(IssueTypeStatus::class, $statuses[0]);
+        $this->assertInstanceOf(Model\IssueTypeStatus::class, $statuses[0]);
     }
 
-    public function testFetchNonGovernmentBillStatisticsByAssembly()
+    #[Test]
+    public function fetchNonGovernmentBillStatisticsByAssembly()
     {
         $service = new Issue();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
         $statuses = $service->fetchNonGovernmentBillStatisticsByAssembly(1);
 
         $this->assertCount(1, $statuses);
         $this->assertEquals(1, $statuses[0]->getCount());
         $this->assertEquals('some', $statuses[0]->getStatus());
-        $this->assertInstanceOf(IssueTypeStatus::class, $statuses[0]);
+        $this->assertInstanceOf(Model\IssueTypeStatus::class, $statuses[0]);
     }
 
-    public function testFetchGovernmentBillStatisticsByAssembly()
+    #[Test]
+    public function fetchGovernmentBillStatisticsByAssembly()
     {
         $service = new Issue();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
         $statuses = $service->fetchGovernmentBillStatisticsByAssembly(1);
 
         $this->assertCount(1, $statuses);
         $this->assertEquals(1, $statuses[0]->getCount());
         $this->assertEquals('some', $statuses[0]->getStatus());
-        $this->assertInstanceOf(IssueTypeStatus::class, $statuses[0]);
+        $this->assertInstanceOf(Model\IssueTypeStatus::class, $statuses[0]);
     }
 
-    public function testCountByAssembly()
+    #[Test]
+    public function countByAssembly()
     {
         $service = new Issue();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
         $count = $service->countByAssembly(1);
         $this->assertEquals(3, $count);
     }
 
-    public function testCreate()
+    #[Test]
+    public function createSuccess()
     {
-        $issue = (new IssueModel())
+        $issue = (new Model\Issue())
             ->setAssemblyId(1)
             ->setIssueId(4)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
         ;
 
         $issueService = new Issue();
-        $issueService->setDriver($this->pdo);
+        $issueService->setDriver($this->getPDO());
         $issueService->create($issue);
 
         $expectedTable = $this->createArrayDataSet([
@@ -213,17 +218,18 @@ class IssueTest extends TestCase
         $this->assertTablesEqual($expectedTable, $queryTable);
     }
 
-    public function testSave()
+    #[Test]
+    public function saveSuccess()
     {
-        $issue = (new IssueModel())
+        $issue = (new Model\Issue())
             ->setAssemblyId(1)
             ->setIssueId(4)
             ->setType('ab')
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
         ;
 
         $issueService = new Issue();
-        $issueService->setDriver($this->pdo);
+        $issueService->setDriver($this->getPDO());
         $issueService->save($issue);
 
         $expectedTable = $this->createArrayDataSet([
@@ -248,16 +254,17 @@ class IssueTest extends TestCase
         $this->assertTablesEqual($expectedTable, $queryTable);
     }
 
-    public function testUpdate()
+    #[Test]
+    public function updateSuccess()
     {
-        $issue = (new IssueModel())
+        $issue = (new Model\Issue())
             ->setAssemblyId(1)
             ->setIssueId(3)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setStatus('awesome');
 
         $issueService = new Issue();
-        $issueService->setDriver($this->pdo);
+        $issueService->setDriver($this->getPDO());
         $issueService->update($issue);
 
         $expectedTable = $this->createArrayDataSet([
@@ -269,7 +276,7 @@ class IssueTest extends TestCase
                     'type' => null,
                     'status' => 'awesome',
                     'type_subname' => null,
-                    'kind' => KindEnum::A->value
+                    'kind' => Model\KindEnum::A->value
                 ],
             ],
         ])->getTable('Issue');
@@ -283,8 +290,10 @@ class IssueTest extends TestCase
         $this->assertTablesEqual($expectedTable, $queryTable);
     }
 
-    public function testCreateFireEventResourceCreated()
+    #[Test]
+    public function createFireEventResourceCreated()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -294,20 +303,22 @@ class IssueTest extends TestCase
             })
             ->getMock();
 
-        $issue = (new IssueModel())
+        $issue = (new Model\Issue())
             ->setAssemblyId(1)
             ->setIssueId(4)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
         ;
 
         (new Issue())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->create($issue);
     }
 
-    public function testUpdateFireEventResourceFoundButNoUpdateRequired()
+    #[Test]
+    public function updateFireEventResourceFoundButNoUpdateRequired()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -317,10 +328,10 @@ class IssueTest extends TestCase
             })
             ->getMock();
 
-        $issue = (new IssueModel())
+        $issue = (new Model\Issue())
             ->setAssemblyId(1)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setCongressmanId(1)
             ->setType('l')
             ->setStatus('some')
@@ -328,13 +339,15 @@ class IssueTest extends TestCase
         ;
 
         (new Issue())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->update($issue);
     }
 
-    public function testUpdateFireEventResourceFoundAndUpdateIsNeeded()
+    #[Test]
+    public function updateFireEventResourceFoundAndUpdateIsNeeded()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -344,10 +357,10 @@ class IssueTest extends TestCase
             })
             ->getMock();
 
-        $issue = (new IssueModel())
+        $issue = (new Model\Issue())
             ->setAssemblyId(1)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setCongressmanId(1)
             ->setType('l')
             ->setStatus('some')
@@ -355,13 +368,15 @@ class IssueTest extends TestCase
         ;
 
         (new Issue())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->update($issue);
     }
 
-    public function testSaveFireEventResourceCreated()
+    #[Test]
+    public function saveFireEventResourceCreated()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -371,10 +386,10 @@ class IssueTest extends TestCase
             })
             ->getMock();
 
-        $issue = (new IssueModel())
+        $issue = (new Model\Issue())
             ->setAssemblyId(1)
             ->setIssueId(4)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setCongressmanId(1)
             ->setType('l')
             ->setStatus('some')
@@ -382,13 +397,15 @@ class IssueTest extends TestCase
         ;
 
         (new Issue())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->save($issue);
     }
 
-    public function testSaveFireEventResourceFoundNoUpdateRequired()
+    #[Test]
+    public function saveFireEventResourceFoundNoUpdateRequired()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -398,10 +415,10 @@ class IssueTest extends TestCase
             })
             ->getMock();
 
-        $issue = (new IssueModel())
+        $issue = (new Model\Issue())
             ->setAssemblyId(1)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setCongressmanId(1)
             ->setType('l')
             ->setStatus('some')
@@ -409,13 +426,15 @@ class IssueTest extends TestCase
         ;
 
         (new Issue())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->save($issue);
     }
 
-    public function testSaveFireEventResourceFoundUpdateNeeded()
+    #[Test]
+    public function saveFireEventResourceFoundUpdateNeeded()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -425,10 +444,10 @@ class IssueTest extends TestCase
             })
             ->getMock();
 
-        $issue = (new IssueModel())
+        $issue = (new Model\Issue())
             ->setAssemblyId(1)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setCongressmanId(1)
             ->setType('l')
             ->setStatus('some')
@@ -436,7 +455,7 @@ class IssueTest extends TestCase
         ;
 
         (new Issue())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->save($issue);
     }
@@ -456,7 +475,7 @@ class IssueTest extends TestCase
                 [
                     'issue_id' => 1,
                     'assembly_id' => 1,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'congressman_id' => 1,
                     'type' => 'l',
                     'status' => 'some',
@@ -464,23 +483,23 @@ class IssueTest extends TestCase
                 ], [
                     'issue_id' => 2,
                     'assembly_id' => 1,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'type' => 'l',
                     'status' => 'some',
                     'type_subname' => 'stjórnarfrumvarp'
                 ],
-                ['issue_id' => 3, 'assembly_id' => 1, 'kind' => KindEnum::A->value],
-                ['issue_id' => 1, 'assembly_id' => 2, 'kind' => KindEnum::A->value],
+                ['issue_id' => 3, 'assembly_id' => 1, 'kind' => Model\KindEnum::A->value],
+                ['issue_id' => 1, 'assembly_id' => 2, 'kind' => Model\KindEnum::A->value],
 
 
-                ['issue_id' => 1, 'assembly_id' => 1, 'kind' => KindEnum::B->value],
-                ['issue_id' => 1, 'assembly_id' => 2, 'kind' => KindEnum::B->value],
+                ['issue_id' => 1, 'assembly_id' => 1, 'kind' => Model\KindEnum::B->value],
+                ['issue_id' => 1, 'assembly_id' => 2, 'kind' => Model\KindEnum::B->value],
             ],
             'Document' => [
                 [
                     'document_id' => 1,
                     'issue_id' => 1,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'assembly_id' => 1,
                     'date' => '2000-01-01',
                     'url' => '',
@@ -488,7 +507,7 @@ class IssueTest extends TestCase
                 ], [
                     'document_id' => 2,
                     'issue_id' => 1,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'assembly_id' => 1,
                     'date' => '2000-01-02',
                     'url' => '',
@@ -496,7 +515,7 @@ class IssueTest extends TestCase
                 ], [
                     'document_id' => 3,
                     'issue_id' => 1,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'assembly_id' => 1,
                     'date' => '2000-01-03',
                     'url' => '',

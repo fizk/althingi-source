@@ -2,63 +2,56 @@
 
 namespace Althingi\Controller;
 
+use Althingi\{Model, Service};
 use Althingi\Controller\PlenaryAgendaController;
-use Althingi\Model;
-use Althingi\Model\KindEnum;
-use Althingi\Service\Congressman;
-use Althingi\Service\Issue;
-use Althingi\Service\Party;
-use Althingi\Service\Plenary;
-use Althingi\Service\PlenaryAgenda;
 use Althingi\ServiceHelper;
 use Library\Container\Container;
 use PDOException;
+use PHPUnit\Framework\Attributes\{CoversMethod, CoversClass, Test, Before, After};
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class PlenaryControllerTest
- * @package Althingi\Controller
- * @coversDefaultClass \Althingi\Controller\PlenaryAgendaController
- *
- * @covers \Althingi\Controller\PlenaryAgendaController::setPlenaryAgendaService
- */
+#[CoversClass(PlenaryAgendaController::class)]
+#[CoversMethod(PlenaryAgendaController::class, 'setPlenaryAgendaService')]
+#[CoversMethod(PlenaryAgendaController::class, 'getList')]
+#[CoversMethod(PlenaryAgendaController::class, 'patch')]
+#[CoversMethod(PlenaryAgendaController::class, 'put')]
 class PlenaryAgendaControllerTest extends TestCase
 {
     use ServiceHelper;
 
-    public function setUp(): void
+    #[Before]
+    public function up(): void
     {
         $this->setServiceManager(
             new Container(require __DIR__ . '/../../config/service.php')
         );
         $this->buildServices([
-            PlenaryAgenda::class,
-            Plenary::class,
-            Issue::class,
-            Congressman::class,
-            Party::class,
+            Service\PlenaryAgenda::class,
+            Service\Plenary::class,
+            Service\Issue::class,
+            Service\Congressman::class,
+            Service\Party::class,
         ]);
     }
 
-    public function tearDown(): void
+    #[After]
+    public function down(): void
     {
         \Mockery::close();
         parent::tearDown();
     }
 
-    /**
-     * @covers ::getList
-     */
-    public function testGetList()
+    #[Test]
+    public function getList()
     {
-        $this->getMockService(PlenaryAgenda::class)
+        $this->getMockService(Service\PlenaryAgenda::class)
             ->shouldReceive('fetch')
             ->with(1, 2)
             ->andReturn([
                 (new Model\PlenaryAgenda())
                     ->setIssueId(10)
                     ->setAssemblyId(1)
-                    ->setKind(KindEnum::A)
+                    ->setKind(Model\KindEnum::A)
                     ->setPlenaryId(2)
             ])
             ->once()
@@ -70,19 +63,17 @@ class PlenaryAgendaControllerTest extends TestCase
         $this->assertResponseStatusCode(206);
     }
 
-    /**
-     * @covers ::put
-     */
-    public function testPutSuccess()
+    #[Test]
+    public function putSuccess()
     {
-        $expectedData = (new \Althingi\Model\PlenaryAgenda())
+        $expectedData = (new Model\PlenaryAgenda())
             ->setAssemblyId(1)
             ->setPlenaryId(2)
-            ->setKind(KindEnum::B)
+            ->setKind(Model\KindEnum::B)
             ->setIssueId(1)
             ->setItemId(1)
         ;
-        $this->getMockService(PlenaryAgenda::class)
+        $this->getMockService(Service\PlenaryAgenda::class)
             ->shouldReceive('save')
             ->with(\Mockery::on(function ($actualData) use ($expectedData) {
                 return $expectedData == $actualData;
@@ -101,28 +92,20 @@ class PlenaryAgendaControllerTest extends TestCase
         $this->assertResponseStatusCode(201);
     }
 
-    /**
-     * @covers ::put
-     */
-    public function testPutIssueNotFound()
+    #[Test]
+    public function putIssueNotFound()
     {
-        $expectedData = (new \Althingi\Model\PlenaryAgenda())
-            ->setAssemblyId(1)
-            ->setPlenaryId(2)
-            ->setKind(KindEnum::B)
-            ->setIssueId(1)
-            ->setItemId(1)
-        ;
-        $this->getMockService(PlenaryAgenda::class)
+        $this->getMockService(Service\PlenaryAgenda::class)
             ->shouldReceive('save')
             ->once()
             ->andThrow(new PDOException('e_id`, `assembly_id`, `category`) REFERENCES `Issue` (`issue_id`', 23000))
+            ->getMock()
             ->shouldReceive('save')
             ->once()
             ->andReturn(1)
             ->getMock();
 
-        $this->getMockService(Issue::class)
+        $this->getMockService(Service\Issue::class)
             ->shouldReceive('create')
             ->andReturns(1)
             ->getMock();
@@ -140,10 +123,8 @@ class PlenaryAgendaControllerTest extends TestCase
         $this->assertResponseStatusCode(201);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchSuccess()
+    #[Test]
+    public function patchSuccess()
     {
         $this->dispatch('/loggjafarthing/1/thingfundir/3/lidir/4', 'PATCH', [
             'comment' => 'This is the comment'

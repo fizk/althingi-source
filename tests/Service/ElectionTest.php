@@ -2,24 +2,22 @@
 
 namespace Althingi\Service;
 
-use Althingi\Service\Election;
-use Althingi\DatabaseConnection;
+use Althingi\DatabaseConnectionTrait;
+use Althingi\Model;
+use PHPUnit\Framework\Attributes\{Test};
 use PHPUnit\Framework\TestCase;
-use Althingi\Model\Election as ElectionModel;
-use PDO;
 
 class ElectionTest extends TestCase
 {
-    use DatabaseConnection;
+    use DatabaseConnectionTrait;
 
-    private PDO $pdo;
-
-    public function testGet()
+    #[Test]
+    public function getSuccess()
     {
         $service = new Election();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
-        $expectedData = (new ElectionModel())
+        $expectedData = (new Model\Election())
             ->setElectionId(1)
             ->setDate(new \DateTime('2000-01-01'));
         $actualData = $service->get(1);
@@ -27,13 +25,14 @@ class ElectionTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testGetByAssembly()
+    #[Test]
+    public function getByAssembly()
     {
         $service = new Election();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
         $election = $service->getByAssembly(1);
-        $this->assertInstanceOf(ElectionModel::class, $election);
+        $this->assertInstanceOf(Model\Election::class, $election);
     }
 
     protected function getDataSet()

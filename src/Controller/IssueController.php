@@ -34,11 +34,11 @@ class IssueController implements
      */
     public function get(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id', 0);
-        $issueId = $request->getAttribute('issue_id', 0);
-        $kind = KindEnum::fromString($request->getAttribute('kind', 'a'));
-
-        $issue = $this->issueService->get($issueId, $assemblyId, $kind);
+        $issue = $this->issueService->get(
+            $request->getAttribute('issue_id', 0),
+            $request->getAttribute('id', 0),
+            KindEnum::fromString($request->getAttribute('kind', 'a'))
+        );
 
         return $issue
             ? new JsonResponse($issue)
@@ -59,10 +59,10 @@ class IssueController implements
         $typeQuery = $request->getQueryParams()['type'] ?? null;
         $kindQuery = $request->getQueryParams()['kind'] ?? null;
         $orderQuery = $request->getQueryParams()['order'] ?? null;
-        $types = $typeQuery ? explode(',', $typeQuery) : [];
-        $kinds = $kindQuery ? explode(',', $kindQuery) : [];
-        $categories = array_map(function ($category) {
-            return strtoupper($category);
+        $type = $typeQuery ? explode(',', $typeQuery) : [];
+        $category = $kindQuery ? explode(',', $kindQuery) : [];
+        $kind = array_map(function ($item) {
+            return KindEnum::fromString($item);
         }, explode(',', $request->getAttribute('category', 'a,b')));
 
         // $count = $this->issueStore->countByAssembly($assemblyId, $types, $kinds, $categories);
@@ -73,9 +73,9 @@ class IssueController implements
             0, // $range->getFrom(),
             null, // $range->getSize(),
             $orderQuery,
-            $types,
-            $kinds,
-            $categories
+            $type,
+            $category,
+            $kind
         );
 
         return new JsonResponse($issues, 206);
@@ -120,12 +120,10 @@ class IssueController implements
      */
     public function patch(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id');
-        $kind = KindEnum::fromString($request->getAttribute('kind', 'a'));
         $issue = $this->issueService->get(
             $request->getAttribute('issue_id'),
-            $assemblyId,
-            $kind,
+            $request->getAttribute('id'),
+            KindEnum::fromString($request->getAttribute('kind', 'a')),
         );
 
         if (! $issue) {

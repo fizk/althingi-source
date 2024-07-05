@@ -2,46 +2,42 @@
 
 namespace Althingi\Service;
 
-use Althingi\Model\IssueCategory as IssueCategoryModel;
-use Althingi\Model\IssueCategoryAndTime;
-use Althingi\Service\IssueCategory;
-use Althingi\DatabaseConnection;
-use Althingi\Events\AddEvent;
-use Althingi\Events\UpdateEvent;
-use Althingi\Model\KindEnum;
+use Althingi\DatabaseConnectionTrait;
+use Althingi\Events\{UpdateEvent, AddEvent};
+use Althingi\Model;
 use Mockery;
+use PHPUnit\Framework\Attributes\{Test};
 use PHPUnit\Framework\TestCase;
-use PDO;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
 class IssueCategoryTest extends TestCase
 {
-    use DatabaseConnection;
+    use DatabaseConnectionTrait;
 
-    private PDO $pdo;
-
-    public function testGetIssueCategory()
+    #[Test]
+    public function getIssueCategory()
     {
         $service = new IssueCategory();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
         $data = $service->get(145, 1, 1);
 
-        $this->assertInstanceOf(IssueCategoryModel::class, $data);
+        $this->assertInstanceOf(Model\IssueCategory::class, $data);
         $this->assertEquals(145, $data->getAssemblyId());
         $this->assertEquals(1, $data->getIssueId());
         $this->assertEquals(1, $data->getCategoryId());
     }
 
-    public function testCreate()
+    #[Test]
+    public function createSuccess()
     {
         $service = new IssueCategory();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
-        $issueCategory = (new IssueCategoryModel())
+        $issueCategory = (new Model\IssueCategory())
             ->setAssemblyId(145)
             ->setIssueId(2)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setCategoryId(34);
 
         $service->create($issueCategory);
@@ -50,15 +46,16 @@ class IssueCategoryTest extends TestCase
         $this->assertEquals($issueCategory, $data);
     }
 
-    public function testSave()
+    #[Test]
+    public function saveSuccess()
     {
         $service = new IssueCategory();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
-        $issueCategory = (new IssueCategoryModel())
+        $issueCategory = (new Model\IssueCategory())
             ->setAssemblyId(145)
             ->setIssueId(2)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setCategoryId(34);
 
         $service->save($issueCategory);
@@ -67,15 +64,16 @@ class IssueCategoryTest extends TestCase
         $this->assertEquals($issueCategory, $data);
     }
 
-    public function testUpdate()
+    #[Test]
+    public function updateSuccess()
     {
         $service = new IssueCategory();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
-        $issueCategory = (new IssueCategoryModel())
+        $issueCategory = (new Model\IssueCategory())
             ->setAssemblyId(145)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setCategoryId(1);
 
         $service->update($issueCategory);
@@ -84,12 +82,13 @@ class IssueCategoryTest extends TestCase
         $this->assertEquals($issueCategory, $data);
     }
 
-    public function testFetchFrequencyByAssemblyAndCongressman()
+    #[Test]
+    public function fetchFrequencyByAssemblyAndCongressman()
     {
         $service = new IssueCategory();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
-        $expectedData = [(new IssueCategoryAndTime())
+        $expectedData = [(new Model\IssueCategoryAndTime())
             ->setCategoryId(1)
             ->setSuperCategoryId(1)
             ->setTime(20)
@@ -99,8 +98,10 @@ class IssueCategoryTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testCreateFireEventResourceCreated()
+    #[Test]
+    public function createFireEventResourceCreated()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -110,21 +111,23 @@ class IssueCategoryTest extends TestCase
             })
             ->getMock();
 
-        $issueCategory = (new IssueCategoryModel())
+        $issueCategory = (new Model\IssueCategory())
             ->setAssemblyId(145)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setCategoryId(2);
 
         (new IssueCategory())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->create($issueCategory)
         ;
     }
 
-    public function testUpdateFireEventResourceFoundButNoUpdateRequired()
+    #[Test]
+    public function updateFireEventResourceFoundButNoUpdateRequired()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -134,21 +137,23 @@ class IssueCategoryTest extends TestCase
             })
             ->getMock();
 
-        $issueCategory = (new IssueCategoryModel())
+        $issueCategory = (new Model\IssueCategory())
             ->setAssemblyId(145)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setCategoryId(1);
 
         (new IssueCategory())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->update($issueCategory)
         ;
     }
 
-    public function testSaveFireEventResourceAdded()
+    #[Test]
+    public function saveFireEventResourceAdded()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -158,21 +163,23 @@ class IssueCategoryTest extends TestCase
             })
             ->getMock();
 
-        $issueCategory = (new IssueCategoryModel())
+        $issueCategory = (new Model\IssueCategory())
             ->setAssemblyId(145)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setCategoryId(2);
 
         (new IssueCategory())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->save($issueCategory)
         ;
     }
 
-    public function testSaveFireEventResourceFoundButNoNeedForAnUpdate()
+    #[Test]
+    public function saveFireEventResourceFoundButNoNeedForAnUpdate()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -182,14 +189,14 @@ class IssueCategoryTest extends TestCase
             })
             ->getMock();
 
-        $issueCategory = (new IssueCategoryModel())
+        $issueCategory = (new Model\IssueCategory())
             ->setAssemblyId(145)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setCategoryId(1);
 
         (new IssueCategory())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->save($issueCategory)
         ;
@@ -266,7 +273,7 @@ class IssueCategoryTest extends TestCase
                     'issue_id' => 1,
                     'assembly_id' => 145,
                     'congressman_id' => null,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'name' => '',
                     'sub_name' => '',
                     'type' => '',
@@ -278,7 +285,7 @@ class IssueCategoryTest extends TestCase
                     'issue_id' => 2,
                     'assembly_id' => 145,
                     'congressman_id' => null,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'name' => '',
                     'sub_name' => '',
                     'type' => '',
@@ -289,7 +296,7 @@ class IssueCategoryTest extends TestCase
                 ],
             ],
             'Category_has_Issue' => [
-                ['category_id' => 1, 'issue_id' => 1, 'assembly_id' => 145, 'kind' => KindEnum::A->value],
+                ['category_id' => 1, 'issue_id' => 1, 'assembly_id' => 145, 'kind' => Model\KindEnum::A->value],
             ],
             'Speech' => [
                 [
@@ -297,7 +304,7 @@ class IssueCategoryTest extends TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 145,
                     'issue_id' => 1,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'congressman_id' => 1,
                     'from' => '2000-01-01 00:00:00',
                     'to' => null,
@@ -306,7 +313,7 @@ class IssueCategoryTest extends TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 145,
                     'issue_id' => 1,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'congressman_id' => 1,
                     'from' => null,
                     'to' => '2000-01-01 00:0:10',
@@ -315,7 +322,7 @@ class IssueCategoryTest extends TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 145,
                     'issue_id' => 1,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'congressman_id' => 1,
                     'from' => '2000-01-01 00:00:00',
                     'to' => '2000-01-01 00:0:10',
@@ -324,7 +331,7 @@ class IssueCategoryTest extends TestCase
                     'plenary_id' => 1,
                     'assembly_id' => 145,
                     'issue_id' => 1,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'congressman_id' => 1,
                     'from' => '2000-01-01 00:00:00',
                     'to' => '2000-01-01 00:0:10',

@@ -3,24 +3,24 @@
 namespace Althingi\Controller;
 
 use Althingi\Controller;
-use Althingi\Model;
-use Althingi\Service;
+use Althingi\{Model, Service};
 use Althingi\ServiceHelper;
 use Library\Container\Container;
+use PHPUnit\Framework\Attributes\{CoversMethod, CoversClass, Test, Before, After};
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class MinisterSittingController
- * @package Althingi\Controller
- * @coversDefaultClass \Althingi\Controller\MinisterSittingController
- *
- * @covers \Althingi\Controller\MinisterSittingController::setMinisterSittingService
- */
+#[CoversClass(MinisterSittingController::class)]
+#[CoversMethod(MinisterSittingController::class, 'setMinisterSittingService')]
+#[CoversMethod(MinisterSittingController::class, 'assemblySessionsAction')]
+#[CoversMethod(MinisterSittingController::class, 'get')]
+#[CoversMethod(MinisterSittingController::class, 'patch')]
+#[CoversMethod(MinisterSittingController::class, 'post')]
 class MinisterSittingControllerTest extends TestCase
 {
     use ServiceHelper;
 
-    public function setUp(): void
+    #[Before]
+    public function up(): void
     {
         $this->setServiceManager(
             new Container(require __DIR__ . '/../../config/service.php')
@@ -33,16 +33,15 @@ class MinisterSittingControllerTest extends TestCase
         ]);
     }
 
-    public function tearDown(): void
+    #[After]
+    public function down(): void
     {
         \Mockery::close();
         parent::tearDown();
     }
 
-    /**
-     * @covers ::post
-     */
-    public function testCreateSuccess()
+    #[Test]
+    public function createSuccess()
     {
         $expectedObject = (new Model\MinisterSitting())
             ->setMinistryId(1)
@@ -73,10 +72,8 @@ class MinisterSittingControllerTest extends TestCase
         $this->assertActionName('post');
     }
 
-    /**
-     * @covers ::post
-     */
-    public function testCreateEntryAlreadyExists()
+    #[Test]
+    public function createEntryAlreadyExists()
     {
         $exception = new \PDOException();
         $exception->errorInfo = ['', 1062, ''];
@@ -88,8 +85,8 @@ class MinisterSittingControllerTest extends TestCase
             ->getMock()
 
             ->shouldReceive('getIdentifier')
-            ->andReturn(54321)
             ->once()
+            ->andReturn(54321)
             ->getMock()
         ;
 
@@ -106,10 +103,8 @@ class MinisterSittingControllerTest extends TestCase
         $this->assertActionName('post');
     }
 
-    /**
-     * @covers ::post
-     */
-    public function testCreateEntryAlreadyExistsVei()
+    #[Test]
+    public function createEntryAlreadyExistsVei()
     {
         $exception = new \PDOException();
         $exception->errorInfo = ['', 1062, ''];
@@ -120,8 +115,8 @@ class MinisterSittingControllerTest extends TestCase
             ->getMock()
 
             ->shouldReceive('getIdentifier')
-            ->andReturn('54321')
             ->once()
+            ->andReturn('54321')
             ->getMock();
         ;
 
@@ -138,10 +133,8 @@ class MinisterSittingControllerTest extends TestCase
         $this->assertActionName('post');
     }
 
-    /**
-     * @covers ::post
-     */
-    public function testCreateInvalid()
+    #[Test]
+    public function createInvalid()
     {
         $this->getMockService(Service\MinisterSitting::class)
             ->shouldReceive('create')
@@ -163,10 +156,8 @@ class MinisterSittingControllerTest extends TestCase
         $this->assertActionName('post');
     }
 
-    /**
-     * @covers ::post
-     */
-    public function testCreateInvalidSteps()
+    #[Test]
+    public function createInvalidSteps()
     {
         $this->getMockService(Service\MinisterSitting::class)
             ->shouldReceive('create')
@@ -186,10 +177,8 @@ class MinisterSittingControllerTest extends TestCase
         $this->assertActionName('post');
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchSuccess()
+    #[Test]
+    public function patchSuccess()
     {
         $serviceReturnedData = (new Model\MinisterSitting())
             ->setMinisterSittingId(555)
@@ -233,10 +222,8 @@ class MinisterSittingControllerTest extends TestCase
         $this->assertActionName('patch');
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchInvalidParams()
+    #[Test]
+    public function patchInvalidParams()
     {
         $serviceReturnedData = (new Model\MinisterSitting())
             ->setMinisterSittingId(555)
@@ -255,8 +242,8 @@ class MinisterSittingControllerTest extends TestCase
             ->getMock()
 
             ->shouldReceive('update')
-            ->andReturn(10)
             ->never()
+            ->andReturn(10)
             ->getMock();
 
         $this->dispatch('/thingmenn/3/radherraseta/555', 'PATCH', [
@@ -268,10 +255,8 @@ class MinisterSittingControllerTest extends TestCase
         $this->assertActionName('patch');
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchNotFound()
+    #[Test]
+    public function patchNotFound()
     {
         $this->getMockService(Service\MinisterSitting::class)
             ->shouldReceive('get')
@@ -293,10 +278,8 @@ class MinisterSittingControllerTest extends TestCase
         $this->assertActionName('patch');
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGet()
+    #[Test]
+    public function getSuccessful()
     {
         $this->getMockService(Service\MinisterSitting::class)
             ->shouldReceive('get')
@@ -314,10 +297,8 @@ class MinisterSittingControllerTest extends TestCase
         $this->assertActionName('get');
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGetNotFound()
+    #[Test]
+    public function getNotFound()
     {
         $this->getMockService(Service\MinisterSitting::class)
             ->shouldReceive('get')
@@ -330,10 +311,8 @@ class MinisterSittingControllerTest extends TestCase
         $this->assertActionName('get');
     }
 
-    /**
-     * @covers ::assemblySessionsAction
-     */
-    public function testAssemblySessionsAction()
+    #[Test]
+    public function assemblySessionsAction()
     {
         $this->getMockService(Service\MinisterSitting::class)
             ->shouldReceive('fetchByCongressmanAssembly')

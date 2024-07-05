@@ -54,7 +54,6 @@ class Session implements DatabaseAwareInterface, EventsAwareInterface
 
     /**
      * @return \Althingi\Model\Session[]
-     * @deprecated
      */
     public function fetchByCongressman(int $id): array
     {
@@ -71,7 +70,6 @@ class Session implements DatabaseAwareInterface, EventsAwareInterface
 
     /**
      * @return \Althingi\Model\Session[]
-     * @deprecated
      */
     public function fetchByAssembly(int $id): array
     {
@@ -88,7 +86,6 @@ class Session implements DatabaseAwareInterface, EventsAwareInterface
 
     /**
      * @return \Althingi\Model\Session[]
-     * @deprecated
      */
     public function fetchByAssemblyAndCongressman(int $assemblyId, int $congressmanId): array
     {

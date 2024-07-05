@@ -39,7 +39,9 @@ class CabinetController implements
      */
     public function get(ServerRequest $request): ResponseInterface
     {
-        $cabinet = $this->cabinetService->get($request->getAttribute('id'));
+        $cabinet = $this->cabinetService->get(
+            $request->getAttribute('id')
+        );
 
         return $cabinet
             ? new JsonResponse($cabinet, 200)
@@ -120,8 +122,9 @@ class CabinetController implements
      */
     public function assemblyAction(ServerRequest $request)
     {
-        $assemblyId = $request->getAttribute('id');
-        $assembly = $this->assemblyService->get($assemblyId);
+        $assembly = $this->assemblyService->get(
+            $request->getAttribute('id')
+        );
 
         $cabinets = $this->cabinetService->fetchAll(
             $assembly->getFrom(),

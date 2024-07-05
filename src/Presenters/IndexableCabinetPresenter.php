@@ -4,7 +4,7 @@ namespace Althingi\Presenters;
 
 use Althingi\Model\Cabinet;
 use Althingi\Model\ModelInterface;
-use Laminas\Hydrator\HydratorInterface;
+use Althingi\Utils\HydratorInterface;
 
 class IndexableCabinetPresenter implements IndexablePresenter
 {

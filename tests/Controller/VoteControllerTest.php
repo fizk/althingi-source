@@ -2,51 +2,52 @@
 
 namespace Althingi\Controller;
 
+use Althingi\{Model, Service};
 use Althingi\Controller\VoteController;
-use Althingi\Model\KindEnum;
-use Althingi\Service\Vote;
 use Althingi\ServiceHelper;
 use Library\Container\Container;
 use Mockery;
+use PHPUnit\Framework\Attributes\{CoversMethod, CoversClass, Test, Before, After};
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class VoteControllerTest
- * @package Althingi\Controller
- * @coversDefaultClass \Althingi\Controller\VoteController
- *
- * @covers \Althingi\Controller\VoteController::setVoteService
- */
+#[CoversClass(VoteController::class)]
+#[CoversMethod(VoteController::class, 'setVoteService')]
+#[CoversMethod(VoteController::class, 'get')]
+#[CoversMethod(VoteController::class, 'getList')]
+#[CoversMethod(VoteController::class, 'options')]
+#[CoversMethod(VoteController::class, 'optionsList')]
+#[CoversMethod(VoteController::class, 'patch')]
+#[CoversMethod(VoteController::class, 'put')]
 class VoteControllerTest extends TestCase
 {
     use ServiceHelper;
 
-    public function setUp(): void
+    #[Before]
+    public function up(): void
     {
         $this->setServiceManager(
             new Container(require __DIR__ . '/../../config/service.php')
         );
         $this->buildServices([
-            Vote::class,
+            Service\Vote::class,
         ]);
     }
 
-    public function tearDown(): void
+    #[After]
+    public function down(): void
     {
         $this->destroyServices();
         Mockery::close();
         parent::tearDown();
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGet()
+    #[Test]
+    public function getSuccessful()
     {
-        $this->getMockService(Vote::class)
+        $this->getMockService(Service\Vote::class)
             ->shouldReceive('get')
             ->with(3)
-            ->andReturn((new \Althingi\Model\Vote())->setKind(KindEnum::A))
+            ->andReturn((new Model\Vote())->setKind(Model\KindEnum::A))
             ->once()
             ->getMock();
 
@@ -57,12 +58,10 @@ class VoteControllerTest extends TestCase
         $this->assertResponseStatusCode(200);
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGetResourceNotFound()
+    #[Test]
+    public function getResourceNotFound()
     {
-        $this->getMockService(Vote::class)
+        $this->getMockService(Service\Vote::class)
             ->shouldReceive('get')
             ->with(3)
             ->andReturn(null)
@@ -76,15 +75,13 @@ class VoteControllerTest extends TestCase
         $this->assertResponseStatusCode(404);
     }
 
-    /**
-     * @covers ::getList
-     */
-    public function testGetList()
+    #[Test]
+    public function getList()
     {
-        $this->getMockService(Vote::class)
+        $this->getMockService(Service\Vote::class)
             ->shouldReceive('fetchByIssue')
             ->with(1, 2)
-            ->andReturn([(new \Althingi\Model\Vote())->setKind(KindEnum::A)])
+            ->andReturn([(new Model\Vote())->setKind(Model\KindEnum::A)])
             ->once()
             ->getMock()
         ;
@@ -96,15 +93,13 @@ class VoteControllerTest extends TestCase
         $this->assertResponseStatusCode(206);
     }
 
-    /**
-     * @covers ::put
-     */
-    public function testPutSuccess()
+    #[Test]
+    public function putSuccess()
     {
-        $this->getMockService(Vote::class)
+        $this->getMockService(Service\Vote::class)
             ->shouldReceive('save')
-            ->andReturn(1)
             ->once()
+            ->andReturn(1)
             ->getMock();
 
         $this->dispatch('/loggjafarthing/1/thingmal/a/2/atkvaedagreidslur/3', 'PUT', [
@@ -118,15 +113,13 @@ class VoteControllerTest extends TestCase
         $this->assertResponseStatusCode(201);
     }
 
-    /**
-     * @covers ::put
-     */
-    public function testPutInvalid()
+    #[Test]
+    public function putInvalid()
     {
-        $this->getMockService(Vote::class)
+        $this->getMockService(Service\Vote::class)
             ->shouldReceive('create')
-            ->andReturn(1)
             ->never()
+            ->andReturn(1)
             ->getMock();
 
         $this->dispatch('/loggjafarthing/1/thingmal/a/2/atkvaedagreidslur/3', 'PUT', [
@@ -139,33 +132,31 @@ class VoteControllerTest extends TestCase
         $this->assertResponseStatusCode(400);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchSuccess()
+    #[Test]
+    public function patchSuccess()
     {
-        $returnedData = (new \Althingi\Model\Vote())
+        $returnedData = (new Model\Vote())
             ->setVoteId(3)
             ->setIssueId(2)
             ->setAssemblyId(1)
             ->setDate(new \DateTime('2000-01-01 00:00:00'))
             ->setType('type')
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setMethod('method');
 
-        $expectedData = (new \Althingi\Model\Vote())
+        $expectedData = (new Model\Vote())
             ->setVoteId(3)
             ->setIssueId(2)
             ->setAssemblyId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setDate(new \DateTime('2001-01-01 01:02:03'))
             ->setType('type')
             ->setMethod('method');
 
-        $this->getMockService(Vote::class)
+        $this->getMockService(Service\Vote::class)
             ->shouldReceive('get')
-            ->andReturn($returnedData)
             ->once()
+            ->andReturn($returnedData)
             ->getMock()
 
             ->shouldReceive('update')
@@ -184,10 +175,8 @@ class VoteControllerTest extends TestCase
         $this->assertResponseStatusCode(205);
     }
 
-    /**
-     * @covers ::options
-     */
-    public function testOptions()
+    #[Test]
+    public function optionsSuccessful()
     {
         $this->dispatch('/loggjafarthing/1/thingmal/a/2/atkvaedagreidslur/3', 'OPTIONS');
 
@@ -196,10 +185,8 @@ class VoteControllerTest extends TestCase
         $this->assertResponseStatusCode(200);
     }
 
-    /**
-     * @covers ::optionsList
-     */
-    public function testOptionsList()
+    #[Test]
+    public function optionsList()
     {
         $this->dispatch('/loggjafarthing/1/thingmal/a/2/atkvaedagreidslur', 'OPTIONS');
 

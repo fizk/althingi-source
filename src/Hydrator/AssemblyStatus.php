@@ -2,18 +2,17 @@
 
 namespace Althingi\Hydrator;
 
-use Laminas\Hydrator\HydratorInterface;
+use Althingi\Utils\HydratorInterface;
 
 class AssemblyStatus implements HydratorInterface
 {
     /**
-     * Hydrate $object with the provided $data.
      *
-     * @param  array $data
-     * @param  \Althingi\Model\AssemblyStatus $object
+     * @param array $data
+     * @param \Althingi\Model\AssemblyStatus $object
      * @return \Althingi\Model\AssemblyStatus
      */
-    public function hydrate(array $data, $object)
+    public function hydrate(array $data, object $object): object
     {
         return $object
             ->setCount($data['count'])
@@ -24,14 +23,12 @@ class AssemblyStatus implements HydratorInterface
             ->setStatus(array_key_exists('status', $data) ? $data['status'] : null);
     }
 
-
     /**
-     * Extract values from an object
      *
-     * @param  \Althingi\Model\Assembly $object
+     * @param \Althingi\Model\AssemblyStatus $object
      * @return array
      */
-    public function extract($object): array
+    public function extract(object $object): array
     {
         return $object->toArray();
     }

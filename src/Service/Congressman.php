@@ -78,7 +78,6 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
 
     /**
      * @return \Althingi\Model\CongressmanAndParty[]
-     * @deprecated
      */
     public function fetchByAssembly(int $assemblyId, string $congressmanType = null): array
     {
@@ -122,7 +121,6 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
      * Accumulated speech-time per congressman for a given assembly.
      *
      * @return \Althingi\Model\CongressmanValue[]
-     * @deprecated
      */
     public function fetchTimeByAssembly(
         int $assemblyId,
@@ -217,7 +215,6 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
 
     /**
      * @return \Althingi\Model\CongressmanAndCabinet[]
-     * @deprecated
      */
     public function fetchByCabinet(int $cabinetId): array
     {
@@ -234,7 +231,6 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
 
     /**
      * @return \Althingi\Model\CongressmanAndDateRange[]
-     * @deprecated
      */
     public function fetchAccumulatedTimeByIssue(int $assemblyId, int $issueId, ?KindEnum $kind = KindEnum::A): array
     {
@@ -261,7 +257,6 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
 
     /**
      * @return \Althingi\Model\Proponent[]
-     * @deprecated
      */
     public function fetchProponents(int $assemblyId, int $documentId): array
     {
@@ -283,7 +278,6 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
 
     /**
      * @return \Althingi\Model\Proponent[]
-     * @deprecated
      */
     public function fetchProponentsByIssue(int $assemblyId, int $issueId): array
     {
@@ -335,7 +329,6 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
 
     /**
      * @return \Althingi\Model\President[]
-     * @deprecated
      */
     public function fetchPresidents(): array
     {
@@ -350,9 +343,6 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    /**
-     * @deprecated
-     */
     public function getPresidentByAssembly(int $assemblyId, int $presidentId): ?Model\President
     {
         $statement = $this->getDriver()->prepare("
@@ -371,7 +361,6 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
 
     /**
      * @return \Althingi\Model\President[]
-     * @deprecated
      */
     public function fetchPresidentsByAssembly(int $assemblyId): array
     {

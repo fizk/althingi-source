@@ -33,11 +33,11 @@ class DocumentController implements
      */
     public function get(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id');
-        $issueId = $request->getAttribute('issue_id');
-        $documentId = $request->getAttribute('document_id');
-
-        $document = $this->documentService->get($assemblyId, $issueId, $documentId);
+        $document = $this->documentService->get(
+            $request->getAttribute('id'),
+            $request->getAttribute('issue_id'),
+            $request->getAttribute('document_id')
+        );
 
         return $document
             ? new JsonResponse($document)
@@ -50,9 +50,10 @@ class DocumentController implements
      */
     public function getList(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id');
-        $issueId = $request->getAttribute('issue_id');
-        $documents = $this->documentService->fetchByIssue($assemblyId, $issueId);
+        $documents = $this->documentService->fetchByIssue(
+            $request->getAttribute('id'),
+            $request->getAttribute('issue_id')
+        );
         return new JsonResponse($documents, 206);
     }
 
@@ -64,15 +65,11 @@ class DocumentController implements
      */
     public function put(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id');
-        $issueId = $request->getAttribute('issue_id');
-        $documentId = $request->getAttribute('document_id');
-
         $form = new Form\Document([
             ...$request->getParsedBody(),
-            'assembly_id' => $assemblyId,
-            'issue_id' => $issueId,
-            'document_id' => $documentId,
+            'assembly_id' => $request->getAttribute('id'),
+            'issue_id' => $request->getAttribute('issue_id'),
+            'document_id' => $request->getAttribute('document_id'),
             'kind' => KindEnum::A->value,
         ]);
 
@@ -92,11 +89,13 @@ class DocumentController implements
      */
     public function patch(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id');
-        $issueId = $request->getAttribute('issue_id');
-        $documentId = $request->getAttribute('document_id');
-
-        if (($document = $this->documentService->get($assemblyId, $issueId, $documentId)) != null) {
+        if (
+            ($document = $this->documentService->get(
+                $request->getAttribute('id'),
+                $request->getAttribute('issue_id'),
+                $request->getAttribute('document_id')
+            )) != null
+        ) {
             $form = new Form\Document([
                 ...$document->toArray(),
                 ...$request->getParsedBody(),
@@ -127,9 +126,10 @@ class DocumentController implements
      */
     public function primaryDocumentAction(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id');
-        $issueId = $request->getAttribute('issue_id');
-        $document = $this->documentService->getPrimaryDocument($assemblyId, $issueId);
+        $document = $this->documentService->getPrimaryDocument(
+            $request->getAttribute('id'),
+            $request->getAttribute('issue_id')
+        );
 
         return $document
             ? new JsonResponse($document)

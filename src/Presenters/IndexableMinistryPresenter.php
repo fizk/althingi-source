@@ -4,7 +4,7 @@ namespace Althingi\Presenters;
 
 use Althingi\Model\Ministry;
 use Althingi\Model\ModelInterface;
-use Laminas\Hydrator\HydratorInterface;
+use Althingi\Utils\HydratorInterface;
 
 class IndexableMinistryPresenter implements IndexablePresenter
 {

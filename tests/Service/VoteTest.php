@@ -2,35 +2,29 @@
 
 namespace Althingi\Service;
 
-use Althingi\Model\Vote as VoteModel;
-use Althingi\Model\VoteTypeAndCount;
-use Althingi\Service\Vote;
-use Althingi\DatabaseConnection;
-use Althingi\Events\AddEvent;
-use Althingi\Events\UpdateEvent;
-use PHPUnit\Framework\TestCase;
-use Althingi\Model\DateAndCount as DateAndCountModel;
-use Althingi\Model\KindEnum;
+use Althingi\DatabaseConnectionTrait;
+use Althingi\Events\{UpdateEvent, AddEvent};
+use Althingi\Model;
 use DateTime;
 use Mockery;
-use PDO;
+use PHPUnit\Framework\Attributes\{Test};
+use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
 class VoteTest extends TestCase
 {
-    use DatabaseConnection;
+    use DatabaseConnectionTrait;
 
-    private PDO $pdo;
-
-    public function testVote()
+    #[Test]
+    public function getVoteSuccess()
     {
         $service = new Vote();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
-        $expectedData = (new VoteModel())
+        $expectedData = (new Model\Vote())
             ->setVoteId(1)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setAssemblyId(1)
             ->setDocumentId(1)
             ->setDate(new \DateTime('2000-01-01T00:01:00'));
@@ -39,10 +33,11 @@ class VoteTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testVoteNotFound()
+    #[Test]
+    public function voteNotFound()
     {
         $service = new Vote();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
         $expectedData = null;
         $actualData = $service->get(10000);
@@ -50,23 +45,24 @@ class VoteTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchByIssue()
+    #[Test]
+    public function fetchByIssue()
     {
         $service = new Vote();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
         $expectedData = [
-            (new VoteModel())
+            (new Model\Vote())
                 ->setVoteId(1)
                 ->setIssueId(1)
-                ->setKind(KindEnum::A)
+                ->setKind(Model\KindEnum::A)
                 ->setAssemblyId(1)
                 ->setDocumentId(1)
                 ->setDate(new \DateTime('2000-01-01T00:01:00')),
-            (new VoteModel())
+            (new Model\Vote())
                 ->setVoteId(2)
                 ->setIssueId(1)
-                ->setKind(KindEnum::A)
+                ->setKind(Model\KindEnum::A)
                 ->setAssemblyId(1)
                 ->setDocumentId(2)
                 ->setDate(new \DateTime('2000-02-01')),
@@ -77,43 +73,46 @@ class VoteTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchDateFrequencyByIssue()
+    #[Test]
+    public function fetchDateFrequencyByIssue()
     {
         $service = new Vote();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
         $expectedData = [
-            (new DateAndCountModel())->setCount(1)->setDate(new \DateTime('2000-01-01')),
-            (new DateAndCountModel())->setCount(1)->setDate(new \DateTime('2000-02-01')),
+            (new Model\DateAndCount())->setCount(1)->setDate(new \DateTime('2000-01-01')),
+            (new Model\DateAndCount())->setCount(1)->setDate(new \DateTime('2000-02-01')),
         ];
         $actualData = $service->fetchDateFrequencyByIssue(1, 1);
 
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchFrequencyByAssembly()
+    #[Test]
+    public function fetchFrequencyByAssembly()
     {
         $service = new Vote();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
         $expectedData = [
-            (new DateAndCountModel())->setCount(5),
-            (new DateAndCountModel())->setCount(1)->setDate(new \DateTime('2000-01-01')),
-            (new DateAndCountModel())->setCount(1)->setDate(new \DateTime('2000-02-01')),
+            (new Model\DateAndCount())->setCount(5),
+            (new Model\DateAndCount())->setCount(1)->setDate(new \DateTime('2000-01-01')),
+            (new Model\DateAndCount())->setCount(1)->setDate(new \DateTime('2000-02-01')),
         ];
         $actualData = $service->fetchFrequencyByAssembly(1);
 
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchByDocument()
+    #[Test]
+    public function fetchByDocument()
     {
         $service = new Vote();
-        $service->setDriver($this->pdo);
-        $expectedData = [(new VoteModel())
+        $service->setDriver($this->getPDO());
+        $expectedData = [(new Model\Vote())
             ->setVoteId(7)
             ->setIssueId(2)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setAssemblyId(1)
             ->setDocumentId(2)];
         $actualData = $service->fetchByDocument(1, 2, 2);
@@ -121,13 +120,14 @@ class VoteTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testCreate()
+    #[Test]
+    public function createSuccess()
     {
-        $vote = (new VoteModel())
+        $vote = (new Model\Vote())
             ->setVoteId(9)
             ->setIssueId(2)
             ->setAssemblyId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setYes(0)
             ->setNo(0)
             ->setInaction(0)
@@ -144,19 +144,20 @@ class VoteTest extends TestCase
         );
 
         $voteService = new Vote();
-        $voteService->setDriver($this->pdo);
+        $voteService->setDriver($this->getPDO());
         $voteService->create($vote);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testSave()
+    #[Test]
+    public function saveSuccess()
     {
-        $vote = (new VoteModel())
+        $vote = (new Model\Vote())
             ->setVoteId(9)
             ->setIssueId(2)
             ->setAssemblyId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setYes(0)
             ->setNo(0)
             ->setInaction(0)
@@ -173,19 +174,20 @@ class VoteTest extends TestCase
         );
 
         $voteService = new Vote();
-        $voteService->setDriver($this->pdo);
+        $voteService->setDriver($this->getPDO());
         $voteService->save($vote);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testUpdate()
+    #[Test]
+    public function updateSuccess()
     {
-        $vote = (new VoteModel())
+        $vote = (new Model\Vote())
             ->setVoteId(1)
             ->setIssueId(1)
             ->setAssemblyId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setYes(0)
             ->setNo(0)
             ->setInaction(0)
@@ -209,16 +211,17 @@ class VoteTest extends TestCase
         );
 
         $voteService = new Vote();
-        $voteService->setDriver($this->pdo);
+        $voteService->setDriver($this->getPDO());
         $voteService->update($vote);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testCountByAssembly()
+    #[Test]
+    public function countByAssembly()
     {
         $voteService = new Vote();
-        $voteService->setDriver($this->pdo);
+        $voteService->setDriver($this->getPDO());
 
         $expectedCount = 7;
         $actualCount = $voteService->countByAssembly(1);
@@ -226,36 +229,40 @@ class VoteTest extends TestCase
         $this->assertEquals($expectedCount, $actualCount);
     }
 
-    public function testGetFrequencyByAssemblyAndCongressman()
+    #[Test]
+    public function getFrequencyByAssemblyAndCongressman()
     {
         $voteService = new Vote();
-        $voteService->setDriver($this->pdo);
+        $voteService->setDriver($this->getPDO());
 
         $expectedData = [
-            (new VoteTypeAndCount())->setVote('ja')->setCount(1),
-            (new VoteTypeAndCount())->setVote('nei')->setCount(1),
+            (new Model\VoteTypeAndCount())->setVote('ja')->setCount(1),
+            (new Model\VoteTypeAndCount())->setVote('nei')->setCount(1),
         ];
         $actualData = $voteService->getFrequencyByAssemblyAndCongressman(1, 2);
 
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testGetFrequencyByAssemblyAndCongressmanWithDate()
+    #[Test]
+    public function getFrequencyByAssemblyAndCongressmanWithDate()
     {
         $voteService = new Vote();
-        $voteService->setDriver($this->pdo);
+        $voteService->setDriver($this->getPDO());
 
         $expectedData = [
-            (new VoteTypeAndCount())->setVote('ja')->setCount(1),
-            (new VoteTypeAndCount())->setVote('nei')->setCount(1),
+            (new Model\VoteTypeAndCount())->setVote('ja')->setCount(1),
+            (new Model\VoteTypeAndCount())->setVote('nei')->setCount(1),
         ];
         $actualData = $voteService->getFrequencyByAssemblyAndCongressman(1, 2, new \DateTime('2000-01-01'));
 
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testCreateFireEventResourceCreated()
+    #[Test]
+    public function createFireEventResourceCreated()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -265,24 +272,26 @@ class VoteTest extends TestCase
             })
             ->getMock();
 
-        $vote = (new VoteModel())
+        $vote = (new Model\Vote())
             ->setVoteId(9)
             ->setIssueId(2)
             ->setAssemblyId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setYes(0)
             ->setNo(0)
             ->setInaction(0)
             ->setDocumentId(2);
 
         (new Vote())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher(($eventDispatcher))
             ->create($vote);
     }
 
-    public function testUpdateFireEventResourceFoundNoUpdateNeeded()
+    #[Test]
+    public function updateFireEventResourceFoundNoUpdateNeeded()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -292,28 +301,30 @@ class VoteTest extends TestCase
             })
             ->getMock();
 
-        $vote = (new VoteModel())
+        $vote = (new Model\Vote())
             ->setVoteId(1)
             ->setIssueId(1)
             ->setAssemblyId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setYes(0)
             ->setNo(0)
             ->setInaction(0)
             ->setDocumentId(1)
             ->setDate(new DateTime('2000-01-01T00:00:00'));
 
-        $statement = $this->pdo->prepare('select * from Vote');
+        $statement = $this->getPDO()->prepare('select * from Vote');
         $statement->execute();
 
         (new Vote())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher(($eventDispatcher))
             ->update($vote);
     }
 
-    public function testUpdateFireEventResourceFoundUpdatedRequired()
+    #[Test]
+    public function updateFireEventResourceFoundUpdatedRequired()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -323,11 +334,11 @@ class VoteTest extends TestCase
             })
             ->getMock();
 
-        $vote = (new VoteModel())
+        $vote = (new Model\Vote())
             ->setVoteId(1)
             ->setIssueId(1)
             ->setAssemblyId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setYes(0)
             ->setNo(0)
             ->setInaction(0)
@@ -335,13 +346,15 @@ class VoteTest extends TestCase
             ->setDate(new DateTime('2000-01-02T00:00:00'));
 
         (new Vote())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher(($eventDispatcher))
             ->update($vote);
     }
 
-    public function testSaveFireEventResourceCreated()
+    #[Test]
+    public function saveFireEventResourceCreated()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -351,11 +364,11 @@ class VoteTest extends TestCase
             })
             ->getMock();
 
-        $vote = (new VoteModel())
+        $vote = (new Model\Vote())
             ->setVoteId(100)
             ->setIssueId(1)
             ->setAssemblyId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setYes(0)
             ->setNo(0)
             ->setInaction(0)
@@ -363,13 +376,15 @@ class VoteTest extends TestCase
             ->setDate(new DateTime('2000-01-02T00:00:00'));
 
         (new Vote())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher(($eventDispatcher))
             ->save($vote);
     }
 
-    public function testSaveFireEventResourceFoundNoUpdatedNeeded()
+    #[Test]
+    public function saveFireEventResourceFoundNoUpdatedNeeded()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -379,11 +394,11 @@ class VoteTest extends TestCase
             })
             ->getMock();
 
-        $vote = (new VoteModel())
+        $vote = (new Model\Vote())
             ->setVoteId(1)
             ->setIssueId(1)
             ->setAssemblyId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setYes(0)
             ->setNo(0)
             ->setInaction(0)
@@ -391,13 +406,15 @@ class VoteTest extends TestCase
             ->setDate(new DateTime('2000-01-01T00:00:00'));
 
         (new Vote())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher(($eventDispatcher))
             ->save($vote);
     }
 
-    public function testSaveFireEventResourceFoundUpdateRequired()
+    #[Test]
+    public function saveFireEventResourceFoundUpdateRequired()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -407,11 +424,11 @@ class VoteTest extends TestCase
             })
             ->getMock();
 
-        $vote = (new VoteModel())
+        $vote = (new Model\Vote())
             ->setVoteId(1)
             ->setIssueId(1)
             ->setAssemblyId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setYes(0)
             ->setNo(0)
             ->setInaction(0)
@@ -419,7 +436,7 @@ class VoteTest extends TestCase
             ->setDate(new DateTime('2000-01-02T00:00:00'));
 
         (new Vote())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher(($eventDispatcher))
             ->save($vote);
     }
@@ -438,17 +455,18 @@ class VoteTest extends TestCase
                 ['congressman_id' => 4, 'name' => 'name4', 'birth' => '2000-01-01', 'death' => null],
             ],
             'Issue' => [
-                ['assembly_id' => 1, 'issue_id' => 1, 'kind' => KindEnum::A->value],
-                ['assembly_id' => 1, 'issue_id' => 2, 'kind' => KindEnum::A->value],
-                ['assembly_id' => 1, 'issue_id' => 3, 'kind' => KindEnum::A->value],
-                ['assembly_id' => 2, 'issue_id' => 1, 'kind' => KindEnum::A->value],
-                ['assembly_id' => 2, 'issue_id' => 2, 'kind' => KindEnum::A->value],
-                ['assembly_id' => 2, 'issue_id' => 3, 'kind' => KindEnum::A->value],
+                ['assembly_id' => 1, 'issue_id' => 1, 'kind' => Model\KindEnum::A->value],
+                ['assembly_id' => 1, 'issue_id' => 2, 'kind' => Model\KindEnum::A->value],
+                ['assembly_id' => 1, 'issue_id' => 3, 'kind' => Model\KindEnum::A->value],
+                ['assembly_id' => 2, 'issue_id' => 1, 'kind' => Model\KindEnum::A->value],
+                ['assembly_id' => 2, 'issue_id' => 2, 'kind' => Model\KindEnum::A->value],
+                ['assembly_id' => 2, 'issue_id' => 3, 'kind' => Model\KindEnum::A->value],
             ],
             'Document' => [
-                ['document_id' => 1,
+                [
+                    'document_id' => 1,
                     'issue_id' => 1,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'assembly_id' => 1,
                     'date' => '2000-01-01 00:00:00',
                     'url' => 'http://url.com',
@@ -456,7 +474,7 @@ class VoteTest extends TestCase
                 ], [
                     'document_id' => 2,
                     'issue_id' => 1,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'assembly_id' => 1,
                     'date' => '2000-01-01 00:00:00',
                     'url' => 'http://url.com',
@@ -464,7 +482,7 @@ class VoteTest extends TestCase
                 ], [
                     'document_id' => 3,
                     'issue_id' => 1,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'assembly_id' => 1,
                     'date' => '2000-01-01 00:00:00',
                     'url' => 'http://url.com',
@@ -472,7 +490,7 @@ class VoteTest extends TestCase
                 ], [
                     'document_id' => 4,
                     'issue_id' => 2,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'assembly_id' => 1,
                     'date' => '2000-01-01 00:00:00',
                     'url' => 'http://url.com',
@@ -483,24 +501,54 @@ class VoteTest extends TestCase
                 [
                     'vote_id' => 1,
                     'issue_id' => 1,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'assembly_id' => 1,
                     'document_id' => 1,
                     'date' => '2000-01-01T00:01:00'
                 ], [
                     'vote_id' => 2,
                     'issue_id' => 1,
-                    'kind' => KindEnum::A->value,
+                    'kind' => Model\KindEnum::A->value,
                     'assembly_id' => 1,
                     'document_id' => 2,
                     'date' => '2000-02-01'
+                ],[
+                    'vote_id' => 3,
+                    'issue_id' => 2,
+                    'kind' => Model\KindEnum::A->value,
+                    'assembly_id' => 1,
+                    'document_id' => 1
+                ],[
+                    'vote_id' => 4,
+                    'issue_id' => 2,
+                    'kind' => Model\KindEnum::A->value,
+                    'assembly_id' => 1,
+                    'document_id' => 1
+                ],[
+                    'vote_id' => 5,
+                    'issue_id' => 2,
+                    'kind' => Model\KindEnum::A->value,
+                    'assembly_id' => 1,
+                    'document_id' => 1
+                ],[
+                    'vote_id' => 6,
+                    'issue_id' => 2,
+                    'kind' => Model\KindEnum::A->value,
+                    'assembly_id' => 1,
+                    'document_id' => 1
+                ],[
+                    'vote_id' => 7,
+                    'issue_id' => 2,
+                    'kind' => Model\KindEnum::A->value,
+                    'assembly_id' => 1,
+                    'document_id' => 2
+                ],[
+                    'vote_id' => 8,
+                    'issue_id' => 2,
+                    'kind' => Model\KindEnum::A->value,
+                    'assembly_id' => 2,
+                    'document_id' => 2
                 ],
-                ['vote_id' => 3, 'issue_id' => 2, 'kind' => KindEnum::A->value, 'assembly_id' => 1, 'document_id' => 1],
-                ['vote_id' => 4, 'issue_id' => 2, 'kind' => KindEnum::A->value, 'assembly_id' => 1, 'document_id' => 1],
-                ['vote_id' => 5, 'issue_id' => 2, 'kind' => KindEnum::A->value, 'assembly_id' => 1, 'document_id' => 1],
-                ['vote_id' => 6, 'issue_id' => 2, 'kind' => KindEnum::A->value, 'assembly_id' => 1, 'document_id' => 1],
-                ['vote_id' => 7, 'issue_id' => 2, 'kind' => KindEnum::A->value, 'assembly_id' => 1, 'document_id' => 2],
-                ['vote_id' => 8, 'issue_id' => 2, 'kind' => KindEnum::A->value, 'assembly_id' => 2, 'document_id' => 2],
             ],
             'VoteItem' => [
                 ['vote_id' => 1, 'congressman_id' => 1, 'vote' => 'ja', 'vote_item_id' => 1],

@@ -15,8 +15,7 @@ use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\Diactoros\Uri;
 use Library\Container\Container;
 
-$manager = new Container(require_once './config/service.php');
-$router = $manager->get(RouteInterface::class);
+
 
 $path = isset($argv[1]) ? $argv[1] : '/';
 
@@ -33,6 +32,9 @@ $request = php_sapi_name() === 'cli'
     );
 
 $emitter = new SapiEmitter();
+$manager = new Container(require_once './config/service.php');
+$router = $manager->get(RouteInterface::class);
+
 try {
     $routeMatch = $router->match($request);
     if ($routeMatch) {

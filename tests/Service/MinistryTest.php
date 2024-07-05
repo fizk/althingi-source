@@ -2,26 +2,23 @@
 
 namespace Althingi\Service;
 
-use Althingi\Service\Ministry;
-use Althingi\DatabaseConnection;
-use Althingi\Events\AddEvent;
-use Althingi\Events\UpdateEvent;
+use Althingi\DatabaseConnectionTrait;
+use Althingi\Events\{UpdateEvent, AddEvent};
 use Althingi\Model;
 use Mockery;
+use PHPUnit\Framework\Attributes\{Test};
 use PHPUnit\Framework\TestCase;
-use PDO;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
 class MinistryTest extends TestCase
 {
-    use DatabaseConnection;
+    use DatabaseConnectionTrait;
 
-    private PDO $pdo;
-
-    public function testGet()
+    #[Test]
+    public function getSuccess()
     {
         $ministryService = new Ministry();
-        $ministryService->setDriver($this->pdo);
+        $ministryService->setDriver($this->getPDO());
 
         $expectedData = (new Model\Ministry())
             ->setMinistryId(1)
@@ -36,20 +33,22 @@ class MinistryTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testGetNotFound()
+    #[Test]
+    public function getNotFound()
     {
         $ministryService = new Ministry();
-        $ministryService->setDriver($this->pdo);
+        $ministryService->setDriver($this->getPDO());
 
         $actualData = $ministryService->get(100);
 
         $this->assertNull($actualData);
     }
 
-    public function testFetch()
+    #[Test]
+    public function fetchSuccess()
     {
         $ministryService = new Ministry();
-        $ministryService->setDriver($this->pdo);
+        $ministryService->setDriver($this->getPDO());
 
         $expectedData = [
             (new Model\Ministry())
@@ -72,10 +71,11 @@ class MinistryTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchAllGenerator()
+    #[Test]
+    public function fetchAllGenerator()
     {
         $ministryService = new Ministry();
-        $ministryService->setDriver($this->pdo);
+        $ministryService->setDriver($this->getPDO());
 
         $expectedData = [
             (new Model\Ministry())
@@ -101,7 +101,8 @@ class MinistryTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testCreate()
+    #[Test]
+    public function create()
     {
         $ministry = (new Model\Ministry())
             ->setMinistryId(3)
@@ -140,13 +141,14 @@ class MinistryTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('Ministry', 'SELECT * FROM Ministry');
 
         $ministryService = new Ministry();
-        $ministryService->setDriver($this->pdo);
+        $ministryService->setDriver($this->getPDO());
         $ministryService->create($ministry);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testSaveUpdate()
+    #[Test]
+    public function saveUpdate()
     {
         $ministry = (new Model\Ministry())
             ->setMinistryId(2)
@@ -179,14 +181,15 @@ class MinistryTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('Ministry', 'SELECT * FROM Ministry');
 
         $ministryService = new Ministry();
-        $ministryService->setDriver($this->pdo);
+        $ministryService->setDriver($this->getPDO());
         $affectedRows = $ministryService->save($ministry);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
         $this->assertEquals(2, $affectedRows);
     }
 
-    public function testSaveCreate()
+    #[Test]
+    public function saveCreate()
     {
         $ministry = (new Model\Ministry())
             ->setMinistryId(3)
@@ -227,14 +230,15 @@ class MinistryTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('Ministry', 'SELECT * FROM Ministry');
 
         $ministryService = new Ministry();
-        $ministryService->setDriver($this->pdo);
+        $ministryService->setDriver($this->getPDO());
         $affectedRows = $ministryService->save($ministry);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
         $this->assertEquals(1, $affectedRows);
     }
 
-    public function testUpdate()
+    #[Test]
+    public function updateSuccess()
     {
         $ministry = (new Model\Ministry())
             ->setMinistryId(2)
@@ -267,23 +271,26 @@ class MinistryTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('Ministry', 'SELECT * FROM Ministry');
 
         $ministryService = new Ministry();
-        $ministryService->setDriver($this->pdo);
+        $ministryService->setDriver($this->getPDO());
         $ministryService->update($ministry);
 
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testCount()
+    #[Test]
+    public function countSuccess()
     {
         $ministryService = new Ministry();
-        $ministryService->setDriver($this->pdo);
+        $ministryService->setDriver($this->getPDO());
 
         $this->assertEquals(2, $ministryService->count());
     }
 
-    public function testCreateFireEventCreateResource()
+    #[Test]
+    public function createFireEventCreateResource()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -301,12 +308,14 @@ class MinistryTest extends TestCase
 
         (new Ministry())
             ->setEventDispatcher($eventDispatcher)
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->create($ministry);
     }
 
-    public function testUpdateFireEventResourceFoundUpdateRequired()
+    #[Test]
+    public function updateFireEventResourceFoundUpdateRequired()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -324,12 +333,14 @@ class MinistryTest extends TestCase
 
         (new Ministry())
             ->setEventDispatcher($eventDispatcher)
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->update($ministry);
     }
 
-    public function testUpdateFireEventResourceFoundNoUpdateNeeded()
+    #[Test]
+    public function updateFireEventResourceFoundNoUpdateNeeded()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -348,12 +359,14 @@ class MinistryTest extends TestCase
 
         (new Ministry())
             ->setEventDispatcher($eventDispatcher)
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->update($ministry);
     }
 
-    public function testSaveFireEventResourceCreated()
+    #[Test]
+    public function saveFireEventResourceCreated()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -372,12 +385,14 @@ class MinistryTest extends TestCase
 
         (new Ministry())
             ->setEventDispatcher($eventDispatcher)
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->save($ministry);
     }
 
-    public function testSaveFireEventResourceFoundNoUpdateNeeded()
+    #[Test]
+    public function saveFireEventResourceFoundNoUpdateNeeded()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -396,12 +411,14 @@ class MinistryTest extends TestCase
 
         (new Ministry())
             ->setEventDispatcher($eventDispatcher)
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->save($ministry);
     }
 
-    public function testSaveFireEventResourceFoundUpdateRequired()
+    #[Test]
+    public function saveFireEventResourceFoundUpdateRequired()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -420,7 +437,7 @@ class MinistryTest extends TestCase
 
         (new Ministry())
             ->setEventDispatcher($eventDispatcher)
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->save($ministry);
     }
 

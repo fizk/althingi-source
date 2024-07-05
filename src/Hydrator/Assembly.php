@@ -2,20 +2,19 @@
 
 namespace Althingi\Hydrator;
 
-use Laminas\Hydrator\HydratorInterface;
+use Althingi\Utils\HydratorInterface;
 
 class Assembly implements HydratorInterface
 {
     use HydrateDate;
 
     /**
-     * Hydrate $object with the provided $data.
      *
-     * @param  array $data
-     * @param  \Althingi\Model\Assembly $object
+     * @param array $data
+     * @param \Althingi\Model\Assembly $object
      * @return \Althingi\Model\Assembly
      */
-    public function hydrate(array $data, $object)
+    public function hydrate(array $data, object $object): object
     {
         return $object->setAssemblyId($data['assembly_id'])
             ->setFrom(array_key_exists('from', $data) ? $this->hydrateDate($data['from']) : null)
@@ -24,12 +23,11 @@ class Assembly implements HydratorInterface
     }
 
     /**
-     * Extract values from an object
      *
-     * @param  \Althingi\Model\Assembly $object
+     * @param \Althingi\Model\Assembly $object
      * @return array
      */
-    public function extract($object): array
+    public function extract(object $object): array
     {
         return $object->toArray();
     }

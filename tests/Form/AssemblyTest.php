@@ -3,11 +3,13 @@
 namespace Althingi\Form;
 
 use Althingi\Form\Assembly;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class AssemblyTest extends TestCase
 {
-    public function testEmptyToValue()
+    #[Test]
+    public function emptyShouldBeConvertedToNULL()
     {
         $form = (new Assembly([
             'assembly_id' => 1,
@@ -17,12 +19,12 @@ class AssemblyTest extends TestCase
         ]));
         $form->isValid();
 
-        /** @var \Althingi\Model\Assembly */
         $model = $form->getModel();
         $this->assertNull($model->getTo());
     }
 
-    public function testNonEmptyToValue()
+    #[Test]
+    public function nonEmptyShouldBeLeftAlone()
     {
         $form = new Assembly([
             'assembly_id' => 1,
@@ -31,7 +33,6 @@ class AssemblyTest extends TestCase
         ]);
         $form->isValid();
 
-        /** @var \Althingi\Model\Assembly */
         $model = $form->getModel();
         $this->assertNotNull($model->getTo());
     }

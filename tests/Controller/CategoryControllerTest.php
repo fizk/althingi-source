@@ -3,47 +3,47 @@
 namespace Althingi\Controller;
 
 use Althingi\Controller\CategoryController;
-use Althingi\Model;
-use Althingi\Service\Category;
+use Althingi\{Model, Service};
 use Althingi\ServiceHelper;
 use Library\Container\Container;
 use Mockery;
+use PHPUnit\Framework\Attributes\{CoversMethod, CoversClass, Test, Before, After};
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class CategoryControllerTest
- * @package Althingi\Controller
- * @coversDefaultClass \Althingi\Controller\CategoryController
- *
- * @covers \Althingi\Controller\CategoryController::setCategoryService
- */
+#[CoversClass(CategoryController::class)]
+#[CoversMethod(CategoryController::class, 'setCategoryService')]
+#[CoversMethod(CategoryController::class, 'assemblySummaryAction')]
+#[CoversMethod(CategoryController::class, 'get')]
+#[CoversMethod(CategoryController::class, 'getList')]
+#[CoversMethod(CategoryController::class, 'patch')]
+#[CoversMethod(CategoryController::class, 'put')]
 class CategoryControllerTest extends TestCase
 {
     use ServiceHelper;
 
-    public function setUp(): void
+    #[Before]
+    public function up(): void
     {
         $this->setServiceManager(
             new Container(require __DIR__ . '/../../config/service.php')
         );
         $this->buildServices([
-            Category::class,
+            Service\Category::class,
         ]);
     }
 
-    public function tearDown(): void
+    #[After]
+    public function down(): void
     {
         Mockery::close();
         $this->destroyServices();
         parent::tearDown();
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGet()
+    #[Test]
+    public function getOneCategorySuccessfully()
     {
-        $this->getMockService(Category::class)
+        $this->getMockService(Service\Category::class)
             ->shouldReceive('get')
             ->with(2)
             ->andReturn((new Model\Category())->setCategoryId(2)->setSuperCategoryId(1))
@@ -56,12 +56,10 @@ class CategoryControllerTest extends TestCase
         $this->assertResponseStatusCode(200);
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGetNotFound()
+    #[Test]
+    public function getOneCategoryWhichIsNotFound()
     {
-        $this->getMockService(Category::class)
+        $this->getMockService(Service\Category::class)
             ->shouldReceive('get')
             ->with(2)
             ->andReturn(null)
@@ -74,12 +72,10 @@ class CategoryControllerTest extends TestCase
         $this->assertResponseStatusCode(404);
     }
 
-    /**
-     * @covers ::getList
-     */
-    public function testGetList()
+    #[Test]
+    public function fetchAllCategoriesSuccessfully()
     {
-        $this->getMockService(Category::class)
+        $this->getMockService(Service\Category::class)
             ->shouldReceive('fetch')
             ->with(1)
             ->andReturn([
@@ -94,12 +90,10 @@ class CategoryControllerTest extends TestCase
         $this->assertResponseStatusCode(206);
     }
 
-    /**
-     * @covers ::put
-     */
-    public function testPut()
+    #[Test]
+    public function putOneCategoryWhichIsCreatedSuccessfully()
     {
-        $this->getMockService(Category::class)
+        $this->getMockService(Service\Category::class)
             ->shouldReceive('save')
             ->once()
             ->andReturn(1)
@@ -114,16 +108,14 @@ class CategoryControllerTest extends TestCase
         $this->assertResponseStatusCode(201);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatch()
+    #[Test]
+    public function patchOneCategorySuccessfully()
     {
-        $this->getMockService(Category::class)
+        $this->getMockService(Service\Category::class)
             ->shouldReceive('get')
             ->once()
             ->with(2)
-            ->andReturn((new \Althingi\Model\Category())->setCategoryId(1)->setSuperCategoryId(2))
+            ->andReturn((new Model\Category())->setCategoryId(1)->setSuperCategoryId(2))
             ->getMock()
             ->shouldReceive('update')
             ->once()
@@ -139,12 +131,10 @@ class CategoryControllerTest extends TestCase
         $this->assertResponseStatusCode(205);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchNotFound()
+    #[Test]
+    public function patchOneCategoryThatDoesNotExistWithNotFoundError()
     {
-        $this->getMockService(Category::class)
+        $this->getMockService(Service\Category::class)
             ->shouldReceive('get')
             ->once()
             ->with(2)
@@ -163,16 +153,14 @@ class CategoryControllerTest extends TestCase
         $this->assertResponseStatusCode(404);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchInvalidFormValues()
+    #[Test]
+    public function patchOneCategoryButParametersAreMissingWithError()
     {
-        $this->getMockService(Category::class)
+        $this->getMockService(Service\Category::class)
             ->shouldReceive('get')
             ->once()
             ->with(2)
-            ->andReturn((new \Althingi\Model\Category())->setCategoryId(1)->setSuperCategoryId(2))
+            ->andReturn((new Model\Category())->setCategoryId(1)->setSuperCategoryId(2))
             ->getMock()
             ->shouldReceive('update')
             ->never()
@@ -185,12 +173,10 @@ class CategoryControllerTest extends TestCase
         $this->assertResponseStatusCode(400);
     }
 
-    /**
-     * @covers ::put
-     */
-    public function testPutInvalidParams()
+    #[Test]
+    public function patchOneCategoryWithError()
     {
-        $this->getMockService(Category::class)
+        $this->getMockService(Service\Category::class)
             ->shouldReceive('create')
             ->andReturn(1)
             ->getMock();
@@ -202,12 +188,10 @@ class CategoryControllerTest extends TestCase
         $this->assertResponseStatusCode(400);
     }
 
-    /**
-     * @covers ::assemblySummaryAction
-     */
-    public function testAssemblySummaryAction()
+    #[Test]
+    public function fetchByAssembly()
     {
-        $this->getMockService(Category::class)
+        $this->getMockService(Service\Category::class)
             ->shouldReceive('fetchByAssembly')
             ->with(123)
             ->andReturn([

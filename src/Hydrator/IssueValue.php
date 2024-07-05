@@ -3,18 +3,17 @@
 namespace Althingi\Hydrator;
 
 use Althingi\Model\KindEnum;
-use Laminas\Hydrator\HydratorInterface;
+use Althingi\Utils\HydratorInterface;
 
 class IssueValue implements HydratorInterface
 {
     /**
-     * Hydrate $object with the provided $data.
      *
-     * @param  array $data
-     * @param  \Althingi\Model\IssueValue $object
+     * @param array $data
+     * @param \Althingi\Model\IssueValue $object
      * @return \Althingi\Model\IssueValue
      */
-    public function hydrate(array $data, $object)
+    public function hydrate(array $data, object $object): object
     {
         return $object
             ->setIssueId($data['issue_id'])
@@ -38,12 +37,11 @@ class IssueValue implements HydratorInterface
     }
 
     /**
-     * Extract values from an object
      *
-     * @param  \Althingi\Model\IssueValue $object
+     * @param \Althingi\Model\IssueValue $object
      * @return array
      */
-    public function extract($object): array
+    public function extract(object $object): array
     {
         return $object->toArray();
     }

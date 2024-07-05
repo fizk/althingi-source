@@ -3,20 +3,19 @@
 namespace Althingi\Hydrator;
 
 use Althingi\Model\KindEnum;
-use Laminas\Hydrator\HydratorInterface;
+use Althingi\Utils\HydratorInterface;
 
 class Speech implements HydratorInterface
 {
     use HydrateDate;
 
     /**
-     * Hydrate $object with the provided $data.
      *
-     * @param  array $data
-     * @param  \Althingi\Model\Speech $object
-     * @return \Althingi\Model\Speech $object
+     * @param array $data
+     * @param \Althingi\Model\Speech $object
+     * @return \Althingi\Model\Speech
      */
-    public function hydrate(array $data, $object)
+    public function hydrate(array $data, object $object): object
     {
         return $object
             ->setSpeechId($data['speech_id'])
@@ -36,12 +35,11 @@ class Speech implements HydratorInterface
     }
 
     /**
-     * Extract values from an object
      *
-     * @param  \Althingi\Model\Speech $object
+     * @param \Althingi\Model\Speech $object
      * @return array
      */
-    public function extract($object): array
+    public function extract(object $object): array
     {
         return $object->toArray();
     }

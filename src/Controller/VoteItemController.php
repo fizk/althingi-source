@@ -63,11 +63,9 @@ class VoteItemController implements
      */
     public function post(ServerRequest $request): ResponseInterface
     {
-        $voteId = $request->getAttribute('vote_id');
-
         $form = new Form\VoteItem([
             ...$request->getParsedBody(),
-            'vote_id' => $voteId,
+            'vote_id' => $request->getAttribute('vote_id'),
         ]);
 
         if ($form->isValid()) {
@@ -108,7 +106,9 @@ class VoteItemController implements
      */
     public function getList(ServerRequest $request): ResponseInterface
     {
-        $vote = $this->voteService->get($request->getAttribute('vote_id'));
+        $vote = $this->voteService->get(
+            $request->getAttribute('vote_id')
+        );
 
         $votes = $this->voteItemService->fetchByVote($vote->getVoteId());
         $date = $vote->getDate();
@@ -141,9 +141,11 @@ class VoteItemController implements
      */
     public function patch(ServerRequest $request): ResponseInterface
     {
-        $voteItemId = $request->getAttribute('vote_item_id');
-
-        if (($voteItem = $this->voteItemService->get($voteItemId)) !== null) {
+        if (
+            ($voteItem = $this->voteItemService->get(
+                $request->getAttribute('vote_item_id')
+            )) !== null
+        ) {
             $form = new Form\VoteItem([
                 ...$voteItem->toArray(),
                 ...$request->getParsedBody(),

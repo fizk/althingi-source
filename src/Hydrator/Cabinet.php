@@ -2,19 +2,18 @@
 
 namespace Althingi\Hydrator;
 
-use Laminas\Hydrator\HydratorInterface;
+use Althingi\Utils\HydratorInterface;
 use DateTime;
 
 class Cabinet implements HydratorInterface
 {
     /**
-     * Hydrate $object with the provided $data.
      *
-     * @param  array $data
-     * @param  \Althingi\Model\Cabinet $object
+     * @param array $data
+     * @param \Althingi\Model\Cabinet $object
      * @return \Althingi\Model\Cabinet
      */
-    public function hydrate(array $data, $object)
+    public function hydrate(array $data, object $object): object
     {
         return $object->setCabinetId($data['cabinet_id'])
             ->setTitle($data['title'] ? : null)
@@ -24,14 +23,12 @@ class Cabinet implements HydratorInterface
             ;
     }
 
-
     /**
-     * Extract values from an object
      *
-     * @param  \Althingi\Model\Assembly $object
+     * @param \Althingi\Model\Cabinet $object
      * @return array
      */
-    public function extract($object): array
+    public function extract(object $object): array
     {
         return $object->toArray();
     }

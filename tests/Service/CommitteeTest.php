@@ -2,23 +2,27 @@
 
 namespace Althingi\Service;
 
-use PHPUnit\Framework\TestCase;
-use Althingi\Model\Committee as CommitteeModel;
-use Althingi\Service\Committee;
-use Althingi\DatabaseConnection;
+use Althingi\DatabaseConnectionTrait;
 use Althingi\Events\{UpdateEvent, AddEvent};
+use Althingi\Model;
 use Mockery;
-use PDO;
+use PHPUnit\Framework\Attributes\{Test, After};
+use PHPUnit\Framework\TestCase;
 
 class CommitteeTest extends TestCase
 {
-    use DatabaseConnection;
+    use DatabaseConnectionTrait;
 
-    private PDO $pdo;
-
-    public function testGet()
+    #[After]
+    public function down(): void
     {
-        $expectedData = (new CommitteeModel())
+        Mockery::close();
+    }
+
+    #[Test]
+    public function getSuccess()
+    {
+        $expectedData = (new Model\Committee())
             ->setFirstAssemblyId(1)
             ->setLastAssemblyId(2)
             ->setCommitteeId(1)
@@ -27,40 +31,45 @@ class CommitteeTest extends TestCase
             ->setName('committee1');
 
         $service = new Committee();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
         $this->assertEquals($expectedData, $service->get(1));
     }
 
-    public function testGetNotFound()
+    #[Test]
+    public function getNotFound()
     {
         $service = new Committee();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
         $this->assertNull($service->get(100));
     }
 
-    public function testFetchAll()
+    #[Test]
+    public function fetchAll()
     {
         $service = new Committee();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
         $this->assertIsArray($service->fetchAll());
         $this->assertCount(3, $service->fetchAll());
     }
 
-    public function testFetchByAssembly()
+    #[Test]
+    public function fetchByAssembly()
     {
         $service = new Committee();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
         $service->fetchByAssembly(1);
 
         $this->assertCount(3, $service->fetchByAssembly(1));
     }
 
-    public function testCreate()
+    #[Test]
+    public function createSuccess()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(\Psr\EventDispatcher\EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->times(1)
@@ -101,19 +110,20 @@ class CommitteeTest extends TestCase
         ])->getTable('Committee');
         $actualTable = $this->getConnection()->createQueryTable('Committee', 'SELECT * FROM Committee');
 
-        $committee = (new CommitteeModel())
+        $committee = (new Model\Committee())
             ->setFirstAssemblyId(1)
             ->setCommitteeId(4);
 
         (new Committee())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->create($committee);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testCreateNegative()
+    #[Test]
+    public function createNegative()
     {
         $expectedTable = $this->createArrayDataSet([
             'Committee' => [
@@ -151,19 +161,21 @@ class CommitteeTest extends TestCase
         ])->getTable('Committee');
         $actualTable = $this->getConnection()->createQueryTable('Committee', 'SELECT * FROM Committee');
 
-        $committee = (new CommitteeModel())
+        $committee = (new Model\Committee())
             ->setFirstAssemblyId(1)
             ->setCommitteeId(-4);
 
         $service = new Committee();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
         $service->create($committee);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testSave()
+    #[Test]
+    public function saveSuccess()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(\Psr\EventDispatcher\EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->with(Mockery::on(function ($arg) {
@@ -207,19 +219,20 @@ class CommitteeTest extends TestCase
         ])->getTable('Committee');
         $actualTable = $this->getConnection()->createQueryTable('Committee', 'SELECT * FROM Committee');
 
-        $committee = (new CommitteeModel())
+        $committee = (new Model\Committee())
             ->setFirstAssemblyId(1)
             ->setCommitteeId(4);
 
         (new Committee())
             ->setEventDispatcher($eventDispatcher)
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->save($committee);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testSaveNegative()
+    #[Test]
+    public function saveNegative()
     {
         $expectedTable = $this->createArrayDataSet([
             'Committee' => [
@@ -257,18 +270,19 @@ class CommitteeTest extends TestCase
         ])->getTable('Committee');
         $actualTable = $this->getConnection()->createQueryTable('Committee', 'SELECT * FROM Committee');
 
-        $committee = (new CommitteeModel())
+        $committee = (new Model\Committee())
             ->setFirstAssemblyId(1)
             ->setCommitteeId(-4);
 
         $service = new Committee();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
         $service->save($committee);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testSaveZeroId()
+    #[Test]
+    public function saveZeroId()
     {
         $expectedTable = $this->createArrayDataSet([
             'Committee' => [
@@ -306,19 +320,21 @@ class CommitteeTest extends TestCase
         ])->getTable('Committee');
         $actualTable = $this->getConnection()->createQueryTable('Committee', 'SELECT * FROM Committee');
 
-        $committee = (new CommitteeModel())
+        $committee = (new Model\Committee())
             ->setFirstAssemblyId(1)
             ->setCommitteeId(0);
 
         $service = new Committee();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
         $service->save($committee);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testUpdate()
+    #[Test]
+    public function updateSuccess()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(\Psr\EventDispatcher\EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->with(Mockery::on(function ($arg) {
@@ -355,7 +371,7 @@ class CommitteeTest extends TestCase
         ])->getTable('Committee');
         $actualTable = $this->getConnection()->createQueryTable('Committee', 'SELECT * FROM Committee');
 
-        $committee = (new CommitteeModel())
+        $committee = (new Model\Committee())
             ->setCommitteeId(1)
             ->setName('thisIsTheNewName')
             ->setFirstAssemblyId(1)
@@ -364,7 +380,7 @@ class CommitteeTest extends TestCase
             ->setAbbrShort('c1');
 
         $service = (new Committee())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->update($committee);
 
@@ -405,10 +421,5 @@ class CommitteeTest extends TestCase
                 ],
             ]
         ]);
-    }
-
-    public function tearDown(): void
-    {
-        Mockery::close();
     }
 }

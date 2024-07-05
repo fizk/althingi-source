@@ -33,6 +33,7 @@ class CommitteeController implements
     public function get(ServerRequest $request): ResponseInterface
     {
         $identifier = $request->getAttribute('committee_id');
+
         $committee = is_numeric($identifier)
             ? $this->committeeService->get($identifier)
             : $this->committeeService->getByName(rawurldecode($identifier));
@@ -83,7 +84,11 @@ class CommitteeController implements
      */
     public function patch(ServerRequest $request): ResponseInterface
     {
-        if (($committee = $this->committeeService->get($request->getAttribute('committee_id'))) != null) {
+        if (
+            ($committee = $this->committeeService->get(
+                $request->getAttribute('committee_id')
+            )) != null
+        ) {
             $form = new Form\Committee([
                 ...$committee->toArray(),
                 ...$request->getParsedBody(),

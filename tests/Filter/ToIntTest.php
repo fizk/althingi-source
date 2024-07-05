@@ -2,18 +2,11 @@
 
 namespace Althingi\Filter;
 
-use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\{DataProvider, Test};
 use PHPUnit\Framework\TestCase;
 
 class ToIntTest extends TestCase
 {
-    #[DataProvider('provider')]
-    public function testTrue($in, $out)
-    {
-
-        $this->assertEquals((new ToInt())->filter($in), $out);
-    }
-
     public static function provider()
     {
         return [
@@ -28,5 +21,13 @@ class ToIntTest extends TestCase
             [12.94, 12],
             ['a', null],
         ];
+    }
+
+    #[DataProvider('provider')]
+    #[Test]
+    public function filterTest($in, $out)
+    {
+
+        $this->assertEquals((new ToInt())->filter($in), $out);
     }
 }

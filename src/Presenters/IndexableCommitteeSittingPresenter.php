@@ -5,7 +5,7 @@ namespace Althingi\Presenters;
 use Althingi\Model\CommitteeSitting;
 use Althingi\Hydrator;
 use Althingi\Model\ModelInterface;
-use Laminas\Hydrator\HydratorInterface;
+use Althingi\Utils\HydratorInterface;
 
 class IndexableCommitteeSittingPresenter implements IndexablePresenter
 {

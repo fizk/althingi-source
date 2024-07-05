@@ -2,29 +2,32 @@
 
 namespace Althingi\Service;
 
-use Althingi\Service\Inflation;
-use Althingi\DatabaseConnection;
-use Althingi\Events\AddEvent;
-use Althingi\Events\UpdateEvent;
-use Althingi\Model\Inflation as InflationModel;
+use Althingi\DatabaseConnectionTrait;
+use Althingi\Events\{UpdateEvent, AddEvent};
+use Althingi\Model;
+use DateTime;
+use Mockery;
+use PHPUnit\Framework\Attributes\{Test, After};
 use PHPUnit\Framework\TestCase;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Mockery;
-use DateTime;
-use PDO;
 
 class InflationTest extends TestCase
 {
-    use DatabaseConnection;
+    use DatabaseConnectionTrait;
 
-    private PDO $pdo;
+    #[After]
+    public function down(): void
+    {
+        Mockery::close();
+    }
 
-    public function testGet()
+    #[Test]
+    public function getSuccess()
     {
         $inflationService = new Inflation();
-        $inflationService->setDriver($this->pdo);
+        $inflationService->setDriver($this->getPDO());
 
-        $expectedData = (new InflationModel())
+        $expectedData = (new Model\Inflation())
             ->setId(1)
             ->setDate(new DateTime('2000-01-01'))
             ->setValue(1);
@@ -34,17 +37,18 @@ class InflationTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchAll()
+    #[Test]
+    public function fetchAll()
     {
         $inflationService = new Inflation();
-        $inflationService->setDriver($this->pdo);
+        $inflationService->setDriver($this->getPDO());
 
         $expectedData = [
-            (new InflationModel())->setId(1)->setDate(new DateTime('2000-01-01'))->setValue(1),
-            (new InflationModel())->setId(2)->setDate(new DateTime('2000-01-02'))->setValue(2),
-            (new InflationModel())->setId(3)->setDate(new DateTime('2000-01-03'))->setValue(3),
-            (new InflationModel())->setId(4)->setDate(new DateTime('2000-01-04'))->setValue(4),
-            (new InflationModel())->setId(5)->setDate(new DateTime('2000-01-05'))->setValue(5),
+            (new Model\Inflation())->setId(1)->setDate(new DateTime('2000-01-01'))->setValue(1),
+            (new Model\Inflation())->setId(2)->setDate(new DateTime('2000-01-02'))->setValue(2),
+            (new Model\Inflation())->setId(3)->setDate(new DateTime('2000-01-03'))->setValue(3),
+            (new Model\Inflation())->setId(4)->setDate(new DateTime('2000-01-04'))->setValue(4),
+            (new Model\Inflation())->setId(5)->setDate(new DateTime('2000-01-05'))->setValue(5),
         ];
 
         $actualData = $inflationService->fetchAll();
@@ -52,17 +56,18 @@ class InflationTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchAllGenerator()
+    #[Test]
+    public function fetchAllGenerator()
     {
         $inflationService = new Inflation();
-        $inflationService->setDriver($this->pdo);
+        $inflationService->setDriver($this->getPDO());
 
         $expectedData = [
-            (new InflationModel())->setId(1)->setDate(new DateTime('2000-01-01'))->setValue(1),
-            (new InflationModel())->setId(2)->setDate(new DateTime('2000-01-02'))->setValue(2),
-            (new InflationModel())->setId(3)->setDate(new DateTime('2000-01-03'))->setValue(3),
-            (new InflationModel())->setId(4)->setDate(new DateTime('2000-01-04'))->setValue(4),
-            (new InflationModel())->setId(5)->setDate(new DateTime('2000-01-05'))->setValue(5),
+            (new Model\Inflation())->setId(1)->setDate(new DateTime('2000-01-01'))->setValue(1),
+            (new Model\Inflation())->setId(2)->setDate(new DateTime('2000-01-02'))->setValue(2),
+            (new Model\Inflation())->setId(3)->setDate(new DateTime('2000-01-03'))->setValue(3),
+            (new Model\Inflation())->setId(4)->setDate(new DateTime('2000-01-04'))->setValue(4),
+            (new Model\Inflation())->setId(5)->setDate(new DateTime('2000-01-05'))->setValue(5),
         ];
 
         $actualData = [];
@@ -73,15 +78,16 @@ class InflationTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchAllFrom()
+    #[Test]
+    public function fetchAllFrom()
     {
         $inflationService = new Inflation();
-        $inflationService->setDriver($this->pdo);
+        $inflationService->setDriver($this->getPDO());
 
         $expectedData = [
-            (new InflationModel())->setId(3)->setDate(new DateTime('2000-01-03'))->setValue(3),
-            (new InflationModel())->setId(4)->setDate(new DateTime('2000-01-04'))->setValue(4),
-            (new InflationModel())->setId(5)->setDate(new DateTime('2000-01-05'))->setValue(5),
+            (new Model\Inflation())->setId(3)->setDate(new DateTime('2000-01-03'))->setValue(3),
+            (new Model\Inflation())->setId(4)->setDate(new DateTime('2000-01-04'))->setValue(4),
+            (new Model\Inflation())->setId(5)->setDate(new DateTime('2000-01-05'))->setValue(5),
         ];
 
         $actualData = $inflationService->fetchAll(new DateTime('2000-01-03'));
@@ -89,15 +95,16 @@ class InflationTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchAllTo()
+    #[Test]
+    public function fetchAllTo()
     {
         $inflationService = new Inflation();
-        $inflationService->setDriver($this->pdo);
+        $inflationService->setDriver($this->getPDO());
 
         $expectedData = [
-            (new InflationModel())->setId(1)->setDate(new DateTime('2000-01-01'))->setValue(1),
-            (new InflationModel())->setId(2)->setDate(new DateTime('2000-01-02'))->setValue(2),
-            (new InflationModel())->setId(3)->setDate(new DateTime('2000-01-03'))->setValue(3),
+            (new Model\Inflation())->setId(1)->setDate(new DateTime('2000-01-01'))->setValue(1),
+            (new Model\Inflation())->setId(2)->setDate(new DateTime('2000-01-02'))->setValue(2),
+            (new Model\Inflation())->setId(3)->setDate(new DateTime('2000-01-03'))->setValue(3),
         ];
 
         $actualData = $inflationService->fetchAll(null, new DateTime('2000-01-03'));
@@ -105,15 +112,16 @@ class InflationTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchAllFromAndTo()
+    #[Test]
+    public function fetchAllFromAndTo()
     {
         $inflationService = new Inflation();
-        $inflationService->setDriver($this->pdo);
+        $inflationService->setDriver($this->getPDO());
 
         $expectedData = [
-            (new InflationModel())->setId(2)->setDate(new DateTime('2000-01-02'))->setValue(2),
-            (new InflationModel())->setId(3)->setDate(new DateTime('2000-01-03'))->setValue(3),
-            (new InflationModel())->setId(4)->setDate(new DateTime('2000-01-04'))->setValue(4),
+            (new Model\Inflation())->setId(2)->setDate(new DateTime('2000-01-02'))->setValue(2),
+            (new Model\Inflation())->setId(3)->setDate(new DateTime('2000-01-03'))->setValue(3),
+            (new Model\Inflation())->setId(4)->setDate(new DateTime('2000-01-04'))->setValue(4),
         ];
 
         $actualData = $inflationService->fetchAll(new DateTime('2000-01-02'), new DateTime('2000-01-04'));
@@ -121,8 +129,10 @@ class InflationTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testSaveUpdate()
+    #[Test]
+    public function saveUpdate()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -131,7 +141,7 @@ class InflationTest extends TestCase
             })
             ->getMock();
 
-        $inflation = (new InflationModel())
+        $inflation = (new Model\Inflation())
             ->setId(2)
             ->setDate(new DateTime('2000-01-02'))
             ->setValue(20);
@@ -148,7 +158,7 @@ class InflationTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('Inflation', 'SELECT * FROM Inflation');
 
         $affectedRows = (new Inflation())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->save($inflation);
 
@@ -156,8 +166,10 @@ class InflationTest extends TestCase
         $this->assertEquals(2, $affectedRows);
     }
 
-    public function testSaveCreate()
+    #[Test]
+    public function saveCreate()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -166,7 +178,7 @@ class InflationTest extends TestCase
             })
             ->getMock();
 
-        $inflation = (new InflationModel())
+        $inflation = (new Model\Inflation())
             ->setId(6)
             ->setDate(new DateTime('2000-01-06'))
             ->setValue(6);
@@ -184,7 +196,7 @@ class InflationTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('Inflation', 'SELECT * FROM Inflation');
 
         $affectedRows = (new Inflation())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->save($inflation);
 
@@ -192,8 +204,10 @@ class InflationTest extends TestCase
         $this->assertEquals(1, $affectedRows);
     }
 
-    public function testUpdate()
+    #[Test]
+    public function update()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -202,7 +216,7 @@ class InflationTest extends TestCase
             })
             ->getMock();
 
-        $inflation = (new InflationModel())
+        $inflation = (new Model\Inflation())
             ->setId(2)
             ->setDate(new DateTime('2000-01-02'))
             ->setValue(20);
@@ -219,7 +233,7 @@ class InflationTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('Inflation', 'SELECT * FROM Inflation');
 
         $affectedRows = (new Inflation())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->update($inflation);
 
@@ -227,8 +241,10 @@ class InflationTest extends TestCase
         $this->assertEquals(1, $affectedRows);
     }
 
-    public function testUpdateFireEventsEntryFoundButNoUpdatesRequired()
+    #[Test]
+    public function updateFireEventsEntryFoundButNoUpdatesRequired()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -238,19 +254,21 @@ class InflationTest extends TestCase
             })
             ->getMock();
 
-        $inflation = (new InflationModel())
+        $inflation = (new Model\Inflation())
             ->setId(1)
             ->setDate(new DateTime('2000-01-01'))
             ->setValue(1);
 
         (new Inflation())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->update($inflation);
     }
 
-    public function testUpdateFireEventsEntryFoundAndUpdateIsRequired()
+    #[Test]
+    public function updateFireEventsEntryFoundAndUpdateIsRequired()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -260,19 +278,21 @@ class InflationTest extends TestCase
             })
             ->getMock();
 
-        $inflation = (new InflationModel())
+        $inflation = (new Model\Inflation())
             ->setId(1)
             ->setDate(new DateTime('2000-01-01'))
             ->setValue(2);
 
         (new Inflation())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->update($inflation);
     }
 
-    public function testSaveFireEventsEntryCreated()
+    #[Test]
+    public function saveFireEventsEntryCreated()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -282,19 +302,21 @@ class InflationTest extends TestCase
             })
             ->getMock();
 
-        $inflation = (new InflationModel())
+        $inflation = (new Model\Inflation())
             ->setId(6)
             ->setDate(new DateTime('2000-01-01'))
             ->setValue(2);
 
         (new Inflation())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->save($inflation);
     }
 
-    public function testSaveFireEventsEntryFoundButNoUpdateNeeded()
+    #[Test]
+    public function saveFireEventsEntryFoundButNoUpdateNeeded()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -304,19 +326,21 @@ class InflationTest extends TestCase
             })
             ->getMock();
 
-        $inflation = (new InflationModel())
+        $inflation = (new Model\Inflation())
             ->setId(1)
             ->setDate(new DateTime('2000-01-01'))
             ->setValue(1);
 
         (new Inflation())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->save($inflation);
     }
 
-    public function testSaveFireEventsEntryFoundAndAnUpdateRequied()
+    #[Test]
+    public function saveFireEventsEntryFoundAndAnUpdateRequied()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -326,13 +350,13 @@ class InflationTest extends TestCase
             })
             ->getMock();
 
-        $inflation = (new InflationModel())
+        $inflation = (new Model\Inflation())
             ->setId(1)
             ->setDate(new DateTime('2000-01-01'))
             ->setValue(2);
 
         (new Inflation())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->save($inflation);
     }
@@ -348,10 +372,5 @@ class InflationTest extends TestCase
                 ['id' => 5, 'date' => '2000-01-05', 'value' => 5],
             ],
         ]);
-    }
-
-    public function tearDown(): void
-    {
-        Mockery::close();
     }
 }

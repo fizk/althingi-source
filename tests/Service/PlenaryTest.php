@@ -2,29 +2,26 @@
 
 namespace Althingi\Service;
 
-use Althingi\Service\Plenary;
-use Althingi\DatabaseConnection;
-use Althingi\Events\AddEvent;
-use Althingi\Events\UpdateEvent;
-use PHPUnit\Framework\TestCase;
-use Althingi\Model\Plenary as PlenaryModel;
-use Psr\EventDispatcher\EventDispatcherInterface;
+use Althingi\DatabaseConnectionTrait;
+use Althingi\Events\{UpdateEvent, AddEvent};
+use Althingi\Model;
 use DateTime;
 use Mockery;
-use PDO;
+use PHPUnit\Framework\Attributes\{Test};
+use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class PlenaryTest extends TestCase
 {
-    use DatabaseConnection;
+    use DatabaseConnectionTrait;
 
-    private PDO $pdo;
-
-    public function testGet()
+    #[Test]
+    public function getSuccess()
     {
         $plenaryService = new Plenary();
-        $plenaryService->setDriver($this->pdo);
+        $plenaryService->setDriver($this->getPDO());
 
-        $expectedData = (new PlenaryModel())
+        $expectedData = (new Model\Plenary())
             ->setPlenaryId(1)
             ->setFrom(new \DateTime('2000-01-01 00:00:00'))
             ->setAssemblyId(1);
@@ -34,10 +31,11 @@ class PlenaryTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testGetNotFound()
+    #[Test]
+    public function getNotFound()
     {
         $plenaryService = new Plenary();
-        $plenaryService->setDriver($this->pdo);
+        $plenaryService->setDriver($this->getPDO());
 
         $expectedData = null;
 
@@ -46,20 +44,21 @@ class PlenaryTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchByAssembly()
+    #[Test]
+    public function fetchByAssembly()
     {
         $plenaryService = new Plenary();
-        $plenaryService->setDriver($this->pdo);
+        $plenaryService->setDriver($this->getPDO());
 
         $expectedData = [
-            (new PlenaryModel())->setPlenaryId(1)->setAssemblyId(1)
+            (new Model\Plenary())->setPlenaryId(1)->setAssemblyId(1)
                 ->setFrom(new \DateTime('2000-01-01')),
-            (new PlenaryModel())->setPlenaryId(2)->setAssemblyId(1)
+            (new Model\Plenary())->setPlenaryId(2)->setAssemblyId(1)
                 ->setFrom(new \DateTime('2000-01-01')),
-            (new PlenaryModel())->setPlenaryId(3)
+            (new Model\Plenary())->setPlenaryId(3)
                 ->setAssemblyId(1)->setFrom(new \DateTime('2000-01-01'))
                 ->setTo(new \DateTime('2001-01-01')),
-            (new PlenaryModel())->setPlenaryId(4)
+            (new Model\Plenary())->setPlenaryId(4)
                 ->setAssemblyId(1)->setFrom(new \DateTime('2000-01-01'))
                 ->setTo(new \DateTime('2001-01-01'))->setName('p-name'),
         ];
@@ -69,10 +68,11 @@ class PlenaryTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchByAssemblyNotFound()
+    #[Test]
+    public function fetchByAssemblyNotFound()
     {
         $plenaryService = new Plenary();
-        $plenaryService->setDriver($this->pdo);
+        $plenaryService->setDriver($this->getPDO());
 
         $expectedData = [];
 
@@ -81,10 +81,11 @@ class PlenaryTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testCountByAssembly()
+    #[Test]
+    public function countByAssembly()
     {
         $plenaryService = new Plenary();
-        $plenaryService->setDriver($this->pdo);
+        $plenaryService->setDriver($this->getPDO());
 
         $expectedData = 4;
         $actualData = $plenaryService->countByAssembly(1);
@@ -92,10 +93,11 @@ class PlenaryTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testCountByAssemblyNotFound()
+    #[Test]
+    public function countByAssemblyNotFound()
     {
         $plenaryService = new Plenary();
-        $plenaryService->setDriver($this->pdo);
+        $plenaryService->setDriver($this->getPDO());
 
         $expectedData = 0;
         $actualData = $plenaryService->countByAssembly(100);
@@ -103,14 +105,15 @@ class PlenaryTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testCreate()
+    #[Test]
+    public function createSuccess()
     {
-        $plenary = (new PlenaryModel())
+        $plenary = (new Model\Plenary())
             ->setAssemblyId(1)
             ->setPlenaryId(5);
 
         $assemblyService = new Plenary();
-        $assemblyService->setDriver($this->pdo);
+        $assemblyService->setDriver($this->getPDO());
         $assemblyService->create($plenary);
 
         $expectedTable = $this->createArrayDataSet([
@@ -138,14 +141,15 @@ class PlenaryTest extends TestCase
         $this->assertTablesEqual($expectedTable, $queryTable);
     }
 
-    public function testCreateNegative()
+    #[Test]
+    public function createNegative()
     {
-        $plenary = (new PlenaryModel())
+        $plenary = (new Model\Plenary())
             ->setAssemblyId(1)
             ->setPlenaryId(-5);
 
         $assemblyService = new Plenary();
-        $assemblyService->setDriver($this->pdo);
+        $assemblyService->setDriver($this->getPDO());
         $assemblyService->create($plenary);
 
         $expectedTable = $this->createArrayDataSet([
@@ -173,14 +177,15 @@ class PlenaryTest extends TestCase
         $this->assertTablesEqual($expectedTable, $queryTable);
     }
 
-    public function testSave()
+    #[Test]
+    public function saveSuccess()
     {
-        $plenary = (new PlenaryModel())
+        $plenary = (new Model\Plenary())
             ->setAssemblyId(1)
             ->setPlenaryId(5);
 
         $assemblyService = new Plenary();
-        $assemblyService->setDriver($this->pdo);
+        $assemblyService->setDriver($this->getPDO());
         $assemblyService->save($plenary);
 
         $expectedTable = $this->createArrayDataSet([
@@ -208,14 +213,15 @@ class PlenaryTest extends TestCase
         $this->assertTablesEqual($expectedTable, $queryTable);
     }
 
-    public function testSaveNegative()
+    #[Test]
+    public function saveNegative()
     {
-        $plenary = (new PlenaryModel())
+        $plenary = (new Model\Plenary())
             ->setAssemblyId(1)
             ->setPlenaryId(-5);
 
         $assemblyService = new Plenary();
-        $assemblyService->setDriver($this->pdo);
+        $assemblyService->setDriver($this->getPDO());
         $assemblyService->save($plenary);
 
         $expectedTable = $this->createArrayDataSet([
@@ -243,16 +249,17 @@ class PlenaryTest extends TestCase
         $this->assertTablesEqual($expectedTable, $queryTable);
     }
 
-    public function testUpdate()
+    #[Test]
+    public function updateSuccess()
     {
-        $plenary = (new PlenaryModel())
+        $plenary = (new Model\Plenary())
             ->setAssemblyId(1)
             ->setPlenaryId(1)
             ->setFrom(new \DateTime('2000-01-01 00:00:00'))
             ->setName('NewName');
 
         $assemblyService = new Plenary();
-        $assemblyService->setDriver($this->pdo);
+        $assemblyService->setDriver($this->getPDO());
         $assemblyService->update($plenary);
 
         $expectedTable = $this->createArrayDataSet([
@@ -289,8 +296,10 @@ class PlenaryTest extends TestCase
         $this->assertTablesEqual($expectedTable, $queryTable);
     }
 
-    public function testCreateFireEventResourceCreated()
+    #[Test]
+    public function createFireEventResourceCreated()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -300,19 +309,21 @@ class PlenaryTest extends TestCase
             })
             ->getMock();
 
-        $plenary = (new PlenaryModel())
+        $plenary = (new Model\Plenary())
             ->setAssemblyId(1)
             ->setPlenaryId(5);
 
         (new Plenary())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher(($eventDispatcher))
             ->create($plenary)
         ;
     }
 
-    public function testUpdateFireEventResourceFoundNoNeedForAnUpdate()
+    #[Test]
+    public function updateFireEventResourceFoundNoNeedForAnUpdate()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -322,20 +333,22 @@ class PlenaryTest extends TestCase
             })
             ->getMock();
 
-        $plenary = (new PlenaryModel())
+        $plenary = (new Model\Plenary())
             ->setAssemblyId(1)
             ->setPlenaryId(1)
             ->setFrom(new DateTime('2000-01-01'));
 
         (new Plenary())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher(($eventDispatcher))
             ->update($plenary)
         ;
     }
 
-    public function testUpdateFireEventResourceFoundUpdateRequired()
+    #[Test]
+    public function updateFireEventResourceFoundUpdateRequired()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -345,20 +358,22 @@ class PlenaryTest extends TestCase
             })
             ->getMock();
 
-        $plenary = (new PlenaryModel())
+        $plenary = (new Model\Plenary())
             ->setAssemblyId(1)
             ->setPlenaryId(1)
             ->setFrom(new DateTime('2001-01-01'));
 
         (new Plenary())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher(($eventDispatcher))
             ->update($plenary)
         ;
     }
 
-    public function testSaveFireEventResourceCreated()
+    #[Test]
+    public function saveFireEventResourceCreated()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -368,20 +383,22 @@ class PlenaryTest extends TestCase
             })
             ->getMock();
 
-        $plenary = (new PlenaryModel())
+        $plenary = (new Model\Plenary())
             ->setAssemblyId(1)
             ->setPlenaryId(10)
             ->setFrom(new DateTime('2001-01-01'));
 
         (new Plenary())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher(($eventDispatcher))
             ->save($plenary)
         ;
     }
 
-    public function testSaveFireEventResourceFoundNoUpdate()
+    #[Test]
+    public function saveFireEventResourceFoundNoUpdate()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -391,20 +408,22 @@ class PlenaryTest extends TestCase
             })
             ->getMock();
 
-        $plenary = (new PlenaryModel())
+        $plenary = (new Model\Plenary())
             ->setAssemblyId(1)
             ->setPlenaryId(1)
             ->setFrom(new DateTime('2000-01-01'));
 
         (new Plenary())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher(($eventDispatcher))
             ->save($plenary)
         ;
     }
 
-    public function testSaveFireEventResourceFoundUpdateRequired()
+    #[Test]
+    public function saveFireEventResourceFoundUpdateRequired()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -414,13 +433,13 @@ class PlenaryTest extends TestCase
             })
             ->getMock();
 
-        $plenary = (new PlenaryModel())
+        $plenary = (new Model\Plenary())
             ->setAssemblyId(1)
             ->setPlenaryId(1)
             ->setFrom(new DateTime('2010-01-01'));
 
         (new Plenary())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher(($eventDispatcher))
             ->save($plenary)
         ;

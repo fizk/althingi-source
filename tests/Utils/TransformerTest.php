@@ -3,7 +3,7 @@
 namespace Althingi\Lib;
 
 use Althingi\Utils\Transformer;
-use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\{DataProvider, Test};
 use PHPUnit\Framework\TestCase;
 
 class TransformerTest extends TestCase
@@ -17,8 +17,9 @@ class TransformerTest extends TestCase
         ];
     }
 
+    #[Test]
     #[DataProvider('htmlToMarkdownData')]
-    public function testHtmlToMarkdown($input, $output)
+    public function htmlToMarkdown($input, $output)
     {
         $this->assertEquals($output, Transformer::htmlToMarkdown($input));
     }
@@ -32,8 +33,9 @@ class TransformerTest extends TestCase
         ];
     }
 
+    #[Test]
     #[DataProvider('speechToMarkdownData')]
-    public function testSpeechToMarkdown($input, $output)
+    public function speechToMarkdown($input, $output)
     {
         $this->assertEquals($output, Transformer::speechToMarkdown($input));
     }

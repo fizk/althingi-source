@@ -2,32 +2,28 @@
 
 namespace Althingi\Service;
 
-use Althingi\Service\Document;
-use Althingi\DatabaseConnection;
-use Althingi\Events\AddEvent;
-use Althingi\Events\UpdateEvent;
-use PHPUnit\Framework\TestCase;
-use Althingi\Model\Document as DocumentModel;
-use Althingi\Model\KindEnum;
+use Althingi\DatabaseConnectionTrait;
+use Althingi\Events\{AddEvent, UpdateEvent};
+use Althingi\Model;
 use Mockery;
-use PDO;
+use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\{Test};
 use Psr\EventDispatcher\EventDispatcherInterface;
 
 class DocumentTest extends TestCase
 {
-    use DatabaseConnection;
+    use DatabaseConnectionTrait;
 
-    private PDO $pdo;
-
-    public function testGet()
+    #[Test]
+    public function getSuccess()
     {
         $service = new Document();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
-        $expectedData = (new DocumentModel())
+        $expectedData = (new Model\Document())
             ->setDocumentId(1)
             ->setAssemblyId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setIssueId(1)
             ->setDate(new \DateTime('2000-01-01'))
             ->setType('type')
@@ -37,48 +33,50 @@ class DocumentTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchByIssue()
+    #[Test]
+    public function fetchByIssue()
     {
         $service = new Document();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
         $documents = $service->fetchByIssue(1, 2);
 
         $this->assertCount(1, $documents);
-        $this->assertInstanceOf(DocumentModel::class, $documents[0]);
+        $this->assertInstanceOf(Model\Document::class, $documents[0]);
     }
 
-    public function testCreate()
+    #[Test]
+    public function createSuccess()
     {
-        $document = (new DocumentModel())
+        $document = (new Model\Document())
             ->setAssemblyId(1)
             ->setDocumentId(5)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setDate(new \DateTime('2000-01-01'))
             ->setType('type')
             ->setUrl('http://url.com');
 
         $documentService = new Document();
-        $documentService->setDriver($this->pdo);
+        $documentService->setDriver($this->getPDO());
         $documentService->create($document);
 
         $expectedTable = $this->createArrayDataSet([
             'Document' => [
                 [
-                    'document_id' => 1, 'issue_id' => 1, 'kind' => KindEnum::A->value, 'assembly_id' => 1,
+                    'document_id' => 1, 'issue_id' => 1, 'kind' => Model\KindEnum::A->value, 'assembly_id' => 1,
                     'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
                 ], [
-                    'document_id' => 2, 'issue_id' => 1, 'kind' => KindEnum::A->value, 'assembly_id' => 1,
+                    'document_id' => 2, 'issue_id' => 1, 'kind' => Model\KindEnum::A->value, 'assembly_id' => 1,
                     'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
                 ], [
-                    'document_id' => 3, 'issue_id' => 1, 'kind' => KindEnum::A->value, 'assembly_id' => 1,
+                    'document_id' => 3, 'issue_id' => 1, 'kind' => Model\KindEnum::A->value, 'assembly_id' => 1,
                     'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
                 ], [
-                    'document_id' => 4, 'issue_id' => 2, 'kind' => KindEnum::A->value, 'assembly_id' => 1,
+                    'document_id' => 4, 'issue_id' => 2, 'kind' => Model\KindEnum::A->value, 'assembly_id' => 1,
                     'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
                 ], [
-                    'document_id' => 5, 'issue_id' => 1, 'kind' => KindEnum::A->value, 'assembly_id' => 1,
+                    'document_id' => 5, 'issue_id' => 1, 'kind' => Model\KindEnum::A->value, 'assembly_id' => 1,
                     'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
                 ],
             ]
@@ -89,37 +87,38 @@ class DocumentTest extends TestCase
         $this->assertTablesEqual($expectedTable, $queryTable);
     }
 
-    public function testSave()
+    #[Test]
+    public function saveSuccess()
     {
-        $document = (new DocumentModel())
+        $document = (new Model\Document())
             ->setAssemblyId(1)
             ->setDocumentId(5)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setDate(new \DateTime('2000-01-01'))
             ->setType('type')
             ->setUrl('http://url.com');
 
         $documentService = new Document();
-        $documentService->setDriver($this->pdo);
+        $documentService->setDriver($this->getPDO());
         $documentService->save($document);
 
         $expectedTable = $this->createArrayDataSet([
             'Document' => [
                 [
-                    'document_id' => 1, 'issue_id' => 1, 'kind' => KindEnum::A->value, 'assembly_id' => 1,
+                    'document_id' => 1, 'issue_id' => 1, 'kind' => Model\KindEnum::A->value, 'assembly_id' => 1,
                     'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
                 ], [
-                    'document_id' => 2, 'issue_id' => 1, 'kind' => KindEnum::A->value, 'assembly_id' => 1,
+                    'document_id' => 2, 'issue_id' => 1, 'kind' => Model\KindEnum::A->value, 'assembly_id' => 1,
                     'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
                 ], [
-                    'document_id' => 3, 'issue_id' => 1, 'kind' => KindEnum::A->value, 'assembly_id' => 1,
+                    'document_id' => 3, 'issue_id' => 1, 'kind' => Model\KindEnum::A->value, 'assembly_id' => 1,
                     'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
                 ], [
-                    'document_id' => 4, 'issue_id' => 2, 'kind' => KindEnum::A->value, 'assembly_id' => 1,
+                    'document_id' => 4, 'issue_id' => 2, 'kind' => Model\KindEnum::A->value, 'assembly_id' => 1,
                     'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
                 ], [
-                    'document_id' => 5, 'issue_id' => 1, 'kind' => KindEnum::A->value, 'assembly_id' => 1,
+                    'document_id' => 5, 'issue_id' => 1, 'kind' => Model\KindEnum::A->value, 'assembly_id' => 1,
                     'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
                 ],
             ]
@@ -129,34 +128,35 @@ class DocumentTest extends TestCase
         $this->assertTablesEqual($expectedTable, $queryTable);
     }
 
-    public function testUpdate()
+    #[Test]
+    public function updateSuccess()
     {
-        $document = (new DocumentModel())
+        $document = (new Model\Document())
             ->setDocumentId(1)
             ->setAssemblyId(1)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setDate(new \DateTime('2000-01-01'))
             ->setType('thisismytype')
             ->setUrl('http://url.com');
 
         $documentService = new Document();
-        $documentService->setDriver($this->pdo);
+        $documentService->setDriver($this->getPDO());
         $documentService->update($document);
 
         $expectedTable = $this->createArrayDataSet([
             'Document' => [
                 [
-                    'document_id' => 1, 'issue_id' => 1, 'kind' => KindEnum::A->value, 'assembly_id' => 1,
+                    'document_id' => 1, 'issue_id' => 1, 'kind' => Model\KindEnum::A->value, 'assembly_id' => 1,
                     'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'thisismytype'
                 ], [
-                    'document_id' => 2, 'issue_id' => 1, 'kind' => KindEnum::A->value, 'assembly_id' => 1,
+                    'document_id' => 2, 'issue_id' => 1, 'kind' => Model\KindEnum::A->value, 'assembly_id' => 1,
                     'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
                 ], [
-                    'document_id' => 3, 'issue_id' => 1, 'kind' => KindEnum::A->value, 'assembly_id' => 1,
+                    'document_id' => 3, 'issue_id' => 1, 'kind' => Model\KindEnum::A->value, 'assembly_id' => 1,
                     'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
                 ], [
-                    'document_id' => 4, 'issue_id' => 2, 'kind' => KindEnum::A->value, 'assembly_id' => 1,
+                    'document_id' => 4, 'issue_id' => 2, 'kind' => Model\KindEnum::A->value, 'assembly_id' => 1,
                     'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
                 ],
             ]
@@ -166,8 +166,10 @@ class DocumentTest extends TestCase
         $this->assertTablesEqual($expectedTable, $queryTable);
     }
 
-    public function testCreateFireEventResourceCreated()
+    #[Test]
+    public function createFireEventResourceCreated()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -177,23 +179,25 @@ class DocumentTest extends TestCase
             })
             ->getMock();
 
-        $document = (new DocumentModel())
+        $document = (new Model\Document())
             ->setAssemblyId(1)
             ->setDocumentId(5)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setDate(new \DateTime('2000-01-01'))
             ->setType('type')
             ->setUrl('http://url.com');
 
         (new Document())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->create($document);
     }
 
-    public function testUpdateFireEventZeroResourceFoundButNoUpdateRequired()
+    #[Test]
+    public function updateFireEventZeroResourceFoundButNoUpdateRequired()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -203,23 +207,25 @@ class DocumentTest extends TestCase
             })
             ->getMock();
 
-        $document = (new DocumentModel())
+        $document = (new Model\Document())
             ->setAssemblyId(1)
             ->setDocumentId(1)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setDate(new \DateTime('2000-01-01'))
             ->setType('type')
             ->setUrl('http://url.com');
 
         (new Document())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->update($document);
     }
 
-    public function testUpdateFireEventOneResourceFoundAndAnUpdateRequired()
+    #[Test]
+    public function updateFireEventOneResourceFoundAndAnUpdateRequired()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -229,23 +235,25 @@ class DocumentTest extends TestCase
             })
             ->getMock();
 
-        $document = (new DocumentModel())
+        $document = (new Model\Document())
             ->setAssemblyId(1)
             ->setDocumentId(1)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setDate(new \DateTime('2000-01-01'))
             ->setType('type')
             ->setUrl('http://url.com/add-to-url');
 
         (new Document())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->update($document);
     }
 
-    public function testSaveFireEventZeroResourceFoundButNoUpdateRequired()
+    #[Test]
+    public function saveFireEventZeroResourceFoundButNoUpdateRequired()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -255,23 +263,25 @@ class DocumentTest extends TestCase
             })
             ->getMock();
 
-        $document = (new DocumentModel())
+        $document = (new Model\Document())
             ->setAssemblyId(1)
             ->setDocumentId(1)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setDate(new \DateTime('2000-01-01'))
             ->setType('type')
             ->setUrl('http://url.com');
 
         (new Document())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->save($document);
     }
 
-    public function testSaveFireEventOneNeedsToBeCreated()
+    #[Test]
+    public function saveFireEventOneNeedsToBeCreated()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -281,23 +291,25 @@ class DocumentTest extends TestCase
             })
             ->getMock();
 
-        $document = (new DocumentModel())
+        $document = (new Model\Document())
             ->setAssemblyId(1)
             ->setDocumentId(5)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setDate(new \DateTime('2000-01-01'))
             ->setType('type')
             ->setUrl('http://url.com');
 
         (new Document())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->save($document);
     }
 
-    public function testSaveFireEventTwoCresourceFoundAndNeedsToBeUpdated()
+    #[Test]
+    public function saveFireEventTwoCresourceFoundAndNeedsToBeUpdated()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -307,17 +319,17 @@ class DocumentTest extends TestCase
             })
             ->getMock();
 
-        $document = (new DocumentModel())
+        $document = (new Model\Document())
             ->setAssemblyId(1)
             ->setDocumentId(1)
             ->setIssueId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setDate(new \DateTime('2000-01-01'))
             ->setType('type')
             ->setUrl('http://url.com/update');
 
         (new Document())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->save($document);
     }
@@ -329,21 +341,21 @@ class DocumentTest extends TestCase
                 ['assembly_id' => 1, 'from' => '2000-01-01', 'to' => null]
             ],
             'Issue' => [
-                ['issue_id' => 1, 'assembly_id' => 1, 'kind' => KindEnum::A->value ,],
-                ['issue_id' => 2, 'assembly_id' => 1, 'kind' => KindEnum::A->value ,],
+                ['issue_id' => 1, 'assembly_id' => 1, 'kind' => Model\KindEnum::A->value ,],
+                ['issue_id' => 2, 'assembly_id' => 1, 'kind' => Model\KindEnum::A->value ,],
             ],
             'Document' => [
                 [
-                    'document_id' => 1, 'issue_id' => 1, 'kind' => KindEnum::A->value ,'assembly_id' => 1,
+                    'document_id' => 1, 'issue_id' => 1, 'kind' => Model\KindEnum::A->value ,'assembly_id' => 1,
                     'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
                 ], [
-                    'document_id' => 2, 'issue_id' => 1, 'kind' => KindEnum::A->value ,'assembly_id' => 1,
+                    'document_id' => 2, 'issue_id' => 1, 'kind' => Model\KindEnum::A->value ,'assembly_id' => 1,
                     'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
                 ], [
-                    'document_id' => 3, 'issue_id' => 1, 'kind' => KindEnum::A->value ,'assembly_id' => 1,
+                    'document_id' => 3, 'issue_id' => 1, 'kind' => Model\KindEnum::A->value ,'assembly_id' => 1,
                     'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
                 ], [
-                    'document_id' => 4, 'issue_id' => 2, 'kind' => KindEnum::A->value ,'assembly_id' => 1,
+                    'document_id' => 4, 'issue_id' => 2, 'kind' => Model\KindEnum::A->value ,'assembly_id' => 1,
                     'date' => '2000-01-01 00:00:00', 'url' => 'http://url.com', 'type' => 'type'
                 ],
             ]

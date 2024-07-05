@@ -3,52 +3,52 @@
 namespace Althingi\Controller;
 
 use Althingi\Controller\PlenaryController;
-use Althingi\Service\Plenary;
+use Althingi\{Model, Service};
 use Althingi\ServiceHelper;
 use Library\Container\Container;
+use PHPUnit\Framework\Attributes\{CoversMethod, CoversClass, Test, Before, After};
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class PlenaryControllerTest
- * @package Althingi\Controller
- * @coversDefaultClass \Althingi\Controller\PlenaryController
- *
- * @covers \Althingi\Controller\PlenaryController::setPlenaryService
- */
+#[CoversClass(PlenaryController::class)]
+#[CoversMethod(PlenaryController::class, 'setPlenaryService')]
+#[CoversMethod(PlenaryController::class, 'get')]
+#[CoversMethod(PlenaryController::class, 'getList')]
+#[CoversMethod(PlenaryController::class, 'patch')]
+#[CoversMethod(PlenaryController::class, 'put')]
 class PlenaryControllerTest extends TestCase
 {
     use ServiceHelper;
 
-    public function setUp(): void
+    #[Before]
+    public function up(): void
     {
         $this->setServiceManager(
             new Container(require __DIR__ . '/../../config/service.php')
         );
 
         $this->buildServices([
-            Plenary::class,
+            Service\Plenary::class,
         ]);
     }
 
-    public function tearDown(): void
+    #[After]
+    public function down(): void
     {
         \Mockery::close();
         parent::tearDown();
     }
 
-    /**
-     * @covers ::put
-     */
-    public function testPutSuccess()
+    #[Test]
+    public function putSuccess()
     {
-        $expectedData = (new \Althingi\Model\Plenary())
+        $expectedData = (new Model\Plenary())
             ->setAssemblyId(1)
             ->setPlenaryId(2)
             ->setName('n1')
             ->setFrom(new \DateTime('2001-01-01'))
             ->setTo(new \DateTime('2001-01-01'))
         ;
-        $this->getMockService(Plenary::class)
+        $this->getMockService(Service\Plenary::class)
             ->shouldReceive('save')
             ->with(\Mockery::on(function ($actualData) use ($expectedData) {
                 return $expectedData == $actualData;
@@ -68,16 +68,17 @@ class PlenaryControllerTest extends TestCase
         $this->assertResponseStatusCode(201);
     }
 
-    public function testPutNegativeSuccess()
+    #[Test]
+    public function putNegativeSuccess()
     {
-        $expectedData = (new \Althingi\Model\Plenary())
+        $expectedData = (new Model\Plenary())
             ->setAssemblyId(1)
             ->setPlenaryId(-1)
             ->setName('n1')
             ->setFrom(new \DateTime('2001-01-01'))
             ->setTo(new \DateTime('2001-01-01'))
         ;
-        $this->getMockService(Plenary::class)
+        $this->getMockService(Service\Plenary::class)
             ->shouldReceive('save')
             ->with(\Mockery::on(function ($actualData) use ($expectedData) {
                 return $expectedData == $actualData;
@@ -97,29 +98,27 @@ class PlenaryControllerTest extends TestCase
         $this->assertResponseStatusCode(201);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchSuccess()
+    #[Test]
+    public function patchSuccess()
     {
-        $expectedData = (new \Althingi\Model\Plenary())
+        $expectedData = (new Model\Plenary())
             ->setAssemblyId(1)
             ->setPlenaryId(2)
             ->setName('newName')
             ->setFrom(new \DateTime('2001-01-01'))
             ->setTo(new \DateTime('2001-01-01'))
         ;
-        $this->getMockService(Plenary::class)
+        $this->getMockService(Service\Plenary::class)
             ->shouldReceive('get')
+            ->once()
             ->andReturn(
-                (new \Althingi\Model\Plenary())
+                (new Model\Plenary())
                     ->setAssemblyId(1)
                     ->setPlenaryId(2)
                     ->setName('n1')
                     ->setFrom(new \DateTime('2001-01-01'))
                     ->setTo(new \DateTime('2001-01-01'))
             )
-            ->once()
             ->getMock()
 
             ->shouldReceive('update')
@@ -139,16 +138,14 @@ class PlenaryControllerTest extends TestCase
         $this->assertResponseStatusCode(205);
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGet()
+    #[Test]
+    public function getSuccessful()
     {
-        $this->getMockService(Plenary::class)
+        $this->getMockService(Service\Plenary::class)
             ->shouldReceive('get')
             ->with(1, 2)
             ->andReturn(
-                (new \Althingi\Model\Plenary())
+                (new Model\Plenary())
                     ->setAssemblyId(1)
                     ->setPlenaryId(2)
                     ->setName('n1')
@@ -165,12 +162,10 @@ class PlenaryControllerTest extends TestCase
         $this->assertResponseStatusCode(200);
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGetNotFound()
+    #[Test]
+    public function getNotFound()
     {
-        $this->getMockService(Plenary::class)
+        $this->getMockService(Service\Plenary::class)
             ->shouldReceive('get')
             ->with(1, 2)
             ->andReturn(null)
@@ -184,27 +179,25 @@ class PlenaryControllerTest extends TestCase
         $this->assertResponseStatusCode(404);
     }
 
-    /**
-     * @covers ::getList
-     */
-    public function testGetList()
+    #[Test]
+    public function getList()
     {
-        $this->getMockService(Plenary::class)
+        $this->getMockService(Service\Plenary::class)
             ->shouldReceive('countByAssembly')
-            ->andReturn(123)
             ->once()
+            ->andReturn(123)
             ->getMock()
 
             ->shouldReceive('fetchByAssembly')
+            ->once()
             ->andReturn(array_map(function () {
-                return (new \Althingi\Model\Plenary())
+                return (new Model\Plenary())
                     ->setAssemblyId(1)
                     ->setPlenaryId(2)
                     ->setName('n1')
                     ->setFrom(new \DateTime('2001-01-01'))
                     ->setTo(new \DateTime('2001-01-01'));
             }, range(0, 24)))
-            ->once()
             ->getMock();
 
 

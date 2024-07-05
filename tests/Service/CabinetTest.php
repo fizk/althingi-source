@@ -2,18 +2,43 @@
 
 namespace Althingi\Service;
 
+use Althingi\DatabaseConnectionTrait;
+use Althingi\Model;
+use PHPUnit\Framework\Attributes\{DataProvider, Test};
 use PHPUnit\Framework\TestCase;
-use Althingi\Service\Cabinet;
-use Althingi\DatabaseConnection;
-use Althingi\Model\Cabinet as CabinetModel;
-use PDO;
-use PHPUnit\Framework\Attributes\DataProvider;
 
 class CabinetTest extends TestCase
 {
-    use DatabaseConnection;
+    use DatabaseConnectionTrait;
 
-    private PDO $pdo;
+    #[Test]
+    #[DataProvider('additionProvider')]
+    public function fetchByAssembly(int $assembly, array $cabinets)
+    {
+        $assemblyService = new Cabinet();
+        $assemblyService->setDriver($this->getPDO());
+
+        $expectedData = array_map(function ($cabinet) {
+            return (new \Althingi\Hydrator\Cabinet())->hydrate($cabinet, new Model\Cabinet());
+        }, $cabinets);
+
+        $actualData = $assemblyService->fetchByAssembly($assembly);
+
+        $this->assertEquals($expectedData, $actualData);
+    }
+
+    #[Test]
+    public function fetchByAssemblyNoResult()
+    {
+        $assemblyService = new Cabinet();
+        $assemblyService->setDriver($this->getPDO());
+
+        $expectedData = [];
+
+        $actualData = $assemblyService->fetchByAssembly(40);
+
+        $this->assertEquals($expectedData, $actualData);
+    }
 
     public static function additionProvider()
     {
@@ -38,33 +63,6 @@ class CabinetTest extends TestCase
             [148, [['cabinet_id' => 20171130, 'title' => 'title', 'from' => '2017-11-30', 'to' => null]]],
             [149, [['cabinet_id' => 20171130, 'title' => 'title', 'from' => '2017-11-30', 'to' => null]]],
         ];
-    }
-
-    #[DataProvider('additionProvider')]
-    public function testFetchByAssembly(int $assembly, array $cabinets)
-    {
-        $assemblyService = new Cabinet();
-        $assemblyService->setDriver($this->pdo);
-
-        $expectedData = array_map(function ($cabinet) {
-            return (new \Althingi\Hydrator\Cabinet())->hydrate($cabinet, new CabinetModel());
-        }, $cabinets);
-
-        $actualData = $assemblyService->fetchByAssembly($assembly);
-
-        $this->assertEquals($expectedData, $actualData);
-    }
-
-    public function testFetchByAssemblyNoResult()
-    {
-        $assemblyService = new Cabinet();
-        $assemblyService->setDriver($this->pdo);
-
-        $expectedData = [];
-
-        $actualData = $assemblyService->fetchByAssembly(40);
-
-        $this->assertEquals($expectedData, $actualData);
     }
 
     protected function getDataSet()

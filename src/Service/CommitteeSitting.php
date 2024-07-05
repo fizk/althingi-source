@@ -89,7 +89,6 @@ class CommitteeSitting implements DatabaseAwareInterface, EventsAwareInterface
 
     /**
      * @return \Althingi\Model\CommitteeSitting[]
-     * @deprecated
      */
     public function fetchByCongressman(int $congressmanId)
     {

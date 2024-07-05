@@ -2,25 +2,22 @@
 
 namespace Althingi\Controller;
 
+use Althingi\{Model, Service};
 use Althingi\Controller\PartyController;
-use Althingi\Model;
-use Althingi\Service;
 use Althingi\ServiceHelper;
 use Library\Container\Container;
+use PHPUnit\Framework\Attributes\{CoversMethod, CoversClass, Test, Before, After};
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class PartyControllerTest
- * @package Althingi\Controller
- * @coversDefaultClass \Althingi\Controller\PartyController
- *
- * @covers \Althingi\Controller\PartyController::setPartyService
- */
+#[CoversClass(PartyController::class)]
+#[CoversMethod(PartyController::class, 'setPartyService')]
+#[CoversMethod(PartyController::class, 'get')]
 class PartyControllerTest extends TestCase
 {
     use ServiceHelper;
 
-    public function setUp(): void
+    #[Before]
+    public function up(): void
     {
         $this->setServiceManager(
             new Container(require __DIR__ . '/../../config/service.php')
@@ -30,16 +27,15 @@ class PartyControllerTest extends TestCase
         ]);
     }
 
-    public function tearDown(): void
+    #[After]
+    public function down(): void
     {
         \Mockery::close();
         parent::tearDown();
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGet()
+    #[Test]
+    public function getSuccessful()
     {
         $this->getMockService(Service\Party::class)
             ->shouldReceive('get')
@@ -55,10 +51,8 @@ class PartyControllerTest extends TestCase
         $this->assertResponseStatusCode(200);
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGetNotFound()
+    #[Test]
+    public function getNotFound()
     {
         $this->getMockService(Service\Party::class)
             ->shouldReceive('get')
@@ -74,10 +68,8 @@ class PartyControllerTest extends TestCase
         $this->assertResponseStatusCode(404);
     }
 
-    /**
-     * @covers ::put
-     */
-    public function testPutSuccess()
+    #[Test]
+    public function putSuccess()
     {
         $expectedData = (new Model\Party())
             ->setPartyId(100)
@@ -107,10 +99,8 @@ class PartyControllerTest extends TestCase
         $this->assertResponseStatusCode(201);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchSuccess()
+    #[Test]
+    public function patchSuccess()
     {
         $expectedData = (new Model\Party())
             ->setPartyId(100)

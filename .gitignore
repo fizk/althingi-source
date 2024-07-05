@@ -201,3 +201,5 @@ $RECYCLE.BIN/
 tests/docs
 .composer
 .bash_history
+coverage/*
+!coverage/.gitkeep

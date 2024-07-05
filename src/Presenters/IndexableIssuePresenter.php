@@ -4,7 +4,7 @@ namespace Althingi\Presenters;
 
 use Althingi\Model\Issue;
 use Althingi\Model\ModelInterface;
-use Laminas\Hydrator\HydratorInterface;
+use Althingi\Utils\HydratorInterface;
 
 class IndexableIssuePresenter implements IndexablePresenter
 {

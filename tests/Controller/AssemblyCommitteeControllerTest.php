@@ -3,51 +3,48 @@
 namespace Althingi\Controller;
 
 use Althingi\Controller\AssemblyCommitteeController;
-use Althingi\Model\Committee as CommitteeModel;
-use Althingi\Service\Committee;
+use Althingi\{Model, Service};
 use Althingi\ServiceHelper;
 use Library\Container\Container;
 use Mockery;
+use PHPUnit\Framework\Attributes\{CoversMethod, CoversClass, Test, Before, After};
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class AssemblyCommitteeControllerTest
- * @package Althingi\Controller
- * @coversDefaultClass \Althingi\Controller\AssemblyCommitteeController
- *
- * @covers \Althingi\Controller\AssemblyCommitteeController::setCommitteeService
- */
+#[CoversClass(AssemblyCommitteeController::class)]
+#[CoversMethod(AssemblyCommitteeController::class, 'setCommitteeService')]
+#[CoversMethod(AssemblyCommitteeController::class, 'get')]
+#[CoversMethod(AssemblyCommitteeController::class, 'getList')]
 class AssemblyCommitteeControllerTest extends TestCase
 {
     use ServiceHelper;
 
-    public function setUp(): void
+    #[Before]
+    public function up(): void
     {
         $this->setServiceManager(
             new Container(require __DIR__ . '/../../config/service.php')
         );
 
         $this->buildServices([
-            Committee::class,
+            Service\Committee::class,
         ]);
     }
 
-    public function tearDown(): void
+    #[After]
+    public function down(): void
     {
         $this->destroyServices();
         Mockery::close();
         parent::tearDown();
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGet()
+    #[Test]
+    public function getOneCommittee()
     {
-        $this->getMockService(Committee::class)
+        $this->getMockService(Service\Committee::class)
             ->shouldReceive('get')
             ->withArgs([1])
-            ->andReturn((new CommitteeModel())->setCommitteeId(1)->setFirstAssemblyId(1))
+            ->andReturn((new Model\Committee())->setCommitteeId(1)->setFirstAssemblyId(1))
             ->once()
             ->getMock();
 
@@ -58,12 +55,10 @@ class AssemblyCommitteeControllerTest extends TestCase
         $this->assertResponseStatusCode(200);
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGetNotFound()
+    #[Test]
+    public function getOneCommitteeThatIsNotFound()
     {
-        $this->getMockService(Committee::class)
+        $this->getMockService(Service\Committee::class)
             ->shouldReceive('get')
             ->withArgs([1])
             ->andReturn(null)
@@ -77,19 +72,17 @@ class AssemblyCommitteeControllerTest extends TestCase
         $this->assertResponseStatusCode(404);
     }
 
-    /**
-     * @covers ::getList
-     */
-    public function testGetList()
+    #[Test]
+    public function getAListOfCommitteesForGivenAssembly()
     {
-        $this->getMockService(Committee::class)
+        $this->getMockService(Service\Committee::class)
             ->shouldReceive('fetchByAssembly')
             ->withArgs([144])
             ->andReturn([
-                (new CommitteeModel())->setCommitteeId(1)->setFirstAssemblyId(100),
-                (new CommitteeModel())->setCommitteeId(2)->setFirstAssemblyId(100),
-                (new CommitteeModel())->setCommitteeId(3)->setFirstAssemblyId(100),
-                (new CommitteeModel())->setCommitteeId(4)->setFirstAssemblyId(100),
+                (new Model\Committee())->setCommitteeId(1)->setFirstAssemblyId(100),
+                (new Model\Committee())->setCommitteeId(2)->setFirstAssemblyId(100),
+                (new Model\Committee())->setCommitteeId(3)->setFirstAssemblyId(100),
+                (new Model\Committee())->setCommitteeId(4)->setFirstAssemblyId(100),
             ])
             ->once()
             ->getMock();

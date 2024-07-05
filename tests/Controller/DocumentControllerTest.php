@@ -3,25 +3,24 @@
 namespace Althingi\Controller;
 
 use Althingi\Controller\DocumentController;
-use Althingi\Model;
-use Althingi\Model\KindEnum;
-use Althingi\Service;
+use Althingi\{Model, Service};
 use Althingi\ServiceHelper;
 use Library\Container\Container;
+use PHPUnit\Framework\Attributes\{CoversMethod, CoversClass, Test, Before, After};
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class DocumentControllerTest
- * @package Althingi\Controller
- * @coversDefaultClass \Althingi\Controller\DocumentController
- *
- * @covers \Althingi\Controller\DocumentController::setDocumentService
- */
+#[CoversClass(DocumentController::class)]
+#[CoversMethod(DocumentController::class, 'setDocumentService')]
+#[CoversMethod(DocumentController::class, 'get')]
+#[CoversMethod(DocumentController::class, 'getList')]
+#[CoversMethod(DocumentController::class, 'patch')]
+#[CoversMethod(DocumentController::class, 'put')]
 class DocumentControllerTest extends TestCase
 {
     use ServiceHelper;
 
-    public function setUp(): void
+    #[Before]
+    public function up(): void
     {
         $this->setServiceManager(
             new Container(require __DIR__ . '/../../config/service.php')
@@ -31,16 +30,15 @@ class DocumentControllerTest extends TestCase
         ]);
     }
 
-    public function tearDown(): void
+    #[After]
+    public function down(): void
     {
         \Mockery::close();
         parent::tearDown();
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGet()
+    #[Test]
+    public function getSuccessful()
     {
         $this->getMockService(Service\Document::class)
             ->shouldReceive('get')
@@ -50,7 +48,7 @@ class DocumentControllerTest extends TestCase
                 ->setDate(new \DateTime())
                 ->setDocumentId(2)
                 ->setIssueId(2)
-                ->setKind(KindEnum::A)
+                ->setKind(Model\KindEnum::A)
                 ->setAssemblyId(145)
                 ->setType('type'))
             ->getMock();
@@ -62,10 +60,8 @@ class DocumentControllerTest extends TestCase
         $this->assertResponseStatusCode(200);
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGetNotFound()
+    #[Test]
+    public function getNotFound()
     {
         $this->getMockService(Service\Document::class)
             ->shouldReceive('get')
@@ -81,10 +77,8 @@ class DocumentControllerTest extends TestCase
         $this->assertResponseStatusCode(404);
     }
 
-    /**
-     * @covers ::getList
-     */
-    public function testGetList()
+    #[Test]
+    public function getList()
     {
         $this->getMockService(Service\Document::class)
             ->shouldReceive('fetchByIssue')
@@ -95,7 +89,7 @@ class DocumentControllerTest extends TestCase
                         ->setDate(new \DateTime())
                         ->setDocumentId(2)
                         ->setIssueId(2)
-                        ->setKind(KindEnum::A)
+                        ->setKind(Model\KindEnum::A)
                         ->setAssemblyId(145)
                         ->setType('type')
                 ),
@@ -104,7 +98,7 @@ class DocumentControllerTest extends TestCase
                         ->setDate(new \DateTime())
                         ->setDocumentId(2)
                         ->setIssueId(2)
-                        ->setKind(KindEnum::A)
+                        ->setKind(Model\KindEnum::A)
                         ->setAssemblyId(145)
                         ->setType('type')
                 ),
@@ -119,10 +113,8 @@ class DocumentControllerTest extends TestCase
         $this->assertResponseStatusCode(206);
     }
 
-    /**
-     * @covers ::put
-     */
-    public function testPut()
+    #[Test]
+    public function putSuccessful()
     {
         $this->getMockService(Service\Document::class)
             ->shouldReceive('save')
@@ -140,10 +132,8 @@ class DocumentControllerTest extends TestCase
         $this->assertResponseStatusCode(201);
     }
 
-    /**
-     * @covers ::put
-     */
-    public function testPutInvalidArgument()
+    #[Test]
+    public function putInvalidArgument()
     {
         $this->getMockService(Service\Document::class)
             ->shouldReceive('create')
@@ -160,10 +150,8 @@ class DocumentControllerTest extends TestCase
         $this->assertResponseStatusCode(400);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatch()
+    #[Test]
+    public function patchSuccessful()
     {
         $this->getMockService(Service\Document::class)
             ->shouldReceive('get')
@@ -173,7 +161,7 @@ class DocumentControllerTest extends TestCase
                     ->setAssemblyId(145)
                     ->setIssueId(2)
                     ->setDocumentId(2)
-                    ->setKind(KindEnum::A)
+                    ->setKind(Model\KindEnum::A)
                     ->setDate(new \DateTime())
                     ->setType('some-type')
             )
@@ -194,10 +182,8 @@ class DocumentControllerTest extends TestCase
         $this->assertResponseStatusCode(205);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchInvalidArguments()
+    #[Test]
+    public function patchInvalidArguments()
     {
         $this->getMockService(Service\Document::class)
             ->shouldReceive('get')
@@ -209,7 +195,7 @@ class DocumentControllerTest extends TestCase
                     ->setDocumentId(2)
                     ->setDate(new \DateTime())
                     ->setType('some-type')
-                    ->setKind(KindEnum::A)
+                    ->setKind(Model\KindEnum::A)
             )
             ->getMock()
 
@@ -227,10 +213,8 @@ class DocumentControllerTest extends TestCase
         $this->assertResponseStatusCode(400);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchResourceNotFound()
+    #[Test]
+    public function patchResourceNotFound()
     {
         $this->getMockService(Service\Document::class)
             ->shouldReceive('get')

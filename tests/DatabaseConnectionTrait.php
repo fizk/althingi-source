@@ -5,16 +5,21 @@ namespace Althingi;
 use PHPUnit\DbUnit\TestCaseTrait;
 use PDO;
 
-trait DatabaseConnection
+trait DatabaseConnectionTrait
 {
     use TestCaseTrait;
 
     static protected $connection;   // phpcs:ignore
+    private ?PDO $pdo;
+
+    protected function getPDO(): ?PDO
+    {
+        return $this->pdo;
+    }
 
     /**
      * Returns the test database connection.
      *
-
      */
     protected function getConnection()
     {

@@ -2,26 +2,30 @@
 
 namespace Althingi\Service;
 
-use Althingi\Service\Constituency;
-use Althingi\DatabaseConnection;
-use PHPUnit\Framework\TestCase;
-use Althingi\Model\Constituency as ConstituencyModel;
+use Althingi\DatabaseConnectionTrait;
 use Althingi\Events\{UpdateEvent, AddEvent};
+use Althingi\Model;
 use Mockery;
-use PDO;
+use PHPUnit\Framework\Attributes\{Test, After};
+use PHPUnit\Framework\TestCase;
 
 class ConstituencyTest extends TestCase
 {
-    use DatabaseConnection;
+    use DatabaseConnectionTrait;
 
-    private PDO $pdo;
+    #[After]
+    public function down(): void
+    {
+        Mockery::close();
+    }
 
-    public function testGet()
+    #[Test]
+    public function getsuccess()
     {
         $service = new Constituency();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
-        $expectedData = (new ConstituencyModel())
+        $expectedData = (new Model\Constituency())
             ->setConstituencyId(1)
             ->setName('some-place')
             ->setAbbrShort('s-p')
@@ -32,8 +36,10 @@ class ConstituencyTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testCreate()
+    #[Test]
+    public function createSuccess()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(\Psr\EventDispatcher\EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->with(Mockery::on(function ($arg) {
@@ -42,7 +48,7 @@ class ConstituencyTest extends TestCase
             ->times(1)
             ->getMock();
 
-        $constituency = (new ConstituencyModel())
+        $constituency = (new Model\Constituency())
             ->setName('name')
             ->setConstituencyId(2);
 
@@ -66,15 +72,17 @@ class ConstituencyTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('Constituency', 'SELECT * FROM Constituency');
 
         (new Constituency())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->create($constituency);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testSave()
+    #[Test]
+    public function saveSuccess()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(\Psr\EventDispatcher\EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->with(Mockery::on(function ($arg) {
@@ -83,7 +91,7 @@ class ConstituencyTest extends TestCase
             ->times(1)
             ->getMock();
 
-        $constituency = (new ConstituencyModel())
+        $constituency = (new Model\Constituency())
             ->setName('name')
             ->setConstituencyId(2);
 
@@ -107,15 +115,17 @@ class ConstituencyTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('Constituency', 'SELECT * FROM Constituency');
 
         (new Constituency())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->save($constituency);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testUpdate()
+    #[Test]
+    public function updateSuccess()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(\Psr\EventDispatcher\EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->with(Mockery::on(function ($arg) {
@@ -124,7 +134,7 @@ class ConstituencyTest extends TestCase
             ->times(1)
             ->getMock();
 
-        $constituency = (new ConstituencyModel())
+        $constituency = (new Model\Constituency())
             ->setConstituencyId(1)
             ->setName('another-place');
 
@@ -142,15 +152,17 @@ class ConstituencyTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('Constituency', 'SELECT * FROM Constituency');
 
         (new Constituency())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->update($constituency);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testCreateFireEventOneCreatedNewEntry()
+    #[Test]
+    public function createFireEventOneCreatedNewEntry()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(\Psr\EventDispatcher\EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->with(Mockery::on(function (AddEvent $args) {
@@ -160,18 +172,20 @@ class ConstituencyTest extends TestCase
             ->times(1)
             ->getMock();
 
-        $constituency = (new ConstituencyModel())
+        $constituency = (new Model\Constituency())
             ->setName('name')
             ->setConstituencyId(2);
 
         (new Constituency())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->create($constituency);
     }
 
-    public function testUpdateFireEventZeroFoundEntryButNoUpdateRequired()
+    #[Test]
+    public function updateFireEventZeroFoundEntryButNoUpdateRequired()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(\Psr\EventDispatcher\EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->with(Mockery::on(function (UpdateEvent $args) {
@@ -181,7 +195,7 @@ class ConstituencyTest extends TestCase
             ->times(1)
             ->getMock();
 
-        $constituency = (new ConstituencyModel())
+        $constituency = (new Model\Constituency())
             ->setConstituencyId(1)
             ->setName('some-place')
             ->setAbbrShort('s-p')
@@ -190,13 +204,15 @@ class ConstituencyTest extends TestCase
             ;
 
         (new Constituency())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->update($constituency);
     }
 
-    public function testUpdateFireEventOneFoundEntryAndUpdated()
+    #[Test]
+    public function updateFireEventOneFoundEntryAndUpdated()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(\Psr\EventDispatcher\EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->with(Mockery::on(function (UpdateEvent $args) {
@@ -206,7 +222,7 @@ class ConstituencyTest extends TestCase
             ->times(1)
             ->getMock();
 
-        $constituency = (new ConstituencyModel())
+        $constituency = (new Model\Constituency())
             ->setConstituencyId(1)
             ->setName('some-place-update')
             ->setAbbrShort('s-p')
@@ -215,13 +231,15 @@ class ConstituencyTest extends TestCase
             ;
 
         (new Constituency())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->update($constituency);
     }
 
-    public function testSaveFireEventZeroFoundButNoUpdate()
+    #[Test]
+    public function saveFireEventZeroFoundButNoUpdate()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(\Psr\EventDispatcher\EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->with(Mockery::on(function (UpdateEvent $args) {
@@ -231,7 +249,7 @@ class ConstituencyTest extends TestCase
             ->times(1)
             ->getMock();
 
-        $constituency = (new ConstituencyModel())
+        $constituency = (new Model\Constituency())
             ->setConstituencyId(1)
             ->setName('some-place')
             ->setAbbrShort('s-p')
@@ -240,13 +258,15 @@ class ConstituencyTest extends TestCase
             ;
 
         (new Constituency())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->save($constituency);
     }
 
-    public function testSaveFireEventOneCreatedNewentry()
+    #[Test]
+    public function saveFireEventOneCreatedNewentry()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(\Psr\EventDispatcher\EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->with(Mockery::on(function (AddEvent $args) {
@@ -256,7 +276,7 @@ class ConstituencyTest extends TestCase
             ->times(1)
             ->getMock();
 
-        $constituency = (new ConstituencyModel())
+        $constituency = (new Model\Constituency())
             ->setConstituencyId(2)
             ->setName('some-place')
             ->setAbbrShort('s-p')
@@ -265,13 +285,15 @@ class ConstituencyTest extends TestCase
             ;
 
         (new Constituency())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->save($constituency);
     }
 
-    public function testSaveFireEventTwoEntryFoundAndUpdated()
+    #[Test]
+    public function saveFireEventTwoEntryFoundAndUpdated()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(\Psr\EventDispatcher\EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->with(Mockery::on(function (UpdateEvent $args) {
@@ -281,7 +303,7 @@ class ConstituencyTest extends TestCase
             ->times(1)
             ->getMock();
 
-        $constituency = (new ConstituencyModel())
+        $constituency = (new Model\Constituency())
             ->setConstituencyId(1)
             ->setName('some-place-update')
             ->setAbbrShort('s-p')
@@ -290,7 +312,7 @@ class ConstituencyTest extends TestCase
             ;
 
         (new Constituency())
-            ->setDriver($this->pdo)
+            ->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher)
             ->save($constituency);
     }
@@ -308,10 +330,5 @@ class ConstituencyTest extends TestCase
                 ]
             ],
         ]);
-    }
-
-    public function tearDown(): void
-    {
-        Mockery::close();
     }
 }

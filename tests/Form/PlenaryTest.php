@@ -3,11 +3,13 @@
 namespace Althingi\Form;
 
 use Althingi\Form\Plenary;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class PlenaryTest extends TestCase
 {
-    public function testEmptyToValue()
+    #[Test]
+    public function emptyValuesAreAllowed()
     {
         $form = new Plenary([
             'plenary_id' => '1',
@@ -22,7 +24,8 @@ class PlenaryTest extends TestCase
         $this->assertTrue($isValid);
     }
 
-    public function testNegativeValue()
+    #[Test]
+    public function IDisNegativeNumber()
     {
         $form = new Plenary([
             'plenary_id' => '-1',

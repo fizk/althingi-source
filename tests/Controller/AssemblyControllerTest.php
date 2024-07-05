@@ -3,26 +3,27 @@
 namespace Althingi\Controller;
 
 use Althingi\Controller\AssemblyController;
-use Althingi\Model;
-use Althingi\Model\Assembly;
-use Althingi\Service;
+use Althingi\{Model, Service};
 use Althingi\ServiceHelper;
 use DateTime;
 use Library\Container\Container;
+use PHPUnit\Framework\Attributes\{CoversMethod, CoversClass, Test, Before, After};
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class AssemblyControllerTest
- * @package Althingi\Controller
- * @coversDefaultClass \Althingi\Controller\AssemblyController
- *
- * @covers \Althingi\Controller\AssemblyController::setAssemblyService
- */
+#[CoversClass(AssemblyController::class)]
+#[CoversMethod(AssemblyController::class, 'get')]
+#[CoversMethod(AssemblyController::class, 'getList')]
+#[CoversMethod(AssemblyController::class, 'put')]
+#[CoversMethod(AssemblyController::class, 'patch')]
+#[CoversMethod(AssemblyController::class, 'options')]
+#[CoversMethod(AssemblyController::class, 'optionsList')]
+#[CoversMethod(AssemblyController::class, 'setAssemblyService')]
 class AssemblyControllerTest extends TestCase
 {
     use ServiceHelper;
 
-    public function setUp(): void
+    #[Before]
+    public function up(): void
     {
         $this->setServiceManager(
             new Container(require __DIR__ . '/../../config/service.php')
@@ -33,24 +34,23 @@ class AssemblyControllerTest extends TestCase
         ]);
     }
 
-    public function tearDown(): void
+    #[After]
+    public function down(): void
     {
         $this->destroyServices();
         \Mockery::close();
         parent::tearDown();
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGet()
+    #[Test]
+    public function getOneAssemblySuccessfully(): void
     {
         $this->getMockService(Service\Assembly::class)
             ->shouldReceive('get')
+            ->once()
             ->andReturn((new Model\Assembly())
                 ->setAssemblyId(144)
                 ->setFrom(new DateTime()))
-            ->once()
             ->getMock();
 
         $this->dispatch('/loggjafarthing/144', 'GET');
@@ -60,15 +60,13 @@ class AssemblyControllerTest extends TestCase
         $this->assertResponseStatusCode(200);
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGetNotFound()
+    #[Test]
+    public function getOneAssemblyThatDoesNotExist(): void
     {
         $this->getMockService(Service\Assembly::class)
             ->shouldReceive('get')
-            ->andReturn(null)
             ->once()
+            ->andReturn(null)
             ->getMock();
 
         $this->dispatch('/loggjafarthing/144', 'GET');
@@ -77,16 +75,14 @@ class AssemblyControllerTest extends TestCase
         $this->assertResponseStatusCode(404);
     }
 
-    /**
-     * @covers ::getList
-     */
-    public function testGetListAll()
+    #[Test]
+    public function getListOfAllAssemblies(): void
     {
         $this->getMockService(Service\Assembly::class)
             ->shouldReceive('fetchAll')
             ->andReturn([
-                (new Assembly())->setAssemblyId(1)->setFrom(new DateTime()),
-                (new Assembly())->setAssemblyId(2)->setFrom(new DateTime()),
+                (new Model\Assembly())->setAssemblyId(1)->setFrom(new DateTime()),
+                (new Model\Assembly())->setAssemblyId(2)->setFrom(new DateTime()),
             ])
             ->getMock();
 
@@ -97,15 +93,13 @@ class AssemblyControllerTest extends TestCase
         $this->assertResponseStatusCode(206);
     }
 
-    /**
-     * @covers ::put
-     */
-    public function testPut()
+    #[Test]
+    public function makeAPutRequestForAssemblyThatWillBeSavedSuccessfully(): void
     {
         $this->getMockService(Service\Assembly::class)
             ->shouldReceive('save')
-            ->andReturn(1)
             ->once()
+            ->andReturn(1)
             ->getMock();
 
         $this->dispatch('/loggjafarthing/144', 'PUT', [
@@ -117,15 +111,13 @@ class AssemblyControllerTest extends TestCase
         $this->assertResponseStatusCode(201);
     }
 
-    /**
-     * @covers ::put
-     */
-    public function testPutInvalidParams()
+    #[Test]
+    public function makeAPutReuestForAssemblyButValuesAreMissing(): void
     {
         $this->getMockService(Service\Assembly::class)
             ->shouldReceive('create')
-            ->andReturn(1)
             ->never()
+            ->andReturn(1)
             ->getMock();
 
         $this->dispatch('/loggjafarthing/144', 'PUT', [
@@ -137,10 +129,8 @@ class AssemblyControllerTest extends TestCase
         $this->assertResponseStatusCode(400);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatch()
+    #[Test]
+    public function updatesExistingAssemblyWithAPatchReuestSuccessfully(): void
     {
         $assembly = (new Model\Assembly())
             ->setAssemblyId(144)
@@ -148,8 +138,8 @@ class AssemblyControllerTest extends TestCase
 
         $this->getMockService(Service\Assembly::class)
             ->shouldReceive('get')
-            ->andReturn($assembly)
             ->once()
+            ->andReturn($assembly)
             ->getMock()
             ->shouldReceive('update')
             ->andReturn(1)
@@ -164,15 +154,13 @@ class AssemblyControllerTest extends TestCase
         $this->assertResponseStatusCode(205);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchNotFound()
+    #[Test]
+    public function updatesAssemblyWithAPatchBytTheAssemblyDoesNotExist(): void
     {
         $this->getMockService(Service\Assembly::class)
             ->shouldReceive('get')
-            ->andReturn(null)
             ->once()
+            ->andReturn(null)
             ->getMock();
 
         $this->dispatch('/loggjafarthing/144', 'PATCH', [
@@ -184,10 +172,8 @@ class AssemblyControllerTest extends TestCase
         $this->assertResponseStatusCode(404);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchInvalidParams()
+    #[Test]
+    public function updatesAssemblyButValuesAreInvalid(): void
     {
         $assembly = (new Model\Assembly())
             ->setAssemblyId(144)
@@ -195,12 +181,12 @@ class AssemblyControllerTest extends TestCase
 
         $this->getMockService(Service\Assembly::class)
             ->shouldReceive('get')
-            ->andReturn($assembly)
             ->once()
+            ->andReturn($assembly)
             ->getMock()
             ->shouldReceive('update')
-            ->andReturn(1)
             ->never()
+            ->andReturn(1)
             ->getMock();
 
         $this->dispatch('/loggjafarthing/144', 'PATCH', [
@@ -212,30 +198,8 @@ class AssemblyControllerTest extends TestCase
         $this->assertResponseStatusCode(400);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchResourceNotFound()
-    {
-        $this->getMockService(Service\Assembly::class)
-            ->shouldReceive('get')
-            ->andReturn(null)
-            ->once()
-            ->getMock();
-
-        $this->dispatch('/loggjafarthing/144', 'PATCH', [
-            'from' => '20016-01-01',
-        ]);
-
-        $this->assertControllerName(AssemblyController::class);
-        $this->assertActionName('patch');
-        $this->assertResponseStatusCode(404);
-    }
-
-    /**
-     * @covers ::options
-     */
-    public function testOptions()
+    #[Test]
+    public function getOptionsdHeaderForASingleAssembly(): void
     {
         $this->dispatch('/loggjafarthing/144', 'OPTIONS');
 
@@ -249,10 +213,8 @@ class AssemblyControllerTest extends TestCase
         $this->assertCount(0, array_diff($expectedMethods, $actualMethods));
     }
 
-    /**
-     * @covers ::optionsList
-     */
-    public function testOptionsList()
+    #[Test]
+    public function getOptionsdHeaderForAssemblyList(): void
     {
         $this->dispatch('/loggjafarthing', 'OPTIONS');
 

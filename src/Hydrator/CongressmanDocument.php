@@ -3,18 +3,17 @@
 namespace Althingi\Hydrator;
 
 use Althingi\Model\KindEnum;
-use Laminas\Hydrator\HydratorInterface;
+use Althingi\Utils\HydratorInterface;
 
 class CongressmanDocument implements HydratorInterface
 {
     /**
-     * Hydrate $object with the provided $data.
      *
-     * @param  array $data
-     * @param  \Althingi\Model\CongressmanDocument $object
+     * @param array $data
+     * @param \Althingi\Model\CongressmanDocument $object
      * @return \Althingi\Model\CongressmanDocument
      */
-    public function hydrate(array $data, $object)
+    public function hydrate(array $data, object $object): object
     {
         return $object
             ->setDocumentId($data['document_id'])
@@ -26,14 +25,12 @@ class CongressmanDocument implements HydratorInterface
             ->setOrder($data['order']);
     }
 
-
     /**
-     * Extract values from an object
      *
-     * @param  \Althingi\Model\CongressmanDocument $object
+     * @param \Althingi\Model\CongressmanDocument $object
      * @return array
      */
-    public function extract($object): array
+    public function extract(object $object): array
     {
         return $object->toArray();
     }

@@ -2,39 +2,38 @@
 
 namespace Althingi\Service;
 
-use PHPUnit\Framework\TestCase;
-use Althingi\DatabaseConnection;
-use Althingi\Model\Category as CategoryModel;
-use Althingi\Model\CategoryAndCount as CategoryAndCountModel;
+use Althingi\DatabaseConnectionTrait;
+use Althingi\Model;
 use Althingi\Model\KindEnum;
-use PDO;
+use PHPUnit\Framework\Attributes\{Test};
+use PHPUnit\Framework\TestCase;
 
 class CategoryTest extends TestCase
 {
-    use DatabaseConnection;
+    use DatabaseConnectionTrait;
 
-    private PDO $pdo;
-
-    public function testGet()
+    #[Test]
+    public function getSuccess()
     {
-        $expectedData = (new CategoryModel())
+        $expectedData = (new Model\Category())
             ->setCategoryId(1)
             ->setSuperCategoryId(1)
             ->setTitle(null)
             ->setDescription(null);
 
         $service = new Category();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
         $actualData = $service->get(1);
         $this->assertEquals($expectedData, $actualData);
-        $this->assertInstanceOf(CategoryModel::class, $actualData);
+        $this->assertInstanceOf(Model\Category::class, $actualData);
     }
 
-    public function testFetchAllGenerator()
+    #[Test]
+    public function fetchAllGenerator()
     {
         $service = new Category();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
         $categories = [];
         foreach ($service->fetchAllGenerator() as $category) {
@@ -42,37 +41,40 @@ class CategoryTest extends TestCase
         }
 
         $this->assertCount(3, $categories);
-        $this->assertInstanceOf(CategoryModel::class, $categories[0]);
+        $this->assertInstanceOf(Model\Category::class, $categories[0]);
     }
 
-    public function testFetchByAssembly()
+    #[Test]
+    public function fetchByAssembly()
     {
         $service = new Category();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
         $categories = $service->fetchByAssembly(1);
 
         $this->assertCount(2, $categories);
-        $this->assertInstanceOf(CategoryAndCountModel::class, $categories[0]);
+        $this->assertInstanceOf(Model\CategoryAndCount::class, $categories[0]);
     }
 
-    public function testFetchByAssemblyAndIssue()
+    #[Test]
+    public function fetchByAssemblyAndIssue()
     {
         $service = new Category();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
         $categories = $service->fetchByAssemblyAndIssue(1, 1);
 
         $this->assertCount(1, $categories);
-        $this->assertInstanceOf(CategoryModel::class, $categories[0]);
+        $this->assertInstanceOf(Model\Category::class, $categories[0]);
     }
 
-    public function testFetchByAssemblyIssueAndCategory()
+    #[Test]
+    public function fetchByAssemblyIssueAndCategory()
     {
         $service = new Category();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
 
-        $expectedData = (new CategoryModel())
+        $expectedData = (new Model\Category())
             ->setCategoryId(1)
             ->setSuperCategoryId(1)
             ->setTitle(null)
@@ -81,12 +83,13 @@ class CategoryTest extends TestCase
         $actualCategory = $service->fetchByAssemblyIssueAndCategory(1, 1, 1);
 
         $this->assertEquals($expectedData, $actualCategory);
-        $this->assertInstanceOf(CategoryModel::class, $actualCategory);
+        $this->assertInstanceOf(Model\Category::class, $actualCategory);
     }
 
-    public function testCreate()
+    #[Test]
+    public function createSuccess()
     {
-        $category = (new CategoryModel())
+        $category = (new Model\Category())
             ->setCategoryId(4)
             ->setSuperCategoryId(1);
 
@@ -101,15 +104,16 @@ class CategoryTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('Category', 'SELECT * FROM Category');
 
         $service = new Category();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
         $service->create($category);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testSave()
+    #[Test]
+    public function saveSuccess()
     {
-        $category = (new CategoryModel())
+        $category = (new Model\Category())
             ->setCategoryId(4)
             ->setSuperCategoryId(1);
 
@@ -124,15 +128,16 @@ class CategoryTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('Category', 'SELECT * FROM Category');
 
         $service = new Category();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
         $service->save($category);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testUpdate()
+    #[Test]
+    public function updateSuccess()
     {
-        $category = (new CategoryModel())
+        $category = (new Model\Category())
             ->setCategoryId(1)
             ->setSuperCategoryId(1)
             ->setTitle('Thisisanewtitle');
@@ -147,7 +152,7 @@ class CategoryTest extends TestCase
         $actualTable = $this->getConnection()->createQueryTable('Category', 'SELECT * FROM Category');
 
         $service = new Category();
-        $service->setDriver($this->pdo);
+        $service->setDriver($this->getPDO());
         $service->update($category);
 
         $this->assertTablesEqual($expectedTable, $actualTable);

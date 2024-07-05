@@ -2,48 +2,44 @@
 
 namespace Althingi\Controller;
 
+use Althingi\{Model, Service};
 use Althingi\Controller\CongressmanDocumentController;
-use Althingi\Model\CongressmanDocument as CongressmanDocumentModel;
-use Althingi\Model\KindEnum;
-use Althingi\Service\CongressmanDocument;
 use Althingi\ServiceHelper;
 use Library\Container\Container;
+use PHPUnit\Framework\Attributes\{CoversMethod, CoversClass, Test, Before, After};
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class CongressmanDocumentControllerTest
- * @package Althingi\Controller
- * @coversDefaultClass \Althingi\Controller\CongressmanDocumentController
- *
- * @covers \Althingi\Controller\CongressmanDocumentController::setCongressmanDocumentService
- */
+#[CoversClass(CongressmanDocumentController::class)]
+#[CoversMethod(CongressmanDocumentController::class, 'setCongressmanDocumentService')]
+#[CoversMethod(CongressmanDocumentController::class, 'put')]
+#[CoversMethod(CongressmanDocumentController::class, 'patch')]
 class CongressmanDocumentControllerTest extends TestCase
 {
     use ServiceHelper;
 
-    public function setUp(): void
+    #[Before]
+    public function up(): void
     {
         $this->setServiceManager(
             new Container(require __DIR__ . '/../../config/service.php')
         );
         $this->buildServices([
-            CongressmanDocument::class,
+            Service\CongressmanDocument::class,
 
         ]);
     }
 
-    public function tearDown(): void
+    #[After]
+    public function down(): void
     {
         \Mockery::close();
         parent::tearDown();
     }
 
-    /**
-     * @covers ::put
-     */
-    public function testPutSuccess()
+    #[Test]
+    public function putSuccess()
     {
-        $this->getMockService(CongressmanDocument::class)
+        $this->getMockService(Service\CongressmanDocument::class)
             ->shouldReceive('save')
             ->once()
             ->andReturn(1)
@@ -58,20 +54,18 @@ class CongressmanDocumentControllerTest extends TestCase
         $this->assertResponseStatusCode(201);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchSuccess()
+    #[Test]
+    public function patchSuccess()
     {
-        $this->getMockService(CongressmanDocument::class)
+        $this->getMockService(Service\CongressmanDocument::class)
             ->shouldReceive('get')
             ->with(145, 2, 637, 1018)
             ->once()
             ->andReturn(
-                (new CongressmanDocumentModel())
+                (new Model\CongressmanDocument())
                     ->setAssemblyId(145)
                     ->setIssueId(2)
-                    ->setKind(KindEnum::A)
+                    ->setKind(Model\KindEnum::A)
                     ->setCongressmanId(637)
                     ->setDocumentId(1018)
                     ->setOrder(1)

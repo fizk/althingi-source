@@ -3,24 +3,29 @@
 namespace Althingi\Controller;
 
 use Althingi\Controller\CongressmanController;
-use Althingi\Model;
-use Althingi\Service;
+use Althingi\{Model, Service};
 use Althingi\ServiceHelper;
 use Library\Container\Container;
+use PHPUnit\Framework\Attributes\{CoversMethod, CoversClass, Test, Before, After};
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class CongressmanControllerTest
- * @package Althingi\Controller
- * @coversDefaultClass \Althingi\Controller\CongressmanController
- *
- * @covers \Althingi\Controller\CongressmanController::setCongressmanService
- */
+#[CoversClass(CongressmanController::class)]
+#[CoversMethod(CongressmanController::class, 'setCongressmanService')]
+#[CoversMethod(CongressmanController::class, 'assemblyAction')]
+#[CoversMethod(CongressmanController::class, 'assemblyCongressmanAction')]
+#[CoversMethod(CongressmanController::class, 'delete')]
+#[CoversMethod(CongressmanController::class, 'get')]
+#[CoversMethod(CongressmanController::class, 'getList')]
+#[CoversMethod(CongressmanController::class, 'options')]
+#[CoversMethod(CongressmanController::class, 'optionsList')]
+#[CoversMethod(CongressmanController::class, 'patch')]
+#[CoversMethod(CongressmanController::class, 'put')]
 class CongressmanControllerTest extends TestCase
 {
     use ServiceHelper;
 
-    public function setUp(): void
+    #[Before]
+    public function up(): void
     {
         $this->setServiceManager(
             new Container(require __DIR__ . '/../../config/service.php')
@@ -30,23 +35,23 @@ class CongressmanControllerTest extends TestCase
         ]);
     }
 
-    public function tearDown(): void
+    #[After]
+    public function down(): void
     {
         \Mockery::close();
         parent::tearDown();
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGet()
+    #[Test]
+    public function getSuccessfull()
     {
         $this->getMockService(Service\Congressman::class)
             ->shouldReceive('get')
+            ->once()
             ->andReturn(
                 (new Model\Congressman())
                 ->setCongressmanId(1)
-            )->once()
+            )
             ->getMock();
 
         $this->dispatch('/thingmenn/1', 'GET');
@@ -56,10 +61,8 @@ class CongressmanControllerTest extends TestCase
         $this->assertResponseStatusCode(200);
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGetResourceNotFound()
+    #[Test]
+    public function getResourceNotFound()
     {
         $this->getMockService(Service\Congressman::class)
             ->shouldReceive('get')
@@ -74,10 +77,8 @@ class CongressmanControllerTest extends TestCase
         $this->assertResponseStatusCode(404);
     }
 
-    /**
-     * @covers ::getList
-     */
-    public function testGetList()
+    #[Test]
+    public function getList()
     {
         $this->getMockService(Service\Congressman::class)
             ->shouldReceive('fetchAll')
@@ -92,10 +93,8 @@ class CongressmanControllerTest extends TestCase
         $this->assertResponseStatusCode(206);
     }
 
-    /**
-     * @covers ::put
-     */
-    public function testPutSuccess()
+    #[Test]
+    public function putSuccess()
     {
         $this->getMockService(Service\Congressman::class)
             ->shouldReceive('save')
@@ -113,10 +112,8 @@ class CongressmanControllerTest extends TestCase
         $this->assertResponseStatusCode(201);
     }
 
-    /**
-     * @covers ::put
-     */
-    public function testPutInvalidData()
+    #[Test]
+    public function putInvalidData()
     {
         $this->getMockService(Service\Congressman::class)
             ->shouldReceive('create')
@@ -133,20 +130,18 @@ class CongressmanControllerTest extends TestCase
         $this->assertResponseStatusCode(400);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchSuccess()
+    #[Test]
+    public function patchSuccess()
     {
         $this->getMockService(Service\Congressman::class)
             ->shouldReceive('get')
+            ->once()
             ->andReturn(
                 (new Model\Congressman())
                     ->setCongressmanId(1)
                     ->setBirth(new \DateTime('1978-04-11'))
-            )->once()
+            )
             ->getMock()
-
             ->shouldReceive('update')
             ->once()
             ->andReturn(1)
@@ -163,21 +158,19 @@ class CongressmanControllerTest extends TestCase
         $this->assertResponseStatusCode(205);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchInvalidData()
+    #[Test]
+    public function patchInvalidData()
     {
         $this->getMockService(Service\Congressman::class)
             ->shouldReceive('get')
+            ->once()
             ->andReturn(
                 (new Model\Congressman())
                     ->setCongressmanId(1)
                     ->setName('My Namesson')
                     ->setBirth(new \DateTime('1978-04-11'))
-            )->once()
+            )
             ->getMock()
-
             ->shouldReceive('update')
             ->never()
             ->getMock();
@@ -192,14 +185,13 @@ class CongressmanControllerTest extends TestCase
         $this->assertResponseStatusCode(400);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchResourceNotFound()
+    #[Test]
+    public function patchResourceNotFound()
     {
         $this->getMockService(Service\Congressman::class)
             ->shouldReceive('get')
-            ->andReturn(null)->once()
+            ->once()
+            ->andReturn(null)
             ->getMock()
             ->shouldReceive('update')
             ->never()
@@ -214,21 +206,19 @@ class CongressmanControllerTest extends TestCase
         $this->assertResponseStatusCode(404);
     }
 
-    /**
-     * @covers ::delete
-     */
-    public function testDeleteSuccess()
+    #[Test]
+    public function deleteSuccess()
     {
         $this->getMockService(Service\Congressman::class)
             ->shouldReceive('get')
+            ->once()
             ->andReturn(
                 (new Model\Congressman())
                     ->setCongressmanId(1)
                     ->setName('My Namesson')
                     ->setBirth(new \DateTime('1978-04-11'))
-            )->once()
+            )
             ->getMock()
-
             ->shouldReceive('delete')
             ->once()
             ->getMock();
@@ -240,14 +230,13 @@ class CongressmanControllerTest extends TestCase
         $this->assertResponseStatusCode(205);
     }
 
-    /**
-     * @covers ::delete
-     */
-    public function testDeleteResourceNotFound()
+    #[Test]
+    public function deleteResourceNotFound()
     {
         $this->getMockService(Service\Congressman::class)
             ->shouldReceive('get')
-            ->andReturn(null)->once()
+            ->once()
+            ->andReturn(null)
             ->getMock()
 
             ->shouldReceive('delete')
@@ -261,10 +250,8 @@ class CongressmanControllerTest extends TestCase
         $this->assertResponseStatusCode(404);
     }
 
-    /**
-     * @covers ::options
-     */
-    public function testOptions()
+    #[Test]
+    public function options()
     {
         $this->dispatch('/thingmenn/1', 'OPTIONS');
 
@@ -277,10 +264,8 @@ class CongressmanControllerTest extends TestCase
         $this->assertCount(0, array_diff($expectedMethods, $actualMethods));
     }
 
-    /**
-     * @covers ::optionsList
-     */
-    public function testOptionsList()
+    #[Test]
+    public function optionsList()
     {
         $this->dispatch('/thingmenn', 'OPTIONS');
 
@@ -293,10 +278,8 @@ class CongressmanControllerTest extends TestCase
         $this->assertCount(0, array_diff($expectedMethods, $actualMethods));
     }
 
-    /**
-     * @covers ::assemblyAction
-     */
-    public function testAssemblyAction()
+    #[Test]
+    public function assemblyAction()
     {
         $this->getMockService(Service\Congressman::class)
             ->shouldReceive('fetchByAssembly')
@@ -310,10 +293,8 @@ class CongressmanControllerTest extends TestCase
         $this->assertResponseStatusCode(206);
     }
 
-    /**
-     * @covers ::assemblyCongressmanAction
-     */
-    public function testAssemblyCongressmanAction()
+    #[Test]
+    public function assemblyCongressmanAction()
     {
         $this->getMockService(Service\Congressman::class)
             ->shouldReceive('get')
@@ -329,10 +310,8 @@ class CongressmanControllerTest extends TestCase
         $this->assertResponseStatusCode(200);
     }
 
-    /**
-     * @covers ::assemblyCongressmanAction
-     */
-    public function testAssemblyCongressmanActionNotFound()
+    #[Test]
+    public function assemblyCongressmanActionNotFound()
     {
         $this->getMockService(Service\Congressman::class)
             ->shouldReceive('get')

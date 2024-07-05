@@ -32,10 +32,10 @@ class CommitteeMeetingAgendaController implements
      */
     public function get(ServerRequest $request): ResponseInterface
     {
-        $agendaId = $request->getAttribute('committee_meeting_agenda_id');
-        $meetingId = $request->getAttribute('committee_meeting_id');
-
-        $agenda = $this->committeeMeetingAgendaService->get($meetingId, $agendaId);
+        $agenda = $this->committeeMeetingAgendaService->get(
+            $request->getAttribute('committee_meeting_id'),
+            $request->getAttribute('committee_meeting_agenda_id')
+        );
 
         return $agenda
             ? new JsonResponse($agenda, 200)
@@ -48,8 +48,9 @@ class CommitteeMeetingAgendaController implements
      */
     public function getList(ServerRequest $request): ResponseInterface
     {
-        $meetingId = $request->getAttribute('committee_meeting_id');
-        $agenda = $this->committeeMeetingAgendaService->fetch($meetingId);
+        $agenda = $this->committeeMeetingAgendaService->fetch(
+            $request->getAttribute('committee_meeting_id')
+        );
         return new JsonResponse($agenda, 200);
     }
 
@@ -61,15 +62,11 @@ class CommitteeMeetingAgendaController implements
      */
     public function put(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id');
-        $committeeMeetingId = $request->getAttribute('committee_meeting_id');
-        $committeeMeetingAgendaId = $request->getAttribute('committee_meeting_agenda_id');
-
         $form = new Form\CommitteeMeetingAgenda([
             ...$request->getParsedBody(),
-            'committee_meeting_agenda_id' => $committeeMeetingAgendaId,
-            'assembly_id' => $assemblyId,
-            'committee_meeting_id' => $committeeMeetingId,
+            'committee_meeting_agenda_id' => $request->getAttribute('committee_meeting_agenda_id'),
+            'assembly_id' => $request->getAttribute('id'),
+            'committee_meeting_id' => $request->getAttribute('committee_meeting_id'),
         ]);
 
         if ($form->isValid()) {
@@ -92,8 +89,10 @@ class CommitteeMeetingAgendaController implements
         $committeeMeetingAgendaId = $request->getAttribute('committee_meeting_agenda_id');
 
         if (
-            ($committeeMeetingAgenda = $this->committeeMeetingAgendaService
-                ->get($committeeMeetingId, $committeeMeetingAgendaId)) != null
+            ($committeeMeetingAgenda = $this->committeeMeetingAgendaService->get(
+                $committeeMeetingId,
+                $committeeMeetingAgendaId
+            )) != null
         ) {
             $form = new Form\CommitteeMeetingAgenda([
                 ...$committeeMeetingAgenda->toArray(),

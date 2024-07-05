@@ -107,7 +107,6 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
 
     /**
      * @return \Althingi\Model\PartyAndTime[]
-     * @deprecated
      */
     public function fetchTimeByAssembly(int $assemblyId, array $kind = [KindEnum::A]): array
     {
@@ -166,7 +165,6 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
 
     /**
      * @return \Althingi\Model\Party[]
-     * @deprecated
      */
     public function fetchByAssembly(int $assemblyId, array $exclude = []): array
     {
@@ -196,7 +194,6 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
 
     /**
      * @return \Althingi\Model\PartyAndElection[]
-     * @deprecated
      */
     public function fetchElectedByAssembly(int $assemblyId): array
     {
@@ -213,7 +210,6 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
 
     /**
      * @return \Althingi\Model\Party[]
-     * @deprecated
      */
     public function fetchByCongressman(int $congressmanId): array
     {
@@ -230,7 +226,6 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
 
     /**
      * @return \Althingi\Model\Party[]
-     * @deprecated
      */
     public function fetchByCabinet(int $cabinetId): array
     {

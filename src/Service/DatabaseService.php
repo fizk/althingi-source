@@ -24,7 +24,7 @@ trait DatabaseService
     protected function toSelectString(string $table, array $params = [], string $order = null)
     {
         $mappedParams = array_map(function ($key) {
-            return "`{$key}` = :${key}";
+            return "`{$key}` = :{$key}";
         }, array_keys($params));
 
         return ("select * from `{$table}` ") .

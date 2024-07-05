@@ -20,13 +20,25 @@ $serviceManager = new Container(require './config/service.php');
 /** @var PDO */
 $pdo = $serviceManager->get(PDO::class);
 
+// $statement = new class {
+//     public function execute(){}
+//     public function rowCount(){return rand(0,1);}
+// };
 
-echo "Starting database migration " . PHP_EOL;
+// $pdo = new class ($statement)  {
+//     public function __construct(private $statement){}
+//     public function prepare(){
+//         return $this->statement;
+//     }
+//     public function exec() {}
+// };
 
 $scriptPaths = array_map(
     fn (string $path) => new SplFileInfo(realpath("$scriptDirectory/$path")),
     scandir(realpath($scriptDirectory))
 );
+
+echo "\e[1;33mStarting database migration from ".realpath($scriptDirectory)."\e[0m\n";
 
 foreach ($scriptPaths as $fileInfo) {
     if ($fileInfo->getExtension() !== 'sql') {
@@ -39,11 +51,11 @@ foreach ($scriptPaths as $fileInfo) {
         $resultCount = $statusStatement->rowCount();
 
         if ($resultCount !== 0) {
-            echo "Skipping " . $fileInfo->getFilename() . PHP_EOL;
+            echo "\e[0;31mSkipping\e[0m\t" . $fileInfo->getFilename() . PHP_EOL;
             continue;
         }
 
-        echo "Processing " . $fileInfo->getFilename() . PHP_EOL;
+        echo "\e[0;32mProcessing\e[0m\t" . $fileInfo->getFilename() . PHP_EOL;
 
         $script = file_get_contents($fileInfo->getPathname());
         $pdo->exec($script);
@@ -55,4 +67,4 @@ foreach ($scriptPaths as $fileInfo) {
     }
 }
 
-echo "Ending database migration " . PHP_EOL;
+echo "\e[1;33mEnding database migration\e[0m\n";

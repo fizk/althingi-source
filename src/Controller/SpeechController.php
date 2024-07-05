@@ -109,14 +109,10 @@ class SpeechController implements
      */
     public function getList(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id');
-        $issueId = $request->getAttribute('issue_id');
-        $kind = KindEnum::fromString($request->getAttribute('kind', 'a'));
-
         $speechesAndProperties = $this->speechService->fetchAllByIssue(
-            $assemblyId,
-            $issueId,
-            $kind,
+            $request->getAttribute('id'),
+            $request->getAttribute('issue_id'),
+            KindEnum::fromString($request->getAttribute('kind', 'a')),
         );
 
         return new JsonResponse($speechesAndProperties, 206);
@@ -136,16 +132,12 @@ class SpeechController implements
      */
     public function put(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id');
-        $issueId = $request->getAttribute('issue_id');
-        $kind = KindEnum::fromString($request->getAttribute('kind', 'a'));
-
         $form = new Form\Speech([
             ...$request->getParsedBody(),
             'speech_id' => $request->getAttribute('speech_id'),
-            'issue_id' => $issueId,
-            'assembly_id' => $assemblyId,
-            'category' => $kind,
+            'issue_id' => $request->getAttribute('issue_id'),
+            'assembly_id' => $request->getAttribute('id'),
+            'category' => KindEnum::fromString($request->getAttribute('kind', 'a')),
         ]);
 
         if ($form->isValid()) {
@@ -199,9 +191,11 @@ class SpeechController implements
      */
     public function patch(ServerRequest $request): ResponseInterface
     {
-        $speechId = $request->getAttribute('speech_id');
-
-        if (($speech = $this->speechService->get($request->getAttribute('speech_id'))) != null) {
+        if (
+            ($speech = $this->speechService->get(
+                $request->getAttribute('speech_id')
+            )) != null
+        ) {
             $form = new Form\Speech([
                 ...$speech->toArray(),
                 ...$request->getParsedBody(),

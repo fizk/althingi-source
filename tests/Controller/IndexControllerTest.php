@@ -4,28 +4,25 @@ namespace Althingi\Controller;
 
 use Althingi\ServiceHelper;
 use Library\Container\Container;
+use PHPUnit\Framework\Attributes\{CoversMethod, CoversClass, Test, Before};
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class AssemblyCommitteeControllerTest
- * @package Althingi\Controller
- * @coversDefaultClass \Althingi\Controller\IndexController
- */
+#[CoversClass(IndexController::class)]
+#[CoversMethod(IndexController::class, 'handle')]
 class IndexControllerTest extends TestCase
 {
     use ServiceHelper;
 
-    public function setUp(): void
+    #[Before]
+    public function up(): void
     {
         $this->setServiceManager(
             new Container(require __DIR__ . '/../../config/service.php')
         );
     }
 
-    /**
-     * @covers ::handle
-     */
-    public function testIndex()
+    #[Test]
+    public function indexSuccessful()
     {
         $this->dispatch('/', 'GET');
 

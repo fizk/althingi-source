@@ -2,18 +2,17 @@
 
 namespace Althingi\Hydrator;
 
-use Laminas\Hydrator\HydratorInterface;
+use Althingi\Utils\HydratorInterface;
 
 class CommitteeMeeting implements HydratorInterface
 {
     /**
-     * Hydrate $object with the provided $data.
      *
-     * @param  array $data
-     * @param  \Althingi\Model\CommitteeMeeting $object
+     * @param array $data
+     * @param \Althingi\Model\CommitteeMeeting $object
      * @return \Althingi\Model\CommitteeMeeting
      */
-    public function hydrate(array $data, $object)
+    public function hydrate(array $data, object $object): object
     {
         return $object
             ->setCommitteeMeetingId($data['committee_meeting_id'])
@@ -24,14 +23,12 @@ class CommitteeMeeting implements HydratorInterface
             ->setDescription(isset($data['description']) ? $data['description'] : null);
     }
 
-
     /**
-     * Extract values from an object
      *
-     * @param  \Althingi\Model\CommitteeMeeting $object
+     * @param \Althingi\Model\CommitteeMeeting $object
      * @return array
      */
-    public function extract($object): array
+    public function extract(object $object): array
     {
         return $object->toArray();
     }

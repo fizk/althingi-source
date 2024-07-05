@@ -2,18 +2,17 @@
 
 namespace Althingi\Hydrator;
 
-use Laminas\Hydrator\HydratorInterface;
+use Althingi\Utils\HydratorInterface;
 
 class Constituency implements HydratorInterface
 {
     /**
-     * Hydrate $object with the provided $data.
      *
-     * @param  array $data
-     * @param  \Althingi\Model\Constituency $object
+     * @param array $data
+     * @param \Althingi\Model\Constituency $object
      * @return \Althingi\Model\Constituency
      */
-    public function hydrate(array $data, $object)
+    public function hydrate(array $data, object $object): object
     {
         return $object
             ->setConstituencyId($data['constituency_id'])
@@ -23,14 +22,12 @@ class Constituency implements HydratorInterface
             ->setDescription($data['description']);
     }
 
-
     /**
-     * Extract values from an object
      *
-     * @param  \Althingi\Model\Constituency $object
+     * @param \Althingi\Model\Constituency $object
      * @return array
      */
-    public function extract($object): array
+    public function extract(object $object): array
     {
         return $object->toArray();
     }

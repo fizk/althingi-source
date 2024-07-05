@@ -3,63 +3,61 @@
 namespace Althingi\Controller;
 
 use Althingi\Controller\CabinetController;
-use Althingi\Service\Assembly;
-use Althingi\Service\Cabinet;
-use Althingi\Service\Congressman;
-use Althingi\Service\Party;
+use Althingi\{Model, Service};
 use Althingi\ServiceHelper;
 use DateTime;
 use Library\Container\Container;
+use PHPUnit\Framework\Attributes\{CoversMethod, CoversClass, Test, Before, After};
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class CabinetControllerTest
- * @package Althingi\Controller
- * @coversDefaultClass \Althingi\Controller\CabinetController
- *
- * @covers \Althingi\Controller\CabinetController::setCabinetService
- * @covers \Althingi\Controller\CabinetController::setAssemblyService
- */
+#[CoversClass(CabinetController::class)]
+#[CoversMethod(CabinetController::class, 'setCabinetService')]
+#[CoversMethod(CabinetController::class, 'setAssemblyService')]
+#[CoversMethod(CabinetController::class, 'assemblyAction')]
+#[CoversMethod(CabinetController::class, 'get')]
+#[CoversMethod(CabinetController::class, 'getList')]
+#[CoversMethod(CabinetController::class, 'put')]
+#[CoversMethod(CabinetController::class, 'patch')]
 class CabinetControllerTest extends TestCase
 {
     use ServiceHelper;
 
-    public function setUp(): void
+    #[Before]
+    public function up(): void
     {
         $this->setServiceManager(
             new Container(require __DIR__ . '/../../config/service.php')
         );
         $this->buildServices([
-            Congressman::class,
-            Party::class,
-            Cabinet::class,
-            Assembly::class,
+            Service\Congressman::class,
+            Service\Party::class,
+            Service\Cabinet::class,
+            Service\Assembly::class,
         ]);
     }
 
-    public function tearDown(): void
+    #[After]
+    public function down(): void
     {
         \Mockery::close();
         $this->destroyServices();
         parent::tearDown();
     }
 
-    /**
-     * @covers ::assemblyAction
-     */
-    public function testAssemblyAction()
+    #[Test]
+    public function getAllCabinetsForAssemblySuccessfully()
     {
-        $this->getMockService(Cabinet::class)
+        $this->getMockService(Service\Cabinet::class)
             ->shouldReceive('fetchAll')
             ->andReturn([
-                (new \Althingi\Model\Cabinet())->setCabinetId(1)
+                (new Model\Cabinet())->setCabinetId(1)
             ])
             ->getMock();
 
-        $this->getMockService(Assembly::class)
+        $this->getMockService(Service\Assembly::class)
             ->shouldReceive('get')
             ->andReturn(
-                (new \Althingi\Model\Assembly())
+                (new Model\Assembly())
                     ->setFrom(new DateTime('2001-01-01'))
                     ->setTo(new DateTime('2001-01-01'))
                     ->setAssemblyId(1)
@@ -73,20 +71,18 @@ class CabinetControllerTest extends TestCase
         $this->assertResponseStatusCode(206);
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGet()
+    #[Test]
+    public function getCabinetSuccessfully()
     {
-        $this->getMockService(Cabinet::class)
+        $this->getMockService(Service\Cabinet::class)
             ->shouldReceive('get')
-            ->andReturn((new \Althingi\Model\Cabinet())->setCabinetId(1))
+            ->andReturn((new Model\Cabinet())->setCabinetId(1))
             ->getMock();
 
-        $this->getMockService(Assembly::class)
+        $this->getMockService(Service\Assembly::class)
             ->shouldReceive('fetchByCabinet')
             ->andReturn([
-                (new \Althingi\Model\Assembly())
+                (new Model\Assembly())
                     ->setFrom(new DateTime('2001-01-01'))
                     ->setTo(new DateTime('2001-01-01'))
                     ->setAssemblyId(1)
@@ -100,14 +96,12 @@ class CabinetControllerTest extends TestCase
         $this->assertResponseStatusCode(200);
     }
 
-    /**
-     * @covers ::getList
-     */
-    public function testGetList()
+    #[Test]
+    public function getListOfAllCabinets()
     {
-        $this->getMockService(Cabinet::class)
+        $this->getMockService(Service\Cabinet::class)
             ->shouldReceive('fetchAll')
-            ->andReturn([(new \Althingi\Model\Cabinet())->setCabinetId(1)])
+            ->andReturn([(new Model\Cabinet())->setCabinetId(1)])
             ->getMock();
 
         $this->dispatch('/raduneyti', 'GET');
@@ -117,12 +111,10 @@ class CabinetControllerTest extends TestCase
         $this->assertResponseStatusCode(206);
     }
 
-    /**
-     * @covers ::put
-     */
-    public function testPut()
+    #[Test]
+    public function putCabinetSavingItSuccessfully()
     {
-        $this->getMockService(Cabinet::class)
+        $this->getMockService(Service\Cabinet::class)
             ->shouldReceive('save')
             ->andReturn(1)
             ->getMock();
@@ -138,19 +130,17 @@ class CabinetControllerTest extends TestCase
         $this->assertResponseStatusCode(201);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatch()
+    #[Test]
+    public function patchCabinetSuccessfully()
     {
-        $this->getMockService(Cabinet::class)
+        $this->getMockService(Service\Cabinet::class)
             ->shouldReceive('update')
             ->andReturn(1)
             ->getMock()
 
             ->shouldReceive('get')
             ->andReturn(
-                (new \Althingi\Model\Cabinet())
+                (new Model\Cabinet())
                     ->setCabinetId(1)
                     ->setFrom(new DateTime())
                     ->setTo(new DateTime())

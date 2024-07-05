@@ -2,33 +2,33 @@
 
 namespace Althingi\Controller;
 
-use Althingi\Controller;
-use Althingi\Model;
-use Althingi\Model\Assembly;
-use Althingi\Model\KindEnum;
-use Althingi\Service;
+use Althingi\{Model, Service};
+use Althingi\Controller\SpeechController;
 use Althingi\ServiceHelper;
 use DateTime;
 use Library\Container\Container;
 use Mockery;
+use PHPUnit\Framework\Attributes\{CoversMethod, CoversClass, Test, Before, After};
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class SpeechControllerTest
- * @package Althingi\Controller
- * @coversDefaultClass \Althingi\Controller\SpeechController
- *
- * @covers \Althingi\Controller\SpeechController::setCongressmanService
- * @covers \Althingi\Controller\SpeechController::setPartyService
- * @covers \Althingi\Controller\SpeechController::setSpeechService
- * @covers \Althingi\Controller\SpeechController::setPlenaryService
- * @covers \Althingi\Controller\SpeechController::setConstituencyService
- */
+#[CoversClass(SpeechController::class)]
+#[CoversMethod(SpeechController::class, 'setCongressmanService')]
+#[CoversMethod(SpeechController::class, 'setPartyService')]
+#[CoversMethod(SpeechController::class, 'setSpeechService')]
+#[CoversMethod(SpeechController::class, 'setPlenaryService')]
+#[CoversMethod(SpeechController::class, 'setConstituencyService')]
+#[CoversMethod(SpeechController::class, 'get')]
+#[CoversMethod(SpeechController::class, 'getList')]
+#[CoversMethod(SpeechController::class, 'options')]
+#[CoversMethod(SpeechController::class, 'optionsList')]
+#[CoversMethod(SpeechController::class, 'patch')]
+#[CoversMethod(SpeechController::class, 'put')]
 class SpeechControllerTest extends TestCase
 {
     use ServiceHelper;
 
-    public function setUp(): void
+    #[Before]
+    public function up(): void
     {
         $this->setServiceManager(
             new Container(require __DIR__ . '/../../config/service.php')
@@ -42,28 +42,27 @@ class SpeechControllerTest extends TestCase
         ]);
     }
 
-    public function tearDown(): void
+    #[After]
+    public function down(): void
     {
         \Mockery::close();
         parent::tearDown();
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGetSuccess()
+    #[Test]
+    public function getSuccess()
     {
         $this->getMockService(Service\Speech::class)
             ->shouldReceive('countByIssue')
-            ->andReturn(100)
             ->once()
+            ->andReturn(100)
             ->getMock()
 
             ->shouldReceive('fetch')
-            ->with(4, 1, 3, 25, KindEnum::A)
+            ->with(4, 1, 3, 25, Model\KindEnum::A)
             ->andReturn([
                 (new Model\SpeechAndPosition())
-                    ->setKind(KindEnum::A)
+                    ->setKind(Model\KindEnum::A)
                     ->setPosition(1)
                     ->setCongressmanId(1)
                     ->setFrom(new \DateTime())
@@ -75,7 +74,7 @@ class SpeechControllerTest extends TestCase
         $this->getMockService(Service\Congressman::class)
             ->shouldReceive('get')
             ->andReturn(
-                (new \Althingi\Model\Congressman())
+                (new Model\Congressman())
                     ->setCongressmanId(1)
             )
             ->getMock();
@@ -83,7 +82,7 @@ class SpeechControllerTest extends TestCase
         $this->getMockService(Service\Party::class)
             ->shouldReceive('getByCongressman')
             ->andReturn(
-                (new \Althingi\Model\Party())
+                (new Model\Party())
                     ->setPartyId(1)
                     ->setName('name')
             )
@@ -91,24 +90,22 @@ class SpeechControllerTest extends TestCase
 
         $this->getMockService(Service\Constituency::class)
             ->shouldReceive('getByCongressman')
+            ->once()
             ->andReturn(
                 (new Model\ConstituencyDate())
                     ->setConstituencyId(1)
             )
-            ->once()
             ->getMock();
 
         $this->dispatch('/loggjafarthing/1/thingmal/a/3/raedur/4', 'GET');
 
-        $this->assertControllerName(Controller\SpeechController::class);
+        $this->assertControllerName(SpeechController::class);
         $this->assertActionName('get');
         $this->assertResponseStatusCode(206);
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGetRangeHeaders()
+    #[Test]
+    public function getRangeHeaders()
     {
         $this->getMockService(Service\Speech::class)
             ->shouldReceive('countByIssue')
@@ -117,7 +114,7 @@ class SpeechControllerTest extends TestCase
             ->shouldReceive('fetch')
             ->andReturn(array_map(function ($i) {
                 return  (new Model\SpeechAndPosition())
-                    ->setKind(KindEnum::A)
+                    ->setKind(Model\KindEnum::A)
                     ->setCongressmanId(1)
                     ->setText('<?xml version="1.0" ?><root />')
                     ->setFrom(new \DateTime('2000-01-01'))
@@ -127,13 +124,13 @@ class SpeechControllerTest extends TestCase
 
         $this->getMockService(Service\Congressman::class)
             ->shouldReceive('get')
-            ->andReturn(new \Althingi\Model\Congressman())
+            ->andReturn(new Model\Congressman())
             ->getMock();
 
         $this->getMockService(Service\Party::class)
             ->shouldReceive('getByCongressman')
             ->andReturn(
-                (new \Althingi\Model\Party())
+                (new Model\Party())
                     ->setPartyId(1)
                     ->setName('name')
             )
@@ -141,11 +138,11 @@ class SpeechControllerTest extends TestCase
 
         $this->getMockService(Service\Constituency::class)
             ->shouldReceive('getByCongressman')
+            ->times(25)
             ->andReturn(
                 (new Model\ConstituencyDate())
                     ->setConstituencyId(1)
             )
-            ->times(25)
             ->getMock();
 
         $this->dispatch('/loggjafarthing/1/thingmal/a/3/raedur/4', 'GET');
@@ -157,10 +154,8 @@ class SpeechControllerTest extends TestCase
         $this->assertEquals('items 25-49/100', $contentRange[0]);
     }
 
-    /**
-     * @covers ::put
-     */
-    public function testPutSuccess()
+    #[Test]
+    public function putSuccess()
     {
         $expectedData = (new Model\Speech())
             ->setPlenaryId(20)
@@ -173,7 +168,7 @@ class SpeechControllerTest extends TestCase
             ->setTo(new \DateTime('2001-01-01 00:00:00'))
             ->setType('t1')
             ->setText('t2')
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
             ->setValidated(false);
 
         $this->getMockService(Service\Speech::class)
@@ -201,15 +196,13 @@ class SpeechControllerTest extends TestCase
             'validated' => 'false',
         ]);
 
-        $this->assertControllerName(Controller\SpeechController::class);
+        $this->assertControllerName(SpeechController::class);
         $this->assertActionName('put');
         $this->assertResponseStatusCode(201);
     }
 
-    /**
-     * @covers ::put
-     */
-    public function testPutInvalidForm()
+    #[Test]
+    public function putInvalidForm()
     {
         $this->getMockService(Service\Speech::class)
             ->shouldReceive('create')
@@ -225,15 +218,13 @@ class SpeechControllerTest extends TestCase
             'text' => 't2'
         ]);
 
-        $this->assertControllerName(Controller\SpeechController::class);
+        $this->assertControllerName(SpeechController::class);
         $this->assertActionName('put');
         $this->assertResponseStatusCode(400);
     }
 
-    /**
-     * @covers ::put
-     */
-    public function testPutDuplicate()
+    #[Test]
+    public function putDuplicate()
     {
         $exception = new \PDOException();
         $exception->errorInfo = ['', 1452, ''];
@@ -261,15 +252,13 @@ class SpeechControllerTest extends TestCase
             'validated' => 'false'
         ]);
 
-        $this->assertControllerName(Controller\SpeechController::class);
+        $this->assertControllerName(SpeechController::class);
         $this->assertActionName('put');
         $this->assertResponseStatusCode(500);
     }
 
-    /**
-     * @covers ::put
-     */
-    public function testPutSomeError()
+    #[Test]
+    public function putSomeError()
     {
         $exception = new \PDOException();
         $exception->errorInfo = ['', 0, ''];
@@ -297,26 +286,24 @@ class SpeechControllerTest extends TestCase
             'validated' => 'false'
         ]);
 
-        $this->assertControllerName(Controller\SpeechController::class);
+        $this->assertControllerName(SpeechController::class);
         $this->assertActionName('put');
         $this->assertResponseStatusCode(500);
     }
 
-    /**
-     * @covers ::getList
-     */
-    public function testGetList()
+    #[Test]
+    public function getList()
     {
         $this->getMockService(Service\Speech::class)
             ->shouldReceive('fetchAllByIssue')
-            ->with(144, 3, KindEnum::B)
+            ->with(144, 3, Model\KindEnum::B)
             ->once()
             ->andReturn([
                 (new Model\SpeechCongressmanProperties())
-                        ->setSpeech((new Model\Speech())->setKind(KindEnum::A))
+                        ->setSpeech((new Model\Speech())->setKind(Model\KindEnum::A))
                         ->setCongressman((
                             (new Model\CongressmanPartyProperties())
-                                ->setAssembly((new Assembly())->setAssemblyId(1)->setFrom(new DateTime()))
+                                ->setAssembly((new Model\Assembly())->setAssemblyId(1)->setFrom(new DateTime()))
                         )
                         ->setCongressman(new Model\Congressman()))
                 ])
@@ -327,15 +314,13 @@ class SpeechControllerTest extends TestCase
 
         $this->dispatch('/loggjafarthing/144/thingmal/b/3/raedur');
 
-        $this->assertControllerName(\Althingi\Controller\SpeechController::class);
+        $this->assertControllerName(SpeechController::class);
         $this->assertActionName('getList');
         $this->assertResponseStatusCode(206);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchSuccess()
+    #[Test]
+    public function patchSuccess()
     {
         $expectedData = (new Model\Speech())
             ->setSpeechId(4)
@@ -345,7 +330,7 @@ class SpeechControllerTest extends TestCase
             ->setAssemblyId(145)
             ->setIssueId(1)
             ->setCongressmanId(1)
-            ->setKind(KindEnum::A)
+            ->setKind(Model\KindEnum::A)
         ;
 
         $this->getMockService(Service\Speech::class)
@@ -360,7 +345,7 @@ class SpeechControllerTest extends TestCase
                     ->setAssemblyId(145)
                     ->setIssueId(1)
                     ->setCongressmanId(1)
-                    ->setKind(KindEnum::A)
+                    ->setKind(Model\KindEnum::A)
             )
             ->getMock()
 
@@ -378,14 +363,12 @@ class SpeechControllerTest extends TestCase
         $this->assertResponseStatusCode(205);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchInvalid()
+    #[Test]
+    public function patchInvalid()
     {
         $this->getMockService(Service\Speech::class)
             ->shouldReceive('get')
-            ->andReturn((new Model\Speech())->setKind(KindEnum::A))
+            ->andReturn((new Model\Speech())->setKind(Model\KindEnum::A))
             ->getMock();
 
         $this->dispatch('/loggjafarthing/144/thingmal/a/3/raedur/4', 'PATCH', [
@@ -395,10 +378,8 @@ class SpeechControllerTest extends TestCase
         $this->assertResponseStatusCode(400);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchNotFound()
+    #[Test]
+    public function patchNotFound()
     {
         $this->getMockService(Service\Speech::class)
             ->shouldReceive('get')
@@ -410,10 +391,8 @@ class SpeechControllerTest extends TestCase
         $this->assertResponseStatusCode(404);
     }
 
-    /**
-     * @covers ::options
-     */
-    public function testOptions()
+    #[Test]
+    public function optionsSuccessful()
     {
         $this->dispatch('/loggjafarthing/144/thingmal/a/3/raedur/4', 'OPTIONS');
 
@@ -426,10 +405,8 @@ class SpeechControllerTest extends TestCase
         $this->assertCount(0, array_diff($expectedMethods, $actualMethods));
     }
 
-    /**
-     * @covers ::optionsList
-     */
-    public function testOptionsList()
+    #[Test]
+    public function optionsList()
     {
         $this->dispatch('/loggjafarthing/144/thingmal/a/3/raedur', 'OPTIONS');
 

@@ -35,6 +35,7 @@ class CategoryController implements
         $category = $this->categoryService->get(
             $request->getAttribute('category_id')
         );
+
         return $category
             ? new JsonResponse($category, 200)
             : new EmptyResponse(404);
@@ -49,6 +50,7 @@ class CategoryController implements
         $categories = $this->categoryService->fetch(
             $request->getAttribute('super_category_id')
         );
+
         return new JsonResponse($categories, 206);
     }
 
@@ -82,7 +84,11 @@ class CategoryController implements
      */
     public function patch(ServerRequest $request): ResponseInterface
     {
-        if (($category = $this->categoryService->get($request->getAttribute('category_id'))) != null) {
+        if (
+            ($category = $this->categoryService->get(
+                $request->getAttribute('category_id')
+            )) != null
+        ) {
             $form = new Form\Category([
                 ...$category->toArray(),
                 ...$request->getParsedBody(),
@@ -107,8 +113,9 @@ class CategoryController implements
      */
     public function assemblySummaryAction(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id');
-        $categorySummary = $this->categoryService->fetchByAssembly($assemblyId);
+        $categorySummary = $this->categoryService->fetchByAssembly(
+            $request->getAttribute('id')
+        );
 
         return new JsonResponse($categorySummary, 206);
     }

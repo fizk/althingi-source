@@ -3,7 +3,7 @@
 namespace Althingi\Presenters;
 
 use Althingi\Model\ModelInterface;
-use Laminas\Hydrator\HydratorInterface;
+use Althingi\Utils\HydratorInterface;
 
 interface IndexablePresenter
 {

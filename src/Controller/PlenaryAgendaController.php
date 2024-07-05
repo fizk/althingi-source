@@ -36,11 +36,11 @@ class PlenaryAgendaController implements
      */
     public function get(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id');
-        $plenaryId  = $request->getAttribute('plenary_id');
-        $itemId  = $request->getAttribute('item_id');
-
-        $item = $this->plenaryAgendaService->get($assemblyId, $plenaryId, $itemId);
+        $item = $this->plenaryAgendaService->get(
+            $request->getAttribute('id'),
+            $request->getAttribute('plenary_id'),
+            $request->getAttribute('item_id')
+        );
         return $item
             ? new JsonResponse($item)
             : new EmptyResponse(404);
@@ -52,10 +52,10 @@ class PlenaryAgendaController implements
      */
     public function getList(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id');
-        $plenaryId  = $request->getAttribute('plenary_id');
-
-        $agenda = $this->plenaryAgendaService->fetch($assemblyId, $plenaryId);
+        $agenda = $this->plenaryAgendaService->fetch(
+            $request->getAttribute('id'),
+            $request->getAttribute('plenary_id')
+        );
 
         return new JsonResponse($agenda, 206);
     }
@@ -68,13 +68,11 @@ class PlenaryAgendaController implements
      */
     public function put(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id');
-        $plenaryId  = $request->getAttribute('plenary_id');
         $form = new Form\PlenaryAgenda([
             ...$request->getParsedBody(),
             'item_id' => $request->getAttribute('item_id'),
-            'assembly_id' => $assemblyId,
-            'plenary_id' => $plenaryId,
+            'assembly_id' => $request->getAttribute('id'),
+            'plenary_id' => $request->getAttribute('plenary_id'),
         ]);
 
         if ($form->isValid()) {

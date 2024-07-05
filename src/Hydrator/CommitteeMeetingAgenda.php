@@ -3,18 +3,17 @@
 namespace Althingi\Hydrator;
 
 use Althingi\Model\KindEnum;
-use Laminas\Hydrator\HydratorInterface;
+use Althingi\Utils\HydratorInterface;
 
 class CommitteeMeetingAgenda implements HydratorInterface
 {
     /**
-     * Hydrate $object with the provided $data.
      *
-     * @param  array $data
-     * @param  \Althingi\Model\CommitteeMeetingAgenda $object
+     * @param array $data
+     * @param \Althingi\Model\CommitteeMeetingAgenda $object
      * @return \Althingi\Model\CommitteeMeetingAgenda
      */
-    public function hydrate(array $data, $object)
+    public function hydrate(array $data, object $object): object
     {
         return $object
             ->setCommitteeMeetingAgendaId($data['committee_meeting_agenda_id'])
@@ -25,14 +24,12 @@ class CommitteeMeetingAgenda implements HydratorInterface
             ->setTitle(isset($data['title']) ? $data['title'] : null);
     }
 
-
     /**
-     * Extract values from an object
      *
-     * @param  \Althingi\Model\CommitteeMeetingAgenda $object
+     * @param \Althingi\Model\CommitteeMeetingAgenda $object
      * @return array
      */
-    public function extract($object): array
+    public function extract(object $object): array
     {
         return $object->toArray();
     }

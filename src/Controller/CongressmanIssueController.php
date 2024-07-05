@@ -30,9 +30,9 @@ class CongressmanIssueController implements
      */
     public function getList(ServerRequest $request): ResponseInterface
     {
-        $congressmanId = $request->getAttribute('congressman_id');
-
-        $issues = $this->issueService->fetchByCongressman($congressmanId);
+        $issues = $this->issueService->fetchByCongressman(
+            $request->getAttribute('congressman_id')
+        );
 
         return new JsonResponse($issues, 206);
     }

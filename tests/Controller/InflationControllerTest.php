@@ -2,59 +2,57 @@
 
 namespace Althingi\Controller;
 
+use Althingi\{Model, Service};
 use Althingi\Controller\InflationController;
-use Althingi\Model\Inflation as InflationModel;
-use Althingi\Service\Assembly;
-use Althingi\Service\Cabinet;
-use Althingi\Service\Inflation;
 use Althingi\ServiceHelper;
 use DateTime;
 use Library\Container\Container;
 use Mockery;
+use PHPUnit\Framework\Attributes\{CoversMethod, CoversClass, Test, Before, After};
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class InflationControllerTest
- * @package Althingi\Controller
- * @coversDefaultClass \Althingi\Controller\InflationController
- *
- * @covers \Althingi\Controller\InflationController::setInflationService
- * @covers \Althingi\Controller\InflationController::setCabinetService
- * @covers \Althingi\Controller\InflationController::setAssemblyService
- */
+#[CoversClass(InflationController::class)]
+#[CoversMethod(InflationController::class, 'setInflationService')]
+#[CoversMethod(InflationController::class, 'setCabinetService')]
+#[CoversMethod(InflationController::class, 'setAssemblyService')]
+#[CoversMethod(InflationController::class, 'fetchAssemblyAction')]
+#[CoversMethod(InflationController::class, 'get')]
+#[CoversMethod(InflationController::class, 'getList')]
+#[CoversMethod(InflationController::class, 'patch')]
+#[CoversMethod(InflationController::class, 'put')]
 class InflationControllerTest extends TestCase
 {
     use ServiceHelper;
 
-    public function setUp(): void
+    #[Before]
+    public function up(): void
     {
         $this->setServiceManager(
             new Container(require __DIR__ . '/../../config/service.php')
         );
         $this->buildServices([
-            Inflation::class,
-            Cabinet::class,
-            Assembly::class,
+            Service\Inflation::class,
+            Service\Cabinet::class,
+            Service\Assembly::class,
         ]);
     }
 
-    public function tearDown(): void
+    #[After]
+    public function down(): void
     {
         $this->destroyServices();
         Mockery::close();
         parent::tearDown();
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGet()
+    #[Test]
+    public function getSuccessful()
     {
-        $this->getMockService(Inflation::class)
+        $this->getMockService(Service\Inflation::class)
             ->shouldReceive('get')
             ->withArgs([14])
             ->andReturn(
-                (new InflationModel())
+                (new Model\Inflation())
                     ->setId(1)
                     ->setValue(1)
                     ->setDate(new \DateTime())
@@ -69,12 +67,10 @@ class InflationControllerTest extends TestCase
         $this->assertResponseStatusCode(200);
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGetNotFound()
+    #[Test]
+    public function getNotFound()
     {
-        $this->getMockService(Inflation::class)
+        $this->getMockService(Service\Inflation::class)
             ->shouldReceive('get')
             ->withArgs([14])
             ->andReturn(null)
@@ -88,32 +84,30 @@ class InflationControllerTest extends TestCase
         $this->assertResponseStatusCode(404);
     }
 
-    /**
-     * @covers ::getList
-     */
-    public function testGetList()
+    #[Test]
+    public function getList()
     {
-        $this->getMockService(Inflation::class)
+        $this->getMockService(Service\Inflation::class)
             ->shouldReceive('fetchAll')
+            ->once()
             ->andReturn([
-                (new InflationModel())
+                (new Model\Inflation())
                     ->setId(1)
                     ->setValue(1)
                     ->setDate(new \DateTime()),
-                (new InflationModel())
+                (new Model\Inflation())
                     ->setId(1)
                     ->setValue(1)
                     ->setDate(new \DateTime()),
-                (new InflationModel())
+                (new Model\Inflation())
                     ->setId(1)
                     ->setValue(1)
                     ->setDate(new \DateTime()),
-                (new InflationModel())
+                (new Model\Inflation())
                     ->setId(1)
                     ->setValue(1)
                     ->setDate(new \DateTime()),
             ])
-            ->once()
             ->getMock();
 
         $this->dispatch('/verdbolga', 'GET');
@@ -123,42 +117,40 @@ class InflationControllerTest extends TestCase
         $this->assertResponseStatusCode(206);
     }
 
-    /**
-     * @covers ::getList
-     */
-    public function testGetListWithAssembly()
+    #[Test]
+    public function getListWithAssembly()
     {
-        $this->getMockService(Cabinet::class)
+        $this->getMockService(Service\Cabinet::class)
             ->shouldReceive('fetchByAssembly')
+            ->once()
             ->andReturn([
-                (new \Althingi\Model\Cabinet())
+                (new Model\Cabinet())
                     ->setFrom(new DateTime())
                     ->setTo(new DateTime()),
             ])
-            ->once()
             ->getMock();
 
-        $this->getMockService(Inflation::class)
+        $this->getMockService(Service\Inflation::class)
             ->shouldReceive('fetchAll')
+            ->once()
             ->andReturn([
-                (new InflationModel())
+                (new Model\Inflation())
                     ->setId(1)
                     ->setValue(1)
                     ->setDate(new \DateTime()),
-                (new InflationModel())
+                (new Model\Inflation())
                     ->setId(1)
                     ->setValue(1)
                     ->setDate(new \DateTime()),
-                (new InflationModel())
+                (new Model\Inflation())
                     ->setId(1)
                     ->setValue(1)
                     ->setDate(new \DateTime()),
-                (new InflationModel())
+                (new Model\Inflation())
                     ->setId(1)
                     ->setValue(1)
                     ->setDate(new \DateTime()),
             ])
-            ->once()
             ->getMock();
 
         $this->dispatch('/verdbolga?loggjafarthing=1', 'GET');
@@ -168,51 +160,49 @@ class InflationControllerTest extends TestCase
         $this->assertResponseStatusCode(206);
     }
 
-    /**
-     * @covers ::fetchAssemblyAction
-     */
-    public function testFetchAssembly()
+    #[Test]
+    public function fetchAssembly()
     {
-        $this->getMockService(Assembly::class)
+        $this->getMockService(Service\Assembly::class)
             ->shouldReceive('get')
+            ->once()
             ->andReturn(
-                (new \Althingi\Model\Assembly())
+                (new Model\Assembly())
                     ->setAssemblyId(1)
                     ->setFrom(new DateTime())
                     ->setTo(new DateTime())
             )
-            ->once()
             ->getMock();
 
-        $this->getMockService(Cabinet::class)
+        $this->getMockService(Service\Cabinet::class)
             ->shouldReceive('fetchByAssembly')
-            ->andReturn([
-                (new \Althingi\Model\Cabinet())
-            ])
             ->once()
+            ->andReturn([
+                (new Model\Cabinet())
+            ])
             ->getMock();
 
-        $this->getMockService(Inflation::class)
+        $this->getMockService(Service\Inflation::class)
             ->shouldReceive('fetchAll')
+            ->once()
             ->andReturn([
-                (new InflationModel())
+                (new Model\Inflation())
                     ->setId(1)
                     ->setValue(1)
                     ->setDate(new \DateTime()),
-                (new InflationModel())
+                (new Model\Inflation())
                     ->setId(1)
                     ->setValue(1)
                     ->setDate(new \DateTime()),
-                (new InflationModel())
+                (new Model\Inflation())
                     ->setId(1)
                     ->setValue(1)
                     ->setDate(new \DateTime()),
-                (new InflationModel())
+                (new Model\Inflation())
                     ->setId(1)
                     ->setValue(1)
                     ->setDate(new \DateTime()),
             ])
-            ->once()
             ->getMock();
 
         $this->dispatch('/loggjafarthing/1/verdbolga', 'GET');
@@ -222,12 +212,10 @@ class InflationControllerTest extends TestCase
         $this->assertResponseStatusCode(206);
     }
 
-    /**
-     * @covers ::put
-     */
-    public function testPut()
+    #[Test]
+    public function putSuccessful()
     {
-        $this->getMockService(Inflation::class)
+        $this->getMockService(Service\Inflation::class)
             ->shouldReceive('save')
             ->andReturn(1)
             ->getMock();
@@ -242,19 +230,17 @@ class InflationControllerTest extends TestCase
         $this->assertResponseStatusCode(201);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatch()
+    #[Test]
+    public function patchSuccessful()
     {
-        $this->getMockService(Inflation::class)
+        $this->getMockService(Service\Inflation::class)
             ->shouldReceive('update')
             ->andReturn(1)
             ->getMock()
 
             ->shouldReceive('get')
             ->andReturn(
-                (new InflationModel())
+                (new Model\Inflation())
                 ->setId(1)
                 ->setValue(0)
                 ->setDate(new DateTime())

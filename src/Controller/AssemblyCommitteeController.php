@@ -32,8 +32,9 @@ class AssemblyCommitteeController implements
      */
     public function get(ServerRequest $request): ResponseInterface
     {
-        $committeeId = $request->getAttribute('committee_id');
-        $committee = $this->committeeService->get($committeeId);
+        $committee = $this->committeeService->get(
+            $request->getAttribute('committee_id')
+        );
 
         return $committee
             ? new JsonResponse($committee, 200)
@@ -48,8 +49,9 @@ class AssemblyCommitteeController implements
      */
     public function getList(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id');
-        $committees = $this->committeeService->fetchByAssembly($assemblyId);
+        $committees = $this->committeeService->fetchByAssembly(
+            $request->getAttribute('id')
+        );
 
         return new JsonResponse($committees, 206);
     }

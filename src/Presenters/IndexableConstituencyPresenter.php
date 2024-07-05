@@ -4,7 +4,7 @@ namespace Althingi\Presenters;
 
 use Althingi\Model\Constituency;
 use Althingi\Model\ModelInterface;
-use Laminas\Hydrator\HydratorInterface;
+use Althingi\Utils\HydratorInterface;
 
 class IndexableConstituencyPresenter implements IndexablePresenter
 {

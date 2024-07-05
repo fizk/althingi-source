@@ -2,46 +2,46 @@
 
 namespace Althingi\Controller;
 
+use Althingi\{Model, Service};
 use Althingi\Controller\SessionController;
-use Althingi\Service\Session;
 use Althingi\ServiceHelper;
 use DateTime;
 use Library\Container\Container;
+use PHPUnit\Framework\Attributes\{CoversMethod, CoversClass, Test, Before, After};
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class SessionControllerTest
- * @package Althingi\Controller
- * @coversDefaultClass \Althingi\Controller\SessionController
- *
- * @covers \Althingi\Controller\SessionController::setSessionService
- */
+#[CoversClass(SessionController::class)]
+#[CoversMethod(SessionController::class, 'setSessionService')]
+#[CoversMethod(SessionController::class, 'get')]
+#[CoversMethod(SessionController::class, 'getList')]
+#[CoversMethod(SessionController::class, 'patch')]
+#[CoversMethod(SessionController::class, 'post')]
 class SessionControllerTest extends TestCase
 {
     use ServiceHelper;
 
-    public function setUp(): void
+    #[Before]
+    public function up(): void
     {
         $this->setServiceManager(
             new Container(require __DIR__ . '/../../config/service.php')
         );
         $this->buildServices([
-            Session::class,
+            Service\Session::class,
         ]);
     }
 
-    public function tearDown(): void
+    #[After]
+    public function down(): void
     {
         \Mockery::close();
         parent::tearDown();
     }
 
-    /**
-     * @covers ::post
-     */
-    public function testCreateSuccess()
+    #[Test]
+    public function createSuccess()
     {
-        $expectedObject = (new \Althingi\Model\Session())
+        $expectedObject = (new Model\Session())
             ->setConstituencyId(1)
             ->setCongressmanId(2)
             ->setAssemblyId(1)
@@ -50,7 +50,7 @@ class SessionControllerTest extends TestCase
             ->setType('varamadur')
             ->setPartyId(4);
 
-        $this->getMockService(Session::class)
+        $this->getMockService(Service\Session::class)
             ->shouldReceive('create')
             ->with(\Mockery::on(function ($actualData) use ($expectedObject) {
                 return $actualData == $expectedObject;
@@ -74,23 +74,21 @@ class SessionControllerTest extends TestCase
         $this->assertActionName('post');
     }
 
-    /**
-     * @covers ::post
-     */
-    public function testCreateEntryAlreadyExists()
+    #[Test]
+    public function createEntryAlreadyExists()
     {
         $exception = new \PDOException();
         $exception->errorInfo = ['', 1062, ''];
 
-        $this->getMockService(Session::class)
+        $this->getMockService(Service\Session::class)
             ->shouldReceive('create')
             ->andThrow($exception)
             ->once()
             ->getMock()
 
             ->shouldReceive('getIdentifier')
-            ->andReturn(54321)
             ->once()
+            ->andReturn(54321)
         ;
 
         $this->dispatch('/thingmenn/2/thingseta', 'POST', [
@@ -108,12 +106,10 @@ class SessionControllerTest extends TestCase
         $this->assertActionName('post');
     }
 
-    /**
-     * @covers ::post
-     */
-    public function testCreateInvalid()
+    #[Test]
+    public function createInvalid()
     {
-        $this->getMockService(Session::class)
+        $this->getMockService(Service\Session::class)
             ->shouldReceive('create')
             ->andReturnNull()
             ->getMock();
@@ -131,12 +127,10 @@ class SessionControllerTest extends TestCase
         $this->assertActionName('post');
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchSuccess()
+    #[Test]
+    public function patchSuccess()
     {
-        $serviceReturnedData = (new \Althingi\Model\Session())
+        $serviceReturnedData = (new Model\Session())
             ->setSessionId(555)
             ->setConstituencyId(1)
             ->setCongressmanId(2)
@@ -146,7 +140,7 @@ class SessionControllerTest extends TestCase
             ->setType('varamadur')
             ->setPartyId(4);
 
-        $expectedObject = (new \Althingi\Model\Session())
+        $expectedObject = (new Model\Session())
             ->setSessionId(555)
             ->setConstituencyId(1)
             ->setCongressmanId(2)
@@ -156,7 +150,7 @@ class SessionControllerTest extends TestCase
             ->setType('new type')
             ->setPartyId(4);
 
-        $this->getMockService(Session::class)
+        $this->getMockService(Service\Session::class)
             ->shouldReceive('get')
             ->with(555)
             ->andReturn($serviceReturnedData)
@@ -180,12 +174,10 @@ class SessionControllerTest extends TestCase
         $this->assertActionName('patch');
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchInvalidParams()
+    #[Test]
+    public function patchInvalidParams()
     {
-        $serviceReturnedData = (new \Althingi\Model\Session())
+        $serviceReturnedData = (new Model\Session())
             ->setSessionId(555)
             ->setConstituencyId(1)
             ->setCongressmanId(2)
@@ -195,7 +187,7 @@ class SessionControllerTest extends TestCase
             ->setType('varamadur')
             ->setPartyId(4);
 
-        $this->getMockService(Session::class)
+        $this->getMockService(Service\Session::class)
             ->shouldReceive('get')
             ->with(555)
             ->andReturn($serviceReturnedData)
@@ -215,12 +207,10 @@ class SessionControllerTest extends TestCase
         $this->assertActionName('patch');
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchNotFound()
+    #[Test]
+    public function patchNotFound()
     {
-        $this->getMockService(Session::class)
+        $this->getMockService(Service\Session::class)
             ->shouldReceive('get')
             ->with(555)
             ->andReturn(null)
@@ -240,15 +230,13 @@ class SessionControllerTest extends TestCase
         $this->assertActionName('patch');
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGet()
+    #[Test]
+    public function getSuccessful()
     {
-        $this->getMockService(Session::class)
+        $this->getMockService(Service\Session::class)
             ->shouldReceive('get')
             ->andReturn(
-                (new \Althingi\Model\Session())
+                (new Model\Session())
                     ->setCongressmanId(1)
                     ->setConstituencyId(2)
                     ->setAssemblyId(4)
@@ -262,12 +250,10 @@ class SessionControllerTest extends TestCase
         $this->assertActionName('get');
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGetNotFound()
+    #[Test]
+    public function getNotFound()
     {
-        $this->getMockService(Session::class)
+        $this->getMockService(Service\Session::class)
             ->shouldReceive('get')
             ->andReturn(null)
             ->getMock();
@@ -278,12 +264,10 @@ class SessionControllerTest extends TestCase
         $this->assertActionName('get');
     }
 
-    /**
-     * @covers ::getList
-     */
-    public function testGetList()
+    #[Test]
+    public function getList()
     {
-        $this->getMockService(Session::class)
+        $this->getMockService(Service\Session::class)
             ->shouldReceive('fetchByCongressman')
             ->andReturn([])
             ->getMock();

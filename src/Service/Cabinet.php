@@ -112,7 +112,6 @@ class Cabinet implements DatabaseAwareInterface, EventsAwareInterface
 
     /**
      * @return \Althingi\Model\Cabinet[]
-     * @deprecated
      */
     public function fetchByAssembly(int $assemblyId): array
     {

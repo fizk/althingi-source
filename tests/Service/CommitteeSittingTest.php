@@ -2,25 +2,23 @@
 
 namespace Althingi\Service;
 
-use PHPUnit\Framework\TestCase;
-use Althingi\DatabaseConnection;
-use Althingi\Service\CommitteeSitting;
-use Althingi\Model;
+use Althingi\DatabaseConnectionTrait;
 use Althingi\Events\{UpdateEvent, AddEvent};
-use Psr\EventDispatcher\EventDispatcherInterface;
+use Althingi\Model;
 use Mockery;
-use PDO;
+use PHPUnit\Framework\Attributes\{Test};
+use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class CommitteeSittingTest extends TestCase
 {
-    use DatabaseConnection;
+    use DatabaseConnectionTrait;
 
-    private PDO $pdo;
-
-    public function testGet()
+    #[Test]
+    public function getSuccess()
     {
         $committeeSitting = new CommitteeSitting();
-        $committeeSitting->setDriver($this->pdo);
+        $committeeSitting->setDriver($this->getPDO());
 
         $expectedData = (new Model\CommitteeSitting())
             ->setCommitteeSittingId(1)
@@ -37,10 +35,11 @@ class CommitteeSittingTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchByCongressman()
+    #[Test]
+    public function fetchByCongressman()
     {
         $committeeSitting = new CommitteeSitting();
-        $committeeSitting->setDriver($this->pdo);
+        $committeeSitting->setDriver($this->getPDO());
 
         $expectedData = [
             (new Model\CommitteeSitting())
@@ -60,10 +59,11 @@ class CommitteeSittingTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchByCongressmanNotFound()
+    #[Test]
+    public function fetchByCongressmanNotFound()
     {
         $committeeSitting = new CommitteeSitting();
-        $committeeSitting->setDriver($this->pdo);
+        $committeeSitting->setDriver($this->getPDO());
 
         $expectedData = [];
 
@@ -72,8 +72,10 @@ class CommitteeSittingTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testCreate()
+    #[Test]
+    public function createSuccess()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -121,15 +123,17 @@ class CommitteeSittingTest extends TestCase
         );
 
         $committeeSitting = new CommitteeSitting();
-        $committeeSitting->setDriver($this->pdo)
+        $committeeSitting->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher);
         $committeeSitting->create($sitting);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testUpdate()
+    #[Test]
+    public function updateSuccess()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -168,15 +172,17 @@ class CommitteeSittingTest extends TestCase
         );
 
         $committeeSitting = new CommitteeSitting();
-        $committeeSitting->setDriver($this->pdo)
+        $committeeSitting->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher);
         $committeeSitting->update($sitting);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testCreateFireEventOne()
+    #[Test]
+    public function createFireEventOne()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -197,12 +203,15 @@ class CommitteeSittingTest extends TestCase
 
 
         $committeeSitting = new CommitteeSitting();
-        $committeeSitting->setDriver($this->pdo)
+        $committeeSitting->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher);
         $committeeSitting->create($sitting);
     }
-    public function testUpdateFireEventZero()
+
+    #[Test]
+    public function updateFireEventZero()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -224,13 +233,15 @@ class CommitteeSittingTest extends TestCase
         ;
 
         $committeeSitting = new CommitteeSitting();
-        $committeeSitting->setDriver($this->pdo)
+        $committeeSitting->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher);
         $committeeSitting->update($sitting);
     }
 
-    public function testUpdateFireEventOne()
+    #[Test]
+    public function updateFireEventOne()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -252,7 +263,7 @@ class CommitteeSittingTest extends TestCase
         ;
 
         $committeeSitting = new CommitteeSitting();
-        $committeeSitting->setDriver($this->pdo)
+        $committeeSitting->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher);
         $committeeSitting->update($sitting);
     }

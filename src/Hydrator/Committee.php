@@ -2,18 +2,17 @@
 
 namespace Althingi\Hydrator;
 
-use Laminas\Hydrator\HydratorInterface;
+use Althingi\Utils\HydratorInterface;
 
 class Committee implements HydratorInterface
 {
     /**
-     * Hydrate $object with the provided $data.
      *
-     * @param  array $data
-     * @param  \Althingi\Model\Committee $object
+     * @param array $data
+     * @param \Althingi\Model\Committee $object
      * @return \Althingi\Model\Committee
      */
-    public function hydrate(array $data, $object)
+    public function hydrate(array $data, object $object): object
     {
         return $object
             ->setName($data['name'] ? : null)
@@ -24,14 +23,12 @@ class Committee implements HydratorInterface
             ->setLastAssemblyId(isset($data['last_assembly_id']) ? $data['last_assembly_id'] : null);
     }
 
-
     /**
-     * Extract values from an object
      *
-     * @param  \Althingi\Model\Committee $object
+     * @param \Althingi\Model\Committee $object
      * @return array
      */
-    public function extract($object): array
+    public function extract(object $object): array
     {
         return $object->toArray();
     }

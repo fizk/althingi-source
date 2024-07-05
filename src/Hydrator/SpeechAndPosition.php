@@ -5,13 +5,12 @@ namespace Althingi\Hydrator;
 class SpeechAndPosition extends Speech
 {
     /**
-     * Hydrate $object with the provided $data.
      *
-     * @param  array $data
-     * @param  \Althingi\Model\SpeechAndPosition $object
-     * @return \Althingi\Model\SpeechAndPosition $object
+     * @param array $data
+     * @param \Althingi\Model\SpeechAndPosition $object
+     * @return \Althingi\Model\SpeechAndPosition
      */
-    public function hydrate(array $data, $object)
+    public function hydrate(array $data, object $object): object
     {
         return parent::hydrate($data, $object)
             // FIXME this method doesn't exist

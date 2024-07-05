@@ -154,9 +154,10 @@ class MinisterSittingController implements
      */
     public function assemblySessionsAction(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id', 0);
-        $congressmanId = $request->getAttribute('congressman_id', 0);
-        $sittings = $this->ministerSittingService->fetchByCongressmanAssembly($assemblyId, $congressmanId);
+        $sittings = $this->ministerSittingService->fetchByCongressmanAssembly(
+            $request->getAttribute('id', 0),
+            $request->getAttribute('congressman_id', 0)
+        );
 
         return new JsonResponse($sittings, 206);
     }

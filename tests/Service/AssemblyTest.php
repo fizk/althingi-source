@@ -2,27 +2,31 @@
 
 namespace Althingi\Service;
 
-use PHPUnit\Framework\TestCase;
-use Althingi\DatabaseConnection;
-use Althingi\Service\{President, Assembly};
-use Althingi\Model\Assembly as AssemblyModel;
+use Althingi\{Model, Service};
+use Althingi\DatabaseConnectionTrait;
 use Althingi\Events\{UpdateEvent, AddEvent};
-use Psr\EventDispatcher\EventDispatcherInterface;
 use Mockery;
-use PDO;
+use PHPUnit\Framework\Attributes\{Test, After};
+use PHPUnit\Framework\TestCase;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 class AssemblyTest extends TestCase
 {
-    use DatabaseConnection;
+    use DatabaseConnectionTrait;
 
-    private PDO $pdo;
-
-    public function testGet()
+    #[After]
+    public function down(): void
     {
-        $assemblyService = new Assembly();
-        $assemblyService->setDriver($this->pdo);
+        Mockery::close();
+    }
 
-        $expectedData = (new AssemblyModel())
+    #[Test]
+    public function getSuccessfull()
+    {
+        $assemblyService = new Service\Assembly();
+        $assemblyService->setDriver($this->getPDO());
+
+        $expectedData = (new Model\Assembly())
             ->setAssemblyId(1)
             ->setFrom(new \DateTime('2000-01-01'));
 
@@ -31,92 +35,98 @@ class AssemblyTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testGetNotFound()
+    #[Test]
+    public function getNotFound()
     {
-        $assemblyService = new President();
-        $assemblyService->setDriver($this->pdo);
+        $assemblyService = new Service\President();
+        $assemblyService->setDriver($this->getPDO());
 
         $actualData = $assemblyService->get(100);
 
         $this->assertNull($actualData);
     }
 
-    public function testFetch()
+    #[Test]
+    public function fetch()
     {
-        $assemblyService = new Assembly();
-        $assemblyService->setDriver($this->pdo);
+        $assemblyService = new Service\Assembly();
+        $assemblyService->setDriver($this->getPDO());
 
         $expectedData = [
-            (new AssemblyModel())->setAssemblyId(1)->setFrom(new \DateTime('2000-01-01')),
-            (new AssemblyModel())->setAssemblyId(2)->setFrom(new \DateTime('2000-01-01')),
-            (new AssemblyModel())->setAssemblyId(3)->setFrom(new \DateTime('2000-01-01')),
-            (new AssemblyModel())->setAssemblyId(4)->setFrom(new \DateTime('2000-01-01')),
-            (new AssemblyModel())->setAssemblyId(5)->setFrom(new \DateTime('2000-01-01')),
-            (new AssemblyModel())->setAssemblyId(6)->setFrom(new \DateTime('2000-01-01')),
-            (new AssemblyModel())->setAssemblyId(7)->setFrom(new \DateTime('2000-01-01')),
-            (new AssemblyModel())->setAssemblyId(8)->setFrom(new \DateTime('2000-01-01')),
-            (new AssemblyModel())->setAssemblyId(9)->setFrom(new \DateTime('2000-01-01')),
+            (new Model\Assembly())->setAssemblyId(1)->setFrom(new \DateTime('2000-01-01')),
+            (new Model\Assembly())->setAssemblyId(2)->setFrom(new \DateTime('2000-01-01')),
+            (new Model\Assembly())->setAssemblyId(3)->setFrom(new \DateTime('2000-01-01')),
+            (new Model\Assembly())->setAssemblyId(4)->setFrom(new \DateTime('2000-01-01')),
+            (new Model\Assembly())->setAssemblyId(5)->setFrom(new \DateTime('2000-01-01')),
+            (new Model\Assembly())->setAssemblyId(6)->setFrom(new \DateTime('2000-01-01')),
+            (new Model\Assembly())->setAssemblyId(7)->setFrom(new \DateTime('2000-01-01')),
+            (new Model\Assembly())->setAssemblyId(8)->setFrom(new \DateTime('2000-01-01')),
+            (new Model\Assembly())->setAssemblyId(9)->setFrom(new \DateTime('2000-01-01')),
         ];
         $actualData = $assemblyService->fetchAll();
 
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchSubsetFromZero()
+    #[Test]
+    public function fetchSubsetFromZero()
     {
-        $assemblyService = new Assembly();
-        $assemblyService->setDriver($this->pdo);
+        $assemblyService = new Service\Assembly();
+        $assemblyService->setDriver($this->getPDO());
 
         $expectedData = [
-            (new AssemblyModel())->setAssemblyId(1)->setFrom(new \DateTime('2000-01-01')),
-            (new AssemblyModel())->setAssemblyId(2)->setFrom(new \DateTime('2000-01-01')),
-            (new AssemblyModel())->setAssemblyId(3)->setFrom(new \DateTime('2000-01-01')),
-            (new AssemblyModel())->setAssemblyId(4)->setFrom(new \DateTime('2000-01-01')),
-            (new AssemblyModel())->setAssemblyId(5)->setFrom(new \DateTime('2000-01-01')),
-            (new AssemblyModel())->setAssemblyId(6)->setFrom(new \DateTime('2000-01-01')),
-            (new AssemblyModel())->setAssemblyId(7)->setFrom(new \DateTime('2000-01-01')),
-            (new AssemblyModel())->setAssemblyId(8)->setFrom(new \DateTime('2000-01-01')),
-            (new AssemblyModel())->setAssemblyId(9)->setFrom(new \DateTime('2000-01-01')),
+            (new Model\Assembly())->setAssemblyId(1)->setFrom(new \DateTime('2000-01-01')),
+            (new Model\Assembly())->setAssemblyId(2)->setFrom(new \DateTime('2000-01-01')),
+            (new Model\Assembly())->setAssemblyId(3)->setFrom(new \DateTime('2000-01-01')),
+            (new Model\Assembly())->setAssemblyId(4)->setFrom(new \DateTime('2000-01-01')),
+            (new Model\Assembly())->setAssemblyId(5)->setFrom(new \DateTime('2000-01-01')),
+            (new Model\Assembly())->setAssemblyId(6)->setFrom(new \DateTime('2000-01-01')),
+            (new Model\Assembly())->setAssemblyId(7)->setFrom(new \DateTime('2000-01-01')),
+            (new Model\Assembly())->setAssemblyId(8)->setFrom(new \DateTime('2000-01-01')),
+            (new Model\Assembly())->setAssemblyId(9)->setFrom(new \DateTime('2000-01-01')),
         ];
         $actualData = $assemblyService->fetchAll(0);
 
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchSubsetFromFive()
+    #[Test]
+    public function fetchSubsetFromFive()
     {
-        $assemblyService = new Assembly();
-        $assemblyService->setDriver($this->pdo);
+        $assemblyService = new Service\Assembly();
+        $assemblyService->setDriver($this->getPDO());
 
         $expectedData = [
-            (new AssemblyModel())->setAssemblyId(6)->setFrom(new \DateTime('2000-01-01')),
-            (new AssemblyModel())->setAssemblyId(7)->setFrom(new \DateTime('2000-01-01')),
-            (new AssemblyModel())->setAssemblyId(8)->setFrom(new \DateTime('2000-01-01')),
-            (new AssemblyModel())->setAssemblyId(9)->setFrom(new \DateTime('2000-01-01')),
+            (new Model\Assembly())->setAssemblyId(6)->setFrom(new \DateTime('2000-01-01')),
+            (new Model\Assembly())->setAssemblyId(7)->setFrom(new \DateTime('2000-01-01')),
+            (new Model\Assembly())->setAssemblyId(8)->setFrom(new \DateTime('2000-01-01')),
+            (new Model\Assembly())->setAssemblyId(9)->setFrom(new \DateTime('2000-01-01')),
         ];
         $actualData = $assemblyService->fetchAll(5);
 
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchSubset()
+    #[Test]
+    public function fetchSubset()
     {
-        $assemblyService = new Assembly();
-        $assemblyService->setDriver($this->pdo);
+        $assemblyService = new Service\Assembly();
+        $assemblyService->setDriver($this->getPDO());
 
         $expectedData = [
-            (new AssemblyModel())->setAssemblyId(6)->setFrom(new \DateTime('2000-01-01')),
-            (new AssemblyModel())->setAssemblyId(7)->setFrom(new \DateTime('2000-01-01')),
+            (new Model\Assembly())->setAssemblyId(6)->setFrom(new \DateTime('2000-01-01')),
+            (new Model\Assembly())->setAssemblyId(7)->setFrom(new \DateTime('2000-01-01')),
         ];
         $actualData = $assemblyService->fetchAll(5, 2);
 
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testFetchEmpty()
+    #[Test]
+    public function fetchEmpty()
     {
-        $assemblyService = new Assembly();
-        $assemblyService->setDriver($this->pdo);
+        $assemblyService = new Service\Assembly();
+        $assemblyService->setDriver($this->getPDO());
 
         $expectedData = [];
         $actualData = $assemblyService->fetchAll(10, 25);
@@ -124,8 +134,10 @@ class AssemblyTest extends TestCase
         $this->assertEquals($expectedData, $actualData);
     }
 
-    public function testCreate()
+    #[Test]
+    public function create()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -134,7 +146,7 @@ class AssemblyTest extends TestCase
             })
             ->getMock();
 
-        $assembly = (new AssemblyModel())
+        $assembly = (new Model\Assembly())
             ->setAssemblyId(10)
             ->setFrom(new \DateTime('2000-01-01'));
 
@@ -154,16 +166,18 @@ class AssemblyTest extends TestCase
         ])->getTable('Assembly');
         $actualTable = $this->getConnection()->createQueryTable('Assembly', 'SELECT * FROM Assembly');
 
-        $assemblyService = new Assembly();
-        $assemblyService->setDriver($this->pdo)
+        $assemblyService = new Service\Assembly();
+        $assemblyService->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher);
         $assemblyService->create($assembly);
 
         $this->assertTablesEqual($expectedTable, $actualTable);
     }
 
-    public function testSaveUpdate()
+    #[Test]
+    public function saveUpdate()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -172,7 +186,7 @@ class AssemblyTest extends TestCase
             })
             ->getMock();
 
-        $assembly = (new AssemblyModel())
+        $assembly = (new Model\Assembly())
             ->setAssemblyId(1)
             ->setFrom(new \DateTime('2000-01-01'));
 
@@ -191,8 +205,8 @@ class AssemblyTest extends TestCase
         ])->getTable('Assembly');
         $actualTable = $this->getConnection()->createQueryTable('Assembly', 'SELECT * FROM Assembly');
 
-        $assemblyService = new Assembly();
-        $assemblyService->setDriver($this->pdo)
+        $assemblyService = new Service\Assembly();
+        $assemblyService->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher);
         $affectedRows = $assemblyService->save($assembly);
 
@@ -200,8 +214,10 @@ class AssemblyTest extends TestCase
         $this->assertEquals(0, $affectedRows);
     }
 
-    public function testSaveCreate()
+    #[Test]
+    public function saveCreate()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -210,7 +226,7 @@ class AssemblyTest extends TestCase
             })
             ->getMock();
 
-        $assembly = (new AssemblyModel())
+        $assembly = (new Model\Assembly())
             ->setAssemblyId(10)
             ->setFrom(new \DateTime('2000-01-01'));
 
@@ -230,8 +246,8 @@ class AssemblyTest extends TestCase
         ])->getTable('Assembly');
         $actualTable = $this->getConnection()->createQueryTable('Assembly', 'SELECT * FROM Assembly');
 
-        $assemblyService = new Assembly();
-        $assemblyService->setDriver($this->pdo)
+        $assemblyService = new Service\Assembly();
+        $assemblyService->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher);
         $affectedRows = $assemblyService->save($assembly);
 
@@ -239,8 +255,10 @@ class AssemblyTest extends TestCase
         $this->assertEquals(1, $affectedRows);
     }
 
-    public function testUpdate()
+    #[Test]
+    public function update()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -249,13 +267,13 @@ class AssemblyTest extends TestCase
             })
             ->getMock();
 
-        $assembly = (new AssemblyModel())
+        $assembly = (new Model\Assembly())
             ->setAssemblyId(1)
             ->setFrom(new \DateTime('2000-01-01'))
             ->setTo(new \DateTime('2000-02-01'));
 
-        $assemblyService = new Assembly();
-        $assemblyService->setDriver($this->pdo)
+        $assemblyService = new Service\Assembly();
+        $assemblyService->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher);
         $assemblyService->update($assembly);
 
@@ -277,16 +295,19 @@ class AssemblyTest extends TestCase
         $this->assertTablesEqual($expectedTable, $queryTable);
     }
 
-    public function testCount()
+    #[Test]
+    public function countSuccess()
     {
-        $assemblyService = new Assembly();
-        $assemblyService->setDriver($this->pdo);
+        $assemblyService = new Service\Assembly();
+        $assemblyService->setDriver($this->getPDO());
 
         $this->assertEquals(9, $assemblyService->count());
     }
 
-    public function testCreateEventFiredRowsOne()
+    #[Test]
+    public function createEventFiredRowsOne()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -296,20 +317,22 @@ class AssemblyTest extends TestCase
             })
             ->getMock();
 
-        $assembly = (new AssemblyModel())
+        $assembly = (new Model\Assembly())
             ->setAssemblyId(10)
             ->setFrom(new \DateTime('2000-01-01'))
             ->setTo(null);
 
 
-        $assemblyService = new Assembly();
-        $assemblyService->setDriver($this->pdo)
+        $assemblyService = new Service\Assembly();
+        $assemblyService->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher);
         $assemblyService->create($assembly);
     }
 
-    public function testUpdateFireEventRowsOne()
+    #[Test]
+    public function updateFireEventRowsOne()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -319,18 +342,19 @@ class AssemblyTest extends TestCase
             })
             ->getMock();
 
-        $assembly = (new AssemblyModel())
+        $assembly = (new Model\Assembly())
             ->setAssemblyId(1)
             ->setFrom(new \DateTime('2000-01-01'))
             ->setTo(new \DateTime('2000-01-01'));
 
-        $assemblyService = new Assembly();
-        $assemblyService->setDriver($this->pdo)
+        $assemblyService = new Service\Assembly();
+        $assemblyService->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher);
         $assemblyService->update($assembly);
     }
     public function testUpdateFireEventRowsZero()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -340,19 +364,21 @@ class AssemblyTest extends TestCase
             })
             ->getMock();
 
-        $assembly = (new AssemblyModel())
+        $assembly = (new Model\Assembly())
             ->setAssemblyId(1)
             ->setFrom(new \DateTime('2000-01-01'))
             ->setTo(null);
 
-        $assemblyService = new Assembly();
-        $assemblyService->setDriver($this->pdo)
+        $assemblyService = new Service\Assembly();
+        $assemblyService->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher);
         $assemblyService->update($assembly);
     }
 
-    public function testSaveFireAddEventOne()
+    #[Test]
+    public function saveFireAddEventOne()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -362,18 +388,20 @@ class AssemblyTest extends TestCase
             })
             ->getMock();
 
-        $assembly = (new AssemblyModel())
+        $assembly = (new Model\Assembly())
             ->setAssemblyId(10)
             ->setFrom(new \DateTime('2000-01-01'));
 
-        $assemblyService = new Assembly();
-        $assemblyService->setDriver($this->pdo)
+        $assemblyService = new Service\Assembly();
+        $assemblyService->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher);
         $assemblyService->save($assembly);
     }
 
-    public function testSaveFireUpdateEventTwo()
+    #[Test]
+    public function saveFireUpdateEventTwo()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -383,19 +411,21 @@ class AssemblyTest extends TestCase
             })
             ->getMock();
 
-        $assembly = (new AssemblyModel())
+        $assembly = (new Model\Assembly())
             ->setAssemblyId(1)
             ->setFrom(new \DateTime('2000-01-01'))
             ->setTo(new \DateTime('2000-01-01'));
 
-        $assemblyService = new Assembly();
-        $assemblyService->setDriver($this->pdo)
+        $assemblyService = new Service\Assembly();
+        $assemblyService->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher);
         $assemblyService->save($assembly);
     }
 
-    public function testSaveFireUpdateEventZero()
+    #[Test]
+    public function saveFireUpdateEventZero()
     {
+        /** @var  \Psr\EventDispatcher\EventDispatcherInterface */
         $eventDispatcher = Mockery::mock(EventDispatcherInterface::class)
             ->shouldReceive('dispatch')
             ->once()
@@ -405,13 +435,13 @@ class AssemblyTest extends TestCase
             })
             ->getMock();
 
-        $assembly = (new AssemblyModel())
+        $assembly = (new Model\Assembly())
             ->setAssemblyId(1)
             ->setFrom(new \DateTime('2000-01-01'))
             ->setTo(null);
 
-        $assemblyService = new Assembly();
-        $assemblyService->setDriver($this->pdo)
+        $assemblyService = new Service\Assembly();
+        $assemblyService->setDriver($this->getPDO())
             ->setEventDispatcher($eventDispatcher);
         $assemblyService->save($assembly);
     }
@@ -431,10 +461,5 @@ class AssemblyTest extends TestCase
                 ['assembly_id' => 9, 'from' => '2000-01-01', 'to' => null],
             ],
         ]);
-    }
-
-    public function tearDown(): void
-    {
-        Mockery::close();
     }
 }

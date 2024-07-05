@@ -32,8 +32,9 @@ class CommitteeMeetingController implements
      */
     public function get(ServerRequest $request): ResponseInterface
     {
-        $committeeMeetingId = $request->getAttribute('committee_meeting_id');
-        $meeting = $this->committeeMeetingService->get($committeeMeetingId);
+        $meeting = $this->committeeMeetingService->get(
+            $request->getAttribute('committee_meeting_id')
+        );
 
         return $meeting
             ? new JsonResponse($meeting)
@@ -46,10 +47,10 @@ class CommitteeMeetingController implements
      */
     public function getList(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id');
-        $committeeId = $request->getAttribute('committee_id');
-
-        $meetings = $this->committeeMeetingService->fetchByAssembly($assemblyId, $committeeId);
+        $meetings = $this->committeeMeetingService->fetchByAssembly(
+            $request->getAttribute('id'),
+            $request->getAttribute('committee_id')
+        );
 
         return new JsonResponse($meetings, 206);
     }
@@ -90,7 +91,11 @@ class CommitteeMeetingController implements
     {
         $committeeMeetingId = $request->getAttribute('committee_meeting_id');
 
-        if (($committeeMeeting = $this->committeeMeetingService->get($committeeMeetingId)) != null) {
+        if (
+            ($committeeMeeting = $this->committeeMeetingService->get(
+                $committeeMeetingId
+            )) != null
+        ) {
             $form = new Form\CommitteeMeeting([
                 ...$committeeMeeting->toArray(),
                 ...$request->getParsedBody(),

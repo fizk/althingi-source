@@ -3,11 +3,13 @@
 namespace Althingi\Form;
 
 use Althingi\Form\PlenaryAgenda;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class PlenaryAgendaTest extends TestCase
 {
-    public function testWithIDsAreNumbers()
+    #[Test]
+    public function IDisNumber()
     {
         $form = new PlenaryAgenda([
             'assembly_id' => 141,
@@ -30,7 +32,8 @@ class PlenaryAgendaTest extends TestCase
         $this->assertTrue($isValid);
     }
 
-    public function testWithEverythingIsAString()
+    #[Test]
+    public function IDisString()
     {
         $form = new PlenaryAgenda([
             'assembly_id' => '141',
@@ -61,7 +64,8 @@ class PlenaryAgendaTest extends TestCase
         $this->assertTrue($isValid);
     }
 
-    public function testWithEmptyStringsAsIDs()
+    #[Test]
+    public function IDisEmpty()
     {
         $form = new PlenaryAgenda([
             'assembly_id' => '141',

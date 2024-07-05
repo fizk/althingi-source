@@ -3,18 +3,17 @@
 namespace Althingi\Hydrator;
 
 use Althingi\Model\KindEnum;
-use Laminas\Hydrator\HydratorInterface;
+use Althingi\Utils\HydratorInterface;
 
 class PlenaryAgenda implements HydratorInterface
 {
     /**
-     * Hydrate $object with the provided $data.
      *
-     * @param  array $data
-     * @param  \Althingi\Model\PlenaryAgenda $object
+     * @param array $data
+     * @param \Althingi\Model\PlenaryAgenda $object
      * @return \Althingi\Model\PlenaryAgenda
      */
-    public function hydrate(array $data, $object)
+    public function hydrate(array $data, object $object): object
     {
         return $object
             ->setItemId($data['item_id'])
@@ -38,12 +37,11 @@ class PlenaryAgenda implements HydratorInterface
     }
 
     /**
-     * Extract values from an object
      *
-     * @param  \Althingi\Model\Plenary $object
+     * @param \Althingi\Model\PlenaryAgenda $object
      * @return array
      */
-    public function extract($object): array
+    public function extract(object $object): array
     {
         return $object->toArray();
     }

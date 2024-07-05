@@ -2,19 +2,18 @@
 
 namespace Althingi\Hydrator;
 
+use Althingi\Utils\HydratorInterface;
 use DateTime;
-use Laminas\Hydrator\HydratorInterface;
 
 class ConstituencyDate implements HydratorInterface
 {
     /**
-     * Hydrate $object with the provided $data.
      *
-     * @param  array $data
-     * @param  \Althingi\Model\ConstituencyDate $object
+     * @param array $data
+     * @param \Althingi\Model\ConstituencyDate $object
      * @return \Althingi\Model\ConstituencyDate
      */
-    public function hydrate(array $data, $object)
+    public function hydrate(array $data, object $object): object
     {
         return $object
             ->setConstituencyId($data['constituency_id'])
@@ -25,14 +24,12 @@ class ConstituencyDate implements HydratorInterface
             ->setDate($data['date'] ? new DateTime($data['date']) : null);
     }
 
-
     /**
-     * Extract values from an object
      *
-     * @param  \Althingi\Model\ConstituencyDate $object
+     * @param \Althingi\Model\ConstituencyDate $object
      * @return array
      */
-    public function extract($object): array
+    public function extract(object $object): array
     {
         return $object->toArray();
     }

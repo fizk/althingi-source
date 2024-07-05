@@ -2,47 +2,45 @@
 
 namespace Althingi\Controller;
 
+use Althingi\{Model, Service};
 use Althingi\Controller\ConstituencyController;
-use Althingi\Model;
-use Althingi\Service\Constituency;
 use Althingi\ServiceHelper;
 use Library\Container\Container;
+use PHPUnit\Framework\Attributes\{CoversMethod, CoversClass, Test, Before, After};
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class ConstituencyControllerTest
- * @package Althingi\Controller
- * @coversDefaultClass \Althingi\Controller\ConstituencyController
- *
- * @covers \Althingi\Controller\ConstituencyController::setConstituencyService
- */
+#[CoversClass(ConstituencyController::class)]
+#[CoversMethod(ConstituencyController::class, 'setConstituencyService')]
+#[CoversMethod(ConstituencyController::class, 'get')]
+#[CoversMethod(ConstituencyController::class, 'put')]
+#[CoversMethod(ConstituencyController::class, 'patch')]
 class ConstituencyControllerTest extends TestCase
 {
     use ServiceHelper;
 
-    public function setUp(): void
+    #[Before]
+    public function up(): void
     {
         $this->setServiceManager(
             new Container(require __DIR__ . '/../../config/service.php')
         );
         $this->buildServices([
-            Constituency::class,
+            Service\Constituency::class,
 
         ]);
     }
 
-    public function tearDown(): void
+    #[After]
+    public function down(): void
     {
         \Mockery::close();
         parent::tearDown();
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGet()
+    #[Test]
+    public function getSuccessful()
     {
-        $this->getMockService(Constituency::class)
+        $this->getMockService(Service\Constituency::class)
             ->shouldReceive('get')
             ->with(1)
             ->andReturn((new Model\Constituency())->setConstituencyId(1))
@@ -55,12 +53,10 @@ class ConstituencyControllerTest extends TestCase
         $this->assertResponseStatusCode(200);
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGetNotFound()
+    #[Test]
+    public function getNotFound()
     {
-        $this->getMockService(Constituency::class)
+        $this->getMockService(Service\Constituency::class)
             ->shouldReceive('get')
             ->with(1)
             ->andReturn(null)
@@ -73,12 +69,10 @@ class ConstituencyControllerTest extends TestCase
         $this->assertResponseStatusCode(404);
     }
 
-    /**
-     * @covers ::put
-     */
-    public function testPutSuccess()
+    #[Test]
+    public function putSuccess()
     {
-        $this->getMockService(Constituency::class)
+        $this->getMockService(Service\Constituency::class)
             ->shouldReceive('save')
             ->once()
             ->andReturn(1)
@@ -92,12 +86,10 @@ class ConstituencyControllerTest extends TestCase
         $this->assertActionName('put');
     }
 
-    /**
-     * @covers ::put
-     */
-    public function testPutNoData()
+    #[Test]
+    public function putNoData()
     {
-        $this->getMockService(Constituency::class)
+        $this->getMockService(Service\Constituency::class)
             ->shouldReceive('save')
             ->once()
             ->andReturn(1)
@@ -109,16 +101,14 @@ class ConstituencyControllerTest extends TestCase
         $this->assertActionName('put');
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchSuccess()
+    #[Test]
+    public function patchSuccess()
     {
         $expectedData = (new Model\Constituency())
             ->setConstituencyId(101)
             ->setName('name1');
 
-        $this->getMockService(Constituency::class)
+        $this->getMockService(Service\Constituency::class)
             ->shouldReceive('get')
             ->with(101)
             ->andReturn(
@@ -145,12 +135,10 @@ class ConstituencyControllerTest extends TestCase
         $this->assertActionName('patch');
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchNotFound()
+    #[Test]
+    public function patchNotFound()
     {
-        $this->getMockService(Constituency::class)
+        $this->getMockService(Service\Constituency::class)
             ->shouldReceive('get')
             ->with(101)
             ->andReturn(null)

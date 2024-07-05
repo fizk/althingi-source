@@ -37,6 +37,7 @@ class CongressmanController implements
         $congressman = $this->congressmanService->get(
             $request->getAttribute('congressman_id')
         );
+
         return $congressman
             ? new JsonResponse($congressman)
             : new EmptyResponse(404);
@@ -115,7 +116,11 @@ class CongressmanController implements
      */
     public function delete(ServerRequest $request): ResponseInterface
     {
-        if (($congressman = $this->congressmanService->get($request->getAttribute('congressman_id'))) !== null) {
+        if (
+            ($congressman = $this->congressmanService->get(
+                $request->getAttribute('congressman_id')
+            )) !== null
+        ) {
             $this->congressmanService->delete($congressman->getCongressmanId());
             return new EmptyResponse(205);
         }
@@ -177,9 +182,10 @@ class CongressmanController implements
      */
     public function assemblyCongressmanAction(ServerRequest $request): ResponseInterface
     {
-        $congressmanId = $request->getAttribute('congressman_id');
+        $congressman = $this->congressmanService->get(
+            $request->getAttribute('congressman_id')
+        );
 
-        $congressman = $this->congressmanService->get($congressmanId);
         return $congressman
             ? new JsonResponse($congressman)
             : new EmptyResponse(404);

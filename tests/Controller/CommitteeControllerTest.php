@@ -3,25 +3,27 @@
 namespace Althingi\Controller;
 
 use Althingi\Controller\CommitteeController;
-use Althingi\Model;
-use Althingi\Service;
+use Althingi\{Model, Service};
 use Althingi\ServiceHelper;
 use Library\Container\Container;
 use Mockery;
+use PHPUnit\Framework\Attributes\{CoversMethod, CoversClass, Test, Before, After};
 use PHPUnit\Framework\TestCase;
 
-/**
- * Class CommitteeControllerTest
- * @package Althingi\Controller
- * @coversDefaultClass \Althingi\Controller\CommitteeController
- *
- * @covers \Althingi\Controller\CommitteeController::setCommitteeService
- */
+#[CoversClass(CommitteeController::class)]
+#[CoversMethod(CommitteeController::class, 'setCommitteeService')]
+#[CoversMethod(CommitteeController::class, 'get')]
+#[CoversMethod(CommitteeController::class, 'getList')]
+#[CoversMethod(CommitteeController::class, 'options')]
+#[CoversMethod(CommitteeController::class, 'optionsList')]
+#[CoversMethod(CommitteeController::class, 'patch')]
+#[CoversMethod(CommitteeController::class, 'put')]
 class CommitteeControllerTest extends TestCase
 {
     use ServiceHelper;
 
-    public function setUp(): void
+    #[Before]
+    public function up(): void
     {
         $this->setServiceManager(
             new Container(require __DIR__ . '/../../config/service.php')
@@ -31,17 +33,16 @@ class CommitteeControllerTest extends TestCase
         ]);
     }
 
-    public function tearDown(): void
+    #[After]
+    public function down(): void
     {
         $this->destroyServices();
         Mockery::close();
         parent::tearDown();
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGet()
+    #[Test]
+    public function getOneCommitteeSuccessfully()
     {
         $this->getMockService(Service\Committee::class)
             ->shouldReceive('get')
@@ -57,10 +58,8 @@ class CommitteeControllerTest extends TestCase
         $this->assertResponseStatusCode(200);
     }
 
-    /**
-     * @covers ::get
-     */
-    public function testGetNotFound()
+    #[Test]
+    public function getOneCommitteeWhichIsNotFoundError()
     {
         $this->getMockService(Service\Committee::class)
             ->shouldReceive('get')
@@ -76,10 +75,8 @@ class CommitteeControllerTest extends TestCase
         $this->assertResponseStatusCode(404);
     }
 
-    /**
-     * @covers ::getList
-     */
-    public function testGetList()
+    #[Test]
+    public function fetchAllCommittiesSuccessfully()
     {
         $this->getMockService(Service\Committee::class)
             ->shouldReceive('fetchAll')
@@ -98,10 +95,8 @@ class CommitteeControllerTest extends TestCase
         $this->assertResponseStatusCode(206);
     }
 
-    /**
-     * @covers ::put
-     */
-    public function testPut()
+    #[Test]
+    public function putOneCommitteeSavingItSuccessfully()
     {
         $this->getMockService(Service\Committee::class)
             ->shouldReceive('save')
@@ -122,7 +117,9 @@ class CommitteeControllerTest extends TestCase
         $this->assertActionName('put');
         $this->assertResponseStatusCode(201);
     }
-    public function testPutZeroId()
+
+    #[Test]
+    public function putNewCommitteeWithTheIDOfZeroSuccessfully()
     {
         $this->getMockService(Service\Committee::class)
             ->shouldReceive('save')
@@ -143,7 +140,9 @@ class CommitteeControllerTest extends TestCase
         $this->assertActionName('put');
         $this->assertResponseStatusCode(201);
     }
-    public function testPutNegativeId()
+
+    #[Test]
+    public function putNewCommitteeWithNegativeIDSuccessfully()
     {
         $this->getMockService(Service\Committee::class)
             ->shouldReceive('save')
@@ -165,10 +164,8 @@ class CommitteeControllerTest extends TestCase
         $this->assertResponseStatusCode(201);
     }
 
-    /**
-     * @covers ::put
-     */
-    public function testPutInvalidParameters()
+    #[Test]
+    public function putCreateNewCommitteeButGetAnError()
     {
         $this->getMockService(Service\Committee::class)
             ->shouldReceive('create')
@@ -183,10 +180,8 @@ class CommitteeControllerTest extends TestCase
         $this->assertResponseStatusCode(400);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatch()
+    #[Test]
+    public function patchCommitteeWithSubsetOfDataSuccessfully()
     {
         $this->getMockService(Service\Committee::class)
             ->shouldReceive('get')
@@ -215,10 +210,8 @@ class CommitteeControllerTest extends TestCase
         $this->assertResponseStatusCode(205);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchInvalidForm()
+    #[Test]
+    public function patchCommitteeButTheValuesAreIncorrectError()
     {
         $this->getMockService(Service\Committee::class)
             ->shouldReceive('get')
@@ -245,10 +238,8 @@ class CommitteeControllerTest extends TestCase
         $this->assertResponseStatusCode(400);
     }
 
-    /**
-     * @covers ::patch
-     */
-    public function testPatchNotFound()
+    #[Test]
+    public function patchCommitteeButTheCommitteeDoesNotExistError()
     {
         $this->getMockService('Althingi\Service\Committee')
             ->shouldReceive('get')
@@ -268,10 +259,8 @@ class CommitteeControllerTest extends TestCase
         $this->assertResponseStatusCode(404);
     }
 
-    /**
-     * @covers ::options
-     */
-    public function testOptions()
+    #[Test]
+    public function optionsGetAllowedMethods()
     {
         $this->dispatch('/nefndir/1', 'OPTIONS');
 
@@ -281,10 +270,8 @@ class CommitteeControllerTest extends TestCase
         $this->assertHasResponseHeader('Allow');
     }
 
-    /**
-     * @covers ::optionsList
-     */
-    public function testOptionsList()
+    #[Test]
+    public function optionsGetListOfAllowedMethods()
     {
         $this->dispatch('/nefndir', 'OPTIONS');
 

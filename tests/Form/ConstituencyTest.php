@@ -2,13 +2,14 @@
 
 namespace Althingi\Form;
 
-use Althingi\Form\Assembly;
 use Althingi\Form\Constituency;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 
 class ConstituencyTest extends TestCase
 {
-    public function testNullName()
+    #[Test]
+    public function NULLNamesAreConvertedIntoDash()
     {
         $form = new Constituency([
             'constituency_id' => 1,
@@ -19,12 +20,12 @@ class ConstituencyTest extends TestCase
         ]);
         $form->isValid();
 
-        /** @var \Althingi\Model\Constituency */
         $model = $form->getModel();
         $this->assertEquals('-', $model->getName());
     }
 
-    public function testEmptyName()
+    #[Test]
+    public function emptyNamesAreConvertedIntoDash()
     {
         $form = new Constituency([
             'constituency_id' => 1,
@@ -35,7 +36,6 @@ class ConstituencyTest extends TestCase
         ]);
         $form->isValid();
 
-        /** @var \Althingi\Model\Constituency */
         $model = $form->getModel();
         $this->assertEquals('-', $model->getName());
     }

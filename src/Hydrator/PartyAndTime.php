@@ -2,18 +2,17 @@
 
 namespace Althingi\Hydrator;
 
-use Laminas\Hydrator\HydratorInterface;
+use Althingi\Utils\HydratorInterface;
 
 class PartyAndTime implements HydratorInterface
 {
     /**
-     * Hydrate $object with the provided $data.
      *
-     * @param  array $data
-     * @param  \Althingi\Model\PartyAndTime $object
+     * @param array $data
+     * @param \Althingi\Model\PartyAndTime $object
      * @return \Althingi\Model\PartyAndTime
      */
-    public function hydrate(array $data, $object)
+    public function hydrate(array $data, object $object): object
     {
         return $object
             ->setPartyId($data['party_id'])
@@ -25,12 +24,11 @@ class PartyAndTime implements HydratorInterface
     }
 
     /**
-     * Extract values from an object
      *
-     * @param  \Althingi\Model\PartyAndTime $object
+     * @param \Althingi\Model\PartyAndTime $object
      * @return array
      */
-    public function extract($object): array
+    public function extract(object $object): array
     {
         return $object->toArray();
     }

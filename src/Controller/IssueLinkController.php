@@ -11,6 +11,7 @@ use Laminas\Diactoros\Response\{
 use Althingi\Service;
 use Althingi\Form;
 use Althingi\Injector\ServiceIssueLinkAwareInterface;
+use Althingi\Model\KindEnum;
 use Althingi\Utils\ErrorFormResponse;
 use Althingi\Router\{
     RestControllerInterface,
@@ -31,11 +32,11 @@ class IssueLinkController implements
      */
     public function get(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id', 0);
-        $issueId = $request->getAttribute('issue_id', 0);
-        $category = $request->getAttribute('category', 'A');
-
-        $issues = $this->issueLinkService->fetchAll($assemblyId, $issueId, $category);
+        $issues = $this->issueLinkService->fetchAll(
+            $request->getAttribute('id', 0),
+            $request->getAttribute('issue_id', 0),
+            KindEnum::fromString($request->getAttribute('category', 'A'))
+        );
         return new JsonResponse($issues, 206);
     }
 
@@ -46,15 +47,13 @@ class IssueLinkController implements
      */
     public function put(ServerRequest $request): ResponseInterface
     {
-        $assemblyId = $request->getAttribute('id', 0);
-        $issueId = $request->getAttribute('issue_id', 0);
-        $category = $request->getAttribute('category', 'A');
-
         $form = new Form\IssueLink([
             ...$request->getParsedBody(),
-            'from_assembly_id' => $assemblyId,
-            'from_issue_id' => $issueId,
-            'from_category' => strtoupper($category),
+            'from_assembly_id' => $request->getAttribute('id', 0),
+            'from_issue_id' => $request->getAttribute('issue_id', 0),
+            'from_category' => KindEnum::fromString(
+                $request->getAttribute('category', 'A')
+            ),
         ]);
 
         if ($form->isValid()) {
