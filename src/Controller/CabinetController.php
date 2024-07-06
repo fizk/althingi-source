@@ -98,9 +98,9 @@ class CabinetController implements
      */
     public function patch(ServerRequest $request): ResponseInterface
     {
-        if (($committee = $this->cabinetService->get($request->getAttribute('id'))) != null) {
+        if (($cabinet = $this->cabinetService->get($request->getAttribute('id'))) != null) {
             $form = new Form\Cabinet([
-                ...$committee->toArray(),
+                ...$cabinet->toArray(),
                 ...$request->getParsedBody(),
                 'cabinet_id' => $request->getAttribute('id'),
             ]);

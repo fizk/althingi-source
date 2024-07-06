@@ -56,6 +56,9 @@ class IssueCategory implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
+    /**
+     * @return \Althingi\Model\IssueCategory[]
+     */
     public function fetchAllGenerator(?int $assemblyId = null): Generator
     {
         if ($assemblyId) {

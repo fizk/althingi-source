@@ -26,7 +26,6 @@ class IndexerIssueCategoryController implements ServiceIssueCategoryAwareInterfa
     {
         $assemblyId = $request->getAttribute('assembly_id', null);
 
-        /** @var \Althingi\Model\IssueCategory $model */
         foreach ($this->issueCategoryService->fetchAllGenerator($assemblyId) as $model) {
             $this->getEventDispatcher()->dispatch(
                 new AddEvent(new IndexableIssueCategoryPresenter($model), ['rows' => 1]),

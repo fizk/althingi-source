@@ -10,6 +10,7 @@ use Althingi\Injector\{DatabaseAwareInterface, EventsAwareInterface};
 use PDO;
 use DateTime;
 use Generator;
+use PDOException;
 
 class Session implements DatabaseAwareInterface, EventsAwareInterface
 {
@@ -29,6 +30,9 @@ class Session implements DatabaseAwareInterface, EventsAwareInterface
             : null;
     }
 
+    /**
+     * @return \Althingi\Model\Session[]
+     */
     public function fetchAllGenerator(?int $assembly_id = null, ?int $congressman_id = null): Generator
     {
         $params = [
@@ -148,7 +152,7 @@ class Session implements DatabaseAwareInterface, EventsAwareInterface
         return $statement->rowCount();
     }
 
-    public function delete(int $id)
+    public function delete(int $id): int
     {
         $statement = $this->getDriver()->prepare("
             delete from `Session` where session_id = :id

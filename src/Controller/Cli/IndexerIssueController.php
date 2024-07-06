@@ -25,7 +25,7 @@ class IndexerIssueController implements ServiceIssueAwareInterface, EventsAwareI
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $assemblyId = $request->getAttribute('assembly_id', null);
-        /** @var \Althingi\Model\Issue $model */
+
         foreach ($this->issueService->fetchAllGenerator($assemblyId) as $model) {
             $this->getEventDispatcher()->dispatch(
                 new AddEvent(new IndexableIssuePresenter($model), ['rows' => 1]),

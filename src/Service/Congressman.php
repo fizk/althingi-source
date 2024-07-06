@@ -46,6 +46,9 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
+    /**
+     * @return \Althingi\Model\CongressmanAndParty[]
+     */
     public function fetchAllGenerator(?int $assemblyId = null): Generator
     {
         if ($assemblyId) {
@@ -164,7 +167,6 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
      * Accumulates submitted types of issue per congressman.
      *
      * @return \Althingi\Model\CongressmanValue[]
-     * @deprecated
      */
     public function fetchIssueTypeCountByAssembly(
         int $assemblyId,
@@ -307,9 +309,6 @@ class Congressman implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    /**
-     * @deprecated
-     */
     public function getAverageAgeByAssembly(int $assemblyId, DateTime $date): float
     {
         $statement = $this->getDriver()->prepare('

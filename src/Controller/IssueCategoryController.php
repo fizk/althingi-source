@@ -100,14 +100,14 @@ class IssueCategoryController implements
     public function patch(ServerRequest $request): ResponseInterface
     {
         if (
-            ($issueCategory = $this->issueCategoryService->get(
+            ($category = $this->issueCategoryService->get(
                 $request->getAttribute('id'),
                 $request->getAttribute('issue_id'),
                 $request->getAttribute('category_id')
             )) != null
         ) {
             $form = new Form\IssueCategory([
-                ...$issueCategory->toArray(),
+                ...$category->toArray(),
                 ...$request->getParsedBody(),
                 'id' => $request->getAttribute('id'),
                 'issue_id' => $request->getAttribute('issue_id'),

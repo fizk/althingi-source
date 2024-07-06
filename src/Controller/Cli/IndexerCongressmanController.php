@@ -26,7 +26,6 @@ class IndexerCongressmanController implements ServiceCongressmanAwareInterface, 
     {
         $assemblyId = $request->getAttribute('assembly_id', null);
 
-        /** @var \Althingi\Model\Congressman $model */
         foreach ($this->congressman->fetchAllGenerator($assemblyId) as $model) {
             $this->getEventDispatcher()->dispatch(
                 new AddEvent(new IndexableCongressmanPresenter($model), ['rows' => 1]),

@@ -28,7 +28,6 @@ class IndexerDocumentVoteController implements ServiceVoteAwareInterface, Events
         $issueId = $request->getAttribute('issue_id', null);
         $documentId = $request->getAttribute('document_id', null);
 
-        /** @var \Althingi\Model\Vote $model */
         foreach ($this->voteService->fetchAllGenerator($assemblyId, $issueId, $documentId) as $model) {
             $this->getEventDispatcher()->dispatch(
                 new AddEvent(new IndexableVotePresenter($model), ['rows' => 1]),

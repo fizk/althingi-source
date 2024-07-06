@@ -5,12 +5,12 @@ use Althingi\Controller;
 use Althingi\Events\{
     AddEvent,
     UpdateEvent,
-    DeleteEvent
+    RemoveEvent
 };
 use Althingi\QueueActions\{
     Add,
     Update,
-    Delete
+    Remove
 };
 use Althingi\Events\{
     RequestSuccessEvent,
@@ -34,6 +34,7 @@ use League\Event\{
     PrioritizedListenerRegistry
 };
 use Monolog\Logger;
+use Monolog\Level;
 use Monolog\Handler\StreamHandler;
 use Monolog\Formatter\LineFormatter;
 
@@ -565,8 +566,8 @@ return [
                 $logger->debug((string) $event);
             });
 
-            $provider->subscribeTo(DeleteEvent::class, function (DeleteEvent $event) use ($logger, $container) {
-                (new Delete(
+            $provider->subscribeTo(RemoveEvent::class, function (RemoveEvent $event) use ($logger, $container) {
+                (new Remove(
                     $container->get(MessageBrokerInterface::class),
                     strtolower(getenv('QUEUE_FORCED')) === 'true'
                 )
@@ -581,8 +582,12 @@ return [
         },
 
         Psr\Log\LoggerInterface::class => function (ContainerInterface $container) {
+            $logLevel = getenv('LOG_LEVEL')
+                ? Level::fromName(getenv('LOG_LEVEL'))
+                : Level::Debug;
+
             return (new Logger('source'))
-                ->pushHandler((new StreamHandler('php://stdout', Logger::DEBUG))
+                ->pushHandler((new StreamHandler('php://stdout', $logLevel))
                         ->setFormatter(new LineFormatter("[%datetime%] %level_name% %message%\n")));
         },
 

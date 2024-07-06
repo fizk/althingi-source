@@ -36,13 +36,13 @@ class ParliamentarySessionAgendaController implements
      */
     public function get(ServerRequest $request): ResponseInterface
     {
-        $item = $this->parliamentarySessionAgendaService->get(
+        $agenda = $this->parliamentarySessionAgendaService->get(
             $request->getAttribute('id'),
             $request->getAttribute('parliamentary_session_id'),
             $request->getAttribute('item_id')
         );
-        return $item
-            ? new JsonResponse($item)
+        return $agenda
+            ? new JsonResponse($agenda)
             : new EmptyResponse(404);
     }
 

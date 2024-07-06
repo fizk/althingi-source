@@ -7,7 +7,7 @@ use Althingi\Presenters\{
     IndexablePresenterAwareInterface
 };
 
-class DeleteEvent implements EventInterface, IndexablePresenterAwareInterface
+class RemoveEvent implements EventInterface, IndexablePresenterAwareInterface
 {
     private IndexablePresenter $presenter;
     private string $name;
@@ -15,7 +15,7 @@ class DeleteEvent implements EventInterface, IndexablePresenterAwareInterface
 
     public function __construct(IndexablePresenter $presenter, $params = [])
     {
-        $this->setName('delete');
+        $this->setName('remove');
         $this->setParams($params);
         $this->setPresenter($presenter);
     }

@@ -39,6 +39,8 @@ services:
       - ./phpunit.xml.dist/:/var/www/phpunit.xml
     environment:
       - LOG_PATH=php://stdout
+      - LOG_LEVEL=DEBUG
+    #               INFO NOTICE WARNING ERROR CRITICAL ALERT EMERGENCY
 
       - DB_HOST=database
       - DB_PORT=3306

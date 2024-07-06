@@ -32,11 +32,11 @@ class CommitteeController implements
      */
     public function get(ServerRequest $request): ResponseInterface
     {
-        $identifier = $request->getAttribute('committee_id');
+        $committeeId = $request->getAttribute('committee_id');
 
-        $committee = is_numeric($identifier)
-            ? $this->committeeService->get($identifier)
-            : $this->committeeService->getByName(rawurldecode($identifier));
+        $committee = is_numeric($committeeId)
+            ? $this->committeeService->get($committeeId)
+            : $this->committeeService->getByName(rawurldecode($committeeId));
 
         return $committee
             ? new JsonResponse($committee, 200)

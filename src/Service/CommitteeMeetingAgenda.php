@@ -6,6 +6,7 @@ use Althingi\Model;
 use Althingi\Hydrator;
 use Althingi\Injector\DatabaseAwareInterface;
 use PDO;
+use PDOException;
 
 class CommitteeMeetingAgenda implements DatabaseAwareInterface
 {
@@ -30,6 +31,9 @@ class CommitteeMeetingAgenda implements DatabaseAwareInterface
             : null;
     }
 
+    /**
+     * @return \Althingi\Model\CommitteeMeetingAgenda[]
+     */
     public function fetch(int $meetingId): array
     {
         $statement = $this->getDriver()->prepare('

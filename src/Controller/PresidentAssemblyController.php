@@ -26,12 +26,12 @@ class PresidentAssemblyController implements
      */
     public function get(ServerRequest $request): ResponseInterface
     {
-        $residents = $this->congressmanService->getPresidentByAssembly(
+        $president = $this->congressmanService->getPresidentByAssembly(
             $request->getAttribute('id'),
             $request->getAttribute('president_id')
         );
 
-        return new JsonResponse($residents, 206);
+        return new JsonResponse($president, 206);
     }
 
     /**
@@ -40,11 +40,11 @@ class PresidentAssemblyController implements
      */
     public function getList(ServerRequest $request): ResponseInterface
     {
-        $residents = $this->congressmanService->fetchPresidentsByAssembly(
+        $presidents = $this->congressmanService->fetchPresidentsByAssembly(
             $request->getAttribute('id')
         );
 
-        return new JsonResponse($residents, 206);
+        return new JsonResponse($presidents, 206);
     }
 
     public function setCongressmanService(Congressman $congressman): static

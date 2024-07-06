@@ -27,7 +27,6 @@ class IndexerSessionController implements ServiceSessionAwareInterface, EventsAw
         $assemblyId = $request->getAttribute('assembly_id', null);
         $congressmanId = $request->getAttribute('congressman_id', null);
 
-        /** @var \Althingi\Model\Session $model */
         foreach ($this->session->fetchAllGenerator($assemblyId, $congressmanId) as $model) {
             $this->getEventDispatcher()->dispatch(
                 new AddEvent(new IndexableSessionPresenter($model), ['rows' => 1]),

@@ -28,7 +28,6 @@ class IndexerCommitteeSessionController implements ServiceCommitteeSessionAwareI
         $congressmanId = $request->getAttribute('congressman_id', null);
         $committeeId = $request->getAttribute('committee_id', null);
 
-        /** @var \Althingi\Model\CommitteeSession $model */
         foreach (
             $this->committeeSessionService->fetchAllGenerator(
                 $assemblyId,

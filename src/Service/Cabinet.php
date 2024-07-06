@@ -57,6 +57,9 @@ class Cabinet implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
+    /**
+     * @return \Althingi\Model\Cabinet[]
+     */
     public function fetchAllGenerator(): Generator
     {
         $statement = $this->getDriver()

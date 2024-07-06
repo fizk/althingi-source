@@ -96,8 +96,12 @@ class InflationController implements
         );
 
         if (count($cabinet) > 0) {
-            $from = $assembly->getFrom() < $cabinet[0]->getFrom() ? $assembly->getFrom() : $cabinet[0]->getFrom();
-            $to = $assembly->getTo() > $cabinet[0]->getTo() ? $assembly->getTo() : $cabinet[0]->getTo();
+            $from = $assembly->getFrom() < $cabinet[0]->getFrom()
+                ? $assembly->getFrom()
+                : $cabinet[0]->getFrom();
+            $to = $assembly->getTo() > $cabinet[0]->getTo()
+                ? $assembly->getTo()
+                : $cabinet[0]->getTo();
 
             $inflationCollection = $this->inflationService->fetchAll($from, $to);
             return new JsonResponse($inflationCollection, 206);

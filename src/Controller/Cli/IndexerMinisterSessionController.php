@@ -26,7 +26,6 @@ class IndexerMinisterSessionController implements ServiceMinisterSessionAwareInt
     {
         $assemblyId = $request->getAttribute('assembly_id', null);
 
-        /** @var \Althingi\Model\MinisterSession $model */
         foreach ($this->ministerSessionService->fetchAllGenerator($assemblyId) as $model) {
             $this->getEventDispatcher()->dispatch(
                 new AddEvent(new IndexableMinisterSessionPresenter($model), ['rows' => 1]),

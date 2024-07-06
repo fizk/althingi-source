@@ -32,6 +32,9 @@ class CommitteeDocument implements DatabaseAwareInterface, EventsAwareInterface
             : null;
     }
 
+    /**
+     * @return \Althingi\Model\CommitteeDocument[]
+     */
     public function fetchAllGenerator(?int $assemblyId = null, ?int $issueId = null, ?int $documentId = null): Generator
     {
         if ($assemblyId === null) {
@@ -88,7 +91,7 @@ class CommitteeDocument implements DatabaseAwareInterface, EventsAwareInterface
     }
 
     /**
-     * @return Model\CommitteeDocument[]
+     * @return \Althingi\Model\CommitteeDocument[]
      */
     public function fetchByDocument(int $assemblyId, $issueId, $documentId): array
     {

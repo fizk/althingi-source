@@ -24,7 +24,6 @@ class IndexerCabinetController implements ServiceCabinetAwareInterface, EventsAw
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        /** @var \Althingi\Model\Cabinet $model */
         foreach ($this->cabinetService->fetchAllGenerator() as $model) {
             $this->getEventDispatcher()->dispatch(
                 new AddEvent(new IndexableCabinetPresenter($model), ['rows' => 1]),

@@ -10,6 +10,7 @@ use Althingi\Presenters\IndexableCommitteeSessionPresenter;
 use PDO;
 use DateTime;
 use Generator;
+use PDOException;
 
 class CommitteeSession implements DatabaseAwareInterface, EventsAwareInterface
 {
@@ -29,6 +30,9 @@ class CommitteeSession implements DatabaseAwareInterface, EventsAwareInterface
             : null;
     }
 
+    /**
+     * @return \Althingi\Model\CommitteeSession[]
+     */
     public function fetchAllGenerator(
         ?int $assemblyId = null,
         ?int $congressmanId = null,

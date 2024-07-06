@@ -63,6 +63,9 @@ class MinisterSession implements DatabaseAwareInterface, EventsAwareInterface
         }, $sittings);
     }
 
+    /**
+     * @return \Althingi\Model\MinisterSession[]
+     */
     public function fetchAllGenerator(?int $assemblyId = null): Generator
     {
         if ($assemblyId) {

@@ -57,7 +57,7 @@ class CongressmanDocumentController implements
     public function patch(ServerRequest $request): ResponseInterface
     {
         if (
-            ($congressmanDocument = $this->congressmanDocumentService->get(
+            ($document = $this->congressmanDocumentService->get(
                 $request->getAttribute('id'),
                 $request->getAttribute('issue_id'),
                 $request->getAttribute('document_id'),
@@ -65,7 +65,7 @@ class CongressmanDocumentController implements
             )) != null
         ) {
             $form = new Form\CongressmanDocument([
-                ...$congressmanDocument->toArray(),
+                ...$document->toArray(),
                 ...$request->getParsedBody(),
                 'id' => $request->getAttribute('id'),
                 'issue_id' => $request->getAttribute('issue_id'),

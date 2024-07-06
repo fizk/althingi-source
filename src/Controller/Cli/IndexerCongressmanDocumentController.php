@@ -28,7 +28,6 @@ class IndexerCongressmanDocumentController implements ServiceCongressmanDocument
         $congressmanId = $request->getAttribute('congressman_id', null);
         $issueId = $request->getAttribute('issue_id', null);
 
-        /** @var \Althingi\Model\CongressmanDocument $model */
         foreach ($this->congressmanDocument->fetchAllGenerator($congressmanId, $assemblyId, $issueId) as $model) {
             $this->getEventDispatcher()->dispatch(
                 new AddEvent(new IndexableCongressmanDocumentPresenter($model), ['rows' => 1]),

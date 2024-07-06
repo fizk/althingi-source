@@ -12,6 +12,7 @@ use PDO;
 use DateTime;
 use Exception;
 use Generator;
+use PDOException;
 
 class Vote implements DatabaseAwareInterface, EventsAwareInterface
 {
@@ -31,6 +32,9 @@ class Vote implements DatabaseAwareInterface, EventsAwareInterface
             : null ;
     }
 
+    /**
+     * @return \Althingi\Model\Vote[]
+     */
     public function fetchAllGenerator(?int $assemblyId = null, ?int $issueId = null, ?int $documentId = null): Generator
     {
         if ($assemblyId === null) {
@@ -222,10 +226,6 @@ class Vote implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    /**
-     * @param int $assemblyId
-     * @return int
-     */
     public function countByAssembly(int $assemblyId): int
     {
         $statement = $this->getDriver()->prepare('
@@ -237,10 +237,6 @@ class Vote implements DatabaseAwareInterface, EventsAwareInterface
         return (int) $statement->fetchColumn(0);
     }
 
-    /**
-     * @param \Althingi\Model\Vote $data
-     * @return int
-     */
     public function create(Model\Vote $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -255,10 +251,6 @@ class Vote implements DatabaseAwareInterface, EventsAwareInterface
         return $this->getDriver()->lastInsertId();
     }
 
-    /**
-     * @param \Althingi\Model\Vote $data
-     * @return int
-     */
     public function save(Model\Vote $data): int
     {
         $statement = $this->getDriver()->prepare(
@@ -282,10 +274,6 @@ class Vote implements DatabaseAwareInterface, EventsAwareInterface
         return $statement->rowCount();
     }
 
-    /**
-     * @param \Althingi\Model\Vote | object $data
-     * @return int
-     */
     public function update(Model\Vote $data): int
     {
         $statement = $this->getDriver()->prepare(

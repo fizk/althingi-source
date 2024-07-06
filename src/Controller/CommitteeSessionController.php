@@ -43,12 +43,12 @@ class CommitteeSessionController implements
      */
     public function get(ServerRequest $request): ResponseInterface
     {
-        $committeeSession = $this->committeeSessionService->get(
+        $session = $this->committeeSessionService->get(
             $request->getAttribute('committee_session_id')
         );
 
-        return $committeeSession
-            ? new JsonResponse($committeeSession)
+        return $session
+            ? new JsonResponse($session)
             : new EmptyResponse(404);
     }
 
@@ -141,12 +141,12 @@ class CommitteeSessionController implements
     public function patch(ServerRequest $request): ResponseInterface
     {
         if (
-            ($committeeSession = $this->committeeSessionService->get(
+            ($session = $this->committeeSessionService->get(
                 $request->getAttribute('committee_session_id')
             )) != null
         ) {
             $form = new Form\CommitteeSession([
-                ...$committeeSession->toArray(),
+                ...$session->toArray(),
                 ...$request->getParsedBody(),
                 'committee_session_id' => $request->getAttribute('committee_session_id'),
             ]);

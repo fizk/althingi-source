@@ -28,7 +28,6 @@ class IndexerSpeechController implements ServiceSpeechAwareInterface, EventsAwar
         $assemblyId = $request->getAttribute('assembly_id', null);
         $issueId = $request->getAttribute('issue_id', null);
 
-        /** @var \Althingi\Model\Speech $model */
         foreach ($this->speechService->fetchAllGenerator($assemblyId, $issueId) as $model) {
             $this->getEventDispatcher()->dispatch(
                 new AddEvent(new IndexableSpeechPresenter($model), ['rows' => 1]),

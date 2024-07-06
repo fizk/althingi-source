@@ -11,6 +11,7 @@ use Althingi\Model\KindEnum;
 use Generator;
 use InvalidArgumentException;
 use PDO;
+use PDOException;
 
 /**
  * Class Issue
@@ -52,9 +53,9 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
     /**
      * This is a Generator
      *
-     * @return \Althingi\Model\Issue[] | void
+     * @return \Althingi\Model\Issue[]
      */
-    public function fetchAll(array $kind = [KindEnum::A])
+    public function fetchAll(array $kind = [KindEnum::A]): Generator
     {
         $statement = $this->getDriver()->prepare(
             'select * from `Issue` I where I.kind in (' .  implode(', ', array_map(function (KindEnum $item) {
@@ -72,6 +73,11 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
         return;
     }
 
+    /**
+     * This is a Generator
+     *
+     * @return \Althingi\Model\Issue[]
+     */
     public function fetchAllGenerator(?int $assemblyId = null): Generator
     {
         $statement = $this->getDriver()
@@ -117,7 +123,12 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
             : null;
     }
 
-    public function fetchAllByAssembly(int $assembly_id)
+    /**
+     * This is a Generator
+     *
+     * @return \Althingi\Model\Issue[]
+     */
+    public function fetchAllByAssembly(int $assembly_id): array
     {
         $issueStatement = $this->getDriver()->prepare('
           select * from Issue where assembly_id = :assembly_id
@@ -333,7 +344,10 @@ class Issue implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    public function fetchCountByCategory(int $assemblyId)
+    /**
+     * @return \Althingi\Model\AssemblyStatus[]
+     */
+    public function fetchCountByCategory(int $assemblyId): array
     {
         $statement = $this->getDriver()->prepare('
             select count(*) as `count`, kind, type, type_name, type_subname

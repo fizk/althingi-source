@@ -10,6 +10,7 @@ use Althingi\Injector\{EventsAwareInterface, DatabaseAwareInterface};
 use Althingi\Model\KindEnum;
 use Generator;
 use PDO;
+use PDOException;
 
 class Speech implements DatabaseAwareInterface, EventsAwareInterface
 {
@@ -109,7 +110,10 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
         ];
     }
 
-    public function fetchAllByIssue(int $assemblyId, int $issueId, KindEnum $kind = KindEnum::A)
+    /**
+     * @return \Althingi\Model\SpeechAndPosition[]
+     */
+    public function fetchAllByIssue(int $assemblyId, int $issueId, KindEnum $kind = KindEnum::A): array
     {
         $statement = $this->getDriver()->prepare("
             select *, timestampdiff(SECOND, `from`, `to`) as `time`
@@ -242,7 +246,7 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
 
     /**
      * This is a Generator
-     * @return \Althingi\Model\Speech[] | void
+     * @return \Althingi\Model\Speech[]
      */
     public function fetchAll()
     {
@@ -258,6 +262,10 @@ class Speech implements DatabaseAwareInterface, EventsAwareInterface
         return;
     }
 
+    /**
+     * This is a Generator
+     * @return \Althingi\Model\Speech[]
+     */
     public function fetchAllGenerator(?int $assemblyId = null, ?int $issueId = null): Generator
     {
         if ($assemblyId !== null && $issueId === null) {

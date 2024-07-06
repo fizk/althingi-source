@@ -24,7 +24,6 @@ class IndexerPartyController implements ServicePartyAwareInterface, EventsAwareI
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        /** @var \Althingi\Model\Party $model */
         foreach ($this->partyService->fetchAllGenerator() as $model) {
             $this->getEventDispatcher()->dispatch(
                 new AddEvent(new IndexablePartyPresenter($model), ['rows' => 1]),

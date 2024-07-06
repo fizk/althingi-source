@@ -24,7 +24,6 @@ class IndexerAssemblyController implements ServiceAssemblyAwareInterface, Events
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        /** @var \Althingi\Model\Assembly $model */
         foreach ($this->assemblyService->fetchAllGenerator() as $model) {
             $this->getEventDispatcher()->dispatch(
                 new AddEvent(new IndexableAssemblyPresenter($model), ['rows' => 1]),

@@ -5,7 +5,7 @@ namespace Althingi\QueueActions;
 use Althingi\Utils\MessageBrokerInterface;
 use Althingi\Presenters\IndexablePresenter;
 
-class Delete
+class Remove
 {
     private MessageBrokerInterface $client;
     private bool $forced;

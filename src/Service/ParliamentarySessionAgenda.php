@@ -53,6 +53,9 @@ class ParliamentarySessionAgenda implements DatabaseAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
+    /**
+     * @return Model\ParliamentarySessionAgenda[]
+     */
     public function fetchAllGenerator(?int $assembly_id): Generator
     {
         $params = [
@@ -75,7 +78,7 @@ class ParliamentarySessionAgenda implements DatabaseAwareInterface
         return null;
     }
 
-    public function create(Model\ParliamentarySessionAgenda $data)
+    public function create(Model\ParliamentarySessionAgenda $data): string|false
     {
         $statement = $this->getDriver()->prepare(
             $this->toInsertString('ParliamentarySessionAgenda', $data)
@@ -85,7 +88,7 @@ class ParliamentarySessionAgenda implements DatabaseAwareInterface
         return $this->getDriver()->lastInsertId();
     }
 
-    public function save(Model\ParliamentarySessionAgenda $data)
+    public function save(Model\ParliamentarySessionAgenda $data): int
     {
         $statement = $this->getDriver()->prepare(
             $this->toSaveString('ParliamentarySessionAgenda', $data)

@@ -43,12 +43,12 @@ class MinisterSessionController implements
      */
     public function get(ServerRequest $request): ResponseInterface
     {
-        $ministerSession = $this->ministerSessionService->get(
+        $session = $this->ministerSessionService->get(
             $request->getAttribute('ministry_sitting_id')
         );
 
-        return $ministerSession
-            ? new JsonResponse($ministerSession)
+        return $session
+            ? new JsonResponse($session)
             : new EmptyResponse(404);
     }
 
@@ -127,12 +127,12 @@ class MinisterSessionController implements
     public function patch(ServerRequest $request): ResponseInterface
     {
         if (
-            ($ministerSession = $this->ministerSessionService->get(
+            ($session = $this->ministerSessionService->get(
                 $request->getAttribute('ministry_sitting_id')
             )) != null
         ) {
             $form = new Form\MinisterSession([
-                ...$ministerSession->toArray(),
+                ...$session->toArray(),
                 ...$request->getParsedBody(),
                 'ministry_sitting_id' => $request->getAttribute('ministry_sitting_id'),
             ]);
@@ -154,12 +154,12 @@ class MinisterSessionController implements
      */
     public function assemblySessionsAction(ServerRequest $request): ResponseInterface
     {
-        $sittings = $this->ministerSessionService->fetchByCongressmanAssembly(
+        $session = $this->ministerSessionService->fetchByCongressmanAssembly(
             $request->getAttribute('id', 0),
             $request->getAttribute('congressman_id', 0)
         );
 
-        return new JsonResponse($sittings, 206);
+        return new JsonResponse($session, 206);
     }
 
     public function setMinisterSessionService(Service\MinisterSession $ministerSession): static

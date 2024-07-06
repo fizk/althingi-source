@@ -40,6 +40,9 @@ class SuperCategory implements DatabaseAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
+    /**
+     * @return \Althingi\Model\SuperCategory[]
+     */
     public function fetchAllGenerator(): Generator
     {
         $statement = $this->getDriver()

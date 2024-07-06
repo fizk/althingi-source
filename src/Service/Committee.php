@@ -56,7 +56,9 @@ class Committee implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-
+    /**
+     * @return \Althingi\Model\Committee[]
+     */
     public function fetchAllGenerator(): Generator
     {
         $statement = $this->getDriver()

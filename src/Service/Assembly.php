@@ -61,6 +61,9 @@ class Assembly implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
+    /**
+     * @return \Althingi\Model\Assembly[]
+     */
     public function fetchAllGenerator(): Generator
     {
         $statement = $this->getDriver()

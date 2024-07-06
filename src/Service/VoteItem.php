@@ -9,6 +9,7 @@ use Althingi\Presenters\IndexableVoteItemPresenter;
 use Althingi\Injector\{EventsAwareInterface, DatabaseAwareInterface};
 use Generator;
 use PDO;
+use PDOException;
 
 class VoteItem implements DatabaseAwareInterface, EventsAwareInterface
 {
@@ -28,6 +29,9 @@ class VoteItem implements DatabaseAwareInterface, EventsAwareInterface
             : null;
     }
 
+    /**
+     * @return \Althingi\Model\VoteItem[]
+     */
     public function fetchAllGenerator(?int $assemblyId = null, ?int $issueId = null, ?int $documentId = null): Generator
     {
         if ($assemblyId === null) {

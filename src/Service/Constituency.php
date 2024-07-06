@@ -11,6 +11,7 @@ use Althingi\Presenters\IndexableConstituencyPresenter;
 use PDO;
 use DateTime;
 use Generator;
+use PDOException;
 
 class Constituency implements DatabaseAwareInterface, EventsAwareInterface
 {
@@ -30,6 +31,9 @@ class Constituency implements DatabaseAwareInterface, EventsAwareInterface
             : null;
     }
 
+    /**
+     * @return \Althingi\Model\Constituency[]
+     */
     public function fetchAllGenerator(): Generator
     {
         $statement = $this->getDriver()
@@ -65,9 +69,6 @@ class Constituency implements DatabaseAwareInterface, EventsAwareInterface
             : null ;
     }
 
-    /**
-     * @deprecated
-     */
     public function getByCongressmanAndConstituency(int $congressmanId, int $assemblyId): ?Model\ConstituencyDate
     {
         $statement = $this->getDriver()->prepare('
@@ -109,7 +110,6 @@ class Constituency implements DatabaseAwareInterface, EventsAwareInterface
 
     /**
      * @return Althingi\Model\ConstituencyDate[]
-     * @deprecated
      */
     public function fetchByCongressman(int $congressmanId): array
     {
@@ -130,7 +130,6 @@ class Constituency implements DatabaseAwareInterface, EventsAwareInterface
 
     /**
      * @return \Althingi\Model\ConstituencyValue[]
-     * @deprecated
      */
     public function fetchFrequencyByAssembly(int $assemblyId): array
     {

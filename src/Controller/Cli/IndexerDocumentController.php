@@ -27,7 +27,6 @@ class IndexerDocumentController implements ServiceDocumentAwareInterface, Events
         $assemblyId = $request->getAttribute('assembly_id', null);
         $issueId = $request->getAttribute('issue_id', null);
 
-        /** @var \Althingi\Model\Document $model */
         foreach ($this->documentService->fetchAllGenerator($assemblyId, $issueId) as $model) {
             $this->getEventDispatcher()->dispatch(
                 new AddEvent(new IndexableDocumentPresenter($model), ['rows' => 1]),

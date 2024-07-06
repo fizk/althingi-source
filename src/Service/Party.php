@@ -45,6 +45,9 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
+    /**
+     * @return \Althingi\Model\Party[]
+     */
     public function fetchAllGenerator(): Generator
     {
         $statement = $this->getDriver()
@@ -81,9 +84,6 @@ class Party implements DatabaseAwareInterface, EventsAwareInterface
             : null;
     }
 
-    /**
-     * @deprecated
-     */
     public function getByCongressmanAndAssembly(int $congressmanId, int $assemblyId): ?Model\Party
     {
         $statement = $this->getDriver()->prepare('

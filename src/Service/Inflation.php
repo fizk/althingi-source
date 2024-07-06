@@ -62,6 +62,9 @@ class Inflation implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
+    /**
+     * @return \Althingi\Model\Inflation[]
+     */
     public function fetchAllGenerator(): Generator
     {
         $statement = $this->getDriver()

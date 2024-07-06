@@ -10,6 +10,7 @@ use Althingi\Injector\{DatabaseAwareInterface, EventsAwareInterface};
 use PDO;
 use DateTime;
 use Generator;
+use PDOException;
 
 class President implements DatabaseAwareInterface, EventsAwareInterface
 {
@@ -31,6 +32,9 @@ class President implements DatabaseAwareInterface, EventsAwareInterface
             : null;
     }
 
+    /**
+     * @return \Althingi\Model\President[]
+     */
     public function fetch(): array
     {
         $statement = $this->getDriver()->prepare(
@@ -45,6 +49,9 @@ class President implements DatabaseAwareInterface, EventsAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
+    /**
+     * @return \Althingi\Model\President[]
+     */
     public function fetchAllGenerator(?int $assembly = null): Generator
     {
         if ($assembly) {

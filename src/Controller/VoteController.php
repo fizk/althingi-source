@@ -47,12 +47,12 @@ class VoteController implements
      */
     public function getList(ServerRequest $request): ResponseInterface
     {
-        $issues = $this->voteService->fetchByIssue(
+        $votes = $this->voteService->fetchByIssue(
             $request->getAttribute('id'),
             $request->getAttribute('issue_id')
         );
 
-        return new JsonResponse($issues, 206);
+        return new JsonResponse($votes, 206);
     }
 
     /**

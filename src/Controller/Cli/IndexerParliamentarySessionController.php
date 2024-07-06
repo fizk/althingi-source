@@ -26,7 +26,6 @@ class IndexerParliamentarySessionController implements ServiceParliamentarySessi
     {
         $assemblyId = $request->getAttribute('assembly_id', null);
 
-        /** @var \Althingi\Model\ParliamentarySession $model */
         foreach ($this->parliamentarySessionService->fetchAllGenerator($assemblyId) as $model) {
             $this->getEventDispatcher()->dispatch(
                 new AddEvent(new IndexableParliamentarySessionPresenter($model), ['rows' => 1]),

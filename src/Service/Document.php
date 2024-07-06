@@ -11,6 +11,7 @@ use Althingi\Model\KindEnum;
 use Exception;
 use Generator;
 use PDO;
+use PDOException;
 
 class Document implements DatabaseAwareInterface, EventsAwareInterface
 {
@@ -35,7 +36,7 @@ class Document implements DatabaseAwareInterface, EventsAwareInterface
             : null ;
     }
 
-    public function getPrimaryDocument(int $assemblyId, int $issueId)
+    public function getPrimaryDocument(int $assemblyId, int $issueId): ?Model\Document
     {
         $statement = $this->getDriver()->prepare("
             select * from `Document` where
@@ -57,6 +58,9 @@ class Document implements DatabaseAwareInterface, EventsAwareInterface
             : null;
     }
 
+    /**
+     * @return \Althingi\Model\Document[]
+     */
     public function fetchAllGenerator(?int $assemblyId = null, ?int $issueId = null): Generator
     {
         if ($assemblyId === null) {
@@ -174,6 +178,9 @@ class Document implements DatabaseAwareInterface, EventsAwareInterface
         return $statement->rowCount();
     }
 
+    /**
+     * @return \Althingi\Model\Document[]
+     */
     public function fetchByIssue(int $assemblyId, int $issueId): array
     {
         $statement = $this->getDriver()->prepare('

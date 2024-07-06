@@ -32,13 +32,13 @@ class ParliamentarySessionController implements
      */
     public function get(ServerRequest $request): ResponseInterface
     {
-        $parliamentarySession = $this->parliamentarySessionService->get(
+        $session = $this->parliamentarySessionService->get(
             $request->getAttribute('id'),
             $request->getAttribute('parliamentary_session_id')
         );
 
-        return $parliamentarySession
-            ? new JsonResponse($parliamentarySession, 200)
+        return $session
+            ? new JsonResponse($session, 200)
             : new EmptyResponse(404);
     }
 
@@ -48,7 +48,7 @@ class ParliamentarySessionController implements
      */
     public function getList(ServerRequest $request): ResponseInterface
     {
-        $plenaries = $this->parliamentarySessionService->fetchByAssembly(
+        $session = $this->parliamentarySessionService->fetchByAssembly(
             $request->getAttribute('id', null),
             0, // $range->getFrom(),
             $this->parliamentarySessionService->countByAssembly(
@@ -56,7 +56,7 @@ class ParliamentarySessionController implements
             )
             //($range->getFrom()-$range->getTo())
         );
-        return new JsonResponse($plenaries, 206);
+        return new JsonResponse($session, 206);
     }
 
     /**
@@ -89,13 +89,13 @@ class ParliamentarySessionController implements
     public function patch(ServerRequest $request): ResponseInterface
     {
         if (
-            ($parliamentarySession = $this->parliamentarySessionService->get(
+            ($session = $this->parliamentarySessionService->get(
                 $request->getAttribute('id'),
                 $request->getAttribute('parliamentary_session_id')
             )) != null
         ) {
             $form = new Form\ParliamentarySession([
-                ...$parliamentarySession->toArray(),
+                ...$session->toArray(),
                 ...$request->getParsedBody(),
                 'assembly_id' => $request->getAttribute('id'),
                 'parliamentary_session_id' => $request->getAttribute('parliamentary_session_id'),

@@ -8,6 +8,7 @@ use Althingi\Injector\DatabaseAwareInterface;
 use Althingi\Model\KindEnum;
 use Generator;
 use PDO;
+use PDOException;
 
 class Category implements DatabaseAwareInterface
 {
@@ -27,6 +28,9 @@ class Category implements DatabaseAwareInterface
             : null;
     }
 
+    /**
+     * @return \Althingi\Model\Category[]
+     */
     public function fetch(int $superId): ?array
     {
         $statement = $this->getDriver()->prepare('
@@ -39,6 +43,9 @@ class Category implements DatabaseAwareInterface
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
+    /**
+     * @return \Althingi\Model\Category[]
+     */
     public function fetchAllGenerator(): Generator
     {
         $statement = $this->getDriver()

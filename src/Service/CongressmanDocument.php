@@ -39,6 +39,7 @@ class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterfac
 
     /**
      * @todo does this need to be orderd on something.
+     * @return \Althingi\Model\CongressmanDocument[]
      */
     public function fetchAllGenerator(
         ?int $congressmanId = null,
@@ -70,7 +71,6 @@ class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterfac
 
     /**
      * @return \Althingi\Model\CongressmanDocument[]
-     * @deprecated
      */
     public function fetchByDocument(int $assemblyId, int $issueId, int $documentId): array
     {
@@ -90,9 +90,6 @@ class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterfac
         }, $statement->fetchAll(PDO::FETCH_ASSOC));
     }
 
-    /**
-     * @deprecated
-     */
     public function countProponents(int $assemblyId, int $issueId, int $documentId): ?int
     {
         $statement = $this->getDriver()->prepare("
@@ -109,9 +106,6 @@ class CongressmanDocument implements DatabaseAwareInterface, EventsAwareInterfac
         return $statement->fetchColumn(0);
     }
 
-    /**
-     * @deprecated
-     */
     public function fetchProponents($assemblyId, $issueId, $documentId): ?Model\CongressmanValue
     {
         $statement = $this->getDriver()->prepare("
