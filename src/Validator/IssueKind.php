@@ -14,10 +14,12 @@ class IssueKind extends AbstractValidator
      */
     public function isValid($value)
     {
-        $value = strtolower($value);
+        if (!is_string($value)) {
+            return false;
+        }
 
-        if ($value !== 'a' && $value !== 'b') {
-            $this->error('value is not A or B');
+        if (strtolower($value) !== 'a' && strtolower($value) !== 'b') {
+            $this->error('value is not "A" or "B"');
             return false;
         }
         return true;

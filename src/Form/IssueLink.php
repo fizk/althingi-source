@@ -36,20 +36,21 @@ class IssueLink extends Form
                 ->attachValidator(new SignedDigits())
                 ->attachFilter(new ToInt())
             ,
-            (new Input('from_category'))
+            (new Input('from_kind'))
                 ->attachValidator(new NotEmpty())
+                ->attachValidator(new IssueKind())
             ,
-            (new Input('assembly_id'))
-                ->attachValidator(new NotEmpty())
-                ->attachValidator(new SignedDigits())
-                ->attachFilter(new ToInt())
-            ,
-            (new Input('issue_id'))
+            (new Input('to_assembly_id'))
                 ->attachValidator(new NotEmpty())
                 ->attachValidator(new SignedDigits())
                 ->attachFilter(new ToInt())
             ,
-            (new Input('kind'))
+            (new Input('to_issue_id'))
+                ->attachValidator(new NotEmpty())
+                ->attachValidator(new SignedDigits())
+                ->attachFilter(new ToInt())
+            ,
+            (new Input('to_kind'))
                 ->attachValidator(new NotEmpty())
                 ->attachValidator(new IssueKind())
             ,

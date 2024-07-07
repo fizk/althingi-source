@@ -85,6 +85,7 @@ services:
       - ./public/:/var/www/public
       - ./tests/:/var/www/tests
       - ./bin/:/var/www/bin
+      - ./schema/:/var/www/schema
       - ./phpcs.xml:/var/www/phpcs.xml
       - ./phpunit.xml.dist:/var/www/phpunit.xml
     environment:

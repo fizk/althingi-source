@@ -35,7 +35,7 @@ class IssueLinkController implements
         $issues = $this->issueLinkService->fetchAll(
             $request->getAttribute('id', 0),
             $request->getAttribute('issue_id', 0),
-            KindEnum::fromString($request->getAttribute('category', 'A'))
+            KindEnum::fromString($request->getAttribute('kind', 'A'))
         );
         return new JsonResponse($issues, 206);
     }
@@ -51,9 +51,7 @@ class IssueLinkController implements
             ...$request->getParsedBody(),
             'from_assembly_id' => $request->getAttribute('id', 0),
             'from_issue_id' => $request->getAttribute('issue_id', 0),
-            'from_category' => KindEnum::fromString(
-                $request->getAttribute('category', 'A')
-            ),
+            'from_kind' => KindEnum::fromString($request->getAttribute('kind', 'A'))->value,
         ]);
 
         if ($form->isValid()) {

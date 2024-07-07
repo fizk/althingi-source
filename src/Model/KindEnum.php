@@ -14,7 +14,7 @@ enum KindEnum: string
         return match (strtolower($value)) {
             'a' => self::A,
             'b' => self::B,
-            default => throw new Exception("'$value' is not a valid string"),
+            default => throw new Exception("'$value' is not 'A' or 'B'"),
         };
     }
 }

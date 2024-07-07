@@ -5,7 +5,7 @@ include __DIR__ . '/../vendor/autoload.php';
 
 set_error_handler('exception_error_handler');
 
-use Althingi\Events\{RequestSuccessEvent, RequestFailureEvent, RequestUnsuccessEvent};
+use Althingi\Events\{RequestSuccessEvent, RequestFailureEvent, RequestUnsuccessEvent, RequestWarningEvent};
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 use Althingi\Router\RouteInterface;
@@ -53,12 +53,17 @@ try {
     }
 
     $emitter->emit($response);
-    $manager->get(Psr\EventDispatcher\EventDispatcherInterface::class)
-        ->dispatch(
-        $response->getStatusCode() >= 400
-            ? new RequestUnsuccessEvent($request, $response)
-            : new RequestSuccessEvent($request, $response)
-        );
+
+    if ($response->getStatusCode() === 409) {
+        $manager->get(Psr\EventDispatcher\EventDispatcherInterface::class)
+            ->dispatch(new RequestWarningEvent($request, $response));
+    } else if ($response->getStatusCode() < 400) {
+        $manager->get(Psr\EventDispatcher\EventDispatcherInterface::class)
+            ->dispatch(new RequestSuccessEvent($request, $response));
+    } else {
+        $manager->get(Psr\EventDispatcher\EventDispatcherInterface::class)
+            ->dispatch(new RequestUnsuccessEvent($request, $response));
+    }
 
 } catch (Throwable $error) {
     $event = new RequestFailureEvent($request, $error);

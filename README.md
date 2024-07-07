@@ -80,7 +80,7 @@ docker build -t x-althingi-source --build-arg ENV=development .
 docker build -t x-althingi-aggregator --build-arg ENV=development .
 
 
-docker run --name x-althingi-database --network althingi-network -p 4406:3306 -e MYSQL_ROOT_PASSWORD=example -e MYSQL_DATABASE=althingi einarvalur/althingi-source-db:97bec3d2041832e170f4185167d515f0f0bcff4c
-docker run --name x-althingi-source -e DB_HOST=x-althingi-database -e DB_NAME=althingi -e DB_USER=root -e DB_PASSWORD=example -e BROKER=none --network althingi-network x-althingi-source
+docker run --name x-althingi-database --rm --network althingi-network -p 4406:3306 -e MYSQL_ROOT_PASSWORD=example -e MYSQL_DATABASE=althingi einarvalur/althingi-source-db:97bec3d2041832e170f4185167d515f0f0bcff4c
+docker run --name x-althingi-source --rm -e LOG_LEVEL=WARNING -e DB_HOST=x-althingi-database -e DB_NAME=althingi -e DB_USER=root -e DB_PASSWORD=example -e BROKER=none --network althingi-network x-althingi-source
 docker run --name x-althingi-aggregator --network althingi-network --rm -e CONSUMER_CACHE_TYPE=none -e PROVIDER_CACHE_TYPE=none -e AGGREGATOR_CONSUMER_HOST=x-althingi-source  -e AGGREGATOR_CONSUMER_PORT=80 x-althingi-aggregator assembly 154
 ```
