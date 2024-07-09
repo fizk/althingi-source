@@ -16,6 +16,7 @@ class ErrorFormResponse extends JsonResponse
     {
         return [
             'form' => $form->getData(),
+            'name' => $form::class,
             'messages' => array_map(function ($value, $key) {
                 return [
                     'field' => $key,

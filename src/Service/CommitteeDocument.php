@@ -156,14 +156,14 @@ class CommitteeDocument implements DatabaseAwareInterface, EventsAwareInterface
         KindEnum $kind,
         int $committeeId,
         string $part
-    ): int {
+    ): ?int {
         $statement = $this->getDriver()->prepare('
-            select `committee_session_id` from `CommitteeSession`
-            where `assembly_id` = :assembly_id and,
-                `document_id` = :document_id and,
-                `issue_id` = :issue_id and,
-                `kind` = :kind and,
-                `committee_id` = :committee_id and,
+            select `document_committee_id` from `Document_has_Committee`
+            where `assembly_id` = :assembly_id and
+                `document_id` = :document_id and
+                `issue_id` = :issue_id and
+                `kind` = :kind and
+                `committee_id` = :committee_id and
                 `part` = :part
             ;
         ');
@@ -175,6 +175,10 @@ class CommitteeDocument implements DatabaseAwareInterface, EventsAwareInterface
             'committee_id' => $committeeId,
             'part' => $part,
         ]);
-        return $statement->fetchColumn(0);
+        $result = $statement->fetchColumn(0);
+        return $result > 0
+            ? $result
+            : null;
+        // return $statement->fetchColumn(0);
     }
 }

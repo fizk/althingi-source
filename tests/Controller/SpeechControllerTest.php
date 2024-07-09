@@ -202,6 +202,37 @@ class SpeechControllerTest extends TestCase
     }
 
     #[Test]
+    public function putMoreSuccess()
+    {
+        $this->getMockService(Service\Speech::class)
+            ->shouldReceive('save')
+            ->once()
+            ->andReturn(1)
+            ->getMock();
+
+        $this->dispatch('/loggjafarthing/1/thingmal/a/3/raedur/20210613T012100', 'PUT', [
+            "assembly_id" => "144",
+            "congressman_id" => "652",
+            "congressman_type" => "fjármála- og efnahagsráðherra",
+            "from" => "2014-09-11 10:36:52",
+            "id" => "20140911T103652",
+            "issue_id" => "1",
+            "iteration" => "1",
+            "kind" => "a",
+            "parliamentary_session_id" => "3",
+            "speech_id" => "20140911T103652",
+            "text" => "<ræðutexti xmlns=\"http://skema.althingi.is/skema\">\n</ræðutexti>",
+            "to" => "2014-09-11 11:07:24",
+            "type" => "flutningsræða",
+            "validated" => "true"
+        ]);
+
+        $this->assertControllerName(SpeechController::class);
+        $this->assertActionName('put');
+        $this->assertResponseStatusCode(201);
+    }
+
+    #[Test]
     public function putInvalidForm()
     {
         $this->getMockService(Service\Speech::class)

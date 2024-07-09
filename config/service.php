@@ -627,6 +627,7 @@ return [
                 ->setDefinition(getenv('DOCUMENT_DEFINITION') ?: '/api/openapi')
                 ->setSchema(['http']);
         },
+
         RouteInterface::class => function () {
             return TreeRouteStack::factory(require __DIR__ . '/route.php');
         },

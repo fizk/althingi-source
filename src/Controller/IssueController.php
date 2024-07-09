@@ -92,14 +92,14 @@ class IssueController implements
     public function put(ServerRequest $request): ResponseInterface
     {
         $assemblyId = $request->getAttribute('id');
-        $kind = KindEnum::fromString($request->getAttribute('kind', 'a'));
+        $kind = KindEnum::fromString($request->getAttribute('kind', 'a'))->value;
         $issueId = $request->getAttribute('issue_id');
 
         $form = new Form\Issue([
             ...$request->getParsedBody(),
             'assembly_id' => $assemblyId,
             'issue_id' => $issueId,
-            'kind' => $kind->value,
+            'kind' => $kind,
         ]);
 
         if ($form->isValid()) {

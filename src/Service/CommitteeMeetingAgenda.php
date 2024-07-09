@@ -6,7 +6,6 @@ use Althingi\Model;
 use Althingi\Hydrator;
 use Althingi\Injector\DatabaseAwareInterface;
 use PDO;
-use PDOException;
 
 class CommitteeMeetingAgenda implements DatabaseAwareInterface
 {

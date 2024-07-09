@@ -137,7 +137,7 @@ class SpeechController implements
             'speech_id' => $request->getAttribute('speech_id'),
             'issue_id' => $request->getAttribute('issue_id'),
             'assembly_id' => $request->getAttribute('id'),
-            'category' => KindEnum::fromString($request->getAttribute('kind', 'a')),
+            'kind' => KindEnum::fromString($request->getAttribute('kind', 'a'))->value,
         ]);
 
         if ($form->isValid()) {

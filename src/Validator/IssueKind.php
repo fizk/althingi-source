@@ -15,6 +15,7 @@ class IssueKind extends AbstractValidator
     public function isValid($value)
     {
         if (!is_string($value)) {
+            $this->error('value for "IssueKind" can not be "' . gettype($value) . '" only "string" allowed');
             return false;
         }
 

@@ -43,7 +43,7 @@ class CommitteeMeetingAgenda extends Form
             ,
             (new Input('kind', true))
                 ->attachFilter(new ToNull(['type' => 'all']))
-                ->attachValidator(new IssueKind())
+                // ->attachValidator(new IssueKind())
             ,
             (new Input('issue_id', true))
                 ->attachValidator(new SignedDigits())

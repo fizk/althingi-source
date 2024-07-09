@@ -131,7 +131,7 @@ class CommitteeDocumentController implements
                     return new ErrorExceptionResponse($e);
                 }
             }
-
+            ;
             return new EmptyResponse($statusCode, [
                 'Location' => $this->router->assemble([
                     'id' => $assemblyId,
