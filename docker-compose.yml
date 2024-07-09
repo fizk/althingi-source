@@ -126,8 +126,8 @@ services:
       - MYSQL_DATABASE=${ENV_DB_NAME:-althingi}
     volumes:
       - local-source-db-volume:/var/lib/mysql
-    networks:
-        - x-althingi
+    # networks:
+    #     - x-althingi
     command: --default-authentication-plugin=mysql_native_password
 
   database-test:
