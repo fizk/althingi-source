@@ -21,7 +21,7 @@ class CommitteeDocumentTest extends TestCase
 
         $expectedData = 100001;
 
-        $actualData = $committeeDocument->getIdentifier(1,1,1,Model\KindEnum::A,1,'part1');
+        $actualData = $committeeDocument->getIdentifier(1, 1, 1, Model\KindEnum::A, 1, 'part1');
 
         $this->assertEquals($expectedData, $actualData);
     }
@@ -36,7 +36,8 @@ class CommitteeDocumentTest extends TestCase
             12,
             12,
             12,
-            Model\KindEnum::A,1,
+            Model\KindEnum::A,
+            1,
             'part1'
         );
 

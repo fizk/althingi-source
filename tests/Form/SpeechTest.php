@@ -32,5 +32,4 @@ class SpeechTest extends TestCase
 
         $this->assertTrue($form->isValid());
     }
-
 }

@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+
+  run:
+    environment:
+      - LOG_LEVEL=WARNING
+      - BROKER=none
+    networks:
+        - x-althingi
+
+  test:
+    volumes:
+      - ./vendor/:/var/www/vendor
+
+  database:
+    networks:
+        - x-althingi
+
+networks:
+    x-althingi:
+        driver: bridge
+

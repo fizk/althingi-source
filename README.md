@@ -1,6 +1,11 @@
 # Loggjafarthing
 This is the single-source-of-truth system for `althingi.is` data. It is a PHP 8 API with a MySQL database.
 
+## Run for development
+```sh
+ docker compose -f docker-compose.yml -f docker-compose.local.yml up run
+```
+
 ## Environment variables:
 
 | name                | default                          | Options                               | description                   |

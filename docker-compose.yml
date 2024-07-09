@@ -39,9 +39,7 @@ services:
       - ./phpunit.xml.dist/:/var/www/phpunit.xml
     environment:
       - LOG_PATH=php://stdout
-    #   - LOG_LEVEL=DEBUG
-      - LOG_LEVEL=WARNING
-    #               INFO NOTICE WARNING ERROR CRITICAL ALERT EMERGENCY
+      - LOG_LEVEL=DEBUG # INFO NOTICE WARNING ERROR CRITICAL ALERT EMERGENCY
 
       - DB_HOST=database
       - DB_PORT=3306
@@ -49,16 +47,13 @@ services:
       - DB_USER=${ENV_DB_USER:-root}
       - DB_PASSWORD=${ENV_DB_PASSWORD:-example}
 
-    #   - BROKER=${ENV_BROKER:-kafka}
-      - BROKER=none
+      - BROKER=${ENV_BROKER:-kafka}
       - BROKER_HOST=host.docker.internal:9092
       - BROKER_CONFIG=all
       - DOCUMENT_SERVER=${ENV_DOCUMENT_SERVER:-localhost:7070}
       - DOCUMENT_DEFINITION=${ENV_DOCUMENT_DEFINITION:-/openapi}
     depends_on:
       - database
-    # networks:
-    #     - x-althingi
     command: '/var/www/bin/wait-for-it.sh -h database -p 3306 -- /var/www/bin/start'
 
   #
@@ -84,7 +79,6 @@ services:
       - ./composer.lock/:/var/www/composer.lock
       - ./coverage/:/var/www/coverage
       - ./config/:/var/www/config
-    #   - ./vendor/:/var/www/vendor
       - ./src/:/var/www/src
       - ./public/:/var/www/public
       - ./tests/:/var/www/tests
@@ -105,7 +99,6 @@ services:
 
       - DOCUMENT_SERVER=${ENV_DOCUMENT_SERVER:-localhost:8080}
       - DOCUMENT_DEFINITION=${ENV_DOCUMENT_DEFINITION:-/openapi}
-
     depends_on:
       - database-test
     command: '/var/www/bin/wait-for-it.sh -h database-test -p 3306 -- /var/www/bin/test'
@@ -126,8 +119,6 @@ services:
       - MYSQL_DATABASE=${ENV_DB_NAME:-althingi}
     volumes:
       - local-source-db-volume:/var/lib/mysql
-    # networks:
-    #     - x-althingi
     command: --default-authentication-plugin=mysql_native_password
 
   database-test:
@@ -140,10 +131,6 @@ services:
     volumes:
       - local-source-db-test-volume:/var/lib/mysql
     command: --default-authentication-plugin=mysql_native_password
-
-# networks:
-#     x-althingi:
-#         driver: bridge
 
 volumes:
     local-source-db-volume:
